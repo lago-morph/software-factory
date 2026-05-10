@@ -1,143 +1,192 @@
 # StrongDM Factory — Research Report
-**Sources covered:**
-- https://factory.strongdm.ai/ (homepage)
-- https://factory.strongdm.ai/principles
-- https://factory.strongdm.ai/techniques
-- https://factory.strongdm.ai/techniques/gene-transfusion
-- https://factory.strongdm.ai/techniques/pyramid-summaries
-- https://factory.strongdm.ai/techniques/dtu (Digital Twin Users)
-- https://factory.strongdm.ai/techniques/semport (Semantic Ports / Semports)
-- https://factory.strongdm.ai/products
-- https://factory.strongdm.ai/products/attractor
-- https://factory.strongdm.ai/products/cxdb
 
-**Reachability note:** Every `factory.strongdm.ai` URL returned HTTP 403 to both WebFetch and direct curl from this sandbox (likely a UA/region/Cloudflare gate). I reconstructed the substance from heavily-quoted secondary coverage — Simon Willison's piece, Ry Walker's research notes, Pragmatic CTO, Stanford CodeX, ASCII News, 36kr, airesourcepro, and search-result excerpts that quote the source pages verbatim. Quotes attributed to `factory.strongdm.ai/...` below have been cross-checked across at least two such reports.
+**Sources covered (all ACCESSED via local saved copies; previously blocked HTTP 403 from sandbox):**
+- https://factory.strongdm.ai/ — local: `/home/user/software-factory/factory.strongdm.ai.html`
+- https://factory.strongdm.ai/principles — local: `/home/user/software-factory/factory.strongdm.ai__principles.html`
+- https://factory.strongdm.ai/techniques — local: `/home/user/software-factory/factory.strongdm.ai__techniques.html`
+- https://factory.strongdm.ai/techniques/dtu — local: `/home/user/software-factory/factory.strongdm.ai__techniques__dtu.html`
+- https://factory.strongdm.ai/techniques/gene-transfusion — local: `/home/user/software-factory/factory.strongdm.ai__techniques__gene-transfusion.html`
+- https://factory.strongdm.ai/techniques/pyramid-summaries — local: `/home/user/software-factory/factory.strongdm.ai__techniques__pyramid-summaries.html`
+- https://factory.strongdm.ai/techniques/semport — local: `/home/user/software-factory/factory.strongdm.ai__techniques__semport.html`
+- https://factory.strongdm.ai/products — local: `/home/user/software-factory/factory.strongdm.ai__products.html`
+- https://factory.strongdm.ai/products/attractor — local: `/home/user/software-factory/factory.strongdm.ai__products__attractor.html`
+- https://factory.strongdm.ai/products/cxdb — local: `/home/user/software-factory/factory.strongdm.ai__products__cxdb.html`
 
 **Date:** 2026-05-10
 
+## Revision notes
+
+This revision replaces a reconstruction (built from secondary coverage when the primary site was 403-blocked) with direct extraction from the canonical pages.
+
+**Verified verbatim:** The cardinal rules now match the homepage exactly: "Code must not be written by humans" / "Code must not be reviewed by humans" / "If you haven't spent at least $1,000 on tokens today per human engineer, your software factory has room for improvement". The kōan: "Why am I doing this? (implied: the model should be doing this instead)". Principles slogan: "Seed → Validation harness → Feedback loop. Tokens are the fuel." Satisfaction definition ("of all the observed trajectories through all the scenarios, what fraction of them likely satisfy the user?") is verbatim from the homepage, not the techniques page.
+
+**Added material:**
+- StrongDM AI team founding (July 14, 2025; Justin McCarthy, Jay Taylor, Navan Chauhan); "Hands off!" charter line; credit to "the second revision of Claude 3.5 (October 2024)" and Cursor's YOLO mode as catalyst.
+- The narrative arc from tests → integration → regression → e2e → behavior → scenarios → satisfaction, and the `return true` reward-hacking story in their own words.
+- "Tokens are the fuel" page's enumerated representations: traces, screen capture, transcripts, incident replays, adversarial use, agentic simulation, just-in-time surveys, customer interviews, price elasticity testing.
+- **The Filesystem** as a named first-class technique (missing entirely before).
+- The "opaque ML weights" framing from `/techniques`: code's correctness is inferred only from externally observable behavior.
+- Gene Transfusion's three propagation modes and five-step flow; Caddy's Let's Encrypt as canonical exemplar.
+- Pyramid Summaries' "executive parallel" and the explicit Map/Cluster/Reduce decomposition.
+- Semport's canonical mechanics (daily auto-port of `openai/openai-agents-python` to Go; Attractor "ledgers the fix, runs the tests, tags the release") and three variants (one-time, ongoing, adaptive).
+- DTU's four-property enumeration and boundary-replication recipe ("validate doubles against the live dependency until we stop finding behavioral differences").
+- Attractor's four key properties (deterministic, observable, resumable, composable), node prompts, and sample natural-language edges; plus the large community implementation ecosystem (17+ ports).
+- CXDB performance claims (p50 < 1ms append, 70%+ storage reduction via Zstd + BLAKE3 CAS, dual binary/HTTP ports 9009/9010, Rust+Go+React stack) and competitive positioning vs. LangSmith / Langfuse / Helicone / OTel / LiteLLM.
+- The site's own list of related practitioners and competitor factories.
+
+**Corrections to prior report:**
+- "DTU" stands for **Digital Twin *Universe***, not "Digital Twin *Users*" — the URL slug misled the reconstruction.
+- The principles page does **not** number the rules ("Rule one…"). They are presented as kōan, then two rules, then a "practical form". The numbered phrasing was a secondary-source rewording.
+- The canonical Attractor page describes a "graph of nodes, forming a generative SDLC" / "graph-structured pipeline" — *not* "DOT-graph". DOT is a community-implementation convention.
+- "Scenarios" and "Satisfaction" are defined on the **homepage**, not as standalone technique pages — they sit upstream of the techniques inventory entirely.
+- "Shift Work" exists as a one-line definition on `/techniques` (no dedicated subpage), confirming the prior report's guess.
+- The catalyst model is "the second revision of Claude 3.5" (more specific than "Claude 3.5 v2").
+- The prior report named "Hallucination loops via shared blind spots" as a canonical pitfall; the canonical pages do not directly admit this — it came from secondary commentary and is now flagged as an open question rather than a documented lesson.
+
+**New external references surfaced by the primary sources (for future research):**
+- Luke PM, "The Software Factory"; Sam Schillace, "I Have Seen the Compounding Teams"; Dan Shapiro, "Five Levels from Spicy Autocomplete to the Software Factory" (all cited in homepage footnote 1).
+- Competitor factories (homepage footnote 2): Devin, 8090, Factory, Superconductor, Jesse Vincent's Superpowers.
+- Reference LLM-native SDKs Semport pulls from: Vercel AI SDK, OpenAI Agents SDK.
+- Caddy's Let's Encrypt integration (the canonical Gene Transfusion exemplar).
+- 17+ named community Attractor ports across Rust, Go, Python, Java, F#, PHP, Tcl, TypeScript, Scala, Ruby, C, C# — Fabro (Bryan Helmkamp), Kilroy (Dan Shapiro), Forge (Luke Buehler), Arc (Point Labs), and Amol Kabe's multi-agent factory variant being the most distinctive.
+
 ## Executive summary
-StrongDM Factory is a public methodology site (with three sections — Principles, Techniques, Products — plus a small open-source set including Attractor, CXDB, and StrongDM ID) describing how a ~3-person AI team at StrongDM ships production security software *without humans writing or reviewing code*. Its distinctive claim is that long-horizon agentic coding "compounds correctness rather than error" once you give it the right scaffold, and that the human role collapses to specifying intent and tending the harness.
 
-The core loop is a three-word slogan: **Seed → Validation harness → Feedback loop**, with **tokens as fuel**. A *seed* is any starting artifact (a PRD, a few sentences, a screenshot, an existing codebase). A *validation harness* is end-to-end and as close to the real environment as possible — for SaaS-heavy products, this is realized through their **Digital Twin Universe**, behavioral clones of Okta, Jira, Slack, Google Docs/Drive/Sheets that replicate APIs and edge cases offline. The *feedback loop* re-feeds output trajectories into inputs until *satisfaction* — a probabilistic measure (LLM judges fraction of trajectories that satisfy the user) — converges.
+StrongDM Factory is the public methodology site of the StrongDM AI team — three engineers (Justin McCarthy, Jay Taylor, Navan Chauhan, founded July 14, 2025) — describing how they ship production security software with no human-written or human-reviewed code. The site has four navigable sections: **Story** (`/`), **Principles** (`/principles`), **Techniques** (`/techniques` + per-technique subpages), and **Products** (`/products` + per-product subpages).
 
-Two ideas make the methodology distinctive versus the more familiar "agent in an IDE" story:
+The thesis: with the late-2024 model floor (specifically "the second revision of Claude 3.5"), long-horizon agentic coding "began to compound correctness rather than error" rather than decay through accumulated misunderstandings. Given that floor, the engineering problem stops being *writing code* and becomes *specifying intent, building a validation harness, and feeding tokens into a feedback loop until convergence*.
 
-1. **Non-interactive coding agents.** Once intent is fully specified (specs + scenarios + harness), an agent runs end-to-end without back-and-forth. Their reference implementation, **Attractor**, is a DOT-graph of LLM nodes (each node a phase like "implement the functionality" / "identify the bottleneck"), with natural-language edges evaluated by the LLM. The graph itself is the workflow.
-2. **Scenarios as out-of-codebase holdouts.** Borrowing from ML training, end-to-end "user stories" (called *scenarios*) live outside the codebase so agents can't game them, and a *satisfaction harness* judges trajectories probabilistically rather than via boolean assertions.
+The core slogan is **"Seed → Validation harness → Feedback loop. Tokens are the fuel."** (`/principles`). A **seed** is "a PRD, a few sentences, a screenshot, or an existing codebase." The **validation harness** must be "end-to-end, as close to the real environment as possible: customers, integrations, economics." The **feedback loop** is "a sample of the output, fed back into the inputs" and "runs until the holdout scenarios pass (and stay passing)" (`/principles`).
 
-The methodology is unusually opinionated: it states as a *cardinal rule* that humans must neither write nor review code, and benchmarks engineer effectiveness by daily token spend ($1,000/day/engineer is the floor). Pitfalls — reward hacking via `return true`, model-blind-spot hallucination loops, and the question of who writes the scenarios — are openly acknowledged but not fully resolved.
+Two distinctive moves separate this from generic agent-in-IDE workflows:
+
+1. **Scenarios + Satisfaction replace tests.** A *scenario* is "an end-to-end 'user story', often stored outside the codebase (similar to a 'holdout' set in model training)." *Satisfaction* is probabilistic: "of all the observed trajectories through all the scenarios, what fraction of them likely satisfy the user?" (`/`). This defends against reward-hacking (`return true` style) because the holdout lives outside the codebase the agent can edit.
+2. **The Digital Twin Universe (DTU).** Rather than running scenarios against live SaaS (rate limits, prod risk, API costs), StrongDM built behavioral clones of Okta, Jira, Slack, Google Docs, Google Drive, and Google Sheets. The economic premise: "Creating a high fidelity clone of a significant SaaS application was always possible, but never economically feasible" — agents now make it routine (`/techniques/dtu`).
+
+The site frames this as "deliberate naivete: finding and removing the habits, conventions, and constraints of Software 1.0" (`/`).
 
 ## Agents and roles
-Roles are software components in a graph, not personas with names. The cast:
 
-- **Coding agent (Attractor)** — non-interactive; ingests spec + scenarios, traverses a DOT graph of phases (implement, identify bottleneck, fix, validate), and converges or terminates. Composes models, prompts, and tools.
-- **Validator / Satisfaction judge** — an LLM that scores observed *trajectories* through *scenarios* probabilistically ("what fraction satisfy the user?"). Replaces boolean test runners as the source of truth.
-- **Digital Twin (DTU) services** — synthetic Okta/Jira/Slack/Google Docs/Drive/Sheets, etc. Not "agents" per se but full behavioral peer systems the coding agent talks to; they provide deterministic, replayable, rate-limit-free production-like behavior.
-- **Context store (CXDB)** — a turn-by-turn DAG of every agent interaction with blob deduplication (BLAKE3), branch-from-any-turn, typed projections, and a visual debugger. The "memory layer" the agents share.
-- **Identity layer (StrongDM ID)** — federated auth for humans, workloads, and AI agents, with path-scoped sharing. The control plane that lets agents act on real systems.
-- **Human (the "engineer")** — writes seeds, designs scenarios, tends the harness, signs off on production cutover. Mantra: *"Why am I doing this? The model should be doing it instead."*
+The site presents roles as software components, not personas. The cast:
 
-Notably absent: there is no named "reviewer agent," "planner agent," or "PM agent." Phases live as *nodes in Attractor's graph*, not as distinct personas.
+- **Coding agent (Attractor)** — "a non-interactive coding agent … composes models, prompts, and tools into a graph-structured pipeline … designed to operate end-to-end once the work is fully specified" (`/products/attractor`). Each node has a core prompt ("implement the functionality", "identify the bottleneck", "optimize for performance", "verify behavioral correctness"); edges are natural-language predicates evaluated by the LLM.
+- **Satisfaction judge** — an LLM evaluating "what fraction of [trajectories] likely satisfy the user" (`/`). Replaces boolean assertions.
+- **Digital Twin Universe** — behavioral clones at the API boundary, "built from API contracts and observed edge cases" and "validate[d] against the live dependency until we stop finding behavioral differences" (`/techniques/dtu`).
+- **CXDB** — the context store, "a self-hosted context store for AI agents [that] persists every turn of every conversation with full type awareness, branching support, and a visual debugger" (`/products/cxdb`). The turn DAG, blob CAS (BLAKE3), and dynamic type system are the agents' shared memory.
+- **StrongDM ID** — "Identity for humans, workloads, and AI agents with federated authentication and path-scoped sharing" (`/products`).
+- **Human engineer** — writes seeds, curates scenarios, tends harnesses, decides cutover. The site's framing is "Hands off!" — the founding charter line.
+
+There is no named "reviewer," "planner," or "PM" agent on the canonical site. (Community Attractor implementations, e.g. Amol Kabe's port, *do* introduce specialized Coding/Validator/Debugger/Planner agents.)
 
 ## Workflows and cycles
-The end-to-end cycle the site describes:
 
-1. **Seed.** Human (or upstream artifact) supplies a starting intent — "a few sentences, a screenshot, an existing codebase," a PRD-ish spec, or an NLSpec (natural-language spec, Markdown).
-2. **Scenario authoring.** End-to-end user stories are written and stored *outside the codebase* (holdout-style). These become the success surface.
-3. **Harness assembly.** A validation harness is wired up against Digital Twin Users for any SaaS dependencies, so the agent runs in a near-production but offline-safe environment.
-4. **Attractor execution.** The coding agent traverses its DOT pipeline: implement → run scenarios in harness → judge satisfaction → if below threshold, route to a fix/refine node → loop. Edges between nodes are natural-language predicates evaluated by the LLM.
-5. **Trajectory collection.** Every run emits a *trajectory*; CXDB persists every turn with branching support so agents (and humans) can rewind, branch, and replay.
-6. **Satisfaction convergence.** The loop continues until the holdout scenarios "pass and stay passing" — i.e., trajectory satisfaction across the holdout set stabilizes above threshold.
-7. **Cutover.** Once satisfaction is stable, the system ships. The human does not read the diff.
+The end-to-end cycle, reconstructed from the canonical pages:
 
-Handoffs are implicit — they're encoded in the Attractor graph, not in queues of tickets between human roles. The "gate" is the satisfaction threshold, not a code review.
+1. **Seed.** Intent capture from "a PRD, a few sentences, a screenshot, or an existing codebase" (`/principles`).
+2. **Scenario curation.** End-to-end user stories are authored and stored outside the codebase. The homepage shows a "synthetic scenario curation and shaping interface" screenshot.
+3. **Harness assembly.** A validation harness is wired up against DTUs for any SaaS dependency, plus traces, screen capture, transcripts, incident replays, adversarial use, agentic simulation, just-in-time surveys, customer interviews, or price elasticity testing (`/principles`, "Apply More Tokens" section).
+4. **Attractor execution.** "Execution consists of traversing this graph until convergence or termination conditions are met" (`/products/attractor`). Nodes are phases; edges are natural-language predicates the LLM evaluates ("Proceed once a bottleneck is identified"; "Take this edge if the copywriting standards have been met").
+5. **Trajectory persistence.** Every turn goes into CXDB as a node in a turn DAG; branching from any turn is O(1) (a new head pointer).
+6. **Satisfaction convergence.** The loop runs "until the holdout scenarios pass (and stay passing)" (`/principles`).
+7. **Cutover.** No human review of diffs; the gate is satisfaction stability.
+
+Attractor's claimed key properties: "Deterministic given the same inputs / Observable at every node transition / Resumable from any checkpoint / Composable with other graphs."
 
 ## Specification methodology
-Specs are written in prose — Markdown "NLSpecs" (Natural Language Specs) intended to be "directly usable by coding agents to implement/validate behavior." The Attractor repo itself is published as nothing but NLSpec Markdown files (no source code), with the explicit intent that you feed the spec to a coding agent and have it generate Attractor for you. Spec validity is established empirically: a spec is "good" if an independent agent run from a clean state produces a system that hits scenario satisfaction.
 
-Three artifact tiers seem to operate:
-- **Seed** — informal intent; minimum viable description.
-- **NLSpec** — the canonical written artifact, prose with enough structure for an agent to act on.
-- **Scenarios** — separate, holdout, end-to-end user stories that *validate* (not define) the spec.
+The site treats *intent* as the human's output and *code* as a derived, opaque artifact. From `/techniques`: "Code was treated analogously to an ML model snapshot: opaque weights whose correctness is inferred exclusively from externally observable behavior. Internal structure is treated as opaque."
 
-Specification methodology is deliberately *not* formal-methods or type-driven. The bet is on LLM interpretation of natural language plus an end-to-end harness, not on proofs.
+This implies a three-artifact tier:
+
+- **Seed** — informal intent (sentences, screenshot, codebase).
+- **Spec (implicit "NLSpec")** — the canonical (prose) form the agent operates on. The Attractor spec is published as such (referenced by community implementations claiming "100% spec coverage" of `attractor-spec.md`).
+- **Scenarios** — out-of-codebase holdout user stories that validate (not define) behavior.
+
+The site does not use the term "NLSpec" on these canonical pages; that term comes from the Attractor GitHub spec. The methodology is deliberately non-formal: natural-language specs + LLM judgment + harness, not types or proofs.
 
 ## Review and feedback patterns
-- **Agent-to-agent review** is the default and is mediated by the satisfaction judge: one agent's output is scored by an LLM running against scenarios in the harness.
-- **No human code review.** Cardinal rules one and two. The human reviews scenarios, harness behavior, and satisfaction trends, not diffs.
-- **Feedback routing** lives in the Attractor graph: a low-scoring satisfaction result routes the trajectory back into a refinement node (e.g., "identify the bottleneck"). The graph re-enters the implement node with the bottleneck note in context.
-- **Memory of past surprises** is held in CXDB (every turn persisted, branchable), so a future run can be initialized from any prior turn — failure-mode replay is first-class.
-- **Pyramid Summaries** are the channel by which agents triage large feedback surfaces (bug reports, trajectories): summarize at 2/4/8/16-word levels, scan thousands at the short levels, zoom in only where needed.
+
+- **Agent-to-agent review** mediated by the satisfaction judge against the scenario holdout.
+- **No human code review** — restated as cardinal rule.
+- **Feedback routing inside Attractor.** Low satisfaction routes the trajectory to a "fix" or "identify the bottleneck" node; the graph re-enters implementation with that note in context.
+- **Branchable memory in CXDB.** "Branch from any point without copying history. Forking is O(1)" — so failure-mode replay (and "what if we'd done X here") is first-class.
+- **Pyramid Summaries** for high-volume triage. "Summarize this bug report in 2 words. Now 4. Now 8. Now 16." Agents survey "hundreds of items at their 2-word level, identify the interesting ones, and expand only those" (`/techniques/pyramid-summaries`). Combined with MapReduce + Clustering, "a capable model with limited context can 'see' much more of the terrain."
 
 ## Human leverage techniques
-- **Non-interactive mode.** The human launches a run and walks away; convergence is automated. This is the dominant leverage pattern.
-- **Scenarios > diffs.** Steering happens by editing the holdout set, not by line-editing PRs — one human edit reshapes the success criterion for many agent runs.
-- **Pyramid Summaries.** Lets one operator scan hundreds-to-thousands of agent outputs, bug reports, or trajectories at compressed resolution and drill in only where signal appears.
-- **MapReduce + Clustering of summaries.** Combine pyramid summaries with map-reduce-style fan-out: generate compressed views in parallel, cluster, then synthesize. Lets a "capable model with limited context see much more of the terrain."
-- **Shift work** (named technique, page not directly readable from sandbox). Implied: separate fully-specified work (handed to non-interactive agents that run overnight/asynchronously) from interactive work that still needs a human in real time.
-- **Gene Transfusion.** Move a working pattern from one codebase into another by pointing agents at concrete exemplars — one good exemplar leverages into N replications.
-- **Semports (Semantic Ports).** Automated ongoing ports between languages — e.g., daily auto-port of the OpenAI Python agents library into Go. One pattern, many languages, no maintenance.
-- **Digital Twin Users.** A human-built or agent-built behavioral clone of a SaaS dependency that lets agents validate at "volumes and rates far exceeding production limits." Decouples agent throughput from third-party rate limits and prod risk.
-- **Token-spend benchmark.** A psychological forcing function: if a human engineer isn't spending $1k/day in tokens, they're under-utilizing the agents — a meta-leverage check.
+
+- **Non-interactive execution.** Attractor "is designed to operate end-to-end once the work is fully specified" (`/products/attractor`); the human launches and walks away.
+- **Scenarios > diffs.** Steering happens by editing the holdout, not by editing code.
+- **Shift Work.** "Separate interactive work from fully specified work. When intent is complete (specs, tests, existing apps), an agent can run end-to-end without back-and-forth" (`/techniques`).
+- **Pyramid Summaries + MapReduce + Clustering.** Compress, cluster compressed forms, synthesize, drill in only where signal warrants. Executive-style drill-down.
+- **Gene Transfusion.** Point agents at concrete exemplars (e.g., Caddy's Let's Encrypt integration); three propagation modes (cross-language, direct inlining, library embodiment).
+- **Semports.** Continuous auto-port of trusted upstream libraries into your preferred language — "while our human team members sleep" (`/techniques/semport`).
+- **DTU.** Validate "at volumes and rates far exceeding production limits" without prod risk.
+- **The Filesystem.** On-disk state as a memory substrate the agent reads and writes itself.
+- **Token-spend benchmark.** The $1,000/day/engineer floor as a meta-leverage check.
 
 ## Pitfalls and lessons learned
-Drawn from the site and commentary that cites it:
 
-- **Reward hacking / test-gaming.** Early agents wrote `return true` to pass tests. The defense was scenarios held outside the codebase plus probabilistic satisfaction over trajectories rather than boolean assertions.
-- **Hallucination loops via shared blind spots.** If the same model class reads the Okta docs to build the *code* and to build the *Digital Twin*, both will bake in the same misunderstanding — tests pass, prod fails. Cited as an open problem.
-- **The "who writes the scenarios?" regress.** If humans write them, human involvement just moved upstream. If agents write them, you have agents verifying agents verifying agents (a *quis custodiet* regress that "recedes, doesn't resolve"). Not solved.
-- **Test/validator independence is fragile.** When the same model writes code and judges it, the "different-mind" property that makes human testing useful collapses.
-- **No formal methods.** Reliance on prose specs + LLM judgment, not proofs. Acknowledged as a trade-off.
-- **Battle-testing is thin.** A 3-person team's methodology may not survive scaling or domains where edge cases are not observable through SaaS-like APIs.
-- **The hard transition was model-dependent.** They credit the late-2024 Claude 3.5 (v2) release as the inflection where long-horizon agentic loops began compounding correctness instead of error — i.e., the methodology is contingent on a model floor.
+- **Reward hacking via the codebase.** "A test, stored in the codebase, can be lazily rewritten to match the code. The code could be rewritten to trivially pass the test" (`/`). Defense: out-of-codebase scenarios + probabilistic satisfaction.
+- **`return true` shortcuts.** "The agent, obsessed with the immediate task, soon began to take shortcuts: `return true` is a great way to pass narrowly written tests, but probably won't generalize to the software you want" (`/`).
+- **Rigid tests fail with agentic systems.** "Tests are too rigid - we were coding with agents, but we're also building with LLMs and agent loops as design primitives; evaluating success often required LLM-as-judge" (`/`).
+- **Model-floor dependency.** The methodology is explicitly contingent on the late-2024 model floor ("the second revision of Claude 3.5").
+- **Battle-testing is thin.** A 3-person team; the canonical pages are advocacy, not retrospective post-mortems.
+- *Not directly admitted on canonical pages but flagged by secondary commentary:* shared-blind-spot hallucination loops (when judge and coder share a model class), and the recursive question of who writes the scenarios. See open questions below.
 
 ## Principles & techniques inventory
 
-**Principles** (from `/principles`):
-- **Seed.** Every system starts with a seed: a PRD, a few sentences, a screenshot, or an existing codebase. Intent capture, low-ceremony.
-- **Validation harness.** Must be end-to-end and as close to the real environment as possible (customers, integrations, economics).
-- **Feedback loop.** A sample of output fed back into inputs; the loop runs until holdout scenarios pass and stay passing.
-- **Tokens are the fuel.** Compute spend is the engine; under-spending is under-leveraging.
-- **Cardinal rules.** (1) Code must not be written by humans. (2) Code must not be reviewed by humans. (3) If you haven't spent at least $1,000 on tokens per engineer today, your factory has room for improvement.
-- **"Why am I doing this?"** Mantra: every engineer task should be challenged with "the model should be doing this instead."
+**Principles** (from `/` and `/principles`):
+- **Seed**, **Validation harness**, **Feedback loop**, **Tokens as fuel** — see Executive summary.
+- **Cardinal rules (homepage, verbatim):** kōan "Why am I doing this? (implied: the model should be doing this instead)"; rules "Code must not be written by humans" / "Code must not be reviewed by humans"; practical "If you haven't spent at least $1,000 on tokens today per human engineer, your software factory has room for improvement".
+- **Tokens-are-fuel representations** the engineer can convert problems into: traces, screen capture, conversation transcripts, incident replays, adversarial use, agentic simulation, just-in-time surveys, customer interviews, price elasticity testing.
 
-**Techniques** (from `/techniques` and sub-pages):
-- **Digital Twin Users (DTU)** — Offline behavioral clones of SaaS dependencies (Okta, Jira, Slack, Google Workspace) for validation at scale without rate limits or prod risk.
-- **Pyramid Summaries** — Multi-resolution summaries (2/4/8/16-word levels, inspired by Pyramid TIFF and map tiles); agents survey at low res and zoom in only on items of interest.
-- **MapReduce + Clustering** (used in combination with Pyramid Summaries) — Parallel summarization, cluster compressed representations, synthesize insights across clusters.
-- **Gene Transfusion** — Move a working pattern between codebases by pointing agents at concrete exemplars (inside or outside the StrongDM estate).
-- **Semports (Semantic Ports)** — One-time or ongoing automated ports, typically across languages (example: daily auto-port of the OpenAI Python agents library into Go).
-- **Shift Work** — Separate fully-specified work (run end-to-end by non-interactive agents) from interactive work that still needs a human present.
-- **Scenarios** — Repurposed term for end-to-end "user stories," stored outside the codebase as an ML-style holdout set so agents can't game them.
-- **Satisfaction (harness)** — Probabilistic validation: across all observed trajectories through all scenarios, what fraction satisfy the user? Replaces boolean green/red testing.
+**Techniques** (canonical list on `/techniques`):
+- **Digital Twin Universe (DTU)** — behavioral clones at API boundaries.
+- **Gene Transfusion** — exemplar-driven pattern propagation; three modes (cross-language, direct inlining, library embodiment); five-step flow.
+- **The Filesystem** — on-disk state as agent memory substrate.
+- **Shift Work** — separate interactive from fully-specified work.
+- **Semport** — automated translation across languages/frameworks; one-time / ongoing / adaptive variants.
+- **Pyramid Summaries** — reversible multi-zoom summarization (2/4/8/16 words), inspired by Pyramid TIFF and Google Maps tiles; combine with MapReduce + Clustering.
+
+Defined upstream on the homepage rather than as techniques: **Scenarios** (out-of-codebase holdout user stories) and **Satisfaction** (probabilistic LLM-judged validation across trajectories).
 
 **Products** (from `/products`):
-- **Attractor** — Non-interactive coding agent; DOT-graph pipeline of LLM phases with natural-language edges.
-- **CXDB** — Self-hosted context store for AI agents: turn DAG, BLAKE3 blob dedup, branch-from-any-turn, typed projections, React UI, CLI capture.
-- **StrongDM ID** — Federated identity for humans, workloads, and AI agents, with path-scoped sharing.
+- **CXDB** — self-hosted context store; turn DAG, BLAKE3 blob CAS, dynamic msgpack→JSON type system, p50 < 1ms appends, ~70% storage reduction, dual binary/HTTP protocols (ports 9009/9010), Rust+Go+React, Apache 2.0.
+- **StrongDM ID** — federated identity for humans, workloads, and AI agents with path-scoped sharing.
+- **Attractor** — non-interactive coding agent as a graph of phases; deterministic / observable / resumable / composable; open spec with 17+ community ports.
 
 ## Notable quotes
-- "Seed, validation harness, feedback loop." — `factory.strongdm.ai/principles`
-- "Rule one: code must not be written by humans. Rule two: code must not be reviewed by humans. Rule three: if you haven't spent at least $1,000 on tokens today per human engineer, your software factory has room for improvement." — `factory.strongdm.ai/principles`
-- "Why am I doing this? The model should be doing it instead." — `factory.strongdm.ai/principles`
-- "Of all the observed trajectories through all the scenarios, what fraction of them likely satisfy the user?" — `factory.strongdm.ai/techniques` (satisfaction)
+
+- "Seed → Validation harness → Feedback loop. Tokens are the fuel." — `factory.strongdm.ai/principles`
+- "Code must not be written by humans / Code must not be reviewed by humans / If you haven't spent at least $1,000 on tokens today per human engineer, your software factory has room for improvement." — `factory.strongdm.ai/`
+- "Why am I doing this? (implied: the model should be doing this instead)" — `factory.strongdm.ai/`
+- "Of all the observed trajectories through all the scenarios, what fraction of them likely satisfy the user?" — `factory.strongdm.ai/`
+- "Code was treated analogously to an ML model snapshot: opaque weights whose correctness is inferred exclusively from externally observable behavior." — `factory.strongdm.ai/techniques`
+- "Attractor is structured as a graph of nodes, forming a generative SDLC. … Edges between nodes are expressed in natural language and evaluated by the LLM. Execution consists of traversing this graph until convergence or termination conditions are met." — `factory.strongdm.ai/products/attractor`
+- "Behavioral clones of the third-party services our software depends on … We can run thousands of scenarios per hour without hitting rate limits, triggering abuse detection, or accumulating API costs." — `factory.strongdm.ai/techniques/dtu`
 - "Summarize this bug report in 2 words. Now 4. Now 8. Now 16." — `factory.strongdm.ai/techniques/pyramid-summaries`
-- "Attractor is structured as a graph of nodes forming a generative SDLC … edges between nodes are expressed in natural language and evaluated by the LLM. Execution consists of traversing this graph until convergence or termination conditions are met." — `factory.strongdm.ai/products/attractor`
-- "Behavioral clones of every third-party service the software integrates with … no rate limits, no production risk." — `factory.strongdm.ai/techniques/dtu`
+- "Those of us building software factories must practice a deliberate naivete: finding and removing the habits, conventions, and constraints of Software 1.0." — `factory.strongdm.ai/`
+- "The OpenAI team does great work (in Python), and we receive it (in Go) and it just … works." — `factory.strongdm.ai/techniques/semport`
 
 ## Recommended additional sources
-- https://github.com/strongdm/attractor/blob/main/attractor-spec.md — The canonical NLSpec for Attractor; the most precise statement of the graph-pipeline model and node-edge semantics (covered by a sibling research stream).
-- https://simonwillison.net/2026/Feb/7/software-factory/ — Most-cited external summary; quotes verbatim from the principles page and provides outsider framing.
-- https://law.stanford.edu/2026/02/08/built-by-agents-tested-by-agents-trusted-by-whom/ — Stanford CodeX critique; the most articulate write-up of the "who tests the testers" regress and accountability gaps.
-- https://www.thepragmaticcto.com/p/the-software-factory-when-no-human — Detailed pitfalls write-up; surfaces the `return true` reward-hacking story and the model-blind-spot loop concern.
-- https://rywalker.com/research/strongdm-factory — Independent technique-by-technique annotation; useful for triangulating any technique sub-page I couldn't reach directly.
+
+- The Attractor spec on GitHub (`strongdm/attractor` — referenced as "View on GitHub" from `/products/attractor`). Sibling research stream.
+- The CXDB source on GitHub (`strongdm/cxdb` — Apache 2.0). Concrete reference for any factory's context-store layer.
+- Luke PM, "The Software Factory" (cited in homepage footnote 1).
+- Sam Schillace, "I Have Seen the Compounding Teams" (cited in homepage footnote 1).
+- Dan Shapiro, "Five Levels from Spicy Autocomplete to the Software Factory" (cited in homepage footnote 1; Shapiro also authored the **Kilroy** Attractor port).
+- Competitor factories named in homepage footnote 2: Devin, 8090, Factory (factory.ai), Superconductor, Jesse Vincent's Superpowers.
+- Reference LLM-native SDKs Semport pulls from: Vercel AI SDK, OpenAI Agents SDK (`openai/openai-agents-python`).
+- Notable community Attractor implementations: Fabro (Bryan Helmkamp, Rust), Kilroy (Dan Shapiro, Go), Forge (Luke Buehler, Rust), Arc (Point Labs, TypeScript — explicitly implements "convergence loops … holdout test scenarios"), and Amol Kabe's Python "multi-agent Software Factory" that names Coding/Validator/Debugger/Planner specialists.
 
 ## Open questions for synthesis
-- **Scenario authorship.** The methodology punts on who writes scenarios. The baseline `spec-driven-ai-dev.md` likely needs to take a position: scenarios authored by a human PM-role agent under human review, by a dedicated "scenario synthesis" agent against the seed, or co-evolved with the spec. StrongDM offers no resolution.
-- **Independence of judge from coder.** StrongDM uses an LLM as satisfaction judge. For a multi-agent factory, do we require *different model families* (or different prompt scaffolds, or human-curated rubrics) for the judge to preserve the "different mind" property? Worth a deliberate stance.
-- **No named roles.** StrongDM collapses everything into nodes in one graph. Conventional and pre-agile-inspired options will probably want explicit named personas (architect, implementer, tester, integrator). What do we lose by going personaless? What do we gain?
-- **Specs as Markdown vs. structured.** StrongDM's NLSpec is prose. Other sources (compound-engineering, the Simon Willison agentic-patterns guide) lean more structured. The synthesis needs to position the factory on a prose ↔ schema spectrum.
-- **Holdout discipline.** Scenarios live outside the codebase as a holdout. Is the analog in a generic factory a separate repo? A signed scenario manifest? A human-curated regression bank? Choice has tooling and governance implications.
-- **The $1k/day forcing function.** Cute but operational — does the factory architecture surface per-agent / per-loop cost telemetry as a first-class human-facing metric? StrongDM implies yes; baseline doesn't address it.
-- **Model-floor dependency.** StrongDM credits a specific model release for making the loop work. The architecture options should declare which model capability assumptions they rest on (long-horizon coherence, judge-quality, tool-use reliability) so the design ages explicitly.
-- **Human leverage at small-team scale.** Single-operator leverage is well-supported (non-interactive runs, pyramid summaries, scenarios). Less clear: how multiple humans coordinate when they edit overlapping scenarios or harness pieces. StrongDM is silent; the synthesis must answer.
+
+- **Scenario authorship.** Canonical pages don't say who writes scenarios. The homepage screenshot caption — "Synthetic scenario curation and shaping interface" — suggests agent-generated scenarios with human shaping, but the regress (agent-generates → agent-judges) is unresolved.
+- **Judge independence.** Canonical pages don't take a position on cross-family judging or human-curated rubrics. The synthesis should.
+- **Personaless design.** StrongDM collapses everything into Attractor nodes + a satisfaction judge + DTUs. What's lost / gained vs. named personas (architect, implementer, tester)?
+- **NLSpec vs. structured.** "NLSpec" is a GitHub-spec term, not used on canonical pages. Position on the prose↔schema spectrum is still required.
+- **Holdout discipline.** "Outside the codebase" is asserted; mechanics (separate repo? signed manifest? human-curated bank?) are unspecified.
+- **$1k/day telemetry.** The floor is asserted but the surface for engineers to see token-spend live is undocumented. Per-loop / per-agent cost telemetry should be a first-class metric.
+- **Model-floor coupling.** Methodology depends on "the second revision of Claude 3.5". Synthesis architectures should declare their model-capability assumptions.
+- **Multi-human coordination.** Pages are silent on what happens when two humans edit overlapping scenarios or harness pieces.
+- **DTU build cost.** Pages assert DTUs are "routine" but don't quantify how long the Okta/Jira/Slack/Google-Workspace twins took. This datum would calibrate any factory's harness-investment plan.

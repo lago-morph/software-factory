@@ -1,10 +1,20 @@
 # Architecture 3 — The Phase-Gated Foundry
 ## A Software Factory Built on Pre-Agile Methodology with Hour-Scale Cycle Times
 
-**Version:** 0.1
+**Version:** 0.2
 **Status:** Draft architecture proposal
-**Lineage:** Pre-agile structured methodologies (Waterfall, V-Model, RUP, Cleanroom Software Engineering, Stage-Gate) reconsidered for an environment where agent-driven implementation collapses cycle time from months to hours
+**Lineage:** Pre-agile structured methodologies (Waterfall, V-Model, RUP, Cleanroom Software Engineering, Stage-Gate) reconsidered for an environment where agent-driven implementation collapses cycle time from months to hours; refined with findings from `research/00-synthesis.md` (v2)
 **Stance in one sentence:** *Formal phases, structured exchanges, and independent verification — rejected by Agile because they were too slow for humans — become the right shape when agents make them fast.*
+
+---
+
+## 0. Revision notes (v0.2)
+
+Changes from v0.1 driven by the v2 research pass:
+
+- **The "looking-the-part hazard"** (Simon Willison, May 6 2026: a repo with 100 commits and tests no longer proves care) is folded into the failure-mode coverage table under F7 (normalization of deviance). This architecture's defect-of-origin attribution and Cleanroom no-debugging discipline are particularly strong defenses against this hazard — surface-quality signals (commits, tests, lint-clean) become *outputs* of the structured process rather than independent proxies for quality.
+- **Independent V&V** policy is reinforced by the v2 finding that Simon's stance on human review is eroding under load (May 6 post). The Foundry's independent V&V agents (different model family from construction) are the architectural fix for what would otherwise become normalization-of-deviance drift. The architecture's claim that "V&V on a different model family than construction" is a structural defense is now better supported.
+- **No structural changes** to the six-phase cycle, the V-Model pairings, or the role catalog.
 
 ---
 

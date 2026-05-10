@@ -34,13 +34,22 @@ name: Fetch Blocked URLs
 on:
   issues:
     types: [opened, edited, reopened]
+  # workflow_dispatch lets us re-test against an existing issue without
+  # editing it. Supply the issue number; the workflow reads body/title/etc.
+  # via the gh CLI.
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Issue number whose body contains the URLs to fetch"
+        required: true
+        type: string
 
 permissions:
   contents: write
   issues: write
 
 concurrency:
-  group: fetch-blocked-urls-${{ github.event.issue.number }}
+  group: fetch-blocked-urls-${{ github.event.issue.number || inputs.issue_number }}
   cancel-in-progress: false
 
 jobs:
@@ -48,17 +57,60 @@ jobs:
     name: Fetch URLs from issue body
     runs-on: ubuntu-latest
 
-    # Job-level gate. Both conditions must hold.
-    if: >-
-      startsWith(github.event.issue.title, '[fetch-urls]') &&
-      (
-        github.event.issue.author_association == 'OWNER' ||
-        github.event.issue.author_association == 'COLLABORATOR' ||
-        github.event.issue.author_association == 'MEMBER'
-      )
+    # NO job-level `if:`. Job-level skips are silent in the Actions UI
+    # (zero step logs, the word "Skipped" only). v1 and v2 both got
+    # silent-skipped without us being able to see why. This version
+    # always runs the job and uses logged steps for every gate, so the
+    # next failure is diagnosable from the run page.
+    #
+    # Cost: every issue event (opened/edited/reopened) on this repo
+    # spins up a runner for ~10s of context-printing before the
+    # title-prefix step exits cleanly on non-matching issues. That is
+    # a deliberate trade for diagnosability.
 
     steps:
-      - name: Re-check author association inside runner (defense in depth)
+      - name: Show context for diagnostics
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          ACTOR: ${{ github.actor }}
+          ISSUE_NUMBER_FROM_EVENT: ${{ github.event.issue.number }}
+          ISSUE_NUMBER_FROM_INPUT: ${{ inputs.issue_number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_USER: ${{ github.event.issue.user.login }}
+          ISSUE_ASSOC: ${{ github.event.issue.author_association }}
+          ISSUE_BODY_LEN: ${{ length(github.event.issue.body) }}
+        run: |
+          echo "event_name        = $EVENT_NAME"
+          echo "event.action      = $ACTION"
+          echo "actor             = $ACTOR"
+          echo "issue # (event)   = $ISSUE_NUMBER_FROM_EVENT"
+          echo "issue # (input)   = $ISSUE_NUMBER_FROM_INPUT"
+          echo "issue title       = $ISSUE_TITLE"
+          echo "issue user        = $ISSUE_USER"
+          echo "issue association = $ISSUE_ASSOC"
+          echo "issue body length = $ISSUE_BODY_LEN"
+
+      - name: Enforce title-prefix gate
+        id: title_gate
+        if: github.event_name == 'issues'
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+        run: |
+          set -euo pipefail
+          case "$ISSUE_TITLE" in
+            "[fetch-urls]"*)
+              echo "Title matches [fetch-urls] prefix; proceeding."
+              echo "proceed=true" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Title does not match [fetch-urls] prefix; exiting cleanly."
+              echo "proceed=false" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
+      - name: Enforce author-association gate
+        if: github.event_name == 'issues' && steps.title_gate.outputs.proceed == 'true'
         env:
           ASSOC: ${{ github.event.issue.author_association }}
           AUTHOR: ${{ github.event.issue.user.login }}
@@ -74,32 +126,68 @@ jobs:
               ;;
           esac
 
+      - name: Resolve issue number (for workflow_dispatch path)
+        id: resolve
+        if: github.event_name == 'workflow_dispatch' || steps.title_gate.outputs.proceed == 'true'
+        env:
+          ISSUE_NUMBER_FROM_EVENT: ${{ github.event.issue.number }}
+          ISSUE_NUMBER_FROM_INPUT: ${{ inputs.issue_number }}
+        run: |
+          if [ -n "${ISSUE_NUMBER_FROM_EVENT}" ]; then
+            echo "issue_number=${ISSUE_NUMBER_FROM_EVENT}" >> "$GITHUB_OUTPUT"
+          else
+            echo "issue_number=${ISSUE_NUMBER_FROM_INPUT}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout
+        if: steps.resolve.outputs.issue_number != ''
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
       - name: Set up Python
+        if: steps.resolve.outputs.issue_number != ''
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Install dependencies
+        if: steps.resolve.outputs.issue_number != ''
         run: |
           python -m pip install --upgrade pip
           # html2text is small and pure-python; used for HTML -> markdown.
           # No other deps are required.
           pip install "html2text==2024.2.26"
 
-      - name: Extract URLs from issue body
-        id: extract
+      - name: Resolve issue body
+        id: body
+        if: steps.resolve.outputs.issue_number != ''
         env:
-          BODY: ${{ github.event.issue.body }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
+          BODY_FROM_EVENT: ${{ github.event.issue.body }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           mkdir -p .fetch-work
-          python3 .github/scripts/extract_urls.py > .fetch-work/urls.txt
+          if [ -n "${BODY_FROM_EVENT}" ]; then
+            printf '%s' "$BODY_FROM_EVENT" > .fetch-work/body.txt
+          else
+            gh issue view "$ISSUE_NUMBER" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --json body \
+              --jq '.body' > .fetch-work/body.txt
+          fi
+          echo "Body length: $(wc -c < .fetch-work/body.txt) bytes."
+
+      - name: Extract URLs from issue body
+        id: extract
+        if: steps.resolve.outputs.issue_number != ''
+        env:
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
+        run: |
+          set -euo pipefail
+          BODY="$(cat .fetch-work/body.txt)" \
+            python3 .github/scripts/extract_urls.py > .fetch-work/urls.txt
           count=$(wc -l < .fetch-work/urls.txt | tr -d ' ')
           echo "url_count=$count" >> "$GITHUB_OUTPUT"
           echo "Extracted $count URLs."
@@ -113,12 +201,14 @@ jobs:
       - name: Comment and abort if too many URLs
         if: steps.extract.outputs.too_many == 'true'
         uses: actions/github-script@v7
+        env:
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
         with:
           script: |
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: parseInt(process.env.ISSUE_NUMBER, 10),
               body: `Refusing to fetch: the issue body contains more than 50 URLs (${{ steps.extract.outputs.url_count }}). Split into multiple issues and try again.`,
             });
             core.setFailed('Too many URLs');
@@ -126,26 +216,28 @@ jobs:
       - name: Comment and exit cleanly if no URLs
         if: steps.extract.outputs.no_urls == 'true'
         uses: actions/github-script@v7
+        env:
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
         with:
           script: |
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: parseInt(process.env.ISSUE_NUMBER, 10),
               body: `No URLs found in the issue body. Put one URL per line (markdown links are accepted).`,
             });
 
       - name: Fetch URLs
         if: steps.extract.outputs.too_many != 'true' && steps.extract.outputs.no_urls != 'true'
         env:
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
         run: bash .github/scripts/fetch_urls.sh
 
       - name: Commit and push fetched files
         if: steps.extract.outputs.too_many != 'true' && steps.extract.outputs.no_urls != 'true'
         id: commit
         env:
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
         run: |
           set -euo pipefail
@@ -181,12 +273,13 @@ jobs:
         env:
           BRANCH: ${{ steps.commit.outputs.branch }}
           EMPTY: ${{ steps.commit.outputs.empty }}
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
         with:
           script: |
             const fs = require('fs');
-            const path = require('path');
             const branch = process.env.BRANCH;
             const empty = process.env.EMPTY === 'true';
+            const issueNumber = parseInt(process.env.ISSUE_NUMBER, 10);
             const summaryPath = '.fetch-work/summary.md';
             let summary = '';
             if (fs.existsSync(summaryPath)) {
@@ -204,6 +297,6 @@ jobs:
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: issueNumber,
               body,
             });

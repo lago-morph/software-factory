@@ -1,7 +1,25 @@
 # Software Factory Architecture Options — Comparison and Decision Guide
 **Date:** 2026-05-10
+**Version:** 2 — post-primary-source-access
 **Status:** Companion document to the four architecture specs in this directory
 **Purpose:** Compare the four proposed architectures side-by-side, surface the decisions each one resolves differently, and recommend which to pick (or hybridize) for different conditions.
+
+---
+
+## 0. Revision notes (v2)
+
+Changes from v1 driven by the v2 research pass against primary sources:
+
+- **DTU = Digital Twin Universe** (not "Users") throughout. Where this comparison previously referenced DTU implicitly, the term is consistently corrected.
+- **Willison's "4 parallel agents" specific number was a v1 fabrication.** The verbatim claim is only that he is "mentally exhausted by 11 a.m." running parallel agents. The cognitive-ceiling row in §2.2 is unchanged in intent but no specific number is cited.
+- **Cherny "10–30 PRs/day, 10–15 parallel sessions"** comes from a separate Lenny interview (Feb 19 2026), not the Willison interview. Provenance retagged.
+- **Compound engineering canonical loop is four-step** (Plan → Work → Review → Compound), not five. Affects the description of Architecture 2 but not its structure.
+- **Self-improving prompts** (Klaassen's frustration-detector, Tedesco's Montaigne) are now documented patterns; Architecture 2's coverage of F8 (stale-knowledge) is *stronger* than v1 suggested.
+- **Scenarios are partially agent-generated at StrongDM** (homepage caption confirms a "synthetic scenario curation and shaping interface"). This makes Architecture 4's Predator-driven scenario generation more consistent with prior art than v1 framed it.
+- **Simon Willison's "review everything" stance has softened** (May 6 2026 post). The "Tiered: humans for Channel-2 only" framing in §2.2 for Architecture 1 is consistent with this; it remains the appropriate description.
+- **The recommended starting path (Atelier as baseline + selective borrows) is unchanged.** The new self-improving-prompts evidence further supports the recommendation.
+
+The four architecture specs each carry their own v0.2 revision notes detailing what changed in each.
 
 ---
 

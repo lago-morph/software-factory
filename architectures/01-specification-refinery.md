@@ -1,10 +1,23 @@
 # Architecture 1 — The Specification Refinery
 ## A Software Factory Built Around Iterative Specification Refinement
 
-**Version:** 0.1
+**Version:** 0.2
 **Status:** Draft architecture proposal
-**Lineage:** Refines `spec-driven-ai-dev.md` v0.1 with findings from `research/00-synthesis.md`
+**Lineage:** Refines `spec-driven-ai-dev.md` v0.1 with findings from `research/00-synthesis.md` (v2, post-primary-source-access)
 **Stance in one sentence:** *The specification is the product; everything else is instrumentation.*
+
+---
+
+## 0. Revision notes (v0.2)
+
+Changes from v0.1 driven by the v2 research pass:
+
+- **Scenario authorship is now known to be partly agent-assisted at StrongDM** (homepage caption: "synthetic scenario curation and shaping interface"). This architecture's role definition for the Scenario Designer is updated accordingly (§3.2 — Scenario Designer can use Genome-Author-style agents to *propose* scenarios for human ratification without violating holdout independence, provided the proposer agent is structurally independent from the Implementer).
+- **Simon Willison's "human reviews everything" stance is more nuanced than v0.1 implied.** The architecture's Channel-2 review is still the human's, but the read-every-line maximalism is not required — Simon himself reports reaching for a "team analogy" rather than line-by-line review in May 2026.
+- **DTU = Digital Twin Universe** (not "Users"). The optional Healer extension references this correctly.
+- **Attractor is "graph-structured" canonically; DOT is community convention.** The v0.1 reference to "Attractor's argument" about not reusing the SDK's `generate()` loop is unchanged (that argument is in the published spec).
+
+No structural changes to the seven-phase revelation cycle or the artifact stack.
 
 ---
 

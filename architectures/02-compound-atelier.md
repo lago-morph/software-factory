@@ -1,10 +1,25 @@
 # Architecture 2 — The Compound Atelier
 ## A Software Factory Built on Specialized Persona Workshops with Knowledge Compounding
 
-**Version:** 0.1
+**Version:** 0.2
 **Status:** Draft architecture proposal
-**Lineage:** Inspired by Every.to's compound-engineering plugin and symphony-thumbtack orchestration model; refined with findings from `research/00-synthesis.md`
+**Lineage:** Inspired by Every.to's compound-engineering plugin and symphony-thumbtack orchestration model; refined with findings from `research/00-synthesis.md` (v2, post-primary-source-access)
 **Stance in one sentence:** *Each unit of work makes the next one easier — by passing through specialist hands and leaving its lessons behind.*
+
+---
+
+## 0. Revision notes (v0.2)
+
+Changes from v0.1 driven by the v2 research pass against primary every.to sources:
+
+- **Canonical compound-engineering loop is FOUR-STEP** (Plan → Work → Review → Compound), not five. The original report mis-stated this from plugin-internal language; the every.to articles consistently state four. Brainstorming is subsumed into Plan. The plugin's longer chain is an elaboration, not the canonical statement. This architecture's §5 (workshop chain) is unchanged in structure but the framing in §1 has been updated to match.
+- **80/20 + 50/50 rules are paired, not merged.** 80/20 is *per cycle* (planning+review vs work+compound). 50/50 is *across all engineering time* (feature work vs system-improvement work). Both are documented in the every.to guide.
+- **Self-improving prompts are now a documented pattern.** Klaassen's frustration-detector example — the agent analyzes its own chain-of-thought from failed runs and *rewrites the original prompt* — is a concrete, reproducible instance. Tedesco's Montaigne is a second instance. The architecture now names this pattern in §4.4 (Synthesis and curation) and adds a "Prompt-self-improver" role; existing personas remain unchanged.
+- **Team-scale evidence is now concrete.** Every runs five products with "primarily single-person engineering teams" serving "thousands of people every day." The original open question #5 about single-author vs team scale is partially resolved: the methodology operates at single-person scale per product; cross-product coordination is via shared knowledge stores and plugin updates.
+- **Five-stage adoption ladder** (Stage 0 manual → Stage 5 parallel cloud) is documented in the guide. This architecture's implementation roadmap (§11) maps onto roughly stages 1–4.
+- **Tool-agnostic statement:** Every uses Claude Code primarily, but also Factory's Droid and OpenAI's Codex CLI. The architecture is provider-agnostic; this is now reinforced.
+
+No structural changes to the artifact stack or the role catalog.
 
 ---
 
@@ -150,6 +165,7 @@ The single richest part of the architecture. Reviewers are persona-shaped, run i
 - **Synthesizer** — runs after the reviewer panel. Pipeline: validate → anchor (each finding to actual content) → dedupe → **promote on cross-persona agreement** → resolve contradictions → auto-promote `safe_auto` → route by tier. Output: a single ordered finding list with severity (P0–P3) and autofix class (`safe_auto` / `gated_auto` / `manual` / `advisory`).
 - **Knowledge Curator** — runs after every cycle. Captures durable lessons (typically auto-invoked on phrases like "that worked," "it's fixed"). Five-dimensional overlap check (problem statement, root cause, solution approach, files referenced, prevention rules) routes high-overlap content to update an existing doc rather than create a duplicate. Mandatory discoverability check on `AGENTS.md` / `CLAUDE.md`.
 - **Refresh Curator** — runs on a separate cadence (e.g., weekly). Five outcomes per knowledge doc: Keep / Update / Consolidate / Replace / Delete. Auto-delete only when (a) implementation is gone, (b) problem domain is gone, (c) inbound citations are absent or decorative — all three.
+- **Prompt-self-improver** (optional, documented pattern) — runs after a Knowledge Curator captures a failure mode that is *itself a prompt failure*. Example pattern from Every.to's primary sources: Klaassen's frustration-detector runs its own detection prompt 10 times, finds it succeeds 4/10, analyzes Claude's chain-of-thought from the 6 failures, identifies the missing signal (e.g., hedged language like "Hmm, not quite"), and **rewrites the original prompt** to look for it. On the next iteration, the rewritten prompt succeeds 9/10. The Prompt-self-improver is a special-case curator: its output is not a knowledge document but an updated agent prompt. The factory checks the updated prompt against a held-out test set before promoting it to live use. This pattern is documented in Klaassen's "My AI Had Already Fixed the Code Before I Saw It" and Tedesco's "The Agent That Saved My Brain."
 
 ### 4.5 Conductor (the orchestrator)
 

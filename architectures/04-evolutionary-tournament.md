@@ -1,10 +1,24 @@
 # Architecture 4 — The Evolutionary Tournament
 ## A Software Factory Built on Population, Selection Pressure, and Lineage
 
-**Version:** 0.1
+**Version:** 0.2
 **Status:** Draft architecture proposal
 **Lineage:** Out-of-the-box. Borrows the "writing code is cheap" mindset (Willison), the parallel-coding-agent lifestyle (Willison/Cherny), satisfaction-as-judge (StrongDM), and explicit model-family diversity (Attractor's provider-aligned profiles, El Kaim's "different mind" principle), and reframes them as selection pressure on a population.
 **Stance in one sentence:** *The factory does not specify the right answer; it sets up the conditions under which the right answer wins.*
+
+---
+
+## 0. Revision notes (v0.2)
+
+Changes from v0.1 driven by the v2 research pass:
+
+- **The "4-agent ceiling" reference was a v1 fabrication** and has been removed (the verbatim Lenny editorial says only "mentally exhausted by 11 a.m." — no specific count). §10 has been updated to refer to the *cognitive ceiling problem* in supervisor-mode architectures without citing a specific number.
+- **Jay Taylor's DTU origin story** (HN 46931812) is new evidence for this architecture's bet that validation harnesses are the load-bearing engineering. StrongDM's DTU took roughly a year of dedicated effort (started August 2025; reimplementing in Rust by spring 2026; Slack was the hardest single SaaS to clone) — which is consistent with this architecture's stance that **scenario authorship + harness richness are the binding constraints, not population size.** If you cannot generate or maintain a strong scenario corpus, the tournament has nothing to select against.
+- **DTU = Digital Twin Universe** (not "Users"). Architecture text uses generic "validation harness" / "twin" vocabulary; this terminological fix is captured for the comparison doc.
+- **Attractor is "graph-structured" generically; DOT is community convention.** This architecture's tooling-profile reference to "codex-rs-aligned, claude-code-aligned, per Attractor's provider-aligned discipline" is unchanged (that discipline is in the published Attractor spec).
+- **StrongDM scenarios are partially agent-generated** ("synthetic scenario curation and shaping interface") — this is *more* consistent with this architecture than v1 implied, since Predator-driven scenario generation is one of the named mechanisms.
+
+No structural changes to the genome, generation cycle, or roles.
 
 ---
 
@@ -289,7 +303,7 @@ What you cannot get for the cost:
 
 ## 10. Scaling
 
-For solo operation, this architecture scales naturally. The Geneticist runs one tournament at a time; the population is the parallelism, not the human's calendar. The 4-agent ceiling other architectures hit doesn't apply because the human isn't supervising agents — the human is *tuning the conditions under which agents compete*.
+For solo operation, this architecture scales naturally. The Geneticist runs one tournament at a time; the population is the parallelism, not the human's calendar. The cognitive-ceiling problem that bites supervisor-style architectures (Simon Willison reports being "mentally exhausted by 11 a.m." running parallel agents in supervise-mode) doesn't apply here because the human isn't supervising candidates — the human is *tuning the conditions under which candidates compete*. The human reviews per-generation summaries and finalist galleries; the population's size is bounded by token budget, not by attention.
 
 For team scale-up, multiple Geneticists run independent tournaments. The genome library is the shared asset; the Strategist coordinates which problems to fund. Cross-team coordination happens at genome-template-share-time, not at per-implementation-review-time.
 

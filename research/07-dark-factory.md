@@ -3,9 +3,23 @@
 - https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e (primary; assigned article by William El Kaim, April 2026)
 - el-kaim.com author profile context (https://medium.com/@welkaim/about, https://welkaim.medium.com/) — used only to identify the author and confirm no follow-up posts on the same "dark factory" theme were published on el-kaim.com at time of writing.
 
-Note on access: el-kaim.com (a Medium custom domain) blocked direct fetch from this environment ("Host not in allowlist" / HTTP 403). The contents below were reconstructed from multiple web-search retrievals that quoted the article body verbatim, cross-checked against contemporaneous citations (Simon Willison, Dan Shapiro, 2389 Research, BCG Platinion, MindStudio, Infralovers, Substack/Nate's Newsletter). All numbered references in the article (Attractor, CXDB, Kilroy, Beads, Gas Town, Dolt, 2389) appear across multiple independent sources, so the reconstruction is treated as high-confidence. Where I am paraphrasing rather than quoting, that is flagged.
+**Date:** 2026-05-10 (original pass) / revised 2026-05-10
 
-**Date:** 2026-05-10
+## Revision notes (2026-05-10)
+
+This revision is a status check and light refinement, not a rewrite. Summary:
+
+- **What was verified:** The user committed local HTML copies of all three primary URLs (the article and two author-profile pages). I re-checked each by reading its first ~150 lines.
+- **What remains blocked:** All three local files are Cloudflare interstitial challenge pages, not actual article content. Each is ~5.5–5.8 KB, has `<title>Just a moment...</title>`, the standard `noscript`/"Enable JavaScript and cookies to continue" markup, and a Cloudflare orchestrate challenge script (`_cf_chl_opt`). None contains a single sentence of the El Kaim article. Specifically:
+  - `el-kaim.com__the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e.html` (5,804 bytes) — Cloudflare challenge for `el-kaim.com`, ray `9f9bdf11389221de`. No article body.
+  - `medium.com___at_welkaim__about.html` (5,571 bytes) — Cloudflare challenge for `medium.com`, ray `9f9bdf1808916206`. No profile body.
+  - `welkaim.medium.com.html` (5,537 bytes) — Cloudflare challenge for `welkaim.medium.com`, ray `9f9bdf1eec55b471`. No profile body.
+- **Indirect attribution check:** I scanned the sibling reports (`research/01-strongdm-factory.md`, `research/05-simon-willison.md`, `research/06-hn-and-lenny.md`, plus the blocked-urls log) for any verbatim El Kaim quotes that other agents may have surfaced via different fetch paths. None did. Across the sibling reports, the "Dark Factory" framing is consistently attributed to **Dan Shapiro's 5-level taxonomy**, popularized by **Simon Willison's Feb 7, 2026 walkthrough**, with **StrongDM** as the concrete instance — not to El Kaim. El Kaim's article is a downstream *synthesis* of that ecosystem, not a coinage. This means the reconstruction in this report cannot be upgraded to "confirmed-attribution" via sibling sources; the quoted lines below remain reconstructions from web-search retrievals on the original pass.
+- **Outcome:** The report's substance and structure stand. The original reconstruction was already cross-checked against multiple independent secondary sources (Willison, Shapiro, 2389, BCG Platinion, MindStudio, Infralovers, Nate's Newsletter); none of those checks have been invalidated. Quote wording at section "Notable quotes" should still be treated as reconstructed-not-canonical until el-kaim.com is reachable.
+
+## Status note
+
+The primary source (el-kaim.com) remained inaccessible after the user's fetch attempt. The local file at the repo root that purports to be the article is a 5.8 KB Cloudflare challenge page, not the article text. This report continues to rest on the **secondary-source reconstruction** from the original research pass, which is high-confidence on facts and structure but should be treated as paraphrase-level (not verbatim) on the specific quotes in the "Notable quotes" section. Any downstream use of those quotes in synthesis should either (a) attribute the underlying claim to the confirmed-quote sibling sources (Willison, Shapiro, StrongDM principles page), or (b) flag the line as "reconstructed wording, attributed to El Kaim."
 
 ## Executive summary
 

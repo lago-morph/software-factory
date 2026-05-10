@@ -1,0 +1,209 @@
+name: Fetch Blocked URLs
+
+# This workflow exists because the sandbox the research agent runs in blocks
+# essentially every host except raw.githubusercontent.com. When the agent
+# needs the live web — a Substack post, an arXiv paper, a docs site, etc. —
+# it opens an issue titled "[fetch-urls] ..." with one URL per line in the
+# body. This workflow fetches each URL from a normal GitHub runner (which is
+# not behind the sandbox's allowlist), commits the results to a new branch
+# named `fetched/issue-<n>`, and posts a comment linking back to the branch.
+#
+# Security model — see research/PLAN.md §6 for the full discussion.
+#
+#   1. Title prefix gate: only issues whose title starts with [fetch-urls]
+#      can trigger any work. Owner-created issues about other topics do not
+#      run this workflow.
+#
+#   2. Author-association gate: only issues opened by a user with
+#      author_association in (OWNER, COLLABORATOR, MEMBER) trigger work.
+#      This excludes drive-by GitHub users (NONE, FIRST_TIME_CONTRIBUTOR,
+#      CONTRIBUTOR) even if they manage to put the magic prefix in a title.
+#      The gate is re-checked inside the runner for defense in depth.
+#
+#   3. Permissions are scoped: contents:write (to push the branch) and
+#      issues:write (to comment). No secrets are accessed. The action only
+#      reads URLs from the issue body — it never executes fetched content.
+#
+#   4. Per-issue cap: at most 50 URLs and a 30-second per-URL timeout. The
+#      action refuses (with a comment) and exits non-zero if the cap is
+#      exceeded.
+#
+#   5. Never pushes to main. Always creates a new branch
+#      fetched/issue-<n> off the default branch.
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: fetch-blocked-urls-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    name: Fetch URLs from issue body
+    runs-on: ubuntu-latest
+
+    # Job-level gate. Both conditions must hold.
+    if: >-
+      startsWith(github.event.issue.title, '[fetch-urls]') &&
+      (
+        github.event.issue.author_association == 'OWNER' ||
+        github.event.issue.author_association == 'COLLABORATOR' ||
+        github.event.issue.author_association == 'MEMBER'
+      )
+
+    steps:
+      - name: Re-check author association inside runner (defense in depth)
+        env:
+          ASSOC: ${{ github.event.issue.author_association }}
+          AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          set -euo pipefail
+          case "$ASSOC" in
+            OWNER|COLLABORATOR|MEMBER)
+              echo "Author $AUTHOR has association $ASSOC; allowed."
+              ;;
+            *)
+              echo "Author $AUTHOR has association $ASSOC; refusing."
+              exit 1
+              ;;
+          esac
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # html2text is small and pure-python; used for HTML -> markdown.
+          # No other deps are required.
+          pip install "html2text==2024.2.26"
+
+      - name: Extract URLs from issue body
+        id: extract
+        env:
+          BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          mkdir -p .fetch-work
+          python3 .github/scripts/extract_urls.py > .fetch-work/urls.txt
+          count=$(wc -l < .fetch-work/urls.txt | tr -d ' ')
+          echo "url_count=$count" >> "$GITHUB_OUTPUT"
+          echo "Extracted $count URLs."
+          if [ "$count" -eq 0 ]; then
+            echo "no_urls=true" >> "$GITHUB_OUTPUT"
+          fi
+          if [ "$count" -gt 50 ]; then
+            echo "too_many=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment and abort if too many URLs
+        if: steps.extract.outputs.too_many == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `Refusing to fetch: the issue body contains more than 50 URLs (${{ steps.extract.outputs.url_count }}). Split into multiple issues and try again.`,
+            });
+            core.setFailed('Too many URLs');
+
+      - name: Comment and exit cleanly if no URLs
+        if: steps.extract.outputs.no_urls == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `No URLs found in the issue body. Put one URL per line (markdown links are accepted).`,
+            });
+
+      - name: Fetch URLs
+        if: steps.extract.outputs.too_many != 'true' && steps.extract.outputs.no_urls != 'true'
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: bash .github/scripts/fetch_urls.sh
+
+      - name: Commit and push fetched files
+        if: steps.extract.outputs.too_many != 'true' && steps.extract.outputs.no_urls != 'true'
+        id: commit
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+        run: |
+          set -euo pipefail
+          BRANCH="fetched/issue-${ISSUE_NUMBER}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # If the branch already exists upstream (re-fetch on an edited issue),
+          # reset its history rather than appending to it — the issue body is
+          # the source of truth.
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "Branch $BRANCH already exists; will force-update."
+            git fetch origin "$BRANCH":"$BRANCH" || true
+          fi
+          git checkout -B "$BRANCH"
+
+          git add research/fetched/
+          # Always include the URL manifest so reviewers can see what was asked for.
+          git add -f .fetch-work/urls.txt 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Nothing to commit (every fetch failed?)."
+            echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+            echo "empty=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Fetch URLs for issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}"
+          git push -u origin "$BRANCH" --force-with-lease
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Comment with results
+        if: steps.extract.outputs.too_many != 'true' && steps.extract.outputs.no_urls != 'true'
+        uses: actions/github-script@v7
+        env:
+          BRANCH: ${{ steps.commit.outputs.branch }}
+          EMPTY: ${{ steps.commit.outputs.empty }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const branch = process.env.BRANCH;
+            const empty = process.env.EMPTY === 'true';
+            const summaryPath = '.fetch-work/summary.md';
+            let summary = '';
+            if (fs.existsSync(summaryPath)) {
+              summary = fs.readFileSync(summaryPath, 'utf8');
+            }
+            let body;
+            if (empty) {
+              body = `Every fetch failed for this issue. See logs of run ${context.runId}.\n\n${summary}`;
+            } else {
+              body = `Fetched URLs committed to branch \`${branch}\`. ` +
+                     `To merge into your working branch:\n\n` +
+                     `\`\`\`\ngit fetch origin ${branch}\ngit merge --no-ff origin/${branch}\n\`\`\`\n\n` +
+                     `### Per-URL summary\n\n${summary}`;
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });

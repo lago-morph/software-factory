@@ -1,16 +1,16 @@
 # StrongDM Factory — Research Report
 
-**Sources covered (all ACCESSED via local saved copies; previously blocked HTTP 403 from sandbox):**
-- https://factory.strongdm.ai/ — local: `/home/user/software-factory/factory.strongdm.ai.html`
-- https://factory.strongdm.ai/principles — local: `/home/user/software-factory/factory.strongdm.ai__principles.html`
-- https://factory.strongdm.ai/techniques — local: `/home/user/software-factory/factory.strongdm.ai__techniques.html`
-- https://factory.strongdm.ai/techniques/dtu — local: `/home/user/software-factory/factory.strongdm.ai__techniques__dtu.html`
-- https://factory.strongdm.ai/techniques/gene-transfusion — local: `/home/user/software-factory/factory.strongdm.ai__techniques__gene-transfusion.html`
-- https://factory.strongdm.ai/techniques/pyramid-summaries — local: `/home/user/software-factory/factory.strongdm.ai__techniques__pyramid-summaries.html`
-- https://factory.strongdm.ai/techniques/semport — local: `/home/user/software-factory/factory.strongdm.ai__techniques__semport.html`
-- https://factory.strongdm.ai/products — local: `/home/user/software-factory/factory.strongdm.ai__products.html`
-- https://factory.strongdm.ai/products/attractor — local: `/home/user/software-factory/factory.strongdm.ai__products__attractor.html`
-- https://factory.strongdm.ai/products/cxdb — local: `/home/user/software-factory/factory.strongdm.ai__products__cxdb.html`
+**Sources covered — all ACCESSED via local saved copies (previously blocked HTTP 403 from sandbox). Local files in `/home/user/software-factory/` are prefixed `factory.strongdm.ai__*.html`:**
+- https://factory.strongdm.ai/ — `factory.strongdm.ai.html`
+- https://factory.strongdm.ai/principles — `…__principles.html`
+- https://factory.strongdm.ai/techniques — `…__techniques.html`
+- https://factory.strongdm.ai/techniques/dtu — `…__techniques__dtu.html`
+- https://factory.strongdm.ai/techniques/gene-transfusion — `…__techniques__gene-transfusion.html`
+- https://factory.strongdm.ai/techniques/pyramid-summaries — `…__techniques__pyramid-summaries.html`
+- https://factory.strongdm.ai/techniques/semport — `…__techniques__semport.html`
+- https://factory.strongdm.ai/products — `…__products.html`
+- https://factory.strongdm.ai/products/attractor — `…__products__attractor.html`
+- https://factory.strongdm.ai/products/cxdb — `…__products__cxdb.html`
 
 **Date:** 2026-05-10
 
@@ -52,57 +52,51 @@ This revision replaces a reconstruction (built from secondary coverage when the 
 
 ## Executive summary
 
-StrongDM Factory is the public methodology site of the StrongDM AI team — three engineers (Justin McCarthy, Jay Taylor, Navan Chauhan, founded July 14, 2025) — describing how they ship production security software with no human-written or human-reviewed code. The site has four navigable sections: **Story** (`/`), **Principles** (`/principles`), **Techniques** (`/techniques` + per-technique subpages), and **Products** (`/products` + per-product subpages).
+StrongDM Factory is the public methodology site of the StrongDM AI team — three engineers (Justin McCarthy, Jay Taylor, Navan Chauhan, founded July 14, 2025) — describing how they ship production security software with no human-written or human-reviewed code. Four sections: **Story** (`/`), **Principles**, **Techniques** (+ per-technique subpages), and **Products** (+ per-product subpages).
 
-The thesis: with the late-2024 model floor (specifically "the second revision of Claude 3.5"), long-horizon agentic coding "began to compound correctness rather than error" rather than decay through accumulated misunderstandings. Given that floor, the engineering problem stops being *writing code* and becomes *specifying intent, building a validation harness, and feeding tokens into a feedback loop until convergence*.
+The thesis: with "the second revision of Claude 3.5" (October 2024) as a model floor, long-horizon agentic coding "began to compound correctness rather than error" rather than decay through accumulated misunderstandings. Given that floor, the engineering problem stops being *writing code* and becomes *specifying intent, building a validation harness, and feeding tokens into a feedback loop until convergence*.
 
-The core slogan is **"Seed → Validation harness → Feedback loop. Tokens are the fuel."** (`/principles`). A **seed** is "a PRD, a few sentences, a screenshot, or an existing codebase." The **validation harness** must be "end-to-end, as close to the real environment as possible: customers, integrations, economics." The **feedback loop** is "a sample of the output, fed back into the inputs" and "runs until the holdout scenarios pass (and stay passing)" (`/principles`).
+The core slogan is **"Seed → Validation harness → Feedback loop. Tokens are the fuel."** (`/principles`). A seed is "a PRD, a few sentences, a screenshot, or an existing codebase." The harness must be "end-to-end, as close to the real environment as possible: customers, integrations, economics." The loop "runs until the holdout scenarios pass (and stay passing)".
 
-Two distinctive moves separate this from generic agent-in-IDE workflows:
+Two distinctive moves:
 
-1. **Scenarios + Satisfaction replace tests.** A *scenario* is "an end-to-end 'user story', often stored outside the codebase (similar to a 'holdout' set in model training)." *Satisfaction* is probabilistic: "of all the observed trajectories through all the scenarios, what fraction of them likely satisfy the user?" (`/`). This defends against reward-hacking (`return true` style) because the holdout lives outside the codebase the agent can edit.
-2. **The Digital Twin Universe (DTU).** Rather than running scenarios against live SaaS (rate limits, prod risk, API costs), StrongDM built behavioral clones of Okta, Jira, Slack, Google Docs, Google Drive, and Google Sheets. The economic premise: "Creating a high fidelity clone of a significant SaaS application was always possible, but never economically feasible" — agents now make it routine (`/techniques/dtu`).
+1. **Scenarios + Satisfaction replace tests.** A *scenario* is "an end-to-end 'user story', often stored outside the codebase (similar to a 'holdout' set in model training)." *Satisfaction* is probabilistic: "of all the observed trajectories through all the scenarios, what fraction of them likely satisfy the user?" (`/`). The holdout sits outside the codebase the agent can edit, defending against `return true`-style reward-hacking.
+2. **The Digital Twin Universe (DTU).** Rather than running scenarios against live SaaS, StrongDM built behavioral clones of Okta, Jira, Slack, Google Docs, Drive, and Sheets. The economic premise: "Creating a high fidelity clone of a significant SaaS application was always possible, but never economically feasible" — agents now make it routine (`/techniques/dtu`).
 
 The site frames this as "deliberate naivete: finding and removing the habits, conventions, and constraints of Software 1.0" (`/`).
 
 ## Agents and roles
 
-The site presents roles as software components, not personas. The cast:
+Roles are software components, not personas:
 
-- **Coding agent (Attractor)** — "a non-interactive coding agent … composes models, prompts, and tools into a graph-structured pipeline … designed to operate end-to-end once the work is fully specified" (`/products/attractor`). Each node has a core prompt ("implement the functionality", "identify the bottleneck", "optimize for performance", "verify behavioral correctness"); edges are natural-language predicates evaluated by the LLM.
-- **Satisfaction judge** — an LLM evaluating "what fraction of [trajectories] likely satisfy the user" (`/`). Replaces boolean assertions.
+- **Coding agent (Attractor)** — "a non-interactive coding agent … composes models, prompts, and tools into a graph-structured pipeline … designed to operate end-to-end once the work is fully specified" (`/products/attractor`). Node prompts include "implement the functionality", "identify the bottleneck", "optimize for performance", "verify behavioral correctness"; edges are natural-language predicates evaluated by the LLM.
+- **Satisfaction judge** — an LLM scoring trajectory fraction that "likely satisfy the user". Replaces boolean assertions.
 - **Digital Twin Universe** — behavioral clones at the API boundary, "built from API contracts and observed edge cases" and "validate[d] against the live dependency until we stop finding behavioral differences" (`/techniques/dtu`).
-- **CXDB** — the context store, "a self-hosted context store for AI agents [that] persists every turn of every conversation with full type awareness, branching support, and a visual debugger" (`/products/cxdb`). The turn DAG, blob CAS (BLAKE3), and dynamic type system are the agents' shared memory.
-- **StrongDM ID** — "Identity for humans, workloads, and AI agents with federated authentication and path-scoped sharing" (`/products`).
-- **Human engineer** — writes seeds, curates scenarios, tends harnesses, decides cutover. The site's framing is "Hands off!" — the founding charter line.
+- **CXDB** — "a self-hosted context store for AI agents [that] persists every turn of every conversation with full type awareness, branching support, and a visual debugger" (`/products/cxdb`). Turn DAG + BLAKE3 blob CAS + dynamic type system = the agents' shared memory.
+- **StrongDM ID** — federated identity for humans, workloads, and AI agents with path-scoped sharing.
+- **Human engineer** — writes seeds, curates scenarios, tends harnesses, decides cutover. "Hands off!" was the founding charter line.
 
-There is no named "reviewer," "planner," or "PM" agent on the canonical site. (Community Attractor implementations, e.g. Amol Kabe's port, *do* introduce specialized Coding/Validator/Debugger/Planner agents.)
+There is no named "reviewer," "planner," or "PM" agent on the canonical site. (Community Attractor implementations like Amol Kabe's *do* introduce specialized Coding/Validator/Debugger/Planner agents.)
 
 ## Workflows and cycles
 
-The end-to-end cycle, reconstructed from the canonical pages:
+End-to-end cycle reconstructed from the canonical pages:
 
-1. **Seed.** Intent capture from "a PRD, a few sentences, a screenshot, or an existing codebase" (`/principles`).
-2. **Scenario curation.** End-to-end user stories are authored and stored outside the codebase. The homepage shows a "synthetic scenario curation and shaping interface" screenshot.
-3. **Harness assembly.** A validation harness is wired up against DTUs for any SaaS dependency, plus traces, screen capture, transcripts, incident replays, adversarial use, agentic simulation, just-in-time surveys, customer interviews, or price elasticity testing (`/principles`, "Apply More Tokens" section).
-4. **Attractor execution.** "Execution consists of traversing this graph until convergence or termination conditions are met" (`/products/attractor`). Nodes are phases; edges are natural-language predicates the LLM evaluates ("Proceed once a bottleneck is identified"; "Take this edge if the copywriting standards have been met").
-5. **Trajectory persistence.** Every turn goes into CXDB as a node in a turn DAG; branching from any turn is O(1) (a new head pointer).
-6. **Satisfaction convergence.** The loop runs "until the holdout scenarios pass (and stay passing)" (`/principles`).
-7. **Cutover.** No human review of diffs; the gate is satisfaction stability.
+1. **Seed.** "A PRD, a few sentences, a screenshot, or an existing codebase" (`/principles`).
+2. **Scenario curation.** End-to-end user stories stored outside the codebase. The homepage shows a "synthetic scenario curation and shaping interface" screenshot — suggesting agent-assisted authoring.
+3. **Harness assembly.** Wire up against DTUs plus any other input modalities (traces, screen capture, transcripts, incident replays, adversarial use, agentic simulation, customer interviews, price elasticity tests).
+4. **Attractor execution.** "Execution consists of traversing this graph until convergence or termination conditions are met" (`/products/attractor`). Edges are natural-language predicates ("Proceed once a bottleneck is identified"; "Take this edge if the copywriting standards have been met").
+5. **Trajectory persistence in CXDB.** Every turn lands in a turn DAG; branching is O(1).
+6. **Satisfaction convergence.** Loop runs "until the holdout scenarios pass (and stay passing)" (`/principles`).
+7. **Cutover.** No human diff review; the gate is satisfaction stability.
 
-Attractor's claimed key properties: "Deterministic given the same inputs / Observable at every node transition / Resumable from any checkpoint / Composable with other graphs."
+Attractor's claimed key properties: deterministic given the same inputs, observable at every node transition, resumable from any checkpoint, composable with other graphs.
 
 ## Specification methodology
 
 The site treats *intent* as the human's output and *code* as a derived, opaque artifact. From `/techniques`: "Code was treated analogously to an ML model snapshot: opaque weights whose correctness is inferred exclusively from externally observable behavior. Internal structure is treated as opaque."
 
-This implies a three-artifact tier:
-
-- **Seed** — informal intent (sentences, screenshot, codebase).
-- **Spec (implicit "NLSpec")** — the canonical (prose) form the agent operates on. The Attractor spec is published as such (referenced by community implementations claiming "100% spec coverage" of `attractor-spec.md`).
-- **Scenarios** — out-of-codebase holdout user stories that validate (not define) behavior.
-
-The site does not use the term "NLSpec" on these canonical pages; that term comes from the Attractor GitHub spec. The methodology is deliberately non-formal: natural-language specs + LLM judgment + harness, not types or proofs.
+Three-artifact tier: **Seed** (informal intent) → **Spec** (prose; called "NLSpec" in the GitHub spec, not on canonical pages) → **Scenarios** (out-of-codebase holdout user stories that validate, not define, behavior). Deliberately non-formal: prose + LLM judgment + harness, not types or proofs.
 
 ## Review and feedback patterns
 
@@ -157,16 +151,16 @@ Defined upstream on the homepage rather than as techniques: **Scenarios** (out-o
 
 ## Notable quotes
 
-- "Seed → Validation harness → Feedback loop. Tokens are the fuel." — `factory.strongdm.ai/principles`
-- "Code must not be written by humans / Code must not be reviewed by humans / If you haven't spent at least $1,000 on tokens today per human engineer, your software factory has room for improvement." — `factory.strongdm.ai/`
-- "Why am I doing this? (implied: the model should be doing this instead)" — `factory.strongdm.ai/`
-- "Of all the observed trajectories through all the scenarios, what fraction of them likely satisfy the user?" — `factory.strongdm.ai/`
-- "Code was treated analogously to an ML model snapshot: opaque weights whose correctness is inferred exclusively from externally observable behavior." — `factory.strongdm.ai/techniques`
-- "Attractor is structured as a graph of nodes, forming a generative SDLC. … Edges between nodes are expressed in natural language and evaluated by the LLM. Execution consists of traversing this graph until convergence or termination conditions are met." — `factory.strongdm.ai/products/attractor`
-- "Behavioral clones of the third-party services our software depends on … We can run thousands of scenarios per hour without hitting rate limits, triggering abuse detection, or accumulating API costs." — `factory.strongdm.ai/techniques/dtu`
-- "Summarize this bug report in 2 words. Now 4. Now 8. Now 16." — `factory.strongdm.ai/techniques/pyramid-summaries`
-- "Those of us building software factories must practice a deliberate naivete: finding and removing the habits, conventions, and constraints of Software 1.0." — `factory.strongdm.ai/`
-- "The OpenAI team does great work (in Python), and we receive it (in Go) and it just … works." — `factory.strongdm.ai/techniques/semport`
+- "Seed → Validation harness → Feedback loop. Tokens are the fuel." — `/principles`
+- "Code must not be written by humans / Code must not be reviewed by humans / If you haven't spent at least $1,000 on tokens today per human engineer, your software factory has room for improvement." — `/`
+- "Why am I doing this? (implied: the model should be doing this instead)" — `/`
+- "Of all the observed trajectories through all the scenarios, what fraction of them likely satisfy the user?" — `/`
+- "Code was treated analogously to an ML model snapshot: opaque weights whose correctness is inferred exclusively from externally observable behavior." — `/techniques`
+- "Attractor is structured as a graph of nodes, forming a generative SDLC. … Edges between nodes are expressed in natural language and evaluated by the LLM. Execution consists of traversing this graph until convergence or termination conditions are met." — `/products/attractor`
+- "We can run thousands of scenarios per hour without hitting rate limits, triggering abuse detection, or accumulating API costs." — `/techniques/dtu`
+- "Summarize this bug report in 2 words. Now 4. Now 8. Now 16." — `/techniques/pyramid-summaries`
+- "Those of us building software factories must practice a deliberate naivete: finding and removing the habits, conventions, and constraints of Software 1.0." — `/`
+- "The OpenAI team does great work (in Python), and we receive it (in Go) and it just … works." — `/techniques/semport`
 
 ## Recommended additional sources
 

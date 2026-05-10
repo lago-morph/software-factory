@@ -57,36 +57,60 @@ jobs:
     name: Fetch URLs from issue body
     runs-on: ubuntu-latest
 
-    # Job-level gate kept to the cheap title-prefix check only, so that
-    # ordinary issues do not spin up a runner. The author-association
-    # check is enforced as a logged step below — silent job-level skips
-    # were too hard to diagnose. workflow_dispatch bypasses both gates
-    # (only repo members with `actions:write` can dispatch anyway).
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      startsWith(github.event.issue.title, '[fetch-urls]')
+    # NO job-level `if:`. Job-level skips are silent in the Actions UI
+    # (zero step logs, the word "Skipped" only). v1 and v2 both got
+    # silent-skipped without us being able to see why. This version
+    # always runs the job and uses logged steps for every gate, so the
+    # next failure is diagnosable from the run page.
+    #
+    # Cost: every issue event (opened/edited/reopened) on this repo
+    # spins up a runner for ~10s of context-printing before the
+    # title-prefix step exits cleanly on non-matching issues. That is
+    # a deliberate trade for diagnosability.
 
     steps:
       - name: Show context for diagnostics
         env:
           EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
           ACTOR: ${{ github.actor }}
           ISSUE_NUMBER_FROM_EVENT: ${{ github.event.issue.number }}
           ISSUE_NUMBER_FROM_INPUT: ${{ inputs.issue_number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_USER: ${{ github.event.issue.user.login }}
           ISSUE_ASSOC: ${{ github.event.issue.author_association }}
+          ISSUE_BODY_LEN: ${{ length(github.event.issue.body) }}
         run: |
           echo "event_name        = $EVENT_NAME"
+          echo "event.action      = $ACTION"
           echo "actor             = $ACTOR"
           echo "issue # (event)   = $ISSUE_NUMBER_FROM_EVENT"
           echo "issue # (input)   = $ISSUE_NUMBER_FROM_INPUT"
           echo "issue title       = $ISSUE_TITLE"
           echo "issue user        = $ISSUE_USER"
           echo "issue association = $ISSUE_ASSOC"
+          echo "issue body length = $ISSUE_BODY_LEN"
+
+      - name: Enforce title-prefix gate
+        id: title_gate
+        if: github.event_name == 'issues'
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+        run: |
+          set -euo pipefail
+          case "$ISSUE_TITLE" in
+            "[fetch-urls]"*)
+              echo "Title matches [fetch-urls] prefix; proceeding."
+              echo "proceed=true" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Title does not match [fetch-urls] prefix; exiting cleanly."
+              echo "proceed=false" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
 
       - name: Enforce author-association gate
-        if: github.event_name == 'issues'
+        if: github.event_name == 'issues' && steps.title_gate.outputs.proceed == 'true'
         env:
           ASSOC: ${{ github.event.issue.author_association }}
           AUTHOR: ${{ github.event.issue.user.login }}
@@ -104,6 +128,7 @@ jobs:
 
       - name: Resolve issue number (for workflow_dispatch path)
         id: resolve
+        if: github.event_name == 'workflow_dispatch' || steps.title_gate.outputs.proceed == 'true'
         env:
           ISSUE_NUMBER_FROM_EVENT: ${{ github.event.issue.number }}
           ISSUE_NUMBER_FROM_INPUT: ${{ inputs.issue_number }}
@@ -115,16 +140,19 @@ jobs:
           fi
 
       - name: Checkout
+        if: steps.resolve.outputs.issue_number != ''
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
       - name: Set up Python
+        if: steps.resolve.outputs.issue_number != ''
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Install dependencies
+        if: steps.resolve.outputs.issue_number != ''
         run: |
           python -m pip install --upgrade pip
           # html2text is small and pure-python; used for HTML -> markdown.
@@ -133,6 +161,7 @@ jobs:
 
       - name: Resolve issue body
         id: body
+        if: steps.resolve.outputs.issue_number != ''
         env:
           ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
           BODY_FROM_EVENT: ${{ github.event.issue.body }}
@@ -152,6 +181,7 @@ jobs:
 
       - name: Extract URLs from issue body
         id: extract
+        if: steps.resolve.outputs.issue_number != ''
         env:
           ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
         run: |

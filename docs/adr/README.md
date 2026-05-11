@@ -23,16 +23,24 @@ python3 .claude/skills/adr/scripts/check_adr_links.py docs/adr/
 
 - **Filename**: `NNNN-kebab-title.md`, zero-padded to 4 digits, numbers
   permanent (never reuse — not even for abandoned proposals).
-- **Sections**: Status, Date, Deciders, Context, Decision, Consequences,
-  Alternatives Considered, References. (Optional: Supersedes, Superseded by.)
+- **H1**: `# ADR NNNN: Title in Sentence Case` (matches the agent-os
+  convention).
+- **Section order**: Status / Date / Context / Decision /
+  Alternatives considered / Consequences / References. Heading case is
+  lowercase `c` in "Alternatives considered" — preserved for anchor-slug
+  compatibility.
 - **Internal links are relative.** No `https://github.com/.../blob/main/...`
   for repo content. External sources (papers, blog posts) use absolute URLs.
+- **Direct subsection linking** in References is encouraged for dense
+  cross-references: one bullet can name a target file and then carry
+  multiple anchor links to sections within it. See ADR-0001's References
+  section for an example.
 - **Immutable after Accepted.** Substantive changes require a superseding
   ADR. The only legal in-place edits are: Status changes (to Deprecated or
-  Superseded by ADR-NNNN), and typo / link fixes.
+  `Superseded by ADR-NNNN`), and typo / link fixes.
 - **Bidirectional supersession.** When ADR-NNNN supersedes ADR-MMMM, both
   files are updated in the same commit: MMMM's Status changes to
-  `Superseded by [ADR-NNNN](./NNNN-kebab-title.md)`.
+  `Superseded by ADR-NNNN`.
 
 ## When to write a new ADR
 

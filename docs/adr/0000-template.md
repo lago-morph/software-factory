@@ -1,12 +1,22 @@
-# NNNN. Title in Title Case
+# ADR NNNN: Title in Sentence Case
 
 - **Status**: Proposed
 - **Date**: YYYY-MM-DD
-- **Deciders**: <names or roles; "session" is acceptable for solo agent work>
 
 <!--
 This is the canonical template. Copy it to docs/adr/NNNN-kebab-title.md and
 fill in. Keep each section to one or two short paragraphs / a small list.
+
+Compatible with the `lago-morph/agent-os/adr` convention:
+  - H1 form: `# ADR NNNN: <title>`
+  - Section order: Context, Decision, Alternatives considered,
+    Consequences, References
+  - Lowercase "considered" in the Alternatives heading.
+
+This template's superset additions (over agent-os):
+  - Optional Deciders field on the metadata line.
+  - Optional Supersedes / Superseded by fields.
+  - Explicit lifecycle states beyond Accepted.
 
 Numbering:
   - Zero-pad to 4 digits.
@@ -15,14 +25,17 @@ Numbering:
 
 Naming:
   - Filename: NNNN-kebab-case-title.md
-  - H1 heading: "NNNN. Title in Title Case"
+  - H1 heading: `# ADR NNNN: Title in Sentence Case`
 
 Status states:
-  Proposed | Accepted | Deprecated | Superseded by [ADR-NNNN](./NNNN-...)
+  Proposed | Accepted | Deprecated | Superseded by ADR-NNNN
 
 Relative-link rule:
   - Internal references use relative paths.
   - External resources (papers, blog posts) use absolute URLs.
+  - References supports DIRECT SUBSECTION LINKING — one bullet can
+    carry multiple anchor links to the same target file, in the form
+    shown in the References example below.
 
 Run `python3 .claude/skills/adr/scripts/check_adr_links.py docs/adr/`
 before committing. The script verifies every relative file path and
@@ -49,6 +62,15 @@ at the top, then expand.
 Be specific. "We will use X" beats "We considered using X and may use it".
 -->
 
+## Alternatives considered
+
+<!--
+For each meaningfully-considered alternative, one short paragraph: what
+it is, why we did not pick it.
+
+Skip this section only if there were no real alternatives (rare).
+-->
+
 ## Consequences
 
 <!--
@@ -59,29 +81,22 @@ If relevant, include "what we are explicitly not promising" — the limits
 of this decision's scope.
 -->
 
-## Alternatives Considered
-
-<!--
-For each meaningfully-considered alternative, one short paragraph: what
-it is, why we did not pick it.
-
-Skip this section only if there were no real alternatives (rare).
--->
-
 ## References
 
 <!--
 Relative links only for repo-internal content. Absolute URLs for external.
-One bullet per reference. Group by category if helpful.
 
-Replace the lines below with real references. The forms shown here are
-illustrative and intentionally use placeholder paths so the link checker
-will skip them; once you swap in real paths, the checker validates each.
+The agent-os style supports DIRECT SUBSECTION LINKING per bullet:
+one bullet may name a target file once and then list multiple anchor
+links to sections within it, comma-separated. Examples below illustrate
+both single-link bullets and multi-link bullets. Replace these examples
+with real references; the placeholders are wrapped in code blocks so the
+link checker skips them.
 -->
 
 ```
-- (research) [short label](./relative/path/to/file.md)
-- (sibling ADR) [ADR-NNNN: short title](./NNNN-kebab-title.md)
-- (code) [short label](../../path/to/source-file)
-- (external) [Author, "Title"](https://example.com)
+- [overview.md](../overview.md) [§5](../overview.md#5-foo), [§6.2](../overview.md#62-bar), [§9](../overview.md#9-baz)
+- [ADR-NNNN: short title](./NNNN-kebab-title.md)
+- [short label](../../path/to/source-file)
+- [Author, "Title"](https://example.com)
 ```

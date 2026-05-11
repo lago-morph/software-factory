@@ -1,13 +1,16 @@
 ---
 name: self-retrospective
-description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produce a structured retrospective covering what happened, which skills are worth extracting, and which repo conventions belong in AGENTS.md. Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", or "anything to add to AGENTS.md?", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
+description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produces a structured retrospective on disk at `retrospective/report/YYYY-MM-DD-NN.md` plus a sibling directory with one self-contained spec per suggested skill and a consolidated `AGENTS-suggestions.md` whose sections each carry exact proposed agents-file text plus a persuasion argument. Echoes an inline summary in chat (the full content is on disk). Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", or "anything to add to the agents file?", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
 ---
 
 # Skill: self-retrospective
 
-Harvest the knowledge accumulated in a session before it's lost to context
-truncation. Produce a structured retrospective: what happened, which skills
-are worth extracting, and which repo conventions belong in `AGENTS.md`.
+Harvest session knowledge before context truncation. Default output is a
+**filesystem package** at `retrospective/report/` plus a short inline
+summary. The package is structured so each suggested skill has a
+self-contained spec a fresh-context agent can implement from that one
+file, and the proposed agents-file additions live in one consolidated,
+persuasive document.
 
 ---
 
@@ -19,135 +22,213 @@ are worth extracting, and which repo conventions belong in `AGENTS.md`.
 - "What did we learn?"
 - "What skills could we extract?"
 - "Lessons learned?"
-- "Anything to add to AGENTS.md?"
+- "Anything to add to the agents file?" / "...to AGENTS.md?"
 - `/retrospective` (and flag variants — see below)
 
 ### Proactive triggers — offer the skill without being asked
 
 Offer when **any** of these apply:
 
-- Session spanned multiple distinct phases or pivots
-- Session surfaced unexpected real-world findings (bugs, transport quirks, spec contradictions)
-- Session used ≥5 subagents or required novel orchestration
-- Session discovered workarounds for tool or sandbox limitations
-- Session ran >2 hours of total agent time
-- User says something session-wrapping: "OK we're done", "good work", "let's stop here"
+- Session spanned multiple distinct phases or pivots.
+- Session surfaced unexpected real-world findings (bugs, transport quirks, spec contradictions).
+- Session used ≥5 subagents or required novel orchestration.
+- Session discovered workarounds for tool or sandbox limitations.
+- Session ran >2 hours of total agent time.
+- User says something session-wrapping: "OK we're done", "good work", "let's stop here".
 
 **Do NOT offer for:**
-- Routine sessions that exercised a known pattern with no surprises
-- Sessions where the user hasn't done substantive work yet
+
+- Routine sessions that exercised a known pattern with no surprises.
+- Sessions where the user hasn't done substantive work yet.
 
 ### Flag variants
 
 | Invocation | Behavior |
 |------------|----------|
-| `/retrospective` | Default — Mode A, all three parts |
-| `/retrospective --no-skills` | Skip Part 2; produce only narrative + AGENTS.md rules |
-| `/retrospective --output-dir ./retro/` | Mode B at a custom path |
-| `/retrospective --since "2025-01-15"` | Scope to material after this point |
+| `/retrospective` | Default — full on-disk package + inline summary. |
+| `/retrospective --no-skills` | Skip per-skill specs; only narrative, commit log, and `AGENTS-suggestions.md`. |
+| `/retrospective --pr` | After writing the package, push the branch and open a PR. |
+| `/retrospective --since "YYYY-MM-DD"` | Scope material to after this point. |
 
 ---
 
-## Step 0 — determine mode
+## Step 0 — verify the UTC date (mandatory tool call)
 
-Before producing any output, decide which mode to use.
+**The retrospective's filename embeds the UTC date. Never trust the model's
+internal notion of "today's date" — always verify via a tool call before
+writing anything.**
 
-**Mode A (chat-only)** is the default. Deliver inline markdown, three parts,
-final summary table. Cap at ~5000 words.
+Run one of:
 
-**Mode B (package)** creates a filesystem directory tree, commits to a feature
-branch, and opens a PR. Use when:
+```bash
+date -u +%Y-%m-%d
+```
 
-- The user mentions "feature branch", "package these", "capture for later",
-  "create specs and READMEs", or "I want to implement these later"
-- The session has 5+ skill candidates
-- The user wants to dispatch each skill build as a separate subsequent task
+```bash
+python3 -c "import datetime; print(datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d'))"
+```
 
-**If it's not obvious which mode the user wants, ask before producing output.**
-A one-sentence question suffices: "Do you want the retrospective inline (Mode A)
-or packaged into a feature branch with per-skill READMEs and SPECs (Mode B)?"
+```bash
+node -e "console.log(new Date().toISOString().slice(0,10))"
+```
+
+Use whichever is available. If the agent's environment supports more than
+one, prefer running two and confirming they agree. Save the result as
+`UTC_DATE`. **The retrospective text must report which tool produced the
+date** so a future reader can audit the provenance.
 
 ---
 
-## Step 1 — scan the session (the harvest)
+## Step 1 — determine the sequence number
 
-Walk the session systematically using this checklist. Do NOT start writing the
-retrospective until the scan is complete. The scan populates the material; the
-parts organize it.
+Multiple retrospectives may be produced in the same UTC day. Sequence them
+with a two-digit suffix.
+
+```bash
+mkdir -p retrospective/report
+existing=$(ls retrospective/report/"$UTC_DATE"-*.md 2>/dev/null | wc -l)
+SEQ=$(printf "%02d" $((existing + 1)))
+REPORT="retrospective/report/${UTC_DATE}-${SEQ}.md"
+SIBLING_DIR="retrospective/report/${UTC_DATE}-${SEQ}"
+```
+
+The first retrospective of the day is `-01`, the second `-02`, and so on.
+Sequence numbers are never reused, even if a retrospective is later
+deleted — the historical numbering is preserved.
+
+---
+
+## Step 2 — collect commit hashes grouped by PR
+
+The retrospective must record which commits were produced in the session's
+work. Group them by pull request so the audit trail is reviewer-friendly.
+
+### Strategy A — `gh` CLI available
+
+```bash
+gh pr list --state all --search "author:@me" --limit 25 \
+  --json number,title,headRefName,state,mergedAt,baseRefName
+# For each PR, list its commits via:
+gh pr view <N> --json commits --jq '.commits[].oid'
+```
+
+### Strategy B — `gh` not available (fallback via git log)
+
+Parse `main`'s merge commits to map PR numbers to branches, then list
+commits per branch:
+
+```bash
+git log origin/main --merges --pretty='%H %s' \
+  | grep -E "Merge pull request #[0-9]+ from"
+# Output lines like:
+#   c3b06ef... Merge pull request #9 from lago-morph/claude/round-2-research-consolidation
+```
+
+For each (PR-number, branch) pair the agent touched in this session, list
+its commits:
+
+```bash
+git log <branch> --not origin/main --pretty='%h %s'
+# For merged branches, use the merge commit's parent range:
+git log <merge-base>..<pr-tip> --pretty='%h %s'
+```
+
+Open PRs (not yet merged) are scoped via the current branch:
+
+```bash
+git log origin/main..HEAD --pretty='%h %s'
+```
+
+### Scope rule
+
+"This session's PRs" = PRs the current agent authored or substantially
+modified. If unsure, err toward over-inclusion; the reviewer can prune.
+Skip PRs whose work predates the `--since` cutoff if one was supplied.
+
+---
+
+## Step 3 — scan the session (the harvest)
+
+Walk the session systematically using this checklist. **Do NOT start
+writing the retrospective until the scan is complete.** The scan
+populates the material; the parts organize it.
 
 ### 3.1 Bugs fixed
 
-Classify each bug found and fixed during the session:
-
+Classify each:
 - **Implementation defects** — code did the wrong thing. Generalizable → skill candidate.
 - **Spec defects** — the design itself was broken. Generalizable → skill candidate.
-- **Transport / environment quirks** — the runtime surprised you (escaping, identity, permissions, naming collisions). Usually → AGENTS.md rule.
+- **Transport / environment quirks** — the runtime surprised you (escaping, identity, permissions, naming collisions). Usually → agents-file rule.
 
 ### 3.2 Workarounds invented
 
 Any time a tool didn't do what was needed and you went around it. Each
-workaround is reusable. Ask: is this workaround project-specific (AGENTS.md
-rule) or general enough to apply elsewhere (skill candidate)?
+workaround is reusable. Project-specific → agents-file rule.
+Generalizable → skill candidate.
 
 ### 3.3 Recurring micro-patterns
 
 Anything done more than twice. If it was worth doing twice, it's worth
-templating. Examples: a prompt structure reused across steps, a file-naming
-convention applied repeatedly, a verification pattern run after every deploy.
+templating.
 
 ### 3.4 Operational mishaps (especially valuable)
 
-Near-misses and mistakes that required recovery. Each becomes a "don't do X"
-rule. Examples:
-- Force-pushed feature branch back to main → PR auto-closed
-- Subagent ran out of usage mid-task → recovery from local commit
-- Marker comments didn't appear → workflow YAML wasn't on main yet
-
-Do not soften these. The mishap IS the lesson.
+Near-misses and mistakes that required recovery. Each becomes a "don't do
+X" rule. Do not soften these. The mishap IS the lesson.
 
 ### 3.5 Subagent prompts that worked vs didn't
 
-What brief structures produced good output? What structures produced vague
-or overly long output? This is meta-skill material for briefing future agents.
+Meta-skill material for briefing future agents.
 
 ### 3.6 Scope decisions
 
-What was explicitly skipped, deferred, or cut? The *why* is the lesson.
-"We skipped X because Y" is more valuable than a list of what shipped.
+What was explicitly skipped, deferred, or cut, and *why*.
 
 ### 3.7 Runtime discoveries
 
 Hard-won facts about the execution environment: auth boundaries, identity
-quirks, rate limits, naming collisions, sandbox restrictions. Almost always
-worth an AGENTS.md rule.
+quirks, rate limits, naming collisions, sandbox restrictions. Almost
+always worth an agents-file rule.
 
 ### 3.8 Effective or innovative workflows
 
-Workflows that emerged or evolved during the session and had measurable
-benefit. Only include if the workflow was actually useful — not just novel.
+Workflows that emerged or evolved and had measurable benefit.
 
 ---
 
-## Mode A — execution
+## Step 4 — write the main report
 
-Produce a markdown document inline. Three parts, in order. Every part is
-mandatory; skipping one leaves significant value on the table.
+Path: `retrospective/report/${UTC_DATE}-${SEQ}.md`
 
----
+Section structure:
 
-### Part 1 — what happened (narrative + metrics)
+````markdown
+# Retrospective — <one-line description of the session's work>
 
-Write a **phase-by-phase narrative**. Each distinct phase gets a named heading
-(`### Phase N — <name>`) and 1–3 paragraphs covering:
+- **UTC date**: ${UTC_DATE} (verified via `<tool used>`)
+- **Sequence**: ${SEQ}
+- **Branch at write time**: <git rev-parse --abbrev-ref HEAD>
+- **Sibling artifacts**: [./${UTC_DATE}-${SEQ}/](./${UTC_DATE}-${SEQ}/)
 
-1. What was the goal of this phase?
-2. What was the planned approach?
-3. What actually happened — especially deviations from the plan?
-4. What was unplanned but mattered (mishaps, recoveries, surprises)?
+## Commit hashes by PR
 
-After the narrative, append the **metrics table**:
+### PR #N — <branch-name> (<state: open / merged YYYY-MM-DD>)
 
-```markdown
+- `<short-hash>` <subject>
+- `<short-hash>` <subject>
+- ...
+
+(repeat per PR)
+
+## Part 1 — what happened
+
+(Phase-by-phase narrative. Each distinct phase gets a named heading
+(`### Phase N — <name>`) and 1–3 paragraphs covering: goal, planned
+approach, what actually happened (especially deviations), what was
+unplanned but mattered.)
+
+### Metrics
+
 | Metric | Value |
 |--------|-------|
 | Subagents dispatched | N (by category if useful) |
@@ -157,200 +238,215 @@ After the narrative, append the **metrics table**:
 | Spec amendments | S |
 | Scenarios driven / skipped | D / Sk |
 | Files touched at major refactors | F |
-```
 
-Fill in actual values from the scan. If a metric is zero, include the row
-anyway — absence is information.
+## Part 2 — skills summary
+
+| Skill | Priority | Approx scope | Spec |
+|-------|----------|--------------|------|
+| `<id>` | high/med/low | <1–3 words> | [./${UTC_DATE}-${SEQ}/<id>-spec.md](./${UTC_DATE}-${SEQ}/<id>-spec.md) |
+
+(One row per skill candidate. Detailed specs live in the sibling
+directory, not inline.)
+
+## Part 3 — agents-file suggestions
+
+See [./${UTC_DATE}-${SEQ}/AGENTS-suggestions.md](./${UTC_DATE}-${SEQ}/AGENTS-suggestions.md)
+for proposed additions to the project's agents file (`AGENTS.md`), one
+section per rule, each with exact text to paste and a persuasion
+argument.
+````
+
+**Hard cap**: keep the main report under ~3500 words. Detail lives in the
+sibling directory.
 
 ---
 
-### Part 2 — skills to extract
+## Step 5 — write per-skill specs
 
-For each skill candidate identified in the scan, use this exact template:
+For each skill candidate, write `${SIBLING_DIR}/<skill-id>-spec.md`.
+
+**Each spec must be self-contained.** A fresh-context agent given only
+this file as a brief should be able to build the skill without seeing
+the session it came from.
+
+Required sections per skill spec:
 
 ```markdown
-### Skill N: `<skill-id>` — <one-line summary>
+# Spec: `<skill-id>`
 
-**Purpose.** <One sentence: what problem this skill solves.>
+## Intent
 
-**Trigger.** <When this skill should activate — be specific.>
+(One paragraph: what problem the skill solves and why it earns its
+place in the skill library. Ground in a real session moment.)
 
-**Core content.** <Numbered list of 5-10 substantive teachings derived
-from the session. "Write good prompts" is not a teaching. Ground each
-item in something that happened.>
+## Trigger
 
-**Anti-patterns.** <What NOT to do, based on session misses. Each
-anti-pattern should be traceable to a specific moment.>
+(When should this skill activate? Direct user phrases + proactive
+triggers + negative triggers. Be specific.)
 
-**Example/template.** <Concrete code, prompt, or text where useful.
-Omit if nothing concrete applies.>
+## Inputs
+
+(What the skill receives at invocation: arguments, current workspace
+state, environment variables, recent context.)
+
+## Outputs
+
+(What the skill produces: files, commits, comments, side effects.)
+
+## Workflow
+
+(Numbered steps. Each step is concrete enough to execute. No "consider
+doing X" — say "do X" or "if condition, do X; else do Y".)
+
+## Concrete examples
+
+(At least TWO worked examples, end-to-end. Show input, intermediate
+state, output. Use the session's actual material where possible —
+real file paths, real commit messages, real error text.)
+
+## Anti-patterns
+
+(Specific things NOT to do, each traceable to a session moment.)
+
+## Acceptance criteria
+
+(How to know the skill is done well: 3–5 testable properties.)
+
+## Files this skill creates / modifies
+
+(Paths the skill writes to, with one-line description of each.)
 ```
 
-Target 200–500 words per skill. Enough detail that a future agent could
-build from this spec without the original session; not so much that the
-retrospective becomes the implementation.
+**Quality bar**: an agent reading just this file, with no other context,
+should be able to produce a working skill. If the spec defers to the
+session, it has failed.
 
-**If `--no-skills` was passed, skip Part 2 entirely.**
+Word count target per spec: 400–1200 words. The skill's complexity sets
+the actual length.
 
 ---
 
-### Part 3 — AGENTS.md / repo conventions
+## Step 6 — write `AGENTS-suggestions.md`
 
-Write 5–15 one-line rules. Each rule must be:
-- Grounded in something that actually went wrong (or nearly did) in this session
-- Phrased as a concrete do/don't statement
-- Ready to drop into `AGENTS.md` verbatim
+Path: `${SIBLING_DIR}/AGENTS-suggestions.md`
 
-Use this format for each rule:
+**Purpose**: give the user a single document with proposed agents-file
+additions. The user reads each section, decides whether to copy-paste
+into their actual `AGENTS.md`, and moves on.
 
-```markdown
-N. **<Rule name>.**
-   "<The rule as a do/don't statement.>"
-   *Grounded in: <one-phrase reference to the session event that motivated it>.*
-```
+Structure:
 
-More than 15 rules is noise. If you have 20 candidates, pick the 15 with the
-highest signal. The grounding line makes it easy for the user to evaluate each.
+````markdown
+# AGENTS.md suggestions — ${UTC_DATE}-${SEQ}
 
----
+These are proposed additions to the project's agents file (typically
+`AGENTS.md` at the repo root). Each section contains:
 
-### Final summary table
+1. **Proposed addition** — the exact text to paste.
+2. **Why this earns its place in your agents file** — the argument for
+   doing it, grounded in something that happened (or nearly happened).
 
-After Parts 1–3, append this table:
-
-```markdown
-| Skill | Priority | Approx scope |
-|-------|----------|--------------|
-| `<skill-id>` | high / med / low | <1-3 word estimate, e.g. "2-day build"> |
-```
-
-Priority guidance:
-- **high** — generalizes broadly, would have helped multiple times in this session
-- **med** — useful but narrow scope or requires specific context
-- **low** — nice to have, low reuse potential
-
-This is the user's pick-list for what to build next. Do not recommend an order
-or prescribe which ones to fund — that's the user's call.
+Decide each on its own merits. Skip ones that don't apply to your
+operating posture; copy-paste the ones that do.
 
 ---
 
-## Mode B — execution
+## Suggestion 1: <Rule name>
 
-Mode B creates an implementation-grade package in a feature branch.
+### Proposed addition
 
-### Step B-1 — create the feature branch
+> **<Rule name>.** "<The rule, phrased as a do/don't statement, ready
+> to paste verbatim.>"
+>
+> *Grounded in: <one-phrase session-event reference>.*
 
-```
-git checkout -b feat/retrospective-<YYYYMMDD>
-```
+### Why this earns its place in your agents file
 
-Use today's date for `YYYYMMDD`.
-
-### Step B-2 — create the directory tree
-
-At repo root:
-
-```
-retrospective/
-  README.md                          # top-level index
-  <skill-name-1>/
-    README.md                        # human motivation
-    SPEC.md                          # implementation-grade detail
-    excerpts.jsonl                   # session evidence (optional)
-    examples/                        # concrete templates (optional)
-  <skill-name-2>/
-    ...
-  agents-md-template/
-    README.md
-    SPEC.md
-```
-
-### Step B-3 — write `retrospective/README.md`
-
-Contents:
-1. Why this directory exists (one paragraph)
-2. Skill-index table with links, priority, and one-line summary per skill
-3. "How to consume this package" — how a future agent should use these files
-
-### Step B-4 — for each skill, write `README.md` and `SPEC.md`
-
-**Each `README.md`** must cover:
-- Why this skill matters
-- When it would have helped — a concrete session example
-- What "good looks like" when the skill runs correctly
-- Cousin skills (related, complementary)
-- Status: "Spec only — no code yet"
-
-**Each `SPEC.md`** must cover:
-- Trigger conditions (direct + proactive)
-- Inputs (parameters and defaults)
-- Outputs (what the skill produces)
-- Workflow steps (numbered, detailed)
-- Templates (verbatim prompt or code structures)
-- Anti-patterns
-- Implementation notes
-- Test plan
-- Living document note
-
-Quality bar: each `SPEC.md` must be detailed enough that a future builder
-agent, given only that file as a brief, can produce the skill without access
-to the original session.
-
-### Step B-5 — write `excerpts.jsonl` where valuable
-
-One JSONL record per session excerpt that illustrates a skill or rule. Each
-record has at minimum: `id`, `kind`, `phase`, `demonstration`. Use verbatim
-error messages and code — not paraphrases. The value is fidelity.
-
-### Step B-6 — write `agents-md-template/README.md` and `SPEC.md`
-
-This sub-directory holds the proposed AGENTS.md additions as a spec of their
-own — so a future agent can review, amend, and apply them.
-
-### Step B-7 — DO NOT implement the skills
-
-This branch is spec only. If you find yourself writing implementation code,
-stop. That work belongs in a separate task after the user reviews and approves
-the package.
-
-### Step B-8 — commit, push, open PR
-
-```
-git add retrospective/
-git commit -m "docs: retrospective skill specs — <N> skills + AGENTS.md template"
-git push -u origin feat/retrospective-<YYYYMMDD>
-```
-
-Open a PR. Body should include the skill-index table. Do not merge unless the
-user explicitly requests it.
+(A persuasive paragraph or two. Name the specific session event.
+Quantify the cost of not having the rule — "took 20 minutes to undo",
+"produced two parallel mechanisms", "five fabrications propagated for
+two passes before catching". State the marginal cost of adopting the
+rule — "one extra grep at session start", "two tool calls". Make the
+asymmetry vivid.)
 
 ---
 
-## Tone rules
+## Suggestion 2: ...
+````
 
-- **Honest about misses.** A retrospective with no "I would do this
-  differently" entries is incomplete. Do not soften or omit mishaps.
-- **Concrete about scope.** Name what's in, what's out, and why.
-- **Suggest, don't prescribe.** The user decides what survives and what to
-  build next.
+Aim for 5–15 suggestions. More than 15 is noise — pick the 15 with the
+highest signal.
+
+The **"Proposed addition"** block is the verbatim text the user will
+paste. Make sure it's self-contained — no references back to the
+session, no "see above". The user is making an editorial decision per
+section and only the proposed-addition text leaves the document.
+
+The **"Why this earns its place"** block exists to convince. Be
+specific. Be honest about costs. Don't pad.
+
+---
+
+## Step 7 — echo inline summary + commit
+
+After writing all artifacts:
+
+1. **Print a short inline summary** in chat (not the full retrospective):
+   - Path to the main report.
+   - Skill count + names + paths to specs.
+   - AGENTS-suggestions count + path.
+
+2. **Commit the artifacts** on the current branch:
+
+   ```bash
+   git add retrospective/
+   git commit -m "Retrospective ${UTC_DATE}-${SEQ}: <N> skills, <M> agents-file suggestions"
+   ```
+
+3. If `--pr` was passed: push the branch and open a PR.
+
+**Do not** print the entire main report inline — it's on disk; reference
+the path. The inline summary should fit in ~20 lines.
 
 ---
 
 ## Anti-patterns (never do these)
 
-- **Implementing while retrospecting.** If the user says "build it", that is
-  a separate task. Wait for an explicit instruction before writing code.
-- **One giant unstructured document.** The Part 1/2/3 split is not optional —
-  it makes the output skimmable.
-- **Generic advice.** "Write good prompts" is useless without a session anchor.
-  Every teaching must be traceable to something that actually happened.
-- **Forgetting Part 3.** AGENTS.md rules are often the highest-ROI output of
-  a retrospective. They can be applied immediately, without building anything.
-- **Capping at "what went well."** The misses ARE the lessons. If the session
-  had no mishaps worth recording, look harder.
-- **Skipping the mode question.** If it's ambiguous whether the user wants
-  inline markdown or a packaged feature branch, ask first. Producing the
-  wrong mode wastes everyone's time.
-- **Producing speculative skill candidates.** Only propose skills that have
-  direct evidence in the scan. If nothing in the session demonstrates the need,
-  leave it out.
+- **Trusting the model's notion of today's date.** Always verify via a
+  tool call (`date -u`, Python `datetime.UTC`, Node `new Date().toISOString()`).
+  Date drift in filenames silently breaks the day-sequence numbering.
+- **Implementing while retrospecting.** If the user says "build it",
+  that is a separate task. Wait for an explicit instruction.
+- **One giant unstructured document.** The on-disk structure (main
+  report + sibling directory with per-skill specs + `AGENTS-suggestions.md`)
+  is not optional — it's what makes the output consumable.
+- **Generic advice.** "Write good prompts" is useless without a session
+  anchor. Every teaching must be traceable to something that happened.
+- **Forgetting the agents-file suggestions.** Agents-file rules are
+  often the highest-ROI output of a retrospective; they can be applied
+  immediately, without building anything.
+- **Capping at "what went well."** The misses ARE the lessons. If the
+  session had no mishaps worth recording, look harder.
+- **Producing speculative skill candidates.** Only propose skills with
+  direct evidence in the scan. If nothing in the session demonstrates
+  the need, leave it out.
+- **Calling the agents file "CLAUDE.md".** This skill targets the
+  generic agents-file convention — `AGENTS.md` at the repo root. If a
+  project chose a different filename (`AGENT.md`, `.aider`, etc.) the
+  user can adapt; the retrospective should not bake in a tool-specific
+  name.
+- **Per-skill specs that defer to the session.** A spec that says "see
+  the session for details" has failed its job. Specs must stand alone.
+- **Bulk-committing without verifying intra-package links.** If the
+  project has a link checker (e.g., `.claude/skills/adr/scripts/check_adr_links.py`),
+  run it on the new retrospective files before committing. Broken
+  intra-package links erode the artifact's value.
+
+---
+
+## See also
+
+- `README.md` — human-facing motivation and one-page overview.
+- `spec/SPEC.md` — implementation-grade spec (mirrors this SKILL.md with
+  more rationale).
+- `retrospective/report/` — the on-disk artifact tree this skill produces.

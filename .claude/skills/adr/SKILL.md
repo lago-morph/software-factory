@@ -1,6 +1,6 @@
 ---
 name: adr
-description: Author and maintain Architecture Decision Records (ADRs) — numbered, dated, immutable markdown files that record binding architectural choices and their context. Use whenever a decision is being made that affects multiple files / will outlive this session, when a default tool / library / pattern is being chosen, when a prior decision is being reversed (write a superseding ADR), or when the user says "ADR this", "record this decision", "let's write it down", or asks to look up "why did we choose X?". Produces ADRs at `docs/adr/NNNN-kebab-title.md` using a fixed structure (Status / Context / Decision / Consequences / Alternatives / References) with all internal links as RELATIVE paths so the log survives forks, renames, and branch moves.
+description: Author and maintain Architecture Decision Records (ADRs) — numbered, dated, immutable markdown files that record binding architectural choices and their context. Compatible with the `lago-morph/agent-os/adr` convention (H1 `# ADR NNNN: Title`, section order Context → Decision → Alternatives considered → Consequences → References, direct subsection linking in References). Use whenever a decision is being made that affects multiple files / will outlive this session, when a default tool / library / pattern is being chosen, when a prior decision is being reversed (write a superseding ADR), or when the user says "ADR this", "record this decision", "let's write it down", or asks to look up "why did we choose X?". Produces ADRs at `docs/adr/NNNN-kebab-title.md` with all internal links as RELATIVE paths so the log survives forks, renames, and branch moves.
 ---
 
 # Skill: adr
@@ -10,13 +10,21 @@ files that record binding decisions and the context that produced them. They
 are how a future agent (or human) answers "why did we do it this way?"
 without re-reading the entire commit history.
 
+This skill follows the **lago-morph/agent-os ADR convention** as the
+canonical format, with a small superset of features (optional `Deciders`
+field, explicit lifecycle states, optional Supersedes / Superseded-by).
+ADRs produced by this skill can live in agent-os-style repos without
+modification; ADRs from agent-os parse cleanly through this skill's
+link checker.
+
 This skill specifies:
 
 1. **Where ADRs live** and how they are numbered.
 2. **The fixed section structure** every ADR must follow.
 3. **The relative-link rule** — the durability invariant.
-4. **The lifecycle** — Proposed → Accepted → Deprecated → Superseded.
-5. **The check** — a script that validates all relative links and anchors.
+4. **Direct subsection linking** — one bullet, multiple anchor links.
+5. **The lifecycle** — Proposed → Accepted → Deprecated → Superseded.
+6. **The check** — a script that validates all relative links and anchors.
 
 ---
 
@@ -60,53 +68,56 @@ abandoned proposal.
 
 Titles are **kebab-case** in the filename (`use-pip-not-poetry.md`,
 `fetch-blocked-urls-mechanism.md`). The first heading inside the file uses
-the full title-case form ("Use pip, not Poetry").
+`# ADR NNNN: <Title in Sentence Case>`.
 
 ---
 
 ## Section structure (mandatory)
 
-Every ADR uses this exact section structure:
+Every ADR uses this exact section structure, in this order:
 
 ```markdown
-# NNNN. <Title in Title Case>
+# ADR NNNN: <Title in Sentence Case>
 
-- **Status**: Proposed | Accepted | Deprecated | Superseded by [ADR-NNNN](./NNNN-...)
+- **Status**: Proposed | Accepted | Deprecated | Superseded by ADR-NNNN
 - **Date**: YYYY-MM-DD
-- **Deciders**: <names or roles; "session" is acceptable for solo agent work>
+- **Deciders** (optional): <names or roles; "session" is acceptable for solo agent work>
 
 ## Context
 
 What is the issue we are seeing that motivates this decision? What
-forces are at play? Cite the research that informed it via relative links.
-Keep this section evidence-driven; do not editorialize.
+forces are at play? Cite the research that informed it via relative
+links. Keep this section evidence-driven; do not editorialize.
 
 ## Decision
 
-What is the change we are making? Be specific. Name the chosen option in
-one sentence at the top; expand below if needed.
+What is the change we are making? Be specific. Name the chosen option
+in one sentence at the top; expand below if needed.
+
+## Alternatives considered
+
+For each meaningfully-considered alternative, one paragraph: what it
+is, why we did not pick it. Skip this section only if there were no
+real alternatives (rare).
 
 ## Consequences
 
 What becomes easier? What becomes harder? What are we accepting as a
 trade-off? Include "what we are explicitly not promising" if relevant.
 
-## Alternatives Considered
-
-For each meaningfully-considered alternative, one paragraph: what it is,
-why we did not pick it. Skip this section only if there were no real
-alternatives (rare).
-
 ## References
 
-Relative links only (see "Relative-link rule" below). One bullet per
-reference. Group as desired (research, sibling ADRs, code).
+Relative links only for repo-internal content (see "Relative-link
+rule" below). Direct subsection linking is encouraged for dense
+cross-references — see "Direct subsection linking" below.
 ```
+
+**Heading case** matters for compatibility: use "Alternatives considered"
+(lowercase `c`). The link-checker is case-sensitive on anchor slugs.
 
 Optional sections (use only when applicable):
 
-- **Supersedes**: `[ADR-NNNN](./NNNN-...)` — when this ADR replaces an
-  earlier one.
+- **Supersedes**: `ADR-NNNN` — when this ADR replaces an earlier one.
 - **Superseded by**: filled in (and only filled in) by a later ADR.
 
 ---
@@ -128,8 +139,37 @@ Absolute GitHub URLs break the moment the repo is forked, renamed, or
 mirrored — and the breakage is invisible until someone clicks.
 
 **Anchor links** use GitHub-flavored markdown slug rules: heading text
-lowercased, spaces replaced by hyphens, most punctuation stripped. The
-`check_adr_links.py` script (under `scripts/`) verifies all anchors resolve.
+lowercased, spaces replaced by hyphens, most punctuation stripped,
+**no hyphen collapsing**. The `scripts/check_adr_links.py` script verifies
+all anchors resolve.
+
+---
+
+## Direct subsection linking
+
+When citing multiple sections of the same target file, prefer the
+agent-os multi-link bullet form over multiple bullets:
+
+```markdown
+- [overview.md](../overview.md) [§5](../overview.md#5-software-added-to-baseline), [§6.2](../overview.md#62-agent-runtime-architecture), [§9](../overview.md#9-oss-limitations)
+```
+
+instead of:
+
+```markdown
+- [overview.md §5](../overview.md#5-software-added-to-baseline)
+- [overview.md §6.2](../overview.md#62-agent-runtime-architecture)
+- [overview.md §9](../overview.md#9-oss-limitations)
+```
+
+The multi-link form is dense and scans well; the link checker treats each
+`[text](path)` independently regardless of bullet structure, so it
+validates every anchor.
+
+Both forms are legal. Use single-link bullets when the section identity
+is the load-bearing part (sibling ADRs, single workflow files); use
+multi-link bullets when you're citing several sections of the same
+source.
 
 ---
 
@@ -140,12 +180,12 @@ lowercased, spaces replaced by hyphens, most punctuation stripped. The
 | **Proposed** | Initial state when a draft ADR is committed for review. |
 | **Accepted** | Decision is binding. Move from Proposed once review is complete. |
 | **Deprecated** | Decision no longer applies but is not directly replaced (rare; usually a feature was removed). |
-| **`Superseded by [ADR-NNNN](./NNNN-...)`** | A later ADR reverses or replaces this one. |
+| **`Superseded by ADR-NNNN`** | A later ADR reverses or replaces this one. |
 
 **The only legal in-place edits** to an Accepted ADR:
 
-1. Changing **Status** to `Superseded by [ADR-NNNN](./NNNN-...)` when a later
-   ADR replaces it.
+1. Changing **Status** to `Superseded by ADR-NNNN` when a later ADR
+   replaces it.
 2. Changing **Status** to `Deprecated` (with a short justification appended).
 3. Fixing typos / broken links — never substantive content.
 
@@ -197,7 +237,7 @@ next=$(printf '%04d' $(( $(ls docs/adr/[0-9]*.md 2>/dev/null | \
 echo "Next ADR number: $next"
 ```
 
-Title: kebab-case in the filename, Title Case in the H1 heading.
+Filename: `NNNN-kebab-title.md`. H1: `# ADR NNNN: Title in Sentence Case`.
 
 ### 4. Draft the ADR from the template
 
@@ -210,13 +250,15 @@ records, not design documents. The full design rationale lives in
 
 - For every claim that has a source, add a `References` bullet with a
   relative link.
-- For every sibling ADR you cite, use `[ADR-NNNN](./NNNN-...)` form.
+- For sibling ADRs, use `[ADR-NNNN: short title](./NNNN-kebab-title.md)` form.
+- When citing multiple sections of one file, use the **direct subsection
+  linking** multi-link bullet (see above).
 - For external sources, absolute URLs are fine.
 
 ### 6. If superseding: update the old ADR
 
 ```markdown
-- **Status**: Superseded by [ADR-NNNN](./NNNN-new-title.md)
+- **Status**: Superseded by ADR-NNNN
 ```
 
 The body of the old ADR is **not** edited beyond this status change.
@@ -265,6 +307,9 @@ same commit so the bidirectional link is atomic.
   writing a superseding ADR. Otherwise the chain breaks.
 - **ADRs for tactical choices.** "We use 4-space indentation" is not an
   ADR. ADR-worthy means architectural.
+- **Title-case "Considered".** The agent-os convention is "Alternatives
+  considered" (lowercase `c`). Title-casing the second word breaks the
+  anchor slug compatibility between the two conventions.
 
 ---
 
@@ -275,16 +320,18 @@ GitHub-flavored markdown derives anchors from heading text:
 1. Lowercase the heading.
 2. Replace spaces with hyphens.
 3. Strip most punctuation (keep alphanumerics, hyphens, underscores).
-4. Collapse consecutive hyphens.
+4. **Do NOT collapse consecutive hyphens** — GFM preserves them. The
+   heading "A — B" produces `a--b` (two hyphens around where the em-dash
+   was, because the surrounding spaces became hyphens).
 
 Examples:
 
 | Heading | Anchor |
 |---|---|
 | `## Context` | `#context` |
-| `## Where ADRs live` | `#where-adrs-live` |
-| `### 3.2 Where the sources agree` | `#32-where-the-sources-agree` |
-| `## Alternatives Considered` | `#alternatives-considered` |
+| `## Alternatives considered` | `#alternatives-considered` |
+| `## 3.2 Where the sources agree` | `#32-where-the-sources-agree` |
+| `## 6. GitHub Action — security stance` | `#6-github-action--security-stance` |
 
 The check script applies these rules to verify anchor targets. If your link
 is `[X](../foo.md#some-section)`, the script reads `../foo.md`, derives all
@@ -297,7 +344,8 @@ its heading slugs, and confirms `some-section` is one of them.
 - `.claude/skills/adr/templates/0000-template.md` — the ADR template, copied
   into `docs/adr/0000-template.md` on first use.
 - `.claude/skills/adr/scripts/check_adr_links.py` — the link / anchor validator.
-- `.claude/skills/adr/README.md` — human-facing motivation and examples.
+- `.claude/skills/adr/spec/SPEC.md` — fuller reference spec (motivation,
+  worked examples, design rationale).
 
 ---
 
@@ -306,4 +354,5 @@ its heading slugs, and confirms `some-section` is one of them.
 - `docs/adr/README.md` — the in-repo ADR index (created on first use of this skill).
 - `docs/adr/0000-template.md` — the template, ready to copy.
 - [Michael Nygard's original ADR essay](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) (the canonical source for the format).
+- [`lago-morph/agent-os/adr/`](https://github.com/lago-morph/agent-os/tree/main/adr) — the convention this skill aligns with.
 - [MADR (Markdown ADR) project](https://adr.github.io/madr/) — a fuller variant; we use a deliberately minimal subset.

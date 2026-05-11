@@ -1,0 +1,10 @@
+https://docs.tabnine.com/main/welcome/readme/architecture/deployment-options
+https://docs.tabnine.com/main/welcome/readme/privacy
+https://docs.tabnine.com/main/getting-started/context-engine
+https://docs.tabnine.com/main/getting-started/tabnine-agent/guidelines
+https://docs.tabnine.com/main/welcome/readme/protection/provenance-and-attribution
+https://docs.tabnine.com/main/administering-tabnine/private-installation
+https://docs.tabnine.com/main/administering-tabnine/private-installation/server-setup-guide/air-gapped-deployment-guide
+https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/agent-guidelines
+https://docs.tabnine.com/main/welcome/readme/ai-models/tabnines-private-and-protected-universal-models
+https://docs.tabnine.com/main/getting-started/context-engine/admin-console/coaching-guidelines-v

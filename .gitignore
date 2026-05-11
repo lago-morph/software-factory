@@ -223,3 +223,6 @@ __marimo__/
 # canonical record of what was requested per fetch issue lives in
 # research/blocked-urls.md, research/blocked-urls-round-2.md, and PLAN.md §10.1.
 .fetch-work/
+
+# Parallel-subagent-fanout worktrees (transient harness state).
+.claude/worktrees/

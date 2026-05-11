@@ -1,8 +1,8 @@
 # Research Plan — Round 2: Jaymin West Book, Overstory, OpenHands
 
-**Branch:** `claude/research-agentic-engineering-YxbW1`
+**Branches:** `claude/research-agentic-engineering-YxbW1` (initial plan, merged in PR #3); `claude/round-2-research-consolidation` (current — see `git log`).
 **Date opened:** 2026-05-10
-**Status:** Open. Subagent dispatch has not been performed yet. A future agent can resume by following the "How to resume" section at the bottom of this file.
+**Status:** **Mid-stream as of 2026-05-11.** Fetch action operational. Tier-1 web content retrieved (issue #4). Three reports written *by the lead agent in place of subagents* (08, 11, 12 — see §10 *Round-2 progress log*). Reports 08 (Foundations + Patterns), 10 (Overstory substrate audit), and the unfetched portions of 09 (Practices + Mental Models) are still pending; report 13 (synthesis) blocks on them. See §10 for next-action checklist.
 **Lead question:** *What can we reuse — patterns, vocabulary, or working code — from these three sources to build the software factory described in `architectures/`, given that we want to operate as a CI/CD pipeline rather than an interactive desktop?*
 
 ---
@@ -345,4 +345,123 @@ Per-subagent expectation, assuming a ~200k-context model:
 
 ---
 
-*End of research plan v0.1 — `research/PLAN.md`*
+## 10. Round-2 progress log (added 2026-05-11)
+
+### 10.1 Fetch action history
+
+| Issue | Purpose | Status | Result |
+|---|---|---|---|
+| [#4](https://github.com/lago-morph/software-factory/issues/4) | Tier-1 + Tier-2 initial pull (14 URLs) | Closed (acted on) | 13/14 fetched; merged via `fetched/issue-4` branch into `claude/round-2-research-consolidation`. The 1 failure is the Substack manifesto (Substack 403s GitHub Actions IPs). |
+| [#8](https://github.com/lago-morph/software-factory/issues/8) | Wayback supplements (Substack + arXiv HTML render + Round-1 backfill candidates) | In flight | Should produce `fetched/issue-8`. Apply the workflow's standard merge instructions when comment lands. |
+
+### 10.2 Reports produced
+
+Lead-agent-written, using the freshly-fetched content. These are *not* full subagent dispatches — each notes what is still pending and could be deepened by a future subagent pass.
+
+| Report | Coverage | Status | Notes |
+|---|---|---|---|
+| 08 — Jaymin Foundations + Patterns | Ch 1, 2, 3, 4, 5, 7 of the book | **Pending.** | All source files live in `raw.githubusercontent.com/jayminwest/agentic-engineering-book/main/chapters/*` and are reachable from the sandbox. No fetch dependency. The original prompt in §3.1 stands. |
+| 09 — Jaymin Harnesses + Practices + Mental Models | Ch 6, 8, 9 of the book | **Partial.** `research/09-jaymin-harnesses-partial.md` covers Ch 6's index page in depth. Ch 6 sub-pages 1–7, Ch 8, Ch 9 are pending. | Highest-priority missing piece: Ch 9.7 *Software Factories*. |
+| 10 — Overstory substrate audit | The `jayminwest/overstory` repo | **Pending.** | All source files reachable via `raw.githubusercontent.com`. No fetch dependency. The original prompt in §3.3 stands. |
+| 11 — OpenHands substrate audit | `All-Hands-AI/OpenHands` plus SDK/CLI/Action companion repos and docs | ✅ `research/11-openhands-substrate-audit.md` v0.1 | Substantive on CI/CD-relevant surfaces. One open follow-up: full SDK paper body (PDF didn't text-extract; HTML render queued in #8). |
+| 12 — Adjacent ecosystem | Tier-2 perspective pieces + book Ch 10 + appendix examples | **Partial.** `research/12-adjacent-ecosystem.md` covers the six Tier-2 pieces. gastown / kotadb / pi-mono / book Ch 10 still pending. | All remaining sources reachable via raw.githubusercontent.com. |
+| 13 — Round-2 synthesis | Reads reports 08-12 + Round-1 synthesis + architectures comparison | **Blocked.** Cannot run until 08 + 10 are written, and ideally until 09 and 12 are completed past their partial state. | The synthesis prompt in §3.6 is unchanged. |
+
+### 10.3 What the partial reports already shift
+
+Even at partial state, the Round-2 work changes things that should be reflected in `architectures/` once 13 is written:
+
+1. **"Harness" is the right umbrella term** for what `architectures/00-comparison.md` §4.1 calls "shared infrastructure." Adopt the term. (See report 09 §3, §10.)
+2. **OpenHands SDK + CLI is a serious substrate candidate** for the per-cycle agent runtime, with a documented headless mode + JSONL event stream that satisfies our decision-log requirement. (See report 11 §3, §9, §10.)
+3. **No official OpenHands GitHub Action exists.** The Marketplace listing is third-party (10 stars). For CI use, roll our own thin Docker-image wrapper. (Report 11 §7.)
+4. **Cisco/LangChain piece supplies the first concrete enterprise case study** with measured numbers (93% time-to-root-cause reduction, 65% dev-cycle reduction, 200 hours saved/month/70 users). Empirical support for Architecture-2's Compound Atelier pattern. (Report 12 §2.2.)
+5. **Kiro is a newly-surfaced substrate candidate** — spec-driven, EARS notation, CLI surface, native MCP. Worth a focused audit. (Report 12 §2.5.)
+6. **"PR review is the bottleneck"** is now externally validated by the Cisco numbers. Strengthens the case for our architectures that move the human upstream (Architecture-1 spec author, Architecture-4 Geneticist). (Report 12 §2.2.)
+
+### 10.4 Next actions, in order
+
+A future agent (or future Claude session) can pick up from here. Do these in sequence.
+
+#### Step 1 (MANDATORY FIRST ACTION) — Drain the in-flight fetch issue #8
+
+The session that wrote v0.2 of this plan shut down before issue [#8](https://github.com/lago-morph/software-factory/issues/8) finished fetching. **Before doing anything else, check whether it has landed.**
+
+```bash
+# (a) Has the workflow created the branch yet?
+git fetch origin 2>&1 | grep -i fetched/issue-8
+
+# (b) If yes, what did it get?
+#     The workflow comments the per-URL summary on the issue itself.
+#     Use mcp__github__issue_read with method=get_comments on issue 8.
+
+# (c) If the branch exists, merge it into the current working branch
+#     (or into a new branch off main if the prior working branch is merged).
+git merge --no-ff origin/fetched/issue-8 -m "Merge Wayback fetched URLs from issue #8"
+```
+
+What issue #8 was asked to fetch (Wayback-Machine routes — see issue body for the canonical list):
+
+- `jayminwest.substack.com/p/a-manifesto-for-agentic-development` — Jaymin's Substack manifesto. If retrieved, this may add doctrinal claims not in the book; update `research/09-jaymin-harnesses-partial.md` if so.
+- `arxiv.org/html/2511.03690v2` — OpenHands SDK paper HTML render. If retrieved, this closes the open follow-up in `research/11-openhands-substrate-audit.md` §10 — feed the paper body through and update report 11 in place with deeper architecture / sandbox / cost details.
+- `lennysnewsletter.com/p/head-of-claude-code-what-happens` — Cherny interview. If retrieved, this is the strongest scaling data point and feeds back into the Round-1 corpus (potential follow-up to `research/06-hn-and-lenny.md`).
+- `lennysnewsletter.com/p/an-ai-state-of-the-union` — Lenny's Simon Willison interview. Same: Round-1 backfill candidate.
+- `simonwillison.net/2026/Feb/7/software-factory/` and `simonwillison.net/guides/agentic-engineering-patterns/` — Round-1 backfill candidates. If retrieved, may sharpen `research/05-simon-willison.md` quotations.
+- `el-kaim.com/the-dark-factory-...` — Round-1 backfill candidate for `research/07-dark-factory.md`.
+- `factory.strongdm.ai/principles` and `/techniques` — Round-1 backfill candidates for `research/01-strongdm-factory.md`.
+- `every.to/guides/compound-engineering` — Round-1 backfill candidate for `research/03-every-compound-engineering.md`.
+
+For each successfully-retrieved URL, **decide whether it actually changes a claim** before editing a report — most of the Round-1 reconstructions used multi-source cross-checks and may already be accurate. Only edit if direct evidence contradicts or sharpens existing claims.
+
+If issue #8's workflow **failed** (e.g. all URLs returned 403 from Wayback too), close the issue with a brief comment explaining what was tried and what to do next (probably: try direct Wayback `web.archive.org/web/<timestamp>/<url>` with a recent specific timestamp instead of the redirect-to-latest form). Then proceed to step 2 without those sources.
+
+#### Step 2 — Dispatch subagent 08
+
+**Subagent 08** (Jaymin Foundations + Patterns). The prompt in §3.1 is unchanged. All source files are accessible via raw.githubusercontent.com; no fetch action needed.
+
+#### Step 3 — Dispatch subagent 10
+
+**Subagent 10** (Overstory substrate audit). The prompt in §3.3 is unchanged. All source files accessible via raw.githubusercontent.com.
+
+#### Step 4 — Dispatch subagent 09-completion
+
+**Subagent 09-completion** (Jaymin Ch 6 sub-pages 1–7 + Ch 8 + Ch 9). Use the prompt in §3.2 but **instruct the agent that `research/09-jaymin-harnesses-partial.md` already exists** — it should read that report's §11 ("What's still pending") for context, then deepen rather than redo. Especially Ch 9.7 (*Software Factories*) is high-leverage.
+
+#### Step 5 — Dispatch subagent 12-completion
+
+**Subagent 12-completion** (gastown / kotadb / pi-mono / book Ch 10). Prompt in §3.5; analogous instruction that `research/12-adjacent-ecosystem.md` exists with the Tier-2 capsules done.
+
+#### Step 6 — Dispatch subagent 13 (synthesis)
+
+Run **only after** 08, 10, 09-completion, 12-completion are all in. Prompt in §3.6 unchanged.
+
+#### Step 7 — Update architectures/
+
+Update `architectures/` based on 13's recommendations. Preserve Round-1 architecture text as `architectures/0N-*.md` with a "Round 1" stanza; add Round-2 deltas as new section or sibling file.
+
+#### Parallelism notes
+
+Steps 2, 3, 4, 5 can be dispatched **in parallel** in a single multi-Agent message; they share no files. Steps 1 and 6 are sequential bottlenecks. Step 7 is human-curated and likely needs `AskUserQuestion` checkpoints.
+
+**Resume-from-cold checklist:** If you are picking this up after a session shutdown, your very first commands should be:
+
+```bash
+# 1. Make sure you have all relevant branches locally
+git fetch origin
+
+# 2. See what state main is in and what fetch branches exist
+git log --oneline -10 origin/main
+git branch -r | grep -E "fetched/|claude/"
+
+# 3. Read this PLAN's §10.4 step 1 above. Drain #8 if needed.
+```
+
+### 10.5 Workflow lessons learned (for future agents using the fetch action)
+
+- **Job-level `if:` skips are silent in the Actions UI.** Always gate via logged step instead.
+- **`length()` is not a GitHub Actions expression function.** Use bash `${#VAR}` at runtime.
+- **`author_association` is computed differently by the REST API and the webhook payload.** Don't use it as a gate. Use a label or username allowlist.
+- **`mcp__github__issue_write` with an unknown label name auto-creates the label** (default color #ededed). Apply the `fetch-urls` label at issue-creation time to fire the workflow immediately, no follow-up edit needed.
+
+---
+
+*End of research plan v0.2 — `research/PLAN.md`. Originally v0.1 was structured around six subagents in §3; v0.2 records the lead-agent partial pass and the resumption checklist.*

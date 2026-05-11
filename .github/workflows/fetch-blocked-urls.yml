@@ -79,7 +79,7 @@ jobs:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_USER: ${{ github.event.issue.user.login }}
           ISSUE_ASSOC: ${{ github.event.issue.author_association }}
-          ISSUE_BODY_LEN: ${{ length(github.event.issue.body) }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
           echo "event_name        = $EVENT_NAME"
           echo "event.action      = $ACTION"
@@ -89,7 +89,7 @@ jobs:
           echo "issue title       = $ISSUE_TITLE"
           echo "issue user        = $ISSUE_USER"
           echo "issue association = $ISSUE_ASSOC"
-          echo "issue body length = $ISSUE_BODY_LEN"
+          echo "issue body length = ${#ISSUE_BODY}"
 
       - name: Enforce title-prefix gate
         id: title_gate

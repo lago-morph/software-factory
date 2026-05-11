@@ -3,8 +3,17 @@
 **Sources covered:**
 - https://news.ycombinator.com/item?id=46924426 — HN: "Software factories and the agentic moment" (links to https://factory.strongdm.ai/). **ACCESSED** via local mirror: `/home/user/software-factory/news.ycombinator.com__item__q__id_eq_46924426.html` (712 KB, 459 comments, 304 points, submitter: `mellosouls`, story URL https://factory.strongdm.ai/).
 - https://www.lennysnewsletter.com/p/an-ai-state-of-the-union — Lenny Rachitsky interview with Simon Willison ("An AI state of the union: We've passed the inflection point, dark factories are coming, and automation timelines"). **ACCESSED** via local mirror: `/home/user/software-factory/www.lennysnewsletter.com__p__an-ai-state-of-the-union.html`. The interview body is paywalled; the visible portion is the editorial summary, sponsors, and the 45-entry references section. Verbatim Willison quotes are reconstructed from the visible summary bullets plus referenced Willison blog posts (cited inline).
+- https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens — Lenny Rachitsky interview with Boris Cherny ("Head of Claude Code: What happens after coding is solved | Boris Cherny", Feb 19, 2026). **PARTIAL** access via Wayback Machine snapshot (capture timestamp 2026-05-04). Both the direct URL and the Wayback capture paywall the interview body and the "biggest takeaways" section. Visible material: editorial intro, "We discuss" topic list, "Where to find Boris Cherny" links, the full "Referenced:" link list, and "Recommended books".
 
-**Date:** 2026-05-10 (revision based on primary-source HTML)
+**Date:** 2026-05-11 (Boris Cherny interview added from Wayback snapshot, visible portions only)
+
+## Sources status
+
+| Source URL | Status | Notes |
+|---|---|---|
+| https://news.ycombinator.com/item?id=46924426 | FULL | Local HTML mirror; 459 comments parsed verbatim. |
+| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | PARTIAL | Local HTML mirror; body paywalled. Visible: editorial summary + 45-entry references section. |
+| https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens | PARTIAL | Body paywalled directly and via Wayback (`web.archive.org/web/20260504124102/...`). Visible: editorial intro, 8-item topic list, host/guest links, ~30-entry "Referenced:" section, recommended books. The "My biggest takeaways from this conversation" body is gated. |
 
 ---
 
@@ -317,10 +326,82 @@ References from the previous bibliography that turned out **not** to be in the L
 
 ---
 
+## Lenny's Boris Cherny interview — what the Wayback snapshot reveals
+
+The second Lenny interview added in this revision is *"Head of Claude Code: What happens after coding is solved | Boris Cherny"* (published Feb 19, 2026). Boris Cherny is the creator and head of Claude Code at Anthropic; per the Lenny editorial intro, *"What began as a simple terminal-based prototype just a year ago has transformed the role of software engineering and is increasingly transforming all professional work."* The Lenny post's eighth topic line confirms a personal-bio detail not in the previous version of this report: Cherny *briefly left Anthropic for Cursor, then returned after just two weeks.*
+
+**Important access caveat:** This section is built **only from the editorial preface, the topic list, the host/guest links, and the references list** that are visible in the Wayback snapshot at `web.archive.org/web/20260504124102/https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens`. The actual interview body — including the section the post itself headlines as "My biggest takeaways from this conversation" — is paywalled in both the direct URL and the Wayback capture (Wayback shows: *"This post is for paid subscribers"*). No quotes from the interview body have been captured; do not insert any.
+
+### Topics the interview covers (verbatim from the visible "We discuss" list)
+
+The visible portion of the post lists eight numbered topics that the conversation covers, reproduced here verbatim because the topic list itself is the most concrete signal we have about the interview's content:
+
+1. *"How Claude Code grew from a quick hack to 4% of public GitHub commits, with daily active users doubling last month"*
+2. *"The counterintuitive product principles that drove Claude Code's success"*
+3. *"Why Boris believes coding is 'solved'"*
+4. *"The latent demand that shaped Claude Code and Cowork"*
+5. *"Practical tips for getting the most out of Claude Code and Cowork"*
+6. *"How underfunding teams and giving them unlimited tokens leads to better AI products"*
+7. *"Why Boris briefly left Anthropic for Cursor, then returned after just two weeks"*
+8. *"Three principles Boris shares with every new team member"*
+
+Two of these eight items reference an Anthropic product called **Cowork** (the references list points to `https://www.anthropic.com/webinars/future-of-ai-at-work-introducing-cowork`); the previous version of this report had no mention of Cowork. The "4% of public GitHub commits, daily active users doubling last month" claim from item 1 is now the only quantitatively-anchored Cherny number we can cite to the visible portion of the source.
+
+### Where to find Boris Cherny (verbatim)
+
+- X: https://x.com/bcherny
+- LinkedIn: https://www.linkedin.com/in/bcherny
+- Website: https://borischerny.com
+
+### Sponsors of the episode (visible "Brought to you by" block)
+
+DX (`getdx.com/lenny`); Sentry (`sentry.io/lenny`); Metaview (`metaview.ai/lenny`).
+
+### Cherny interview "Referenced:" list (verbatim)
+
+The visible references section captures the trail of related sources Boris brings up. Reproduced verbatim:
+
+| # | Verbatim title / label | URL |
+|---|---|---|
+| 1 | Everyone should be using Claude Code more | https://www.lennysnewsletter.com/p/everyone-should-be-using-claude-code |
+| 2 | Cursor | https://cursor.com |
+| 3 | "The rise of Cursor: The $300M ARR AI tool that engineers can't stop using" — Michael Truell (co-founder and CEO) | https://www.lennysnewsletter.com/p/the-rise-of-cursor-michael-truell |
+| 4 | Anthropic | https://www.anthropic.com |
+| 5 | "Anthropic's CPO on what comes next" — Mike Krieger (co-founder of Instagram) | https://www.lennysnewsletter.com/p/anthropics-cpo-heres-what-comes-next |
+| 6 | Claude Code Is the Inflection Point | https://newsletter.semianalysis.com/p/claude-code-is-the-inflection-point |
+| 7 | "Spotify says its best developers haven't written a line of code since December, thanks to AI" | https://techcrunch.com/2026/02/12/spotify-says-its-best-developers-havent-written-a-line-of-code-since-december-thanks-to-ai/ |
+| 8 | "Anthropic co-founder on quitting OpenAI, AGI predictions, $100M talent wars, 20% unemployment, and the nightmare scenarios keeping him up at night" — Ben Mann | https://www.lennysnewsletter.com/p/anthropic-co-founder-benjamin-mann |
+| 9 | Haiku | https://www.anthropic.com/claude/haiku |
+| 10 | Sonnet | https://www.anthropic.com/claude/sonnet |
+| 11 | Opus | https://www.anthropic.com/claude/opus |
+| 12 | Jenny Wen on X | https://x.com/jenny_wen |
+| 13 | Johannes Gutenberg | https://en.wikipedia.org/wiki/Johannes_Gutenberg |
+| 14 | Anthropic jobs | https://www.anthropic.com/careers/jobs |
+| 15 | Lenny's AI poll post on X | https://x.com/lennysan/status/2020266745722991051 |
+| 16 | Fiona Fung on LinkedIn | https://www.linkedin.com/in/fionafung |
+| 17 | Brandon Kurkela on LinkedIn | https://www.linkedin.com/in/bkurkela |
+| 18 | Cowork | https://www.anthropic.com/webinars/future-of-ai-at-work-introducing-cowork |
+| 19 | Chris Olah on X | https://x.com/ch402 |
+| 20 | The Bitter Lesson | http://www.incompleteideas.net/IncIdeas/BitterLesson.html |
+| 21 | *3 Body Problem* on Netflix | https://www.netflix.com/title/81024821 |
+| 22 | Acquired podcast | https://www.acquired.fm |
+| 23 | Acquired: The Complete History & Strategy of Nintendo | https://www.acquired.fm/episodes/nintendo |
+
+**Recommended books** (from the same visible section): *Programming TypeScript* by Boris Cherny himself (O'Reilly); *Functional Programming in Scala* (Pilquist et al.); *Accelerando* (Stross); *Wandering Earth* (Liu); *The Three-Body Problem* (Liu); *A Fire Upon the Deep* (Vinge); *A Deepness in the Sky* (Vinge).
+
+### Cross-source observations
+
+- The Cherny interview directly references the same Mike Krieger / Anthropic CPO interview cited elsewhere in this corpus, plus *"Claude Code Is the Inflection Point"* on SemiAnalysis — the same "inflection point" phrasing Willison uses about November 2025 in the other Lenny interview.
+- *The Bitter Lesson* (Sutton) appearing in the references is consistent with topic #6 above ("underfunding teams and giving them unlimited tokens leads to better AI products") — i.e., Cherny is likely making the Bitter-Lesson argument that scale-of-compute beats clever engineering at the team-building level.
+- The Spotify-developers TechCrunch link (Feb 12, 2026) and Cherny's "coding is solved" framing (topic #3) both point to the same thesis Willison and bitwize are circling around, but Cherny appears to be making it from inside Anthropic with first-party metrics (the "4% of public GitHub commits" line).
+- The Boris-Cherny → Cursor → Anthropic sequence (topic #7) is potentially load-bearing for understanding the competitive dynamic between the two Claude Code competitors; the Wayback snapshot does not reveal *why* he returned, only that he did, after two weeks.
+
+---
+
 ## Top 3-5 referenced posts — brief summaries
 
 ### 1. "Head of Claude Code: What happens after coding is solved" — Boris Cherny (Lenny ref #4)
-**URL:** https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens. Cherny (head of Claude Code at Anthropic) reportedly has not edited a single line of code by hand since November 2025, ships 10–30 PRs/day, and orchestrates 10–15 parallel sessions as "workers." The human's role becomes *scheduler of capacity*. The 10–15 (Cherny) vs. "mentally exhausted by 11 a.m." (Willison) delta suggests the binding constraint is human role specialization, not raw model capability.
+**URL:** https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens. Cherny (head of Claude Code at Anthropic) reportedly has not edited a single line of code by hand since November 2025, ships 10–30 PRs/day, and orchestrates 10–15 parallel sessions as "workers." The human's role becomes *scheduler of capacity*. The 10–15 (Cherny) vs. "mentally exhausted by 11 a.m." (Willison) delta suggests the binding constraint is human role specialization, not raw model capability. (The two specific Cherny stats above — 10–30 PRs/day and 10–15 parallel sessions — were carried over from the previous version of this report and remain *unverified against primary source*: see the dedicated Boris Cherny section below for what the Wayback snapshot does and does not actually say.)
 
 ### 2. "The lethal trifecta for AI agents" — Simon Willison, Jun 16, 2025 (Lenny ref #30)
 **URL:** https://simonwillison.net/2025/Jun/16/the-lethal-trifecta. Prompt injection becomes catastrophic when an agent has all three: (1) private data access, (2) exposure to untrusted content, (3) external communication. Block any one. The Lenny editorial pairs this directly with the Challenger metaphor — Willison expects a Challenger-style AI disaster from a prompt-injection chain. A factory whose agents have file-system, network, *and* secret access has all three legs.

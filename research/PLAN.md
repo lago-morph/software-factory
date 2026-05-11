@@ -352,7 +352,7 @@ Per-subagent expectation, assuming a ~200k-context model:
 | Issue | Purpose | Status | Result |
 |---|---|---|---|
 | [#4](https://github.com/lago-morph/software-factory/issues/4) | Tier-1 + Tier-2 initial pull (14 URLs) | Closed (acted on) | 13/14 fetched; merged via `fetched/issue-4` branch into `claude/round-2-research-consolidation`. The 1 failure is the Substack manifesto (Substack 403s GitHub Actions IPs). |
-| [#8](https://github.com/lago-morph/software-factory/issues/8) | Wayback supplements (Substack + arXiv HTML render + Round-1 backfill candidates) | In flight | Should produce `fetched/issue-8`. Apply the workflow's standard merge instructions when comment lands. |
+| [#8](https://github.com/lago-morph/software-factory/issues/8) | Wayback supplements (Substack + arXiv HTML render + Round-1 backfill candidates) | Closed (acted on 2026-05-11) | `fetched/issue-8` produced 10 URL pairs. Outcomes: Substack manifesto ✅ → report 09 §12; arXiv HTML v2 ✅ → report 11 v0.2; Lenny "head-of-claude-code" PARTIAL (paywall persists) → new section in report 06; Lenny "an-ai-state-of-the-union" PARTIAL (paywall persists; no new info beyond #4 capture); el-kaim ❌ (Wayback never archived); 5 Round-1 backfill duplicates skipped (primary-source content already incorporated). All cache files deleted after incorporation. |
 
 ### 10.2 Reports produced
 
@@ -363,7 +363,7 @@ Lead-agent-written, using the freshly-fetched content. These are *not* full suba
 | 08 — Jaymin Foundations + Patterns | Ch 1, 2, 3, 4, 5, 7 of the book | **Pending.** | All source files live in `raw.githubusercontent.com/jayminwest/agentic-engineering-book/main/chapters/*` and are reachable from the sandbox. No fetch dependency. The original prompt in §3.1 stands. |
 | 09 — Jaymin Harnesses + Practices + Mental Models | Ch 6, 8, 9 of the book | **Partial.** `research/09-jaymin-harnesses-partial.md` covers Ch 6's index page in depth. Ch 6 sub-pages 1–7, Ch 8, Ch 9 are pending. | Highest-priority missing piece: Ch 9.7 *Software Factories*. |
 | 10 — Overstory substrate audit | The `jayminwest/overstory` repo | **Pending.** | All source files reachable via `raw.githubusercontent.com`. No fetch dependency. The original prompt in §3.3 stands. |
-| 11 — OpenHands substrate audit | `All-Hands-AI/OpenHands` plus SDK/CLI/Action companion repos and docs | ✅ `research/11-openhands-substrate-audit.md` v0.1 | Substantive on CI/CD-relevant surfaces. One open follow-up: full SDK paper body (PDF didn't text-extract; HTML render queued in #8). |
+| 11 — OpenHands substrate audit | `All-Hands-AI/OpenHands` plus SDK/CLI/Action companion repos and docs | ✅ `research/11-openhands-substrate-audit.md` v0.2 | Substantive on CI/CD-relevant surfaces. The previously-open follow-up (full SDK paper body) is now incorporated via the issue #8 Wayback HTML render of `arxiv.org/html/2511.03690v2`. |
 | 12 — Adjacent ecosystem | Tier-2 perspective pieces + book Ch 10 + appendix examples | **Partial.** `research/12-adjacent-ecosystem.md` covers the six Tier-2 pieces. gastown / kotadb / pi-mono / book Ch 10 still pending. | All remaining sources reachable via raw.githubusercontent.com. |
 | 13 — Round-2 synthesis | Reads reports 08-12 + Round-1 synthesis + architectures comparison | **Blocked.** Cannot run until 08 + 10 are written, and ideally until 09 and 12 are completed past their partial state. | The synthesis prompt in §3.6 is unchanged. |
 
@@ -382,7 +382,11 @@ Even at partial state, the Round-2 work changes things that should be reflected 
 
 A future agent (or future Claude session) can pick up from here. Do these in sequence.
 
-#### Step 1 (MANDATORY FIRST ACTION) — Drain the in-flight fetch issue #8
+#### Step 1 (DONE 2026-05-11) — Drained the in-flight fetch issue #8
+
+Issue [#8](https://github.com/lago-morph/software-factory/issues/8) was processed: Wayback fetches were triaged, content was incorporated into reports 06 / 09 / 11, and cache files were deleted. See §10.1 for the per-URL outcome summary. The original step-1 instructions are retained below for reference / future Wayback-supplement issues.
+
+<details><summary>Original step-1 instructions (preserved for future reference)</summary>
 
 The session that wrote v0.2 of this plan shut down before issue [#8](https://github.com/lago-morph/software-factory/issues/8) finished fetching. **Before doing anything else, check whether it has landed.**
 
@@ -413,6 +417,8 @@ What issue #8 was asked to fetch (Wayback-Machine routes — see issue body for 
 For each successfully-retrieved URL, **decide whether it actually changes a claim** before editing a report — most of the Round-1 reconstructions used multi-source cross-checks and may already be accurate. Only edit if direct evidence contradicts or sharpens existing claims.
 
 If issue #8's workflow **failed** (e.g. all URLs returned 403 from Wayback too), close the issue with a brief comment explaining what was tried and what to do next (probably: try direct Wayback `web.archive.org/web/<timestamp>/<url>` with a recent specific timestamp instead of the redirect-to-latest form). Then proceed to step 2 without those sources.
+
+</details>
 
 #### Step 2 — Dispatch subagent 08
 

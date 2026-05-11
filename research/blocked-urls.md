@@ -1,7 +1,7 @@
-# Blocked URLs — Sandbox Reachability Report (v2)
-**Date:** 2026-05-10
-**Version:** 2 — most sources now ACCESSED via user-committed local copies
-**Purpose:** Originally enumerated every URL the research subagents could not fetch. After the user committed local copies of the previously-blocked pages to the repo root, most are now accessible. This v2 records the final status and what remains genuinely blocked.
+# Blocked URLs — Sandbox Reachability Report (v3)
+**Date:** 2026-05-10 (v2); 2026-05-11 (v3 update after issue #8 Wayback fetches landed)
+**Version:** 3 — incorporates Wayback-Machine retry results from issue #8
+**Purpose:** Originally enumerated every URL the research subagents could not fetch. After the user committed local copies of the previously-blocked pages to the repo root, most became accessible (v2). Issue #8 ran a Wayback-Machine retry pass for the rest; v3 records the final status. Local cached source files have since been deleted from the repo (content is incorporated into the reports).
 
 ---
 
@@ -37,7 +37,7 @@ The user committed local saved copies of the previously-blocked pages to the rep
 | https://simonwillison.net/tags/evals/ | local | ✅ ACCESSED (large index) |
 | https://simonwillison.net/tags/agentic-engineering/ | local | ✅ ACCESSED (large index) |
 | https://news.ycombinator.com/item?id=46924426 | `news.ycombinator.com__item__q__id_eq_46924426.html` | ✅ ACCESSED (712 KB, 459 comments, 304 points) |
-| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | `www.lennysnewsletter.com__p__an-ai-state-of-the-union.html` | ⚠️ ACCESSED but **interview body paywalled** — only summary bullets, sponsors, and references list visible |
+| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | (incorporated; cache file deleted) | ⚠️ PARTIAL — interview body paywalled in both direct fetch and Wayback retry (issue #8). Only summary bullets, sponsors, and references list available; reflected as such in report 06. |
 
 GitHub repos remained accessible throughout (the user did not need to commit copies).
 
@@ -45,15 +45,15 @@ GitHub repos remained accessible throughout (the user did not need to commit cop
 
 ## What remains BLOCKED
 
-| URL | Local file (if any) | Status |
-|---|---|---|
-| https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e | `el-kaim.com__the-dark-factory-...html` | ❌ Cloudflare challenge page only (5.8 KB, `<title>Just a moment...</title>`) |
-| https://medium.com/@welkaim/about | `medium.com___at_welkaim__about.html` | ❌ Cloudflare challenge page only (5.5 KB) |
-| https://welkaim.medium.com/ | `welkaim.medium.com.html` | ❌ Cloudflare challenge page only (5.5 KB) |
+| URL | Status |
+|---|---|
+| https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e | ❌ Direct fetch returned Cloudflare challenge. **Wayback retry (issue #8) confirmed: not archived** — `web.archive.org` returns "The Wayback Machine has not archived that URL" for `https://el-kaim.com/`. Cache stub deleted. |
+| https://medium.com/@welkaim/about | ❌ Cloudflare challenge page only. Cache stub deleted. |
+| https://welkaim.medium.com/ | ❌ Cloudflare challenge page only. Cache stub deleted. |
 
 **Implication for report 07 (Dark Factory):** the reconstruction-from-secondary-sources stands. No verbatim El Kaim quotes are available in the corpus. Sibling reports (01, 05, 06) attribute the "Dark Factory" framing to Dan Shapiro, not to El Kaim — so cross-attribution from sibling primary sources cannot upgrade the El Kaim report's quote confidence.
 
-**To fully resolve report 07:** the user would need to fetch the el-kaim Medium article from a non-Cloudflare-challenged environment (e.g., manual browser save with cookies, or via an alternative archive like archive.org's Wayback Machine if El Kaim's article is preserved there).
+**To fully resolve report 07:** the user would need to fetch the el-kaim Medium article from a non-Cloudflare-challenged environment (e.g., manual browser save with cookies). Wayback is no longer a viable route — the article was never archived there.
 
 ---
 

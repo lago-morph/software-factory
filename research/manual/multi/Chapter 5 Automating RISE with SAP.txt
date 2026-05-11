@@ -1,0 +1,663 @@
+Chapter 5: Automating RISE with SAP Through Specification-Driven Enterprise Architecture
+William El Kaim
+William El Kaim
+
+Following
+29 min read
+·
+Apr 28, 2026
+
+
+
+
+
+The first four posts in this series argued that enterprise architecture must become more explicit, more continuous, and more executable. This post proves the mechanism by applying it to one of the most demanding transformation contexts in the enterprise: RISE with SAP and the SAP Activate lifecycle.
+
+This post is not primarily about SAP programs, but serves as the proving ground because ERP transformations concentrate many of the problems this series has described: intent ambiguity, core-model erosion, local variation, integration debt, governance latency, and the difficulty of keeping architecture relevant during execution. If specification-driven architecture works here, it can work in other large transformation contexts as well.
+
+The model described here should be read as a target architecture, not as a claim about current SAP program practice. Its individual components already exist in partial form: SAP Activate, Cloud ALM, clean-core guidance, EA councils, policy-as-code, AI-assisted development, and emerging agent/tool interfaces. What remains uncommon is their integration into one specification-driven governance chain.
+
+The model follows the same attractor pattern that StrongDM has described for their Software Factory, applied here to enterprise transformation governance rather than software development. The parallel is worth understanding because it clarifies the architectural choice.
+
+1. Why SAP transformation exposes architecture’s operational gap
+Large-scale SAP transformations are among the most consequential change programs an enterprise undertakes. A move to S/4HANA, whether greenfield, brownfield, or selective data transition, touches process models, data structures, organizational hierarchies, integration landscapes, compliance frameworks, and operating routines across every business function the enterprise runs.
+
+RISE with SAP, the commercial and methodological wrapper SAP provides for this journey, packages cloud infrastructure, the SAP Activate methodology, and an increasingly ambitious integrated toolchain into a single program structure. RISE with SAP has become a major transformation path for SAP customers worldwide.
+
+Yet the role of enterprise architecture in these programs remains structurally weak. Architecture teams participate, review, and advise; they produce target-state diagrams and integration schematics. What they rarely do is govern the transformation through explicit, machine-usable specifications that bind the program’s design choices to enforceable constraints and traceable decisions. The architecture function sits alongside the SAP program rather than inside it.
+
+The result is a pattern visible across industries: the program respects the architecture in the early steering committee presentations, then gradually diverges from it as Fit-to-Standard workshops surface exceptions, country rollouts accumulate local modifications, and integration teams solve immediate problems without formal design decisions.
+
+This is the same weakness diagnosed in Post 1 (architecture that describes but does not steer) made sharply visible in the context of a transformation methodology that already has lifecycle phases, governance checkpoints, and tooling.
+
+The SAP Activate methodology provides Discover, Prepare, Explore, Realize, Deploy, and Run phases; Fit-to-Standard workshops with scope items, best-practice content, and quality gates; and SAP Cloud ALM as a lifecycle orchestration platform.
+
+What it does not provide yet, and what this post argues it needs, is a specification-driven architecture layer that makes design decisions, clean-core constraints, extension boundaries, and variability rules explicit enough to be checked, enforced, and fed back into the program automatically.
+
+The integration described in this post (executable clean-core constraints, automated phase-gate checks, variability specifications governing country rollouts, an EA council operating through structured design decisions inside SAP Activate) represents a target architecture, not a description of current practice. The individual elements exist in varying degrees of maturity:
+
+SAP Cloud ALM provides operational tooling.
+Clean-core guidelines are published and increasingly adopted.
+Some enterprises operate architecture councils within SAP programs.
+Policy-as-code is well established in platform engineering outside the SAP ecosystem.
+What does not yet exist is the full chain from variability specification through executable constraint to automated conformance at country-variant scale, operating inside SAP Activate’s lifecycle. The remaining sections of this post build that chain.
+
+2. The StrongDM Software Factory and why it matters here
+StrongDM’s Software Factory described publicly, is built on a deceptively simple loop: Seed, Validation, Feedback:
+
+A specification (the seed) drives an agent that generates code.
+A validation harness evaluates the output, not by inspecting the code but by running scenarios that test externally observable behavior.
+The results feed back into the next iteration.
+The loop runs until the holdout scenarios pass and stay passing.
+The radical move in the StrongDM model is that code is treated analogously to neural network weights: opaque, not reviewed by humans, and validated exclusively by external behavior. Internal structure does not matter. What matters is whether the output satisfies the specification under test conditions. Human control does not live in code review. It lives in the specification and the validation harness. Change the spec, and the agent’s behavior changes. Change the scenarios, and the acceptance criteria change. The control surface is the specification, not the artifact.
+
+Two consequences of this design matter for enterprise architecture:
+
+The graph of dependencies, phases, and transitions becomes the primary governance artifact. An agent told “build this” makes its own decisions about sequencing, dependencies, and parallelization. An agent bound to a graph does not: those decisions are already made, explicitly, with human accountability behind them.
+Validation becomes probabilistic. StrongDM uses the term “satisfaction” rather than “pass/fail” because their validation includes LLM-as-judge assessments that produce confidence scores rather than binary results.
+The SAP governance model in this post applies the same pattern.
+
+The variability specification and the clean-core policy are the seed.
+The phase graph (the Directed Acyclic Graph of SAP Activate phases) is the structure that constrains the agent.
+The edge evaluations at each transition are the validation harness.
+The conformance results flowing back from Run to Prepare are the feedback loop.
+The “satisfaction” measure is the convergence of conformance scores across country variants over successive iterations.
+The EA council owns the seed and the graph, not the individual evaluations.
+3. The attractor pattern and the phase graph
+The StrongDM Attractor pattern runs three stages in a loop: Seed, Validation, Feedback. Applied to SAP governance, this loop maps directly onto the structure of a directed acyclic graph (DAG).
+
+The nodes in the graph represent SAP Activate phases. Each node produces architectural artifacts (a variability specification, a set of design decisions, an extension inventory, a conformance report) and consumes artifacts produced by earlier nodes. Nodes are deterministic structure: they define what must exist at each point in the lifecycle. The EA council controls which nodes exist, what each node produces, and what dependencies connect them. Adding a node, removing a node, or changing what a node produces is a graph edit, versioned and traceable.
+
+The edges in the graph represent transitions between phases. Each edge has a transition condition: “is this country variant ready to move from Explore to Realize?” The edges are where the LLM evaluates. At each transition, the LLM receives the seed documents (the variability specification and the clean-core policy), the deterministic facts produced by Rego (which extensions pass, which fail, on which rules), and the contextual evidence from the current node (design decisions, SAP ABAP Test Cockpit findings, workshop outcomes). It produces a structured judgment: approve, approve-with-exceptions, or block, with confidence level, specific findings, and a recommendation.
+
+This separation is the core architectural decision: human control lives in the graph definition (the nodes and their dependencies), not in the individual edge evaluations. The EA council does not review every extension or approve every transport, but defines the structure within which evaluations occur.
+
+Adjusting the graph adjusts all agent behavior, adjusting the seed (the specifications) adjusts what the LLM evaluates against. Neither requires retraining anything.
+
+The attractor emerges from the feedback stage. After each Validation pass, the Feedback stage measures convergence (data completeness, compliance rate), remediates gaps (the LLM classifies missing data, the system detects cross-country patterns), and revises the seed when evidence warrants it (the EA council adds a variation point, updates the policy). The revised seed feeds the next Validation pass. The loop runs until the metrics stabilize: the holdout scenarios (the transition conditions) pass and stay passing.
+
+Three stages, repeating:
+
+Press enter or click to view image in full size
+
+We developed prototype, as a runnable Python project, to demonstrate the feasibility of this loop end to end. The prototype loads the seed documents, executes the actual Rego policy (via regopy, a Python binding for the Rego language), calls the Claude API for edge evaluation, and runs the attractor loop for three iterations, producing the convergence history described in Section 5 of this post.
+
+4. SAP Activate as a phase graph
+Let’s look at SAP Activate and how to represent it.
+
+4.1. SAP Activate Phases
+SAP Activate organizes transformation work into phases: Discover, Prepare, Explore, Realize, Deploy, and Run. These phases carry specific deliverables, governance expectations, and readiness criteria
+
+Press enter or click to view image in full size
+
+SAP Activate phases and key artifacts
+The most architecturally consequential phase is Explore, because it is where the enterprise discovers the gap between what SAP provides and what the business needs. Every gap is a potential design decision: some can be closed through configuration, others require approved extensions or process change on the business side, and a few are genuine exceptions that need formal architectural treatment. In current practice, Fit-to-Standard outcomes are captured as scope items, requirements, and workshop notes. An architecture-enriched Explore phase would capture each significant gap as a design decision record with the requirement, the standard process, the gap, the chosen resolution, the rationale, the clean-core implications, and the review trigger. These records become the design-decision corpus that governs the Realize phase.
+
+The enforcement role during Realize is where executable constraints become essential. Manual review cannot scale across a large Realize phase with multiple workstreams, sprint cycles, and country teams working in parallel. Constraints must be expressed as policy rules that can be checked against the actual artifacts being produced: code, configuration, integration definitions, extension classifications.
+
+Across all phases, the argument is the same: SAP Activate already has the lifecycle shape. What it lacks is an explicit specification layer that makes architecture a structural participant at each phase rather than a periodic reviewer.
+
+4.2. SAP Activate as a Directed Acyclic Graph (DAG)
+The architecture model proposed here treats these phases not as a checklist or a Gantt chart, but as a directed acyclic graph (DAG) where each node produces and consumes architectural artifacts, each edge has a transition condition, and each transition is evaluated by an LLM against governing specifications.
+
+Press enter or click to view image in full size
+
+SAP Activate Phases
+The graph is provided as a Graphviz DOT file, editable and re-renderable for any enterprise’s specific process areas and governance structure.
+
+The architectural significance of this choice follows from an insight that StrongDM has articulated clearly: an agent told “build this” makes its own decisions about sequencing, dependencies, and parallelization. An agent bound to a phase graph does not. Those decisions are already made, explicitly, with human accountability behind them. Human control does not live in individual code reviews or extension approvals. It lives in the definition of the structure within which the agent operates.
+
+This is an architectural decision with wide-ranging consequences. The EA council can adjust the graph without retraining any agent. It can add new phases, change transition conditions, introduce parallel paths (for instance, a separate regulatory-extension track that bypasses the standard approval flow). The control logic is versioned, diffable, and human-readable, even when the artifacts the agent generates from it may no longer be.
+
+Earlier posts introduced policy-as-code through OPA and Rego as a way to make architectural constraints executable. That remains true for structural facts: which APIs are released, which transports contain modifications, which extensions persist data in the core. Those facts are deterministic and Rego extracts them efficiently.
+
+What the graph model adds is the recognition that the higher-order governance question at each transition (“is this country variant ready to move from Explore to Realize?”) is not a conjunction of binary checks. It is a structured judgment that consumes those facts as input alongside variability specifications, design decisions, and context that only a language model can interpret. Rego does not disappear, but shifts from gating engine to structured fact extractor, and the graph edge evaluation becomes the governance decision point.
+
+5. The seed
+The scaling challenge in SAP transformations is not primarily about project management. It is about managed variability.
+
+5.1. The SAP core model and the variability problem
+The SAP core model (the enterprise’s chosen configuration of SAP standard processes, data structures, organizational hierarchies, and integration patterns) represents the common baseline across all deployments.
+
+It typically covers the canonical process families: Order to Cash, Procure to Pay, Record to Report, Plan to Produce, Hire to Retire. The core model is configured against SAP best practices and the enterprise’s own harmonization decisions. It is not SAP’s default. It is the enterprise’s deliberate design choice about what “standard” means for them.
+
+The variability problem emerges because country deployments cannot all consume the core model identically. Differences arise from at least four distinct sources, and the architectural response must differ for each:
+
+Regulatory mandates (tax calculation, e-invoicing, statutory reporting, data residency) are non-negotiable and must be accommodated without violating clean core. They are the hardest category because they often require logic that SAP standard does not cover, forcing extension decisions that carry long-term maintenance and upgrade consequences.
+Localization configuration (chart of accounts, payment methods, bank communication formats, fiscal calendars) falls within SAP’s configuration scope but creates variant configurations that must be tested independently and governed for drift.
+Process variants (local approval workflows, country-specific logistics rules, regional pricing logic) sit in a grey zone between configuration and extension. This is where most clean-core violations originate because the boundary between configurable and custom is unclear without explicit design decisions about what constitutes an acceptable process deviation.
+Organizational and political variants represent differences that arise not from regulation or technical necessity but from local business units that insist on process differences for historical, competitive, or organizational reasons. These are the most architecturally contentious because the variation is discretionary, and the EA council must decide whether to accommodate, harmonize, or defer.
+Without a formal variability model, one that classifies each variation point by type, assigns governance authority, specifies extension boundaries, and defines conformance criteria, the core model erodes silently.
+
+Each country team makes locally rational decisions. A country extends the pricing logic because local commercial practice requires it. Elsewhere, a custom approval step appears because the regional compliance team insists. In yet another market, the output determination changes because the local warehouse uses a different labeling standard. Each decision is reasonable in isolation. The cumulative effect is a “core model” that exists on paper but not in practice.
+
+The enterprise discovers this when it tries to apply a cross-country change (a new regulatory requirement, a global process improvement, a platform upgrade) and finds that every deployment has diverged in undocumented ways.
+
+The variability must be specified, not just described. Each variation point needs a classification (regulatory, configuration, process, discretionary), a design decision (how it is accommodated), a constraint (what the variant must not violate), and a conformance check (how the enterprise verifies that the variant remains within bounds).
+
+5.2. Managing the variability
+The variability specification defines the envelope of permitted variation per process area. It classifies each variation point by type (regulatory, configuration, process, discretionary), assigns governance authority, specifies the permitted extension mechanism, and states the conformance rules that apply. The following specification illustrates this for Order to Cash, using the ea.codex/v1 schema introduced in Post 3 to maintain consistency across the series’ artifact model.
+
+apiVersion: ea.codex/v1
+kind: VariabilitySpec
+metadata:
+  name: order-to-cash-variability
+  version: "2.1"
+  owner: ea-council
+  lastReviewDate: "2026-03-15"
+  scope: global
+
+coreModel:
+  processArea: Order to Cash
+  sapModule: SD
+  baselineVersion: "S4H-2023.FPS02"
+  standardProcesses:
+    - id: OTC-010
+      name: Standard Order Processing
+      scopeItem: "1NS"
+      status: approved
+    - id: OTC-020
+      name: Pricing and Conditions
+      scopeItem: "2V4"
+      status: approved
+    - id: OTC-030
+      name: Billing and Invoicing
+      scopeItem: "1FC"
+      status: approved
+    - id: OTC-040
+      name: Credit Management
+      scopeItem: "1DM"
+      status: approved
+
+variationPoints:
+  - id: VP-OTC-001
+    name: Country-specific e-invoicing
+    classification: regulatory
+    affectedProcess: OTC-030
+    permittedExtensionType: side-by-side-btp
+    governanceAuthority: country-team
+    escalationTrigger: >
+      Any requirement to modify core billing tables or pricing
+      conditions to satisfy e-invoicing obligations
+
+  - id: VP-OTC-002
+    name: Regional pricing rules
+    classification: process
+    affectedProcess: OTC-020
+    permittedExtensionType: in-app-key-user
+    governanceAuthority: ea-council
+    escalationTrigger: >
+      Any request for custom ABAP pricing exits or modifications
+      to standard pricing procedures
+
+  - id: VP-OTC-003
+    name: Local credit check thresholds
+    classification: configuration
+    affectedProcess: OTC-040
+    permittedExtensionType: configuration-only
+    governanceAuthority: country-team
+    escalationTrigger: >
+      Any request to bypass credit check or modify credit
+      management logic
+
+  - id: VP-OTC-004
+    name: Country-specific order approval workflow
+    classification: discretionary
+    affectedProcess: OTC-010
+    permittedExtensionType: in-app-key-user
+    governanceAuthority: ea-council
+    escalationTrigger: >
+      Any workflow that requires custom ABAP development or
+      modifies the standard order document flow
+The classification of variation points by type (regulatory, configuration, process, discretionary) is not merely descriptive. It determines who has governance authority, what extension types are permitted, and when escalation is required.
+
+A regulatory variation point grants the country team authority to implement the necessary extension within defined boundaries.
+A discretionary variation point requires EA council approval before any development begins.
+The conformance rules are stated in terms that can be evaluated against actual artifacts: transports, deployment packages, configuration records, and extension inventories. Some rules can be checked automatically. Others require human judgment but are structured enough to be audited.
+
+The variability specification is the artifact that makes federated governance operational. Without it, the enterprise faces a false choice between two failure modes: over-centralization (the EA council reviews every decision, creating bottlenecks that the program works around) or under-governance (country teams operate autonomously, and the core model fragments).
+
+The specification defines the envelope within which country teams have authority, and the boundaries beyond which escalation is required. The sharper the envelope, the more autonomy country teams have, and the fewer escalations the council must handle.
+
+5.3. The clean-core policy
+SAP’s clean-core doctrine is straightforward: keep the S/4HANA core system free of custom modifications so that it remains upgrade-safe, innovation-ready, and aligned with SAP’s continuous delivery model. Extensions should use approved extension points:
+
+• side-by-side extensions on SAP Business Technology Platform,
+
+• in-app extensions using key-user tools and approved APIs, or
+
+• developer extensions within the ABAP Cloud programming model.
+
+Classic modifications to standard ABAP code, direct database table changes, and unsupported API usage should be eliminated.
+
+The difficulty is that clean core, as done in most SAP programs, is enforced through architecture principles documents, code review, and retrospective audit rather than through executable specification.
+
+A project architect tells the development team to keep the core clean, and the team interprets this guidance locally, with some teams reading it strictly and others pragmatically under deadline pressure.
+A Fit-to-Standard workshop surfaces a requirement that SAP standard does not cover, and the team faces a choice: build a side-by-side extension on BTP (architecturally correct, but slower to deliver and more complex to integrate), use an in-app extension (faster, but only if the requirement fits within key-user tooling), or write a classic modification (fastest, but creates upgrade debt and violates clean core).
+Under program pressure, the classic modification wins more often than architecture teams would like. Clean-core violations accumulate because the boundary between what is permitted and what is not remains implicit.
+
+The categories (side-by-side, in-app, developer extension, classic modification) are well-defined in SAP’s documentation. What is not well-defined in most programs is which categories are permitted for which types of requirements, who has authority to approve each category, what constraints each category must satisfy, and how conformance is verified after the fact.
+
+This is where clean core becomes a specification problem rather than a communication problem. The enterprise needs to express its clean-core rules in a form that can be evaluated against actual development artifacts.
+
+The clean-core policy defines the constraints every extension must satisfy. It is expressed as a Rego policy that can be loaded into Open Policy Agent and evaluated against JSON input documents. In the graph model, this policy does not gate transitions directly. It produces structured facts that the LLM consumes during edge evaluation: which extensions pass, which fail, and on which specific rules.
+
+package cleancore
+
+import future.keywords.in
+import future.keywords.if
+import future.keywords.contains
+
+default allow := false
+
+permitted_extension_types := {
+    "regulatory":     {"side-by-side-btp", "developer-extension-abap-cloud"},
+    "configuration":  {"configuration-only"},
+    "process":        {"in-app-key-user", "side-by-side-btp"},
+    "discretionary":  {"in-app-key-user", "side-by-side-btp"}
+}
+
+allow if {
+    extension_type_permitted
+    api_surface_approved
+    data_boundary_respected
+    upgrade_path_clear
+    governance_authority_valid
+}
+
+extension_type_permitted if {
+    classification := input.extension.variabilityClassification
+    ext_type := input.extension.extensionType
+    permitted := permitted_extension_types[classification]
+    ext_type in permitted
+}
+
+deny_reasons contains "Classic modification not permitted" if {
+    input.extension.extensionType == "classic-modification"
+}
+
+approved_api_types := {
+    "side-by-side-btp":                {"odata-v4", "soap-whitelisted", "event-mesh"},
+    "in-app-key-user":                 {"released-abap-api", "key-user-api"},
+    "developer-extension-abap-cloud":  {"released-abap-api", "odata-v4"},
+    "configuration-only":              {"none"}
+}
+
+api_surface_approved if {
+    ext_type := input.extension.extensionType
+    approved := approved_api_types[ext_type]
+    every api in input.extension.apisUsed {
+        api.type in approved
+    }
+}
+
+deny_reasons contains msg if {
+    ext_type := input.extension.extensionType
+    approved := approved_api_types[ext_type]
+    some api in input.extension.apisUsed
+    not api.type in approved
+    msg := sprintf("API '%s' of type '%s' not approved for '%s'",
+        [api.name, api.type, ext_type])
+}
+
+data_boundary_respected if {
+    input.extension.extensionType != "side-by-side-btp"
+}
+data_boundary_respected if {
+    input.extension.extensionType == "side-by-side-btp"
+    input.extension.dataBoundary.persistsInCore == false
+}
+
+upgrade_path_clear if {
+    input.extension.upgradeImpact.blocksQuarterlyUpdate == false
+}
+
+governance_authority_valid if {
+    input.extension.variabilityClassification != "discretionary"
+}
+governance_authority_valid if {
+    input.extension.variabilityClassification == "discretionary"
+    input.extension.governance.eaCouncilApproval == true
+}
+
+result := {
+    "allowed": allow,
+    "reasons": deny_reasons,
+    "extension": input.extension.name,
+    "country": input.extension.country
+}
+This is not pseudocode, but a valid Rego policy that can be loaded into Open Policy Agent and evaluated against JSON input documents describing extension proposals. Each rule checks one dimension of clean-core compliance:
+
+whether the extension type is permitted for the given variability classification,
+whether the APIs used are on the approved list for that extension type,
+whether the data boundary is respected (side-by-side extensions must not persist state in the S/4HANA core),
+whether the extension blocks quarterly updates, and
+whether the required governance approvals are in place.
+The deny_reasons set accumulates every violation found, so the output tells the development team not only that the extension is rejected but exactly which rules it violates. This is a meaningful difference from a binary pass/fail gate. A team that receives “API BAPI_SALESORDER_CHANGE” of type ‘unreleased-bapi’ is not approved for extension type ‘side-by-side-btp’” has actionable information. They know which API to replace, which approved alternatives to consider, and what the policy expects.
+
+Write on Medium
+The prototype we built executes it using regopy, a Python binding for the Rego language that evaluates data.cleancore.result against real JSON input documents describing extension proposals. Each extension is set as input, the policy is loaded into the interpreter, and the structured fact sheet (allowed true/false, specific violations) is returned. When the attractor loop revises the seed (adding a new variation point, updating the permitted extension types), the policy source is patched and reloaded for the next iteration. No OPA binary is required; regopy runs as a pure Python package.
+
+5.4. Synthesis: Seed in SAP context
+In SAP governance, two artifacts, the variability specification and the clean-core policy, are the seed and are not enforcement engines. They are context documents loaded into the LLM at every edge evaluation. The Rego policy defines the rules; the LLM evaluates whether the evidence at the edge satisfies them.
+
+6. Edge evaluation
+At each transition in the graph, the LLM reads the relevant context (specifications, Rego output, SAP ABAT Test Cockpit findings, design decisions, extension inventory, transport metadata) and evaluates whether the transition condition is met. The structure provides the frame. The evaluation remains probabilistic.
+
+Press enter or click to view image in full size
+
+Edge Evaluation Architecture
+The distinction between what the LLM does and what the Rego policy does must remain sharp:
+
+The Rego policy handles everything that can be evaluated deterministically: is this extension type permitted for the given classification? Is this API on the approved list? Does this extension persist data in the core? Those are structural properties with binary answers. Routing them through an LLM would add latency, cost, and the risk of hallucinated compliance assessments. The Rego policy produces a structured fact sheet (pass/fail per rule, with specific violations) that the LLM consumes as input.
+The LLM becomes essential where the input is unstructured, the classification requires interpretation, or the output is a draft that a human must review. At the Explore-to-Realize edge, for instance, the transition condition is not “do all binary checks pass?” It is “is this country variant ready to begin development, given its design decisions, its variability profile, its extension inventory, and the clean-core evaluation of its proposed extensions?” That question requires reading context that spans workshop notes, requirement descriptions, gap assessments, and policy output, and producing a structured judgment.
+The following prompt template illustrates how an edge evaluation works. The LLM receives the variability specification, the clean-core policy, and the specific evidence at the edge, and produces a structured classification with rationale.
+
+apiVersion: ea.codex/v1
+kind: EdgeEvaluationPrompt
+metadata:
+  name: explore-to-realize-evaluation
+  edge: Explore -> Realize
+  version: "1.0"
+
+systemContext: >
+  You are an enterprise architecture governance agent evaluating
+  whether a country variant is ready to transition from Explore
+  to Realize in an SAP Activate program. You evaluate evidence
+  against governing specifications and produce a structured
+  transition judgment.
+
+contextDocuments:
+  - type: VariabilitySpec
+    source: variability-spec-otc.yaml
+    role: Defines the approved variation envelope
+
+  - type: CleanCorePolicyOutput
+    source: cleancore-rego-results.json
+    role: >
+      Structured output from Rego evaluation of all proposed
+      extensions. Use these facts as deterministic input.
+
+  - type: DesignDecisionCorpus
+    source: design-decisions/{country}.json
+    role: All Fit-to-Standard gap resolutions for this variant
+
+  - type: ATCFindings
+    source: atc-findings/{country}.json
+    role: Static analysis results for all custom objects
+
+evaluationCriteria:
+  - Every identified gap has a design decision with classification
+  - All proposed extensions pass clean-core policy (or have
+    documented exception rationale)
+  - Extensions remain within the variability envelope
+  - Integration interfaces are documented with pattern and owner
+  - Test strategy covers all extension points
+
+expectedOutput:
+  type: JSON
+  schema:
+    transition: "approve | approve-with-exceptions | block"
+    confidence: "high | medium | low"
+    countryVariant: "string"
+    findings:
+      - category: "string"
+        status: "pass | fail | missing-data"
+        detail: "string"
+    exceptions:
+      - extensionName: "string"
+        violation: "string"
+        rationale: "string"
+        councilApprovalRequired: "boolean"
+    recommendation: "string"
+To make this concrete, two worked examples show the mechanism at different DAG edges.
+
+6.1. Explore-to-Realize edge (Germany, Order to Cash)
+During Explore, ACME Pharma’s German team conducted Fit-to-Standard workshops for Order to Cash. They identified twelve gaps between their business requirements and SAP standard process coverage. Each gap produced a design decision record. Three of the twelve gaps resulted in proposed extensions. The question at the edge is: is the German OTC variant ready to enter Realize?
+
+The edge evaluator assembles its context. The Rego policy has already evaluated the three proposed extensions and produced a structured fact sheet:
+
+{
+  "country": "DE",
+  "processArea": "Order to Cash",
+  "regoResults": [
+    {
+      "extension": "Promotional pricing bundles",
+      "allowed": true,
+      "classification": "process",
+      "extensionType": "in-app-key-user",
+      "violations": []
+    },
+    {
+      "extension": "Loyalty tier discount calculation",
+      "allowed": false,
+      "classification": "process",
+      "extensionType": "developer-extension-abap-cloud",
+      "violations": [
+        "API 'BAPI_SALESORDER_CHANGE' of type 'unreleased-bapi' not approved for 'developer-extension-abap-cloud'"
+      ]
+    },
+    {
+      "extension": "Regional output determination",
+      "allowed": null,
+      "classification": null,
+      "violations": ["No variability classification provided"]
+    }
+  ]
+}
+The LLM receives this Rego output alongside the variability specification (which defines VP-OTC-002 as a “process” variant with “in-app-key-user” as the permitted extension type and “any request for custom ABAP pricing exits” as the escalation trigger), the twelve design-decision records from the German workshops, and the SAP ABAP Test Cockpit (ATC) findings for the German development objects.
+
+The LLM evaluates:
+
+the promotional pricing extension is compliant and within the variability envelope.
+The loyalty tier extension fails because it uses an unreleased BAPI, and the variability specification’s escalation trigger explicitly flags custom ABAP pricing work for EA council review.
+The regional output determination has no classification and cannot be evaluated.
+Two of the twelve design decisions reference integration interfaces that lack documented patterns.
+
+The LLM produces its judgment:
+
+{
+  "transition": "approve-with-exceptions",
+  "confidence": "medium",
+  "countryVariant": "DE",
+  "findings": [
+    {"category": "extension-compliance", "status": "pass",
+     "detail": "1 of 3 extensions fully compliant"},
+    {"category": "extension-compliance", "status": "fail",
+     "detail": "Loyalty tier extension uses unreleased BAPI. Escalation required per VP-OTC-002."},
+    {"category": "extension-compliance", "status": "missing-data",
+     "detail": "Regional output determination has no variability classification."},
+    {"category": "design-decisions", "status": "pass",
+     "detail": "12 gaps resolved with complete records."},
+    {"category": "integration-documentation", "status": "fail",
+     "detail": "2 interfaces lack documented integration patterns."}
+  ],
+  "exceptions": [
+    {"extensionName": "Loyalty tier discount calculation",
+     "violation": "Unreleased BAPI usage",
+     "rationale": "Business justification is strong (loyalty program is a strategic initiative) but technical approach needs revision. Released OData v4 API for sales order exists as alternative.",
+     "councilApprovalRequired": true}
+  ],
+  "recommendation": "Approve entry to Realize for sprint 1 work (configuration, compliant extensions). Block loyalty tier extension until EA council reviews and either approves the BAPI exception or confirms the OData v4 alternative. Classify the regional output determination before sprint 2."
+}
+The critical point: the Rego policy identified the unreleased BAPI. It could not assess whether the German team’s business justification is strong enough to warrant an exception, whether an alternative API exists, or whether the loyalty program’s strategic importance changes the risk calculus. The LLM performed that interpretive work, constrained by the variability specification and the Rego facts, and the EA council receives a structured recommendation it can act on efficiently.
+
+6.2. Realize transport gate (Brazil, pricing modification)
+During Realize, the Brazilian team submits transport request BR4K901234 containing modifications to three ABAP objects. The transport edge evaluation fires automatically.
+
+The Rego policy evaluates the transport objects against ATC findings and the clean-core rules:
+
+{
+  "transport": "BR4K901234",
+  "country": "BR",
+  "regoResults": [
+    {
+      "object": "Z_PRICING_EXIT_RVAA01",
+      "type": "classic-modification",
+      "allowed": false,
+      "violations": ["Classic ABAP modification is not permitted"]
+    },
+    {
+      "object": "ZCL_LOYALTY_DISCOUNT",
+      "type": "developer-extension-abap-cloud",
+      "allowed": true,
+      "violations": []
+    },
+    {
+      "object": "ZCL_INVOICE_OUTPUT_BR",
+      "type": "side-by-side-btp",
+      "allowed": true,
+      "violations": []
+    }
+  ],
+  "atcFindings": {
+    "Z_PRICING_EXIT_RVAA01": [
+      {"severity": "error", "finding": "Modification to standard include RVAA01"},
+      {"severity": "warning", "finding": "Direct table access to KONV without released API"}
+    ]
+  }
+}
+The LLM receives this alongside the variability specification (VP-OTC-002 explicitly prohibits modifications to pricing procedure RVAA01) and the design-decision corpus (which shows that Brazil previously had a design decision to use in-app key-user tooling for pricing, not classic modification).
+
+The LLM’s judgment is straightforward:
+
+{
+  "transition": "block",
+  "confidence": "high",
+  "transport": "BR4K901234",
+  "findings": [
+    {"object": "Z_PRICING_EXIT_RVAA01", "status": "fail",
+     "detail": "Classic modification to RVAA01 explicitly prohibited by VP-OTC-002. Design decision DD-BR-017 approved in-app key-user approach, not classic modification. This transport contradicts an approved design decision."},
+    {"object": "ZCL_LOYALTY_DISCOUNT", "status": "pass", "detail": "Compliant."},
+    {"object": "ZCL_INVOICE_OUTPUT_BR", "status": "pass", "detail": "Compliant."}
+  ],
+  "recommendation": "Block transport. The pricing exit modification contradicts both the clean-core policy and approved design decision DD-BR-017. The two compliant objects should be separated into a new transport and released independently. The pricing requirement should be reimplemented using the in-app key-user approach approved in Explore, or escalated to the EA council if that approach proves insufficient."
+}
+This example shows the layering at work:
+
+The Rego policy flagged the classic modification.
+The ATC findings confirmed the direct table access.
+But only the LLM could connect those facts to the design-decision corpus (the Brazilian team had already agreed to a different approach during Explore) and produce a recommendation that includes the remediation path.
+The edge evaluation is a judgment, not a rule check.
+7. The attractor: how the loop converges
+The preceding sections described a single pass: load the seed, evaluate an edge, produce a judgment. That is an audit. The attractor pattern is what happens when the output of each pass feeds back into the next one, and the system converges toward a governed steady state.
+
+StrongDM uses the term “satisfaction” rather than “pass/fail” because their validation is probabilistic: of all the observed trajectories through all the scenarios, what fraction likely satisfy the user? The SAP governance equivalent is the convergence of two metrics across iterations: data completeness (what percentage of extensions have full classification, design-decision records, and API documentation) and compliance rate (what percentage of evaluable extensions pass the clean-core policy). The loop runs until both metrics stabilize at acceptable levels.
+
+7.1. The attractor pattern loop
+The following three iterations, drawn from a toy example, illustrate the mechanism at work.
+
+Iteration 1: The data quality baseline
+The first evaluation of six extensions across Germany and Brazil produces this picture:
+
+Germany’s regional output determination extension has no variability classification and cannot be evaluated.
+Germany’s loyalty tier extension fails because it uses an extension type not permitted for its classification and an unreleased BAPI.
+Brazil’s pricing exit fails because classic modifications are prohibited. Three extensions pass cleanly.
+ITERATION 1
+ Extensions evaluated: 6
+ PASS: 3 (50%)
+ FAIL - policy violation: 2 (33%)
+ FAIL - missing data: 1 (17%)
+ Data completeness: 83.3%
+ Compliance rate: 60.0%
+This first run is not a governance failure, it is a baseline. The missing data tells the enterprise which extensions need classification and the violations tell the enterprise which extensions need remediation. The interesting signal is the pattern: both Germany and Brazil independently propose non-compliant pricing extensions, suggesting that the core model’s pricing approach (OTC-020) has a structural gap.
+
+Feedback: remediation and seed revision
+Three things happen between iterations, each driven by the evidence the first pass produced.
+
+The LLM classifies the unclassified extension. Germany’s regional output determination is analyzed in context (its API usage, its process area, its deployment pattern) and classified as “configuration” with a reference to VP-OTC-003. This is not a human manually filling in a form. It is the LLM reading the extension’s code, ATC findings, and deployment context, and producing a draft classification for architect review.
+The pattern detection identifies the cross-country pricing gap. Two countries independently failing on pricing extensions is evidence that the variability specification’s envelope is too narrow for that process area. This finding is surfaced to the EA council as a core-model-improvement candidate rather than as two individual country exceptions.
+The EA council revises the seed. Based on the pattern, the council adds a new variation point (VP-OTC-005: Loyalty and promotional pricing extensions) with “developer-extension-abap-cloud” as the permitted extension type. This is a graph edit: the council changes the governing specification, and every subsequent edge evaluation operates against the revised envelope. The council does not review individual extensions. It adjusts the structure.
+Iteration 2: Data gap closed, spec gap closed
+ITERATION 2
+ Extensions evaluated: 6
+ PASS: 4 (67%)
+ FAIL - policy violation: 2 (33%)
+ FAIL - missing data: 0 (0%)
+ 
+ Data completeness: 100.0%
+ Compliance rate: 66.7%
+The regional output determination now passes (classified as configuration, compliant). The loyalty tier extension type is now permitted (VP-OTC-005 allows developer-extension-abap-cloud for process variants in pricing) but the unreleased BAPI still fails the API surface check. Brazil’s classic modification still fails. Data completeness has reached 100%. Compliance has improved from 60% to 66.7%.
+
+Iteration 3: Convergence
+ITERATION 3
+ Extensions evaluated: 6
+ PASS: 4 (67%)
+ FAIL - policy violation: 2 (33%)
+ FAIL - missing data: 0 (0%)
+ 
+ Data completeness: 100.0%
+ Compliance rate: 66.7%
+ ** Stabilized **
+The metrics are unchanged and the system has converged. The two remaining failures are genuine violations that cannot be resolved through governance changes:
+
+Germany’s extension must replace its unreleased BAPI with a released OData v4 API,
+Brazil must rewrite its classic modification using the in-app key-user approach approved during Explore.
+These are technical remediation tasks, not specification gaps.
+
+The convergence history
+Iteration Completeness Compliance Missing Violations
+ #1 83.3% 60.0% 1 2
+ #2 100.0% 66.7% 0 2
+ #3 100.0% 66.7% 0 2
+The attractor worked at three levels.
+
+At the data level, it surfaced the missing classification and the LLM remediated it.
+At the specification level, it detected the cross-country pricing pattern and the EA council revised the variability envelope.
+At the compliance level, it separated genuine violations (which need code changes) from governance gaps (which need spec changes). The system now knows exactly what remains to be fixed, why, and by whom.
+That is the difference between a compliance system (which enforces rules) and a learning system (which revises rules based on evidence and then enforces the revised rules).
+
+Specification-driven architecture needs both, and the attractor pattern provides both through the same loop.
+
+7.2 The prototype
+The prototype built reproduces this convergence exactly.
+
+Running sap_activate_demo.py — no-llm executes the Rego policy via regopy, runs the attractor loop for three iterations with simulated LLM judgments, and prints the convergence table above.
+
+Running without the flag calls the Claude API for real edge evaluations, producing the richer judgments shown in Section 4’s worked examples. The seed documents (variability spec, Rego policy), the evidence files (extension proposals for Germany and Brazil), and the attractor loop code are all included as editable source, so the reader can modify the variability envelope, add country variants, or change the extension proposals and observe how the convergence behavior changes.
+
+Press enter or click to view image in full size
+
+Claude Code screenshot
+Press enter or click to view image in full size
+
+Claude Desktop basic generated application
+8. Human control lives in the graph
+The EA council owns the DOT file.
+
+Most SAP programs have steering committees and program boards. The steering committee governs budget, timeline, and scope. The program board governs execution and risk. Neither is designed to govern the architectural integrity of the core model, the coherence of the variability envelope, or the long-term upgrade-safety of extension decisions. That is the work of the EA council, and in the graph model, the council’s authority is expressed through the graph itself.
+
+Adjusting the graph adjusts all agent behavior without retraining anything. Adding a new phase, changing a transition condition, introducing a parallel path for regulatory extensions that bypasses the standard approval flow: these are graph edits, versioned and traceable. The council does not review individual transports. It maintains the structure within which every evaluation occurs.
+
+The council’s authority operates at two levels:
+
+At the core model level, the council owns the variability specifications, the clean-core policy, and the graph definition. When the council approves a variability specification, it is defining the envelope of permitted variation. When it approves a clean-core policy, it is defining the constraints that apply to every extension across every deployment.
+At the variant level, the council does not govern every country decision individually. Instead, it governs the classification framework and the escalation boundary. Country teams operate within the envelope. Decisions that fall outside the envelope (a new extension type not covered by the spec, an API not on the approved list, a pattern where multiple countries request the same deviation suggesting a core-model gap) escalate to the council.
+The council also provides the institutional memory that survives program team turnover. When the team that made a design decision in Explore is no longer present during Realize, the design-decision corpus maintained by the council preserves rationale, constraints, rejected alternatives, and review triggers. A new team member can read the decision record and understand not only what was decided but why, and what evidence would justify revisiting it.
+
+The graph is the governance artifact, the specifications are the seed and the LLM evaluates, while the council steers.
+
+9. Limits of the approach
+The pattern does not converge if the graph is poorly defined. Too many edges create governance bottlenecks that program teams work around. Too few create ungoverned transitions where architectural drift accumulates undetected. The graph must be precise enough to catch consequential transitions and loose enough to avoid bureaucratic friction on routine ones.
+
+The specifications must be maintained. A variability specification written during Explore will encounter requirements during Realize that were not anticipated. The clean-core policy will need updates as SAP releases new APIs and deprecates old ones. These artifacts are living instruments, not one-time deliverables. An enterprise that writes them and then does not maintain them will end up with stale specifications that the LLM evaluates against faithfully, producing misleading results.
+
+The LLM’s edge evaluations must be calibrated against human judgment. A transition judgment that consistently disagrees with what the EA council would have decided is worse than no automation, because it erodes trust in the governance model. Calibration requires reviewing early edge evaluations manually, adjusting the prompt templates and context document selection, and building confidence incrementally. The attractor only works if the validation harness is trustworthy.
+
+Organizational friction is the most predictable obstacle. Establishing an EA council with real decision authority inside an SAP program challenges existing power structures. System integrator partners may view the variability specification as additional constraint on their delivery flexibility. Some organizations prefer the diplomatic ambiguity of advisory architecture precisely because it allows disagreement to remain hidden. An executable clean-core policy that evaluates every extension against defined rules makes non-compliance visible, and visibility creates accountability.
+
+The toolchain integration requires to feed real data into the edge evaluation context (extension inventories from Cloud ALM, ATC findings from the development system, process models from Signavio, application landscapes from LeanIX) and requires custom development today. SAP’s integrated toolchain provides some of the connectivity, and the growing ecosystem of MCP servers provides additional access, but the specification-driven governance layer described in this post sits above what the toolchain currently supports.
+
+Adoption will be incremental. The realistic path is to start with one process area, one country variant, one edge evaluation, and use the results to demonstrate value before expanding. The target architecture has been described, but the journey toward it will be iterative and partial, and that is appropriate.
+
+10. Sources
+SAP Activate Methodology: lifecycle phases, Fit-to-Standard workshops, and quality-gate structure. https://support.sap.com/en/alm/sap-activate.html
+SAP Clean Core: extension classification, upgrade-safe development, and BTP extension architecture. https://www.sap.com/products/erp/s4hana/clean-core.html
+SAP Cloud ALM: lifecycle orchestration, implementation tracking, and integrated toolchain hub. https://support.sap.com/en/alm/sap-cloud-alm.html
+SAP ABAP Test Cockpit (ATC): static analysis for ABAP code quality, clean-core compliance, unreleased API detection, and modification checks. https://help.sap.com/docs/abap-cloud/abap-development-tools-user-guide/working-with-atc
+SAP Signavio and SAP LeanIX: bidirectional process-to-application synchronization within the RISE with SAP integrated toolchain. https://www.sap.com/products/erp/rise/what-is-sap-integrated-toolchain.html
+SAP Business Technology Platform: extension platform and ABAP Cloud programming model. https://www.sap.com/products/technology-platform.html
+SAP MCP Servers: curated community list of open-source MCP server implementations for SAP systems, maintained by Marian Foos. https://github.com/marianfoo/sap-ai-mcp-servers
+StrongDM Software Factory: seed-validation-feedback attractor pattern for specification-driven agent execution. https://factory.strongdm.ai/
+Open Policy Agent (OPA) and Rego: policy-as-code engine for evaluating structured policy rules against JSON data. https://www.openpolicyagent.org/
+regopy: Python binding for the Rego language, used in the companion prototype to execute clean-core policies without an OPA binary. https://pypi.org/project/regopy/

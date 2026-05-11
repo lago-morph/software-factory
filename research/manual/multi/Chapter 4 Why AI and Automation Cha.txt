@@ -1,0 +1,773 @@
+Chapter 4: Why AI and Automation Change the Stakes
+William El Kaim
+William El Kaim
+
+Following
+35 min read
+·
+Apr 23, 2026
+
+
+
+
+
+Press enter or click to view image in full size
+
+The first three chapters of this book made a demanding set of claims. Chapter 1 argued that enterprise architecture must evolve from document-heavy review toward machine-checkable decisions, executable policies, and continuous evidence. Chapter 2 argued that architecture must move into the delivery flow itself rather than sit beside it. Chapter 3 argued that architecture must begin from explicit, structured intent expressed in forms that both humans and machines can reason about. Each of these arguments was correct, and each was old. Versions of them have circulated in the enterprise architecture community for at least a decade.
+
+Why, then, has adoption lagged so far behind the argument? The answer is not that architects failed to see the need. The answer is that the labor economics made the vision unreachable. Authoring a decision record for every significant architectural choice, expressing each decision as a machine-checkable rule, maintaining a coherent architecture “Codex” across thousands of capabilities, reviewing every pull request against enterprise policy, keeping intent artifacts current as strategy evolved: these tasks require sustained semantic work at a volume that no practical architecture function could supply.
+
+The vision was correct. The cost of realizing it was prohibitive. This chapter argues that AI and automation change that economics decisively.
+
+AI-assisted engineering, specialized agents, structured skills, architecture-as-code tooling, and protocols such as MCP that let agents consume enterprise context make it possible, for the first time, to operate the practice described in chapters 1, 2, and 3 at enterprise scale. The stakes change in two directions simultaneously:
+
+The cost of leaving architecture ambiguous rises because automation will act on whatever structure it finds.
+The cost of making architecture explicit falls because AI can help author, validate, maintain, and enforce the structured artifacts that the discipline has always needed. What used to be a rhetorical aspiration becomes an operational possibility.
+The chapter proceeds by showing what chapters 1 through 3 demanded, why those demands remained unreachable under manual labor, what AI now enables that was not possible before, and how a design authority model built around specialized AI agents can operate continuously against structured architecture artifacts.
+
+The chapter develops this through the concept of an EA Council at ACME Pharma: a set of agents that exercise delegated design authority within explicit boundaries, escalating to human architects at defined thresholds. Dark-factory execution appears here only as a signal on the horizon; its full treatment belongs to Chapter 20.
+
+1. The Promise That the First Three Chapters Made
+To see what AI enables, the reader must first see what previous posts already demanded. The opening chapters did not describe a small evolution of existing practice. They described a practice that most enterprises have never actually operated.
+
+Chapter 1 argued that an architecture decision should not remain a prose document on a shared drive. It should be expressed in a structured form that connects intent, scope, policy references, mandates, evidence sources, and exception paths. Part of each decision should be compiled into executable validation logic so that the delivery flow can reject non-compliant change. Evidence should be produced continuously rather than assembled for audits. Exceptions should be time-bounded, named, and tied to compensating controls. This is not merely a better document management strategy. It is a completely different mode of operating: architecture as a control system.
+
+Chapter 2 argued that architecture must become continuous. Review cycles at phase gates cannot govern a delivery chain that runs all day. Architecture must sit inside pull requests, inside platform templates, inside admission controllers, inside catalog registrations, inside the tickets that propose change. Architects must shape the catalogs, schemas, templates, decision models, policy bundles, and exception mechanisms that delivery teams and automated flows consume continuously. The unit of architectural intervention stops being the steering committee artifact and becomes the machine-usable constraint.
+
+Chapter 3 argued that this entire chain must begin from explicit intent. A vague objective (“reduce onboarding time”) cannot drive structured decisions, typed specifications, or executable controls. The intent itself must become a governed artifact carrying nine distinct kinds of information: identity and metadata, a directional statement, measurable business outcomes, bounded capability scope, policy references, intent-specific invariants, non-goals, open decision seeds, guardrails, and feedback sources. Without that upstream anchor, every downstream artifact drifts because it has no shared reference for what the enterprise is trying to achieve.
+
+Taken together, these three chapters describe an enterprise in which intent is typed, decisions are structured, policies are executable, specifications are machine-readable, controls are continuous, and evidence is automatic.
+
+The enterprise architecture Codex holds all of this in a connected graph that both humans and delivery systems can consume. That is a large claim. It is worth pausing on the gap between the claim and ordinary enterprise reality.
+
+2. Why the Practice Remained Mostly Aspirational
+The honest assessment is that very few enterprises have operated this practice at scale. Some have pieces of it:
+
+A particularly mature platform team may maintain good templates.
+A strong security function may enforce meaningful admission policies.
+A well-run data governance program may keep a policy-as-code repository.
+What has been rare, and in many enterprises entirely absent, is the coherent combination: structured intent, structured decisions, structured policies, structured specifications, structured controls, and structured evidence, all kept connected over time.
+
+The main obstacle was the sheer volume of semantic labor required to make the practice actually operate. A mid-sized enterprise might have fifty business capabilities in active architectural scope, three hundred significant services, a hundred and fifty active architecture decisions, thousands of pull requests per month, and dozens of policy domains. Maintaining structured artifacts across all of that by hand, keeping them synchronized with strategy and regulation, and validating them against actual delivery is a labor budget that no enterprise has been willing to fund.
+
+The consequences of that labor gap have been predictable:
+
+Decision records fall behind.
+Policy catalogs accumulate dead rules that no one has time to retire.
+Intent artifacts go stale as strategy shifts.
+Business Capability models become frozen pictures of a previous organizational design.
+Review boards compensate by focusing on large initiatives and ignoring continuous change.
+Governance becomes performative: everyone agrees that structured architecture would be better, and everyone knows that the enterprise cannot afford to produce it at the needed volume.
+
+AI tooling, as it existed before the recent generation of coding agents and domain-specialized assistants, did not change this picture meaningfully:
+
+Early code-completion tools accelerated local implementation but did nothing for architectural labor.
+Static analyzers enforced narrow rules but could not reason about intent, policy, or decision context.
+Diagramming tools produced images but not structured artifacts.
+None of these systems could read an intent document, consult a capability model, check a policy catalog, and propose a well-formed decision record with appropriate controls.
+
+The semantic labor remained human labor.
+
+That is the specific limit the present chapter addresses. The practice we advocate is not a minor extension of traditional EA. It is a substantially more demanding discipline whose adoption has been blocked by cost rather than by design. The question for this chapter is whether a new generation of tooling removes that block.
+
+3. What Current AI Tooling Actually Enables
+Several developments in AI-assisted engineering change the operating cost of structured architecture in ways that were not true even two or three years ago. The reader should notice that none of these is a theoretical capability. Each is either already in production or in advanced preview at the time this post was written.
+
+3.1. Agents that consume enterprise context through structured protocols
+The Model Context Protocol (MCP), released as an open specification, defines how AI assistants connect to external context sources. An enterprise can expose its Codex, its capability catalog, its policy repository, its decision record store, and its specification artifacts through MCP servers. An AI agent can then retrieve, reason about, and act on that context with the same ease it currently reaches into a Git repository.
+
+The architectural significance is this: a coding agent working on a pharmacovigilance service can consult the enterprise’s decision record for that capability, read the applicable policies, check the current specification, and propose an implementation that respects all three. Before MCP, each integration required bespoke engineering. A structured protocol turns enterprise context from a theoretical resource into a consumable one.
+
+The enterprise architecture tool vendors proposed already MCP.
+
+SAP LeanIX ships an MCP server that exposes its GraphQL API as MCP tools, letting AI agents query the application portfolio, read fact sheets and their relations, access capability maps, and retrieve architecture decisions directly from the governed repository.
+Ardoq’s AI Gateway (their MCP server, the first in the EA tool market to reach general availability) goes further: it provides metamodel-aware access to the architecture knowledge graph, enabling agents to reason over viewpoints, dashboards, and component relationships rather than retrieving flat records.
+Both tools support Claude Desktop, Microsoft Copilot Studio, and custom agent frameworks. The practical consequence is that an EA Council agent, or any architecture-aware agent, can consume the enterprise’s governed portfolio data through the same protocol it uses to read code, query policies, or access the Codex. The integration cost drops from weeks of custom connector work to a configuration entry.
+
+3.2. Architecture-as-code and AI-assisted governance tooling
+Tools such as Structurizr DSL (an open-source domain-specific language for defining C4-style architecture models as code) let architects express systems, containers, components, and relationships as typed declarations that both generate diagrams and expose a structured, queryable model. The architectural artifact is no longer a PNG exported from a diagramming tool. It is a program that produces both a visual view and a machine-readable representation. An AI agent can read that representation, reason about dependencies, check it against policy, and propose updates as code changes.
+
+Separately, ArcKit provides an AI-assisted governance toolkit: over sixty slash commands that generate structured architecture artifacts (ADRs, requirements documents, risk registers, vendor evaluations) from templates, using AI to produce first drafts that architects review and refine.
+
+The two tools illustrate different facets of the same shift.
+
+Architecture-as-code makes the model machine-readable and AI-assisted governance makes the governance artifacts producible at volume.
+
+Neither existed in usable form several years ago.
+
+3.3. Specialized skills and named capabilities
+Recent agent architectures expose named skills that encapsulate particular competencies.
+
+ArcKit, the governance toolkit introduced in the previous subsection, illustrates what this means in practice. Each of its sixty-seven commands is a named, scoped skill:
+
+/arckit.adr drafts an architecture decision record,
+/arckit.risk-register produces a risk assessment,
+/arckit.requirements generates a requirements specification,
+/arckit.traceability builds a traceability matrix.
+Each command declares its inputs (which project artifacts it needs), its template (the governed structure of the output), and its dependencies (which other commands must have been executed before it can run). The commands are organized by delivery phase and linked by a dependency matrix of forty-seven mapped relationships.
+
+In Claude Code, these commands surface as invocable skills that the agent can match by natural language. The pattern is not unique to ArcKit; Claude Skills, the skill frameworks in GitHub Copilot’s agent modes, and the tool-calling conventions standardized by several model providers all move in the same direction.
+
+The architectural significance is that semantic labor becomes composable. An enterprise can assemble an architecture-assistant by combining skills (validate this schema, draft that ADR, assess this jurisdiction impact) rather than by building a monolithic system from scratch.
+
+3.4. Coding agents that operate inside the delivery flow
+GitHub’s Copilot coding agent, Anthropic’s Claude Code, and similar systems are no longer autocomplete in an editor. They can plan changes, execute them on branches, run tests, and open pull requests.
+
+When given structured architectural context through MCP or repository-resident decision records, these agents can act as continuous architecture reviewers and authors. A pull request that touches a regulated capability can trigger an agent that reads the applicable decision record, checks the proposed change against the specification, runs the associated policy pack, and either approves, requests revision, or escalates to a human architect. That is continuous architecture in the sense Chapter 2 demanded, executed by mechanism rather than by meeting.
+
+The draw.io MCP server illustrates a less obvious but architecturally significant extension of this pattern. JGraph’s official MCP integration lets a coding agent generate and update architecture diagrams (draw.io XML, Mermaid, CSV-based org charts) directly from within the delivery flow. The agent can search over ten thousand shapes across AWS, Azure, GCP, Kubernetes, UML, and BPMN libraries, produce a diagram that reflects the current state of the code, and commit the .drawio file alongside the pull request. When the architecture changes, the diagram is regenerated as part of the same agent session that modifies the code. Visual documentation stops being a separate artifact that decays on a wiki and becomes a governed output that travels with the code.
+
+For enterprise architecture, this matters because it closes a persistent gap: architecture diagrams that are always current because they are produced by the same delivery mechanism that produces the change.
+
+3.5. Language models capable of drafting structured artifacts
+Perhaps the most prosaic but most transformative capability is this: current language models can reliably draft decision records, OpenAPI contracts, JSON Schemas, Rego policies, intent declarations, and capability descriptions when given appropriate context.
+
+They do not always draft them correctly, but they draft them well enough that a human architect’s role shifts from authoring every artifact from a blank page to reviewing, revising, and approving well-structured drafts. A practice that could produce a handful of rigorous decision records per quarter can now produce several dozen, with the architect’s time concentrated on judgment rather than on formatting.
+
+3.6. A new era for Enterprise Architecture
+These five capabilities combine into something that did not exist before. Enterprise architecture can now operate with structured artifacts at a volume that matches the rate of enterprise change, because the semantic labor is partly delegated to AI under human architectural supervision. The promise of chapters 1 through 3 becomes a working operating model rather than a slide.
+
+4. Why This Justifies the Approach We Advocate
+A natural objection appears here. If AI can read and write structured artifacts, does the enterprise still need the structure at all? Could an agent not simply infer architectural meaning from code, documentation, and tickets without the discipline of explicit intent, decisions, policies, and specifications?
+
+The answer is that AI raises the value of structure rather than lowering it. An agent that infers meaning from unstructured sources is doing probabilistic archaeology. It reads code, reads commits, reads documentation, and produces its best guess about what the enterprise intended. That guess may be good. It may also be wrong in ways that are hard to detect because the source material is ambiguous. When the agent then acts on that guess (generating code, proposing a change, approving a pull request), its confidence is indistinguishable from its accuracy. Enterprises in regulated domains cannot operate on that basis.
+
+Structured architecture gives AI systems a different substrate to reason over.
+
+A decision record that explicitly states “clinical trial data must remain in EU regions” is not inferred. It is declared.
+An agent consuming that decision does not need to guess whether region matters. It knows.
+A specification that binds an intent to a capability, a set of policies, and a set of controls is not a hint. It is a contract that the agent can check and that the enterprise can audit.
+The structured layer turns agent behavior from inference into execution against a known frame.
+
+This is why the practice described in chapters 1 through 3 becomes more important, not less, under AI:
+
+Without explicit intent, agents will fabricate intent from whatever signals they find.
+Without structured decisions, agents will propose changes without context.
+Without executable policies, agents will produce technically valid but architecturally wrong outputs.
+Without an enterprise architecture “Codex”, agents will build their own inconsistent context pack each time they are invoked.
+The same logic explains why the practice now becomes economically viable where it was previously prohibitive.
+
+Every structured artifact the enterprise maintains becomes a multiplier of AI utility:
+
+A decision record authored once is consumed by every subsequent agent that touches the relevant capability.
+A capability definition maintained in the enterprise architecture Codex informs every coding agent working in that domain.
+A policy expressed in Rego governs every pipeline check.
+The fixed cost of structure is amortized across a growing volume of AI-assisted work, once the initial semantic scaffolding exists.
+
+There is a further consequence to this: AI changes the cost of maintaining structured artifacts, not only the cost of creating them.
+
+A capability definition that becomes stale can be flagged by an agent that notices drift between the definition and the running services that claim to implement it.
+A policy that produces many false positives can be flagged by an agent that tracks override patterns.
+An intent statement that no longer matches strategic priorities can be flagged by an agent that compares it against current investment decisions.
+The maintenance problem that killed earlier attempts at structured architecture becomes an automation problem. Automation problems are solvable in ways that pure-labor problems were not.
+
+5. Design Authority in an AI-Augmented Practice
+Before introducing specific agents, the chapter needs to address the governing concept above them: design authority.
+
+5.1. What design authority means and why it matters now
+Design authority is the organizational right to make binding architectural decisions within a defined scope. In traditional enterprises, this authority is typically distributed across several bodies.
+
+A central architecture review board holds authority over cross-cutting standards and major platform choices.
+Domain architects hold authority over the design of services and data models within their capability areas.
+Platform teams hold de facto authority over infrastructure patterns, deployment templates, and runtime controls.
+Product teams make local design choices daily, often without realizing they are exercising architectural authority because no one has named the boundary.
+This diffuse arrangement works tolerably when the rate of change is low. When delivery becomes continuous and AI-assisted tooling accelerates the volume of design choices, diffuse authority becomes a structural problem.
+
+The review board cannot meet often enough.
+
+Domain architects cannot review every pull request.
+Platform teams encode choices into templates that are consumed without architectural scrutiny.
+The enterprise makes more architectural decisions per week than the human architecture function can process, and many of those decisions are made implicitly by whoever builds the next service.
+
+The concept of design authority becomes critical precisely at this point. If the enterprise is going to delegate some portion of architectural review to AI agents, it must first be explicit about what authority is being delegated, to whom, under what constraints, and with what accountability. Without that explicitness, the EA Council is just another automation project. With it, the EA Council becomes a governed extension of design authority into the continuous delivery flow.
+
+5.2. Classifying decisions by delegation level
+Not all architectural decisions carry the same weight.
+
+A decision about which logging framework a service uses is architecturally relevant but low-risk.
+A decision about where regulated patient data is stored is architecturally critical and cannot be made by an automated agent.
+Between those extremes lies a range of decisions that benefit from AI assistance but require different levels of human involvement.
+
+The classification below show an example of how to organize decisions into four delegation levels. Each level defines who holds authority, what role AI agents play, and what evidence is required. The classification is not theoretical; it is the operating contract that makes the EA Council governable.
+
+apiVersion: ea.acmepharma.io/v1
+kind: DesignAuthorityClassification
+metadata:
+  id: DAC-001
+  owner: chief-architect
+  status: approved
+
+levels:
+  - level: L1-automated
+    description: >
+      Routine conformance checks where the right answer is
+      deterministic. No human review unless the check fails.
+    examples:
+      - schema validation of intent and specification artifacts
+      - OpenAPI lint against enterprise contract standards
+      - data classification label consistency
+      - retention period compliance with declared policy
+    agentRole: execute-and-report
+    humanRole: review-on-failure-only
+    evidenceRequired: audit-log-of-evaluation
+
+  - level: L2-assisted
+    description: >
+      Design assessments where the agent produces a structured
+      finding and a recommended action, but a domain architect
+      must approve before the change proceeds.
+    examples:
+      - API boundary changes that affect adjacent capabilities
+      - new integration dependencies across domain boundaries
+      - changes to event schemas consumed by multiple services
+      - infrastructure template deviations from landing-zone policy
+    agentRole: assess-and-recommend
+    humanRole: domain-architect-approval
+    evidenceRequired: agent-finding plus architect-sign-off
+
+  - level: L3-escalated
+    description: >
+      Decisions with cross-domain, regulatory, or precedent-setting
+      implications. The agent flags the decision and prepares a
+      briefing. The design authority board resolves it.
+    examples:
+      - new capability boundary definitions
+      - changes to data sovereignty or jurisdiction scope
+      - introduction of AI-assisted functions in regulated workflows
+      - platform retirement or major technology substitution
+    agentRole: flag-and-brief
+    humanRole: design-authority-board-resolution
+    evidenceRequired: decision-record with rationale and dissent
+
+  - level: L4-reserved
+    description: >
+      Decisions that are reserved to named human authorities
+      regardless of agent confidence. No delegation permitted.
+    examples:
+      - enterprise-wide policy changes
+      - intent artifact approval or supersession
+      - exception grants for regulatory invariants
+      - cross-enterprise data authority reassignment
+    agentRole: none
+    humanRole: named-authority-only
+    evidenceRequired: board-minutes with accountability record
+The classification does several things that a traditional governance model does not: it makes the delegation explicit.
+
+An L1 decision is not informally “okay to automate”; it is formally classified, with named examples, a defined agent role, and a stated evidence requirement.
+An L4 decision is not informally “too important for machines”; it is formally reserved, with named human authorities and an accountability record.
+The enterprise can audit the classification itself: are the right decisions at the right level? Are agents being asked to handle L3 work that should be escalated? Is the board spending time on L1 work that a gate should have handled?
+
+Become a Medium member
+The classification also changes the conversation about AI in architecture. Instead of debating whether AI should be “trusted” with architectural decisions (a question with no useful answer in the abstract), the enterprise debates which specific decisions belong at which delegation level. That is a tractable question with an auditable answer.
+
+5.3. The ACME Pharma EA Council: council architecture
+With the delegation classification in place, the EA Council becomes a governed mechanism rather than an ad hoc collection of bots.
+
+The council architecture described below adapts a multi-agent pattern demonstrated in Overbeek’s open EA Council knowledge base, reshaped for the delegation classification and regulated pharmaceutical context that this chapter requires.
+
+The core structure is a Chief Architect orchestrator that triages incoming requests, routes them to specialized domain and cross-cutting agents, runs a deliberation protocol that synthesizes their findings, and produces a governed recommendation. The pattern draws on the same structural logic as a human architecture review board (a convener, specialist reviewers, a protocol, a verdict) but operates continuously inside the delivery flow rather than on a meeting calendar.
+
+The council is organized in three agent layers and a shared knowledge layer that connects them to the enterprise’s governed context.:
+
+The orchestrator layer is a single Chief Architect Agent that receives every architecture-relevant event (pull requests touching governed capabilities, catalog registration requests, specification change proposals, exception requests) and decides which agents to consult.
+The domain layer comprises specialist agents, each scoped to a capability domain: Clinical Operations Architecture (clinical trial systems, site activation, eTMF, CTMS), Regulatory and Quality Architecture (GxP compliance, Part 11, validation, quality systems), Data and AI Architecture (data governance, classification, AI/ML strategy, DPIA), Application Architecture (portfolio management, lifecycle, rationalization), Integration Architecture (APIs, events, middleware, system boundaries), and Platform Architecture (cloud infrastructure, landing zones, DevOps).
+The cross-cutting layer comprises agents whose scope spans all domains: Security Architecture (threat modeling, zero-trust, data protection) which holds veto power over any change that introduces an unmitigated critical vulnerability, GxP Compliance (regulatory readiness, computerized system validation, audit trail integrity) which holds escalation power to the human design authority board for any change that affects validated system status, and a Red Team Agent (assumption testing, adversarial review) which holds challenge-only authority and cannot approve or reject but can force reconsideration.
+The shared knowledge layer is where every agent connects to the enterprise’s governed context. Each agent consumes the Enterprise Architecture knowledge through MCP (retrieving capabilities, decisions, policies, and specifications), queries the application portfolio through the EA tool (SAP LeanIX or Ardoq, as described in section 3), and accesses the architecture principles, technology radar, and reference architectures that the enterprise maintains as governed artifacts.
+The distinction between the shared layer and agent-specific context matters: agents do not embed enterprise knowledge in their prompts. They retrieve it at evaluation time from governed sources, which means the council’s behavior updates when the Codex updates, without redeploying agents.
+
+The figure below summarizes the council architecture: three agent layers (orchestrator, domain, cross-cutting) connected to the shared knowledge layer through MCP and API protocols, with delegation levels governing which decisions each agent may handle.
+
+
+ACME Pharma EA Council Architecture
+The specification below defines the Chief Architect orchestrator. The reader should notice three things: the orchestrator declares which agents it can invoke (with each agent scoped to named capabilities from the enterprise capability model, identified by the CAP- prefix), what deliberation protocol it follows, what routing rules it uses to select agents for a given request, and what output it produces. It does not perform domain analysis itself. We also took the example of SAP LeanIX as the EA tool. Its role is to convene, coordinate, and synthesize.
+
+apiVersion: ea.acmepharma.io/v1
+kind: EACouncilOrchestrator
+metadata:
+  id: ORCH-CA-001
+  name: chief-architect-orchestrator
+  version: 2.0.0
+
+spec:
+  role: chief-architect
+  authority: final-recommendation
+
+  councilMembers:
+    domain:
+      - agent: AGENT-CLIN-001
+        role: clinical-operations-architect
+        scope: [CAP-CLINICAL-OPERATIONS, CAP-SITE-ACTIVATION, CAP-ETMF]
+      - agent: AGENT-RQ-001
+        role: regulatory-quality-architect
+        scope: [CAP-QUALITY-MANAGEMENT, CAP-REGULATORY-AFFAIRS]
+      - agent: AGENT-DAI-001
+        role: data-ai-architect
+        scope: [CAP-DATA-GOVERNANCE, CAP-AI-ML, CAP-ANALYTICS]
+      - agent: AGENT-APP-001
+        role: application-architect
+        scope: [CAP-PORTFOLIO-MANAGEMENT, CAP-LIFECYCLE]
+      - agent: AGENT-INT-001
+        role: integration-architect
+        scope: [CAP-API-MANAGEMENT, CAP-EVENT-PLATFORM]
+      - agent: AGENT-PLT-001
+        role: platform-architect
+        scope: [CAP-CLOUD-INFRASTRUCTURE, CAP-DEVOPS]
+    crossCutting:
+      - agent: AGENT-SEC-001
+        role: security-architect
+        specialAuthority: veto
+      - agent: AGENT-GXP-001
+        role: gxp-compliance-architect
+        specialAuthority: escalation
+      - agent: AGENT-RED-001
+        role: red-team
+        specialAuthority: challenge-only
+
+  deliberationProtocol:
+    phases:
+      - phase: 1-triage
+        description: >
+          Classify the request by affected capabilities, delegation
+          level, and regulatory touchpoints. Select which agents
+          to consult.
+      - phase: 2-parallel-assessment
+        description: >
+          Route the request to selected domain and cross-cutting
+          agents. Each agent evaluates independently and produces
+          a structured finding.
+      - phase: 3-conflict-detection
+        description: >
+          Compare findings across agents. Identify contradictions,
+          overlapping concerns, or gaps where no agent covered a
+          relevant dimension.
+      - phase: 4-synthesis
+        description: >
+          Merge non-conflicting findings into a consolidated
+          assessment. Flag conflicts for resolution.
+      - phase: 5-recommendation
+        description: >
+          Produce a single recommendation: approve, request changes,
+          or escalate. Attach all agent findings as evidence.
+      - phase: 6-record
+        description: >
+          If the recommendation involves a design decision, draft
+          an ADR. Link the ADR to the intent artifact, the affected
+          specifications, and the agent findings that informed it.
+
+  routingRules:
+    - trigger: pull-request.touches-regulated-capability
+      consult: [clinical-operations, regulatory-quality, security, gxp-compliance]
+    - trigger: pull-request.modifies-api-contract
+      consult: [integration, application, security]
+    - trigger: pull-request.introduces-ai-component
+      consult: [data-ai, security, gxp-compliance, red-team]
+    - trigger: catalog.new-service-registration
+      consult: [application, platform, integration, security]
+    - trigger: specification.change-proposal
+      consult: [domain-by-capability-match, gxp-compliance]
+    - trigger: exception.request
+      consult: [all-domain-by-scope, security, gxp-compliance, red-team]
+
+  contextSources:
+    - mcp://codex.acmepharma.io/capabilities
+    - mcp://codex.acmepharma.io/decisions
+    - mcp://codex.acmepharma.io/policies
+    - mcp://codex.acmepharma.io/specifications
+    - mcp://codex.acmepharma.io/intents
+    - api://leanix.acmepharma.io/factsheets
+
+  outputContract:
+    format: council-recommendation
+    schemaRef: schemas/council-recommendation.schema.json
+    requiredFields:
+      - request_id
+      - delegation_level
+      - agents_consulted
+      - findings_summary
+      - conflicts_detected
+      - recommendation
+      - evidence_refs
+      - adr_draft (if applicable)
+5.4. Domain and cross-cutting agents
+Each agent in the council follows a common specification pattern but carries domain-specific skills, policies, and escalation thresholds. Two examples illustrate the pattern from different angles: the Data and AI Architect Agent (a domain agent operating at L1 and L2) and the GxP Compliance Architect Agent (a cross-cutting agent with escalation authority operating at L2 and L3).
+
+The Data and AI Architect Agent is responsible for data governance, classification consistency, retention compliance, and AI/ML oversight across the clinical, pharmacovigilance, and medical information capabilities. Its skills include classifying data touchpoints in code changes, verifying that declared data classifications match actual data flows, checking retention periods against jurisdiction-specific policy, assessing whether new AI components require a Data Protection Impact Assessment, and drafting ADR amendments when a change extends the scope of an existing decision.
+
+apiVersion: ea.acmepharma.io/v1
+kind: EACouncilAgent
+metadata:
+  id: AGENT-DAI-001
+  name: data-ai-architect
+  version: 2.1.0
+
+spec:
+  role: data-ai-architect
+  delegationLevels: [L1-automated, L2-assisted]
+  capabilityScope:
+    - CAP-DATA-GOVERNANCE
+    - CAP-AI-ML
+    - CAP-MEDICAL-INFORMATION
+    - CAP-PHARMACOVIGILANCE
+    - CAP-CLINICAL-OPERATIONS
+
+  skills:
+    - id: skill.classify-data-touchpoint
+      level: L1
+      description: >
+        Identify whether a code change touches regulated personal
+        data, clinical data, or pharmacovigilance data.
+    - id: skill.verify-classification-consistency
+      level: L1
+      description: >
+        Compare declared data classification in the specification
+        against the classification implied by the actual data flow.
+    - id: skill.check-retention-obligations
+      level: L1
+      description: >
+        Verify that retention periods in code or infrastructure
+        match the jurisdiction-specific retention policy.
+    - id: skill.assess-dpia-requirement
+      level: L2
+      description: >
+        When a new AI component or data processing activity is
+        introduced, assess whether a DPIA is required under GDPR
+        or the EU AI Act and produce a structured finding.
+    - id: skill.assess-jurisdiction-impact
+      level: L2
+      description: >
+        When a new jurisdiction is introduced, assess impact on
+        data residency, retention, and consent requirements.
+    - id: skill.draft-adr-amendment
+      level: L2
+      description: >
+        Draft a proposed amendment to an existing architecture
+        decision record when the change requires scope extension.
+
+  policies:
+    mandatory:
+      - GDPR
+      - EU-AI-ACT
+      - CFR21-PART11
+      - ACME-DATA-CLASSIFICATION-STANDARD
+    advisory:
+      - ACME-AI-ETHICS-FRAMEWORK
+
+  contextSources:
+    - mcp://codex.acmepharma.io/capabilities
+    - mcp://codex.acmepharma.io/decisions
+    - mcp://codex.acmepharma.io/policies
+    - mcp://codex.acmepharma.io/specifications
+
+  toolBoundaries:
+    allowed:
+      - read: git.pull-request
+      - read: codex.query
+      - read: leanix.factsheet
+      - write: pull-request.comment
+      - write: pull-request.review
+      - write: decision-record.draft
+    prohibited:
+      - write: decision-record.approve
+      - write: policy.modify
+      - execute: deployment.any
+
+  humanEscalation:
+    requireArchitectReview:
+      - finding_type: data_classification_conflict
+      - finding_type: new_jurisdiction_introduced
+      - finding_type: dpia_required
+      - finding_severity: high
+    escalateToBoard:
+      - finding_type: cross_domain_data_authority_change
+      - finding_type: new_ai_component_in_regulated_workflow
+
+  evaluationMetrics:
+    - override_rate
+    - false_positive_rate
+    - time_to_finding_seconds
+    - escalation_accuracy
+The GxP Compliance Architect Agent illustrates a different pattern. As a cross-cutting agent with escalation authority, it operates at L2 and L3. It does not handle routine conformance checks (those belong to L1 skills in the domain agents). Instead, it evaluates whether a proposed change affects the validated status of a computerized system, whether audit trail integrity is preserved, whether the change requires revalidation under the enterprise’s quality system, and whether regulatory notification is necessary. When it finds that a change touches validated system status, it does not merely produce a finding. It escalates to the human design authority board with a structured briefing.
+
+apiVersion: ea.acmepharma.io/v1
+kind: EACouncilAgent
+metadata:
+  id: AGENT-GXP-001
+  name: gxp-compliance-architect
+  version: 1.2.0
+
+spec:
+  role: gxp-compliance-architect
+  delegationLevels: [L2-assisted, L3-escalated]
+  specialAuthority: escalation
+  capabilityScope: all-regulated
+
+  skills:
+    - id: skill.assess-validated-system-impact
+      level: L3
+      description: >
+        Determine whether a proposed change affects the validated
+        status of a GxP computerized system. If yes, produce an
+        escalation briefing for the design authority board.
+    - id: skill.verify-audit-trail-integrity
+      level: L2
+      description: >
+        Check whether a code change preserves the required audit
+        trail fields (author, timestamp, reason-for-change) for
+        regulated records.
+    - id: skill.assess-revalidation-need
+      level: L3
+      description: >
+        When infrastructure or platform changes affect a validated
+        system, assess whether partial or full revalidation is
+        required under the quality system.
+    - id: skill.check-electronic-signature-compliance
+      level: L2
+      description: >
+        Verify that electronic signature implementations conform
+        to 21 CFR Part 11 requirements.
+
+  policies:
+    mandatory:
+      - GXP-DATA-INTEGRITY
+      - CFR21-PART11
+      - EU-ANNEX-11
+      - ACME-CSV-SOP
+      - ACME-CHANGE-CONTROL-SOP
+
+  contextSources:
+    - mcp://codex.acmepharma.io/capabilities
+    - mcp://codex.acmepharma.io/policies
+    - mcp://codex.acmepharma.io/specifications
+    - api://leanix.acmepharma.io/factsheets
+    - api://qualitysystem.acmepharma.io/validated-systems-register
+
+  toolBoundaries:
+    allowed:
+      - read: git.pull-request
+      - read: codex.query
+      - read: validated-systems-register
+      - write: pull-request.comment
+      - write: escalation-briefing.draft
+    prohibited:
+      - write: decision-record.approve
+      - write: validated-systems-register.modify
+      - execute: deployment.any
+
+  humanEscalation:
+    alwaysEscalate:
+      - finding_type: validated_system_status_affected
+      - finding_type: revalidation_required
+      - finding_type: regulatory_notification_required
+    escalateTo:
+      - role: head-of-quality
+      - role: chief-architect
+      - council: ea-design-authority-board
+The Security Architect Agent (not shown in full here for space) follows a similar cross-cutting pattern but with veto authority: when it identifies an unmitigated critical vulnerability, its finding blocks the change regardless of what other agents recommend. The Red Team Agent operates differently still. It has challenge-only authority: it cannot approve or reject a change, but it can force reconsideration by injecting adversarial questions (“What happens if this API is called with a jurisdiction the system has never seen?” “What if the eTMF retention service is unavailable during the evidence write?”). Its findings are attached to the council recommendation as challenges that the approving authority must address, creating a structural devil’s-advocate function that most human review boards aspire to but rarely sustain.
+
+5.5. Command-driven governance artifact generation
+The EA Council as described so far is a review mechanism: it receives a change, assesses it, and produces findings. That is necessary but incomplete.
+
+A mature design authority also needs to produce governance artifacts at the volume that continuous architecture demands. Decision records, risk assessments, requirements fragments, traceability matrices, and compliance evidence must be generated consistently across hundreds of changes per month. Manual authoring of these artifacts was, as section 2 of this chapter argued, the labor bottleneck that made structured architecture unaffordable.
+
+ArcKit, an open-source enterprise architecture governance toolkit by Mark Craddock, demonstrates a pattern that addresses this problem directly. ArcKit provides over sixty AI-assisted slash commands that generate structured governance documents from templates. Each command produces a specific artifact type (an architecture decision record, a stakeholder analysis, a risk register, a vendor evaluation, a traceability matrix) following a standard template, with AI generating the first draft and the architect reviewing and refining. The commands are organized by delivery phase and linked by a dependency matrix that declares which artifacts must exist before others can be generated. The pattern works across multiple AI coding assistants and produces identical output structures regardless of the underlying model.
+
+The architectural insight is not the tooling itself but the operating pattern it reveals: agents can carry not only assessment skills (which detect problems) but also generation skills (which produce governed artifacts from templates).
+
+The Data and AI Architect Agent, when it identifies that a new jurisdiction requires a data residency assessment, does not merely produce a finding that says “assessment needed.” It generates a first-draft Data Protection Impact Assessment from a governed template, pre-populated with the capability context, the applicable policies, and the data classification from the Codex.
+
+The GxP Compliance Architect Agent, when it determines that a change affects a validated system, does not merely escalate. It generates a first-draft change impact assessment from the enterprise’s computerized system validation template, pre-populated with the system’s validation status, the affected test cases, and the revalidation scope estimate.
+
+The specification below shows how generation commands are declared within an agent’s skill set. The reader should notice the distinction between assessment skills (which produce findings) and generation skills (which produce draft artifacts from templates). Each generation skill references a governed template, declares which Codex context it requires as input, and names the approval authority for the generated artifact.
+
+# Extension to AGENT-DAI-001 (Data & AI Architect)
+# Generation skills added alongside assessment skills
+
+generationSkills:
+  - id: gen.draft-dpia
+    trigger: finding_type == dpia_required
+    templateRef: templates/governance/dpia-template.yaml
+    contextRequired:
+      - codex: capability-definition
+      - codex: data-classification
+      - codex: applicable-policies
+      - codex: data-flow-specification
+    outputArtifact: dpia-draft
+    approvalAuthority: data-protection-officer
+
+  - id: gen.draft-data-residency-assessment
+    trigger: finding_type == new_jurisdiction_introduced
+    templateRef: templates/governance/data-residency-assessment.yaml
+    contextRequired:
+      - codex: jurisdiction-policies
+      - codex: data-classification
+      - codex: infrastructure-specification
+    outputArtifact: residency-assessment-draft
+    approvalAuthority: data-governance-architect-human
+
+  - id: gen.draft-adr
+    trigger: finding_type == scope_extension_required
+    templateRef: templates/governance/adr-template.yaml
+    contextRequired:
+      - codex: existing-decision-record
+      - codex: intent-artifact
+      - codex: affected-specifications
+    outputArtifact: adr-amendment-draft
+    approvalAuthority: domain-architect
+
+# Extension to AGENT-GXP-001 (GxP Compliance Architect)
+
+generationSkills:
+  - id: gen.draft-change-impact-assessment
+    trigger: finding_type == validated_system_status_affected
+    templateRef: templates/governance/csv-change-impact.yaml
+    contextRequired:
+      - codex: validated-systems-register-entry
+      - codex: affected-test-cases
+      - codex: change-description
+    outputArtifact: change-impact-assessment-draft
+    approvalAuthority: head-of-quality
+
+  - id: gen.draft-revalidation-plan
+    trigger: finding_type == revalidation_required
+    templateRef: templates/governance/revalidation-plan.yaml
+    contextRequired:
+      - codex: validation-master-plan
+      - codex: affected-requirements
+      - codex: risk-assessment
+    outputArtifact: revalidation-plan-draft
+    approvalAuthority: qa-lead
+This pattern changes the economics of governance artifact production.
+
+Under the traditional model, every ADR, every DPIA, every change impact assessment, and every revalidation plan was authored from scratch by a human architect or compliance specialist. Under the generation-skill model, agents produce structured first drafts that are pre-populated with enterprise context, policy-compliant by template, and linked to the Codex artifacts that informed them.
+
+The human role shifts from authoring to reviewing: checking that the draft reflects the actual situation, that the template was applied correctly, and that the judgment calls within the artifact are sound.
+
+That shift does not eliminate the need for expertise. It eliminates the need for formatting, context assembly, and reference lookup, which is where the majority of authoring time was spent.
+
+The dependency chain between generated artifacts also matters.
+
+An ADR amendment cannot be drafted until the relevant findings exist.
+A revalidation plan cannot be drafted until the change impact assessment is complete.
+A traceability matrix cannot be produced until the ADR, the specification update, and the control mappings are in place.
+These dependencies mirror ArcKit’s command dependency matrix and can be enforced by the orchestrator: when the deliberation protocol reaches phase 6 (record, as shown in section 5.3.), the orchestrator triggers the relevant generation skills in dependency order, producing a coherent set of governance artifacts rather than isolated documents.
+
+5.6. A worked example: a pull request triggers the council
+To make the council concrete, consider what happens when a pull request at ACME Pharma proposes to extend the clinical site onboarding service (governed by intent artifact ACME-INT-CLIN-001, introduced in Chapter 3) to support site activation in Japan. The change adds a new jurisdiction, modifies the regulatory package assembly logic, introduces a new evidence retention period (Japanese PMDA requires different retention from the EU Clinical Trials Regulation), and adds a country-specific submission step.
+
+Phase 1 (triage) starts when the Chief Architect orchestrator receives the pull request event, identifies that the change touches a regulated capability (Site Selection and Activation), and applies its routing rules.
+
+The trigger “pull-request.touches-regulated-capability” selects the Clinical Operations Architect, the Regulatory and Quality Architect, the Security Architect, and the GxP Compliance Architect.
+The trigger “new jurisdiction introduced” also selects the Data and AI Architect (for data residency and retention impact) and the Red Team Agent. Six agents are consulted in parallel.
+Then, we enter phase 2 (Parallel Assessment):
+
+The Clinical Operations Architect checks whether the new country submission step conforms to the state-machine model declared in decision record DD-CT-009 (state-machine orchestration with jurisdiction-specific configuration). It finds that the pull request adds the step as a code branch rather than as configuration, which violates the decision. It produces an L2 finding: “Japan submission step implemented as code branch; specification requires configuration-driven variation.”
+The Data and AI Architect checks whether the new PMDA retention period is declared in the specification and whether the data residency implications of processing Japanese investigator data are addressed. It finds that the retention period is hard-coded in the application rather than declared in the specification’s retentionPolicy field. It produces an L1 finding (retention inconsistency) and an L2 finding (new jurisdiction requires data residency assessment).
+The GxP Compliance Architect checks whether the clinical site onboarding service is on the validated systems register. It is. The introduction of a new jurisdiction with different regulatory requirements constitutes a change to a validated system. The agent produces an L3 finding: “Change affects validated system ACME-VAL-017. Revalidation assessment required before deployment.” This finding triggers automatic escalation to the design authority board.
+The Red Team Agent challenges the assumption that Japanese PMDA requirements can be fully accommodated within the existing evidence model. It asks: “Does the current evidence schema support the PMDA-specific document types, or will the team need to extend the schema, which would be a specification change affecting all jurisdictions?” This challenge is attached to the recommendation.
+The Security Architect finds no critical vulnerabilities but flags that Japanese data protection law (APPI) requires specific consent mechanisms that differ from GDPR. It produces an L2 finding for domain architect review.
+The orchestrator enters then phase 3 (Conflict Detection). The Clinical Operations finding and the Data and AI finding both point to the same root cause: the team implemented jurisdiction-specific behavior in code rather than in configuration and specification. No contradictions exist between agents.
+
+Phase 4 (synthesis) merges the findings.
+
+Phase 5 (recommendation) produces a verdict: “Request changes. Three L2 findings require domain architect review. One L3 finding requires design authority board escalation. One Red Team challenge requires response before approval.”
+
+Phase 6 (record) drafts an ADR amendment to DD-CT-009 proposing that Japan be added to the jurisdiction configuration model, linked back to the intent artifact ACME-INT-CLIN-001 and the Red Team challenge about evidence schema extensibility.
+
+The entire evaluation completes in minutes. Under the traditional model, this pull request would have waited days for a review slot, and the review would likely have focused on the code rather than on the specification, the validated system status, and the evidence model implications.
+
+The council does not replace the human architects who must resolve the L2 and L3 findings. It ensures they receive structured, evidence-backed findings rather than raw code diffs, and it ensures the findings arrive before the change ships rather than at the next quarterly architecture review.
+
+Figures below shows the implementation in Anthropic Claude Code using Opus 4.7. Let’s start by phase 1 (Triage) and 2 (parallel assessment)
+
+Press enter or click to view image in full size
+
+then remaining phases
+
+Press enter or click to view image in full size
+
+and the new ADR generated
+
+Press enter or click to view image in full size
+
+Press enter or click to view image in full size
+
+5.7. The accountability chain
+When an agent approves a change that later causes a production failure or a regulatory breach, who is accountable?
+
+The answer cannot be “the agent,” because an agent is not a legal or organizational actor. Accountability follows the delegation chain.
+
+An L1 failure (a conformance check that should have caught a violation but did not) is accountable to the architect who defined the check and the platform team that deployed it.
+An L2 failure (an agent that recommended approval of a change that a domain architect signed off on) is accountable to the domain architect who approved the finding.
+An L3 failure (a board decision that was informed by an agent briefing containing errors) is accountable to the board, with the agent’s briefing serving as evidence of what information was available at the time.
+The delegation classification makes this accountability tractable. Without it, the enterprise cannot distinguish between “the agent was wrong” and “the human who relied on the agent was negligent.” With it, each failure can be traced to a specific delegation level, a specific agent, a specific finding, and a specific human authority that either approved or should have reviewed. That traceability is what makes the EA Council governable in a regulated context rather than an experiment that regulators will shut down at the first incident.
+
+This also means that the architect who curates the EA Council bears a new form of responsibility. Defining which decisions are L1 versus L2 versus L3 is itself an L3 decision: it shapes the boundary between automation and human judgment across the enterprise. Getting the classification wrong (putting an L3 decision at L2, or an L2 at L1) has consequences that propagate through every agent that inherits the classification.
+
+The design authority classification is therefore one of the most consequential architectural artifacts the enterprise maintains, and it must be governed with the same rigor as the intent artifacts described in Chapter 3.
+
+6. What This Changes for the Architecture Function
+Under this model, the architect’s work changes in several important ways. The change is not that architects do less. It is that they work at a different level of the system: they become the designers and curators of the design authority model itself.
+
+Process shifts from reviewing individual artifacts to curating the review system. An architect who previously spent the majority of time reading pull requests, commenting on designs, and attending meetings now spends more time defining the delegation classification, designing agent skills, tuning capability scopes, adjusting escalation thresholds, and reviewing the findings that agents surface for human judgment. The review itself becomes continuous and distributed. The architect’s contribution becomes the quality of the delegation model and the governance system that operates it.
+
+Methods shift toward composability. The architect must design skills that are narrow enough to be accurate and reusable enough to compose. A skill that detects data classification conflicts should work for pharmacovigilance and for clinical operations and for quality management, not only for one capability. The architect becomes, in part, a skill designer: someone who defines what the enterprise can reliably delegate to automation versus what must remain in human judgment. That boundary is the operational expression of design authority.
+
+Skills broaden in a different direction. Architects need enough fluency in agent frameworks, MCP, architecture-as-code libraries, and skill design patterns to shape how AI enters the architecture function. They do not need to be the primary engineers building these systems, but they must be able to evaluate whether a proposed agent design is appropriate for its delegation level, whether its tool boundaries are sound, and whether its outputs match the enterprise’s risk posture. A chief architect who cannot engage with this layer will find that the delegation model is designed by people who do not understand architecture, which is precisely the failure mode that design authority is meant to prevent.
+
+Tooling converges on a small set of capabilities that matter.
+
+The Codex becomes the semantic substrate. MCP becomes the access protocol.
+An ADR repository becomes the decision store.
+A policy repository becomes the enforcement layer.
+The delegation classification becomes the governance contract.
+A CI/CD system becomes the integration point.
+An agent runtime becomes the execution environment.
+Architecture-as-code libraries become the modeling surface.
+These are not eight separate concerns, but are the components of a single operating system for continuous architecture, and the architect’s influence over this system is the practical measure of architectural authority in the enterprise.
+
+Governance changes with it. The design authority board does not disappear. It meets less frequently on small changes and more thoughtfully on hard ones. Its agenda shifts from approving routine work to reviewing patterns: which agents are overriding the most, which capabilities are producing the most escalations, which delegation levels need reclassification, which policies are generating noise. The board also reviews the delegation classification itself on a regular cadence, asking whether the L1/L2/L3/L4 boundaries still match the enterprise’s risk posture. This is a healthier use of senior architectural time than line-by-line design review.
+
+7. Risks, Limits, and Trade-Offs
+7.1. Hallucination and architectural reasoning errors
+Current language models and agent systems make mistakes: they might cite decision records that do not exist, invent policy provisions that are not in the catalog, and misclassify capabilities. The enterprise that deploys an EA Council must treat every agent output as a candidate finding rather than as a verdict. Output contracts that require explicit references to existing Codex artifacts (with validation that those artifacts actually exist) catch many of these errors. Human review of L2 and L3 findings catches more. The residual risk remains, and the enterprise must accept that AI-assisted architecture is augmentation rather than replacement.
+
+7.2. Context decay and stale knowledge
+Agents are only as good as the context they consume. A Codex that drifts out of sync with reality produces agents that make confident recommendations based on outdated truth. This is not a new problem (humans face it too), but it becomes acute under automation because agents do not pause to ask whether the ground has shifted. The enterprise needs feedback mechanisms that surface context decay: observed override rates, comparison of agent findings against runtime evidence, periodic re-validation of Codex entries against their owning teams. Without these feedback loops, the EA Council degrades silently.
+
+7.3. Design authority erosion
+The most insidious risk is not that agents make wrong decisions but that convenience leads the enterprise to delegate too much. Each time an L3 decision is reclassified to L2 because the board is busy, the boundary between human judgment and automated assessment shifts. Over months, the cumulative effect can hollow out the human judgment layer that the design authority model exists to protect. Architectural judgment involves trade-offs that resist specification: how much local variability is healthy, when a principle should yield to a pragmatic exception, whether a long-term risk is worth accepting for a short-term outcome. Agents cannot make these judgments well because the inputs are often implicit and organizationally situated. The design authority classification must include explicit categories of decisions that never descend below L3, regardless of agent confidence or board convenience.
+
+7.4. Cost and operational complexity
+Running agents continuously against pull requests, catalog changes, and specification updates costs real money. The cost includes model inference, context retrieval, coordination logic, logging, and human review of findings. The enterprise must be honest about these costs. The gains from AI-enabled architecture are real, but they are not free. A practice that deploys AI without attention to cost economics will produce impressive demos and unsustainable operating bills.
+
+7.5. Toolchain lock-in and vendor dependency
+MCP is an open protocol, and that matters. Agent frameworks, skill standards, and architecture-as-code libraries are maturing, but the space is fragmenting. An enterprise that binds its EA Council to a single vendor’s proprietary skill format or agent orchestration layer takes on risk that the entire investment may need to be ported if the vendor changes direction. Architectural prudence suggests preferring open protocols and portable artifact formats even when proprietary alternatives look more polished today.
+
+8. Conclusion
+The first three chapters of this book described a practice that most enterprises have wanted but few have managed to operate. Machine-checkable decisions, continuous architecture review, structured intent: each requirement was defensible on its own terms, and each was stymied by the labor economics of manual structured work at enterprise scale.
+
+AI and automation change those economics. Not by replacing architects, and not by making architectural judgment unnecessary, but by making the semantic labor that structured architecture requires feasible for the first time. Agents can draft decision records, validate them against policy, check their implications in code, and monitor drift over time.
+
+Architecture-as-code libraries let diagrams and system models become machine-readable by default.
+MCP gives agents access to enterprise context through a standard protocol.
+Specialized skills compose into an EA Council that reviews change continuously.
+The practice that chapters 1 through 3 advocated stops being aspirational and becomes operational.
+
+The stakes change in both directions:
+
+The cost of leaving architecture ambiguous rises because automation will act on whatever structure it finds, coherent or not.
+The cost of making architecture explicit falls because AI reduces the labor required to author and maintain structured artifacts.
+Enterprises that recognize both movements early will operate a different kind of architecture function by the end of this decade. Enterprises that hold to the old labor model will either be overwhelmed by the volume of continuous change or will see their architectural function quietly routed around by teams using AI on their own.
+
+The chapters that follow proceed on the assumption that AI-assisted architecture is the baseline rather than a future possibility.
+
+9. Resources
+Model Context Protocol (open specification for connecting AI assistants to enterprise context sources, including catalogs, policies, and decision records): https://modelcontextprotocol.io/
+Structurizr DSL (open-source domain-specific language for defining C4-style architecture models as code, producing both diagrams and queryable structure): https://structurizr.com/dsl
+ArcKit, Enterprise Architecture Governance Toolkit (MIT-licensed AI-assisted command toolkit by Mark Craddock for generating structured governance artifacts including ADRs, requirements, risk registers, and vendor evaluations): https://arckit.org/
+GitHub Docs, About GitHub Copilot coding agent (concrete example of an AI agent that plans, implements, and opens pull requests inside the delivery flow): https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent
+Anthropic, Claude Skills overview (named, versioned capabilities that agents invoke under context, useful as a pattern for composable architecture skills): https://docs.claude.com/en/docs/agents-and-tools/skills
+draw.io MCP Server (official MCP integration by JGraph enabling AI agents to generate, update, and commit architecture diagrams alongside code in the delivery flow): https://github.com/jgraph/drawio-mcp
+SAP LeanIX MCP Server (MCP integration exposing the LeanIX GraphQL API as tools for AI agents to query application portfolios, fact sheets, capabilities, and architecture decisions): https://www.leanix.net/en/blog/mcp-server-for-sap-leanix-solutions
+Ardoq AI Gateway MCP Server (first EA platform to ship MCP to general availability, providing metamodel-aware access to the architecture knowledge graph for AI agents): https://www.ardoq.com/blog/announcing-mcp-ga
+Ruud Overbeek, EA Architecture Council Multi-Agent Knowledge Base (open reference implementation of a multi-agent EA council with Chief Architect orchestrator, domain and cross-cutting agents, deliberation protocol, routing rules, and escalation matrix, built on Microsoft Copilot Studio with LeanIX MCP and ServiceNow integration): https://github.com/ruudoverbeek1/ea-council-knowledge

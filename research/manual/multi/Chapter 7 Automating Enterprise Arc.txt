@@ -1,0 +1,446 @@
+Chapter 7: Automating Enterprise Architecture Execution
+William El Kaim
+William El Kaim
+
+Following
+32 min read
+·
+5 days ago
+
+
+
+
+
+Press enter or click to view image in full size
+
+This post builds on the foundations laid in Posts 1 to 6 posts and brings together two ideas that are often conflated but should not be. One concerns how architects structure intent so that it can survive translation into design and delivery. The other concerns how autonomous systems execute work safely, repeatedly, and under control. They are different problems that needs to be tackled separately and the execution mode where they meet is what this post calls dark factory.
+
+1. The problem is no longer documentation, it is motion
+Traditional enterprise architecture does not usually fail because it lacks conceptual richness, but because it handles motion poorly. An enterprise may have principles, target-state diagrams, capability models, and review boards. It may also have a repository full of useful artifacts. Yet as soon as work starts moving across strategy, architecture, design, delivery, security, compliance, and operations, the meaning of the change begins to drift.
+
+That problem has existed for years, but AI and automation change its consequences. A document-heavy practice can survive slow delivery because human interpretation absorbs ambiguity. It cannot survive industrialized autonomous realization at scale. As more work is performed through generators, policy engines, coding agents, and validation harnesses, ambiguity stops being a tolerable imperfection. It becomes an operational hazard.
+
+The issue is not simply speed. It is control. Once systems can act at machine pace, architectural weakness propagates more quickly and more widely. If the enterprise has not made intent explicit enough to be machine-usable, the automation layer will still move. It will simply move against the wrong semantics. It is no longer sufficient to describe a desirable architecture.
+
+The enterprise needs a reliable flow from business direction to execution-safe architecture, and from execution back to evidence.
+
+This means concretely:
+
+A reliable flow from business direction to execution-safe architecture.
+A mechanism for agents to realize that architecture without silently drifting from it.
+A feedback loop that keeps the architecture honest as reality changes.
+What remains, thus, is the question of motion, and motion is now a question of automation. This post is about automating enterprise architecture execution in a way that is fast, traceable, and under architectural authority rather than subordinate to whatever agent or platform happens to make the decision first.
+
+2. The architect plans, the agent executes
+Automating enterprise architecture execution splits into two jobs done by two different roles:
+
+The architect decides what the enterprise will build and under which constraints.
+The agent produces the working software that satisfies those constraints.
+These are not two phases of the same job, but two distinct practices with different inputs, different rhythms, and different failure modes.
+
+Automating architectural execution has then to satisfy two distinct competencies:
+
+Intent thinking. This is the discipline of translating business needs, constraints, and outcomes into precise, testable descriptions of what must be achieved and what must not be violated. Intent is not a slogan, and it is not a loose aspiration. It is structured enough to drive downstream design, policy, and validation.
+Harness engineering. This is the discipline of designing the environment in which autonomous systems act: what context they receive, which tools they may invoke, what permissions they hold, what validation logic judges them, when they must stop, and how their results are measured.
+Dark factory is the execution mode that emerges when these two competencies are composed correctly. Intent gives the system its direction. The harness gives it disciplined realization. Human accountability remains, but it moves away from constant manual interpretation and toward the design of explicit control surfaces: seeds, rules, scenarios, approval policies, and evidence requirements.
+
+At the level of concrete choices, this post pairs BMAD with the StrongDM attractor pattern. They are not the only possible choices. But they are a useful pair because they make the composition visible
+
+2.1. BMAD and Dark Factory
+Several published methodologies attempt to structure the architect’s side of this work: AWS Kiro, GitHub’s Spec Kit, and OpenAI’s spec-driven development pattern. We decided to adopt BMAD (Brief, Map, Act, Double-check). BMAD comes from an agile and product context, which means its stages are already shaped for iterative delivery and cross-functional handoffs. Transposed to enterprise architecture, it extends with little adaptation: the four stages map cleanly onto the architect’s existing work of surfacing intent, fixing decisions, producing executable artifacts, and closing with evidence. Other spec-driven approaches tend to target the coding task directly; BMAD operates one layer up, at the scope where enterprise architecture actually lives.
+
+For the agent’s side, we decided to adopt a dark-factory approach: autonomous realization under architectural governance, with human accountability preserved in the specifications, scenario packs, and holdout tests rather than in per-artifact review. The principle has a publicly documented instance in StrongDM’s Software Factory, a system built around the Seed-Validation-Feedback attractor loop. StrongDM demonstrates that the pattern works at scale. This post adopts the loop as the agent’s execution mechanism and generalizes its applicability beyond the original software-delivery context.
+
+The figure 1 below makes the asymmetry visible. Planning is a sequenced process with discrete stages. Execution is a feedback loop that keeps running until holdout scenarios converge. The architect’s output flows into the agent’s loop as the seed that drives it.
+
+Press enter or click to view image in full size
+
+Figure 1. The architect’s process produces governed artifacts that seed the agent’s loop
+2.2. BMAD is the architect’s operating flow
+BMAD organizes the architect’s work across four stages: Brief, Map, Act, Double-check. The stages turn enterprise intent into executable architecture, while preserving semantic continuity across the handoffs where architecture traditionally dissolves.
+
+For the flow to become operational, architecture needs then a concrete unit of work. The traditional candidates all fail: a principle is too abstract, a project too broad, a review too late, a static document too passive. What is needed is a bounded package that carries the minimum structured content required for industrial execution.
+
+Call this an architecture package. For one unit of change, it binds intent, scope, policies, design decisions, variation choices, executable outputs, and closure evidence. It does not replace every architecture artifact. It binds the subset of architectural content that must survive translation into autonomous or semi-autonomous execution.
+
+The architecture package is neither the intent nor the Codex:
+
+Post 3 established intent as a structured semantic object.
+Post 6 defined the Codex as the broader semantic system. The Codex holds intent statements, principles, requirements, ADRs, design specs, controls, evidence, and taxonomy.
+The architecture package is a particular Codex-resident object: a bounded orchestrator. For one unit of change:
+
+It references the governing intent statement.
+It creates or updates the relevant ADRs and design specs.
+It names the templates and policies the work produces.
+It accumulates the evidence that closes the change.
+Such a package contains the business outcome and the capability scope. It also includes the applicable policies and constraints, the mandatory design decisions, the permitted and forbidden variation points, the executable artifacts, and the closure evidence.
+
+The package grows across the BMAD stages. Each stage adds typed contributions to the Codex:
+
+Brief is where intent is made explicit. This is not a requirements-gathering exercise. The enterprise states the desired outcome and the value sought. It identifies the governing constraints and affected capabilities. It names the decisions that must be made before execution. Brief links the package to a governed Intent Statement in the Codex. It records decision obligations as typed objects.
+Map is where architecture becomes binding. Family choices, variation points, conceptual structures, platform constraints, and design decisions are made explicit. Map fixes the permissible shape of execution. It creates or updates ADRs, design specifications, and family bindings in the Codex.
+Act is where architecture enters the machinery of delivery. The output is not a document or a presentation. It becomes templates, policy artifacts, pipeline definitions, and execution packs. Each is a governed Codex object. Each can be versioned, signed, and reused.
+Double-check is where evidence closes the loop. This is not merely testing that software behaves as expected. It proves that what was delivered conforms to the governing decisions and controls. Each piece of conformance evidence is deposited in the Codex Evidence Model. Audits can then traverse the chain from intent to realization to proof.
+The package below shows what this looks like for a mid-complexity initiative at RX Pharma. Each field carries semantic weight that survives the handoff to automation:
+
+Brief fixes intent, scope, and decision obligations.
+Map begins with a concrete inventory of what must be decided rather than with a blank page. The Map field binds the work to a product-line family and variant. This prevents country-specific reinvention.
+The Act field names the executable artifacts. Architecture enters the delivery system instead of remaining in the repository.
+The Double-check field names the evidence the package must carry before closure.
+apiVersion: ea.codex/v1
+kind: ArchitecturePackage
+id: AP-0147
+name: "Affiliate Safety Intake Rollout"
+domain: "Pharmacovigilance"
+ 
+brief:
+  intent:
+    outcome: "Deploy a governed safety-intake capability for new affiliates without local solution sprawl"
+    value: "Reduce rollout lead time while preserving a canonical safety-case process"
+  capabilityScope:
+    - AdverseEventIntake
+    - SafetyCaseNormalization
+    - HumanMedicalReview
+    - RegulatorySubmissionPreparation
+  decisionObligations:
+    - choose affiliate variant within governed family
+    - bind regulatory reporting variant to local authority
+    - select identity integration pattern
+ 
+map:
+  familyBinding:
+    productLine: SafetyIntakeSPL
+    variant: EU-MidsizeAffiliate
+    permittedVariationPoints:
+      - localLanguageInterface
+      - affiliateReviewWorkflow
+    forbiddenVariationPoints:
+      - caseStateMachine
+      - auditEventSchema
+  designDecisions:
+    - id: DD-SIP-012
+      topic: caseRoutingModel
+      option: centralOrchestration
+      rationale: preserves cross-affiliate case semantics
+ 
+act:
+  codexAssets:
+    - template: "affiliate-intake-service"
+    - policy:   "gxp-audit-retention.rego"
+    - pipeline: "safety-intake-ci.yaml"
+ 
+doubleCheck:
+  evidence:
+    - conformance: "architectural-conformance-run-2097.json"
+    - validation: "scenario-pack-results-2097.json"
+    - approval:   "qa-signoff-2097.sig"
+2.3. StrongDM’s attractor pattern is the execution mechanism
+If BMAD structures the architect’s work, the StrongDM Software Factory pattern structures the agent’s work. This pattern was publicly documented by StrongDM’s AI team, founded by Justin McCarthy and colleagues in July 2025, as part of a system they call the StrongDM Software Factory.
+
+Its logic is simple.
+
+A specification acts as a seed.
+An autonomous system generates an output.
+A validation harness evaluates that output using scenarios that test externally observable behavior.
+The results are fed back into the next iteration.
+The loop continues until behavior converges within the accepted bounds.
+The conceptual shift is important.
+
+Human control no longer lives primarily in reviewing generated artifacts line by line. It lives upstream in the seed and downstream in the validation harness. Change the seed and you change what the system is trying to produce. Change the validation scenarios and rules and you change what counts as acceptable behavior. This is why the pattern is powerful, because it makes the specification, not the artifact, the primary control surface.
+It also changes how maintenance works. The loop does not merely generate an initial implementation. It can continue to observe behavior, detect anomalies, propose changes, and validate those changes through the same harness. In that sense, the factory is not a one-time generator. It is a living maintenance system.
+Two properties of the attractor matter for enterprise architecture:
+
+The graph of phases, dependencies, and transitions becomes the primary governance artifact. An agent told “build this” makes its own decisions about sequencing and parallelization. An agent bound to a graph does not. Those decisions are made explicitly, with human accountability behind them.
+Validation also becomes probabilistic rather than binary. The convergence metric is not “this run passed” but “the rate of passing scenarios has stabilized across runs.” StrongDM uses the word “satisfaction” rather than “pass/fail,” and the same language applies wherever compliance rates converge to a steady state.
+The attractor pattern applies to any execution context where a specification can be written, a validation harness can be assembled, and a feedback signal can be observed. What changes between contexts is the content of the seed, the shape of the validation harness, and the convergence metric.
+
+Neither component is sufficient alone.
+
+BMAD without the attractor produces specifications that no execution system realizes reliably,
+The attractor without BMAD produces autonomous pipelines executing against ambiguous seeds.
+The two must compose.
+
+3. Composition: the full operating model
+Once BMAD and the attractor are kept distinct, their composition becomes easier to reason about.
+
+BMAD produces the architectural content that autonomous execution needs. The attractor consumes that content and produces evidence. The two do not need to be merged into one concept. They compose through shared artifacts.
+
+3.1. BMAD steps detailed
+The four BMAD steps are detailed below:
+
+BMAD’s Brief stage establishes the convergence target. A BMAD architecture package in its Brief state carries the Intent Statement: the outcome sought, the value definition, the non-negotiable constraints, and the success criteria for execution. These are not seeds for the attractor, but they are what tells the attractor what convergence means. Without Brief, “scenarios pass” has no operational definition. The architect does not run the attractor against undefined success; she defines success in Brief, then lets Map produce the specifications that turn that definition into seeds.
+BMAD’s Map stage produces seeds. A BMAD architecture package in its Map state carries family bindings, design decisions, and permitted variation points. These are exactly the kinds of specifications the attractor consumes as input. A Map artifact is not sent to a review board and filed. It is published into the Codex as a seed that downstream execution loops read from.
+BMAD’s Act stage configures the validation harness. A BMAD architecture package in its Act state names Codex assets (templates, policies, pipelines) and the scenario packs that constitute the validation harness. The architect does not write the scenarios one at a time during execution. The architect curates reusable scenario packs per capability family and binds them to the package at Act.
+BMAD’s Double-check stage consumes attractor output. A BMAD architecture package in its Double-check state binds conformance evidence, validation results, and approval signatures. These are exactly the outputs the attractor produces as its convergence signal. Double-check is not a separate audit after delivery, but is the stage where the architect interprets what the attractor’s validation layer has already demonstrated.
+Seen this way, BMAD is the architect-facing side of the same system whose agent-facing side is the attractor.
+
+They share artifacts through the Codex: the package’s Map field is the attractor’s seed, its Act field names the attractor’s validation configuration, and its Double-check field consumes the attractor’s feedback. Neither component has to be aware of the other’s internal workings; they compose through shared Codex-resident artifacts.
+
+3.2. The Dark Factory operating model
+In practice, implementing this approach requires an ecosystem with explicit layers and named responsibilities. The figure 2 below describe it:
+
+Enterprise inputs flow through BMAD and the ArcKit-inspired execution layer into the Enterprise Codex.
+The EA tool control tower anchors the system of record.
+The delivery and runtime ecosystem and the feedback loop close the system into measurable business outcomes.
+Press enter or click to view image in full size
+
+Figure 2: The dark factory operating model
+At the left edge sit the enterprise inputs that shape intent: business strategy, regulatory obligations, transformation goals, risk posture, operating model constraints, stakeholders and ecosystem, and data and market signals. Post 3 established that intent is a structured semantic object with identifiable outcomes, constraints, and obligations. This is where those elements are sourced. Intent is not invented in a BMAD Brief. It is derived from the ambient state of the enterprise, then made precise and testable through the Brief stage. An intent that ignores any of these inputs is not a flawed artifact, it is a flawed act of sourcing.
+At the top of the operating surface sits the BMAD layer. Brief captures intent, identifies stakeholders, defines drivers, frames problems, and commits to initial principles. Map explores the current state, options, target architecture, data and capability mappings, and impact and gap analysis. Act decides and justifies, sequences the roadmap, shapes the backlog, triggers procurement actions where needed, and produces implementation guidance. Double-check runs traceability, conformance, design review, evidence validation, and exception management. The four stages preserve the semantic continuity that traditional EA habitually lost at each handoff, which is the specific failure Post 1 diagnosed and the continuity Post 2 called for.
+Below BMAD sits the ArcKit-inspired execution layer, organized into six capability clusters. The command library offers named invocations such as principle-assess, requirement-extract, option-evaluate, vendor-compare, design-review, conformance-check, traceability-build, and regulation-assess. The research and evaluation cluster covers market research, technology scan, build-versus-buy analysis, option comparison, scoring and weighting, and recommendation. The design and review cluster covers architecture reviews, design consistency, patterns and standards, risk assessment, threat modeling, and non-functional requirement validation. The traceability services cluster provides requirement, decision, source citation, impact, and control traceability, closing into end-to-end lineage. The conformance and evidence cluster handles regulation mapping, control mapping, compliance assessment, evidence collection, audit-ready reports, and exception tracking. The packs and templates cluster bundles regulatory packs scoped to jurisdictions such as EU and France. It also contains a security and privacy pack, a cloud trust pack, an AI governance pack, a procurement pack, and reusable artifact templates. No BMAD stage runs without these capabilities. They are the mechanized production surface of the architect’s work, and they are what gives Post 4’s AI and automation stakes something worth amplifying rather than something brittle to expose.
+Beneath the execution layer sits the Enterprise Codex, introduced in Post 6 as the single source of architectural truth. It holds the typed objects the execution services produce and consume. Intent Statements capture the directional outcomes that Post 3 made structured, while Principles and Constraints define the boundaries and Requirements and Capabilities bound the functional scope. Architecture Decisions recorded as ADRs carry the chosen paths, and Design Specs and Patterns give intent its buildable form, which makes specification the hinge where intent becomes buildable as Post 6 described. Controls and Policies encode the enforceable rules, the Evidence Model structures how conformance evidence is produced, linked, and versioned, and Glossary and Taxonomy preserve the semantic discipline that keeps every other object coherent. The Codex is not a file but a governed semantic system with versioning, provenance, and projection paths into downstream artifacts, exactly as Post 6 described.
+Below the Codex sits the EA TOOL control tower. It performs several functions. Inventory covers apps, data, technologies, capabilities, and the other fact sheet types. A synchronization capability keeps Codex and EA tool content state aligned. Decision linkage connects design decisions to the objects they affect. Lifecycle management tracks active, target, and retired states. Dependency mapping covers the landscape. Risk and compliance visibility surfaces the evidence base to oversight functions. Governance status exposes the state of each governance process. Reporting and dashboards give leadership the view they act on. The system of record is what auditors and regulators see. Its integrity depends on the synchronization rules defined in the execution layer above. Those rules are governed artifacts, not implementation details.
+The delivery and runtime ecosystem is where architectural intent meets running systems. Backlog and planning tools decompose work, delivery teams own implementation within the permitted envelope, and platform engineering provides the shared substrate. CI/CD pipelines, quality gates, and policy-as-code guardrails enforce continuous checks and executable constraints, while cloud and data platforms host the runtime. AI agents and automation handle the autonomous delivery work that Post 4 argued would move from peripheral tooling to the primary production mechanism. Operations and monitoring feed observed behavior back into the loop. The attractor runs inside this ecosystem rather than above it. It is the convergence loop reading seeds from the Codex, writing evidence back through the same interface, and observing reality through the monitoring layer.
+The feedback and verification loop closes the system and makes the architecture continuous in the sense Post 2 developed. Runtime signals and metrics are captured from the delivery and runtime layer. Delivery evidence flows back against the BMAD Double-check expectations. Conformance results are compared against the controls and policies held in the Codex. Drift and anomaly detection surfaces violations that automated checks caught and manual review needs to adjudicate. Exception and remediation handle the cases where governed deviation is approved rather than ignored. Architecture updates revise the Codex when patterns shift, which is how the system learns. Codex and LeanIX synchronization keeps the system of record current so that reporting and oversight remain honest. Without this loop, the upper layers decay into static documentation. With it, the enterprise has the continuously self-correcting governance system that Post 2 called for and that Post 1’s diagnosis makes urgent.
+At the right edge sit the outcomes that justify the apparatus: aligned decisions, compliant by design, traceable and auditable, faster delivery, lower risk, reusable architecture, and better business value. These are not aspirations. They are the measurable consequences of having the layers, the feedback loop, and the named accountability. A dark factory that delivers fast but produces untraceable changes fails by this measure. A governance process that produces traceable paper but slows delivery fails equally. The operating model is the shape that produces both. Every element in the figure, from the leftmost input to the rightmost outcome, has a concrete owner in the next paragraph.
+The EA Council is the accountable authority across every layer of this operating model
+
+On the inputs side, it validates that business strategy, regulatory scope, and risk posture are interpreted into BMAD Briefs correctly, preventing the drift where intent diverges quietly from the enterprise state it is supposed to reflect.
+Within the BMAD layer, the Council approves architecture packages at closure and resolves the delegation boundaries that determine which classes of change flow autonomously.
+The execution layer is where the Council owns the command library and certifies additions: new artifact templates, new constraint packs, new review gates, new synchronization rules, new scenario packs, and new digital twins.
+Codex governance falls under the Council as well, covering which intent statements are authoritative, which decisions supersede which, and how evidence links back to decisions and controls.
+For the EA tool, the Council governs the canonical model, the relationships between fact sheets, and the reconciliation rules that make the system of record authoritative state rather than documentation.
+Delivery and runtime governance sets the boundary between autonomous realization and human approval for each capability and risk class. The feedback loop is where the Council decides which signals trigger architecture updates and how quickly.
+A differentiated Council structure, with distinct responsibilities at the strategic, domain, platform, and operational layers, distributes this work so that no single body becomes a bottleneck. The Council is the accountable authority of a running governance system.
+
+4. Public implementations reveal the execution pattern
+Publicly documented systems already expose parts of the dark-factory pattern. Two stages of practice are visible:
+
+Late 2025 showed bounded autonomy on a single repository.
+2026 shows autonomous delivery at enterprise scale and self-maintenance of the factory itself.
+4.1. Execution Pattern Examples
+GitHub Copilot’s coding agent can research a repository, create an implementation plan, make code changes on a branch, and operate in an ephemeral development environment. Pull requests created by the agent still require human review, and workflows are not run automatically on agent-produced changes until a user with write access explicitly approves. Documented mitigations include branch scope limits, auditability, signed commits, session logs, secret scanning, CodeQL analysis, dependency checks, and constrained credentials. This is bounded autonomy: delegated work inside a controlled environment with human accountability preserved at merge and workflow authorization boundaries.
+
+OpenAI Codex exposes a complementary pattern around runtime permissions, with sandboxing, approval modes (read-only, workspace-write, full-access), and explicit network controls.
+
+Anthropic’s Claude Code surfaces the same family of ideas through a different control vocabulary. Proposed changes require approval before file modification, hooks enable event-driven automation, and explicit allow-lists determine which tools are pre-approved versus which require confirmation.
+
+BCG Platinion’s March 2026 analysis places these examples within a broader pattern. It identifies five preconditions that organizations must satisfy before the lights can go off. These are:
+
+an intent-driven operating model;
+codified knowledge and technical readiness;
+workforce reshaping around agent supervision;
+deliberately engineered harnesses with dedicated assembly lines for each delivery archetype;
+governance that treats verification and auditability as design properties rather than retrofits.
+The analysis converges with the argument developed here, which is useful confirmation from outside this series.
+
+4.2. Dark factory systems in production
+The more radical examples are now in production.
+
+Join The Writer's Circle event
+Spotify operates an internal platform built on Claude Code and an existing fleet-management substrate. It merges around six hundred AI-generated pull requests into production each month. It handles roughly half of the company’s code changes. Reported time savings on large-scale migrations reach sixty to ninety percent. Anthropic has stated publicly that the majority of Claude Code’s own codebase is now written by Claude Code.
+
+OpenAI’s harness engineering field report describes an internal experiment of the same generation. A small team shipped a beta product of roughly one million lines of code over five months. None of the source was written manually. The report concludes that the engineer’s primary work has shifted. It now centers on designing environments, feedback loops, and agent tooling rather than implementing code.
+
+These implementations also clarify what remains missing from most current practice. They demonstrate autonomous work on bounded scopes, specialized agent configuration, explicit approval boundaries, auditable traces, validation steps, and feedback instrumentation.
+
+What they do not yet carry is full capability semantics, business policy inheritance, architectural decision lineage, or enterprise-wide scenario libraries. The operating model addresses that gap by lifting the local tool mechanics into enterprise architectural governance:
+
+BMAD packages serve as the seeds.
+The ArcKit-inspired execution layer turns them into the architect’s harness.
+The Codex provides the semantic substrate.
+The EA tool acts as the system of record.
+Scenario packs and digital twins constitute the validation harness.
+A second lesson comes from evaluation practice. StrongDM’s Software Factory stores Scenarios outside the codebase, where the agents cannot access them, and are treated explicitly as a holdout set in model training. The underlying idea comes from machine learning evaluation practice, where OpenAI’s guidance frames robust evaluation around datasets, graders, and harnesses that include cases the system cannot see during optimization.
+
+That idea transfers directly into dark-factory architecture.
+
+An autonomous realization system should not be judged solely against the scenarios it can see while generating its solution. It needs reserved scenarios, policy traps, and governance tests that remain outside the agent’s optimization loop.
+
+5. The architecture of dark-factory execution
+A dark factory should be designed as an execution system for approved architectural intent, not as an intelligent substitute for missing architecture.
+
+At the entry point sits an execution request bound to explicit enterprise context: the capability affected, the policy scope, relevant design decisions, reusable patterns, target platforms, risk class, and required evidence. This is the BMAD architecture package in its Map state, lifted into runtime. Without it, the agent is being asked to improvise at the moment when the enterprise most needs determinism.
+
+The request is translated into an execution pack: a task-scoped extraction from the Codex containing decision records, constraints, reference architectures, scenario packs, approved toolchain surface, and approval policy. This is where design decisions become operational. A decision about event choreography becomes a machine-usable reference that shapes generator prompts, validation rules, schema templates, and review criteria.
+
+Scenario packs are central. Visible scenario packs support realization: they tell the agent what good looks like. Hidden holdout packs support governance: they remain outside the realization context and are executed only by the validation layer. Their role is diagnostic. They detect brittle optimization against known examples, shallow policy compliance, and narrow fit to the visible benchmark. The same reasoning that justifies a holdout set in model evaluation justifies hidden holdout scenarios in delegated realization.
+
+The realization flow has several bounded stages:
+
+A planning component interprets the execution pack.
+A realization component operates in a constrained environment and produces candidate artifacts.
+A validation component runs visible scenarios, static controls, policy checks, dependency analysis, security scans, architectural conformance rules, and hidden holdout scenarios.
+An approval component evaluates evidence and decides whether the change proceeds automatically, requires human review, or must be rejected. A deployment component acts within the permitted envelope.
+A feedback component captures operational results.
+The realization layer may be probabilistic, exploratory, and creative, while the validation layer must be deterministic, repeatable, and policy-driven. The approval layer must encode the organization’s actual risk posture, and the deployment layer must be scoped and reversible.
+
+Treating all of these as one undifferentiated agent workflow is the most common mistake and the source of most dark-factory accidents.
+
+Human accountability is distributed, not removed. Named accountability lives in three places: at the design-decision layer (who approved this class of change), at the approval layer (who authorized this release window), and at the policy layer (who maintains the constraints this execution must respect). The dark factory does not eliminate human judgment, but concentrates it at the points where the organization actually bears risk, and frees it from the points where structured validation can already answer the question.
+
+6. RX Pharma: controlled autonomous realization in a regulated domain
+Consider a work package at RX Pharma related to investigational product temperature excursion handling. The business intent is to reduce manual case handling delays while preserving validation evidence, auditability, and clinical quality controls:
+
+The capability in scope is clinical supply deviation management.
+The relevant policies include GxP traceability, electronic record integrity, least privilege, data retention, and mandatory human sign-off for regulated workflow activation.
+The design decisions already recorded in the Codex set the boundaries. Regulated workflow state transitions must be evented and audit records are append-only.
+Exception adjudication must remain attributable to a qualified human role.
+AI assistance may draft recommendations, but it may not finalize disposition.
+In a conventional operating model, this might become a vague backlog item handed to a delivery team with a mixture of meetings, documents, and tacit assumptions. In a dark-factory mode, the work is packaged as a tightly bounded execution unit. The realization system is allowed to propose API changes, workflow handlers, test updates, and interface adjustments. It is not allowed to redefine clinical disposition semantics, change the identity model, bypass audit controls, or activate the workflow in production without named human approval.
+
+The scenario pack below illustrates three essential features of dark-factory execution in a regulated setting: business behavior in machine-usable form, separation of visible scenarios from hidden governance cases, and explicit approval conditions.
+
+apiVersion: ea.codex/v1
+kind: ScenarioPack
+id: SCN-RXP-TEMP-EXCURSION-V4
+capability: clinical-supply-deviation-management
+change_scope: temperature_excursion_case_intake
+ 
+visible_scenarios:
+  - id: VIS-001
+    title: create excursion case from warehouse event
+    given:
+      shipment_status: delivered
+      sensor_reading_celsius: 11.8
+      product_threshold_celsius: 8.0
+      lot_status: quarantined_pending_review
+    when:
+      event: temperature_excursion_detected
+    then:
+      - create_case_record == true
+      - case.audit_events[0].type == "case_opened"
+      - case.disposition == "pending_human_review"
+ 
+hidden_holdouts:
+  - id: HLD-011
+    title: malformed sensor batch with missing timezone metadata
+    rationale: detects brittle handling of partial integration inputs
+  - id: HLD-015
+    title: agent attempts autonomous disposition
+    rationale: enforces non-delegable clinical judgment boundary
+ 
+approval_conditions:
+  - all_visible_scenarios_pass
+  - no_hidden_holdout_failures
+  - policy_check: "gxp-audit-retention.rego == pass"
+  - named_qc_role_signature_required
+  - no_forbidden_autonomy_events_in_realization
+The scenarios above do not run against the warehouse partner’s live sensor endpoints, the identity provider, or the regulatory submission system. They run against digital twins of those interfaces. Each twin reproduces conformant behavior, documented boundary conditions, and the malformed variants the validation team needs to stress-test, such as the missing timezone metadata that HLD-011 probes.
+
+The separation is not a convenience. It is what allows the factory to run high-volume scenario evaluation, including the hidden holdouts, without generating test traffic on a regulated partner’s production system or an auditable internal service.
+
+This introduces a new class of enterprise architecture asset. Someone must define the twin, govern its fidelity, and version it alongside the interface it mirrors. In regulated industries, the twin’s fidelity sets the upper bound on how confidently the factory can validate delegated change. The enterprise architect now owns, or at minimum governs, the semantics of a simulation layer that did not exist in the pre-autonomous delivery model.
+
+Production activation depends on explicit evidence, not on confidence in the agent. The required evidence is concrete: zero failed holdouts, zero policy violations, a validated workflow check, and a named quality role signing the release with a strong signature. Activation also requires confirmation that the agent did not cross forbidden autonomy boundaries, meaning no finalized disposition, no bypassed audit trail, and no modified identity controls. This is how architecture, policy, and regulated accountability meet in executable form.
+
+The forbidden-autonomy check is particularly important. It does not test whether the agent’s output is correct in some general sense. It tests whether the agent stayed within the boundaries that the enterprise defined as non-delegable. A temperature excursion recommendation may be well-reasoned and clinically sound, but if the agent marked it as “approved” rather than “pending human review,” the release gate blocks production activation regardless of output quality. That is the correct behavior because the enterprise has decided that disposition authority belongs to qualified human roles, and no agent capability, however impressive, overrides that architectural choice.
+
+Suppose the dark-factory system has processed twelve temperature-excursion work packages over the past quarter. The feedback dashboard shows that HLD-011 (malformed sensor batch with missing timezone metadata) has failed on three of those packages. Each time, the validation layer caught the failure and escalated to human review. The pattern is not random. The malformed data comes from a specific warehouse partner whose sensor integration was set up before the current event contract standard. The twin of that partner has been faithfully reproducing the malformed payloads exactly as they appear in production telemetry.
+
+Under the old model, this would surface as three incidents, each resolved locally. Under the dark-factory model, the architect examines the feedback data across execution contracts. The recurring holdout failure points to a gap in the upstream event ingestion design. The architect creates a new design decision (DEC-SUPPLY-047: mandate timezone metadata in all sensor event contracts, with a 90-day migration window for existing integrations) and updates the scenario pack to include a visible scenario for timezone validation. HLD-011 is retired because the condition it tested is now part of the standard validation. The warehouse partner’s integration team receives the new contract requirement through the normal platform change process. Future dark-factory executions will catch the problem at the visible-scenario level rather than at holdout. The dark factory has taught the enterprise something about its own architecture, and the architecture has responded by becoming more precise.
+
+This is the same convergence behavior that Post 5 demonstrated in the SAP setting, expressed here in a different domain.
+
+The attractor surfaces patterns the individual executions could not surface on their own, and the architect feeds those patterns back into the seed. The loop revises the architecture as it runs.
+
+7. What changes for the architect
+The architect does less after-the-fact adjudication and more pre-commitment design. Influence is expressed through execution structures rather than occasional review authority. Architectural work becomes intertwined with backlog shaping, platform pattern maintenance, scenario pack curation, decision governance, and control design.
+
+Design decisions become the primary operational artifact. A useful decision record in this world has scope, rationale, applicability conditions, links to policies, links to scenario packs, and downstream control implications. A decision that cannot influence templates, tests, policies, or approval logic is still informative, but it is not yet part of the dark-factory substrate.
+
+Skills shift accordingly. Architects need stronger facility with policy-as-code, validation harnesses, CI/CD control points, repository topology, test design, semantic modeling, and evidence flows. They do not need to become full-time toolsmiths, but they must be able to reason about how architecture is rendered into executable artifacts. They also need a more operational grasp of risk classification and human accountability design. The question is no longer just “What is the right target architecture?” It is also “Under what conditions may this class of change be delegated, validated, approved, and released?”
+
+Tools matter, but the tool question is secondary to the control model. Agent platforms, repository automation, policy engines, evaluation harnesses, and telemetry systems are all relevant. Yet tool selection without architectural packaging discipline will disappoint. The bottleneck is rarely the absence of agent features. It is the absence of an enterprise semantic and governance frame into which those features can be placed. GitHub’s custom agents and skills, branch protections and review requirements, OpenAI Codex approval modes, and Claude Code hooks are useful precisely because they can host explicit standards rather than merely accelerating ad hoc work.
+
+The measure of architectural effectiveness also shifts. In advisory-mode architecture, the architect’s output is reviewed by other humans, and effectiveness is gauged by whether those reviewers agree. In specification-driven architecture with dark-factory execution, the architect’s output is consumed by a validation harness and a convergence metric. Effectiveness now has several concrete measures:
+
+Scenario packs must catch real regressions and the holdout rate must stabilize.
+Design decisions must translate into policy checks that actually fire.
+The feedback loop must close into revised seeds rather than into re-litigated discussion.
+This is a more demanding standard, and also a more honest one. An architecture that cannot be expressed in structures the attractor consumes is, by this standard, not yet operational, regardless of how persuasive the document behind it may be.
+
+A strategic consequence follows that matters at enterprise scale. Once any organization can delegate code production to agents, competitive advantage shifts upstream. It no longer lives in the quality of the code, which becomes cheap to generate. It lives in the quality of the intent the enterprise can produce, the harnesses it has encoded, the scenarios it has curated, the twins it maintains, and the semantic precision of its Codex.
+
+The organizations that sustain advantage are those that can articulate what to build with enough precision to drive autonomous realization, and that can validate the result against reserved evidence.
+
+For enterprise architecture, this positioning is not marginal. It is where the practice has traction it has lacked since delivery became predominantly human and code-centric. The obligation attached to that positioning is to produce the corresponding artifacts: explicit intent objects, governed decisions, curated scenario packs, fidelity-maintained twins, and verifiable evidence.
+
+8. Risks, limits, and trade-offs
+Several risks are worth naming for any serious deployment of this pattern.
+
+A primary failure mode is false confidence. Agentic tooling is often impressive when visible scenarios are clean, which can create the impression that architecture has become optional. The opposite holds. The more capable the tooling, the more fragile unstructured delegation becomes. Hidden holdout scenarios reduce benchmark gaming, but they do not guarantee general correctness. Confidence in the loop must remain calibrated to the validation harness rather than to the felt smoothness of execution.
+
+The modeling burden is also real. Scenario packs, decision records, control policies, execution contracts, and digital twins do not appear by themselves. Where the overhead exceeds the expected value, a dark-factory mode is the wrong choice. BMAD packages only pay back their cost in domains with enough reuse and enough regulatory or architectural significance to justify the semantic investment. Applied to exploratory or one-off work, the discipline produces overhead without matching architectural return.
+
+The pattern has scope limits. Highly novel work, ambiguous product discovery, unstable domain semantics, politically contested processes, or weakly understood legacy estates may resist this execution mode. Dark-factory execution is strongest where the enterprise has already stabilized enough semantics to express meaningful constraints. In areas that have not yet reached that stabilization, attempting to industrialize execution prematurely produces both technical debt and political resistance.
+
+Control calibration is its own subtle problem. If every action requires manual approval, the system collapses back into ordinary delivery with extra ceremony. If approval policies are too coarse, teams route around them. Low-risk changes should flow with very little friction. High-risk changes should demand named human accountability. Calibrating the boundary between the two requires real architectural judgment and is rarely correct on the first try.
+
+Security and injection risks deserve particular attention. GitHub explicitly documents hidden-message filtering, firewall restrictions, and human review requirements because agent workflows are vulnerable to malicious or misleading input. OpenAI warns that enabling network access increases exposure. Any dark-factory design allowing uncontrolled internet retrieval, broad credentials, or opaque tool invocation is architecturally immature. The control envelope must explicitly bound what the agent can read, what it can call, and what it can write.
+
+Political anxiety is legitimate and should not be dismissed. Dark-factory rhetoric can trigger understandable resistance among engineers, analysts, and architects who hear it as a plan to remove professional judgment. If introduced carelessly, the model will be resisted, and rightly so. The healthier framing is that routine realization work can be delegated within a controlled envelope, while human expertise moves toward decision-making, exception handling, policy ownership, scenario design, twin governance, and evidence interpretation. The work changes shape; it does not disappear.
+
+A subtler failure mode is local optimization. A team may build a performant dark-factory loop around a single repository while leaving enterprise semantics fragmented. The result is acceleration on the surface and architectural debt underneath. The Codex, explicit design decisions, and capability-linked execution packs exist to prevent this outcome. Without them, dark-factory tooling becomes another acceleration layer on top of architectural entropy rather than a discipline that compounds across the enterprise.
+
+9. Architecture must become explicit before execution can go dark
+Dark factory is the execution mode of a mature architectural system, not a technological shortcut around architecture.
+
+It becomes possible only after the enterprise has done the harder preparatory work.
+
+Intent must be explicit and capability semantics stable.
+Design decisions must be recorded and policies encoded.
+Reusable patterns must be packaged, scenario packs defined, hidden holdout tests reserved, digital twins built and maintained, and approval logic established to preserve human accountability.
+Dark-factory execution is not the abandonment of governance but its rendering into executable form. Architecture does not disappear into automation; it enters the realization loop with enough semantic precision that autonomous systems can be trusted with bounded work. Humans do not stop mattering either. Their architectural energy stops going into reconstructing context that should already have been explicit, and starts going into designing the intent, harnesses, scenarios, and evidence the loop depends on.
+
+The sharpest test of whether an enterprise’s architecture has become operational is whether it can delegate bounded realization work to autonomous systems and still maintain semantic coherence, policy conformance, evidence traceability, and human accountability. If it can, architecture has entered execution. If it cannot, the gap between architectural intent and delivered reality remains as wide as it ever was, and no amount of agent capability will close it.
+
+10. What should be built first
+The original model is ambitious. That is appropriate as a target state, but it helps to distinguish the minimum viable version from the mature version.
+
+A Minimum viable platform requires a bounded architecture package format, explicit design decisions with applicability and control implications, a small codified policy surface, visible validation scenarios, a limited execution pack for a narrow class of changes, evidence written back into a governed repository or system of record, and named approval boundaries. This is enough to prove that architecture can enter execution in one narrow domain without disappearing into local automation.
+
+A more mature implementation adds reusable scenario libraries, traceability across requirements, decisions, controls, and evidence, reusable templates for recurring execution patterns, more systematic synchronization into LeanIX or the equivalent system of record, differentiated approval policies by risk class, hidden holdout scenarios to detect brittle optimization, and policy-as-code for deterministic controls.
+
+The full dark-factory mode adds digital twins for external interfaces, family-level execution packs, convergence metrics across repeated runs, systematic feedback into seeds and decision records, enterprise-wide semantic discipline in the Codex, and a governing body capable of certifying changes to templates, packs, rules, and synchronization logic.
+
+This staged framing matters because it makes the model implementable. Not every domain deserves the full machinery. The discipline pays off where there is reuse, regulated significance, or large-scale delegated realization.
+
+Press enter or click to view image in full size
+
+Maturity path for datk factory implmentation
+11. Synthesis
+BMAD produces the architectural content that autonomous execution needs. The attractor consumes that content and produces evidence. The two do not need to be merged into one concept. They compose through shared artifacts.
+
+In practical terms:
+
+BMAD Brief establishes the intent, scope, constraints, and decision obligations.
+BMAD Map produces the architectural seed: design decisions, family bindings, permissible variation, target structures.
+BMAD Act produces the execution configuration: templates, policies, pipelines, scenario bindings, approval conditions.
+BMAD Double-check consumes the validation and conformance evidence produced by the execution loop.
+The attractor then operates on those artifacts:
+
+it reads the seed.
+generates candidate outputs.
+validates them against visible scenarios, policy checks, scans, and hidden holdout tests.
+routes the result to automatic progression, human approval, or rejection.
+writes evidence back into the governed architecture package.
+Seen this way, BMAD is the architect-facing side of the system and the attractor is the agent-facing side. The interface between them is the set of governed artifacts shared through a common semantic substrate.
+
+The operating model needs a small number of clear layers:
+
+BMAD provides the operating flow in which that explicit context is produced.
+The ArcKit-inspired execution layer mechanizes the production of that context.
+The Enterprise Codex holds it as typed, governed knowledge.
+The EA tool gives it the system-of-record anchor that oversight and regulation require.
+The delivery and runtime ecosystem is where the attractor actually realizes the work.
+The feedback loop is what keeps every layer honest over time.
+Dark factory is the mode all of these layers compose into, governed by a single accountable Council.
+Press enter or click to view image in full size
+
+Dark Factory
+12. Sources
+StrongDM, The Software Factory. Publicly described Seed-Validation-Feedback attractor pattern, scenarios-as-holdout-set principle, and the Digital Twin Universe concept adopted in this post. https://factory.strongdm.ai/
+Simon Willison, How StrongDM’s AI team build serious software without even looking at the code, February 2026. Detailed public walkthrough of StrongDM’s Software Factory including Attractor, CXDB, and the satisfaction metric. https://simonwillison.net/2026/Feb/7/software-factory/
+Max Charas and Marc Bruggmann, 1,500+ PRs Later: Spotify’s Journey with Our Background Coding Agent (Honk, Part 1), Engineering at Spotify, November 2025. Production-scale example of delegated realization across a large codebase. https://engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1
+Ryan Lopopolo, Harness engineering: leveraging Codex in an agent-first world, OpenAI, February 2026. Five-month internal experiment shipping roughly one million lines with zero manually-written code, and the origin of the harness engineering framing. https://openai.com/index/harness-engineering/
+BCG Platinion, The Dark Software Factory: A New Era of Autonomous Software Delivery, March 2026. Industry framing of intent thinking and harness engineering as the two cardinal competencies of the dark-factory era, with five transformation pillars.
+Dan Shapiro, The Five Levels: from Spicy Autocomplete to the Dark Factory, January 2026. Origin of the “dark factory” level framing for autonomous software delivery. https://www.danshapiro.com/blog/2026/01/the-five-levels-from-spicy-autocomplete-to-the-software-factory/
+GitHub Docs, About GitHub Copilot coding agent. Delegated realization with planning, branch-based execution, and reviewable output. https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent
+GitHub Docs, Risks and mitigations for Copilot coding agent. Controls around branch scope, human review, workflow execution, and restricted access. https://docs.github.com/en/enterprise-cloud@latest/copilot/concepts/agents/coding-agent/risks-and-mitigations
+OpenAI Developers, Codex agent approvals and security. Sandboxing, approval policies, and network controls in agentic environments. https://developers.openai.com/codex/agent-approvals-security
+OpenAI Developers, Optimizing LLM Accuracy. Underlying ML evaluation practice that StrongDM’s scenarios-as-holdout-set principle is built on. https://developers.openai.com/api/docs/guides/optimizing-llm-accuracy
+Claude Code Docs, Quickstart. Approval-before-modification pattern in interactive agentic development. https://code.claude.com/docs/en/quickstart
+Open Policy Agent (OPA) and Rego. Policy-as-code engine for evaluating structured policy rules against JSON data. https://www.openpolicyagent.org/
+Mark Craddock, ArcKit: Enterprise Architecture Governance and Vendor Procurement Toolkit. MIT-licensed command-driven toolkit that inspired the execution services layer described here. https://github.com/tractorjuice/arc-kit
+Carnegie Mellon Software Engineering Institute, A Framework for Software Product Line Practice. Reuse and controlled variability discipline informing the BMAD Map stage. https://www.sei.cmu.edu/our-work/projects/display.cfm?customel_datapageid_4050=20799

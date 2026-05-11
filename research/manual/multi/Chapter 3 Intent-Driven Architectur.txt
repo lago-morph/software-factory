@@ -1,0 +1,592 @@
+Chapter 3: Intent-Driven Architecture
+William El Kaim
+William El Kaim
+
+Following
+36 min read
+·
+Apr 21, 2026
+
+
+
+
+
+Press enter or click to view image in full size
+
+This is the third post of the AI augmented EA series of blog post.
+
+Enterprise architecture is often asked to connect strategy to delivery, yet it is rarely given a sufficiently explicit object to carry across that connection. It receives ambition, pressure, and broad direction. It is told that the enterprise wants growth, simplification, resilience, clean core, regulatory assurance, lower cost to serve, faster product launch, better data reuse, or more AI leverage. These statements are not useless. They are simply too under-shaped to govern design without distortion.
+
+This chapter argues that architecture must begin from explicit intent. Intent, used in the specific sense the chapter develops, is not a slogan, a business case, a principle, a policy, a project charter, or a target diagram. It is a structured declaration of the state of affairs the enterprise seeks to bring about, the business scope within which that direction applies, the constraints that must remain intact, the measures that define success, and the areas where architectural choice is still open.
+
+The chapter develops this argument in three movements.
+
+It first establishes why intent must become explicit and what happens to large programs that skip the step, drawing on Healthcare.gov and the UK Universal Credit program as cautionary cases.
+It then shows how working systems at business, platform, and infrastructure level already demonstrate the discipline, using several examples.
+Finally, it develops a structured intent model, applies it to an energy-sector decarbonization case and an ACME Pharma clinical operations case, and addresses the operational question of how such artifacts are produced, governed, and enforced at enterprise scale.
+1. Intent is not a slogan
+Intent is not a business case in narrative form. It is not a principle, a policy, a project charter, or a target diagram. It is a structured declaration of the state of affairs the enterprise seeks to bring about, the business scope within which that direction applies, the constraints that must remain intact, the measures that define success, and the areas where architectural choice is still open. It says what must become true without pretending that the enterprise has already decided how it will make it true.
+
+That distinction is more than semantic hygiene. When intent remains implicit, enterprise architecture becomes an interpretive activity.
+
+Architects reconstruct meaning from portfolio narratives, steering committee minutes, funding packets, roadmaps, target-state decks, and program assumptions. The resulting designs often look coherent inside each local context and misaligned across the broader enterprise.
+
+The central model of this series of post on AI Augmented architecture matters here.
+
+Intent defines direction.
+Capabilities define stable business scope.
+Policies define constraints.
+Design decisions define execution choices.
+Specifications formalize those choices.
+Controls verify conformance.
+Feedback updates future decisions.
+Intent therefore sits at the head of the chain, but it is not the whole chain. Treating intent as if it were already a specification is as misleading as treating strategy prose as if it were architecture.
+
+A clear distinction between intent and implementation has already been forced in other fields where automation made ambiguity expensive. For example, IETF RFC 9315 defines intent as a declarative expression of desired operational goals and outcomes without specifying how they are achieved, while related intent-based management work describes the translation of that upstream declaration into enforceable operational behavior. That distinction is useful here because it keeps architecture from collapsing direction, rule, and implementation into a single blurred concept. (IETF Datatracker)
+
+The practical claim of this chapter is therefore modest but consequential.
+
+If enterprises want architecture to become continuous, decision-aware, and eventually executable, they need an explicit upstream artifact that stabilizes direction before design branches into options, controls, templates, and delivery work.
+
+2. What large-scale programs reveal about unstabilized direction
+Traditional enterprise architecture often says it is business-led. In practice, it is usually project-led, solution-led, or governance-led. By the time the architecture function is formally engaged, some combination of funding, urgency, vendor positioning, local pain, and executive preference has already compressed the space of interpretation.
+
+The architecture team is then asked to validate, shape, or rationalize a direction that was never adequately modeled.
+
+Real enterprise history confirms how damaging this substitution pattern can be.
+
+When the United States launched Healthcare.gov in October 2013, the intent behind the system was clear at the political level: create a federal marketplace where citizens in every state could compare and purchase health insurance. Yet that strategic direction was never stabilized into an architectural object that fifty-five contractors, multiple federal agencies, and several technology integration partners could consume as a shared reference. CMS, the responsible agency, distributed the work across dozens of contracts with overlapping scopes and no shared statement of capability boundaries, invariants, or open design choices. One contractor built the identity layer. Another built the eligibility engine. A third handled plan management. A fourth built the front-end. Each team made defensible local decisions. The result was a system that could not serve more than a handful of concurrent users at launch, because nobody had governed the integration assumptions, performance invariants, or data-flow constraints that would have needed explicit upstream agreement. Intent was everywhere and nowhere: everyone knew the goal, but no one had formalized the direction into a structure that could govern cross-team design. The subsequent rescue effort began by doing exactly what the original program had not done: stabilizing scope, constraints, integration boundaries, and operational invariants before allowing any further feature work.
+
+The UK Universal Credit program offers a different but structurally related lesson. The strategic ambition was to simplify six separate welfare benefits into a single payment, one of the most architecturally consequential public-sector transformations in recent European history. Yet the gap between that ambition and the stabilization of architectural direction was never properly bridged. Scope oscillated between full digital transformation and incremental migration. Platform choices were made and reversed. Invariants around data residency, identity assurance, and local authority integration were discovered rather than declared. The program endured years of rework, re-platforming, and political crisis.
+
+It is important to be honest about what these examples show. Neither Healthcare.gov nor Universal Credit failed solely because intent was implicit. Procurement failures, political interference, organizational dysfunction, and technical underestimation all played serious roles. But in both cases, the absence of a structured upstream artifact (one that bound direction, scope, invariants, non-goals, and open design choices into a form consumable by downstream teams) amplified every other failure mode. The teams were not failing because they lacked talent. They were failing because the enterprise had not stabilized what it meant before distributing the work.
+
+Traditional methods also encourage false agreement. Enterprise strategy language is often broad enough that many parties can project their own priorities into it. Terms such as simplification, acceleration, modernization, platformization, harmonization, or AI enablement generate the appearance of alignment while concealing disagreement about what exactly is being optimized, where variation remains legitimate, and which trade-offs are protected. Architecture artifacts often inherit this language without sharpening it.
+
+The problem deepens when abstraction levels are mixed. A principle is written as if it were a policy. A roadmap theme is treated as if it were an intent statement. A target architecture is used as if it were strategic direction. A backlog epic is mistaken for an architectural decision. Each artifact has a different purpose: Principles guide, Policies constrain, Decisions choose, Specifications formalize, Intent directs. When the enterprise loses those distinctions, governance discussions become noisy because participants are arguing across layers without noticing they have crossed them.
+
+Review-heavy governance does not repair this upstream loss of clarity. A solution that has already congealed is brought to an architecture forum and assessed for alignment with standards, target state, risk posture, and platform direction. That may still be useful, but it happens after major interpretive choices have already been made. The enterprise is no longer examining the integrity of its intent. It is examining the conformity of a candidate solution.
+
+This is why intent must become explicit before architecture can become continuous.
+
+A continuous architecture discipline cannot rely on periodic rediscovery of what the enterprise wants. It needs a stable but revisable statement of direction that downstream actors can consume. Without that, autonomy becomes divergence, standardization becomes dogma, and governance becomes retrospective correction.
+
+3. What working systems already teach about intent
+The most convincing examples of intent do not all sit at the same level of abstraction. Some appear close to strategy and service design, where the enterprise clarifies the outcome, it wants before solution work begins. Others appear inside the internal engineering platform, where that direction is translated into bounded self-service requests.
+
+The pattern is consistent: intent is useful when it is explicit enough to guide action and abstract enough to avoid freezing implementation too early.
+
+3.1. Business-level practices establish the upstream discipline
+Amazon’s Working Backwards discipline is a strong business-level example. AWS Prescriptive Guidance describes the PR/FAQ as a mechanism that solidifies scope, customer value, and business outcomes for the intended product, tying it to customer journeys and later epics or user stories. The important architectural point is not the writing format. It is the decision to stabilize intended value before technical elaboration begins. In that sense, the PR/FAQ behaves like an upstream intent artifact. It gives architecture a clearer starting point than a roadmap slogan or a partially formed solution proposal. (AWS Documentation)
+
+Toyota’s management system offers a less obvious but structurally powerful example from manufacturing. Hoshin Kanri, often translated as “policy deployment” but more accurately understood as “direction management”, is a disciplined practice for cascading strategic intent through organizational layers while preserving both clarity and local autonomy. Corporate leadership declares a directional target, such as reducing production lead time by thirty percent within three years. That target is not handed directly to plant managers as an instruction to execute. It is decomposed through a structured negotiation process called catchball, in which each layer of the organization examines the intent, identifies the constraints that must be preserved (safety standards, quality tolerances, supplier agreements), declares what is out of scope at that layer, and surfaces the open design choices that belong to the teams closest to the work. The intent becomes more concrete at each layer without losing its connection to the original direction. That is precisely the architectural discipline this chapter is advocating: structured decomposition of direction with preserved meaning across layers of abstraction.
+
+3.2. Engineering-level practices provides technical intent
+Inside the engineering platform, the same principle takes a more technical but equally instructive form.
+
+Backstage, the developer portal originally created at Spotify, provides a centralized catalog and templating surface through which teams request a bounded type of thing rather than assembling every project from scratch. Earlier chapters described Backstage’s role as a catalog and governance entry point. What matters here is a different property: the template itself encodes platform-level intent. When a platform team defines a software template for a “regulated data pipeline” or a “customer-facing API,” the template carries metadata requirements, pre-wired policy bindings, default observability profiles, and mandated ownership declarations. The team requesting the pipeline does not need to interpret the enterprise’s data governance policy from a document. The template has already translated that policy into required fields and structural constraints. The template is not enterprise intent in the strategic sense, but it is a governed translation of intent at the platform layer — and the fact that the translation is encoded in a reusable, versionable artifact rather than residing in human memory is what makes it architecturally significant. (Backstage)
+
+Crossplane extends this further into the execution layer, but the architectural lesson goes beyond resource provisioning. A Composite Resource Definition (or XRD, Crossplane’s term for the custom API object that a platform team defines) lets a platform team expose a higher-level object such as RegulatedAPIService or ClinicalTrialWorkspace, while the composition machinery creates and manages the cloud resources, policies, networking, and provider-specific objects underneath. What is architecturally important is the contract surface that the XRD creates. It declares what the consumer can request and what the platform guarantees. That contract is itself a form of intent at the infrastructure layer: the platform team is saying “this is the shape of thing we are willing to provide, under these conditions, with these defaults.” Consumers who need something outside that contract must escalate to a design decision rather than silently working around the platform. That escalation boundary — the point where a request exceeds encoded intent — is exactly where architecture needs to intervene. (docs.crossplane.io)
+
+3.3. Where intent ends and specification begins
+It is important to draw the boundaries clearly across these layers:
+
+Toyota’s Hoshin Kanri and Amazon’s PR/FAQ operate at the level of enterprise and service intent: what outcome matters, for whom, under what constraints.
+Backstage templates operate at the level of platform intake: what kind of thing is being requested, with what metadata and pre-wired policy.
+Crossplane XRDs operate at the level of executable resource contract: what managed infrastructure shape the platform guarantees, and where the escalation boundary lies.
+At each layer, intent becomes more concrete and less open. By the time direction reaches a Crossplane composition, it is no longer intent in the enterprise sense, it is a specification.
+
+The architectural discipline lies in recognizing where intent ends and specification begins at each layer, and in ensuring that the meaning carried at one level is not lost or distorted as it crosses into the next.
+
+This matters for the rest of the chapter.
+
+Intent is not a single artifact type: it is a layered discipline that preserves meaning while changing form. That observation prevents two errors:
+
+One is keeping intent so abstract that it never affects delivery.
+The other is pushing intent straight into low-level technical declarations and mistaking those declarations for enterprise direction.
+4. Modeling intent without freezing design
+If intent is to guide architecture rather than decorate it, it must be represented in a structured form (the narrative still matters). Executive language, strategic framing, and business context cannot be reduced to fields and enumerations without loss. Yet architecture needs an object that is stable enough to govern translation into decisions, specifications, and controls.
+
+A workable intent model needs to carry several kinds of information at once:
+
+It must state the intended outcome.
+It must identify the capability scope affected by that outcome.
+It must link to the policies that constrain realization.
+It must preserve invariants the future design may not violate.
+It must declare what is out of scope so that silence is not misread as permission.
+It must reveal where meaningful design decisions are still open.
+It must define how success and drift will be measured.
+4.1. Anatomy of a Structured Intent
+A well-formed intent contains nine distinct kinds of information, each serving a different architectural purpose. The table below summarizes them as a reference card; the paragraphs that follow expand on how each concept differs from its neighbors and why the distinctions matter downstream.
+
+Press enter or click to view image in full size
+
+Identity and metadata. Every intent needs a stable identifier, an owning organization, a status, and a planning horizon. Identity is what lets decisions, specifications, and controls later reference the intent without ambiguity. Without it, the artifact cannot participate in the Codex as a first-class object that other artifacts link to over time.
+
+Statement. The statement captures the directional prose: what the enterprise is trying to bring about and why. It is the one field where narrative still belongs, because executive language, strategic framing, and business rationale cannot be reduced to structured fields without loss. The statement sets the voice of the artifact; everything else disciplines it.
+
+Business outcomes. Outcomes translate the prose into measurable business results. Each outcome declares a metric, a baseline (where the enterprise is today), and a target (where it needs to arrive). Outcomes force the enterprise to answer the question “how will we know if this intent was achieved?” before design begins. An intent without outcomes is an aspiration; an intent with outcomes is a commitment.
+
+Capability scope. Intent without bounded scope becomes unusable because every downstream design can claim to serve it. The capability scope block names the enterprise capabilities that are primarily affected (where change must happen) and adjacent (where change is expected to ripple but not to originate). Capability anchoring uses stable business capability definitions rather than project names or application labels, which means the scope survives portfolio reorganization and team reshuffles.
+
+Policy references. Intent operates under enterprise constraints that pre-exist any particular transformation. A clinical-operations intent must still respect GxP, 21 CFR Part 11, and GDPR regardless of what it is trying to accelerate. Listing mandatory and advisory policy references inside the intent ensures that downstream design decisions inherit these constraints explicitly rather than rediscovering them late. Policies are referenced by identifier; the full text of each policy lives in the policy catalog and evolves under its own lifecycle, so the intent does not need to be rewritten when policy interpretation shifts.
+
+Invariants. Invariants are the non-negotiable conditions that any valid realization of the intent must preserve. They differ from policies in scope: policies apply broadly across the enterprise, while invariants are specific to this intent. If the intent is to accelerate onboarding, an invariant might state that adverse decisions still require human review, or that personal-data residency remains in the EU. Invariants declare what speed may not compromise. They are also the fields that later get compiled into executable policy rules, which is why their formulation matters so much.
+
+Non-goals. Silence is often misread as permission. A non-goal explicitly names what the enterprise is not trying to do under this intent. Declaring that “replace country-specific product configuration” is a non-goal protects a legitimate local variation from being swept away in the name of harmonization. Non-goals are a form of negative constraint: they narrow the design space by fencing off territory that is not in play. In most workshops they are the last field to be filled in, because they expose tensions that other parts of the conversation have politely avoided.
+
+Decision seeds. An honest intent artifact acknowledges that certain architectural choices are still open. Decision seeds name these open questions explicitly so that the architecture function can schedule their resolution rather than let them be decided implicitly by whoever writes the first Terraform module or the first integration contract. A decision seed has a topic (what kind of choice is pending) and a question (what must be resolved). Each seed later becomes a full design decision record under its own governance, linked back to the intent.
+
+Guardrails. Outcomes describe what success looks like; guardrails describe what must not break in pursuit of success. A guardrail is a metric with a target that bounds acceptable behavior during the transformation. If the intent is to accelerate onboarding, a guardrail might cap the false-positive rate on KYC escalations or the rate of major compliance findings. Guardrails prevent optimization of the primary outcome from producing unacceptable side effects. Outcomes and guardrails together define what the transformation is trying to achieve and what price it refuses to pay to achieve it.
+
+Feedback sources. An intent that cannot observe its own progress cannot govern anything. The feedback sources block names the event streams, dashboards, reports, and audit channels from which evidence of progress (or drift) will come. Declaring feedback sources inside the intent artifact makes monitoring an upfront architectural concern rather than a retrofit. It also gives the enforcement chain (described in Section 6) a defined place to surface breaches when guardrails threshold.
+
+These nine concepts (identity and metadata, statement, business outcomes, capability scope, policy references, invariants, non-goals, decision seeds, guardrails, feedback sources) are the vocabulary of a structured intent.
+
+Readers familiar with Kubernetes-style resource descriptions will recognize the convention of an apiVersion, a kind, a metadata block, and a spec block. That convention is deliberate. It makes the artifact consumable by the same class of tooling that already handles declarative YAML objects, including the catalogs, policy engines, and CI/CD validation pipelines. It also keeps the structure familiar to the engineers who will eventually consume it, which lowers the cost of adoption.
+
+4.2. Applying the Structure: An ACME Pharma Clinical Onboarding Intent
+With the nine concepts in hand, the YAML below becomes readable. It applies the structure to a realistic regulated case.
+
+ACME Pharma, a global pharmaceutical company, wants to reduce the elapsed time from approved protocol to site activation for phase III oncology studies. The enterprise is under pressure from competitive timelines, country-specific regulatory variation, fragmented evidence handling, and rising coordination cost across CROs, study teams, quality, and regulatory operations. A traditional architecture response would begin with a platform assessment, a CTMS discussion, or a workflow redesign initiative. An intent-driven response begins by stabilizing direction.
+
+The reader should notice how the artifact binds speed, control, scope, and pending choices into one statement that architecture can actually use, without committing to a single orchestration pattern, a single evidence store, or a single data product boundary. Those choices remain open decision seeds to be resolved deliberately through governance.
+
+apiVersion: ea.codex/v1
+kind: EnterpriseIntent
+metadata:
+  id: ACME-INT-CLIN-001
+  name: shorten-site-activation-for-phase3-oncology
+  owner: global-clinical-development
+  coOwners:
+    - quality-and-regulatory
+    - enterprise-architecture
+  status: approved
+  horizon: 18-month
+
+spec:
+  statement: >
+    Shorten the elapsed time from approved protocol to site activation
+    for phase III oncology trials without degrading inspection readiness,
+    attributable evidence handling, or country-specific regulatory
+    compliance.
+
+  businessOutcomes:
+    - metric: median-days-protocol-to-site-activation
+      baseline: "142d"
+      target: "<=95d"
+    - metric: activated-sites-within-plan-window
+      baseline: "54%"
+      target: ">=78%"
+
+  capabilityScope:
+    primary:
+      - Clinical Trial Planning
+      - Site Selection and Activation
+      - Regulatory Information Management
+      - eTMF Management
+    adjacent:
+      - Vendor Collaboration
+      - Clinical Data Management
+      - Quality Management
+
+  policies:
+    mandatory:
+      - GXP-DATA-INTEGRITY
+      - CFR21-PART11
+      - GDPR
+      - ACME-SOP-CLIN-017
+    advisory:
+      - GLOBAL-MDM-STANDARD
+      - EVENT-INTEGRATION-GUIDE
+
+  invariants:
+    - id: INV-CLIN-01
+      rule: electronic-records.mustBeAttributable == true
+    - id: INV-CLIN-02
+      rule: site-activation.approval.requiresCompleteEvidencePack == true
+    - id: INV-CLIN-03
+      rule: country-specific-submission-steps.mayNotBeBypassed == true
+    - id: INV-CLIN-04
+      rule: major-inspection-findings.target == 0
+
+  nonGoals:
+    - Replace all country regulatory systems in the current planning horizon
+    - Standardize every local workflow variant
+    - Remove human approval for site activation
+
+  decisionSeeds:
+    - id: DEC-SEED-CLIN-01
+      topic: control-tower-pattern
+      question: "global orchestration hub or federated country workflows?"
+    - id: DEC-SEED-CLIN-02
+      topic: evidence-architecture
+      question: "single canonical evidence service or linked system-of-record approach?"
+    - id: DEC-SEED-CLIN-03
+      topic: data-product-boundary
+      question: "study-startup data product or broader clinical operations data product?"
+    - id: DEC-SEED-CLIN-04
+      topic: ai-assistance-boundary
+      question: "recommendation-only or bounded autonomous preparation of submission packs?"
+
+  guardrails:
+    - metric: major-inspection-findings
+      target: "0"
+    - metric: eTMF-completeness-at-activation
+      target: ">=98%"
+    - metric: country-regulatory-exception-rate
+      target: "<=baseline"
+    - metric: manual-rework-after-activation-board
+      target: "<=15%"
+
+  feedbackSources:
+    - system: ctms
+      signal: site-activation-cycle-time
+    - system: etmf
+      signal: evidence-completeness
+    - system: qms
+      signal: deviations-and-capa
+    - system: rims
+      signal: country-submission-exceptions
+    - system: process-mining
+      signal: handoff-latency-by-country
+4.3. Reading the Artifact
+In light of the nine concepts introduced in 4.1, the artifact yields several observations.
+
+The statement is deliberately prose. It communicates direction in a form that the VP of clinical development, the regulatory affairs lead, the quality function, and the architecture team can all ratify. The business outcomes convert that prose into measurable targets: median site activation must drop from one hundred and forty-two days to no more than ninety-five, and the share of sites activated within the planned window must rise from fifty-four percent to at least seventy-eight percent. These are not vague improvements; they are commitments that downstream decisions must serve and that feedback channels will measure.
+
+The capability scope distinguishes primary from adjacent capabilities. Clinical Trial Planning, Site Selection and Activation, Regulatory Information Management, and eTMF Management are where the transformation must happen. Vendor Collaboration, Clinical Data Management, and Quality Management are expected to be touched but not restructured. This separation matters because it tells downstream teams which capabilities they have authority over and which they must coordinate with. A team that would otherwise propose a full rebuild of the quality management system now knows that such a rebuild is outside the intent’s scope and requires separate governance.
+
+Policy references anchor the intent to enterprise constraints without duplicating them. GxP data integrity rules, 21 CFR Part 11, GDPR, and ACME’s own clinical SOP are mandatory. The global master-data standard and the event integration guide are advisory. Each reference resolves to a governed policy object in the policy catalog. If CFR Part 11 interpretation evolves (for example following an FDA guidance update) the reference remains stable while the referenced policy updates, and every intent that inherits the policy becomes aware of the change through the catalog link rather than through a memo.
+
+The invariants deserve particular attention because they are the fields that eventually compile into executable policy rules.
+
+INV-CLIN-01 requires that electronic records remain attributable.
+INV-CLIN-02 requires a complete evidence pack before site activation can be approved.
+INV-CLIN-03 forbids bypassing country-specific submission steps.
+INV-CLIN-04 sets a zero tolerance for major inspection findings.
+These four conditions are non-negotiable regardless of what orchestration pattern, evidence architecture, or AI-assistance boundary the enterprise chooses. Any design decision that would violate an invariant is out of scope, not a trade-off to be negotiated in the room.
+
+The non-goals explicitly protect territory that must not be swept up in the transformation. Country regulatory systems are not being replaced in the current horizon. Local workflow variants are not being standardized. Human approval for site activation is not being removed. These non-goals prevent the intent from being reinterpreted as a larger mandate than what was actually authorized, which is a common failure mode when enthusiastic delivery teams read “accelerate” as “automate and harmonize everything in sight.”
+
+The decision seeds are where the artifact demonstrates its most important discipline. Four significant architectural choices remain open: the control-tower pattern (global orchestration hub or federated country workflows), the evidence architecture (single canonical service or linked system-of-record), the data product boundary (study-startup-specific or broader clinical operations), and the AI-assistance boundary (recommendation-only or bounded autonomous preparation). Each will become a proper design decision record under the architecture decision process. Declaring them explicitly in the intent ensures that they are resolved deliberately. Without that declaration, these choices would be made implicitly by whoever built the first workflow prototype, and the enterprise would discover months later that it had committed to, for example, a centralized orchestration hub without ever debating the country-level control trade-off.
+
+The guardrails bound the cost of pursuing the primary outcomes. A forty-day reduction in activation time is not valuable if it produces inspection findings or degrades eTMF completeness. The guardrail on major inspection findings (zero) makes it impossible to trade compliance for speed, which is otherwise a tempting move under competitive pressure. The guardrail on manual rework after the activation board (at most fifteen percent) similarly defends the operational target against quiet degradation as process volume increases.
+
+Become a Medium member
+The feedback sources close the loop.
+
+The CTMS provides site-activation cycle time.
+The eTMF provides evidence completeness signals.
+The QMS tracks deviations and CAPAs.
+The RIMS tracks country submission exceptions. Process mining tracks handoff latency by country.
+Each of these sources feeds the continuous architecture practice described in the second article of the series, so the intent has a running view of its own realization rather than depending on retrospective reporting.
+
+5. Generating the Intent Artifact
+The ACME Pharma artifact shown in section 4 raises an obvious operational question. How does an enterprise actually produce one of these? The artifact looks orderly on the page, but its value depends on the discipline that shaped each field, the catalogs that anchor each reference, and the governance that keeps it alive over time.
+
+Three production paths exist in practice, and they differ less in what they output than in how much governance they bring with them by construction. Most mature organizations end up using all three. Treating them as alternatives forces a false choice; treating them as complementary capabilities clarifies when each is appropriate.
+
+5.1. By hand: the structured workshop
+The first path is the one most enterprises already know how to run, even if they rarely apply it to intent specifically. A facilitator (usually the lead architect for the transformation domain) convenes the business sponsor, one or two domain experts, a representative from regulatory or compliance, and a small group of stakeholders who would have to live with the result. The session moves through the artifact field by field. The statement is debated until it stops sounding like a slogan. The outcomes are forced into measurable form with named baselines and targets. The capability scope is reconciled against the enterprise capability map, and someone in the room has to be authoritative about what “Site Selection and Activation” actually means and where its boundary sits. The policies are pulled from the regulatory affairs catalog. The invariants are negotiated with the people who will be held accountable for protecting them. The non-goals are surfaced last, because they are the field most likely to expose the tension that other parts of the conversation have politely buried.
+
+The strength of this path is that the reasoning happens in the room. Disagreement about what “country-specific submission steps may not be bypassed” actually means in operational terms gets surfaced and resolved by the people who can resolve it. Decision seeds are not invented retrospectively to look thorough; they emerge from genuine pauses in the conversation when the group cannot reach consensus on a design choice and recognizes that the choice belongs to a later, more deliberate process. The artifact that comes out of such a session carries the weight of having been argued through.
+
+The weakness is equally clear. The session is expensive in calendar time and in attention. It depends heavily on the facilitator’s ability to keep the conversation at the right altitude, neither slogan nor solution. It produces inconsistent quality across initiatives because each session is shaped by who happened to be in the room. And it does not refresh well: if the regulatory environment shifts six months later, the artifact does not update itself, and there is no obvious trigger to reconvene the group. The hand-crafted approach is the right choice when the domain is novel, the stakes are high, the framing is contested, or when the enterprise is adopting intent-driven architecture for the first time and needs to build internal conviction. It does not scale to a portfolio of dozens of intents updated quarterly.
+
+5.2. LLM-assisted intent drafting
+A second path has emerged over the last two years and is now realistic enough to discuss seriously. A small internal tool is built around the intent schema as a typed contract. The tool combines a conversational LLM interface with retrieval-augmented access to the enterprise’s governed catalogs (the policy library, the capability map, the metrics glossary, the list of canonical feedback sources) and a validation layer that prevents the model from producing artifacts that violate the schema or reference objects that do not exist.
+
+The anatomy of such a tool is worth being explicit about, because most failures of this approach come from skipping one of its three structural elements. The schema is the contract: it declares which fields are required, which fields must reference governed catalog entries, what enumerations are valid for status and severity, and what cross-field constraints must hold (every decision seed must have a target resolution date; every invariant must reference at least one policy or capability). The retrieval layer is the grounding: when the LLM proposes a policy reference, that reference must come from the policy catalog and not from the model’s training data; when it suggests a capability, the suggestion must resolve to a node in the capability map. The validation layer is the gate: an artifact that lists a non-existent policy or omits a non-goal field is rejected before it leaves the tool, and the model is asked to revise.
+
+A typical interaction begins with the sponsor describing the situation in their own words. The tool listens, identifies which capability nodes are likely in scope, retrieves the candidate policies that constrain those capabilities, and proposes a draft. The sponsor pushes back (“that outcome statement is too generous, we are not promising fifty-five percent renewable share if the grid stability data does not support it”). The tool revises and asks targeted questions to fill remaining fields (“Is this a non-goal, or is it just out of scope for this horizon?”). A short cycle of drafts and corrections produces an artifact in roughly an hour rather than a day, with consistent schema compliance and explicit grounding to the catalogs.
+
+The strengths of this approach are velocity, consistency, and the ability to draft from existing material. A sponsor’s recorded interview, a steering committee transcript, or the relevant section of a strategy document can all be ingested as starting context. The tool can produce twenty draft intent artifacts across a portfolio in the time a workshop process would produce two, and every draft will conform to the same schema and reference the same catalogs.
+
+The mains weakness being that the LLM might confabulate if its retrieval layer is weak. It will invent plausible-sounding policy identifiers, will reference capability nodes at the wrong level of abstraction and will smooth over genuine tensions that a workshop would have surfaced. False precision is the central risk, and it is worse here than in the workshop case because the polish of LLM output disguises its origin. The mitigation is structural: the tool must hard-fail on unresolved references, must require explicit human sign-off on outcomes and invariants before publication, and must record which fields were drafted by the model and which were edited by humans. The LLM is a drafting assistant, not an authority. Authority comes from the governed catalogs the tool is grounded in and from the human who approves the output.
+
+This path is the right choice when the enterprise is running enough intent-driven initiatives that the workshop approach has become a bottleneck, when the catalogs are already in reasonable shape, and when the team is mature enough to use the tool as a draft-then-validate pipeline rather than as a content generator.
+
+5.3. The EA-tool path: authoring inside the governed model
+The third path moves the artifact into the enterprise architecture repository itself, where it lives alongside the other governed objects it references. The argument is structural rather than aesthetic: if the policies, capabilities, metrics, and ownership records already exist as first-class governed entities in the EA tool, then an intent authored in that environment inherits their governance by construction. The artifact stops being a document and becomes a structured node in the enterprise model.
+
+For this to work, the EA tool’s metamodel must support a small set of features. The metamodel must allow a first-class Intent entity that is distinct from Initiative, Program, or Project. This distinction matters because the lifecycle of an intent is not the same as the lifecycle of a project. An intent can outlive several initiatives that try to realize it, and several initiatives may legitimately share the same upstream intent. Collapsing intent into Initiative loses that decoupling and forces the artifact to inherit the wrong governance lifecycle.
+
+The metamodel must also support typed relations from Intent to Business Capability (with primary and adjacent variants), to Policy, to Metric, and to Decision. Without typed relations, the enterprise can only represent these connections as free-text fields, which defeats the point of authoring the artifact in a structured tool. Lifecycle states (draft, proposed, approved, superseded) and a supersedes relation are required to handle revision. An intent that is replaced by a sharper version six months later should not be deleted; it should be marked superseded and linked to its replacement, so the audit trail through downstream decisions and specifications remains traversable.
+
+Several contemporary EA platforms can be extended to support this pattern, though the level of effort varies. The main mechanism in each case is the same: define a new entity type (or subtype) for Intent, expose typed relations to existing capability, policy, and metric entities, and configure a lifecycle workflow for approval and supersession. The work is mostly metamodel configuration rather than custom engineering, but it does require administrative privileges to the EA tool that are usually held tightly. Tool-specific implementation patterns are collected in the resources section at the end of the chapter.
+
+The strengths of this path are governance and traceability. An intent authored here is automatically linked, automatically versioned, and automatically queryable across the portfolio. When a policy changes, the affected intents can be identified by following the constrainedBy relation. When a decision seed is resolved, the resolution is structurally linked to the seed and from there to the intent. The trace from direction to design to execution stops being a narrative claim and becomes a navigable graph.
+
+The weaknesses are the mirror image of those strengths. Extending the metamodel is real work and requires the kind of administrative governance that many EA teams do not own. Most EA tools were not originally designed for the structured authoring of narrative-rich artifacts, and the user interface for entering an outcome statement or an invariant rule expression is rarely as fluid as a workshop whiteboard or a conversational LLM drafting tool. The schema lives in the EA tool’s configuration and has to be governed there, which adds an administrative dependency. And the tool’s permission model has to be carefully aligned with who is allowed to author, propose, approve, or supersede an intent, which is a non-trivial conversation in many organizations.
+
+5.4. From invariant to enforcement: the role of OPA and Rego
+The three authoring paths in the previous subsections produce an intent artifact. The artifact declares invariants in human-readable form: personal data residency must be EU, electronic records must be attributable, country-specific submission steps may not be bypassed. These declarations are governance-meaningful, but they are not executable. Something has to translate them into rules that a pipeline, an admission controller, or an API gateway can evaluate at the moment a change is proposed. That “something” is policy-as-code, and the most common expression of it today is the Rego language running on the Open Policy Agent (OPA).
+
+OPA and Rego appear in the intent lifecycle in two distinct roles that are worth keeping separate, because confusing them leads to confused tooling.
+
+Role one: meta-validation of the intent artifact itself
+The intent schema can be enforced as a bundle of Rego policies that run in the authoring pipeline. Rules such as “every invariant must reference at least one policy,” “every decision seed must have a target resolution date,” “every policy reference must resolve to a governed policy ID in the catalog,” or “every guardrail metric must map to an active feedback source” are cross-field constraints that JSON Schema cannot express but that Rego handles naturally. This is what the validation layer described in subsection 5.2 actually is, once it is built seriously. A draft intent artifact moves from draft to proposed only after the Rego meta-policies pass. An artifact that references a non-existent policy is rejected at the gate, not accepted and reviewed later.
+
+Role two: downstream enforcement of the invariants declared in the intent
+Each invariant in the intent artifact is eventually paired with one or more executable Rego rules. The invariant personal-data-residency == “EU” becomes, in Rego, a rule that evaluates a deployment plan and denies the plan if any resource targets a non-EU region. The invariant electronic-records.mustBeAttributable == true becomes a rule that inspects a record’s metadata and fails the pipeline if required attribution fields are missing. The Rego rule does not replace the invariant; it is the executable expression of it. Both artifacts continue to exist, and the link between them (“invariant INV-CLIN-03 is enforced by rules/clinical/no-bypass-country-submission.rego”) is stored in the EA tool as a ControlSpec artifact that references both the Intent and the Git path.
+
+This separation is what keeps the chain auditable. A regulator asking “how do you enforce that country-specific submission steps are not bypassed?” gets three answers in sequence:
+
+the invariant declared in ACME-INT-CLIN-001,
+the Rego rule in the policy repository,
+and the enforcement events from the admission controller that evaluated the rule at deployment time.
+Each answer is a typed artifact with a version and an owner and none is a narrative.
+
+What makes it work at enterprise scale is the structural link between the invariant and the Rego rule, held by the ControlSpec artifact in the EA tool. Without that link, each of the three parts (governance declaration, executable rule, runtime event) exists in a different system maintained by a different team, and the connection is a narrative claim rather than a navigable graph.
+
+5.5. Proposed end-to-end process
+The process to create an intent that can scale across a portfolio has six stages, each with a clear owner, a tool, and an artifact produced at the end of the stage.
+
+Press enter or click to view image in full size
+
+End-to-end process steps
+Stage 1: Draft. The business sponsor, supported by the enterprise architect, produces the first version of the artifact. The tool is the LLM-assisted drafting environment or a facilitated workshop, or both in sequence. The artifact is a YAML draft that conforms to the intent schema, with outcomes, invariants, non-goals, and decision seeds populated in preliminary form.
+
+Stage 2: Validate schema. The draft passes through an OPA gate that runs the meta-policies described in subsection 5.4. The gate rejects drafts with unresolved policy references, missing resolution dates on decision seeds, or unmeasurable outcome metrics. The artifact is a validated YAML draft ready for human review.
+
+Stage 3: Publish. The validated draft is promoted into the EA tool as a governed fact sheet with typed relations to the referenced policies, capabilities, metrics, and feedback sources. The artifact is a published Intent fact sheet linked to its catalog references, with lifecycle state approved.
+
+Stage 4: Codify invariants. For each invariant in the published intent, the policy engineer writes (or reuses) a Rego rule with unit tests. The rule is committed to the policy repository and linked back to the invariant identifier via a ControlSpec fact sheet in the EA tool. The artifact is a set of versioned Rego rules covering every invariant that requires enforcement.
+
+Stage 5: Enforce. The Rego rules are deployed to the enforcement points where each invariant applies: CI pipelines for deployment-time checks, admission controllers for runtime resource creation, API gateways for request-time authorization, data-writing services for attribute-level checks. The artifact is an active enforcement surface emitting violation events for every policy evaluation.
+
+Stage 6: Feed back. Enforcement events are aggregated against the intent’s guardrails. Breaches are surfaced in the EA tool as alerts on the Intent fact sheet. Runtime telemetry from the feedback sources declared in the intent (CTMS cycle time, SCADA frequency deviation, eTMF completeness) is also aggregated and compared against the declared outcomes and guardrails. The artifact is a set of signals that either confirm the intent is being honored or trigger a review of the underlying decisions. A breach in stage 6 can trigger a revision of decisions, which updates the intent, which moves through stages 2 through 5 again. An intent that ages out of relevance is superseded by a sharper version, which re-enters at stage 1 and links to its predecessor via the supersedes relation.
+
+Scaling depends on three separations being maintained.
+
+The schema is small, stable, and governed centrally; changing it is a metamodel change, made rarely and carefully, while authoring a new intent against the schema is routine.
+The catalogs (policies, capabilities, metrics) are maintained by the functions accountable for them; intent authors consume the catalogs, they do not edit them.
+The Rego policy library is organized like an application codebase: one rule per file, tests alongside, pull-request reviewed, deployed through CI.
+When those three separations hold, the cost of a new intent is not linear in the size of the portfolio. The sponsor describes, the tool drafts, the workshop sharpens, the EA tool publishes, the policy engineer codifies, and enforcement follows. An enterprise can sustain a portfolio of fifty or a hundred intents refreshed on a quarterly cadence without it becoming a full-time authoring shop.
+
+5.6. Making the pipeline work in practice
+Not every stage of the pipeline benefits equally from automation. The operating principle is: automate what has a right answer (schema conformance, reference resolution, breach detection, impact analysis), augment what benefits from a fast first draft but requires human validation (authoring, capability mapping, Rego drafting), and keep manual what carries accountability (business commitments, trade-offs, non-goals, Rego rule approval).
+
+Even with the line drawn well, many enterprises will stall. The barriers are organizational rather than technical, and they have defeated more ambitious EA programs than the ones that have succeeded.
+
+Press enter or click to view image in full size
+
+Barriers to adoption
+None of these barriers is fatal. Each can be overcome with executive sponsorship sustained across budget cycles.
+
+The most common failure mode is not that the approach was tried and found wanting; it is that it was launched, made partial progress, hit a barrier, and was quietly abandoned. The honest counterpoint is that not every enterprise needs the full pipeline.
+
+A smaller portfolio of intents authored by hand and enforced through existing governance delivers a meaningful fraction of the value.
+The catalogs do not have to be complete to start. The Rego skill gap is real but narrowing.
+The right question is whether the enterprise’s current maturity can sustain the version of the pipeline it can actually adopt. A partial pipeline that holds is more valuable than an ambitious pipeline that breaks.
+
+In practice, the three authoring paths are not competing options. Most mature enterprises use all three alongside a single Rego policy library. The typical pattern is:
+
+draft via the LLM-assisted tool from a sponsor interview or strategy document,
+sharpen the draft in a focused workshop with the people accountable for invariants and outcomes,
+then publish into the EA tool where the artifact becomes a governed object linked to its referenced policies, capabilities, and metrics.
+The policy engineer codifies the invariants as Rego rules, and enforcement follows the standard platform path.
+
+The hand-crafted path remains right for the most consequential intents: regulated invariants, cross-functional politics, first-time domain framings.
+The LLM-assisted path provides the velocity to maintain a portfolio at refresh cadence.
+The EA-tool path provides the governance and traceability that make the artifact useful as downstream decisions, Rego rules, and enforcement events accumulate against it.
+6. What Intent-Driven Architecture Changes for Architects
+When intent becomes explicit, the architect’s job changes in substance rather than only in sequence.
+
+Architecture starts earlier than the classic solution review moment. It enters when enterprise direction is being turned into a governed change context. That is also where BMAD-style flow becomes relevant: intent can now feed a continuous chain of discovery, decision, specification, and execution rather than being lost in a one-time initiation ritual.
+
+Method changes follow. Capability mapping becomes more useful because it anchors intent in stable business scope. Decision management becomes more central because the path from direction to realization passes through explicit choices. Policy management becomes more operational because policies are linked to intent before specifications are written.
+
+Tooling also changes. A repository that stores diagrams and inventories is not enough. The architecture environment must be able to version intent objects, link them to policies and capability definitions, connect them to decision records, trace them into specifications, and associate them with observable feedback.
+
+More strategically, this also changes the organization’s readiness for AI-supported engineering. AI tools are effective at elaboration, generation, and synthesis when upstream meaning is structured. They are much less trustworthy when teams hand them ambiguous direction and hope for coherent interpretation. Intent modeling therefore becomes part of architectural preparation for AI. It reduces the space in which generated artifacts can drift away from enterprise purpose while sounding plausible.
+
+7. Conclusion
+Architecture cannot become continuous and executable if it begins from vague direction. It needs an upstream object that makes enterprise purpose explicit enough to survive translation into decisions, specifications, controls, and delivery flow. That object is intent.
+
+Intent-driven architecture does not romanticize strategy language, nor does it pretend that business ambition can be pushed directly into implementation. It does something harder and more useful: it stabilizes direction in a form that can be governed. It gives capabilities a clear role as business scope. It gives policies a clear role as constraints. It reveals where design decisions must still be made. It prepares the ground on which formal specification can later stand.
+
+Traditional enterprise architecture fails not only because it is slow or document-heavy, but because it often begins after meaning has already drifted. Intent-driven architecture repairs that starting point. The next step is to show how explicit intent is translated into design decisions and formal specifications without losing the enterprise meaning that justified the work in the first place.
+
+8. Resources
+IETF RFC 9315, Intent-Based Networking: Concepts and Definitions (precise distinction between intent and implementation in a field where automation forced the issue): https://datatracker.ietf.org/doc/html/rfc9315
+AWS Prescriptive Guidance, Start with why (Working Backwards and PR/FAQ pattern as an upstream intent discipline): https://docs.aws.amazon.com/prescriptive-guidance/latest/strategy-product-development/start-with-why.html
+AWS Well-Architected DevOps Guidance, Prioritize customer needs to deliver optimal business outcomes (linkage between desired customer outcome, PR/FAQ, and continuous feedback): https://docs.aws.amazon.com/wellarchitected/latest/devops-guidance/oa.ti.6-prioritize-customer-needs-to-deliver-optimal-business-outcomes.html
+Pascal Dennis, Getting the Right Things Done (accessible treatment of Hoshin Kanri as a practice for cascading strategic intent through organizational layers with structured negotiation and preserved meaning).
+Steven Brill, “Obama’s Trauma Team,” TIME (detailed reconstruction of the Healthcare.gov rescue, showing how stabilizing scope, constraints, and integration boundaries was the essential first step): https://time.com/10228/obamas-trauma-team/
+Backstage documentation, What is Backstage? (role of the developer portal, software catalog, and how software templates encode platform-level intent through metadata requirements and policy bindings): https://backstage.io/docs/overview/what-is-backstage/
+Backstage documentation, Software Templates (template-driven self-service and controlled project creation as platform-level intent shaping): https://backstage.io/docs/features/software-templates/
+Crossplane documentation, Composite Resource Definitions (custom APIs as executable platform contracts that declare what the platform guarantees and where the escalation boundary lies): https://docs.crossplane.io/latest/composition/composite-resource-definitions/
+Crossplane documentation, Compositions (translation of custom APIs into reusable composed resources): https://docs.crossplane.io/latest/composition/compositions/
+Open Policy Agent documentation, Introduction (the general-purpose policy engine that sits behind the meta-validation and enforcement stages described in subsection 5.4): https://www.openpolicyagent.org/docs/latest/
+Open Policy Agent documentation, Policy Language Rego (declarative policy language in which both the schema meta-policies and the invariant enforcement rules are written): https://www.openpolicyagent.org/docs/latest/policy-language/
+Open Policy Agent documentation, Policy Testing (the opa test harness that makes Rego rules unit-testable as part of the standard CI/CD path): https://www.openpolicyagent.org/docs/latest/policy-testing/
+OPA Gatekeeper documentation, Introduction (Kubernetes admission-controller deployment pattern that applies Rego policies at resource creation time): https://open-policy-agent.github.io/gatekeeper/website/docs/
+Appendix A — The EnterpriseIntent Grammar
+This appendix provides the formal grammar for the EnterpriseIntent artifact used throughout the chapter. It is presented in three forms: a field reference table summarizing each element, a JSON Schema that validates the artifact structurally, and notes on the intended semantics of selected fields.
+
+A.1 Field Reference
+The table below summarizes the top-level structure of an EnterpriseIntent artifact. Cardinality notation follows the convention that:
+
+1 means exactly one (required),
+0..1 means optional,
+1..* means one or more required,
+0..* means zero or more.
+Press enter or click to view image in full size
+
+EnterpriseIntent artifact top level structure
+A.2 JSON Schema
+The JSON Schema below validates the structural shape of an EnterpriseIntent artifact. It enforces required fields, type correctness, and enumerated values for status. It does not (and cannot) validate semantic correctness: whether the chosen outcomes are appropriate, whether the invariants are meaningfully enforceable, or whether the decision seeds are genuinely the important open questions. Semantic validation requires domain review and, for cross-field constraints, Rego meta-policies as described in subsection 5.4.
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codex.example.io/schema/enterprise-intent.json",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "pattern": "^ea\\\\.codex/v[0-9]+$"
+    },
+    "kind": { "const": "EnterpriseIntent" },
+
+    "metadata": {
+      "type": "object",
+      "required": ["id", "name", "owner", "status", "horizon"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "owner": { "type": "string" },
+        "coOwners": {
+          "type": "array", "items": { "type": "string" }
+        },
+        "status": {
+          "enum": ["draft", "proposed", "approved",
+                   "superseded", "retired"]
+        },
+        "horizon": { "type": "string" }
+      }
+    },
+
+    "spec": {
+      "type": "object",
+      "required": [
+        "statement", "businessOutcomes",
+        "capabilityScope", "feedbackSources"
+      ],
+      "properties": {
+        "statement": { "type": "string", "minLength": 20 },
+
+        "businessOutcomes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["metric", "baseline", "target"],
+            "properties": {
+              "metric": { "type": "string" },
+              "baseline": { "type": "string" },
+              "target": { "type": "string" }
+            }
+          }
+        },
+
+        "capabilityScope": {
+          "type": "object",
+          "required": ["primary"],
+          "properties": {
+            "primary": {
+              "type": "array", "minItems": 1,
+              "items": { "type": "string" }
+            },
+            "adjacent": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+
+        "affectedValueStreams": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+
+        "policies": {
+          "type": "object",
+          "properties": {
+            "mandatory": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "advisory": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+
+        "invariants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "rule"],
+            "properties": {
+              "id": { "type": "string" },
+              "rule": { "type": "string" }
+            }
+          }
+        },
+
+        "nonGoals": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+
+        "decisionSeeds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "topic", "question"],
+            "properties": {
+              "id": { "type": "string" },
+              "topic": { "type": "string" },
+              "question": { "type": "string" }
+            }
+          }
+        },
+
+        "guardrails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["metric", "target"],
+            "properties": {
+              "metric": { "type": "string" },
+              "target": { "type": "string" }
+            }
+          }
+        },
+
+        "feedbackSources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["system", "signal"],
+            "properties": {
+              "system": { "type": "string" },
+              "signal": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+A.3 Semantic Notes
+Two semantic conventions are worth highlighting because they affect how downstream tooling consumes the artifact.
+
+The first concerns policy references. Policies are named by identifier rather than included inline. This means the policy catalog owns the full policy text and evolves it independently. An intent artifact that references GDPR does not need to be rewritten when the GDPR interpretation evolves; the reference resolves to the current version in the catalog. The trade-off is that the intent is only as good as the policy catalog it references. Orphaned references (to policies that have been retired or renamed) are a common integrity problem and should be detected by Codex validation or by the Rego meta-policies described in subsection 5.4, rather than left to manual review.
+
+The second concerns invariant rules. The rule field is deliberately typed as string rather than as a formal expression language. This preserves readability at the intent level and leaves the choice of enforcement mechanism to the downstream design decision and specification. An invariant that states “personal-data-residency == EU” is clear enough for a human reviewer and flexible enough to be compiled into a Rego policy, a CEL expression, a Crossplane composition constraint, or a runtime check, depending on what the implementing capability ultimately chooses. The intent declares the constraint; the specification declares how it is enforced. Collapsing the two would be a category error.

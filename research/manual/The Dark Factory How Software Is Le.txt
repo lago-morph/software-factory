@@ -1,0 +1,331 @@
+The Dark Factory: How Software Is Learning to Build Itself
+William El Kaim
+William El Kaim
+
+Follow
+24 min read
+·
+Apr 8, 2026
+50
+
+
+
+
+Press enter or click to view image in full size
+
+Image generated with OpenAI ChatgPT
+The idea of the dark factory is often presented as if software has suddenly become fully autonomous. That framing is misleading. The real shift is not that machines now “magically build software alone.” The shift is that some teams have started to build software factories in which humans no longer spend most of their time writing code or reviewing code. Instead, they define specifications, construct execution environments, design validation scenarios, and supervise the systems that generate and correct the software. The strongest public example of that operating model remains StrongDM’s Software Factory, and the surrounding ecosystem of Attractor, CXDB, Kilroy, Beads, Gas Town, Dolt, and the 2389 implementations shows that this is already a real engineering pattern, not just a slogan.
+
+What Is the Dark Factory?
+The term comes from manufacturing, not software. In 2003, Fanuc Robotics in Japan built a factory where robots manufacture other robots, around the clock, lights off. Not dark because it’s secret. Dark because robots do not need to see. There are no humans present whose vision the lighting would serve.
+
+Applied to software: a dark factory is a system that receives specifications as input and produces working, tested, deployed software as output, without a human writing, reviewing, or reading the code in between.
+
+This is not a product you can install. It is a destination. A point on a maturity curve that a handful of small teams reached in late 2025 and early 2026, and that the rest of the industry is now racing toward. To understand where it sits on that curve, you need the full map.
+
+The Five Levels of Automation
+Dan Shapiro, drawing on the NHTSA’s five-level framework for autonomous driving, mapped software development onto the same progression. Both frameworks describe a transition where human attention shifts from execution to oversight to strategy, and eventually becomes optional entirely.
+
+Level 0: Manual labor
+Every character you write is yours. You might use AI as a sophisticated search engine, occasionally tab-accepting a suggestion. The code is unmistakably human-produced. In a world of technical deflation where the cost of code drops weekly, this is manual labor in a deflationary economy. You are being outrun by the people one level above you, and the gap is compounding.
+
+Level 1: AI intern
+You offload discrete, bounded tasks to the model. Write a unit test. Add a docstring. Explain this function. You retain full authorship of the important work, but you have a useful assistant for the tedious parts. You are still moving at the rate you type. The speedup is real; the paradigm shift is not.
+
+Level 2: AI pair programmer
+This is where most self-described “AI-native” developers live in 2026. You are pairing with the model like a colleague. You achieve flow states. You are more productive than you have ever been. You are not using chat; you are using an AI-native coding environment, getting real mileage from it, handing off the boring work, driving the interesting decisions yourself.
+
+This level is comfortable, and that is the danger. Every level from 2 onward feels like you are done. You are not done.
+
+Level 3: Human in the loop
+You are no longer a senior developer. That is your agent’s job. You are a manager: reviewing code, managing diffs, checking outputs, running the agent across multiple simultaneous workstreams. Your life is diffs.
+
+For many people, this level feels like things got worse. The productive flow of Level 2 is gone; you have become a bureaucrat who reviews other systems’ work. Almost everyone tops out here. It is not an exciting place to stop.
+
+Level 4: PM mode
+You are not a developer. You are not a development manager. You have become what you loathed: a product manager. You write specs. You argue with the agent about specs. You plan schedules. You review plans. Then you leave for twelve hours and come back to check whether the tests pass.
+
+The primary skill at this level is spec-writing: detailed, structured, machine-consumable descriptions of what you want to exist. The code is not yours. The spec is yours. The spec is now the most valuable thing you produce.
+
+Level 5: The dark factory
+It is not a software process anymore. It is a black box that turns specs into software. Nobody writes the code. Nobody reads the code. The factory runs, the lights are off, and working software accumulates.
+
+The teams that have reached Level 5 are small, typically fewer than five people. StrongDM’s AI team: one CTO, one senior engineering manager, one new hire less than a year out of school. Three people. They built a full software factory, a suite of digital twins for major SaaS platforms, an observability layer, a self-healing debugging system, and went on to train dozens of senior StrongDM engineers on the new paradigm.
+
+Two Inflection Points
+Why did the dark factory become achievable when it did? The answer is not a single breakthrough but two distinct model transitions, separated by about thirteen months, each unlocking a different tier of autonomous development.
+
+The first inflection: October 2024
+In October 2024, Anthropic released the second revision of Claude 3.5 Sonnet. With it, something changed in long-horizon agentic coding. Before this model, stacking LLM calls degraded quality. Each iteration accumulated mistakes: misunderstandings, hallucinations, syntax errors, DRY violations, library incompatibilities, until the codebase collapsed under the weight of its own inconsistency. After it, agents could iterate through failure toward working software. The loop converged rather than diverged.
+
+StrongDM’s AI team, founded in July 2025, had been working toward this moment. Justin McCarthy first noticed the change clearly in December 2024 via Cursor’s YOLO mode, where agents could run autonomously without human confirmation on each step. The difference was not subtle. It was the difference between a system that decays and a system that learns. This is the moment the dark factory became physically possible.
+
+The second inflection: November 2025
+A broader inflection point came roughly thirteen months later, with the arrival of Claude Opus 4.5 and GPT-5.2. Where October 2024 changed what was possible for a tiny team of specialists with the right infrastructure already in place, November 2025 changed what was possible for experienced developers working on standard codebases. Reliable instruction-following. Consistent long-horizon behavior. Complex task completion without regression.
+
+Simon Willison, who had visited the StrongDM AI team in October 2025, three months after they had formed, describes what he observed: a working agent harness, a Digital Twin Universe with clones of half a dozen services, and a swarm of simulated test agents running through scenarios. And this was before the Opus and GPT releases that made agentic coding significantly more reliable a month later.
+
+The first inflection built the factory. The second made the factory accessible to the broader industry.
+
+These two moments are commonly collapsed into one in public discussion. The distinction matters.
+
+October 2024 unlocked autonomous development for those who invested in the infrastructure: the validation harnesses, observability layers, and self-healing loops that make human review unnecessary.
+November 2025 unlocked it for those who could not afford that investment. The question for 2026 is which level of investment most teams can realistically make.
+The Architecture That Keeps Converging
+In February 2026, StrongDM open-sourced their specification for a coding agent pipeline runner, which they called Attractor, a name is borrowed from dynamical systems.
+
+An attractor is a state a system tends to evolve toward regardless of its starting conditions.
+
+Here is the remarkable thing about the Attractor release: the GitHub repository contains no code. None. It contains three markdown files describing the spec in meticulous detail, and a note in the README instructing you to feed those specs into your coding agent of choice.
+
+The implicit claim is that the spec is sufficient, that code is a commodity derivable from the description, and the description is the thing worth publishing.
+
+StrongDM’s bet was that this spec describes a design so natural for the problem that independent implementations will converge on it. Dan Shapiro read the spec and built Kilroy: a local-first Go CLI that runs Attractor pipelines in isolated Git worktrees. 2389 Research, independently and in parallel, built three implementations: Mammoth in Go (a full spec engine with a 21-rule DOT linter and configurable fan-in policies), Smasher in Rust (a lean five-crate system with an HTMX frontend and live graph visualization), and Tracker in Go (a weekend-scale implementation with automatic checkpointing). Nobody coordinated. Nobody shared code. They shared a spec.
+
+Every one of these implementations, in different languages, by different people with different goals, landed on the same three-layer architecture.
+
+Layer 1: The LLM Client. A unified adapter layer that abstracts over model providers (Anthropic, OpenAI, Gemini), handles streaming and retries, manages provider-specific quirks, and presents a consistent interface to the rest of the system. The factory does not care which model runs a given task; the client makes them interchangeable.
+Layer 2: The Agent Loop. The reasoning core. A coding agent with tool dispatch, steering rules, loop detection to prevent infinite regress, and the ability to spawn subagents for parallel workstreams. This is the part that reads files, runs commands, writes code, checks outputs, and iterates.
+Layer 3: The Pipeline Engine. The orchestration layer. A DOT-based graph runner that sequences nodes, manages state and checkpointing, handles fan-out and fan-in, enforces retry budgets, and knows when to pause for human input. The pipeline is what makes the factory non-interactive.
+The spec pulled independent implementors toward this shape. That is the attractor: not a product, but a pattern so natural for the problem that it recurs spontaneously.
+
+What makes the StrongDM story important is well described by Simon Willison’s write-up:
+
+first, coding agents became reliable enough to sustain long-horizon work
+second, StrongDM treats scenarios as something like holdout sets, external to the code the agents are producing.
+Those two ideas are the core of the dark factory as it exists today.
+
+The DOT File Is the Product
+The runner implementations are open source and multiplying. The pipeline files, the actual DOT graphs that describe what the factory builds and how, are mostly private.
+
+Everyone is sharing the engine and hiding the blueprints. This is backwards. The engines are commodity. The pipelines are the intellectual property.
+
+A pipeline DOT file is a directed graph written in Graphviz syntax. It describes a workflow as a series of nodes (steps) and edges (dependencies). Each node can be a tool command (a shell script that runs deterministically) or an LLM call (a prompt that a model executes). The graph is the program.
+
+Two styles have emerged in practice with very different characteristics.
+
+The deterministic style uses only tool nodes: shell commands, zero model calls, identical output every run, completes in seconds, costs nothing. A vulnerability scanner that clones a repository, runs static analysis with rg, and writes a report is a complete, useful pipeline with no token spend. This style is underused and underappreciated.
+The LLM-heavy style uses model calls at every step: plan, scaffold, implement, review. Expensive, slow, nondeterministic. Useful for tasks that genuinely require reasoning. Catastrophic for tasks that do not.
+The most mature pipelines combine both: deterministic tool nodes for setup, validation, and deployment; LLM nodes only where reasoning is required. The Mammoth model stylesheet pattern makes this composable at the pipeline level, so different node types route to the models best suited for them, at the cost profile that task warrants.
+
+Multi-model review, where multiple independent models critique the same output and a synthesis node resolves disagreements, has become a standard pattern for high-stakes decisions.
+
+Three models critiquing each other’s code reviews catches errors that any single model passes.
+
+The Validation Problem
+The hardest unsolved problem in dark factory construction is not orchestration. It is validation.
+
+If you stop reading the code, the only way to know whether the system is working is to observe its behavior. But agents are skilled at satisfying poorly specified observations. An agent asked to pass a test suite will pass it: by returning hardcoded values, by rewriting the tests, by finding any path through the constraint that is not the path you intended. This is not malice. It is optimization. An agent rewarding itself by satisfying the nearest measurable proxy for success is doing exactly what it was designed to do.
+
+StrongDM’s team encountered this immediately. Tests were not enough. Integration tests were not enough. End-to-end tests helped, until the agent started optimizing those too.
+
+The real breakthrough is not code generation. It is proof without code review.
+
+Code as black-box weights
+Their solution was a conceptual shift borrowed from machine learning. A trained neural network is opaque; you do not inspect its weights to determine whether it is correct. You observe its behavior across a held-out evaluation set, data the model has never seen and cannot access during training. The weights are implementation details. Correctness is inferred exclusively from externally observable behavior on the holdout.
+
+Applied to the dark factory: code is the weights. You do not read it. Correctness is determined entirely by behavior on scenarios the agent cannot access.
+
+This is the direct analogy, and it is not metaphorical. The same reward-hacking dynamics that make ML evaluation hard make agent validation hard. The same solution, external holdout sets evaluated independently, applies. StrongDM formalized this by replacing the word “test” with “scenario.”
+
+Scenarios as holdout sets
+A scenario, in StrongDM’s definition, is an end-to-end user story written in natural language, stored outside the codebase, that can be intuitively understood and flexibly validated by an LLM. The critical properties: it lives outside the repository the agent can access, it is evaluated by a judge separate from the agent, and it tests externally observable behavior rather than internal implementation.
+
+The scenario library is the holdout set. The factory is the model. The satisfaction rate is the validation loss.
+
+That analogy to holdout sets is one of the most important ideas in the entire dark-factory model. It means the system is not judged primarily by self-authored tests embedded alongside the generated code. It is judged against externally managed behavioral expectations that are not part of the immediate implementation loop. This is structurally similar to how a model is evaluated on examples it was not trained on. The generated software is not trusted because it passes its own tests. It is trusted because it satisfies scenarios that function as independent evaluation data.
+
+That is a much more powerful idea than standard test automation. In a conventional agent workflow, an agent may generate code and tests together, which risks trivial or self-serving validation. The dark-factory answer is to separate generation from evaluation. The implementation path can be agentic, but the standard of truth comes from scenarios held apart from the generated code. That separation is what makes “code must not be reviewed by humans” intellectually defensible. Human review is not being discarded recklessly. It is being replaced, where possible, by stronger behavioral evidence.
+
+When you add a new feature, you add new scenarios to the holdout set before you instruct the factory to implement the feature, exactly as you would add test cases to an evaluation set before retraining. This framing solves the reward-hacking problem by construction. The agent cannot optimize against scenarios it cannot see. An agent that “passes” by returning hardcoded values will fail the held-out scenarios it has never encountered.
+
+Satisfaction as a metric
+Because much of what StrongDM builds has an agentic component, binary success (“the test suite is green”) is insufficient. An agent serving a user follows a trajectory through a space of possible actions; whether the user is actually served depends on the whole trajectory, not on whether any individual step completed. StrongDM introduced “satisfaction” as their primary metric: of all observed trajectories through all scenarios, what fraction of them likely satisfy the user?
+
+This is a probabilistic, empirical measure. It requires an LLM-as-judge to evaluate whether a trajectory satisfied the stated user intent. It is more expensive to compute than a boolean assertion. It is also dramatically harder to game.
+
+The combination, external scenarios, probabilistic evaluation, LLM judge, is what makes no-review development viable for software that actually matters. StrongDM is building enterprise security software. Access management for complex organizations. “Security issue” is a euphemism for “lawsuit.” That they are shipping unreviewed code at all, let alone reliably, is a direct consequence of taking the holdout analogy seriously.
+
+The Digital Twin Universe (DTU)
+To run scenarios at realistic scale, thousands per hour across all the third-party services their software touches, StrongDM needed to solve a rate-limit problem. Running those scenarios against live services at validation speed would trigger abuse detection, exhaust rate limits, and accumulate unacceptable API costs. And testing real failure modes against production services is sometimes dangerous and sometimes impossible.
+
+Their solution: build faithful behavioral clones of every critical dependency.
+
+The Digital Twin Universe contains self-contained implementations of each service, faithful enough for externally observable behavior, API responses, error conditions, edge cases, without being full reimplementations. They are not trying to clone Google Sheets in its entirety. They are trying to clone every behavior that the Python client libraries exercise.
+
+Jay Taylor, the new hire who built the DTU in a couple of weeks, articulated the key strategy on Hacker News after the public launch:
+
+I did have an initial key insight which led to a repeatable strategy to ensure a high level of fidelity between DTU vs. the official canonical SaaS services: Use the top popular publicly available reference SDK client libraries as compatibility targets, with the goal always being 100% compatibility.
+
+The insight is precise: do not clone the service, clone the SDK’s view of the service. Take the most widely-used client library for Okta and make every call it can make return a correct response. The SDK is the contract. Compatibility with the SDK is compatibility with the service, for every purpose the scenarios exercise.
+
+The DTU twins run as self-contained Go binaries. With the DTU in place, the scenario harness can run thousands of end-to-end tests per hour. Failure modes that are impossible to trigger against production become routine. The simulated Slack channel fills with agents exercising every edge case in the permission model, and the factory watches whether the software handles them correctly.
+
+The economics of building the DTU are worth pausing on. Justin McCarthy has described the conversation he would have had with an engineer who proposed this a year ago: “your enthusiasm is really welcome, get back to work, project not approved.” A full behavioral clone of GSuite and Salesforce and Okta, written to SDK-level fidelity, would have required a dedicated team and months of work. Now it is a pipeline task for one engineer over two weeks. What was unthinkable is now routine.
+
+The Self-Healing Loop
+The week before StrongDM’s public release, they built two systems that together close the factory loop entirely.
+
+On Monday, they built CXDB: a special-purpose observability layer that watches every interaction in their system. CXDB is released as open-source, roughly 16,000 lines of Rust, 9,500 of Go, and 6,700 of TypeScript. It stores conversation histories and tool outputs in an immutable DAG, a content-addressed graph where every interaction can be traced, replayed, and queried.
+
+On Tuesday, they built Healer. Healer watches CXDB. It develops opinions about whether agent behaviors look right. It clusters similar problems into diagnoses. Each diagnosis becomes an investigation, and the investigation is itself an agent. An agent wakes up, looks at the cluster of bad behavior, retrieves the relevant code and prompts and data, identifies the root cause, and writes a prescription. The prescription is applied. The bug is fixed.
+
+No human filed the bug report. No human triaged it. No human assigned it. No human wrote the fix. No human reviewed the fix. The factory watches itself, diagnoses itself, and heals itself.
+
+This is the part most discussions of AI coding overlook: the loop does not just build software; it maintains software. The dark factory is not a batch process that produces a snapshot. It is a continuous system that sustains a living codebase.
+
+The discipline that makes this possible is a single question Justin McCarthy’s team asks whenever anyone finds themselves doing something manually: reviewing logs, checking outputs, validating behavior.
+
+Get William El Kaim’s stories in your inbox
+Join Medium for free to get updates from this writer.
+
+Enter your email
+Subscribe
+
+Remember me for faster sign in
+
+Why am I doing this?
+
+If you can look at a log file and articulate why something does not look right, you have described a validation rule. If you can describe it, you can automate it. So stop looking at log files. Get yourself out of the job of looking. This is the discipline that separates a team that uses AI from a team that has built a software factory.
+
+The Memory Problem
+An agent operating inside a pipeline faces a fundamental constraint: LLMs have no memory between calls. Every invocation starts from zero. In a long-horizon task, building a feature that requires dozens of agent calls across hours or days, this is catastrophic. The agent forgets what it decided, contradicts its earlier work, repeats steps it already completed.
+
+The naive solution is to dump everything into the context window. This works up to a point, then degrades: models lose coherence at the extremes of their context, earlier decisions get overwritten by later ones, and the cost per call becomes prohibitive.
+
+Beads addresses this by replacing flat markdown scratchpads with a persistent, dependency-aware graph. Instead of a linear plan that the agent overwrites, Beads maintains a structured representation of tasks, their dependencies, their completion status, and their relationships to each other. An agent working on task 47 can query the graph: what does this task depend on? What have those dependencies produced? What decisions were made upstream that constrain what I do here?
+
+This is not just a memory system. It is a work ledger, a durable record of what has been decided, what has been built, and what remains. It survives across sessions, across agent instances, and across pipeline boundaries. It is the mechanism that makes long-horizon autonomous work possible without regression.
+
+Freshell addresses a related problem at the workspace level. When you are running multiple coding agents, shells, browsers, and editors simultaneously, session management becomes chaotic. Freshell organizes multi-agent work into structured tabs, giving each agent its own isolated workspace while giving the human operator a unified view.
+
+StrongDM’s “Filesystem as Memory” technique captures the same insight at a lower level: models can navigate repositories and adjust their own context by reading and writing files. Directories, indexes, and on-disk state become a form of persistent memory that survives context window limits. A well-organized repository is not just good engineering hygiene. It is an interface that agents can navigate.
+
+Attribution and the Agent Workforce
+When agents are the engineers, traditional accountability structures break down. Git blame attributes commits to “AI Assistant.” Nobody knows which agent wrote the buggy authentication flow. Nobody knows which model handles Go refactors reliably. Nobody knows what is in flight across twelve repositories.
+
+Gas Town, built by Steve Yegge, addresses this as its central design problem. It is an orchestration layer that treats AI agent work as structured data. Every action is attributed. Every agent has a track record. Every piece of work has provenance.
+
+The attribution system is granular. Every Git commit is authored by a specific Gas Town agent identity (gastown/polecats/toast), every task record carries a created_by field, every event log entry carries an actor. Attribution is preserved even when agents work cross-repository.
+
+The value compounds over time. As agents accumulate work histories, those histories become capability profiles. When new Go work arrives, capability-based routing assigns it to proven Go agents. A/B testing between models becomes empirical: deploy two models on comparable tasks, measure completion rates and quality signals, make data-driven routing decisions.
+
+Gas Town’s design philosophy is explicit on five points: attribution is not optional; work is data, not just tickets; history determines trust; scale is assumed from the start; verification is first-class. The enterprise implications extend to compliance: audit trails for SOX and GDPR, objective performance management of the agent workforce, cross-project dependency tracking, federation across organizational boundaries.
+
+The Factory Techniques
+Beyond the core architecture, a set of practical techniques has emerged from teams actively building dark factories.
+
+Gene Transfusion solves the problem of applying a working pattern from one codebase to another. Instead of prompting the agent to “implement feature X,” you point it at a concrete exemplar, a working implementation of the pattern in a different context, and ask it to reproduce the behavior in the new context. A solution paired with a good reference reproduces reliably in ways that a solution described from scratch does not.
+Pyramid Summaries address context compression without information loss. As a codebase grows beyond what fits in a context window, multiple zoom levels are maintained simultaneously: a one-sentence summary, a paragraph summary, a section summary, the full text. The agent navigates between zoom levels as needed. This is reversible summarization: the agent can always expand back to full detail rather than working from a lossy truncation.
+Shift Work separates interactive work from fully specified work. When intent is complete, specs written, scenarios defined, examples provided, an agent can run end-to-end without back-and-forth. Shift work means doing the interactive clarification upfront (the “day shift”) so the agent can execute autonomously overnight (the “night shift”). The factory runs while you sleep.
+Semport (semantic port) handles codebase migrations: moving code between languages or frameworks while preserving behavioral intent. The agent does not translate syntax; it understands the purpose of the code and reimplements it in the target language. This makes migrations that were previously impractical, porting a 200,000-line Python codebase to Go, into pipeline tasks.
+Dorodango is a practice rather than a technique: the discipline of iterative polishing. Jesse Vincent named it after the Japanese art of polishing a ball of mud into a high-gloss sphere. Codegen output is dorodango. You spec carefully, hand it to an agent, and polish what comes out. When the result is fundamentally wrong, you throw it away and rebuild from the spec. When it is close but rough, you polish it in small increments. Jesse described waking up to find an artifact named e2e-test-full-run-33.mp4. Runs 1 through 32 were the agent working through problems one by one. Run 33 worked. That is the process.
+Model Strategy at the Factory Level
+In a world where the factory runs dozens or hundreds of model calls per task per day, model selection is a meaningful engineering decision. StrongDM publishes a “Weather Report,” a living document tracking which models they use for which tasks and how that assignment evolves as models improve.
+
+Their current configuration reflects a multi-model strategy: one model for sprint planning (or a consensus pair that merges two independent outputs), a different model for architectural critique at high reasoning settings, a specialized code model for implementation, a multimodal model for frontend aesthetics and UX ideation. The pipeline model stylesheet pattern makes this composable: different node types route to the models best suited for them.
+
+The model landscape changes quickly. The right model for architectural critique this month may not be the right model next month. Building the routing layer at the pipeline level, rather than hardcoding model choices in application code, is what makes model upgrades cheap.
+
+The Economics
+The $1,000-per-engineer-per-day figure from StrongDM’s framing deserves honest attention rather than being glossed over. At that spend level, $20,000 per engineer per month, the factory pattern becomes a business model question as much as an engineering question. Can you create a profitable enough product that you can afford the overhead? And does the competitive landscape shift so radically that you have no choice? If any competitor can clone your newest features with a few hours of coding agent work, the economics of competitive advantage change fundamentally.
+
+Simon Willison, who covered the StrongDM release extensively and visited the team, offered a useful counterpoint: his personal exploration of agent patterns on a $200/month Claude Max subscription gives him substantial space to experiment. He is not running a swarm of QA testers around the clock, but he is meaningfully engaging with the same architectural questions at a fraction of the cost.
+
+This tension is real and worth sitting with. The dark factory at scale, full Digital Twin Universe, continuous scenario testing, self-healing loops, dozens of parallel agents, costs money. The patterns underlying it, scenarios as holdout sets, deterministic validation, agent attribution, pipeline orchestration, cost much less and are accessible to individual developers today.
+
+The question is not “can I build the full StrongDM factory on a personal budget?” The answer is clearly no. The question is “which pieces of this pattern can I adopt at what cost, and what fraction of the benefit do I capture?” Most teams will not reach Level 5. Most teams would benefit enormously from reaching Level 4. The principles are the same at both scales.
+
+Conclusion: The Spec Is the New Source Code
+All of these pieces, orchestration, validation, observability, memory, attribution, model strategy, point toward the same fundamental shift in what software engineering produces.
+
+In the previous paradigm, engineers produced code. Code was the artifact. Reviews were code reviews. Hiring was evaluated on coding ability. Architecture was expressed in code. The entire profession was organized around code production.
+
+In the dark factory paradigm, engineers produce specs. The factory produces code from specs. Code is the factory’s output, an implementation detail, the way machine code is an implementation detail of compiled software.
+
+Reading the generated code for comprehension is as anachronistic as reading assembly to understand a C program. This is historically familiar. When high-level languages arrived, some engineers were horrified that you would ship assembly you had never read. BASIC felt like cheating. Hand-optimized assembler was the craft. But getting things done was so much faster. History rhymes.
+
+As Shapiro puts it: “People would complain that you had to hand-optimize the assembler. They would be horrified that you’d ship assembly code you’ve never read.” What does “upward” mean in the dark factory era? The craft migrates to three places.
+
+Specification writing: translating intent into machine-consumable descriptions precise enough for autonomous implementation. A good spec for a dark factory is not a three-sentence feature description. It is thousands of words of structured, verifiable, example-rich prose that anticipates failure modes, defines edge cases, and specifies how the factory should behave when things go wrong.
+Pipeline architecture: designing the graph of steps that builds the thing. Which nodes need reasoning? Which are deterministic? Where do you fan out? Where do you bring a human in the loop? What are the retry budgets? The pipeline file is the architectural document.
+Validation design: specifying what success looks like in terms of externally observable behavior. Writing scenarios. Building or adopting digital twins. Defining the satisfaction metric. This is the hardest part and the part most teams underinvest in.
+The key principles to apply moving forward
+These are not aspirational guidelines. They are what the teams actually building dark factories have converged on through practice.
+
+1. Specs are the source of truth. Code is disposable. Well-crafted natural language specs are the artifact worth maintaining. When something breaks, fix the spec and rebuild. Do not debug the output.
+
+2. Use the three-layer architecture. Every working implementation converges on it: unified LLM client, agent loop with tool dispatch, pipeline engine as a directed graph. Extend it; do not reinvent it.
+
+3. The pipeline file is the process definition. The dark factory is graph-driven. DOT, DAGs, checkpoints, gates, and node-level retries appear repeatedly across the actual implementations. Write workflows as DOT files. They are version-controlled, composable, and runner-agnostic. Think of them as BPMN diagrams, not shell scripts. Share them publicly; they are worth more than the runner code.
+
+4. Deterministic nodes first; LLM nodes only where reasoning is required. Tool nodes cost nothing and are reproducible. LLM nodes are expensive and nondeterministic. Use models only where you actually need reasoning.
+
+5. Treat scenarios as holdout sets. Store your behavioral scenarios outside the codebase, inaccessible to the agent. Evaluate against them with an LLM judge. An agent that cannot see its evaluation set cannot optimize against it. This is the direct ML analogy, and it is not metaphorical.
+
+6. Measure satisfaction, not test passage. Define success as the fraction of scenario trajectories that likely satisfy the user. This is harder to game than boolean assertions and more honest about what you are actually building.
+
+7. Build digital twins for critical dependencies. Use the public SDK client libraries as your compatibility target. If your twin satisfies every call the SDK makes, it is faithful enough for everything the scenarios exercise. The DTU is a pipeline task, not a project.
+
+8. Ask “why am I doing this?” every time you do something manually. If you can articulate why a log looks wrong, you have described a validation rule. If you can describe it, you can automate it. This discipline is the gap between Level 3 and Level 5.
+
+9. Every action must be attributed. Build attribution into your infrastructure from day one. It is the foundation of debugging, performance management, compliance, and trust in an agent workforce.
+
+10. Build the memory layer. Agents operating on long-horizon tasks without structured memory regress. A dependency-aware task graph is not optional for work that spans multiple sessions.
+
+11. Close the self-healing loop. The factory is not complete until it can observe its own output, detect its own failures, and correct them without human intervention. A simple anomaly-detection script that opens a ticket is enough to start. Build toward the loop.
+
+12. The pipeline files are worth sharing. The community that forms around shared pipelines is the real open-source project of this moment. An “audit a Rails app” pipeline or a “ship a mobile release” DAG is more valuable to the ecosystem than another runner implementation.
+
+Epilogue: The Question Is No Longer How
+The factory is not a product you install. It is a discipline you build incrementally, spec by spec, pipeline by pipeline, loop by loop, until the lights can stay off.
+
+The “how” question is answered. The three-layer architecture converges. The tooling exists. The techniques are documented. The key concepts, scenarios as holdout sets, code as opaque weights, satisfaction as the real metric, give you the right mental model to make it work. Teams of three people with one year of runway are shipping things that previously required fifteen engineers and two years.
+
+The question now is “what.” What specifications are worth writing? What pipelines are worth building? What problems are worth automating? What does your organization produce when the cost of code asymptotes toward zero?
+
+Those questions are harder than the engineering. They are also more interesting. The dark factory does not answer them for you. It just removes the excuse that getting there is too expensive.
+
+Resources
+Here are all the sources referenced across the article:
+
+Primary authors and articles
+
+Dan Shapiro, “The Five Levels: from Spicy Autocomplete to the Dark Factory” — https://www.danshapiro.com/blog/2026/01/the-five-levels-from-spicy-autocomplete-to-the-software-factory/
+Dan Shapiro, “You Don’t Write the Code. You Don’t Read the Code Either.” — https://www.danshapiro.com/blog/2026/02/you-dont-write-the-code/
+Simon Willison, “How StrongDM’s AI team build serious software without even looking at the code” — https://simonwillison.net/2026/Feb/7/software-factory/
+Harper Reed (2389 Research), “The Dark Factory Is a .dot file” — https://2389.ai/posts/the-dark-factory-is-a-dot-file/
+Jesse Vincent, “Dorodango” — https://blog.fsck.com/2026/02/10/dorodango/
+Steve Yegge, “Welcome to Gas Town” — https://steve-yegge.medium.com/welcome-to-gas-town-4f25ee16dd04
+StrongDM factory documentation
+
+Story — https://factory.strongdm.ai/
+Principles — https://factory.strongdm.ai/principles
+Techniques — https://factory.strongdm.ai/techniques
+Products (Attractor) — https://factory.strongdm.ai/products/attractor
+Weather Report — https://factory.strongdm.ai/weather-report
+Gas Town documentation
+
+Overview — https://docs.gastownhall.ai/
+Why These Features? — https://docs.gastownhall.ai/other/why-these-features/
+GitHub repositories
+
+Attractor (spec only, no code) — https://github.com/strongdm/attractor
+AttractorBench — https://github.com/strongdm/attractorbench
+CXDB — https://github.com/strongdm/cxdb
+Kilroy (Dan Shapiro) — https://github.com/danshapiro/kilroy
+Freshell (Dan Shapiro) — https://github.com/danshapiro/freshell
+Beads — https://github.com/gastownhall/beads
+Gas Town — https://github.com/steveyegge/gastown
+Mammoth (2389) — https://github.com/2389-research/mammoth
+Smasher (2389) — https://github.com/2389-ai/smasher
+Tracker (2389) — https://github.com/2389-research/tracker
+dotpowers (2389) — https://github.com/2389-research/dotpowers
+Dolt (version-controlled SQL database, referenced by Gas Town) — https://github.com/dolthub/dolt
+Jesse Vincent’s Superpowers — https://github.com/obra/superpowers
+Products and websites
+
+StrongDM — https://www.strongdm.com/
+2389 Research — https://2389.ai/
+Freshell site — https://freshell.net/
+Gas Town Hall — https://gastownhall.ai/

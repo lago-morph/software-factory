@@ -1,7 +1,7 @@
-# Blocked URLs — Sandbox Reachability Report (v3)
-**Date:** 2026-05-10 (v2); 2026-05-11 (v3 update after issue #8 Wayback fetches landed)
-**Version:** 3 — incorporates Wayback-Machine retry results from issue #8
-**Purpose:** Originally enumerated every URL the research subagents could not fetch. After the user committed local copies of the previously-blocked pages to the repo root, most became accessible (v2). Issue #8 ran a Wayback-Machine retry pass for the rest; v3 records the final status. Local cached source files have since been deleted from the repo (content is incorporated into the reports).
+# Blocked URLs — Sandbox Reachability Report (v4)
+**Date:** 2026-05-10 (v2); 2026-05-11 (v3 update after issue #8 Wayback fetches landed); 2026-05-11 (v4 update after manual browser-cookie fetch round)
+**Version:** 4 — incorporates manual browser-cookie fetches dropped into `research/manual/` and drained per the research-pipeline skill's Phase 0.
+**Purpose:** Originally enumerated every URL the research subagents could not fetch. After the user committed local copies of the previously-blocked pages to the repo root, most became accessible (v2). Issue #8 ran a Wayback-Machine retry pass for the rest (v3). v4 records the outcome of a third retrieval pass — user-supplied manual browser-cookie fetches. Local cached source files have since been deleted from the repo (content is incorporated into the reports).
 
 ---
 
@@ -23,7 +23,7 @@ The user committed local saved copies of the previously-blocked pages to the rep
 | https://factory.strongdm.ai/products/cxdb | `factory.strongdm.ai__products__cxdb.html` | ✅ ACCESSED |
 | https://every.to/guides/compound-engineering | `every.to__guides__compound-engineering.html` | ✅ ACCESSED |
 | https://every.to/chain-of-thought/compound-engineering-how-every-codes-with-agents | `every.to__chain-of-thought__...html` | ✅ ACCESSED |
-| https://every.to/source-code/my-ai-had-already-fixed-the-code-before-i-saw-it | `every.to__source-code__...html` | ⚠️ ACCESSED but paywall after ~10-minute-investment section |
+| https://every.to/source-code/my-ai-had-already-fixed-the-code-before-i-saw-it | (manual fetch incorporated; cache file deleted) | ✅ FULLY ACCESSED — manual browser-cookie fetch (2026-05-11) returned the full article past the paywall. Post-paywall content (five Cora use cases, five-step playbook, three metrics, $400/$400k claim) incorporated into report 03 §"The Cora playbook". |
 | https://every.to/p/the-agent-that-saved-my-brain | `every.to__p__the-agent-that-saved-my-brain.html` | ✅ ACCESSED |
 | https://simonwillison.net/2026/Feb/7/software-factory/ | `simonwillison.net__2026__Feb__7__software-factory.html` | ✅ ACCESSED |
 | https://simonwillison.net/guides/agentic-engineering-patterns/ (index + 12 chapters) | 13 separate local files | ✅ ALL ACCESSED |
@@ -37,7 +37,8 @@ The user committed local saved copies of the previously-blocked pages to the rep
 | https://simonwillison.net/tags/evals/ | local | ✅ ACCESSED (large index) |
 | https://simonwillison.net/tags/agentic-engineering/ | local | ✅ ACCESSED (large index) |
 | https://news.ycombinator.com/item?id=46924426 | `news.ycombinator.com__item__q__id_eq_46924426.html` | ✅ ACCESSED (712 KB, 459 comments, 304 points) |
-| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | (incorporated; cache file deleted) | ⚠️ PARTIAL — interview body paywalled in both direct fetch and Wayback retry (issue #8). Only summary bullets, sponsors, and references list available; reflected as such in report 06. |
+| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | (incorporated; cache file deleted) | ⚠️ PARTIAL — interview body paywalled in direct fetch, Wayback retry (issue #8), **and manual browser-cookie fetch (2026-05-11)**. Manual fetch ends at "My biggest takeaways from this conversation: This post is for paid subscribers" — browser cookies did not bypass Substack's paid-subscriber gate. Only summary bullets, sponsors, and references list available; reflected as such in report 06. |
+| https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens | (manual fetch attempted; no new content; file deleted) | ⚠️ PARTIAL — same outcome as the sibling Willison interview. Manual browser-cookie fetch (2026-05-11) returned the same paywall-truncated body. Visible portion (editorial preface, 8-item topic list, references, recommended books) was already incorporated into report 06 via the issue #8 Wayback retrieval; no new claims to add. |
 
 GitHub repos remained accessible throughout (the user did not need to commit copies).
 
@@ -47,9 +48,9 @@ GitHub repos remained accessible throughout (the user did not need to commit cop
 
 | URL | Status |
 |---|---|
-| https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e | ❌ Direct fetch returned Cloudflare challenge. **Wayback retry (issue #8) confirmed: not archived** — `web.archive.org` returns "The Wayback Machine has not archived that URL" for `https://el-kaim.com/`. Cache stub deleted. |
-| https://medium.com/@welkaim/about | ❌ Cloudflare challenge page only. Cache stub deleted. |
-| https://welkaim.medium.com/ | ❌ Cloudflare challenge page only. Cache stub deleted. |
+| https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e | ❌ Direct fetch returned Cloudflare challenge. **Wayback retry (issue #8) confirmed: not archived** — `web.archive.org` returns "The Wayback Machine has not archived that URL" for `https://el-kaim.com/`. **Manual browser-cookie fetch (2026-05-11) also returned a 5.8 KB "Just a moment..." Cloudflare interactive-challenge stub** — cookies don't help when the gate is an active JavaScript challenge. Three retrieval routes have now failed; the source is effectively unreachable without manually solving the Cloudflare challenge in a real browser session and using "Save Page As → Web Page, Complete". |
+| https://medium.com/@welkaim/about | ❌ Cloudflare challenge page only. Manual browser-cookie fetch (2026-05-11) also returned a 5.5 KB stub. Same disposition as above. |
+| https://welkaim.medium.com/ | ❌ Cloudflare challenge page only. Manual browser-cookie fetch (2026-05-11) also returned a 5.5 KB stub. Same disposition as above. |
 
 **Implication for report 07 (Dark Factory):** the reconstruction-from-secondary-sources stands. No verbatim El Kaim quotes are available in the corpus. Sibling reports (01, 05, 06) attribute the "Dark Factory" framing to Dan Shapiro, not to El Kaim — so cross-attribution from sibling primary sources cannot upgrade the El Kaim report's quote confidence.
 
@@ -96,8 +97,9 @@ The primary-source pass surfaced new external references worth fetching. Highest
 
 ### Paywalled but accessible with credentials
 
-19. **Lenny Rachitsky, "An AI state of the union"** — the interview body is paywalled in our local copy; access with a Lenny's Newsletter subscription would unlock the full Willison transcript
-20. **Kieran Klaassen, "My AI Had Already Fixed..."** — paywalled past the frustration-detector example; access with an Every.to subscription would unlock additional concrete examples
+19. **Lenny Rachitsky, "An AI state of the union"** — the interview body remains paywalled across direct fetch, Wayback, and a 2026-05-11 manual browser-cookie attempt; a Lenny's Newsletter *paid* subscription is required to unlock the full Willison transcript.
+20. ~~**Kieran Klaassen, "My AI Had Already Fixed..."**~~ — **Resolved 2026-05-11.** Manual browser-cookie fetch returned the full article; post-paywall content (five Cora use cases, five-step playbook, three project metrics, the $400/$400k claim) incorporated into report 03 §"The Cora playbook".
+21. **Boris Cherny, "Head of Claude Code: What happens after coding is solved"** — same disposition as #19. Body paywalled across direct fetch, Wayback (issue #8), and manual browser-cookie fetch (2026-05-11). Paid Lenny subscription needed for the full interview body.
 
 ---
 

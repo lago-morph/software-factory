@@ -353,6 +353,7 @@ Per-subagent expectation, assuming a ~200k-context model:
 |---|---|---|---|
 | [#4](https://github.com/lago-morph/software-factory/issues/4) | Tier-1 + Tier-2 initial pull (14 URLs) | Closed (acted on) | 13/14 fetched; merged via `fetched/issue-4` branch into `claude/round-2-research-consolidation`. The 1 failure is the Substack manifesto (Substack 403s GitHub Actions IPs). |
 | [#8](https://github.com/lago-morph/software-factory/issues/8) | Wayback supplements (Substack + arXiv HTML render + Round-1 backfill candidates) | Closed (acted on 2026-05-11) | `fetched/issue-8` produced 10 URL pairs. Outcomes: Substack manifesto ✅ → report 09 §12; arXiv HTML v2 ✅ → report 11 v0.2; Lenny "head-of-claude-code" PARTIAL (paywall persists) → new section in report 06; Lenny "an-ai-state-of-the-union" PARTIAL (paywall persists; no new info beyond #4 capture); el-kaim ❌ (Wayback never archived); 5 Round-1 backfill duplicates skipped (primary-source content already incorporated). All cache files deleted after incorporation. |
+| Manual browser-cookie pass (user-driven, no GitHub issue) | Recovery attempt for the three URLs left unfetched after #8 (every.to "My AI Had Already Fixed", both Lenny interviews) plus three el-kaim / Medium URLs from the Round-3 §11.12 thread | Drained 2026-05-11 via research-pipeline Phase 0 | 6 files dropped into `research/manual/`. Outcomes: every.to "My AI Had Already Fixed" ✅ FULLY UNLOCKED — post-paywall content (five-step playbook, five Cora use cases, three project metrics, $400/$400k claim) incorporated into report 03 §"The Cora playbook"; both Lenny URLs PARTIAL again (cookies present but *not* paid-subscriber cookies — Substack gate persists; no new info beyond what was already in report 06); all three el-kaim / Medium URLs ❌ Cloudflare interactive JS challenge cookies don't bypass — need Path B (Save Page As) from a browser session that has solved the challenge. All 6 cache files deleted after incorporation/triage. |
 
 ### 10.2 Reports produced
 
@@ -547,7 +548,7 @@ After each wave, consider re-synthesizing the deltas back into `research/00-synt
 **Why it matters:** Cherny is the head of Claude Code at Anthropic and operates further into the "Dark Factory" levels than anyone in our corpus except StrongDM. His specific claims (parallel-session count, no-hand-edit since a specific date, PR throughput) would calibrate the cost/throughput numbers in our four architectures. The comparison doc currently has a "human role" axis that's coarsely "supervises vs. schedules"; Cherny's lived experience would refine this.
 
 **Sources:**
-- https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens — Lenny Rachitsky interview with Boris Cherny, Feb 19 2026 (paywalled; may need Every-style fetch + manual extract; partial coverage already exists in `research/06-hn-and-lenny.md` per §10.1 issue #8)
+- https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens — Lenny Rachitsky interview with Boris Cherny, Feb 19 2026. **Paywall confirmed across three retrieval routes** (direct fetch, Wayback via issue #8, manual browser-cookie fetch 2026-05-11 — see §10.1). Partial coverage exists in `research/06-hn-and-lenny.md`. To unlock: a paid Lenny subscription is required; export paid-subscriber cookies and run `research/fetch-from-browser.sh`, or use Path C in `research/unfetched-sources.md`.
 
 **Extraction targets:**
 - Cherny's exact workflow (how he distributes work across parallel sessions, what each session does, how he reviews)
@@ -725,7 +726,7 @@ After each wave, consider re-synthesizing the deltas back into `research/00-synt
 
 ### 11.12 Thread 12: Dark Factory via archive.org (still blocked)
 
-**One-line:** The El Kaim article remains Cloudflare-gated. Wayback Machine may have an archived copy. (Note: the Wayback attempt was already tried via issue #8 — see §10.1 — and Wayback returned no archived snapshot. Re-attempt only if a different mirror or a fresh Wayback indexing run is plausible.)
+**One-line:** The El Kaim article remains Cloudflare-gated. Wayback Machine never archived it; cookies don't bypass the Cloudflare interactive JS challenge. **Three retrieval routes have now failed** (direct fetch, Wayback via issue #8, manual browser-cookie fetch 2026-05-11 — see §10.1). The only remaining route is **Path B in `research/unfetched-sources.md`**: open the URL in a real browser that has solved the Cloudflare challenge, then "Save Page As → Web Page, Complete" into `research/manual/`. Re-attempt automated routes only if a different mirror (archive.is, scribe.rip, Google Cache) becomes plausible.
 
 **Why it matters:** Report 07 is the only report in the corpus that remains a reconstruction from secondary sources. The Wayback Machine's snapshot (if it exists) would let us verify quotes and possibly surface material the secondary sources don't quote.
 

@@ -3,7 +3,7 @@
 **Sources covered:**
 - https://every.to/guides/compound-engineering — **ACCESSED** via local copy at `/home/user/software-factory/every.to__guides__compound-engineering.html` (the canonical guide; unsigned author but the same voice as Kieran Klaassen)
 - https://every.to/chain-of-thought/compound-engineering-how-every-codes-with-agents — **ACCESSED** via local copy at `/home/user/software-factory/every.to__chain-of-thought__compound-engineering-how-every-codes-with-agents.html` (Dan Shipper and Kieran Klaassen, December 11, 2025; updated April 6, 2026)
-- https://every.to/source-code/my-ai-had-already-fixed-the-code-before-i-saw-it — **ACCESSED** via local copy at `/home/user/software-factory/every.to__source-code__my-ai-had-already-fixed-the-code-before-i-saw-it.html` (Kieran Klaassen, August 18, 2025; updated April 23, 2026; **paywalled after ~10 minute-investment section**)
+- https://every.to/source-code/my-ai-had-already-fixed-the-code-before-i-saw-it — **ACCESSED IN FULL** (Kieran Klaassen, August 18, 2025; updated April 23, 2026). Initial revision had paywall-truncated visibility past the frustration-detector example; the 2026-05-11 revision incorporates the full post-paywall content from a manual browser-cookie fetch dropped into `research/manual/` and processed via the [research-pipeline](../.claude/skills/research-pipeline/SKILL.md) Phase 0 drain.
 - https://every.to/p/the-agent-that-saved-my-brain — **ACCESSED** via local copy at `/home/user/software-factory/every.to__p__the-agent-that-saved-my-brain.html` (Austin Tedesco, March 23, 2026; updated May 4, 2026)
 - https://github.com/EveryInc/compound-engineering-plugin — full plugin docs (`README.md`, `AGENTS.md`, `CHANGELOG.md`, `docs/skills/*.md` for all major skills)
 - https://github.com/EveryInc/compound-knowledge-plugin — full plugin docs (`README.md`, `AGENTS.md`, `kw-compound` and reviewer/researcher agent docs)
@@ -40,7 +40,19 @@ This is a substantive revision of the original report, which had been reconstruc
 - W. Edwards Deming's PDCA cycle, surfaced in a reader comment and acknowledged in spirit by the loop's shape.
 - Factory's Droid (factory.strongdm.ai) and OpenAI's Codex CLI as alternative harnesses Every's team uses.
 
-**Still open:** the paywalled portion of "My AI Had Already Fixed the Code Before I Saw It" (cuts off at the frustration-detector example) likely contains additional concrete examples; the open question about its full contents persists.
+**Still open:** ~~the paywalled portion of "My AI Had Already Fixed the Code Before I Saw It" (cuts off at the frustration-detector example) likely contains additional concrete examples; the open question about its full contents persists.~~ **Resolved 2026-05-11** — the full post-paywall content is now incorporated; see §"The Cora playbook (post-paywall material)" and revision note 2026-05-11 below.
+
+---
+
+## Revision notes (2026-05-11 — post-paywall drain)
+
+User-dropped manual fetches of three previously-blocked URLs were processed via the research-pipeline skill's Phase 0 drain. Findings:
+
+- **`every.to/source-code/my-ai-had-already-fixed-the-code-before-i-saw-it`** — the manual fetch is the **full article** (paywall-bypassed via browser cookies). The previously-flagged "still open" item 11 in §Open questions is resolved. New content incorporated: five concrete Cora use cases, the five-step "compounding engineering playbook" (Teach through work / Turn failures into upgrades / Orchestrate in parallel / Keep context lean / Trust + verify), three project-level metrics (time-to-ship 1–3 days, bugs caught up, PR review cycles in hours instead of days), the $400/$400k cost framing, and three named tools beyond Claude Code (Friday, Amp, Warp). See §"The Cora playbook" below.
+- **`lennysnewsletter.com/p/head-of-claude-code-what-happens`** (Boris Cherny) — manual fetch was **also paywalled**. The fetched HTML truncates at "My biggest takeaways from this conversation: This post is for paid subscribers." Visible portion is the same editorial preface + 8-item topic list + 30-entry references + recommended books already incorporated into `research/06-hn-and-lenny.md` from issue #8's Wayback retrieval. No new claims to add; the source remains an unfetched-body candidate.
+- **`lennysnewsletter.com/p/an-ai-state-of-the-union`** (Simon Willison) — same pattern. Manual fetch ends at "This post is for paid subscribers." Visible portion is the same intro + 7-item topic list + 32-entry references already in `research/06-hn-and-lenny.md`. No new claims; body remains unfetched.
+
+The three Lenny+Every.to outcomes update `research/blocked-urls.md`, `research/blocked-urls-round-2.md`, and `research/unfetched-sources.md` accordingly; PLAN.md §10.1 records the manual-fetch attempt as a row in the fetch action history.
 
 ---
 
@@ -93,6 +105,54 @@ Six mechanisms make iteration `n+1` cheaper than iteration `n`:
 6. **Periodic hygiene.** *"Without active maintenance, the knowledge store loses trustworthiness... the compound effect inverts: bad learnings make work harder, not easier."* (plugin's `ce-compound-refresh`)
 
 A subtler compounding mechanism: **automated extraction of human review feedback.** *"After we do a code review, for example, we'll ask the agent to look at the comments, summarize them, and store them for later. The latest models are smart enough to do all of this with very little extra instruction—and they're also smart enough to actually use it the next time."* (Shipper/Klaassen)
+
+---
+
+## The Cora playbook (post-paywall material from "My AI Had Already Fixed")
+
+Added in the 2026-05-11 revision after the previously-paywalled post-frustration-detector portion of Klaassen's article became available via a user-dropped manual fetch. The five-step playbook below is the most concrete operating guide in the entire Every corpus surveyed by this report.
+
+### Five concrete Cora use cases ("From terminal to mission control")
+
+Klaassen describes five compounding workflows the Every team runs on Cora:
+
+1. **Production errors → permanent fixes.** *"Have AI agents automatically investigate crashes, reproduce problems from system logs, and generate both the solution and tests to prevent it from happening again. This turns every failure into a one-time event."*
+2. **Architectural extraction from collaborative work sessions.** *"Recording design discussions with teammates, then having Claude document why certain approaches were chosen—creating consistent standards that new team members inherit on day one."*
+3. **Review agents with different expertise.** *"Capturing my own preferences in a 'Kieran reviewer' that enforces my style choices, then adding specialized perspectives like a 'Rails expert reviewer' for framework best practices or a 'performance reviewer' for speed optimization."* (Mirrors the public 14-reviewer architecture described in §Agents and roles.)
+4. **Visual-documentation automation.** *"An agent that automatically detects interface changes, captures before/after screenshots across different screen sizes and themes, and generates comprehensive visual documentation—eliminating a 30-minute manual task while ensuring every interface change is properly documented for reviewers."*
+5. **Parallelized feedback resolution.** *"Creating a dedicated agent for each piece of reviewer feedback that works simultaneously to address concerns. This compresses a back-and-forth process that could take hours into parallel work where 10 issues get resolved in the time it used to take for one."*
+
+Framing claim: *"Your job isn't to type code anymore, but to design the systems that design the systems. It's the only approach I've found where today's work makes tomorrow's work exponentially easier, and where every improvement you make is permanent."*
+
+### The five-step compounding engineering playbook
+
+After the frustration-detector worked example, Klaassen distills the methodology into a five-step playbook. This is structurally a generalization of the Plan → Work → Review → Compound loop (§Workflows and cycles), but the framing is operating-discipline-first rather than loop-shape-first:
+
+- **Step 1 — Teach through work.** *"Every time you make a decision, capture it and codify it to stop the AI from making the same mistake again. CLAUDE.md becomes your taste in plain language—why you prefer guard clauses over nested ifs or name things a certain way. Keep it short, keep it alive."* Klaassen names a *separate* file alongside CLAUDE.md: *"the llms.txt file stores your high-level architectural decisions—the design principles and system-wide rules that don't change when you restructure individual features."* The llms.txt / CLAUDE.md split is a new file-level distinction in this report's inventory (the existing §Knowledge / memory architecture treated CLAUDE.md as the single read-every-session anchor).
+- **Step 2 — Turn failures into upgrades.** *"Something breaks? Good. That's data. But here's where most engineers stop: They fix the immediate issue and move on. Compounding engineers add the test, update the rule, and write the evaluation."* Cora example: a user reported never receiving their daily email Brief; the response was tests + monitoring-rule update + delivery-pipeline evaluation, not just the one-shot fix.
+- **Step 3 — Orchestrate in parallel.** *"Unlike hiring engineers at $150,000 each, AI workers scale on demand. The only limits are your orchestration skills and compute costs—not headcount, hiring timelines, or team coordination overhead. You can spin up five specialized agents for the cost of a cup of coffee."* The concrete three-lane setup: *"Left lane: Planning. A Claude instance reads issues, researches approaches, and writes detailed implementation plans. Middle lane: Delegating. Another Claude takes those plans and writes code, creates tests, and implements features. Right lane: Reviewing. A third Claude reviews the output against CLAUDE.md, suggests improvements, and catches issues."* Klaassen's screen runs **Claude Code** for planning, **Friday** for delegating, and **Amp** for reviewing, all inside the **Warp** terminal — three named tools that extend the tool-agnostic claim in §Human leverage techniques. *"It feels awkward at first—like juggling while learning to juggle—but within a week it becomes natural."*
+- **Step 4 — Keep context lean but yours.** *"The internet is full of 'ultimate CLAUDE.md files' you can copy. Don't. Your context should reflect your codebase, your patterns, and your hard-won lessons. Ten specific rules you follow beat 100 generic ones. And when rules stop serving you, delete them. Living context means pruning as much as growing."* Reinforces the existing §Pitfalls "stale knowledge inverts compounding" item with an explicit pruning discipline.
+- **Step 5 — Trust the process, verify output.** *"This is the hardest step. Your instinct will be to micromanage and review every line. Instead, trust the system you've built—but verify through tests, evals, and spot checks. It's like learning to be a CEO or a movie director: You can't do everything yourself, but you can build systems that catch problems before they escalate. When something comes back wrong (and it will), teach the system why it was wrong. Next time, it won't be."*
+
+### Quantitative outcomes (Cora, three-month window)
+
+Klaassen reports three project-level metrics after three months of compounding-engineering workflow on Cora:
+
+- *"Time-to-ship on features drop from over a week to 1-3 days on average."*
+- *"Bugs caught before production have increased substantially."*
+- *"Pull request review cycles that used to drag on for days now finish in hours."*
+
+These are the first project-level numbers from inside an Every product in this report; the existing "5x developer productivity" claim from the *Chain of Thought* article is at the per-developer level, and the StrongDM/HN/Lenny numbers elsewhere in the corpus describe external observers. The time-to-ship drop is the strongest single quantitative anchor for the methodology.
+
+### Cost framing — $400 vs $400,000
+
+Closing economic claim: *"Companies are paying $400 per month for what used to cost $400,000 per year. One-person startups are competing with funded teams. AI is democratizing not just coding, but entire engineering systems. And leverage is shifting to those who teach these systems faster than they type."*
+
+This is the first specific dollar figure Every quotes for what the methodology lets a single developer replace. A factory architecture's per-cycle cost target should land between these poles.
+
+### Closing instruction
+
+Klaassen ends with an explicit onboarding ritual: *"Start with one experiment log today. When something fails that shouldn't have, invest the time to prevent it from happening again—build the test, write the rule, and capture the lesson. Open three terminals. Try the three-lane setup: Plan in one, build in another, and review in a third. Say 'pull request' and watch the branches bloom. Then do it again tomorrow, and see what compounds."*
 
 ---
 
@@ -342,6 +402,9 @@ The guide and articles encode several techniques for a human steering many agent
 15. *"If a developer can see or do something, the agent should be allowed to see or do it too."* — Every.to guide.
 16. *"You used to be the bottleneck because human attention only allows one task at a time. The new bottleneck is compute—how many agents you can run at once."* — Every.to guide.
 17. *"Working on the system is seductive because it feels like progress, but you can end up in a frustrating loop while ignoring the real work at hand."* — Tedesco.
+18. *"Your job isn't to type code anymore, but to design the systems that design the systems."* — Klaassen, "My AI Had Already Fixed" (post-paywall).
+19. *"Companies are paying $400 per month for what used to cost $400,000 per year."* — Klaassen, "My AI Had Already Fixed" (post-paywall).
+20. *"Open three terminals. Try the three-lane setup: Plan in one, build in another, and review in a third. Say 'pull request' and watch the branches bloom."* — Klaassen, "My AI Had Already Fixed" (post-paywall closing).
 
 ---
 
@@ -382,4 +445,4 @@ The guide and articles encode several techniques for a human steering many agent
 
 10. **Failure recovery vs compounding.** Crash recovery (per-experiment `result.yaml` markers in `/ce-optimize`, resume-on-restart) is a different memory tier than the knowledge store. A robust factory may need three tiers: immediate (recovery), local-cycle (plan + brainstorm), durable-compounding (solutions + strategy).
 
-11. **The paywall.** The full text of "My AI Had Already Fixed the Code Before I Saw It" is paywalled past the frustration-detector example. The intro and the first concrete case are visible; later concrete examples (the article promises "the same affliction" with multiple worked cases) are not. Worth fetching with subscriber access during final synthesis.
+11. ~~**The paywall.**~~ **Resolved 2026-05-11.** The full text of "My AI Had Already Fixed the Code Before I Saw It" was incorporated via a user-dropped manual fetch; the five-step playbook, five Cora use cases, and project-level metrics now appear in §"The Cora playbook" above. No remaining paywalled material in this source.

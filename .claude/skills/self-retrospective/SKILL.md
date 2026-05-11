@@ -1,16 +1,19 @@
 ---
 name: self-retrospective
-description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produces a structured retrospective on disk at `retrospective/report/YYYY-MM-DD-NN.md` plus a sibling directory with one self-contained spec per suggested skill and a consolidated `AGENTS-suggestions.md` whose sections each carry exact proposed agents-file text plus a persuasion argument. Echoes an inline summary in chat (the full content is on disk). Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", or "anything to add to the agents file?", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
+description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produces a structured retrospective on disk at `retrospective/YYYY-MM-DD-NN.md` plus a sibling directory with one self-contained spec per suggested skill and a consolidated `AGENTS-suggestions.md` whose sections each carry exact proposed agents-file text plus a persuasion argument. Also lists proposed ADRs (just titles — the user decides whether to author them) in both the report file and the inline chat summary. Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", or "anything to add to the agents file?", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
 ---
 
 # Skill: self-retrospective
 
 Harvest session knowledge before context truncation. Default output is a
-**filesystem package** at `retrospective/report/` plus a short inline
-summary. The package is structured so each suggested skill has a
-self-contained spec a fresh-context agent can implement from that one
-file, and the proposed agents-file additions live in one consolidated,
-persuasive document.
+**filesystem package** at `retrospective/` plus a short inline summary.
+The package is structured so each suggested skill has a self-contained
+spec a fresh-context agent can implement from that one file, and the
+proposed agents-file additions live in one consolidated, persuasive
+document. Proposed ADRs — architectural decisions made in the session
+that the user *might* want to record formally — are listed in both the
+report file and the chat summary, but **without specs**: the user
+decides per ADR whether to author it.
 
 ---
 
@@ -85,11 +88,11 @@ Multiple retrospectives may be produced in the same UTC day. Sequence them
 with a two-digit suffix.
 
 ```bash
-mkdir -p retrospective/report
-existing=$(ls retrospective/report/"$UTC_DATE"-*.md 2>/dev/null | wc -l)
+mkdir -p retrospective
+existing=$(ls retrospective/"$UTC_DATE"-*.md 2>/dev/null | wc -l)
 SEQ=$(printf "%02d" $((existing + 1)))
-REPORT="retrospective/report/${UTC_DATE}-${SEQ}.md"
-SIBLING_DIR="retrospective/report/${UTC_DATE}-${SEQ}"
+REPORT="retrospective/${UTC_DATE}-${SEQ}.md"
+SIBLING_DIR="retrospective/${UTC_DATE}-${SEQ}"
 ```
 
 The first retrospective of the day is `-01`, the second `-02`, and so on.
@@ -194,11 +197,23 @@ always worth an agents-file rule.
 
 Workflows that emerged or evolved and had measurable benefit.
 
+### 3.9 Architectural decisions made (proposed-ADR candidates)
+
+Any binding choice made during the session that affects multiple files or
+outlives the session — a default tool / library / pattern, a structural
+convention, a security gate, a workflow contract. Each becomes a
+**proposed-ADR candidate**.
+
+Do **NOT** write specs for these — the report lists only their titles
+plus a one-line rationale. After the retrospective lands, the user
+decides per ADR whether to author it (using the `adr` skill).
+Speculative proposals are fine to list; the user prunes.
+
 ---
 
 ## Step 4 — write the main report
 
-Path: `retrospective/report/${UTC_DATE}-${SEQ}.md`
+Path: `retrospective/${UTC_DATE}-${SEQ}.md`
 
 Section structure:
 
@@ -254,6 +269,16 @@ See [./${UTC_DATE}-${SEQ}/AGENTS-suggestions.md](./${UTC_DATE}-${SEQ}/AGENTS-sug
 for proposed additions to the project's agents file (`AGENTS.md`), one
 section per rule, each with exact text to paste and a persuasion
 argument.
+
+## Part 4 — proposed ADRs
+
+Architectural decisions made in this session that the user may want to
+record as ADRs. **Titles only — no specs.** Use the `adr` skill to
+author any of these if you decide they're worth recording.
+
+- **<Proposed ADR title>** — <one-line rationale grounded in a session moment>.
+- **<Proposed ADR title>** — <one-line rationale>.
+- ...
 ````
 
 **Hard cap**: keep the main report under ~3500 words. Detail lives in the
@@ -395,6 +420,9 @@ After writing all artifacts:
    - Path to the main report.
    - Skill count + names + paths to specs.
    - AGENTS-suggestions count + path.
+   - **Proposed ADRs** — bulleted list of titles only (no specs, no
+     detail). One line per proposed ADR. Tell the user they can author
+     any of them via the `adr` skill.
 
 2. **Commit the artifacts** on the current branch:
 
@@ -437,6 +465,15 @@ the path. The inline summary should fit in ~20 lines.
   name.
 - **Per-skill specs that defer to the session.** A spec that says "see
   the session for details" has failed its job. Specs must stand alone.
+- **Writing specs for proposed ADRs.** Proposed ADRs are titles +
+  one-line rationale only. **Do not** produce a draft body or a spec
+  file per proposed ADR — the user decides per ADR whether to invest.
+  The `adr` skill is the right tool when they do; this skill just
+  surfaces the candidates.
+- **A nested `report/` subdirectory under `retrospective/`.** The
+  canonical path is `retrospective/YYYY-MM-DD-NN.md` directly under
+  `retrospective/`. The earlier `retrospective/report/` form was
+  redundant — drop it.
 - **Bulk-committing without verifying intra-package links.** If the
   project has a link checker (e.g., `.claude/skills/adr/scripts/check_adr_links.py`),
   run it on the new retrospective files before committing. Broken
@@ -446,7 +483,8 @@ the path. The inline summary should fit in ~20 lines.
 
 ## See also
 
-- `README.md` — human-facing motivation and one-page overview.
 - `spec/SPEC.md` — implementation-grade spec (mirrors this SKILL.md with
   more rationale).
-- `retrospective/report/` — the on-disk artifact tree this skill produces.
+- `retrospective/` — the on-disk artifact tree this skill produces.
+- `.claude/skills/adr/SKILL.md` — the skill the user can invoke after
+  the retrospective to author any of the proposed ADRs.

@@ -1,4 +1,10 @@
-https://law.stanford.edu/2026/02/08/built-by-agents-tested-by-agents-trusted-by-whom/
-https://www.bcgplatinion.com/insights/the-dark-software-factory
-https://cdn.prod.website-files.com/655cded084fee2e958faaffc/69b8331d6141dc7278866f9c_Dark_Software_Factory_BCG_Platinion_AI_report_March2026.pdf
-https://www.thepragmaticcto.com/p/the-software-factory-when-no-human
+https://docs.tabnine.com/main/welcome/readme/architecture/deployment-options
+https://docs.tabnine.com/main/welcome/readme/privacy
+https://docs.tabnine.com/main/getting-started/context-engine
+https://docs.tabnine.com/main/getting-started/tabnine-agent/guidelines
+https://docs.tabnine.com/main/welcome/readme/protection/provenance-and-attribution
+https://docs.tabnine.com/main/administering-tabnine/private-installation
+https://docs.tabnine.com/main/administering-tabnine/private-installation/server-setup-guide/air-gapped-deployment-guide
+https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/agent-guidelines
+https://docs.tabnine.com/main/welcome/readme/ai-models/tabnines-private-and-protected-universal-models
+https://docs.tabnine.com/main/getting-started/context-engine/admin-console/coaching-guidelines-v

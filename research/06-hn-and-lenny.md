@@ -12,8 +12,8 @@
 | Source URL | Status | Notes |
 |---|---|---|
 | https://news.ycombinator.com/item?id=46924426 | FULL | Local HTML mirror; 459 comments parsed verbatim. |
-| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | PARTIAL | Local HTML mirror; body paywalled. Visible: editorial summary + 45-entry references section. |
-| https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens | PARTIAL | Body paywalled directly and via Wayback (`web.archive.org/web/20260504124102/...`). Visible: editorial intro, 8-item topic list, host/guest links, ~30-entry "Referenced:" section, recommended books. The "My biggest takeaways from this conversation" body is gated. |
+| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | 🎬 VIDEO-ONLY | **Updated 2026-05-11:** Round-2 user note confirmed *"only content here was a video. However there were references."* The page is a podcast landing; there is no text interview body at the URL. YouTube video: `https://youtu.be/wc8FBhQtdsA`. References list (this report) is fully captured. Body would require a transcript-extraction service. |
+| https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens | 🎬 VIDEO-ONLY | **Updated 2026-05-11:** Same disposition as the sibling Willison interview. Round-2 user note: *"Confirmed this was just a video. Here are references at end."* YouTube video: `https://youtu.be/We7BZVKbCVw`. The "biggest takeaways" stub is *not* a transcript; the audio is the canonical content. **The 10–30 PRs/day and 10–15 parallel-sessions numbers in this report remain un-primary-sourced** — they came from external summaries, not from the Cherny post itself, and would only be confirmable via a YouTube transcript. |
 
 ---
 
@@ -331,6 +331,8 @@ References from the previous bibliography that turned out **not** to be in the L
 The second Lenny interview added in this revision is *"Head of Claude Code: What happens after coding is solved | Boris Cherny"* (published Feb 19, 2026). Boris Cherny is the creator and head of Claude Code at Anthropic; per the Lenny editorial intro, *"What began as a simple terminal-based prototype just a year ago has transformed the role of software engineering and is increasingly transforming all professional work."* The Lenny post's eighth topic line confirms a personal-bio detail not in the previous version of this report: Cherny *briefly left Anthropic for Cursor, then returned after just two weeks.*
 
 **Important access caveat:** This section is built **only from the editorial preface, the topic list, the host/guest links, and the references list** that are visible in the Wayback snapshot at `web.archive.org/web/20260504124102/https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens`. The actual interview body — including the section the post itself headlines as "My biggest takeaways from this conversation" — is paywalled in both the direct URL and the Wayback capture (Wayback shows: *"This post is for paid subscribers"*). No quotes from the interview body have been captured; do not insert any.
+
+**Update 2026-05-11:** A subsequent user-supplied reader-view export of the page confirmed that *the page itself is video-only* — there is no text interview body anywhere on the URL. The "biggest takeaways" stub is a paywall placeholder for an editorial summary, not a transcript. The canonical content is the YouTube/Spotify/Apple Podcasts audio (YouTube: `https://youtu.be/We7BZVKbCVw`). Recovering Cherny's verbatim claims (notably the 10–30 PRs/day and 10–15 parallel-sessions numbers cited elsewhere in this report) would require a YouTube transcript-extraction service. A Lenny *paid* subscription would not help.
 
 ### Topics the interview covers (verbatim from the visible "We discuss" list)
 

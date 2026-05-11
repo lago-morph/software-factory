@@ -1,7 +1,7 @@
-# Blocked URLs — Sandbox Reachability Report (v4)
-**Date:** 2026-05-10 (v2); 2026-05-11 (v3 update after issue #8 Wayback fetches landed); 2026-05-11 (v4 update after manual browser-cookie fetch round)
-**Version:** 4 — incorporates manual browser-cookie fetches dropped into `research/manual/` and drained per the research-pipeline skill's Phase 0.
-**Purpose:** Originally enumerated every URL the research subagents could not fetch. After the user committed local copies of the previously-blocked pages to the repo root, most became accessible (v2). Issue #8 ran a Wayback-Machine retry pass for the rest (v3). v4 records the outcome of a third retrieval pass — user-supplied manual browser-cookie fetches. Local cached source files have since been deleted from the repo (content is incorporated into the reports).
+# Blocked URLs — Sandbox Reachability Report (v5)
+**Date:** 2026-05-10 (v2); 2026-05-11 (v3 update after issue #8 Wayback fetches landed); 2026-05-11 (v4 update after first manual browser-cookie fetch round); 2026-05-11 (v5 update after second manual round — "Save Page As" + reader-view + user notes)
+**Version:** 5 — incorporates two rounds of manual content drops into `research/manual/`, drained per the research-pipeline skill's Phase 0.
+**Purpose:** Originally enumerated every URL the research subagents could not fetch. After the user committed local copies of the previously-blocked pages to the repo root, most became accessible (v2). Issue #8 ran a Wayback-Machine retry pass for the rest (v3). v4 recorded a third pass — manual browser-cookie fetches. v5 records a fourth pass — text exports from "Save Page As" on a browser that had solved the Cloudflare challenge, plus reader-view exports of two Lenny pages with user-supplied notes. The el-kaim Dark Factory article is now ✅ FULL; both Lenny URLs are confirmed **video-only** (no text body exists at the URL). Local cached source files have since been deleted from the repo (content is incorporated into the reports).
 
 ---
 
@@ -37,8 +37,8 @@ The user committed local saved copies of the previously-blocked pages to the rep
 | https://simonwillison.net/tags/evals/ | local | ✅ ACCESSED (large index) |
 | https://simonwillison.net/tags/agentic-engineering/ | local | ✅ ACCESSED (large index) |
 | https://news.ycombinator.com/item?id=46924426 | `news.ycombinator.com__item__q__id_eq_46924426.html` | ✅ ACCESSED (712 KB, 459 comments, 304 points) |
-| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | (incorporated; cache file deleted) | ⚠️ PARTIAL — interview body paywalled in direct fetch, Wayback retry (issue #8), **and manual browser-cookie fetch (2026-05-11)**. Manual fetch ends at "My biggest takeaways from this conversation: This post is for paid subscribers" — browser cookies did not bypass Substack's paid-subscriber gate. Only summary bullets, sponsors, and references list available; reflected as such in report 06. |
-| https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens | (manual fetch attempted; no new content; file deleted) | ⚠️ PARTIAL — same outcome as the sibling Willison interview. Manual browser-cookie fetch (2026-05-11) returned the same paywall-truncated body. Visible portion (editorial preface, 8-item topic list, references, recommended books) was already incorporated into report 06 via the issue #8 Wayback retrieval; no new claims to add. |
+| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | (all retrieval routes consumed; cache files deleted) | 🎬 **VIDEO-ONLY** — round-2 user note (2026-05-11) confirmed *"only content here was a video. However there were references."* The "paywall" is around a "biggest takeaways" editorial summary, not a transcript. Three retrieval routes attempted (direct fetch, Wayback issue #8, manual browser-cookie). To extract Willison's actual answers, a **transcript-extraction service** against the YouTube video (`https://youtu.be/wc8FBhQtdsA`) is needed — paywall bypass would not help. References list already incorporated into report 06. |
+| https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens | (all retrieval routes consumed; cache files deleted) | 🎬 **VIDEO-ONLY** — same disposition as the sibling Willison interview. Round-2 user note: *"Confirmed this was just a video. Here are references at end."* YouTube URL: `https://youtu.be/We7BZVKbCVw`. **The "10–30 PRs/day" and "10–15 parallel sessions" Cherny numbers remain un-primary-sourced** — they were carried over from secondary summaries (see report 06 §"Lenny's Boris Cherny interview"). |
 
 GitHub repos remained accessible throughout (the user did not need to commit copies).
 
@@ -48,9 +48,9 @@ GitHub repos remained accessible throughout (the user did not need to commit cop
 
 | URL | Status |
 |---|---|
-| https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e | ❌ Direct fetch returned Cloudflare challenge. **Wayback retry (issue #8) confirmed: not archived** — `web.archive.org` returns "The Wayback Machine has not archived that URL" for `https://el-kaim.com/`. **Manual browser-cookie fetch (2026-05-11) also returned a 5.8 KB "Just a moment..." Cloudflare interactive-challenge stub** — cookies don't help when the gate is an active JavaScript challenge. Three retrieval routes have now failed; the source is effectively unreachable without manually solving the Cloudflare challenge in a real browser session and using "Save Page As → Web Page, Complete". |
-| https://medium.com/@welkaim/about | ❌ Cloudflare challenge page only. Manual browser-cookie fetch (2026-05-11) also returned a 5.5 KB stub. Same disposition as above. |
-| https://welkaim.medium.com/ | ❌ Cloudflare challenge page only. Manual browser-cookie fetch (2026-05-11) also returned a 5.5 KB stub. Same disposition as above. |
+| https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e | ✅ **FULLY ACCESSED 2026-05-11** via "Save Page As → text export" from a real browser session that had solved the Cloudflare challenge. 41 KB text export incorporated into `research/07-dark-factory.md` — report 07 transitions from reconstructed-from-secondary-sources to primary-source-anchored. Three prior routes failed (direct fetch, Wayback never archived, manual browser-cookie returned a 5.8 KB JS-challenge stub); the fourth route (Path B in `unfetched-sources.md`) is the one that worked. |
+| https://medium.com/@welkaim/about | ❌ Cloudflare challenge page only. Manual browser-cookie fetch (2026-05-11) also returned a 5.5 KB stub. Low priority now that the canonical Dark Factory article (above) is unlocked — this is the author profile, not the article. |
+| https://welkaim.medium.com/ | ❌ Cloudflare challenge page only. Manual browser-cookie fetch (2026-05-11) also returned a 5.5 KB stub. Low priority — same disposition as the @welkaim/about page. |
 
 **Implication for report 07 (Dark Factory):** the reconstruction-from-secondary-sources stands. No verbatim El Kaim quotes are available in the corpus. Sibling reports (01, 05, 06) attribute the "Dark Factory" framing to Dan Shapiro, not to El Kaim — so cross-attribution from sibling primary sources cannot upgrade the El Kaim report's quote confidence.
 
@@ -97,9 +97,10 @@ The primary-source pass surfaced new external references worth fetching. Highest
 
 ### Paywalled but accessible with credentials
 
-19. **Lenny Rachitsky, "An AI state of the union"** — the interview body remains paywalled across direct fetch, Wayback, and a 2026-05-11 manual browser-cookie attempt; a Lenny's Newsletter *paid* subscription is required to unlock the full Willison transcript.
+19. **Lenny Rachitsky, "An AI state of the union"** — **video-only.** 2026-05-11 user note confirmed no text body exists at the URL; the actual content is at `https://youtu.be/wc8FBhQtdsA`. A transcript-extraction service against the YouTube video is the only remaining recovery path.
 20. ~~**Kieran Klaassen, "My AI Had Already Fixed..."**~~ — **Resolved 2026-05-11.** Manual browser-cookie fetch returned the full article; post-paywall content (five Cora use cases, five-step playbook, three project metrics, the $400/$400k claim) incorporated into report 03 §"The Cora playbook".
-21. **Boris Cherny, "Head of Claude Code: What happens after coding is solved"** — same disposition as #19. Body paywalled across direct fetch, Wayback (issue #8), and manual browser-cookie fetch (2026-05-11). Paid Lenny subscription needed for the full interview body.
+21. **Boris Cherny, "Head of Claude Code: What happens after coding is solved"** — same disposition as #19. **Video-only.** YouTube URL: `https://youtu.be/We7BZVKbCVw`. The "10–30 PRs/day" and "10–15 parallel sessions" claims remain un-primary-sourced.
+22. ~~**William El Kaim, "The Dark Factory..."**~~ — **Resolved 2026-05-11.** Full article incorporated into report 07; see "What remains BLOCKED" table above.
 
 ---
 

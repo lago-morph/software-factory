@@ -1,0 +1,65 @@
+Confirmed this was just a video.  Here are references at end.
+
+
+Referenced:
+• Everyone should be using Claude Code more: https://www.lennysnewsletter.com/p/everyone-should-be-using-claude-code
+
+• Cursor: https://cursor.com
+
+• The rise of Cursor: The $300M ARR AI tool that engineers can’t stop using | Michael Truell (co-founder and CEO): https://www.lennysnewsletter.com/p/the-rise-of-cursor-michael-truell
+
+• Anthropic: https://www.anthropic.com
+
+• Anthropic’s CPO on what comes next | Mike Krieger (co-founder of Instagram): https://www.lennysnewsletter.com/p/anthropics-cpo-heres-what-comes-next
+
+• Claude Code Is the Inflection Point: https://newsletter.semianalysis.com/p/claude-code-is-the-inflection-point
+
+• Spotify says its best developers haven’t written a line of code since December, thanks to AI: https://techcrunch.com/2026/02/12/spotify-says-its-best-developers-havent-written-a-line-of-code-since-december-thanks-to-ai/
+
+• Anthropic co-founder on quitting OpenAI, AGI predictions, $100M talent wars, 20% unemployment, and the nightmare scenarios keeping him up at night | Ben Mann: https://www.lennysnewsletter.com/p/anthropic-co-founder-benjamin-mann
+
+• Haiku: https://www.anthropic.com/claude/haiku
+
+• Sonnet: https://www.anthropic.com/claude/sonnet
+
+• Opus: https://www.anthropic.com/claude/opus
+
+• Jenny Wen on X: https://x.com/jenny_wen
+
+• Johannes Gutenberg: https://en.wikipedia.org/wiki/Johannes_Gutenberg
+
+• Anthropic jobs: https://www.anthropic.com/careers/jobs
+
+• Lenny’s AI poll post on X: https://x.com/lennysan/status/2020266745722991051
+
+• Fiona Fung on LinkedIn: https://www.linkedin.com/in/fionafung
+
+• Brandon Kurkela on LinkedIn: https://www.linkedin.com/in/bkurkela
+
+• Cowork: https://www.anthropic.com/webinars/future-of-ai-at-work-introducing-cowork
+
+• Chris Olah on X: https://x.com/ch402
+
+• The Bitter Lesson: http://www.incompleteideas.net/IncIdeas/BitterLesson.html
+
+• 3 Body Problem on Netflix: https://www.netflix.com/title/81024821
+
+• Acquired podcast: https://www.acquired.fm
+
+• Acquired: The Complete History & Strategy of Nintendo: https://www.acquired.fm/episodes/nintendo
+
+
+Recommended books:
+• Programming TypeScript: Making Your JavaScript Applications Scale: https://www.amazon.com/Programming-TypeScript-Making-JavaScript-Applications/dp/1492037656
+
+• Functional Programming in Scala: https://www.amazon.com/Functional-Programming-Second-Michael-Pilquist-ebook/dp/B0C4LX999T
+
+• Accelerando: https://www.amazon.com/Accelerando-Singularity-Charles-Stross/dp/0441014151
+
+• Wandering Earth: https://www.amazon.com/Wandering-Earth-Cixin-Liu/dp/1250796849
+
+• The Three-Body Problem: https://www.amazon.com/Three-Body-Problem-Cixin-Liu/dp/0765382032
+
+• A Fire Upon the Deep: https://www.amazon.com/Fire-Upon-Deep-Zones-Thought/dp/0812515285
+
+• A Deepness in the Sky: https://www.amazon.com/Deepness-Sky-Zones-Thought/dp/0812536355

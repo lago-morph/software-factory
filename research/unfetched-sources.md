@@ -52,6 +52,8 @@ For paywalled articles where you've already read the body, your browser's Reader
 
 These were blocked from the sandbox during the 2026-05-11 parallel-fanout run (`harness/runs/20260511-054258/`) but the subagent did **not** file a `[fetch-urls]` issue. Each is a candidate for the GitHub Action's runner IP — historically the action retrieves these even when the sandbox can't. **2026-05-13 update:** rows 1-4, 6, 9 batched into three filed issues (#29 high-leverage, #30 GitHub docs, #31 competitor landscape). Rows 5, 7, 8, 10 remain unfiled — see status column.
 
+**Corpus-level lesson from pt-2 drain (2026-05-11):** the Klaassen Every trilogy and the Anthropic / Hamel / Willison evals batches were both successfully action-fetched once filed — confirming that `every.to/chain-of-thought/`, `anthropic.com/engineering/`, `hamel.dev`, and `simonwillison.net` are all **action-fetchable for publicly-visible bodies** despite the sandbox 403s. The "Defer to user — Path B only" labeling some of these previously carried was overcautious. **File a `[fetch-urls]` issue first**, escalate to Path B only when the action also returns ❌.
+
 | URL family | Reports affected | Filing strategy | Status |
 |---|---|---|---|
 | `danshapiro.com/blog/2026/01/the-five-levels-...` (+ `/2026/02/you-dont-write-the-code/`) | `research/followup/01-shapiro-five-levels.md` | One issue; small. Includes Path B fallback in case Cloudflare blocks the action too. | ✅ Filed as part of #29 (2026-05-13). |

@@ -380,17 +380,80 @@ Even at partial state, the Round-2 work changes things that should be reflected 
 
 ### 10.4 Next actions, in order
 
-A future agent (or future Claude session) can pick up from here. Do these in sequence:
+A future agent (or future Claude session) can pick up from here. Do these in sequence.
 
-1. **Watch for issue #8 to comment.** When the workflow posts the per-URL summary, `git fetch origin fetched/issue-8 && git merge` it into the working branch. Update `research/blocked-urls-round-2.md` Tier-1/2 status accordingly.
-2. **Dispatch subagent 08** (Jaymin Foundations + Patterns). The prompt in §3.1 is unchanged. All source files are accessible via raw.githubusercontent.com; no fetch action needed.
-3. **Dispatch subagent 10** (Overstory substrate audit). The prompt in §3.3 is unchanged. All source files accessible via raw.githubusercontent.com.
-4. **Dispatch subagent 09-completion** (Jaymin Ch 6 sub-pages 1–7 + Ch 8 + Ch 9). Use the prompt in §3.2 but **instruct the agent that `research/09-jaymin-harnesses-partial.md` already exists** — it should read that report's §11 ("What's still pending") for context, then deepen rather than redo. Especially Ch 9.7 (*Software Factories*) is high-leverage.
-5. **Dispatch subagent 12-completion** (gastown / kotadb / pi-mono / book Ch 10). Prompt in §3.5; analogous instruction that `research/12-adjacent-ecosystem.md` exists with the Tier-2 capsules done.
-6. **Dispatch subagent 13** (synthesis) once 08, 10, 09-completion, 12-completion are all in. Prompt in §3.6 unchanged.
-7. **Update `architectures/`** based on 13's recommendations. Preserve Round-1 architecture text as `architectures/0N-*.md` with a "Round 1" stanza; add Round-2 deltas as new section or sibling file.
+#### Step 1 (MANDATORY FIRST ACTION) — Drain the in-flight fetch issue #8
 
-Steps 2, 3, 4, 5 can be dispatched **in parallel** in a single multi-Agent message; they share no files. Step 6 is the synthesis bottleneck; step 7 is human-curated and likely needs `AskUserQuestion` checkpoints.
+The session that wrote v0.2 of this plan shut down before issue [#8](https://github.com/lago-morph/software-factory/issues/8) finished fetching. **Before doing anything else, check whether it has landed.**
+
+```bash
+# (a) Has the workflow created the branch yet?
+git fetch origin 2>&1 | grep -i fetched/issue-8
+
+# (b) If yes, what did it get?
+#     The workflow comments the per-URL summary on the issue itself.
+#     Use mcp__github__issue_read with method=get_comments on issue 8.
+
+# (c) If the branch exists, merge it into the current working branch
+#     (or into a new branch off main if the prior working branch is merged).
+git merge --no-ff origin/fetched/issue-8 -m "Merge Wayback fetched URLs from issue #8"
+```
+
+What issue #8 was asked to fetch (Wayback-Machine routes — see issue body for the canonical list):
+
+- `jayminwest.substack.com/p/a-manifesto-for-agentic-development` — Jaymin's Substack manifesto. If retrieved, this may add doctrinal claims not in the book; update `research/09-jaymin-harnesses-partial.md` if so.
+- `arxiv.org/html/2511.03690v2` — OpenHands SDK paper HTML render. If retrieved, this closes the open follow-up in `research/11-openhands-substrate-audit.md` §10 — feed the paper body through and update report 11 in place with deeper architecture / sandbox / cost details.
+- `lennysnewsletter.com/p/head-of-claude-code-what-happens` — Cherny interview. If retrieved, this is the strongest scaling data point and feeds back into the Round-1 corpus (potential follow-up to `research/06-hn-and-lenny.md`).
+- `lennysnewsletter.com/p/an-ai-state-of-the-union` — Lenny's Simon Willison interview. Same: Round-1 backfill candidate.
+- `simonwillison.net/2026/Feb/7/software-factory/` and `simonwillison.net/guides/agentic-engineering-patterns/` — Round-1 backfill candidates. If retrieved, may sharpen `research/05-simon-willison.md` quotations.
+- `el-kaim.com/the-dark-factory-...` — Round-1 backfill candidate for `research/07-dark-factory.md`.
+- `factory.strongdm.ai/principles` and `/techniques` — Round-1 backfill candidates for `research/01-strongdm-factory.md`.
+- `every.to/guides/compound-engineering` — Round-1 backfill candidate for `research/03-every-compound-engineering.md`.
+
+For each successfully-retrieved URL, **decide whether it actually changes a claim** before editing a report — most of the Round-1 reconstructions used multi-source cross-checks and may already be accurate. Only edit if direct evidence contradicts or sharpens existing claims.
+
+If issue #8's workflow **failed** (e.g. all URLs returned 403 from Wayback too), close the issue with a brief comment explaining what was tried and what to do next (probably: try direct Wayback `web.archive.org/web/<timestamp>/<url>` with a recent specific timestamp instead of the redirect-to-latest form). Then proceed to step 2 without those sources.
+
+#### Step 2 — Dispatch subagent 08
+
+**Subagent 08** (Jaymin Foundations + Patterns). The prompt in §3.1 is unchanged. All source files are accessible via raw.githubusercontent.com; no fetch action needed.
+
+#### Step 3 — Dispatch subagent 10
+
+**Subagent 10** (Overstory substrate audit). The prompt in §3.3 is unchanged. All source files accessible via raw.githubusercontent.com.
+
+#### Step 4 — Dispatch subagent 09-completion
+
+**Subagent 09-completion** (Jaymin Ch 6 sub-pages 1–7 + Ch 8 + Ch 9). Use the prompt in §3.2 but **instruct the agent that `research/09-jaymin-harnesses-partial.md` already exists** — it should read that report's §11 ("What's still pending") for context, then deepen rather than redo. Especially Ch 9.7 (*Software Factories*) is high-leverage.
+
+#### Step 5 — Dispatch subagent 12-completion
+
+**Subagent 12-completion** (gastown / kotadb / pi-mono / book Ch 10). Prompt in §3.5; analogous instruction that `research/12-adjacent-ecosystem.md` exists with the Tier-2 capsules done.
+
+#### Step 6 — Dispatch subagent 13 (synthesis)
+
+Run **only after** 08, 10, 09-completion, 12-completion are all in. Prompt in §3.6 unchanged.
+
+#### Step 7 — Update architectures/
+
+Update `architectures/` based on 13's recommendations. Preserve Round-1 architecture text as `architectures/0N-*.md` with a "Round 1" stanza; add Round-2 deltas as new section or sibling file.
+
+#### Parallelism notes
+
+Steps 2, 3, 4, 5 can be dispatched **in parallel** in a single multi-Agent message; they share no files. Steps 1 and 6 are sequential bottlenecks. Step 7 is human-curated and likely needs `AskUserQuestion` checkpoints.
+
+**Resume-from-cold checklist:** If you are picking this up after a session shutdown, your very first commands should be:
+
+```bash
+# 1. Make sure you have all relevant branches locally
+git fetch origin
+
+# 2. See what state main is in and what fetch branches exist
+git log --oneline -10 origin/main
+git branch -r | grep -E "fetched/|claude/"
+
+# 3. Read this PLAN's §10.4 step 1 above. Drain #8 if needed.
+```
 
 ### 10.5 Workflow lessons learned (for future agents using the fetch action)
 

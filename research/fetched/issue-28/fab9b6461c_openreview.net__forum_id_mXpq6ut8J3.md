@@ -1,0 +1,65 @@
+Toggle navigation[**OpenReview**.net](/)
+
+  * [Login](/login)
+
+
+
+[Go to **NeurIPS 2024 Conference** homepage](/group?id=NeurIPS.cc/2024/Conference "Venue Homepage")
+
+## SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering
+
+[](/pdf?id=mXpq6ut8J3 "Download PDF")
+
+### [John Yang](/profile?id=~John_Yang3 "~John_Yang3"), [Carlos E Jimenez](/profile?id=~Carlos_E_Jimenez1 "~Carlos_E_Jimenez1"), [Alexander Wettig](/profile?id=~Alexander_Wettig1 "~Alexander_Wettig1"), [Kilian Lieret](/profile?id=~Kilian_Lieret1 "~Kilian_Lieret1"), [Shunyu Yao](/profile?id=~Shunyu_Yao1 "~Shunyu_Yao1"), [Karthik R Narasimhan](/profile?id=~Karthik_R_Narasimhan1 "~Karthik_R_Narasimhan1"), [Ofir Press](/profile?id=~Ofir_Press1 "~Ofir_Press1")
+
+Published: 25 Sept 2024, Last Modified: 14 Nov 2024NeurIPS 2024 posterEveryone[Revisions](/revisions?id=mXpq6ut8J3)BibTeX[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/ "Licensed under Creative Commons Attribution 4.0 International")
+
+**Keywords :** Language models, Natural language processing, Software engineering
+
+**TL;DR :** We introduce the concept of agent-computer interfaces to enhance LM agent performance on software engineering tasks.
+
+**Abstract :** Language model agents are increasingly being used to automate complicated tasks in digital environments. Just as humans benefit from powerful software applications, such as integrated development environments, for complex tasks like software engineering, we posit that language model agents represent a new category of end users with their own needs and abilities, and would benefit from specially built interfaces to the software they use. We investigate how the role of interface design affects the performance of language model agents. As a result of this exploration, we introduce SWE-agent: a system that facilitates language model agents to autonomously use computers to solve software engineering tasks. SWE-agent's custom agent-computer interface significantly enhances an agent's ability to create and edit code files, navigate entire repositories, and execute tests and other programs. We evaluate SWE-agent on SWE-bench and HumanEvalFix, achieving state-of-the-art performance on both with a pass@1 rate of 12.5% and 87.7%, respectively, far exceeding the previous state-of-the-art achieved with non-interactive language models. Finally, we provide insight on how the design of the agent-computer interface can impact agents' behavior and performance.
+
+**Supplementary Material :** [ zip](/attachment?id=mXpq6ut8J3&name=supplementary_material "Download Supplementary Material")
+
+**Primary Area :** Natural language processing
+
+**Submission Number :** 5053
+
+Loading
+
+  * [About OpenReview](/about)
+  * [Hosting a Venue](/group?id=OpenReview.net/Support)
+  * [All Venues](/venues)
+
+
+
+  * [Contact](/contact)
+  * [Sponsors](/sponsors)
+  * [**Donate**](/donate)
+
+
+
+  * [FAQ](https://docs.openreview.net/getting-started/frequently-asked-questions)
+  * [Terms of Use](/legal/terms) / [Privacy Policy](/legal/privacy)
+  * [News](/group?id=OpenReview.net/News&referrer=\[Homepage\]\(/\))
+
+
+
+  * [About OpenReview](/about)
+  * [Hosting a Venue](/group?id=OpenReview.net/Support)
+  * [All Venues](/venues)
+  * [Sponsors](/sponsors)
+  * [News](/group?id=OpenReview.net/News&referrer=\[Homepage\]\(/\))
+
+
+
+  * [FAQ](https://docs.openreview.net/getting-started/frequently-asked-questions)
+  * [Contact](/contact)
+  * [**Donate**](/donate)
+  * [Terms of Use](/legal/terms)
+  * [Privacy Policy](/legal/privacy)
+
+
+
+[OpenReview](/about) is a long-term project to advance science through improved peer review with legal nonprofit status. We gratefully acknowledge the support of the [OpenReview Sponsors](/sponsors). © 2026 OpenReview

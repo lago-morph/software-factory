@@ -1,9 +1,11 @@
 # Blocked URLs — Round 2 (Jaymin / Overstory / OpenHands)
 
-**Date:** 2026-05-10
-**Purpose:** URLs the Round-2 subagents will probably need that are NOT reachable from the current sandbox. Feed these into the GitHub Action defined in `.github/workflows/fetch-blocked-urls.yml` by opening an issue titled `[fetch-urls] round-2 initial pull`. See `research/PLAN.md` §5–6 for the workflow.
+**Date:** 2026-05-10 (initial); fetch-action results merged 2026-05-11.
+**Purpose:** URLs the Round-2 subagents will probably need that are NOT reachable from the current sandbox.
 
-The sandbox tested 2026-05-10 blocks essentially every host except `raw.githubusercontent.com` (and partial GitHub-API access via the MCP). The list below is the result of that probe.
+**Status as of 2026-05-11:** Issue [#4](https://github.com/lago-morph/software-factory/issues/4) ran the first fetch — 13 of 14 URLs returned HTTP 200 and are now committed in `research/fetched/issue-4/`. Issue [#8](https://github.com/lago-morph/software-factory/issues/8) is the Wayback-Machine supplement (still in flight at time of writing). The §3 inventory below has been updated with per-URL status; tier-bucket guidance below remains useful as a planning tool for future fetch issues.
+
+The sandbox blocks essentially every host except `raw.githubusercontent.com` (and partial GitHub-API access via the MCP). The list below is the result of that probe.
 
 ---
 
@@ -23,29 +25,33 @@ The sandbox tested 2026-05-10 blocks essentially every host except `raw.githubus
 
 These are the canonical-source documents for the three sources, in forms the repo files don't contain.
 
-1. **https://www.jayminwest.com/agentic-engineering-book** — the rendered book index (the website rebuilds daily from the repo, but the rendering may include navigation / cross-references that aren't in the raw markdown)
-2. **https://www.jayminwest.com/agentic-engineering-book/6-harnesses** — Chapter 6 rendered (linked in search results; useful to confirm the rendered version matches the markdown)
-3. **https://jayminwest.substack.com/p/a-manifesto-for-agentic-development** — Jaymin's published manifesto, **not in the repo**. This is the most likely source of doctrinal claims that don't appear in the book itself.
-4. **https://docs.all-hands.dev/usage/how-to/headless-mode** — OpenHands headless mode docs. The repo README does not describe headless mode in any detail; the docs site is the primary source.
-5. **https://docs.all-hands.dev/** (entire `usage/` and `architecture/` sub-trees) — OpenHands operating manual.
-6. **https://arxiv.org/abs/2511.03690** — *The OpenHands Software Agent SDK: A Composable and Extensible Foundation for Production Agents*. The published academic description of the SDK. Likely contains explicit comparisons against other agent runtimes and the rationale for the workspace abstraction.
-7. **https://arxiv.org/pdf/2511.03690** — full PDF.
-8. **https://github.com/marketplace/actions/openhands-ai-action** — the Marketplace listing for the OpenHands GitHub Action. The repo's `action.yml` will tell us the input/output contract, but the marketplace page describes intended usage.
+| # | URL | Fetch status |
+|---|---|---|
+| 1 | https://www.jayminwest.com/agentic-engineering-book | ✅ via #4 (188 KB; rendered TOC matches raw markdown) |
+| 2 | https://www.jayminwest.com/agentic-engineering-book/6-harnesses | ✅ via #4 (113 KB; consumed by `research/09-jaymin-harnesses-partial.md`) |
+| 3 | https://jayminwest.substack.com/p/a-manifesto-for-agentic-development | ❌ via #4 (HTTP 403; Substack blocks Actions IPs). Wayback retry queued in #8. |
+| 4 | https://docs.all-hands.dev/usage/how-to/headless-mode | ✅ via #4 (400 KB; consumed by `research/11-openhands-substrate-audit.md`) |
+| 5 | https://docs.all-hands.dev/ | ✅ via #4 (353 KB; doc-tree fingerprint) |
+| 6 | https://arxiv.org/abs/2511.03690 | ✅ via #4 (abstract + metadata) |
+| 7 | https://arxiv.org/pdf/2511.03690 | ⚠️ via #4 — file fetched but is PDF binary (html2text doesn't extract). HTML render `arxiv.org/html/2511.03690v2` queued via Wayback in #8. |
+| 8 | https://github.com/marketplace/actions/openhands-ai-action | ✅ via #4 (222 KB; third-party `xinbenlv/openhands-action`, 10 stars) |
 
 ## Tier 2 (would add useful color)
 
-9. **https://www.youtube.com/watch?v=K7nY3MUzDuk** — "The Agentic Engineering Meta" (Jaymin). YouTube transcript URL form: `https://youtubetranscript.com/?server_vid2=K7nY3MUzDuk` is sometimes reachable.
-10. **https://www.youtube.com/watch?v=njRAmppPvFk** — "Six Levels of Agentic Engineering" (Jaymin). The "six levels" framing appears to be Jaymin's analog of Dan Shapiro's "five levels" already cited in Round 1. Worth a comparison.
-11. **https://www.youtube.com/watch?v=95TEFWdo6Mw** — "I'm Open Sourcing The Cutting Edge of Agentic Engineering" (Jaymin's announcement of the book).
-12. **https://skillsllm.com/skill/overstory** — third-party description of Overstory (low priority).
-13. **https://deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes** — third-party wiki page about CLI/deployment modes; could substitute partially for the docs site if it's blocked.
-14. **https://www.langchain.com/blog/agentic-engineering-redefining-software-engineering** — outside-perspective piece referencing several of our sources; would help cross-check our vocabulary.
-15. **https://www.mindstudio.ai/blog/what-is-agentic-engineering** — basic explainer; useful for confirming terminology is industry-standard not idiosyncratic.
-16. **https://www.ibm.com/think/topics/agentic-engineering** — IBM's framing of agentic engineering; useful for enterprise framing if we ever pursue Architecture 3 (Foundry).
-17. **https://addyosmani.com/blog/agentic-engineering/** — Addy Osmani's take, often a strong distillation.
-18. **https://agenticengineer.com/tactical-agentic-coding** — additional perspective.
-19. **https://kiro.dev/** — Kiro IDE (claims to "bring engineering rigor to agentic development"); see whether it overlaps OpenHands.
-20. **https://cloud.google.com/discover/what-is-agentic-coding** — Google's framing.
+| # | URL | Fetch status |
+|---|---|---|
+| 9 | https://www.youtube.com/watch?v=K7nY3MUzDuk — *The Agentic Engineering Meta* | Not attempted (YouTube transcripts require a transcript-extraction service). Defer. |
+| 10 | https://www.youtube.com/watch?v=njRAmppPvFk — *Six Levels of Agentic Engineering* | Same as above. Worth fetching the transcript via a transcript service in a future round — the "six levels" framing complements Dan Shapiro's "five levels." |
+| 11 | https://www.youtube.com/watch?v=95TEFWdo6Mw — *I'm Open Sourcing The Cutting Edge* | Same as above. |
+| 12 | https://skillsllm.com/skill/overstory | Not yet attempted; low priority. |
+| 13 | https://deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes | ✅ via #4 (2.1 MB; consumed by report 11) |
+| 14 | https://www.langchain.com/blog/agentic-engineering-redefining-software-engineering | ✅ via #4 (167 KB; Cisco pilot study, consumed by report 12 §2.2) |
+| 15 | https://www.mindstudio.ai/blog/what-is-agentic-engineering | Not yet attempted; report 12 already has enough definitional cross-checks. Skip. |
+| 16 | https://www.ibm.com/think/topics/agentic-engineering | ✅ via #4 (253 KB; consumed by report 12 §2.4) |
+| 17 | https://addyosmani.com/blog/agentic-engineering/ | ✅ via #4 (182 KB; consumed by report 12 §2.1 — strongest Tier-2 piece) |
+| 18 | https://agenticengineer.com/tactical-agentic-coding | Not yet attempted. Add to next fetch issue if appetite remains. |
+| 19 | https://kiro.dev/ | ✅ via #4 (232 KB; consumed by report 12 §2.5 — surfaces a new substrate candidate) |
+| 20 | https://cloud.google.com/discover/what-is-agentic-coding | ✅ via #4 (2.2 MB; consumed by report 12 §2.3 — governance checklist) |
 
 ## Tier 3 (companion / referenced material we'd want for full provenance)
 

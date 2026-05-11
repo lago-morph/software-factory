@@ -31,7 +31,7 @@ Status legend: ✅ full review (read end-to-end) · 🟡 reconstructed from sear
 | https://github.com/marketplace/actions/openhands-ai-action | ✅ | Fetched via issue #4. 222 KB rendered. Primary source for §7. |
 | https://deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes | ✅ | Fetched via issue #4. 2.1 MB. Third-party wiki indexed from source; primary source for §4 architecture decomposition. |
 | https://github.com/All-Hands-AI/OpenHands — README + top-level layout | ✅ | README fetched via raw.githubusercontent.com; directory listing via the GitHub Contents API. §2, §5, §8. |
-| https://github.com/OpenHands/software-agent-sdk (V1 SDK repo) | 🟡 | Repo itself NOT read in this session; cited claims about the SDK come from the MLSys 2026 paper abstract. A direct read of the repo (README + Python API surface) is a candidate for a future deepening pass. |
+| https://github.com/OpenHands/software-agent-sdk (V1 SDK repo) | 🟡 | Repo itself NOT read in this session; cited claims about the SDK now come from the full MLSys 2026 paper body (not just the abstract — see the row above). A direct read of the repo (README + Python API surface) remains a candidate for a future deepening pass to verify class names like `RouterLLM`, `SecretRegistry`, `LLMSecurityAnalyzer` exist as documented. |
 | https://github.com/OpenHands/OpenHands-CLI (binary CLI repo) | 🟡 | Repo itself NOT read in this session; cited claims come from the headless-mode docs and from WebSearch summaries gathered during the initial scout. Direct read pending. |
 | https://github.com/OpenHands/openhands-github-action (companion action repo) | 🟡 | Repo itself NOT read in this session; the third-party `xinbenlv/openhands-action` Marketplace listing was read instead. The official action repo's `action.yml` would tighten §7 if it exists. |
 | `skills/` directory in `All-Hands-AI/OpenHands` | ❌ | Not read in this session — §5 explicitly notes this and defers to a second pass. |
@@ -318,4 +318,4 @@ The MCP server integration is a notable feature: tools delivered as MCP servers 
 
 ---
 
-*End of report 11 — `research/11-openhands-substrate-audit.md` v0.1*
+*End of report 11 — `research/11-openhands-substrate-audit.md` v0.2 (2026-05-11, full SDK paper incorporated)*

@@ -127,7 +127,26 @@ For sources whose Cloudflare challenge the action cannot solve (the runner is no
 1. **Wayback Machine.** `https://web.archive.org/web/2026*/<original-url>` — file a follow-up issue with the wayback URLs instead. Wayback snapshots are post-render, so they often work where the live URL doesn't.
 2. **Google Cache** (when available): prefix the URL with `https://webcache.googleusercontent.com/search?q=cache:`
 3. **Medium alternative front-ends.** For Medium articles, try `scribe.rip` or `freedium.cfd` mirrors with the same path.
-4. **Manual save.** As a last resort, open the page in a real browser yourself, "Save as → Web page complete (single file)", and commit the HTML to `research/fetched/manual/` on a branch.
+4. **Manual browser save by the user** — see next section. After exhausting the action + Wayback, hand the still-failing URLs back to the user with a runnable script.
+
+## When automation has been exhausted — emit manual-recovery artifacts
+
+After every fetch issue lands, you'll know which URLs returned ❌ even from a normal HTTP environment (Cloudflare interactive challenges, paywalled bodies, login-required pages). For those, the next step is the user's own browser — only a real browser session has the cookies and the JS engine to bypass these.
+
+**As soon as you have a confirmed list of URLs that survived the action AND any Wayback retry, write two artifacts in `research/`:**
+
+1. **`research/unfetched-sources.md`** — link list with the rationale per URL: *why* it failed (Cloudflare / paywall / login), *what we need from it*, *which report it affects*. This is the user-facing inventory; keep it updated as URLs get resolved or new ones get added.
+
+2. **`research/fetch-from-browser.sh`** — a runnable bash script that takes the user's exported browser cookies (Netscape format) and runs `curl -b <cookies> -A <recent-realistic-UA>` against the URL list. It must:
+   - Output to `research/manual/` (not `research/fetched/issue-N/`, which is reserved for the action).
+   - Use a sha1-prefixed sanitized filename matching this skill's convention (so the research-pipeline skill can deduplicate across sources).
+   - Detect Cloudflare stubs in the response (small body containing "Just a moment" / "Attention Required" / "cf-mitigated") and rename them `*.cloudflare-stub` rather than passing them off as content.
+   - Print clear instructions for the cookies-export step at the top of the file (extension names per browser).
+   - Note which URLs even cookies+UA won't solve (interactive Cloudflare challenges) — for those, instruct the user to use **File → Save Page As → Web Page Complete** in their browser and drop the HTML into `research/manual/` directly.
+
+A canonical version of both files lives in `research/` once you've done this; the user can re-run the script anytime new URLs get added to the list. The corresponding "drain" step belongs to the [`research-pipeline`](../research-pipeline/SKILL.md) skill (Phase 0 — scan `research/` subdirectories for new content and dispatch subagents to incorporate them).
+
+**Do not skip the artifact step.** It's tempting to just tell the user "go fetch these in your browser" in chat, but that loses the URL list, the per-URL rationale, and the runnable retry path the next time around. Commit both files; they are part of the research record.
 
 ## Limitations
 

@@ -1,6 +1,6 @@
 ---
 name: research-pipeline
-description: Conduct disciplined multi-source research producing reports with full source-status traceability. Use this when the user asks to research a topic that spans multiple web sources (some likely blocked from the sandbox), wants written reports stored in the repo's `research/` folder, and wants future research opportunities tracked in a resumable plan. Handles: probing source reachability, bootstrapping a GitHub Actions URL-fetch workflow for blocked hosts, opening labelled fetch issues, merging fetched content back, writing reports with sources-status tables, cleaning up consumed fetched files, maintaining a research index, and recording promising referenced-source clusters as future research targets with justifications.
+description: Conduct disciplined multi-source research producing reports with full source-status traceability. Use this when the user asks to research a topic that spans multiple web sources (some likely blocked from the sandbox), wants written reports stored in the repo's `research/` folder, and wants future research opportunities tracked in a resumable plan. ALSO use whenever the user asks to "drain", "process", "incorporate", or "check for new content" in `research/` — Phase 0 of the pipeline scans every subdirectory of `research/` for unincorporated source files and dispatches subagents to fold them into the relevant reports. Handles: probing source reachability, bootstrapping a GitHub Actions URL-fetch workflow for blocked hosts, opening labelled fetch issues, merging fetched content back, writing reports with sources-status tables, cleaning up consumed fetched files, maintaining a research index, and recording promising referenced-source clusters as future research targets with justifications.
 ---
 
 # Research Pipeline Skill
@@ -14,11 +14,14 @@ Invoke when the user:
 - Wants the research output to live in the repo as durable markdown reports.
 - Suspects (or you discover) that some sources are blocked from the sandbox.
 - Wants future-research follow-ups recorded as the work surfaces new candidate sources.
+- Asks to "check for new content", "drain", "process", or "incorporate" anything that has shown up under `research/` (this is Phase 0 — see below).
 
 Do NOT invoke for:
 - Quick single-source lookups (one WebFetch is enough).
 - Code reviews or implementation work (use a different skill).
 - Tasks that don't produce a written artifact.
+
+**Important:** Phase 0 ("Drain pending content") runs on every activation regardless of what triggered the skill. Even if the user asked to start a brand-new research thread, scan `research/` first — there may be unprocessed content from a prior session. See Phase 0 below for the exact recipe.
 
 ## Conventions and naming (consolidated)
 
@@ -33,7 +36,10 @@ All artifacts produced by this skill follow a small, deliberately rigid set of n
 | Research index | `research/INDEX.md` | Single-glance summary of every report; updated after each new/edited report. |
 | Resumable plan | `research/PLAN.md` | The next-session handoff. Owns the §10 progress log + in-flight tracking (see [in-flight-workflow-tracking](../in-flight-workflow-tracking/SKILL.md)). |
 | Blocked-URL inventory | `research/blocked-urls.md` (or per-round `blocked-urls-round-N.md`) | The status of every URL the research depends on. |
-| Fetched raw content | `research/fetched/issue-<N>/` | One subdir per fetch issue; the workflow commits here directly. |
+| Unfetched-source inventory | `research/unfetched-sources.md` | URLs that survived all automated retrieval (action + Wayback). User-facing list of what they need to fetch in their browser. Created by the [fetch-blocked-urls](../fetch-blocked-urls/SKILL.md) skill once URLs are confirmed unrecoverable. |
+| Browser-fetch script | `research/fetch-from-browser.sh` | Runnable curl script the user invokes locally with their browser cookies. Outputs to `research/manual/`. Created alongside `unfetched-sources.md`. |
+| Fetched raw content (CI) | `research/fetched/issue-<N>/` | One subdir per fetch issue; the workflow commits here directly. |
+| Manual raw content | `research/manual/` | Where `fetch-from-browser.sh` and "Save Page As" deposit user-retrieved content. Phase 0 scans this on every activation. |
 | Fetch workflow definition | `.github/workflows/fetch-blocked-urls.yml` | See the [fetch-blocked-urls](../fetch-blocked-urls/SKILL.md) skill for the canonical version. |
 | Fetch trigger label | `fetch-urls` | Repo label. Auto-created on first `mcp__github__issue_write` that references it. |
 | Branch for fetched content | `fetched/issue-<N>` | Created by the workflow. Merged into your working branch. |
@@ -141,6 +147,44 @@ If you don't find those two skills in `.claude/skills/`, the work is incomplete 
 ## Pipeline phases
 
 Always work through these in order. Don't skip phases even when the source list is small — the discipline scales.
+
+### Phase 0 — Drain pending content (MANDATORY first action on every activation)
+
+Before doing anything else — even before reading the user's prompt for the new request — **scan every subdirectory of `research/` for source files that haven't been incorporated into reports yet** and dispatch subagents to process them. This catches:
+
+- New `research/fetched/issue-N/` directories from `fetch-blocked-urls` action runs that landed while the prior session was idle.
+- Files the user dropped under `research/manual/` after running `fetch-from-browser.sh` or saving pages from their browser.
+- Anything else in `research/` that isn't a `.md` report, `INDEX.md`, `PLAN.md`, `blocked-urls*.md`, `unfetched-sources.md`, or `fetch-from-browser.sh`.
+
+Recipe:
+
+```bash
+# 1. Inventory candidate source files (ignore the canonical text artifacts)
+find research/ -type f \
+  \( -name '*.html' -o -name '*.md' -o -name '*.txt' -o -name '*.pdf' \) \
+  ! -path 'research/*.md' \
+  ! -path 'research/INDEX.md' \
+  ! -path 'research/PLAN.md' \
+  ! -path 'research/blocked-urls*.md' \
+  ! -path 'research/unfetched-sources.md' \
+  | sort
+```
+
+For each file found:
+
+1. **Identify the source URL** — usually visible in the filename (the fetch action and the manual script both encode it) or in the file's first 30 lines (Wayback wraps content in a UI shell with the original URL).
+2. **Check whether the URL is already incorporated** — search the existing reports: `grep -l "<url>" research/*.md`. If a report already cites it as ✅, the file is redundant; just delete it.
+3. **Verify content quality first** — check for Cloudflare stubs (`grep -l "Just a moment\|Attention Required\|cf-mitigated"`) and paywall markers (`This post is for paid subscribers`, etc.). If the content is empty/blocked, delete the file and update `research/blocked-urls*.md` and `research/unfetched-sources.md` with the failure outcome.
+4. **For genuinely new content**, dispatch a subagent per target report (in parallel where the reports don't overlap). Each subagent:
+   - Reads its source file in full.
+   - Updates the relevant `research/NN-*.md` report with verbatim quotes / new sections / corrections, plus a "Revision notes" block at the top.
+   - Updates that report's sources-status table to flip the URL from ⏳/❌ to ✅ (or 🟡 if partial).
+   - Deletes the source file once the content is incorporated.
+5. **After all subagents return**, update `research/INDEX.md`, `research/PLAN.md` §10 progress log, and `research/blocked-urls*.md` to reflect the final per-URL status.
+
+Only after Phase 0 is complete (or you confirm the inventory is empty) proceed to Phase 1 with the user's actual request.
+
+If the user explicitly tells you to skip the drain ("don't worry about pending content, just do X"), record what was found in Phase 0 in your response so they can come back to it later — don't silently skip.
 
 ### Phase 1 — Scope
 

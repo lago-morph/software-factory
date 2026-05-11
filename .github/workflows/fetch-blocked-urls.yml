@@ -10,33 +10,39 @@ name: Fetch Blocked URLs
 #
 # Security model — see research/PLAN.md §6 for the full discussion.
 #
-#   1. Title prefix gate: only issues whose title starts with [fetch-urls]
-#      can trigger any work. Owner-created issues about other topics do not
-#      run this workflow.
+#   1. Label gate: the workflow only proceeds when the issue carries the
+#      `fetch-urls` label. Only users with the Triage role or higher (i.e.
+#      explicit repo collaborators) can apply labels, so the label IS the
+#      author check. We avoid `author_association` because the webhook
+#      payload and the REST API disagree on its value (the REST API said
+#      MEMBER for jonathanmanton, the webhook said CONTRIBUTOR — every
+#      pre-label version of this workflow silent-skipped because of that).
+#      The fetch-urls label must exist in the repo; creating it on the
+#      fly via the issue UI's label picker is the easiest way.
 #
-#   2. Author-association gate: only issues opened by a user with
-#      author_association in (OWNER, COLLABORATOR, MEMBER) trigger work.
-#      This excludes drive-by GitHub users (NONE, FIRST_TIME_CONTRIBUTOR,
-#      CONTRIBUTOR) even if they manage to put the magic prefix in a title.
-#      The gate is re-checked inside the runner for defense in depth.
+#   2. Permissions are scoped: contents:write (to push the branch) and
+#      issues:write (to comment). No secrets are accessed. The workflow
+#      only reads URLs from the issue body — it never executes fetched
+#      content.
 #
-#   3. Permissions are scoped: contents:write (to push the branch) and
-#      issues:write (to comment). No secrets are accessed. The action only
-#      reads URLs from the issue body — it never executes fetched content.
+#   3. Per-issue cap: at most 50 URLs and a 30-second per-URL timeout.
+#      The workflow refuses (with a comment) and exits non-zero if the
+#      cap is exceeded.
 #
-#   4. Per-issue cap: at most 50 URLs and a 30-second per-URL timeout. The
-#      action refuses (with a comment) and exits non-zero if the cap is
-#      exceeded.
-#
-#   5. Never pushes to main. Always creates a new branch
+#   4. Never pushes to main. Always creates a new branch
 #      fetched/issue-<n> off the default branch.
 
 on:
   issues:
-    types: [opened, edited, reopened]
+    # `labeled` covers the common case (issue exists, label applied).
+    # `edited` covers re-running against an already-labeled issue by
+    # editing its body. `opened` covers issues that are created with the
+    # label already attached via the API.
+    types: [opened, edited, labeled, reopened]
   # workflow_dispatch lets us re-test against an existing issue without
-  # editing it. Supply the issue number; the workflow reads body/title/etc.
-  # via the gh CLI.
+  # editing it. Supply the issue number; the workflow reads body via the
+  # gh CLI and bypasses the label gate (only users with actions:write
+  # can dispatch anyway).
   workflow_dispatch:
     inputs:
       issue_number:
@@ -80,55 +86,43 @@ jobs:
           ISSUE_USER: ${{ github.event.issue.user.login }}
           ISSUE_ASSOC: ${{ github.event.issue.author_association }}
           ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_LABELS_JSON: ${{ toJSON(github.event.issue.labels.*.name) }}
+          JUST_LABELED: ${{ github.event.label.name }}
         run: |
-          echo "event_name        = $EVENT_NAME"
-          echo "event.action      = $ACTION"
-          echo "actor             = $ACTOR"
-          echo "issue # (event)   = $ISSUE_NUMBER_FROM_EVENT"
-          echo "issue # (input)   = $ISSUE_NUMBER_FROM_INPUT"
-          echo "issue title       = $ISSUE_TITLE"
-          echo "issue user        = $ISSUE_USER"
-          echo "issue association = $ISSUE_ASSOC"
-          echo "issue body length = ${#ISSUE_BODY}"
+          echo "event_name         = $EVENT_NAME"
+          echo "event.action       = $ACTION"
+          echo "actor              = $ACTOR"
+          echo "issue # (event)    = $ISSUE_NUMBER_FROM_EVENT"
+          echo "issue # (input)    = $ISSUE_NUMBER_FROM_INPUT"
+          echo "issue title        = $ISSUE_TITLE"
+          echo "issue user         = $ISSUE_USER"
+          echo "issue association  = $ISSUE_ASSOC"
+          echo "issue body length  = ${#ISSUE_BODY}"
+          echo "issue labels       = $ISSUE_LABELS_JSON"
+          echo "just-applied label = $JUST_LABELED"
 
-      - name: Enforce title-prefix gate
-        id: title_gate
+      - name: Enforce label gate
+        id: label_gate
         if: github.event_name == 'issues'
         env:
-          ISSUE_TITLE: ${{ github.event.issue.title }}
+          LABELS_JSON: ${{ toJSON(github.event.issue.labels.*.name) }}
         run: |
           set -euo pipefail
-          case "$ISSUE_TITLE" in
-            "[fetch-urls]"*)
-              echo "Title matches [fetch-urls] prefix; proceeding."
-              echo "proceed=true" >> "$GITHUB_OUTPUT"
-              ;;
-            *)
-              echo "Title does not match [fetch-urls] prefix; exiting cleanly."
-              echo "proceed=false" >> "$GITHUB_OUTPUT"
-              ;;
-          esac
+          # The `fetch-urls` label is the security boundary. Only users
+          # with Triage role or higher can apply labels in GitHub, so
+          # the label's presence proves the author has at least triage
+          # access to this repo.
+          if echo "$LABELS_JSON" | grep -q '"fetch-urls"'; then
+            echo "Issue carries the fetch-urls label; proceeding."
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Issue does not carry the fetch-urls label; exiting cleanly."
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Enforce author-association gate
-        if: github.event_name == 'issues' && steps.title_gate.outputs.proceed == 'true'
-        env:
-          ASSOC: ${{ github.event.issue.author_association }}
-          AUTHOR: ${{ github.event.issue.user.login }}
-        run: |
-          set -euo pipefail
-          case "$ASSOC" in
-            OWNER|COLLABORATOR|MEMBER)
-              echo "Author $AUTHOR has association $ASSOC; allowed."
-              ;;
-            *)
-              echo "Author $AUTHOR has association $ASSOC; refusing."
-              exit 1
-              ;;
-          esac
-
-      - name: Resolve issue number (for workflow_dispatch path)
+      - name: Resolve issue number
         id: resolve
-        if: github.event_name == 'workflow_dispatch' || steps.title_gate.outputs.proceed == 'true'
+        if: github.event_name == 'workflow_dispatch' || steps.label_gate.outputs.proceed == 'true'
         env:
           ISSUE_NUMBER_FROM_EVENT: ${{ github.event.issue.number }}
           ISSUE_NUMBER_FROM_INPUT: ${{ inputs.issue_number }}

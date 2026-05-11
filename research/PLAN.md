@@ -280,8 +280,8 @@ Because the sandbox blocks the live web book, the OpenHands docs, the SDK paper,
 
 The mechanism for getting them is a new GitHub Action defined in `.github/workflows/fetch-blocked-urls.yml`. Workflow:
 
-1. The lead agent (or a future resumption agent) **opens an issue** in this repo with title beginning `[fetch-urls]` and a body containing one URL per line (markdown links are tolerated; the action parses raw URLs).
-2. The action triggers iff the issue's `author_association` is `OWNER`, `COLLABORATOR`, or `MEMBER`. (This is what gates random GitHub users out — see §6 of this plan.)
+1. The lead agent (or a future resumption agent) **opens an issue** in this repo with a body containing one URL per line (markdown links are tolerated; the action parses raw URLs), and applies the `fetch-urls` label to it.
+2. The action triggers when (a) the issue carries the `fetch-urls` label and (b) the event type is `opened`, `edited`, `labeled`, or `reopened`. The label can only be applied by users with Triage role or higher, so the label itself is the security gate. See §6.
 3. The action runs `curl` against each URL from a normal GitHub runner (which is not behind the sandbox's host allowlist), saves results into `research/fetched/<issue-number>/<slug>.html` and `.md` where possible, commits to a new branch `fetched/issue-<n>`, and posts a comment on the issue with the branch name and file list.
 4. The agent then `git fetch origin fetched/issue-<n>` and merges that into the working branch, then re-runs whichever subagent needs the new content.
 
@@ -293,7 +293,7 @@ This loop is asynchronous: opening the issue does not require the agent to wait.
 
 Threats the action must defend against:
 
-- **Random GitHub users opening issues to spam fetches.** Mitigated by the `author_association` gate (OWNER/COLLABORATOR/MEMBER only) *and* the title prefix (`[fetch-urls]`). A user without write access cannot satisfy either condition.
+- **Random GitHub users opening issues to spam fetches.** Mitigated by the `fetch-urls` **label** gate. Only users with Triage role or higher can apply labels in GitHub, so a drive-by user cannot satisfy the gate even by guessing the magic word. (An earlier version tried `author_association` instead, but the webhook payload and the REST API disagreed on its value for the same user, which caused every run to silent-skip.)
 - **A trusted account being compromised and used to fetch malicious URLs.** This is residual risk. The action does not execute fetched content — it only stores it as files. The repository review process catches the misuse before any agent reads the malicious content. Worst case: a junk branch gets created and is deleted.
 - **Excessive runner minutes.** The action caps per-issue fetches at 50 URLs, with a per-URL 30-second timeout. If the issue body contains more URLs, the action refuses with a comment.
 - **Secret exfiltration.** The action has only `contents: write` and `issues: write` permissions. It does not touch secrets, does not call external APIs other than the URLs in the issue body, and does not have an `if: ${{ secrets.X != '' }}` check that would allow secret-conditioned behavior.

@@ -3,7 +3,26 @@
 **Date:** 2026-05-11
 **Author:** Lead agent
 **Status:** **Partial.** Original subagent prompt in `research/PLAN.md` §3.2 covered Chapter 6 (Harnesses), Chapter 8 (Practices), and Chapter 9 (Mental Models). This pass covers **only Chapter 6's index page** at full fidelity, because that's the page we fetched. The seven sub-pages of Ch 6 (1-what-is-a-harness through 7-designing-for-your-context) and all of Ch 8/9 are still pending. They are all reachable from the sandbox via `raw.githubusercontent.com` and can be read directly without needing the fetch action — a future agent can dispatch the original subagent prompt against the remaining files without further fetch ceremony.
-**Primary source:** `research/fetched/issue-4/8569c92993_www.jayminwest.com__agentic-engineering-book__6-harnesses.md` (113 KB rendered HTML → markdown)
+
+## Sources reviewed
+
+Status legend: ✅ full review (read end-to-end) · 🟡 reconstructed from search snippets / partial extraction · ⏳ retrieval pending · ❌ could not obtain.
+
+| Source URL | Status | Notes |
+|---|---|---|
+| https://www.jayminwest.com/agentic-engineering-book/6-harnesses | ✅ | Fetched via issue #4 (113 KB rendered HTML → markdown). The index page of Ch 6. **This is the entire substantive source for this report.** Every chapter section described in this report is the chapter's *summary* of that section — not the section itself. |
+| https://www.jayminwest.com/agentic-engineering-book/6-harnesses/1-what-is-a-harness | ❌ | Not yet fetched. Has the full text behind §1 "What Is a Harness?" — currently only the index-level one-paragraph summary is captured in this report. |
+| https://www.jayminwest.com/agentic-engineering-book/6-harnesses/2-harness-stack | ❌ | Not fetched. Behind §5 of this report; Raschka's six-component breakdown is named but its depth lives here. |
+| https://www.jayminwest.com/agentic-engineering-book/6-harnesses/3-harness-categories | ❌ | Not fetched. Mollick's 3-axis stack + capability tiers + decision table all live here. |
+| https://www.jayminwest.com/agentic-engineering-book/6-harnesses/4-harness-as-control-system | ❌ | Not fetched. Behind §6 of this report; Fowler's full guides-and-sensors decomposition lives here. |
+| https://www.jayminwest.com/agentic-engineering-book/6-harnesses/5-harness-engineering | ❌ | Not fetched. Behind §7 of this report; Hashimoto's six-step loop + failure taxonomy live here. |
+| https://www.jayminwest.com/agentic-engineering-book/6-harnesses/6-security-permissions-trust | ❌ | Not fetched. Behind §8 of this report; the full permission/sandbox/trust treatment lives here. |
+| https://www.jayminwest.com/agentic-engineering-book/6-harnesses/7-designing-for-your-context | ❌ | Not fetched. The four design questions and decision tree live here. |
+| https://www.jayminwest.com/agentic-engineering-book/8-practices (all 7 sub-pages) | ❌ | Not fetched. Practices chapter (Debugging, Evaluation, Cost & Latency, Production, Workflow Coordination, Knowledge Evolution, Operating Agent Swarms). All reachable via `raw.githubusercontent.com/jayminwest/agentic-engineering-book/main/chapters/8-practices/*`. |
+| https://www.jayminwest.com/agentic-engineering-book/9-mental-models (all 7 sub-pages) | ❌ | Not fetched. **Ch 9.7 *Software Factories* is the single highest-priority follow-up** — chapter title overlaps directly with this project's name. All reachable via raw.githubusercontent.com. |
+| https://jayminwest.substack.com/p/a-manifesto-for-agentic-development | ⏳ | Not in the repo. Direct fetch via issue #4 returned 403; Wayback retry queued in fetch issue [#8](https://github.com/lago-morph/software-factory/issues/8). May add doctrinal claims that don't appear in the book itself. |
+
+The entire body of this report is reconstructed from a *single* index-page source. Every named pattern (Raschka's six components, Fowler's guides/sensors, Hashimoto's harness engineering, Schmid's trajectory capture) is one or two sentences in the source. **A future deepening pass that reads the seven Ch 6 sub-pages directly would change this report from partial to authoritative.**
 
 ---
 

@@ -3,13 +3,27 @@
 **Date:** 2026-05-11
 **Author:** Lead agent (not a subagent dispatch — see `research/PLAN.md` §3.4 for the originally-planned subagent prompt; this lead-agent pass covers most of it)
 **Status:** Substantive on the CI/CD-relevant surfaces; one open follow-up (full SDK paper) noted at the end.
-**Primary sources (fetched 2026-05-10 to `research/fetched/issue-4/`):**
-- `docs.all-hands.dev/usage/how-to/headless-mode.md` (400 KB) — the canonical headless-mode contract
-- `docs.all-hands.dev/.md` (353 KB) — docs root, with the full doc-tree taxonomy
-- `arxiv.org/abs/2511.03690.md` — abstract, authors, venue (Wang et al., MLSys 2026)
-- `github.com/marketplace/actions/openhands-ai-action.md` — third-party Marketplace listing (`xinbenlv/openhands-action`)
-- `deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes.md` (2.1 MB) — third-party wiki index over the codebase
-- Repo top-level layout (`api.github.com/repos/All-Hands-AI/OpenHands/contents/`) and README — fetched earlier in `research/PLAN.md` §2.2
+
+## Sources reviewed
+
+Status legend: ✅ full review (read end-to-end) · 🟡 reconstructed from search snippets / partial extraction · ⏳ retrieval pending · ❌ could not obtain.
+
+| Source URL | Status | Notes |
+|---|---|---|
+| https://docs.all-hands.dev/usage/how-to/headless-mode | ✅ | Fetched via issue #4. 400 KB rendered. Canonical headless-mode contract — primary source for §3. |
+| https://docs.all-hands.dev/ | ✅ | Fetched via issue #4. 353 KB rendered. Doc-tree taxonomy used in §2 and the Appendix. |
+| https://arxiv.org/abs/2511.03690 | ✅ | Fetched via issue #4. Abstract, authors, MLSys 2026 venue — primary source for §1, §4, §6. |
+| https://arxiv.org/pdf/2511.03690 | ⏳ | Fetched via issue #4 but came through as PDF binary; html2text doesn't extract PDF. The HTML render `https://arxiv.org/html/2511.03690v2` is queued in fetch issue [#8](https://github.com/lago-morph/software-factory/issues/8). When that lands, deepen §4 (workspace abstraction) and §8 (sandboxing posture) with paper-body details. |
+| https://github.com/marketplace/actions/openhands-ai-action | ✅ | Fetched via issue #4. 222 KB rendered. Primary source for §7. |
+| https://deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes | ✅ | Fetched via issue #4. 2.1 MB. Third-party wiki indexed from source; primary source for §4 architecture decomposition. |
+| https://github.com/All-Hands-AI/OpenHands — README + top-level layout | ✅ | README fetched via raw.githubusercontent.com; directory listing via the GitHub Contents API. §2, §5, §8. |
+| https://github.com/OpenHands/software-agent-sdk (V1 SDK repo) | 🟡 | Repo itself NOT read in this session; cited claims about the SDK come from the MLSys 2026 paper abstract. A direct read of the repo (README + Python API surface) is a candidate for a future deepening pass. |
+| https://github.com/OpenHands/OpenHands-CLI (binary CLI repo) | 🟡 | Repo itself NOT read in this session; cited claims come from the headless-mode docs and from WebSearch summaries gathered during the initial scout. Direct read pending. |
+| https://github.com/OpenHands/openhands-github-action (companion action repo) | 🟡 | Repo itself NOT read in this session; the third-party `xinbenlv/openhands-action` Marketplace listing was read instead. The official action repo's `action.yml` would tighten §7 if it exists. |
+| `skills/` directory in `All-Hands-AI/OpenHands` | ❌ | Not read in this session — §5 explicitly notes this and defers to a second pass. |
+| https://github.com/All-Hands-AI/OpenHands `openhands/` package source | ❌ | Code-walking not done in this session. §4 relies on DeepWiki's TOC as a proxy for the in-repo organization. |
+
+**Primary sources** for the substantive conclusions are all ✅. The 🟡 items affect detail depth in specific sections (called out in those sections); the ❌ items are deferred to the subagent 11 deepening pass tracked in `research/PLAN.md` §10.4.
 
 ---
 

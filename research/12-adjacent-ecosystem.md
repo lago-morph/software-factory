@@ -3,13 +3,25 @@
 **Date:** 2026-05-11
 **Author:** Lead agent (lead-agent pass; the original subagent prompt in `research/PLAN.md` §3.5 covered more — specifically gastown / kotadb / pi-mono / Jaymin's Ch 10 toolkit — which still need a deeper read.)
 **Status:** Capsule-quality on the six Tier-2 perspective pieces we fetched; the gastown / kotadb / pi-mono / Ch 10 reads are deferred.
-**Primary sources (fetched 2026-05-10):**
-- `addyosmani.com/blog/agentic-engineering/` — Addy Osmani's framing piece, *Feb 4, 2026*
-- `cloud.google.com/discover/what-is-agentic-coding` — Google Cloud explainer
-- `www.ibm.com/think/topics/agentic-engineering` — IBM Think reference
-- `www.langchain.com/blog/agentic-engineering-redefining-software-engineering` — Cisco/LangChain pilot study, *April 17, 2026*
-- `kiro.dev/` — Kiro IDE landing page
-- `deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes` — third-party wiki (consumed mostly by report 11)
+
+## Sources reviewed
+
+Status legend: ✅ full review (read end-to-end) · 🟡 reconstructed from search snippets / partial extraction · ⏳ retrieval pending · ❌ could not obtain.
+
+| Source URL | Status | Notes |
+|---|---|---|
+| https://addyosmani.com/blog/agentic-engineering/ | ✅ | Fetched via issue #4 (182 KB). Primary source for §2.1. Read full article body. |
+| https://www.langchain.com/blog/agentic-engineering-redefining-software-engineering | ✅ | Fetched via issue #4 (167 KB). Cisco/LangChain pilot study; primary source for §2.2. Read full article body including pilot numbers. |
+| https://cloud.google.com/discover/what-is-agentic-coding | ✅ | Fetched via issue #4 (2.2 MB). Read the article body including the "Best practices for secure agentic coding workflows" checklist; primary source for §2.3. |
+| https://www.ibm.com/think/topics/agentic-engineering | 🟡 | Fetched via issue #4 (253 KB) but the article body did not cleanly separate from the page navigation chrome in the html2text output. §2.4's findings are based on the navigation tree and the visible introductory framing only. A re-fetch with a different HTML extractor, or a manual read of the rendered page, would deepen this capsule. |
+| https://kiro.dev/ | ✅ | Fetched via issue #4 (232 KB). Landing page only — subpages (`/docs/specs/`, `/docs/chat/autopilot/`, `/docs/steering/`) were NOT fetched. §2.5 explicitly flags that a focused audit of Kiro is still warranted. |
+| https://deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes | ✅ | Fetched via issue #4 (2.1 MB). Mostly consumed by report 11; §2.6 covers the residual that didn't fit there. |
+| https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/gastown | ❌ | Not read in this session. Original subagent prompt covered this — see §4 "What's left unanswered." Reachable via raw.githubusercontent.com; no fetch action needed. |
+| https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/kotadb | ❌ | Same as above. |
+| https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/pi-mono | ❌ | Same as above. |
+| https://github.com/jayminwest/agentic-engineering-book/tree/main/chapters/10-practitioner-toolkit (Ch 10 sub-pages) | ❌ | Same — reachable via raw.githubusercontent.com. Ch 10 covers Claude Code, Google ADK, IDE Integrations, Agent Frameworks, Multi-Agent Workspace Managers, Enterprise Codebase Context Tools — each merits a capsule. |
+
+**Primary sources** for the six §2 capsules are all ✅ except IBM (🟡). The ❌ items are deferred to the subagent 12-completion dispatch tracked in `research/PLAN.md` §10.4.
 
 ## 1. Framing
 

@@ -87,7 +87,7 @@ Heading case matters: lowercase `c` in "Alternatives considered". This matches t
 - Sections in canonical order: Context, Decision, Alternatives considered, Consequences, References.
 - **Direct subsection linking** in References for `research/PLAN.md` (three section anchors in one bullet) and `research/00-synthesis.md` (one anchor).
 
-Read [`docs/adr/0001-fetch-blocked-urls-mechanism.md`](../../../docs/adr/0001-fetch-blocked-urls-mechanism.md) as a worked example.
+Read [`docs/adr/0001-fetch-blocked-urls-mechanism.md`](../../docs/adr/0001-fetch-blocked-urls-mechanism.md) as a worked example.
 
 ### Example 2 — direct subsection linking in References
 

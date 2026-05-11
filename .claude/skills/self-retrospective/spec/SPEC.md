@@ -27,17 +27,16 @@ next agent / human can consume.
 ## 2. Output structure (the spine)
 
 The retrospective produces a filesystem package under
-`retrospective/report/`:
+`retrospective/`:
 
 ```
 retrospective/
-└── report/
-    ├── YYYY-MM-DD-NN.md                  # main report
-    └── YYYY-MM-DD-NN/                    # sibling dir (same base name, no .md)
-        ├── <skill-id-1>-spec.md          # one per suggested skill
-        ├── <skill-id-2>-spec.md
-        ├── ...
-        └── AGENTS-suggestions.md         # one section per rule
+├── YYYY-MM-DD-NN.md                  # main report
+└── YYYY-MM-DD-NN/                    # sibling dir (same base name, no .md)
+    ├── <skill-id-1>-spec.md          # one per suggested skill
+    ├── <skill-id-2>-spec.md
+    ├── ...
+    └── AGENTS-suggestions.md         # one section per rule
 ```
 
 Plus a short inline summary in chat that points at the files. The full
@@ -77,6 +76,12 @@ on-disk artifact.
 ## Part 3 — agents-file suggestions
 (Pointer only; the actual suggestions live in
 ./YYYY-MM-DD-NN/AGENTS-suggestions.md.)
+
+## Part 4 — proposed ADRs
+- **<Title>** — <one-line rationale, grounded in a session moment>.
+- **<Title>** — <one-line rationale>.
+(Titles + one-line rationales only. NO specs. User decides per ADR
+whether to author it via the `adr` skill.)
 ```
 
 Hard cap: ~3500 words. The detail lives in the sibling directory.
@@ -272,17 +277,28 @@ Workflows that evolved during the session and had measurable benefit.
 
 1. **Verify UTC date** via tool call.
 2. **Determine sequence number** by listing
-   `retrospective/report/YYYY-MM-DD-*.md`.
+   `retrospective/YYYY-MM-DD-*.md`.
 3. **Collect commit hashes by PR** (gh or git log).
-4. **Scan the session** using the §5 checklist.
-5. **Write the main report** at `retrospective/report/YYYY-MM-DD-NN.md`.
+4. **Scan the session** using the §5 checklist (including §5.9 below
+   for proposed-ADR candidates).
+5. **Write the main report** at `retrospective/YYYY-MM-DD-NN.md`,
+   including the Part 4 proposed-ADRs section.
 6. **Write per-skill specs** at
-   `retrospective/report/YYYY-MM-DD-NN/<id>-spec.md`.
+   `retrospective/YYYY-MM-DD-NN/<id>-spec.md`.
 7. **Write AGENTS-suggestions.md** at
-   `retrospective/report/YYYY-MM-DD-NN/AGENTS-suggestions.md`.
-8. **Echo a short inline summary** with paths.
+   `retrospective/YYYY-MM-DD-NN/AGENTS-suggestions.md`.
+8. **Echo a short inline summary** with paths AND the proposed-ADRs
+   title list.
 9. **Commit** on the current branch.
 10. **If `--pr`**: push and open a PR.
+
+### 5.9 Proposed-ADR scan
+
+In addition to §5.1–5.8, walk the session for **architectural decisions
+made** — binding choices that affect multiple files / outlive the
+session. Each becomes a proposed-ADR candidate. List in the report's
+Part 4 with title + one-line rationale only. **Do not** write specs;
+the user decides per ADR whether to author one via the `adr` skill.
 
 ---
 
@@ -308,6 +324,12 @@ Workflows that evolved during the session and had measurable benefit.
   highest-ROI output.
 - **Capping at "what went well."** The misses ARE the lessons.
 - **Per-skill specs that defer to the session.** Specs must stand alone.
+- **Writing specs for proposed ADRs.** Proposed ADRs are titles +
+  one-line rationale only. The user decides per ADR whether to invest;
+  the `adr` skill is the right tool when they do.
+- **A nested `report/` subdirectory under `retrospective/`.** Canonical
+  path is `retrospective/YYYY-MM-DD-NN.md` directly. The earlier
+  `retrospective/report/` form was redundant — drop it.
 - **Bulk-committing without verifying intra-package links.** If the
   project has a link checker (e.g.,
   `.claude/skills/adr/scripts/check_adr_links.py`), run it on the new

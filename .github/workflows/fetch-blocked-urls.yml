@@ -14,11 +14,13 @@ name: Fetch Blocked URLs
 #      can trigger any work. Owner-created issues about other topics do not
 #      run this workflow.
 #
-#   2. Author-association gate: only issues opened by a user with
-#      author_association in (OWNER, COLLABORATOR, MEMBER) trigger work.
-#      This excludes drive-by GitHub users (NONE, FIRST_TIME_CONTRIBUTOR,
-#      CONTRIBUTOR) even if they manage to put the magic prefix in a title.
-#      The gate is re-checked inside the runner for defense in depth.
+#   2. Author allowlist gate: only issues opened by an explicitly-listed
+#      GitHub username trigger work. We use a username allowlist rather
+#      than `author_association` because the webhook payload's
+#      `author_association` is computed differently than the REST API
+#      response — the API returned MEMBER for jonathanmanton but the
+#      webhook payload returned CONTRIBUTOR for the same user on the
+#      same issue, which caused every prior run to skip.
 #
 #   3. Permissions are scoped: contents:write (to push the branch) and
 #      issues:write (to comment). No secrets are accessed. The action only
@@ -109,19 +111,23 @@ jobs:
               ;;
           esac
 
-      - name: Enforce author-association gate
+      - name: Enforce author-allowlist gate
         if: github.event_name == 'issues' && steps.title_gate.outputs.proceed == 'true'
         env:
-          ASSOC: ${{ github.event.issue.author_association }}
           AUTHOR: ${{ github.event.issue.user.login }}
+          ASSOC: ${{ github.event.issue.author_association }}
         run: |
           set -euo pipefail
-          case "$ASSOC" in
-            OWNER|COLLABORATOR|MEMBER)
-              echo "Author $AUTHOR has association $ASSOC; allowed."
+          # Explicit username allowlist. Edit this list to add additional
+          # trusted authors (e.g. a Claude-bot account). Association is
+          # logged for context but is NOT a gate, because the webhook
+          # payload's author_association is unreliable across event types.
+          case "$AUTHOR" in
+            jonathanmanton)
+              echo "Author $AUTHOR (association: $ASSOC) is on the allowlist; allowed."
               ;;
             *)
-              echo "Author $AUTHOR has association $ASSOC; refusing."
+              echo "Author $AUTHOR (association: $ASSOC) is NOT on the allowlist; refusing."
               exit 1
               ;;
           esac

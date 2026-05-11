@@ -1,0 +1,41 @@
+{
+  "run_id": "20260511-054258",
+  "goal": "Drain research/PLAN.md Rounds 2 (finish) + 3 (12 threads) + 4 (4 clusters) + 5 (6 clusters) via parallel subagents",
+  "spec_path": "research/PLAN.md",
+  "feature_branch": "claude/parallelize-with-subagents-SO0nR",
+  "conflict_strategy": "fail",
+  "max_parallel": 10,
+  "subtasks": [
+    {"id": "sub-01", "title": "R2 #08 Jaymin foundations+patterns",                 "branch": "claude/parallelize-with-subagents-SO0nR--sub-01", "output": "research/08-jaymin-book-foundations-patterns.md",      "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-02", "title": "R2 #10 Overstory substrate audit",                   "branch": "claude/parallelize-with-subagents-SO0nR--sub-02", "output": "research/10-overstory-substrate-audit.md",            "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-03", "title": "R2 #09 completion Jaymin Ch6/8/9",                   "branch": "claude/parallelize-with-subagents-SO0nR--sub-03", "output": "research/09-jaymin-book-harnesses-practices-mental-models.md", "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-04", "title": "R2 #12 completion gastown/kotadb/pi-mono/Ch10",      "branch": "claude/parallelize-with-subagents-SO0nR--sub-04", "output": "research/12-adjacent-ecosystem.md",                   "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-05", "title": "R3 thread 1 Shapiro Five Levels",                    "branch": "claude/parallelize-with-subagents-SO0nR--sub-05", "output": "research/followup/01-shapiro-five-levels.md",         "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-06", "title": "R3 thread 2 Attractor implementations",              "branch": "claude/parallelize-with-subagents-SO0nR--sub-06", "output": "research/followup/02-attractor-implementations.md",   "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-07", "title": "R3 thread 4 Gas Town + Beads",                       "branch": "claude/parallelize-with-subagents-SO0nR--sub-07", "output": "research/followup/04-gastown-beads.md",               "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-08", "title": "R3 thread 5 Klaassen siblings",                      "branch": "claude/parallelize-with-subagents-SO0nR--sub-08", "output": "research/followup/05-klaassen-siblings.md",           "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-09", "title": "R3 thread 6 Competitor landscape",                   "branch": "claude/parallelize-with-subagents-SO0nR--sub-09", "output": "research/followup/06-competitor-landscape.md",        "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-10", "title": "R3 thread 7 Evals deep-dive",                        "branch": "claude/parallelize-with-subagents-SO0nR--sub-10", "output": "research/followup/07-evals-deepdive.md",              "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-11", "title": "R3 thread 3 Cherny interview (best-effort)",         "branch": "claude/parallelize-with-subagents-SO0nR--sub-11", "output": "research/followup/03-cherny-interview.md",            "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-12", "title": "R3 thread 8 Security primitives",                    "branch": "claude/parallelize-with-subagents-SO0nR--sub-12", "output": "research/followup/08-security-primitives.md",         "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-13", "title": "R3 thread 9 Methodology ancestors",                  "branch": "claude/parallelize-with-subagents-SO0nR--sub-13", "output": "research/followup/09-methodology-ancestors.md",       "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-14", "title": "R3 thread 10 Governance / liability",                "branch": "claude/parallelize-with-subagents-SO0nR--sub-14", "output": "research/followup/10-governance.md",                  "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-15", "title": "R3 thread 11 Compound Knowledge plugin",             "branch": "claude/parallelize-with-subagents-SO0nR--sub-15", "output": "research/followup/11-compound-knowledge.md",          "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-16", "title": "R4 cluster A El Kaim intent+spec",                   "branch": "claude/parallelize-with-subagents-SO0nR--sub-16", "output": "research/14-el-kaim-book-intent-and-spec-authorship.md",    "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-17", "title": "R4 cluster B BMAD+attractor+dark factory",           "branch": "claude/parallelize-with-subagents-SO0nR--sub-17", "output": "research/15-el-kaim-book-bmad-attractor-dark-factory.md",   "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-18", "title": "R4 cluster C EA Council + delegation",               "branch": "claude/parallelize-with-subagents-SO0nR--sub-18", "output": "research/16-el-kaim-book-council-and-delegation.md",         "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-19", "title": "R4 cluster D Codex skill substrate",                 "branch": "claude/parallelize-with-subagents-SO0nR--sub-19", "output": "research/17-el-kaim-book-codex-and-skill-substrate.md",     "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-20", "title": "R5 13.1.1 OpenAI Codex substrate",                   "branch": "claude/parallelize-with-subagents-SO0nR--sub-20", "output": "research/18-openai-codex-substrate.md",                    "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-21", "title": "R5 13.1.2 GitHub Copilot cloud agent",               "branch": "claude/parallelize-with-subagents-SO0nR--sub-21", "output": "research/19-github-copilot-cloud-agent.md",                "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-22", "title": "R5 13.1.3 Replit Agent",                             "branch": "claude/parallelize-with-subagents-SO0nR--sub-22", "output": "research/20-replit-agent.md",                              "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-23", "title": "R5 13.1.4 Tabnine enterprise governance",            "branch": "claude/parallelize-with-subagents-SO0nR--sub-23", "output": "research/21-tabnine-enterprise.md",                        "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-24", "title": "R5 13.1.5 Academic foundations",                     "branch": "claude/parallelize-with-subagents-SO0nR--sub-24", "output": "research/22-academic-foundations.md",                      "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-25", "title": "R5 13.1.6 Anthropic engineering trilogy",            "branch": "claude/parallelize-with-subagents-SO0nR--sub-25", "output": "research/23-anthropic-engineering-trilogy.md",             "status": "pending", "pr_number": null, "issues": []},
+    {"id": "sub-26", "title": "R2 #13 synthesis (depends on sub-01..04 merged)",    "branch": "claude/parallelize-with-subagents-SO0nR--sub-26", "output": "research/13-round-2-synthesis.md",                         "status": "pending", "pr_number": null, "issues": []}
+  ],
+  "waves": {
+    "A": ["sub-01", "sub-02", "sub-03", "sub-04", "sub-05", "sub-06", "sub-07", "sub-08", "sub-09", "sub-10"],
+    "B": ["sub-11", "sub-12", "sub-13", "sub-14", "sub-15", "sub-16", "sub-17", "sub-18", "sub-19", "sub-20"],
+    "C": ["sub-21", "sub-22", "sub-23", "sub-24", "sub-25", "sub-26"]
+  }
+}

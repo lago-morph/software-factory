@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWE-bench</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-H9XFCMDPNS"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-H9XFCMDPNS");
+    </script>
+    <script>
+      // Initialize theme immediately to prevent flash
+      (function() {
+        const storedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+          document.documentElement.classList.add('dark-mode');
+        }
+      })();
+    </script>
+    
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+</head>
+<body>
+    <div class="sidebar-overlay"></div>
+<header class="mobile-header">
+    <a href="/" class="mobile-logo"><img src="img/swe-llama.svg" alt="SWE-bench logo" class="sidebar-logo-icon">SWE-bench</a>
+    <button class="sidebar-opener" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+    </button>
+</header>
+
+<aside class="sidebar" aria-label="Sidebar">
+    <div class="sidebar-header">
+         <a href="/" class="sidebar-logo"><img src="img/swe-llama.svg" alt="SWE-bench logo" class="sidebar-logo-icon">SWE-bench</a>
+         <button class="mobile-nav-toggle" aria-label="Close menu">
+             <i class="fas fa-times"></i>
+         </button>
+    </div>
+    <nav class="sidebar-nav">
+        <ul>
+            <li><a href="index.html" class="nav-link" data-page="index">Leaderboards</a></li>
+            <li class="nav-section-title">Benchmarks</li>
+            <li><a href="original.html" class="nav-link" data-page="original">SWE-bench</a></li>
+            <li><a href="verified.html" class="nav-link" data-page="verified">SWE-bench Verified</a></li>
+            <li><a href="multilingual-leaderboard.html" class="nav-link" data-page="multilingual-leaderboard">SWE-bench Multilingual</a></li>
+            <li><a href="multimodal.html" class="nav-link" data-page="multimodal">SWE-bench Multimodal</a></li>
+            <li><a href="lite.html" class="nav-link" data-page="lite">SWE-bench Lite</a></li>
+            <li class="nav-section-title">About</li>
+            <li><a href="https://openreview.net/pdf?id=VTF8yNQM66" class="nav-link" data-page="paper">Paper <i class="fas fa-external-link-alt"></i></a></li>
+            <li><a href="https://swebench.com/SWE-bench/" class="nav-link" data-page="docs">Docs <i class="fas fa-external-link-alt"></i></a></li>
+            <li><a href="blog.html" class="nav-link" data-page="blog">Blog</a></li>
+            <li><a href="contact.html" class="nav-link" data-page="contact">Contact</a></li>
+            <li><a href="citations.html" class="nav-link" data-page="citations">Citations</a></li>
+            <li><a href="press.html" class="nav-link" data-page="press">Press</a></li>
+            <li><a href="submit.html" class="nav-link" data-page="submit">Submit</a></li>            
+            <li class="nav-section-title">SWE-bench Family</li>
+            <li><a href="https://mini-swe-agent.com/" class="nav-link" data-page="mini-swe-agent"><img src="img/swe-agent-icon.svg" alt="mini-SWE-agent icon" class="sidebar-family-icon">mini-SWE-agent <i class="fas fa-external-link-alt"></i></a></li>
+            <li><a href="https://swesmith.com/" class="nav-link" data-page="swe-smith"><img src="img/swe-smith-icon.svg" alt="SWE-smith icon" class="sidebar-family-icon">SWE-smith <i class="fas fa-external-link-alt"></i></a></li>
+            <li><a href="https://codeclash.ai/" class="nav-link" data-page="codeclash"><img src="img/codeclash.svg" alt="CodeClash icon" class="sidebar-family-icon">CodeClash <i class="fas fa-external-link-alt"></i></a></li>
+            <li><a href="https://swe-rex.com/latest/" class="nav-link" data-page="swe-rex"><img src="img/swe-rex-icon.svg" alt="SWE-ReX icon" class="sidebar-family-icon">SWE-ReX <i class="fas fa-external-link-alt"></i></a></li>
+            <li><a href="https://swebench.com/sb-cli/" class="nav-link" data-page="sb-cli"><img src="img/sb-cli-icon.svg" alt="SWE-bench CLI icon" class="sidebar-family-icon">SWE-bench CLI <i class="fas fa-external-link-alt"></i></a></li>
+            <li><a href="https://swe-agent.com/latest/" class="nav-link" data-page="swe-agent"><img src="img/swe-agent-icon.svg" alt="SWE-agent icon" class="sidebar-family-icon">SWE-agent <span style="font-size: 0.8em;">(legacy)</span> <i class="fas fa-external-link-alt"></i></a></li>
+        </ul>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="https://github.com/swe-bench/SWE-bench" target="_blank" rel="noopener noreferrer" aria-label="SWE-bench on GitHub">
+            <i class="fab fa-github"></i>
+        </a>
+        &nbsp;
+        <a href="https://www.youtube.com/@SWE-bench" target="_blank" rel="noopener noreferrer" aria-label="SWE-bench on YouTube">
+            <i class="fab fa-youtube"></i>
+        </a>
+        &nbsp;
+        <a href="https://twitter.com/SWEbench" target="_blank" rel="noopener noreferrer" aria-label="SWE-bench on Twitter">
+            <i class="fab fa-twitter"></i>
+        </a>
+        &nbsp;
+        <a href="https://join.slack.com/t/swe-bench/shared_invite/zt-3rljl10bn-WED_gNRuFQu6YcILJMgeSw" target="_blank" rel="noopener noreferrer" aria-label="Join the SWE-bench Slack">
+            <i class="fab fa-slack"></i>
+        </a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+</aside>
+    
+    <div class="main-content">
+        
+    <header class="page-header">
+        <div class="container">
+            <div class="d-flex align-center mb-3">
+                <img src="img/swe-llama.svg" alt="SWE-Llama Logo" style="height: 5em; width: auto; margin-right: 1em;">
+                <h1 class="mb-0">SWE-bench</h1>
+            </div>
+            <p>Can Language Models Resolve Real-world Github Issues?</p>
+            <div class="authors">
+                <small>Carlos E. Jimenez*, John Yang*, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press, Karthik R Narasimhan</small>
+                <br>
+                <small>*Equal contribution</small>
+            </div>
+            <br>
+            <div class="flex gap-2">
+                <a href="https://arxiv.org/abs/2310.06770" target="_blank" class="paper-link">Paper</a>
+                <a href="https://github.com/SWE-bench/SWE-bench" target="_blank" class="paper-link">GitHub</a>  
+                <a href="https://huggingface.co/datasets/SWE-bench/SWE-bench" target="_blank" class="paper-link">Dataset</a>             
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section>
+            <h2>Overview</h2>
+            <div style="display: flex; align-items: center; flex-direction: column; margin-bottom: 1em;">
+                <img src="img/teaser.png" alt="SWE-bench Teaser Image" class="img-fluid" />
+            </div>
+            <p>SWE-bench tests AI systems' ability to solve GitHub issues.</p>
+            <p>
+                We collect 2,294 task instances by crawling Pull Requests and Issues from 12 popular Python repositories.
+                Each instance is based on a pull request that (1) is associated with an issue, and (2) modified 1+ testing related files.
+            </p>
+            <p>
+                Per instance, we construct an execution environment (Docker Image) with the repository successfully installed
+                at the commit that the Pull Request is based on.
+                Without the Pull Request's changes, a number of test(s) fail.
+                After the Pull Request is merged, the same set of test(s) pass.
+                These "Fail-to-Pass" tests are the primary signal for evaluation.
+            </p>
+            <p>
+                SWE-bench evaluation works as follows.
+                Per task instance, an AI system is given the issue text.
+                The AI system should then modify the codebase in order to resolve the described issues.
+                When the AI system is finished, we run the aforementioned Fail-to-Pass tests to check if the issue was successfully resolved.
+            </p>
+            <p>
+                SWE-bench was released in October 2023, where our initial Retrieval Augmented Generation (RAG) baseline scored just 1.96%.
+                Our follow up work, <a href="https://swe-agent.com/latest/">SWE-agent</a>, was the first agent-based AI system ever introduced
+                for performing software engineering tasks, achieving a score of 12.47% on SWE-bench.
+                You can train your own agentic software engineering models using our <a href="https://swesmith.com/">SWE-smith</a> dataset.
+            </p>
+        </section>
+        <hr />
+
+        <!-- Resources Section -->
+        <section>
+            <h2>Resources</h2>
+            <p>
+                In the original SWE-bench work, we fine-tuned CodeLlama (<a href="https://arxiv.org/abs/2308.12950">Rozière et al. 2023</a>)
+                to directly generate patches given 1+ files along with the issue text.
+                We provide all assets, including the training data and model weights, for the SWE-Llama models.
+            </p>
+            <p>Base and pre-processed datasets (Oracle, 13K, 27K, 40K, 50K Llama) are available on HuggingFace.</p>
+            <div class="resource-links">
+                <a href="https://huggingface.co/datasets/princeton-nlp/SWE-bench">🤗 SWE-bench</a>
+                <a href="https://huggingface.co/datasets/princeton-nlp/SWE-bench_oracle">🤗 "Oracle" Retrieval</a>
+                <a href="https://huggingface.co/datasets/princeton-nlp/SWE-bench_bm25_13K">🤗 BM25 Retrieval 13K</a>
+                <a href="https://huggingface.co/datasets/princeton-nlp/SWE-bench_bm25_27K">🤗 BM25 Retrieval 27K</a>
+                <a href="https://huggingface.co/datasets/princeton-nlp/SWE-bench_bm25_40K">🤗 BM25 Retrieval 40K</a>
+                <a href="https://huggingface.co/datasets/princeton-nlp/SWE-bench_bm25_50k_llama">🤗 BM25 Retrieval 50K (Llama)</a>
+            </div>
+            <p>SWE-Llama model weights:</p>
+            <div class="resource-links">
+                <a href="https://huggingface.co/princeton-nlp/SWE-Llama-13b">SWE-Llama 13b</a>
+                <a href="https://huggingface.co/princeton-nlp/SWE-Llama-13b-peft">SWE-Llama 13b (PEFT)</a>
+                <a href="https://huggingface.co/princeton-nlp/SWE-Llama-7b">SWE-Llama 7b</a>
+                <a href="https://huggingface.co/princeton-nlp/SWE-Llama-7b-peft">SWE-Llama 7b (PEFT)</a>
+            </div>
+        </section>
+        <hr />
+
+        <!-- Affiliation Section -->
+        <!-- <div class="institution-logos">
+            <div class="logo-container">
+                <a href="https://www.princeton.edu/" target="_blank" title="Princeton University">
+                    <img src="img/princeton_seal.svg" alt="Princeton University" class="institution-logo" style="box-shadow: none; filter: none;">
+                </a>
+                <a href="https://www.stanford.edu/" target="_blank" title="Stanford University">
+                    <img src="img/stanford_seal.png" alt="Stanford University" class="institution-logo" style="box-shadow: none; filter: none;">
+                </a>
+                <a href="https://pli.princeton.edu/" target="_blank" title="Princeton Language and Intelligence">
+                    <img src="img/pli_logo.svg" alt="Princeton Language and Intelligence" class="institution-logo" style="box-shadow: none; filter: none;">
+                </a>
+                <a href="https://www.uchicago.edu/" target="_blank" title="University of Chicago">
+                    <img src="img/chicago_seal.svg" alt="University of Chicago" class="institution-logo" style="box-shadow: none; filter: none;">
+                </a>
+            </div>
+        </div> -->
+
+        <!-- Citation Section -->
+        <section id="citation">
+            <h2>Citation</h2>
+            <p>If you use SWE-bench in your research, please cite our paper:</p>
+            
+            <div class="citation-type">
+                <button class="citation-format-btn active" data-format="bibtex" data-target="original-citation">BibTeX</button>
+                <button class="citation-format-btn" data-format="apa" data-target="original-citation">APA</button>
+                <button class="citation-format-btn" data-format="mla" data-target="original-citation">MLA</button>
+            </div>
+            
+            <div class="citation-container" id="original-citation-bibtex">
+                <button class="copy-btn" aria-label="Copy citation">Copy</button>
+                <pre>@inproceedings{
+    jimenez2024swebench,
+    title={{SWE}-bench: Can Language Models Resolve Real-world Github Issues?},
+    author={Carlos E Jimenez and John Yang and Alexander Wettig and Shunyu Yao and Kexin Pei and Ofir Press and Karthik R Narasimhan},
+    booktitle={The Twelfth International Conference on Learning Representations},
+    year={2024},
+    url={https://openreview.net/forum?id=VTF8yNQM66}
+}</pre>
+            </div>
+            
+            <div class="citation-container display-none" id="original-citation-apa">
+                <button class="copy-btn" aria-label="Copy citation">Copy</button>
+                <pre>Jimenez, C. E., Yang, J., Wettig, A., Yao, S., Pei, K., Press, O., & Narasimhan, K. R. (2024). SWE-bench: Can Language Models Resolve Real-world Github Issues? In The Twelfth International Conference on Learning Representations. https://openreview.net/forum?id=VTF8yNQM66</pre>
+            </div>
+            
+            <div class="citation-container display-none" id="original-citation-mla">
+                <button class="copy-btn" aria-label="Copy citation">Copy</button>
+                <pre>Jimenez, Carlos E., et al. "SWE-bench: Can Language Models Resolve Real-world Github Issues?" The Twelfth International Conference on Learning Representations, 2024.</pre>
+            </div>
+        </section>
+    </div>
+
+        
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-copyright">
+                        &copy; 2025 SWE-bench Team. All rights reserved.
+                    </div>
+                    <div class="footer-links">
+                        <a href="https://github.com/swe-bench/SWE-bench" target="_blank">GitHub</a>
+                        <a href="https://huggingface.co/collections/SWE-bench/benchmarks-68113bc99eb3a64a91ea33c9" target="_blank">HuggingFace</a>
+                        <a href="https://arxiv.org/abs/2310.06770" target="_blank">Paper</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Common JS files -->
+    <script src="js/mainResults.js"></script>
+    <script src="js/citation.js"></script>
+    <script src="js/citationFormat.js"></script>
+    
+    <!-- Page-specific JS files will be injected here -->
+    
+
+    <script>
+        function initTheme() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            
+            // Move dark-mode class from documentElement to body if present
+            if (document.documentElement.classList.contains('dark-mode')) {
+                document.body.classList.add('dark-mode');
+                document.documentElement.classList.remove('dark-mode');
+            }
+            
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    document.body.classList.toggle('dark-mode');
+                    
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+                    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+                });
+            }
+            
+            prefersDarkScheme.addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    if (e.matches) {
+                        document.body.classList.add('dark-mode');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                    }
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            
+            const currentPath = window.location.pathname;
+            const currentPage = currentPath.split('/').pop().split('.')[0] || 'index';
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const linkPage = link.getAttribute('data-page');
+                if (linkPage === currentPage) {
+                    link.classList.add('active');
+                }
+                
+                if (currentPage === 'index' && window.location.hash) {
+                    const currentHash = window.location.hash.substring(1);
+                    if (linkPage === currentHash) {
+                        link.classList.add('active');
+                    }
+                }
+            });
+            
+            const sidebarOpener = document.querySelector('.sidebar-opener');
+            const sidebarCloser = document.querySelector('.sidebar .mobile-nav-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            if ((sidebarOpener || sidebarCloser) && sidebar && overlay) {
+                function toggleMenu() {
+                    sidebar.classList.toggle('open');
+                    overlay.classList.toggle('active');
+                }
+                
+                function openMenu() {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('active');
+                }
+                
+                function closeMenu() {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+                
+                if (sidebarOpener) {
+                    sidebarOpener.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        openMenu();
+                    });
+                }
+                
+                if (sidebarCloser) {
+                    sidebarCloser.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        closeMenu();
+                    });
+                }
+                
+                overlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeMenu();
+                });
+                
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (sidebar.classList.contains('open')) {
+                            closeMenu();
+                        }
+                    });
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+                        closeMenu();
+                    }
+                });
+            }
+        });
+    </script>
+
+    
+    <!-- Citation functionality now provided by citation.js and citationFormat.js loaded in base.html -->
+
+</body>
+</html> 

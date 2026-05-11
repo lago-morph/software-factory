@@ -1,9 +1,9 @@
 # Blocked URLs — Round 2 (Jaymin / Overstory / OpenHands)
 
-**Date:** 2026-05-10 (initial); fetch-action results merged 2026-05-11.
+**Date:** 2026-05-10 (initial); fetch-action results merged 2026-05-11; issue #8 results processed 2026-05-11.
 **Purpose:** URLs the Round-2 subagents will probably need that are NOT reachable from the current sandbox.
 
-**Status as of 2026-05-11:** Issue [#4](https://github.com/lago-morph/software-factory/issues/4) ran the first fetch — 13 of 14 URLs returned HTTP 200 and are now committed in `research/fetched/issue-4/`. Issue [#8](https://github.com/lago-morph/software-factory/issues/8) is the Wayback-Machine supplement (still in flight at time of writing). The §3 inventory below has been updated with per-URL status; tier-bucket guidance below remains useful as a planning tool for future fetch issues.
+**Status as of 2026-05-11:** Issue [#4](https://github.com/lago-morph/software-factory/issues/4) ran the first fetch — 13 of 14 URLs returned HTTP 200; content was incorporated into reports and the cache files have since been deleted. Issue [#8](https://github.com/lago-morph/software-factory/issues/8) (Wayback supplements) has now landed: the Substack manifesto and the arXiv HTML render are now ACCESSED and incorporated into reports 09 and 11; the Boris Cherny Lenny interview is PARTIAL (paywall persists in Wayback) and is reflected in report 06; the el-kaim article was never archived in Wayback (still BLOCKED). Cache files have been deleted after incorporation. The §3 inventory below has been updated with per-URL final status.
 
 The sandbox blocks essentially every host except `raw.githubusercontent.com` (and partial GitHub-API access via the MCP). The list below is the result of that probe.
 
@@ -29,11 +29,11 @@ These are the canonical-source documents for the three sources, in forms the rep
 |---|---|---|
 | 1 | https://www.jayminwest.com/agentic-engineering-book | ✅ via #4 (188 KB; rendered TOC matches raw markdown) |
 | 2 | https://www.jayminwest.com/agentic-engineering-book/6-harnesses | ✅ via #4 (113 KB; consumed by `research/09-jaymin-harnesses-partial.md`) |
-| 3 | https://jayminwest.substack.com/p/a-manifesto-for-agentic-development | ❌ via #4 (HTTP 403; Substack blocks Actions IPs). Wayback retry queued in #8. |
+| 3 | https://jayminwest.substack.com/p/a-manifesto-for-agentic-development | ✅ via #8 Wayback (capture 2026-05-11 00:25:03; full manifesto body recovered; consumed by `research/09-jaymin-harnesses-partial.md` §12) |
 | 4 | https://docs.all-hands.dev/usage/how-to/headless-mode | ✅ via #4 (400 KB; consumed by `research/11-openhands-substrate-audit.md`) |
 | 5 | https://docs.all-hands.dev/ | ✅ via #4 (353 KB; doc-tree fingerprint) |
 | 6 | https://arxiv.org/abs/2511.03690 | ✅ via #4 (abstract + metadata) |
-| 7 | https://arxiv.org/pdf/2511.03690 | ⚠️ via #4 — file fetched but is PDF binary (html2text doesn't extract). HTML render `arxiv.org/html/2511.03690v2` queued via Wayback in #8. |
+| 7 | https://arxiv.org/pdf/2511.03690 | ✅ HTML render `arxiv.org/html/2511.03690v2` fetched via #8 Wayback (capture 2026-05-11 00:25:03; full paper body, 761 lines markdown; consumed by `research/11-openhands-substrate-audit.md` v0.2) |
 | 8 | https://github.com/marketplace/actions/openhands-ai-action | ✅ via #4 (222 KB; third-party `xinbenlv/openhands-action`, 10 stars) |
 
 ## Tier 2 (would add useful color)

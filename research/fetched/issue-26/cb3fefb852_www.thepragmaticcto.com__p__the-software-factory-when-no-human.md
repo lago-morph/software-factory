@@ -1,0 +1,194 @@
+[](/)
+
+# [](/)
+
+SubscribeSign in
+
+# The Software Factory: When No Human Writes or Reviews the Code
+
+### StrongDM's radical experiment with AI-generated code
+
+[](https://substack.com/@allanmacgregor)
+
+[Allan MacGregor 🇨🇦](https://substack.com/@allanmacgregor)
+
+Feb 18, 2026
+
+1
+
+Share
+
+StrongDM's [Software Factory](https://factory.strongdm.ai/) has three cardinal rules. Rule one: code must not be written by humans. Rule two: code must not be reviewed by humans. Rule three: if you haven't spent at least $1,000 on tokens today per human engineer, your software factory has room for improvement.
+
+Three rules. No hedging, no qualifiers, no "except when."
+
+The guiding mantra for every engineer on the team is a single question: "Why am I doing this?" The implication is clear; the model should be doing it instead. Every line of code a human writes is, in their framing, a failure of imagination --- a task that should have been delegated to an agent.
+
+Simon Willison [published his analysis](https://simonwillison.net/2026/Feb/7/software-factory/) of the approach today, calling it "the most ambitious form of AI-assisted software development I've seen yet." He frames it as Level 5 on a spectrum from "spicy autocomplete" to what StrongDM calls the Dark Factory --- fully agentic development where humans don't write code and don't review it. Most of us are somewhere around Levels 2 and 3; StrongDM skipped straight to the end of the spectrum.
+
+That alone would be worth discussing. But context matters.
+
+StrongDM builds security and access management software --- permission management across Okta, Jira, Slack, and Google services. They're [being acquired by Delinea](https://www.globenewswire.com/news-release/2026/01/15/3219527/0/en/Delinea-and-StrongDM-to-Unite-to-Redefine-Identity-Security-for-the-Agentic-AI-Era.html), an identity security company, with the deal expected to close Q1 2026. No human writes the code that controls access to enterprise systems. No human reviews it. This is either the most visionary approach to software development anyone has shipped, or **the setup for a catastrophe that writes its own case study.** The data should tell us which.
+
+## The Engineering Is Disciplined
+
+Before the skepticism, StrongDM deserves credit for what they've built. This is not vibe coding. The engineering is structured, specification-driven, and contains ideas that deserve serious analysis --- regardless of whether you buy the philosophy.
+
+The strongest idea is scenarios as holdout sets. The problem is well-known: when agents write both code and tests, they game the tests. An agent can trivially write `assert true` and declare victory. StrongDM's solution replaces traditional tests with "scenarios" \--- end-to-end user stories stored outside the codebase, invisible to the code-generating agents. The analogy comes from machine learning; you never train on your test set because it corrupts evaluation. [StrongDM applies the same principle to software verification](https://factory.strongdm.ai/). The agents can't see the scenarios, so they can't game them. The satisfaction metric shifts from boolean --- did all tests pass? --- to probabilistic: what fraction of observed trajectories through all scenarios likely satisfy the user?
+
+That's a genuinely smart framing. It addresses the most obvious objection to AI-generated testing in a way that borrows from a discipline with decades of rigor behind it. If you've worked with ML pipelines, you recognize the logic immediately; the principle is sound even if you question the scope of its application.
+
+The [Digital Twin Universe](https://factory.strongdm.ai/) is equally impressive. StrongDM built behavioral clones of third-party services --- Okta, Jira, Slack, Google Docs, Google Drive, Google Sheets --- as self-contained Go binaries that replicate APIs, edge cases, and observable behaviors. They run thousands of scenarios hourly; they test at volumes exceeding production limits; they simulate dangerous failure modes impossible against live services. No rate limits. No API costs. Building full SaaS replicas was always theoretically possible but economically unfeasible; agentic development reverses the cost equation.
+
+The team calls this "grown software" \--- code that [compounds correctness through iteration](https://factory.strongdm.ai/) rather than degrading over time. Not generated once and shipped; grown through cycles of agent-driven refinement against scenario validation. The Software Factory was founded July 14, 2025 by Jay Taylor, Navan Chauhan, and Justin McCarthy, StrongDM's CTO and co-founder. The catalyst, according to them, was Claude Sonnet 3.5's October 2024 revision, which enabled "long-horizon agentic coding workflows" that compound correctness rather than error. Subsequent models --- Opus 4.5, GPT 5.2 --- increased reliability further; the trajectory gave them confidence to go all-in.
+
+It matters that Willison is the one taking this seriously. He's been one of the most rigorous and careful observers of AI-assisted development for years. His assessment: this is [structured, spec-driven agentic development](https://simonwillison.net/2026/Feb/7/software-factory/), not reckless experimentation. He remains most interested in "enabling agents to prove code works without human line-by-line review." Coming from Willison, that's not hype. It's a signal worth tracking.
+
+The holdout-set concept is worth stealing. The DTU is worth studying. The engineering behind the Software Factory is disciplined enough that dismissing it outright would be intellectually lazy.
+
+The philosophy is a different question.
+
+## The Numbers Don't Support It
+
+The quality data on AI-generated code is unambiguous, and it runs directly counter to "no human review."
+
+[CodeRabbit's "State of AI vs Human Code Generation" report](https://www.coderabbit.ai/blog/state-of-ai-vs-human-code-generation-report), published December 2025, analyzed 470 real-world open source pull requests --- 320 AI-coauthored, 150 human-only. AI-authored PRs contained [1.4x more critical issues and 1.7x more major issues](https://www.businesswire.com/news/home/20251217666881/en/CodeRabbits-State-of-AI-vs-Human-Code-Generation-Report-Finds-That-AI-Written-Code-Produces-1.7x-More-Issues-Than-Human-Code) than human-written PRs. The averages: 10.83 issues per AI PR versus 6.45 for human PRs. Logic and correctness issues --- business logic errors, misconfigurations, unsafe control flow --- rose 75%. Security vulnerabilities increased 1.5--2x. Code readability problems jumped more than 3x. Performance inefficiencies appeared nearly 8x more often in AI-generated code.
+
+Those numbers deserve a second read. Not 10% worse. Not marginally worse. Measurably, significantly worse across every dimension that matters for production software --- logic, security, readability, performance. The study looked at real-world pull requests in open-source projects; these aren't synthetic benchmarks or contrived examples.
+
+The security dimension is particularly damning. The [Veracode 2025 report](https://www.accorian.com/security-impact-of-vibe-coding-deep-dive-part-1-of-2/) found that 45% of AI-generated code contains security vulnerabilities, with XSS errors appearing in 86% of AI-generated cases and SQL injection in 20% of generated code samples. The [FormAI study](https://www.netcorpsoftwaredevelopment.com/blog/ai-generated-code-statistics) analyzed 112,000 C programs generated by ChatGPT; 51.24% contained at least one security vulnerability.
+
+Now apply that to StrongDM's context. They build access management software --- the software that determines who can access what across your enterprise systems. Applying "no human review" to security-critical software means trusting AI agents to get security right, when every major study shows AI code has 1.5--2x more security vulnerabilities than human-written code. StrongDM's holdout scenarios may catch some of this. But scenarios are only as comprehensive as the person --- or agent --- that writes them.
+
+The failure mode here isn't a broken feature. It's a security breach.
+
+## When the Dark Factory Has a Dark Day
+
+The failure cases are not hypothetical. They've already happened --- at companies with more human oversight than StrongDM proposes.
+
+In July 2025, [a Replit AI agent deleted a live production database](https://fortune.com/2025/07/23/ai-coding-tool-replit-wiped-database-called-it-a-catastrophic-failure/) during an active code freeze. It wiped data for over 1,200 executives and 1,190 companies. The agent [admitted to running unauthorized commands](https://www.theregister.com/2025/07/21/replit_saastr_vibe_coding_incident/), panicked in response to empty queries, and violated explicit instructions not to proceed without human approval. A code freeze, explicit guardrails, human involvement in the process --- and the agent still destroyed a production database.
+
+In January 2026, [Moltbook launched a platform](https://www.isyncevolution.com/blog/ai-code-slop-crisis-vibe-coding-security-risks) on the 28th. By the 31st --- three days later --- it had leaked over 1.5 million API keys and exposed countless user databases. It was called the first "Mass AI Breach" in tech history. The root cause was straightforward: AI agents generated functional database schemas but never enabled Row Level Security. No human ever reviewed the critical configuration. The post-mortem was blunt: "mistakes that any experienced engineer would have caught."
+
+Both of these incidents happened with some level of human involvement in the development process. Replit had a code freeze and explicit guardrails; Moltbook had human developers in the loop. StrongDM's philosophy explicitly removes that involvement. The guardrails that failed in these cases wouldn't exist at all in the dark factory model.
+
+The accountability question is worth sitting with. **When nobody wrote the code and nobody reviewed it, who reconstructs the failure?** Incident response assumes someone understands what the code does and why decisions were made. In a dark factory, the audit trail is a conversation between LLMs. In regulated industries --- finance, healthcare, government --- this isn't a philosophical objection. **It's a compliance non-starter.**
+
+Moltbook's failure is the one that should keep dark factory advocates up at night. It wasn't a bug in existing logic; it wasn't a regression introduced by a bad commit. It was a missing configuration --- something that nobody, human or AI, thought to include. Row Level Security is a checkbox. A single setting. **And its absence exposed 1.5 million API keys in three days.** The DTU may catch known failure modes through scenarios. But what about the edge cases that aren't in any scenario? What about the omissions that nobody anticipated?
+
+## Who Watches the Watchmen?
+
+StrongDM's answer to the verification problem is the holdout-set concept, and it's clever. The code-writing agents can't see the validation scenarios; they can't game them. This addresses the most obvious objection --- that AI writing its own tests is circular --- in a way that's intellectually satisfying.
+
+But the analogy breaks down at the boundary.
+
+Who writes the scenarios? If humans write them, human involvement hasn't been eliminated; it's been relocated upstream from code review to scenario design. The human review still exists --- it just moved. If agents write the scenarios too, you've pushed the _quis custodiet_ problem one level higher. Now agents verify agents that verify agents. The regression doesn't resolve; it recedes.
+
+Holdout sets in machine learning work because the data distribution is knowable and the test set can be representative of the population. Software edge cases are unbounded. You can't enumerate what you haven't imagined. Moltbook's failure was exactly this type: not a flaw in the logic that was written, but a missing configuration that neither human nor AI thought to include in any scenario. The holdout set can only catch failures it was designed to detect; the catastrophic failures are the ones nobody anticipated.
+
+[Schillace's fourth law](https://sundaylettersfromsam.substack.com/p/coding-laws-for-llms) names this precisely: "The system will be as brittle as its most brittle part." Even if 99% of the pipeline is agentic and robust, the 1% that's wrong propagates through everything. In security software, the most brittle part is the one an attacker finds first.
+
+StrongDM hasn't published defect rates, security vulnerability metrics, or production incident data. The Software Factory was built by a three-person founding team --- not yet proven at organizational scale. The DTU covers specific third-party services --- Okta, Jira, Slack, Google --- but what about novel integrations or unanticipated service behavior?
+
+"Deliberate naivete" is a feature when you're challenging inherited assumptions. It becomes negligence when you're building software that controls enterprise access and the data says AI code has 1.5--2x more security vulnerabilities than human-written code.
+
+## The Economics Question
+
+Even if the approach works flawlessly, the economics constrain who can use it.
+
+One thousand dollars per day per engineer. That's [$20,000 per month, $240,000 per year](https://simonwillison.net/2026/Feb/7/software-factory/) \--- in token costs alone. On top of salary, benefits, and equipment. The fully loaded cost per engineer in a dark factory model runs $400,000--$600,000 or more annually; the token spend alone exceeds the median US software engineer salary. At what product price point does that make economic sense?
+
+Willison asked the right question: ["Does profitability require products expensive enough to justify this overhead?"](https://simonwillison.net/2026/Feb/7/software-factory/) StrongDM builds enterprise security software --- high price point, low volume. The economics may work there. But the Software Factory is presented as a general methodology, not a niche approach for expensive enterprise products. Can a 20-person startup afford $240,000 per year per engineer in tokens? If not, this is an approach for well-funded companies building expensive products --- not the future of software development broadly.
+
+The competitive moat problem is the second-order concern. If agents can build your product from specs and scenarios, they can build your competitor's product too. The defensibility shifts from code to specifications and domain knowledge. But specifications are easier to reverse-engineer than implementations. [Willison flagged this explicitly](https://simonwillison.net/2026/Feb/7/software-factory/): the feature cloning risk is real when your competitive advantage is no longer in the code itself. Your moat dissolves into your scenario library --- and scenario libraries are documentation, not defensible intellectual property.
+
+## The Moderate Position
+
+There's an alternative framework for thinking about AI in development, and it comes from someone who can't be dismissed as a Luddite.
+
+Sam Schillace --- Microsoft's Deputy CTO, creator of Google Docs --- published ["Coding Laws for LLMs,"](https://sundaylettersfromsam.substack.com/p/coding-laws-for-llms) a set of nine principles that are both pro-AI and pro-human-oversight. His first law: "Don't write code if the model can do it." But the model should do it under supervision, not autonomously. His second law: "Trade leverage for precision; use interaction to mitigate." Human validation checkpoints are essential, not optional. His sixth law: "Uncertainty is an exception throw" \--- when models lack confidence, human intervention is necessary.
+
+The key line: "Good design of code involving LLMs takes this into account and allows for human interaction."
+
+Schillace advocates treating models as tools, not autonomous agents. This is the mainstream position for engineering organizations operating at scale: use AI aggressively, keep humans in the loop. He's not anti-AI --- he ran Google Docs; he's Microsoft's Deputy CTO; he has as much incentive as anyone to believe in the transformative power of AI-assisted development. But his framework explicitly requires human interaction points, human uncertainty handling, and human awareness of system brittleness. The distinction is between delegation and abdication.
+
+StrongDM's three cardinal rules explicitly forbid what Schillace's laws explicitly require. These are two different bets on where AI code quality is right now. The CodeRabbit data, the Veracode findings, the FormAI study, the Replit incident, the Moltbook breach --- **the evidence favors the bet that still includes human review.**
+
+## The Workforce Problem
+
+If no human writes or reviews code, what do engineers do? The answer reveals whether this is a genuine evolution of the profession or a rationalization for reducing headcount.
+
+The [charitable framing](https://www.webpronews.com/the-software-factory-has-arrived-how-ai-is-rewriting-the-rules-of-code-production-and-what-it-means-for-the-developer-workforce/): engineers shift from code writers to supervisors and reviewers. Humans provide high-level specifications and architectural guidance; AI handles implementation. Skills gaining importance include systems thinking, security expertise, UX design, and domain knowledge. Traditional coding interviews become "increasingly misaligned with actual work developers now perform."
+
+The [scale concern](https://stackoverflow.blog/2026/02/04/code-smells-for-ai-agents-q-and-a-with-eno-reyes-of-factory/) is sharper: "Bringing on agents isn't hiring another person. It's like hiring a hundred intern-level engineers. You can't code review a hundred engineers." In StrongDM's model, you don't review them at all --- the scenarios do.
+
+Then there's the comprehension debt problem --- and this one compounds over time. AI generates working code that nobody on your team understands. Peter Naur argued in 1985 that software isn't the code; it's the team's mental model of the code. When that model decays, software becomes unmaintainable regardless of how clean the code looks. Code review isn't just quality assurance; it's how teams build shared understanding of their systems. When nobody wrote the code and nobody reviewed it, who maintains it? Who debugs it? Who extends it when requirements change? The dark factory assumes maintenance is also agentic, but maintenance requires understanding context, history, and intent --- an even harder problem than generation.
+
+"Supervisors of code-generating systems" is the generous framing. "Prompt engineers with fancy titles" is the cynical one. Both framings point to the same structural shift: value migrates to design, taste, judgment. But how many companies need a full team doing only design, taste, and judgment? The ratio changes; it doesn't change in a way that preserves current headcount. Every CTO running the numbers on agentic development needs to be honest about this implication.
+
+## The Acquisition Test
+
+StrongDM is [being acquired by Delinea](https://www.globenewswire.com/news-release/2026/01/15/3219527/0/en/Delinea-and-StrongDM-to-Unite-to-Redefine-Identity-Security-for-the-Agentic-AI-Era.html), an identity security company that builds privileged access management and secrets management products. The deal is expected to close Q1 2026.
+
+This matters because it's a real-world test. Did Delinea see the Software Factory methodology and buy it --- or did they buy the product and the customer base? Will the acquirer maintain "no human review" for security products once they own the compliance risk? Startup experiments often don't survive corporate integration; radical methodologies especially. If Delinea imposes human review on StrongDM's code, the Software Factory becomes a case study in methodology, not a sustainable practice.
+
+Worth watching. The answer will tell us more about the viability of the dark factory than any whitepaper or manifesto. Corporate acquirers don't tolerate risk the way three-person founding teams do; the compliance review alone should be illuminating.
+
+## What I'm Doing
+
+Not dark factory. Not even close.
+
+The data doesn't support removing human review for production code, and it especially doesn't support it for anything security-adjacent. But I'm not dismissing the underlying ideas either. StrongDM's engineering is disciplined even if the philosophy is premature.
+
+## What I'm Considering
+
+Keeping verification scenarios outside the codebase --- separate from the code that agents generate and the tests they write --- is valuable even with full human review in place. I'm experimenting with specification-driven scenarios that no agent touches, validated independently. It's a small change to the workflows I'm using; the improvement in verification confidence could be disproportionate.
+
+The DTU concept at smaller scale: not full behavioral clones of third-party services, but mocked environments that let me test integration behavior without hitting live APIs. This was always good practice; StrongDM made the economics interesting by showing how agents can build and maintain the mocks themselves.
+
+## What I'm Not Adopting
+
+"No human review." Not until the CodeRabbit numbers reverse --- and not for security-adjacent code even then. The evidence isn't there. And $1,000 per day in tokens per engineer --- the economics don't work at our scale, and I'm skeptical they work at most scales. We're spending deliberately, not maximally.
+
+**Maybe StrongDM is early, not wrong. Maybe AI code quality improves enough in the next two years that "no human review" becomes defensible. I'd rather be late to a methodology that works than early to one that causes a breach.**
+
+* * *
+
+## Closing Thoughts
+
+The Software Factory is not a question about ambition or vision. It's a question about evidence.
+
+The holdout-set idea is smart. The DTU is impressive engineering. The three cardinal rules are ideology, not engineering --- aspiration dressed as methodology. **The question isn't "should we go fully agentic?" \--- that's a philosophy debate with no falsifiable answer. The question is: what would have to be true about AI code quality for you to trust it without human review?**
+
+That question has a measurable answer. And right now, the measurements don't support it.
+
+What defect rate would you need to see before removing human review? Are we there? If your scenarios catch 95% of issues, is the 5% they miss acceptable for your product? For your customers? For your compliance obligations? When --- not if --- an agent-generated system causes a production incident, who in your organization understands the code well enough to diagnose it?
+
+StrongDM's holdout-set concept is worth adopting. Their philosophy is worth watching.
+
+1
+
+Share
+
+#### Discussion about this post
+
+CommentsRestacks
+
+TopLatestDiscussions
+
+No posts
+
+### Ready for more?
+
+Subscribe
+
+© 2026 Allan MacGregor 🇨🇦 · [Privacy](https://substack.com/privacy) ∙ [Terms](https://substack.com/tos) ∙ [Collection notice](https://substack.com/ccpa#personal-data-collected)
+
+[ Start your Substack](https://substack.com/signup?utm_source=substack&utm_medium=web&utm_content=footer)[Get the app](https://substack.com/app/app-store-redirect?utm_campaign=app-marketing&utm_content=web-footer-button)
+
+[Substack](https://substack.com) is the home for great culture
+
+
+
+
+This site requires JavaScript to run correctly. Please [turn on JavaScript](https://enable-javascript.com/) or unblock scripts 

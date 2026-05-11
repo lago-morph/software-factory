@@ -287,6 +287,23 @@ The mechanism for getting them is a new GitHub Action defined in `.github/workfl
 
 This loop is asynchronous: opening the issue does not require the agent to wait. A future resumption agent can simply check whether a `fetched/issue-N` branch exists and merge it.
 
+### 5.1 Workflow tooling files (current and authoritative)
+
+The following four files in `research/` are the **canonical companion artifacts** of the fetch loop above. Each is referenced by the `research-pipeline` and/or `fetch-blocked-urls` skills; together they are the system of record for what URLs are reachable, what isn't, and how the user can recover the rest manually. **None are scratch state — all four belong on `main`, kept current.**
+
+| File | Purpose | Updated by |
+|---|---|---|
+| `research/blocked-urls.md` | Cross-round canonical inventory of every URL the research depends on, with the per-URL retrieval status (✅ accessed / ⚠️ partial / 🎬 video-only / ❌ blocked) across every retrieval pass tried. The audit log. | Every Phase 0 drain that resolves or fails a URL. |
+| `research/blocked-urls-round-2.md` | Round-2-specific URL inventory (Jaymin / Overstory / OpenHands sources). Distinct content from `blocked-urls.md`; both kept per the skill's `blocked-urls.md (or per-round blocked-urls-round-N.md)` convention. | Round-2 fetch issues (#4, #8) and any future Round-2 follow-ups. |
+| `research/unfetched-sources.md` | User-facing list of URLs that survived every automated retrieval route, with **Path A / B / C recovery instructions** the user runs locally. The action list, not the audit log. | Each round of the drain — rows added when a URL becomes user-recovery-only, removed when it's resolved. |
+| `research/fetch-from-browser.sh` | The runnable bash script the user invokes locally with their browser cookies (Path A in `unfetched-sources.md`). Deposits results in `research/manual/`, where the next research-pipeline activation drains them via Phase 0. | Script logic itself rarely changes; the `unfetched-sources.md` URL list it reads changes per drain. |
+
+Things that **do not** belong on `main`:
+
+- `.fetch-work/` — the workflow scratch directory. The `.github/workflows/fetch-blocked-urls.yml` workflow creates it ephemerally during a CI run; the manifest gets committed to the `fetched/issue-N` branch the workflow produces, never to `main`. Listed in `.gitignore`.
+- `research/manual/<file>` — once a manual fetch's content is incorporated into a report, the source file is deleted per `research-pipeline` Phase 9. Files that survive across sessions in `research/manual/` are only the chapter-files-style primary-source material catalogued for a future round (currently: the 7 El Kaim book chapters in `research/manual/multi/` queued for Round 4 in §12).
+- `fetched/issue-N` branches — these are the workflow's per-issue cache branches. After their content is incorporated into reports, the branches can be deleted. (As of 2026-05-11, `fetched/issue-8` is fully drained and is a deletion candidate.)
+
 ---
 
 ## 6. GitHub Action — security stance
@@ -843,4 +860,4 @@ Chapter 5 ("Automating RISE with SAP Through Specification-Driven Enterprise Arc
 
 ---
 
-*End of research plan v0.4 — `research/PLAN.md`. v0.1 was structured around six subagents in §3; v0.2 records the lead-agent partial pass and the resumption checklist; v0.3 (2026-05-11) consolidates the former root-level `followup.md` into §11 as 12 Round-3 follow-up threads, and adds Step 8 in §10.4 referencing them; v0.4 (2026-05-11, same day) adds §12 as the Round-4 catalogue (4 clusters spanning the El Kaim enterprise-architecture book in `research/manual/multi/`) and updates §11.12 to "RESOLVED" after the Dark Factory primary source was incorporated into report 07 in the same drain.*
+*End of research plan v0.5 — `research/PLAN.md`. v0.1 was structured around six subagents in §3; v0.2 records the lead-agent partial pass and the resumption checklist; v0.3 (2026-05-11) consolidates the former root-level `followup.md` into §11 as 12 Round-3 follow-up threads, and adds Step 8 in §10.4 referencing them; v0.4 (2026-05-11, same day) adds §12 as the Round-4 catalogue (4 clusters spanning the El Kaim enterprise-architecture book in `research/manual/multi/`) and updates §11.12 to "RESOLVED" after the Dark Factory primary source was incorporated into report 07 in the same drain; v0.5 (2026-05-11, same day) adds §5.1 cataloguing the four canonical workflow-tooling files (`blocked-urls.md`, `blocked-urls-round-2.md`, `unfetched-sources.md`, `fetch-from-browser.sh`) plus a "what doesn't belong on main" sidebar covering `.fetch-work/`, `research/manual/`, and stale `fetched/issue-N` branches; deletes the leftover `.fetch-work/` directory and adds it to `.gitignore`.*

@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# fetch-blocked-urls workflow scratch directory.
+# The workflow (.github/workflows/fetch-blocked-urls.yml) creates .fetch-work/
+# ephemerally during a CI run. It should never be committed to main; the
+# canonical record of what was requested per fetch issue lives in
+# research/blocked-urls.md, research/blocked-urls-round-2.md, and PLAN.md §10.1.
+.fetch-work/

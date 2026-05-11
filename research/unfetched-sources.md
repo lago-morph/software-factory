@@ -48,8 +48,29 @@ For paywalled articles where you've already read the body, your browser's Reader
 
 ---
 
+## Deferred fetch-action candidates (added 2026-05-11 post-drain)
+
+These were blocked from the sandbox during the 2026-05-11 parallel-fanout run (`harness/runs/20260511-054258/`) but the subagent did **not** file a `[fetch-urls]` issue. Each is a candidate for the GitHub Action's runner IP — historically the action retrieves these even when the sandbox can't. No user action required; a future Claude session can batch them into 2–3 grouped issues. Listed here so the next-session orchestrator can pick them up without re-deriving the catalog.
+
+| URL family | Reports affected | Filing strategy |
+|---|---|---|
+| `danshapiro.com/blog/2026/01/the-five-levels-...` (+ `/2026/02/you-dont-write-the-code/`) | `research/followup/01-shapiro-five-levels.md` | One issue; small. Includes Path B fallback in case Cloudflare blocks the action too. |
+| `anthropic.com/engineering/` × 4 — `effective-harnesses-for-long-running-agents`, `equipping-agents-for-the-real-world-with-agent-skills`, `building-c-compiler`, `harness-design-long-running-apps` | `research/23-anthropic-engineering-trilogy.md`, `research/followup/07-evals-deepdive.md`, `research/followup/08-security-primitives.md` | One issue; high leverage. Anthropic posts have been retrievable by the action in prior rounds. |
+| `hamel.dev/blog/posts/` (evals-faq, llm-judge, field-guide, evals) + `simonwillison.net/2025/Jul/3/faqs-about-ai-evals/` + `simonwillison.net/2025/Jun/14/multi-agent-research-system/` | `research/followup/07-evals-deepdive.md` | One issue grouped with Anthropic engineering posts. |
+| `simonwillison.net/2025/Apr/11/camel/` + `…/2025/Jun/16/the-lethal-trifecta/` + `…/2023/Apr/25/dual-llm-pattern/` + `arxiv.org/abs/2503.18813` (+ `/html/2503.18813v2`) + `anthropic.com/engineering/claude-code-sandboxing` | `research/followup/08-security-primitives.md` | One issue. arXiv reachable from the action. |
+| `kaner.com/pdfs/ScenarioIntroVer4.pdf` + Wikipedia PDCA + Deming Institute PDSA | `research/followup/09-methodology-ancestors.md` | Optional — structural conclusions firm without verbatim passage-level fidelity. |
+| `devin.ai` + `factory.ai` + `8090.inc` + `superconductor.io` + `blog.fsck.com/2025/10/09/superpowers/` | `research/followup/06-competitor-landscape.md` | One issue; Cloudflare-heavy hosts. Action may also 403; if so, escalate to Path B. |
+| `docs.replit.com/*` + `blog.replit.com/*` (~20 URLs across both — see `research/20-replit-agent.md` blocked-URL list) | `research/20-replit-agent.md` | One issue; Cloudflare-gated. Action success uncertain — `blocked-urls.md` v5 catalogs `*.openai.com` 403s; Replit may behave similarly. |
+| `developers.openai.com/codex/*` + `openai.com/index/harness-engineering/` + `openai.com/index/unlocking-the-codex-harness/` | `research/18-openai-codex-substrate.md` | Listed in `blocked-urls.md` v5 as known-blocked from action too — would need Path B if filed. |
+| `docs.github.com/en/copilot/*` (Copilot cloud agent + Autofix + CodeQL pages) | `research/19-github-copilot-cloud-agent.md` | One issue. GitHub's own docs site is normally reachable from a GH-hosted runner. |
+| `every.to/chain-of-thought/*` (3 Klaassen siblings) | `research/followup/05-klaassen-siblings.md` | Likely action-blocked too (every.to consistently 403s GH IPs); Path B is the realistic recovery — not a fetch-issue candidate. **Defer to user.** |
+
+**How to action this list:** prompt a future session *"file fetch-urls issues for the deferred candidates in `research/unfetched-sources.md`"*. The session will produce 2–3 batched issues (group by host/likelihood), wait for the action's `fetched/issue-N` branches, drain them per the `research-pipeline` skill, then update this section.
+
 ## Disposition after retrieval
 
 Once new files appear under `research/manual/` (or any subdirectory of `research/`), the next research-pipeline-skill activation will scan and dispatch subagents to incorporate them into the relevant reports, then delete the raw files. See the `research-pipeline` skill (Phase 0 — Drain pending content).
 
 If you want to trigger that drain explicitly, prompt: *"check `research/` for new content and incorporate it"* — the skill will pick it up.
+
+For the deferred fetch-action candidates above, the analogous prompt is: *"file fetch-urls issues for the deferred candidates in `research/unfetched-sources.md`"*.

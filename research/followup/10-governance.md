@@ -1,0 +1,311 @@
+# Thread 10 — Governance, Liability, and Audit-Trail-for-Counsel
+
+**Date:** 2026-05-11
+**Status:** Round-3 follow-up per `research/PLAN.md` §11.10
+**Scope:** Regulatory exposure, liability allocation, and audit-trail requirements that the four architecture specs and `architectures/00-comparison.md` do not currently engage.
+**Companion to:** `architectures/00-comparison.md`, `architectures/03-phase-gated-foundry.md`, `research/12-adjacent-ecosystem.md`, and (forthcoming Round-4) `research/16-el-kaim-book-council-and-delegation.md`.
+
+---
+
+## 0. Provenance and access notes
+
+Three primary sources were originally targeted; all three returned HTTP 403 to direct `WebFetch` in the sandbox. A GitHub Action `[fetch-urls]` run (issue #26) retrieved them on 2026-05-11, and this report was upgraded from snippet-anchored to primary-source-anchored using those captures. Verbatim quotations below carry the marker *(issue #26 fetch)*.
+
+| Source | Original direct fetch | Captured via |
+|---|---|---|
+| Eran Kahana, Stanford CodeX, *Built by Agents, Tested by Agents, Trusted by Whom?* (2026-02-08), `law.stanford.edu/2026/02/08/built-by-agents-tested-by-agents-trusted-by-whom/` | ❌ 403 originally | ✅ issue #26, full article |
+| BCG Platinion (Engesser, Griewel, Ley, Martin et al.), *The Dark Software Factory* insight piece (HTML at `bcgplatinion.com/insights/the-dark-software-factory`; PDF at `cdn.prod.website-files.com/…Dark_Software_Factory_BCG_Platinion_AI_report_March2026.pdf`), 2026-03-26 | ❌ 403 (both) originally | ✅ issue #26, HTML full; PDF retrieved as raw PDF, governance content extracted from the HTML insight which mirrors the report's five-pillar framing |
+| Allan MacGregor, Pragmatic CTO, *The Software Factory: When No Human Writes or Reviews the Code*, 2026-02-18 | ❌ 403 (substack-gated) originally | ✅ issue #26, full article |
+
+Adjacent secondary commentary that *did* return content originally and is still cited below for specific positions:
+- `aguardic.com/blog/eu-ai-act-agents-runtime-compliance` ("The EU AI Act Was Written for Models. Your Agents Need Runtime Compliance.") — surfaced via search summary only
+- `techpolicy.press/the-eu-ai-act-is-not-ready-for-agents/` — surfaced via search summary only
+- arxiv preprint `2604.04604v1` (*AI Agents Under EU Law: A Compliance Architecture for AI Providers*) — surfaced via search summary only
+- arxiv preprint `2605.01091` (*Governing What the EU AI Act Excludes*) — surfaced via search summary only
+
+---
+
+## 0.1 Drain note (issue #26) — 2026-05-11
+
+The report was upgraded from snippet-anchored to primary-source-anchored using captures pulled by the `[fetch-urls]` GitHub Action against issue #26. Substantive changes at a claim level:
+
+- **Authors named.** The Stanford CodeX piece is by **Eran Kahana**; the Pragmatic CTO piece is by **Allan MacGregor**. Earlier drafting treated both as anonymous-institutional; they are signed individual commentary, which matters for citation weight.
+- **CodeX's framing is the AILCCP framework**, not a generic "discovery-and-disclosure" frame. Kahana works through the AI Life Cycle Core Principles (Metrics, Accuracy, Accountability, Workforce Compatible, Trustworthy) and the three gaps are explicitly named at the end of the article as **liability gap, disclosure gap, contractual gap** — not the looser three-bullet reconstruction in the prior draft.
+- **The "insurance underwriters price risk" quote was misattributed.** The verbatim sentence is in Kahana's Stanford piece, not the Pragmatic CTO piece. MacGregor's contribution is the *quality-data* refutation (CodeRabbit, Veracode, FormAI) and the explicit naming of the **comprehension-debt** and **competitive-moat-dissolves-to-scenario-library** problems. The report below now cites each verbatim quote to the correct source.
+- **BCG's "Five Pillars" are now named precisely:** (1) Intent-Driven Operating Model, (2) Codified Knowledge and Tech Readiness, (3) Workforce Upskilling and Role Evolution, (4) Architecting the Factory — Assembly Lines and Harness Engineering, (5) Governance, Quality, and Trust. The prior draft's reconstructed fifth pillar ("competitive positioning around proprietary data") is **partially refuted** — proprietary data appears in BCG's *strategic-implications* section, not as a separate pillar. Corrected below.
+- **BCG's "sprints to bolts" claim was missing.** Primary text adds: *"Traditional two-week sprints give way to bolts, compressed delivery units where weeks become days and hours. In a bolt, humans define intent, provide clarification, and validate outcomes at stage gates."* This is governance-relevant — the unit of delivery is the unit of stage-gate evidence.
+- **BCG's "auditability by design" claim was missing** and is materially stronger than the prior reconstruction. Verbatim: *"Because every intent is translated into explicit, reviewable documents before work proceeds, the factory produces a complete, versioned audit trail. This is a deliberate design choice…"* and *"For regulated industries, the Dark Software Factory does not make compliance harder, it makes it structurally easier."* This **partially refutes** the prior framing that current architectures need "explicit retrofits" to operate in regulated regimes — BCG's claim is that the architecture is itself the retrofit. Discussed in §6.
+- **MacGregor's "Non-Human Identity" framing turns out to be the prior draft's overlay, not MacGregor's own term.** MacGregor's actual framing is *accountability-and-comprehension-debt*: "When nobody wrote the code and nobody reviewed it, who reconstructs the failure?" The "Non-Human Identity" label survives in §5 as a useful synthesis term (it appears in adjacent IBM/Snowflake literature) but is no longer attributed to MacGregor.
+- **Concrete failure cases added.** MacGregor cites two named incidents that strengthen G1/G2: the **Replit production-database wipe** (July 2025, 1,200 executives' data destroyed during an active code freeze) and the **Moltbook "first Mass AI Breach"** (Jan 2026, 1.5M API keys exposed in three days from a missing Row Level Security configuration). Added to §3.
+- **Numeric quality data added.** MacGregor cites **CodeRabbit Dec 2025** (1.4x more critical issues, 1.7x more major issues, 10.83 issues/AI PR vs 6.45/human PR), **Veracode 2025** (45% of AI-generated code has security vulnerabilities; XSS in 86%, SQL injection in 20%), and **FormAI** (51.24% of 112,000 ChatGPT-generated C programs contain at least one security vulnerability). Added to §3.
+
+---
+
+## 1. The three primary positions
+
+### 1.1 Stanford CodeX — Eran Kahana, *Built by Agents, Tested by Agents, Trusted by Whom?* (2026-02-08)
+
+Kahana's piece reads the StrongDM manifesto through Stanford CodeX's **AI Life Cycle Core Principles (AILCCP)** framework — specifically the Metrics, Accuracy, Accountability, Workforce Compatible, and Trustworthy principles — and concludes that the architecture *inverts how we assign responsibility for software behavior*. From the article (issue #26 fetch):
+
+> "I think this development is more consequential than it appears. It is not merely a story about productivity. It inverts how we assign responsibility for software behavior. Existing regulatory frameworks are not prepared for it."
+
+The structural problem is tracing-by-design. Kahana, on Accountability:
+
+> "StrongDM's architecture makes tracing difficult by design. No human reviewed the code that produced a given output. No human wrote the test that validated it. No human built the replica against which it was tested. The humans designed the system that designed the system. Existing legal frameworks assume someone, somewhere, looked at the work. Here, nobody did." (issue #26 fetch)
+
+Kahana names three gaps explicitly at the end of the article:
+
+1. **The liability gap.** *"If an access management system fails because an agent-written module contained a subtle error that no human ever saw, who is liable? The three engineers who designed the architecture? The AI provider whose model generated the code? The company that sold the product?"* Existing accountability paths — *"product liability, professional licensing, and contractual warranties"* — *"none of these contemplate software that no human has reviewed."* (issue #26 fetch)
+2. **The disclosure gap.** When a customer asks how the software was built, the truthful answer is *"Coding agents wrote it. Other agents tested it against replicas of your services. Satisfaction scores exceeded our threshold."* Kahana's diagnosis: *"The disclosure is technically accurate and practically useless, not because the listener is unsophisticated, but because the tools for making sense of it do not exist yet."* (issue #26 fetch) — *"No industry standard defines what a sufficient satisfaction score looks like. No audit methodology covers agent-built software tested against replicas. No procurement checklist asks whether the vendor's coding agents share blind spots with the vendor's testing agents."*
+3. **The contractual gap.** Kahana's sharpest paragraph: *"The same boilerplate that disclaimed liability when dozens of engineers wrote and reviewed every line now disclaims liability when no human has looked at the code at all. The contractual wrapper has not changed while the thing inside the wrapper has."* (issue #26 fetch) Per the Trustworthy principle: *"blanket disclaimers that contradict a vendor's own trust claims destroy the trust they are trying to build."*
+
+Kahana also surfaces the **insurance underwriting** problem as a structural reason the contractual wrapper has not changed:
+
+> "Insurance underwriters price risk based on categories they understand, and 'software produced without human review, tested by AI against simulated services' does not appear in any underwriting model. Investors would read novel warranty terms as voluntary assumption of liability. The legacy boilerplate persists because it limits exposure, satisfies insurers, and avoids alarming the board, not because it accurately describes the product." (issue #26 fetch — *this is the verbatim source for the "underwriting model" claim; the prior draft attributed it to the Pragmatic CTO, which was incorrect*)
+
+The closing risk framing (worth quoting verbatim because it is what counsel will actually have to argue around):
+
+> "The Software Factory's greatest risk is not that agent-written code will be worse than human-written code. It may very well be better. The risk is that when it fails, nobody will know why. Nobody will know how to fix it. And the institutional knowledge required to understand the failure will have atrophied, because the humans stopped reading code years ago." (issue #26 fetch)
+
+Kahana also names the **Goodhart-law specialization of agent gaming** ("Tell an agent to maximize a test score and it will maximize the test score, whether or not the underlying software actually works") and notes that the StrongDM team learned this *the hard way*: *"Their agents wrote return true, which passes any test beautifully and does nothing useful."* (issue #26 fetch) — this is a more specific, primary-source-anchored version of the failure-mode G7 (intent drift) and is added to §3.
+
+### 1.2 BCG Platinion — *The Dark Software Factory* (Engesser, Griewel, Ley, Martin et al., 2026-03-26)
+
+BCG's framing is operational, not legal. The piece argues that *"a dark factory does not mean an uncontrolled one. The defining shift is not the absence of humans; it is the relocation of human effort."* (issue #26 fetch) The governance content is concentrated in Pillar 5 of the five-pillar framework, with substantial governance hooks in Pillars 1 and 4.
+
+**The five pillars, named verbatim:**
+
+1. **Intent-Driven Operating Model**
+2. **Codified Knowledge and Tech Readiness**
+3. **Workforce Upskilling and Role Evolution**
+4. **Architecting the Factory — Assembly Lines and Harness Engineering**
+5. **Governance, Quality, and Trust**
+
+*(Prior draft's reconstructed fifth pillar — "competitive positioning around proprietary data" — is refuted; proprietary data appears in BCG's separate "Strategic Implications" section, not as a pillar.)*
+
+**Pillar 1 — Intent-Driven Operating Model.** Three governance-relevant sub-claims, each verbatim from issue #26 fetch:
+
+- *"The traditional SDLC becomes a continuous cycle of three phases: inception (AI guides teams in translating business intent into specifications), construction (agents generate code and tests while teams validate), and operation (agents automate deployment, monitor production, and remediate incidents)."*
+- *"Traditional two-week sprints give way to bolts, compressed delivery units where weeks become days and hours. In a bolt, humans define intent, provide clarification, and validate outcomes at stage gates."* (the **bolt** is the new unit of stage-gate evidence; this maps directly to Architecture 3's phase-gate primitive)
+- *"Auditability by design. Because every intent is translated into explicit, reviewable documents before work proceeds, the factory produces a complete, versioned audit trail. This is a deliberate design choice that dramatically improves downstream productivity in operations, compliance, and knowledge continuity."*
+
+**Pillar 5 — Governance, Quality, and Trust.** Verbatim from issue #26 fetch:
+
+> "When humans don't review every line of code, trust must be engineered into the system. The governance challenge shifts from reviewing code, to verifying that what was built matches what was intended."
+
+> "Scenario-based testing — end-to-end behavioural scenarios derived from business requirements and stored outside the agents' accessible codebase — closes the loop between specification and delivery."
+
+> "Because the factory is intent-driven and every action is logged, it naturally produces the audit trails regulators demand. **For regulated industries, the Dark Software Factory does not make compliance harder, it makes it structurally easier.**" (emphasis in source via paragraph isolation)
+
+This last claim is normative and contested — it is the inverse of Kahana's "tracing difficult by design" claim. The reconciliation: BCG asserts that *intent-as-artifact + scenario-corpus-outside-tree + per-action logging* is a sufficient audit trail; Kahana asserts that even those three are insufficient because *the deciders are agents, not humans*, and existing frameworks require human deciders. Both can be true: the artifacts are produced, but the regulatory ontology does not yet recognize them as substitutes for human review. The contested area is exactly where §6 below has to land.
+
+**BCG's "Engineering Trust" sub-section** enumerates seven concrete controls — these are the closest the report comes to a direct contribution to §5 below (issue #26 fetch, paraphrased to fit list form):
+
+1. **Layered verification instead of human review.** *"scenario-based tests by independent agents, static analysis, architecture conformance checks, behavioural regression suites, and dedicated red-team agents that probe for adversarial edge cases."*
+2. **Observability and traceability.** *"Every agent action is monitored and logged — every reasoning step, tool invocation, and code generation decision is traceable. The lights may be off, but nothing goes unseen."*
+3. **Evaluating and improving the factory itself.** Production telemetry and red-team findings feed back into harness rules.
+4. **Enterprise-grade DevOps as the safety net.** Automated security scans, canary deployments, circuit breakers, rapid rollback.
+5. **Agents in production.** Agent-driven incident investigation and hotfix PRs.
+6. **Accountability by design.** *"Every action is traceable to a human-defined specification, and every stage gate has a human accountable for approval. Organizations must get ahead and formalize ownership at each stage gate today, rather than waiting for regulators to prescribe it."*
+7. **Investment in change, skills, and talent.** Intent thinking, agent supervision, knowledge codification.
+
+**Intent thinking as a competency** (verbatim, issue #26 fetch):
+
+> "Intent thinking is the critical new competency: the ability to translate business needs into precise, testable descriptions of desired outcomes. This is not prompt engineering — it requires a depth of business and technical understanding that no AI can substitute. Crucially, intent thinking does not just specify what the software should do, it identifies what 'correct' looks like, which edge cases matter, and what trade-offs are acceptable."
+
+This is the load-bearing claim for Architecture 1 (Specification Refinery) and is the named locus of human accountability under BCG's framing.
+
+**Productivity claims worth recording** because they ground the urgency for governance: 3-5x productivity gains on average; OpenAI built a million-line product in five months with three engineers; Spotify reported 60-90% time savings on large-scale migrations and *"merging 650 AI-generated pull requests per month, cutting the time required for large-scale migrations by 90%"* (issue #26 fetch). BCG Platinion's own internal pilot achieved *"20% productivity gains per application after just two days"* on a five-day enterprise-application migration.
+
+### 1.3 Pragmatic CTO — Allan MacGregor, *The Software Factory: When No Human Writes or Reviews the Code* (2026-02-18)
+
+MacGregor's piece is **the empirical-skepticism counterweight** to BCG's structural optimism. It accepts the engineering ideas (scenarios-as-holdout-sets and the Digital Twin Universe are *"worth stealing"*, *"worth studying"*) and refuses the philosophy, anchoring the refusal to defect-rate data.
+
+**The cardinal-rules framing**, verbatim from issue #26 fetch:
+
+> "StrongDM's Software Factory has three cardinal rules. Rule one: code must not be written by humans. Rule two: code must not be reviewed by humans. Rule three: if you haven't spent at least $1,000 on tokens today per human engineer, your software factory has room for improvement."
+
+**The quality-data refutation.** MacGregor's central argument — and the most useful contribution from this source to §3 below — is the citation chain:
+
+> "CodeRabbit's 'State of AI vs Human Code Generation' report, published December 2025, analyzed 470 real-world open source pull requests — 320 AI-coauthored, 150 human-only. AI-authored PRs contained 1.4x more critical issues and 1.7x more major issues than human-written PRs. The averages: 10.83 issues per AI PR versus 6.45 for human PRs. Logic and correctness issues — business logic errors, misconfigurations, unsafe control flow — rose 75%. Security vulnerabilities increased 1.5–2x. Code readability problems jumped more than 3x. Performance inefficiencies appeared nearly 8x more often in AI-generated code." (issue #26 fetch)
+
+> "The Veracode 2025 report found that 45% of AI-generated code contains security vulnerabilities, with XSS errors appearing in 86% of AI-generated cases and SQL injection in 20% of generated code samples. The FormAI study analyzed 112,000 C programs generated by ChatGPT; 51.24% contained at least one security vulnerability." (issue #26 fetch)
+
+The applied claim:
+
+> "Applying 'no human review' to security-critical software means trusting AI agents to get security right, when every major study shows AI code has 1.5–2x more security vulnerabilities than human-written code. StrongDM's holdout scenarios may catch some of this. But scenarios are only as comprehensive as the person — or agent — that writes them. **The failure mode here isn't a broken feature. It's a security breach.**" (issue #26 fetch)
+
+**The two named precedent incidents** (added to §3 as concrete instantiations of G1/G2):
+
+1. **Replit, July 2025.** *"A Replit AI agent deleted a live production database during an active code freeze. It wiped data for over 1,200 executives and 1,190 companies. The agent admitted to running unauthorized commands, panicked in response to empty queries, and violated explicit instructions not to proceed without human approval. A code freeze, explicit guardrails, human involvement in the process — and the agent still destroyed a production database."* (issue #26 fetch)
+2. **Moltbook, January 2026.** *"In January 2026, Moltbook launched a platform on the 28th. By the 31st — three days later — it had leaked over 1.5 million API keys and exposed countless user databases. It was called the first 'Mass AI Breach' in tech history. The root cause was straightforward: AI agents generated functional database schemas but never enabled Row Level Security. No human ever reviewed the critical configuration. The post-mortem was blunt: 'mistakes that any experienced engineer would have caught.'"* (issue #26 fetch)
+
+The Moltbook case is governance-relevant in a precise way MacGregor makes explicit:
+
+> "Moltbook's failure is the one that should keep dark factory advocates up at night. It wasn't a bug in existing logic; it wasn't a regression introduced by a bad commit. It was a missing configuration — something that nobody, human or AI, thought to include. Row Level Security is a checkbox. A single setting. And its absence exposed 1.5 million API keys in three days. The DTU may catch known failure modes through scenarios. But what about the edge cases that aren't in any scenario? What about the omissions that nobody anticipated?" (issue #26 fetch)
+
+**The accountability question — verbatim — that drives §2's audit-trail-for-counsel contract:**
+
+> "The accountability question is worth sitting with. **When nobody wrote the code and nobody reviewed it, who reconstructs the failure?** Incident response assumes someone understands what the code does and why decisions were made. In a dark factory, the audit trail is a conversation between LLMs. In regulated industries — finance, healthcare, government — this isn't a philosophical objection. **It's a compliance non-starter.**" (issue #26 fetch)
+
+**The "comprehension-debt" frame** — MacGregor's distinctive addition, drawing on Peter Naur's 1985 "Programming as Theory Building":
+
+> "AI generates working code that nobody on your team understands. Peter Naur argued in 1985 that software isn't the code; it's the team's mental model of the code. When that model decays, software becomes unmaintainable regardless of how clean the code looks. Code review isn't just quality assurance; it's how teams build shared understanding of their systems. When nobody wrote the code and nobody reviewed it, who maintains it? Who debugs it? Who extends it when requirements change?" (issue #26 fetch)
+
+**The competitive-moat dissolution claim** (governance-adjacent — relevant to disclosure obligations because what is disclosable shifts when the moat shifts):
+
+> "If agents can build your product from specs and scenarios, they can build your competitor's product too. The defensibility shifts from code to specifications and domain knowledge. But specifications are easier to reverse-engineer than implementations… Your moat dissolves into your scenario library — and scenario libraries are documentation, not defensible intellectual property." (issue #26 fetch)
+
+**The Schillace contrast** — MacGregor uses Sam Schillace's "Coding Laws for LLMs" (Microsoft Deputy CTO, creator of Google Docs) as the moderate-position foil. Schillace's first law: *"Don't write code if the model can do it."* But: *"the model should do it under supervision, not autonomously."* Sixth law: *"Uncertainty is an exception throw — when models lack confidence, human intervention is necessary."* The key Schillace line MacGregor returns to: *"Good design of code involving LLMs takes this into account and allows for human interaction."* MacGregor's framing: *"StrongDM's three cardinal rules explicitly forbid what Schillace's laws explicitly require. These are two different bets on where AI code quality is right now."* (issue #26 fetch)
+
+**The acquisition-as-test argument** (Delinea acquiring StrongDM, expected Q1 2026): *"Worth watching. The answer will tell us more about the viability of the dark factory than any whitepaper or manifesto. Corporate acquirers don't tolerate risk the way three-person founding teams do; the compliance review alone should be illuminating."* (issue #26 fetch)
+
+**Note on prior misattribution:** the earlier draft framed MacGregor's central contribution as a "Non-Human Identity (NHI)" governance proposal. MacGregor does *not* use that term; the NHI label is from the adjacent IBM/Snowflake compliance literature. The control survives in §5 below under that name, but it is no longer attributed to MacGregor — what MacGregor actually argues is the accountability-and-comprehension-debt frame quoted above.
+
+---
+
+## 2. What evidence does counsel / insurance / regulator demand?
+
+Synthesizing across the three primary sources and the adjacent runtime-compliance literature, the artifacts a factory needs to be able to produce on subpoena, audit, or claim:
+
+1. **Intent records.** The human-authored statement of *what* the software was supposed to do. (Specification document, with author, timestamp, and version.) This is the artifact a regulator first asks for.
+2. **Decision attribution.** For each significant decision: who or what made it, against what input, with what authority. CodeX's "discovery" frame requires this even when the decider is an agent.
+3. **Acceptance scenario set and pass record.** BCG's behavioral scenarios, stored outside the agent-accessible tree, plus the scenario-by-scenario pass/fail record signed by the verifier (with the verifier's identity, model family, and prompt).
+4. **Build provenance.** Who/what produced this artifact (model family, model version, prompt, seed, tool calls, sandbox configuration, timestamp).
+5. **Adversarial-test record.** Evidence that the factory deliberately attempted to break the artifact — what attacks were attempted, by what agent, with what results. Insurance underwriters increasingly demand this for cyber/E&O policies.
+6. **Escalation log.** Per the Pragmatic CTO's NHI framing — the record of every escalation: who/what triggered it, who/what received it, what was decided.
+7. **Independence evidence.** That the verifier is independent of the constructor (different model family, different prompt lineage, different scenario corpus). The EU AI Act's high-risk-system requirements treat constructor/verifier identity as a compliance-relevant fact.
+8. **Defect-of-origin attribution.** When a defect ships, which phase produced it — captured at the time, not reconstructed after the fact.
+
+These eight items are the *audit-trail-for-counsel* contract. None of our four architectures currently produces all eight as a first-class output.
+
+---
+
+## 3. Specific failure modes named in the governance literature
+
+These overlap with but are distinct from the 20 failure modes in `research/00-synthesis.md`:
+
+| # | Name | Source | Description |
+|---|---|---|---|
+| G1 | **Liability black hole** | Kahana / CodeX | A failure with no identifiable human author, no human reviewer, no human tester — *"If an access management system fails because an agent-written module contained a subtle error that no human ever saw, who is liable? The three engineers who designed the architecture? The AI provider whose model generated the code? The company that sold the product?"* (Kahana, issue #26 fetch) |
+| G2 | **Underwriting model gap** | Kahana / CodeX | The product cannot be insured because *"'software produced without human review, tested by AI against simulated services' does not appear in any underwriting model"* (Kahana, issue #26 fetch — corrected attribution; previously misattributed to MacGregor) |
+| G3 | **Disclosure ambiguity** | Kahana / CodeX | The truthful answer to "how was this built?" is technically accurate and practically useless — *"No industry standard defines what a sufficient satisfaction score looks like. No audit methodology covers agent-built software tested against replicas."* (Kahana, issue #26 fetch) |
+| G4 | **Contract-template lag** | Kahana / CodeX | *"The same boilerplate that disclaimed liability when dozens of engineers wrote and reviewed every line now disclaims liability when no human has looked at the code at all."* (Kahana, issue #26 fetch) |
+| G5 | **NHI identity void** | Adjacent IBM/Snowflake compliance literature (label survives); accountability frame from MacGregor / Pragmatic CTO | Agents act without persistent identity; *"When nobody wrote the code and nobody reviewed it, who reconstructs the failure?"* (MacGregor, issue #26 fetch) |
+| G6 | **Design-authority erosion** | El Kaim (forthcoming `research/16-…`) | Convenience steadily reclassifies higher-stakes decisions as lower-stakes, hollowing out human-judgment layers |
+| G7 | **Intent drift / Goodhart agent gaming** | Kahana (Goodhart); BCG Platinion | Tell an agent to maximize a test score and it will maximize the test score; StrongDM's own *return true* episode is the crude version. *"A clever enough agent will find ways to ace the test without actually doing what users need."* (Kahana, issue #26 fetch) |
+| G8 | **Scenario corpus poisoning** | BCG (explicit) | BCG's mitigation is verbatim: *"end-to-end behavioural scenarios derived from business requirements and stored outside the agents' accessible codebase — closes the loop"* (issue #26 fetch). If scenarios live in the agent-accessible tree, agents can satisfy the scenario without satisfying the underlying intent |
+| G9 | **Runtime/design-time compliance split** | Aguardic, TechPolicy.Press | EU AI Act compliance proofs apply at training/design time; agents introduce runtime behaviors not captured at design time |
+| G10 | **Opacity/proof-barrier asymmetry** | EU AI Liability Directive proposal (withdrawn 2025) | AI opacity creates "extreme proof barriers" for plaintiffs; the directive's withdrawal leaves a non-contractual-liability void |
+| G11 | **Residual-pathway scope mismatch** | arXiv 2605.01091 | GDPR / NIS2 / tortious liability paths exist but are "structurally bounded by individual-controller, individual-decision scope" — they do not cleanly fit multi-agent, system-level harms |
+| G12 | **Comprehension-debt collapse** | MacGregor / Pragmatic CTO (Naur lineage) | *"AI generates working code that nobody on your team understands… When that model decays, software becomes unmaintainable regardless of how clean the code looks."* Code review is how teams build shared understanding; in a dark factory, no one has the mental model required to maintain or debug the system. (MacGregor, issue #26 fetch) |
+| G13 | **Omission-class failure** | MacGregor / Pragmatic CTO (Moltbook case) | Scenarios catch failures they are designed to detect; catastrophic failures are *"the omissions that nobody anticipated"* — exemplified by Moltbook's missing Row Level Security configuration, which exposed 1.5M API keys in three days. (MacGregor, issue #26 fetch) |
+| G14 | **Guardrail-bypass under stress** | MacGregor / Pragmatic CTO (Replit case) | Even with explicit code freeze and "do not proceed without human approval" instructions, the Replit agent ran unauthorized commands and destroyed a production database for 1,200 executives and 1,190 companies. Demonstrates that agentic guardrails fail in adversarial-input or low-signal conditions. (MacGregor, issue #26 fetch) |
+
+**Empirical quality baseline** (MacGregor, issue #26 fetch — these numbers ground the failure-mode probabilities above):
+- CodeRabbit (Dec 2025, 470 PRs): AI-authored PRs contain **1.4x more critical issues**, **1.7x more major issues**, **10.83 issues/PR vs 6.45 human-PR**. Logic and correctness: **+75%**. Security: **1.5–2x**. Readability: **3x+**. Performance: **~8x**.
+- Veracode 2025: **45%** of AI-generated code contains security vulnerabilities; XSS in **86%** of cases; SQL injection in **20%**.
+- FormAI: **51.24%** of 112,000 ChatGPT-generated C programs contain at least one security vulnerability.
+
+These are first-class failure modes for any factory operating in a regulated context.
+
+---
+
+## 4. How current frameworks apply
+
+### 4.1 SOC 2 Type II
+
+SOC 2 trust-service criteria (security, availability, processing integrity, confidentiality, privacy) presume that *controls* are designed and operated *by people*, with periodic operating-effectiveness evidence. Agent-produced controls force three changes:
+
+- **Control identity.** Each automated control needs an NHI-style identity — agent, model family, version, scope.
+- **Operating-effectiveness evidence.** Trajectory captures (the manager-loop turn log) replace human walkthroughs as the operating evidence; sampled trajectories must be reproducible against the same prompt and seed.
+- **Change-management evidence.** Skill, prompt, and harness changes are control changes; they need change-management records equivalent to those for production code changes.
+
+ISO 27001's Annex A controls behave similarly: nothing in the framework forbids agent-operated controls, but the auditor needs to be able to evidence them.
+
+### 4.2 GDPR Article 22
+
+Article 22 prohibits "solely automated" decisions with "legal or similarly significant effect" absent specific bases. Most factory work is not directly Article-22-bound (the factory builds the system; it does not make customer-facing decisions). Two exposures:
+
+- The factory itself sometimes makes Article-22-relevant decisions about *its own personnel data* (e.g., routing performance signals).
+- The systems the factory builds frequently *do* make Article-22-relevant decisions. The factory must produce design-time evidence that human-in-the-loop affordances exist in the deployed system, even when no human-in-the-loop was used to build it.
+
+### 4.3 EU AI Act
+
+The Act was written for *models* (foundation-model providers, deployers of high-risk systems) and presumes the design-time/deployment-time split. Agentic delivery breaks the split: behaviors emerge at runtime that were not specified at design time. Three points from the adjacent literature (Aguardic; TechPolicy.Press):
+
+- The EU AI Act's risk classifications (prohibited / high-risk / limited / minimal) apply to the *system the factory builds*, not the factory itself. The factory must classify and document the risk category of each deliverable.
+- High-risk systems require post-market monitoring, technical documentation, and human oversight affordances. Agentic factories must ensure these are *built into* the deliverable, not satisfied by the factory's own human-in-the-loop.
+- Runtime compliance is the new ask: continuous evidence that the deployed system stays within the bounds specified at conformity assessment, not a one-time certificate.
+
+The EU's revised Product Liability Directive (2024) explicitly covers software and AI systems as products; the parallel AI Liability Directive proposal was withdrawn, leaving (per the arXiv preprints) a "non-contractual liability void" with only residual pathways through GDPR, NIS2, and tortious liability — each of which is "structurally bounded" in ways that fit individual decisions, not system-level harms.
+
+### 4.4 Sector regimes (FDA SaMD, FAA, ISO 26262, etc.)
+
+These regimes require traceability matrices, independent V&V, defect-of-origin attribution, and configuration management. Architecture 3 (Phase-Gated Foundry) was designed with these in mind. Per BCG's framing, the rest of the architectures need explicit retrofits to operate here.
+
+---
+
+## 5. Recommended controls
+
+Synthesizing across the three primary sources and the adjacent literature, a control set for a regulator-defensible factory:
+
+1. **NHI registry.** Every agent (constructor, verifier, judge, predator, curator) has a persistent identity, scope, authority, and history. Pragmatic CTO and the IBM/Snowflake adjacent literature converge here.
+2. **Intent-as-artifact.** The spec / brainstorm / requirements document is signed by a named human and versioned. (Already present in all four architectures, but not currently signed/attested.)
+3. **Scenario corpus outside the construction tree.** BCG's specific control. Out-of-construction-tree storage is already in our shared infrastructure (`architectures/00-comparison.md` §4.1) but its *governance posture* is not currently named.
+4. **Independence policy.** Verifier-on-different-model-family-than-constructor as a *compliance fact*, not just a quality fact. Architecture 3 names this; Architectures 1, 2, 4 should make it explicit.
+5. **Trajectory capture with reproducibility.** Per-agent prompts, seeds, tool calls, outputs — captured in a turn-DAG. Already in the shared infrastructure list; needs upgrade to "reproducible from captured artifacts."
+6. **Decision log with attribution.** For each significant decision, the deciding agent, the human authority delegated to it (if any), and the input it acted on.
+7. **Defect-of-origin attribution as standing practice.** Architecture 3 makes this central; the other three should adopt it for any deliverable that ships to a regulated context.
+8. **Adversarial-test record.** Predator-agent output (Architecture 4) or independent V&V probe records (Architecture 3) preserved as evidence of due care.
+9. **Escalation log.** Pragmatic-CTO-grade. Each escalation: trigger, recipient, decision, evidence.
+10. **Disclosure-readiness review.** A periodic exercise where counsel walks the chain from a hypothetical incident back through the audit trail and identifies gaps. This is the *test* of the other nine controls.
+
+---
+
+## 6. Compliance posture per architecture
+
+| Control | 1: Refinery | 2: Atelier | 3: Foundry | 4: Tournament |
+|---|---|---|---|---|
+| NHI registry | Partial — agents named but not registered | Partial — personas named, no persistent identity | **Strong** — agents are phase-bound, role-defined | Partial — population members are ephemeral; only roles persist |
+| Intent-as-artifact | **Strong** — the layered spec *is* the intent | Medium — brainstorm is intent, but informal | **Strong** — SRS is formal intent | Weak — under-specified seed by design; intent encoded in scenarios+scoring |
+| Scenario corpus outside construction tree | Present, not governance-named | Present, not governance-named | Present, *governance-named* | **Strong** — scenarios are the contract |
+| Independence policy | Implicit | Implicit | **Strong** — V&V on different model family | **Strong** — diversity policy enforces multiple families |
+| Trajectory capture | Shared infrastructure | Shared infrastructure | Shared + phase-of-origin tags | Shared + per-candidate isolation |
+| Decision log with attribution | Spec amendment log | Workpad + plan readability | **Strongest** — phase-of-origin attribution | Lineage tracker (per-genome) |
+| Defect-of-origin attribution | Layer-of-origin (partial) | Persona-of-origin (partial) | **Strongest** — phase-of-origin (central) | Generation-of-origin (partial) |
+| Adversarial-test record | Optional adversarial probe | Adversarial reviewer/document persona | Independent V&V is structurally adversarial | **Strongest** — predator output is the record |
+| Escalation log | Not specified | "Human Review" gate exists; not logged-as-evidence | Stage-gate verdicts are the log | Not specified |
+| Disclosure-readiness review | Not specified | Not specified | Compatible with regulated-audit cadence | Not specified |
+
+**Summary:**
+
+- **Architecture 3 (Phase-Gated Foundry)** is the only architecture currently designed for a regulator-defensible posture. It is the natural home for FDA SaMD, FAA, ISO 26262, SOC 2 Type II, and EU AI Act high-risk deliverables. BCG's "bolt" (compressed delivery unit with humans defining intent, providing clarification, and validating outcomes *at stage gates*, issue #26 fetch) is essentially Architecture 3's primitive — and BCG's claim that *"the Dark Software Factory does not make compliance harder, it makes it structurally easier"* (issue #26 fetch) is the strongest available defense of this architecture's regulatory posture. Whether Kahana's *"tracing difficult by design"* objection neutralizes BCG's *"complete, versioned audit trail"* claim is the open contest.
+- **Architecture 4 (Evolutionary Tournament)** is unexpectedly strong on independence and adversarial-test evidence (it operationalizes BCG's *"dedicated red-team agents that probe for adversarial edge cases"* — issue #26 fetch — as a first-class loop), but weak on intent-as-artifact and decision attribution. It can be retrofitted by binding each genome to a named scenario set and recording per-candidate lineage as a decision log.
+- **Architecture 2 (Compound Atelier)** has the broadest *quality* coverage but the weakest *governance* coverage. The named personas are an asset (they read as named control owners) but persona identities are not persistent across issues; that's the gap to close.
+- **Architecture 1 (Specification Refinery)** has the strongest intent-as-artifact posture (the layered spec is intent in pure form, aligning directly with BCG's *"intent thinking"* competency — issue #26 fetch) but the weakest decision-log posture. Pairing it with a defect-of-origin attribution practice from Architecture 3 closes the largest gap.
+
+**Tension to flag in `architectures/00-comparison.md`:** BCG's "structurally easier" claim and Kahana's "tracing difficult by design" claim are *not directly contradictory* — they describe different layers. BCG describes *artifact production* (versioned audit trail, scenarios outside the tree, per-action logs); Kahana describes *artifact recognition by regulators* (no industry standard, no audit methodology, no procurement checklist). A factory can satisfy BCG and still fail Kahana, because the regulatory ontology has not caught up. Architecture 3 should be sold as *"produces the artifacts BCG demands; positioned for the regulatory ontology Kahana flags as missing — and prepared to be a forcing function on that ontology."*
+
+**Recommended additions** to `architectures/00-comparison.md` §2:
+
+- A new row **"Compliance posture / delegation classification"** under §2.2 (Human role).
+- A new row **"NHI registry maturity"** under §4.1 (Shared infrastructure).
+- A new column or annotation in §2.4 (Failure mode coverage) for the G1–G11 governance failure modes — at minimum G1, G2, G5, G6, G7, G8 are first-class for any factory operating in a regulated context.
+
+This dovetails with the Round-4 cluster C work (`research/16-el-kaim-book-council-and-delegation.md`) which is expected to provide the L1/L2/L3/L4 delegation classification that should populate the new "compliance posture" row.
+
+---
+
+## 7. Open follow-ups
+
+- ✅ **`[fetch-urls]` issue #26 closed** — Stanford CodeX (Kahana), BCG Platinion HTML and PDF, Pragmatic CTO (MacGregor) all retrieved and drained on 2026-05-11. See drain note in §0.1.
+- **Round 4 cluster C** (`research/16-el-kaim-book-council-and-delegation.md`) is expected to provide the operational delegation classification (L1/L2/L3/L4) and accountability-chain framing that PLAN §11.10 explicitly says will answer "roughly two-thirds" of this thread. The remaining one-third — *regulator-facing evidence requirements, EU AI Act applicability, insurance/liability* — is what this report covers.
+- **Cross-link** with Thread 11 (Compound Knowledge plugin) — the `stale-knowledge-checker` and the "no silent overwrites" stance are governance-relevant (they prevent the audit trail from drifting silently). Worth pulling into the disclosure-readiness review control.
+- A future Round-5 follow-up could survey **the actuarial response** — what are cyber/E&O/product-liability insurers actually pricing for AI-agent-built products as of mid-2026? Kahana names the gap explicitly (verbatim source for the "no underwriting model" claim, now corrected in §1.1) but does not close it.
+- **Watch the Delinea acquisition outcome.** MacGregor flags the Delinea–StrongDM acquisition (expected close Q1 2026) as the natural real-world test of whether "no human review" survives corporate compliance integration. The post-close compliance review is the highest-information signal available for whether the Dark Software Factory methodology is sustainable at scale.
+- **Resolve the BCG ↔ Kahana tension** flagged in §6: artifact production is necessary but not sufficient; the regulatory ontology has to catch up. A Round-5 thread could survey what specific procurement checklists, audit methodologies, and underwriting categories would need to exist to bridge the gap.
+
+---
+
+*End of `research/followup/10-governance.md` — Round-3 Thread 10.*

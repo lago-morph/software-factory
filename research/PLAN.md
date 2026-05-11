@@ -1008,4 +1008,48 @@ This comparison is **not** a Round-5 dispatch — it's a deliberate section to a
 
 ---
 
-*End of research plan v0.6 — `research/PLAN.md`. v0.1 was structured around six subagents in §3; v0.2 records the lead-agent partial pass and the resumption checklist; v0.3 (2026-05-11) consolidates the former root-level `followup.md` into §11 as 12 Round-3 follow-up threads, and adds Step 8 in §10.4 referencing them; v0.4 (2026-05-11, same day) adds §12 as the Round-4 catalogue (4 clusters spanning the El Kaim enterprise-architecture book in `research/manual/multi/`) and updates §11.12 to "RESOLVED" after the Dark Factory primary source was incorporated into report 07 in the same drain; v0.5 (2026-05-11, same day) adds §5.1 cataloguing the four canonical workflow-tooling files (`blocked-urls.md`, `blocked-urls-round-2.md`, `unfetched-sources.md`, `fetch-from-browser.sh`) plus a "what doesn't belong on main" sidebar covering `.fetch-work/`, `research/manual/`, and stale `fetched/issue-N` branches; deletes the leftover `.fetch-work/` directory and adds it to `.gitignore`; v0.6 (2026-05-11, same day) adds §5.2 cataloguing `research/external-syntheses/` and §13 as the Round-5 catalogue (6 source-harvest clusters → reports 18–23, plus a synthesis-time weak-citations QC checklist and a counterfactual-comparison instruction) against the ChatGPT deep-research paired artifact at `research/external-syntheses/chatgpt-deep-research-2026-05-11/`.*
+## 14. Round 6 — Parallel-fanout night run (2026-05-11) + deferred fetch
+
+**Status:** Substantially executed 2026-05-11 via `harness/runs/20260511-054258/` (29 parallel subagents across 4 waves, 0 merge conflicts). Reports 08, 09, 10, 13, 14–23, and the `research/followup/01–11` catalog all landed in this run. See `harness/runs/20260511-054258/report.md` for the per-subtask record.
+
+### 14.1 What landed
+
+- **Round 2 closed:** reports 08, 09 (Ch6/8/9 completion superseding the earlier `-partial`), 10, 12 (appended), and 13 (synthesis) all on `main` lineage via `claude/parallelize-with-subagents-SO0nR`.
+- **Round 3:** 11 of 12 threads delivered (`research/followup/01–11`); thread 12 was already marked RESOLVED in §11.12.
+- **Round 4:** all 4 El Kaim-book clusters delivered (reports 14–17).
+- **Round 5:** all 6 source-harvest clusters delivered (reports 18–23).
+- **In-flight fetch issues opened by subagents and drained the same night:** #26 (governance), #27 (Tabnine), #28 (academic foundations). All three reports upgraded from snippet-anchored to primary-source-anchored; 9 reconstructed claims were refuted; cache files deleted per `research-pipeline` Phase 6.
+- **New failure modes promoted by Round-2 synthesis:** F21–F33 (13 modes). The list in report 09 §6 plus the synthesis report 13 §3 is the canonical source until `architectures/00-comparison.md` §2.4 is amended.
+
+### 14.2 What the run did NOT change
+
+- `architectures/00-comparison.md` was **not** edited. The Round-2 synthesis (report 13) proposes a substrate-stack recommendation in its §6 ("OpenHands SDK + Overstory-design-in-Python overlay + Compound Atelier as methodology overlay at L3") that should replace §7 of the comparison doc. The synthesis preserves the original §7 in its proposal as "§7 (Round 1)" so the diff is traceable. **This is a curated human-review step**, not a subagent task.
+- `spec-driven-ai-dev.md` was **not** edited. Report 14 (cluster A) proposes a four-field extension (non-goals, decision-seeds, invariant-with-bindingHint, explicit Intent section) that should be folded in.
+- `research/00-synthesis.md` was **not** edited. Report 13 supersedes it for Round-2-and-later claims.
+- `research/09-jaymin-harnesses-partial.md` was **preserved** per the brief. It should be collapsed into report 09 editorially.
+
+### 14.3 Deferred fetch — primary sources still gated
+
+The §10.4 drain-step pattern (file `[fetch-urls]` issue → wait for action → merge `fetched/issue-N`) is the canonical recovery loop. **The catalog of URLs that were sandbox-blocked tonight but NOT filed as issues lives in `research/unfetched-sources.md` under "Deferred fetch-action candidates (added 2026-05-11 post-drain).”** That table groups ~10 URL families across 9 reports into 6–8 batchable issues.
+
+How to action it (one-shot prompt): *"file fetch-urls issues for the deferred candidates in `research/unfetched-sources.md`"* — the session will produce 2–3 batched issues (grouped by host and likelihood-of-success), wait for the action's `fetched/issue-N` branches, drain them per `research-pipeline`, and update both `unfetched-sources.md` and this section.
+
+Two URL families are **NOT** fetch-action candidates and remain user-only — listed in `research/unfetched-sources.md` §"Currently unfetched":
+
+- Both Lenny URLs (Cherny + Willison interviews) — **video-only pages**; the unlock is a YouTube transcript-extraction service against `youtu.be/We7BZVKbCVw` and `youtu.be/wc8FBhQtdsA`, not a paywall bypass.
+- `medium.com/@welkaim/about` + `welkaim.medium.com/` — Cloudflare interactive challenge; Path B (Save Page As) is the only known route. Low priority — background only for report 07.
+
+### 14.4 Next-session task list (priority order)
+
+1. **File the deferred fetch issues** per §14.3 / `unfetched-sources.md`. Highest leverage: the Anthropic engineering + hamel.dev + simonwillison.net + arXiv 2503.18813 batch — these directly upgrade reports 23, followup/07, followup/08 from secondary to primary citations.
+2. **Update `architectures/00-comparison.md`:**
+   - Replace §7 with the substrate-stack recommendation from report 13 §6 (preserve original as "§7 (Round 1)").
+   - Extend §2.4 failure-mode table with F21–F33 from report 09 + report 13 + the three new governance modes (G12/G13/G14) from the drained report 10.
+3. **Update `spec-driven-ai-dev.md`** with the four-field extension proposed by report 14 (cluster A).
+4. **Editorial collapse:** fold `research/09-jaymin-harnesses-partial.md` into `research/09-jaymin-book-harnesses-practices-mental-models.md`, then delete the partial.
+5. **Close Round 2** by adding a "Round 2 complete" stanza at the bottom of PLAN.md §10 with the merge commit hash (`423940f` after the drain pass).
+6. **YouTube transcript extraction** for the two Lenny URLs (user-driven, or a future session that integrates a transcript service) — primary unlock for the Cherny corpus claims that remain un-primary-sourced (10–30 PRs/day, 10–15 parallel sessions).
+
+---
+
+*End of research plan v0.7 — `research/PLAN.md`. v0.1 was structured around six subagents in §3; v0.2 records the lead-agent partial pass and the resumption checklist; v0.3 (2026-05-11) consolidates the former root-level `followup.md` into §11 as 12 Round-3 follow-up threads, and adds Step 8 in §10.4 referencing them; v0.4 (2026-05-11, same day) adds §12 as the Round-4 catalogue (4 clusters spanning the El Kaim enterprise-architecture book in `research/manual/multi/`) and updates §11.12 to "RESOLVED" after the Dark Factory primary source was incorporated into report 07 in the same drain; v0.5 (2026-05-11, same day) adds §5.1 cataloguing the four canonical workflow-tooling files (`blocked-urls.md`, `blocked-urls-round-2.md`, `unfetched-sources.md`, `fetch-from-browser.sh`) plus a "what doesn't belong on main" sidebar covering `.fetch-work/`, `research/manual/`, and stale `fetched/issue-N` branches; deletes the leftover `.fetch-work/` directory and adds it to `.gitignore`; v0.6 (2026-05-11, same day) adds §5.2 cataloguing `research/external-syntheses/` and §13 as the Round-5 catalogue (6 source-harvest clusters → reports 18–23, plus a synthesis-time weak-citations QC checklist and a counterfactual-comparison instruction) against the ChatGPT deep-research paired artifact at `research/external-syntheses/chatgpt-deep-research-2026-05-11/`; v0.7 (2026-05-11, same night) adds §14 as the Round-6 night-run record (29 subagents across 4 waves, 0 conflicts) and routes future sessions to `research/unfetched-sources.md` §"Deferred fetch-action candidates" for the canonical list of still-blocked URLs that need batched `[fetch-urls]` issues.*

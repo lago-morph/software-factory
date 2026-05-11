@@ -199,6 +199,29 @@ Report back with:
 tool calls. The harness runs them in parallel; you will receive all results
 before continuing.
 
+**Always pass `isolation: "worktree"` to every Agent call in a fanout.**
+Without it, every concurrent subagent shares the dispatcher's working
+directory. A subagent's `git checkout <its-sub-branch>` then races against
+the other subagents' checkouts, and they stomp on each other's branches —
+files get committed onto the wrong sub-branch, untracked files leak between
+sibling workdirs, and cleanup at merge time becomes a manual cherry-pick
+exercise. With `isolation: "worktree"` each subagent gets its own
+git-worktree on its assigned branch and these collisions cannot happen.
+
+```
+Agent({
+  description: "...",
+  subagent_type: "general-purpose",
+  isolation: "worktree",   // ← required for any fanout dispatch
+  prompt: "...the brief from the template above..."
+})
+```
+
+The skill's recovery patterns (Step 4 failure handling, Step 5 conflict
+strategies) cover *intended* divergence between subagents. Cross-workdir
+contamination is *unintended* and avoidable; don't make those patterns work
+overtime to clean it up.
+
 **Wave limit:** if N > MAX_PARALLEL, split into waves:
 - Wave 1: dispatch subtasks sub-01 through sub-<MAX_PARALLEL>.
 - Wait for all wave-1 results.
@@ -339,6 +362,10 @@ Tell the user the fanout is complete and print the PR URL.
   issues; always surface them.
 - **Dispatch subagents across multiple messages.** The harness only parallelises
   Agent calls within a single message — split calls serialize the work.
+- **Dispatch without `isolation: "worktree"`.** Concurrent subagents that share
+  the dispatcher's workdir race on `git checkout` and contaminate each other's
+  branches; the merge phase then has to clean up commits that should never
+  have existed. Always isolate.
 - **Skip committing the report.** PR descriptions disappear from search when
   a PR is closed; the committed `report.md` is permanent.
 

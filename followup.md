@@ -4,7 +4,7 @@
 **Purpose:** Catalog the worthwhile outbound threads surfaced by the v1/v2 research passes that were *not* chased then. Each thread below is a self-contained subagent brief that can be dispatched in parallel — no inter-thread dependencies.
 **How to use:** Pick the threads that matter to you, spawn a subagent per thread with the brief verbatim, and let them run concurrently. Each brief lists its sources, extraction targets, and output path. Reports land in `research/followup/<NN-shortname>.md` so the main `research/` directory stays stable.
 
-If a source returns 403 / Cloudflare in the sandbox, use the `fetch-blocked-sources` skill (`.claude/skills/fetch-blocked-sources/SKILL.md`) to file a GitHub issue that triggers the fetcher action.
+If a source returns 403 / Cloudflare in the sandbox, use the `fetch-blocked-urls` skill (`.claude/skills/fetch-blocked-urls/SKILL.md`) to file a GitHub issue (label: `fetch-urls`) that triggers the fetcher action. The action commits each URL's HTML + html2text markdown to a new `fetched/issue-<N>` branch you then merge into your working branch.
 
 ---
 
@@ -113,7 +113,7 @@ Total: 12 threads. All independent and parallelizable.
 
 **Why it matters:** The Atelier (Architecture 2) implementation roadmap (§11) is structured by mechanism adoption. The "Stop Coding and Start Planning" piece reportedly captures the *practice* of teaching the AI how you think — which is the implicit prerequisite for the whole compound-engineering loop. The "Teach Your AI to Think Like a Senior Engineer" piece likely details how the persona library is taught/curated. The Opus 4.5 piece would tell us whether the architecture relies on a specific model capability.
 
-**Sources (all every.to; likely Cloudflare-gated — use the fetch-blocked-sources skill):**
+**Sources (all every.to; likely Cloudflare-gated — use the fetch-blocked-urls skill):**
 - https://every.to/chain-of-thought/stop-coding-and-start-planning — Klaassen, Nov 6 2025
 - https://every.to/chain-of-thought/teach-your-ai-to-think-like-a-senior-engineer — likely same chain-of-thought subdomain
 - https://every.to/chain-of-thought/how-every-is-harnessing-the-world-changing-shift-of-opus-4-5 — likely same subdomain
@@ -313,7 +313,7 @@ After each wave, consider re-synthesizing the deltas back into `research/00-synt
 ## Notes for subagents
 
 - Save reports to `research/followup/NN-<shortname>.md` per the brief.
-- If a source returns 403 / Cloudflare / paywall: use the fetch-blocked-sources skill (file an issue with the URLs and the `fetch-sources` label). Do NOT fabricate quotes.
+- If a source returns 403 / Cloudflare / paywall: use the fetch-blocked-urls skill (file an issue with the URLs, title `[fetch-urls] …`, label `fetch-urls`). Do NOT fabricate quotes.
 - If a brief asks for a comparison table, produce one — the synthesis pass relies on tables for cross-thread integration.
 - Flag any new external references the source surfaces (potential Tier 4 threads for a future round).
 - Mark unresolved questions; the comparison/synthesis pass will pick them up.

@@ -26,7 +26,7 @@ Single-glance index of every numbered report and followup in `research/`. For pe
 | 11 | openhands-substrate-audit | ✅ | OpenHands substrate audit (arXiv paper + docs.all-hands.dev). |
 | 12 | adjacent-ecosystem | ✅ | Adjacent ecosystem (Cisco/LangChain, IBM, Cloud, AddyOsmani, Kiro, others). |
 | 13 | round-2-synthesis | ✅ | Round-2 synthesis; introduces substrate-stack recommendation; catalogs F21–F33. |
-| 14 | el-kaim-book-intent-and-spec-authorship | ✅ | El Kaim EA book — intent + spec authorship (Cluster A; 9-field spec discipline). |
+| 14 | el-kaim-book-intent-and-spec-authorship | ✅ | El Kaim EA book — intent + spec authorship (Chapters 1, 3, 6, 7, 8; 9-field spec discipline; ArchitectureSpecification typed object with derivedFrom rules; EvaluationSuite with `protects: RULE-ID` linkage). **Extended 2026-05-13** with Chapter 8 manual drain. |
 | 15 | el-kaim-book-bmad-attractor-dark-factory | ✅ | El Kaim EA book — BMAD + Attractor + Dark Factory linkage. |
 | 16 | el-kaim-book-council-and-delegation | ✅ | El Kaim EA book — Council pattern + delegation. |
 | 17 | el-kaim-book-codex-and-skill-substrate | ✅ | El Kaim EA book — Codex + skill substrate. |
@@ -36,6 +36,7 @@ Single-glance index of every numbered report and followup in `research/`. For pe
 | 21 | tabnine-enterprise | ✅ | Tabnine enterprise substrate. |
 | 22 | academic-foundations | ✅ | Academic foundations across software-engineering research. |
 | 23 | anthropic-engineering-trilogy | ✅ | Anthropic engineering posts S12–S15 + Claude Code sandboxing post. **Updated 2026-05-13** with issue-#29 drain: full primary-source anchoring, 6 refutations of prior reconstruction, new §8 on sandboxing. |
+| 24 | el-kaim-book-product-line-variability | ✅ | El Kaim EA book — Chapter 9: software product lines, variability, family-based architecture. **New 2026-05-13** from manual fetch. Introduces ProductLineDefinition / ProductLineSpec Codex object; anchors on Linux Kconfig + Azure Landing Zones + AUTOSAR; proposes candidate failure mode **F35 — Federation-as-Family Drift**. |
 
 ## Follow-up reports (round 3 threads + post-round-3 additions)
 

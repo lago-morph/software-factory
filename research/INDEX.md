@@ -42,12 +42,12 @@ Single-glance index of every numbered report and followup in `research/`. For pe
 
 | # | Slug | Status | Primary subject |
 |---|---|---|---|
-| 01 | shapiro-five-levels | 🟡 | Shapiro's 0–5 maturity model. Canonical post slug 404'd in #29; companion "You Don't Write the Code" post drained 2026-05-13. Correct five-levels slug now known; queued for re-fetch. |
+| 01 | shapiro-five-levels | ✅ | Shapiro's 0–5 maturity model. **Canonical post fully drained 2026-05-13 via issue #36** (correct slug `the-five-levels-from-spicy-autocomplete-to-the-software-factory`). All 3 prior gaps closed; Shapiro positions himself at L4 ("I'm here"); 8 El Kaim-vs-Shapiro discrepancies documented (cross-corpus propagation flags in PLAN.md §6.1). |
 | 02 | attractor-implementations | ✅ | Community Attractor ports (~17 named, Go/Rust/Python/...). |
 | 03 | cherny-interview | 🟡 | Boris Cherny Lenny interview. Video-only; transcript extraction is the only remaining path. |
 | 04 | gastown-beads | ✅ | Gas Town's DOT-graph orchestration. |
 | 05 | klaassen-siblings | ✅ | Klaassen's three every.to "Stop Coding..." sibling articles (drained pt-2 / issue-23). |
-| 06 | competitor-landscape | ✅ | Five named competitors (Devin / Factory / 8090 / Superconductor / Superpowers). **Updated 2026-05-13** with issue-#31 drain; Devin pricing refuted, Factory adds Droid Computers primitive, Superconductor.io is wrong domain. |
+| 06 | competitor-landscape | ✅ | Five named competitors (Devin / Factory / 8090 / Superconductor / Superpowers). **Updated 2026-05-13** with issue-#31 + issue-#36 drains; Devin pricing refuted, Factory adds Droid Computers primitive, Superconductor §4 fully re-anchored to .com (multiplayer "take the wheel" shared-agent-session is its unique differentiator). |
 | 07 | evals-deepdive | ✅ | Anthropic multi-agent + Husain/Shankar FAQ + Hamel tetralogy + Simon FAQ. **Updated 2026-05-13** with issue-#29 drain: 4 Hamel posts now primary-anchored; new sections on Critique Shadowing, Capability Funnel, fifteen-five, synthetic data. |
 | 08 | security-primitives | ✅ | Lethal trifecta + Dual LLM + CaMeL + Claude Code sandboxing. **Updated 2026-05-13** with issue-#29 drain: 5 refutations of prior reconstruction; CaMeL section now seven subsections with verbatim primary quotes. |
 | 09 | methodology-ancestors | ✅ | Methodology ancestors (lean, agile, V&V, etc.). |

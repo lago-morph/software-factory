@@ -37,14 +37,14 @@
     dark-factory-article.txt           → El Kaim Medium article (anchors report 07)
     brier-culture-of-ai-engineering.txt → Brier Every.to article (anchors `research/followup/12-brier-pace-layers.md`)
     every-my-ai-had-already-fixed.txt   → Klaassen Every.to article (anchors report 03)
-/research/              → 24 numbered reports + 11 followup reports + workflow tooling
+/research/              → 24 numbered reports + 12 followup reports + workflow tooling
     PLAN.md             → this file
     manual/             → transient drop zone for new manual fetches
     fetch-from-browser.sh, unfetched-sources.md, blocked-urls*.md → fetch-loop tooling
 /retrospective/         → 2026-05-11-01 retrospective + 4 sibling skill specs
 /.claude/skills/        → 8 installed skills
 /.github/               → fetch-blocked-urls action + scripts
-spec-driven-ai-dev.md   → root-level methodology doc (pending update; see §6)
+spec-driven-ai-dev.md   → root-level methodology doc (pending update; see §3.2 task 2)
 initial-sources.md      → original Round-1 seed list (frozen)
 ```
 
@@ -150,7 +150,7 @@ How:
 
 - **The two Lenny URLs as articles** — confirmed video-only with paywall-stub article shell. There is no text body at the URL. See §4.2 for the YouTube route instead.
 - **The three Klaassen Every.to siblings** — successfully fetched via Wayback in (now-closed) fetch-urls issue #23. Re-fetch would be duplicate work.
-- **`kaner.com/pdfs/ScenarioIntroVer4.pdf` + Wikipedia PDCA + Deming Institute PDSA** — optional per PLAN §17 (was §13.1.6); structural conclusions firm without these.
+- **`kaner.com/pdfs/ScenarioIntroVer4.pdf` + Wikipedia PDCA + Deming Institute PDSA** — optional per `research/unfetched-sources.md` "Deferred fetch-action candidates" row 5; structural conclusions firm without these.
 
 ---
 
@@ -239,7 +239,7 @@ For each report, the source citations live in the report's §"Sources reviewed" 
 
 # Archive — version history and per-round catalogs (compressed)
 
-Sections 11–18 below preserve the per-round dispatch records that v0.1–v0.7 of this file accreted. They are reference material for "where did claim X come from?" lookups; they are not the live work plan. The live work plan is §§1–6.
+Sections 11–17 below preserve the per-round dispatch records that v0.1–v0.7 of this file accreted. They are reference material for "where did claim X come from?" lookups; they are not the live work plan. The live work plan is §§1–6.
 
 ## 11. Round 2 — Subagent dispatch record (was §§1–9 of v0.1–v0.4)
 
@@ -310,7 +310,7 @@ Round-5 also catalogued a "weak citations" QC checklist (in the cluster reports)
 
 `harness/runs/20260511-054258/report.md` is the per-subtask record for the main wave (26 subtasks, 0 merge conflicts). A follow-up "pt-2" wave (sub-30 Brier, sub-31 Klaassen drain, sub-32 evals drain) ran cleanly on the same branch on the same night; `harness/runs/20260511-054258/report-pt2.md` is its per-subtask record. The pt-2 wave was orphaned on the side branch until the 2026-05-13 cherry-pick recovered it — see §3.1.
 
-## 16. Round 1 — initial subagent dispatch (was §§1–4 of v0.1)
+## 16. Round 1 — initial subagent dispatch (predates PLAN.md; reconstructed retrospectively)
 
 Round 1 dispatched 7 subagents off the seed list in `initial-sources.md`:
 

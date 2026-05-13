@@ -5,7 +5,7 @@
 - https://www.lennysnewsletter.com/p/an-ai-state-of-the-union — Lenny Rachitsky interview with Simon Willison ("An AI state of the union: We've passed the inflection point, dark factories are coming, and automation timelines"). **ACCESSED** via local mirror: `/home/user/software-factory/www.lennysnewsletter.com__p__an-ai-state-of-the-union.html`. The interview body is paywalled; the visible portion is the editorial summary, sponsors, and the 45-entry references section. Verbatim Willison quotes are reconstructed from the visible summary bullets plus referenced Willison blog posts (cited inline).
 - https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens — Lenny Rachitsky interview with Boris Cherny ("Head of Claude Code: What happens after coding is solved | Boris Cherny", Feb 19, 2026). **PARTIAL** access via Wayback Machine snapshot (capture timestamp 2026-05-04). Both the direct URL and the Wayback capture paywall the interview body and the "biggest takeaways" section. Visible material: editorial intro, "We discuss" topic list, "Where to find Boris Cherny" links, the full "Referenced:" link list, and "Recommended books".
 
-**Date:** 2026-05-11 (Boris Cherny interview added from Wayback snapshot, visible portions only); 2026-05-13 (both Lenny interview bodies now primary-source-anchored via partial transcripts — see Drain note below)
+**Date:** 2026-05-11 (Boris Cherny interview added from Wayback snapshot, visible portions only); 2026-05-13 (both Lenny interview bodies now primary-source-anchored via partial transcripts; ✅ Willison interview now FULL-transcript drained later same day — see Drain notes below)
 
 ---
 
@@ -26,12 +26,55 @@ The body of this report below still contains v2/v3-era framings around the 4-age
 
 ---
 
+## Drain note follow-up (2026-05-13) — Lenny × Willison transcript is now ✅ FULL (2,155 lines)
+
+The user ran the overnight full transcription. The complete 2,155-line manual transcript of the Lenny × Willison podcast is now drained — the partial-drain caveat above is **superseded** for the Willison interview (the Cherny interview remains partial). All net-new material lives in `research/05-simon-willison.md` § "Lenny interview"; this report cross-references the load-bearing additions rather than duplicating them.
+
+**The Challenger-disaster prediction is now fully captured** (lines 1731–1769 of transcript, mirrored in report 05 § "The Challenger disaster prediction"). Key new ingredients beyond the cold-open thesis sentence:
+
+- Simon explicitly cites the **Normalization of Deviance** paper (1980s; Diane Vaughan) as the analogical scaffolding. Mapping: O-rings ↔ prompt-injection vulnerabilities; every survived launch ↔ every survived prompt-injection-vulnerable deployment; institutional confidence as the failure mode.
+- **The self-falsification clause**: *"I've made a version of this prediction every six months for the past three years, and it hasn't happened. So there we are."* — Simon holds the prediction *and* its falsification record simultaneously.
+- The **proof-skepticism standard for any proposed solution**: *"Even if they did hit 100% I'd want more than just a score. I want proof. I want here is the computer science that we have come up with and put in place that means these attacks are no longer a problem. And I cannot imagine what that proof would look like myself."*
+- The Challenger-disaster section directly follows the lethal-trifecta walkthrough in the transcript — i.e., the *disaster is the consequence of repeated lethal-trifecta-style vulnerabilities being survived without consequence*. This is a structural pairing the partial drain could not establish.
+
+**The lethal trifecta is now fully captured** (transcript lines 1601–1850, mirrored in report 05 § "Security and the lethal trifecta"). Net-new vs. the prior corpus framing in `research/followup/08-security-primitives.md`:
+
+- Simon's **naming methodology** rationale: "prompt injection" was a mistake because it was guessable (people guess "injecting prompts → jailbreaking"); "lethal trifecta" was chosen *because* it's unguessable, so readers must come to his definition.
+- The **97%-is-a-failing-grade** argument verbatim (three-in-a-hundred attacks succeed → all data exfiltrated).
+- The **blast-radius doctrine**: assume any agent will do anything it can do; limit what it can do.
+- Endorsement of **CaMeL** (Google DeepMind paper Simon explained Apr 11, 2025) as the most promising structural defense: privileged agent + quarantined agent + taint-tracked data flow + human-in-the-loop *only* on high-risk steps so users don't button-mash through approvals.
+- Sander Schulhoff (the security guest Lenny had on previously) **independently endorsed CaMeL** as the best mitigation — corroboration across the corpus.
+
+**OpenClaw / "Claws" — full elaboration is now corpus-first.** Transcript lines 1851–1992, mirrored in report 05 § "OpenClaw / 'Claws'". Net-new claims central to this report's thesis on factory architectures and personal digital assistants:
+
+- First line of OpenClaw code: Nov 25, 2025; AI.com Super Bowl ad: ~3.5 months later.
+- *"The reason OpenClaw took off is Anthropic and OpenAI could have built this and they didn't because they didn't know how to build it securely."* — i.e., the lethal trifecta is a *structural barrier to incumbent shipping*, not just an academic concern.
+- Simon's biggest-opportunity-in-AI claim: a **safe OpenClaw** is *"a huge opportunity. I don't know how to do it. If I knew how to do that, I'd be building it right now."*
+- **Generic-term emergence**: OpenClaw is no longer a product, it's a category. NanoClaw and others exist. *"I think the new hello world of AI engineering is going to be building your own Claw."*
+- Simon's actual personal setup is a partial trifecta mitigation: dedicated Mac mini, OpenClaw has its own email address, only read-only access to work email — i.e., he air-gaps the *exfiltration* and *write* legs while accepting the *exposure* leg.
+
+**Tool-stack details for the Willison "ground truth" workflow** (mirrored in report 05 § "Tool stack and workflow details"): Claude Code for web via iPhone app's code tab as primary surface, YOLO mode (Claude `--dangerously-skip-permissions`, OpenAI literally named theirs "YOLO"), GPT-5.4 at parity with Claude Opus 4.6 and now cheaper, Claude/Codex effectively indistinguishable, memory features turned off ("I need to see what everyone else sees when I'm prompting"), the Anthropic memory-export prompt-hack to onboard ChatGPT defectors. Several of these (especially the iPhone-app entry point and the YOLO terminology) are direct corroborations of the parallel-coding-agents pattern catalog without changing any thesis-level claim in this report.
+
+**End-of-year automation prediction** (transcript lines 864–893): Simon endorses *"by the end of this year, it will not be uncommon to have an engineer say that almost all of their code is written by AI"* — i.e., 50% of engineers writing ≥95% of their code via AI by end of 2026. This is Simon's strongest dated prediction on the automation timeline and is now corpus-first.
+
+**Macroeconomic worry** (lines 910–915): Simon's only on-record macro-anxiety: *"are we really going to wipe out like a tenth of white collar knowledge work jobs in the next few years? I really hope not because I don't know how the economy adapts to that."* Hedged with *"I'm not an AI doomer in the slightest."* This is load-bearing for any factory architecture that needs to be defensible as an economy-shaper, not just a productivity tool.
+
+**ThoughtWorks U-curve** (already in the partial drain; no change): seniors win, juniors win, mid-career squeezed. Simon offers no mid-career-specific prescriptive advice anywhere in the full transcript — this is now confirmed as a feature, not a gap.
+
+**Data-journalism / Datasette is Simon's stated 2026 north star**: a Pulitzer Prize won using his software for *"like 3% of what they used."* The journalists-treat-AI-as-yet-another-unreliable-source thesis (transcript lines 2025–2028) is the canonical answer to "does AI fit truth-seeking professions?" — and is the corpus's strongest single argument for *why specific professions are AI-ready and others are not*.
+
+**Cherny cross-reference**: the transcript does **not** mention Boris Cherny by name. The Cherny-side corroboration of the November-2025 inflection point (via the SemiAnalysis "Claude Code Is the Inflection Point" piece in the Cherny references) is intact but is not strengthened by this drain. No edits to `research/followup/03-cherny-interview.md` from this transcript.
+
+**Net effect**: this report's body sections (HN thread, Lenny's thesis bullets, the bibliography, quantitative claims, notable quotes) are largely unchanged because most of the new transcript material is *Willison personal practice* rather than *factory-architecture argument*. The Willison-side updates are concentrated in report 05; this report's sections-status table is flipped 🟡 → ✅ for the Willison interview only.
+
+---
+
 ## Sources status
 
 | Source URL | Status | Notes |
 |---|---|---|
 | https://news.ycombinator.com/item?id=46924426 | FULL | Local HTML mirror; 459 comments parsed verbatim. |
-| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | 🎬 VIDEO-ONLY | **Updated 2026-05-11:** Round-2 user note confirmed *"only content here was a video. However there were references."* The page is a podcast landing; there is no text interview body at the URL. YouTube video: `https://youtu.be/wc8FBhQtdsA`. References list (this report) is fully captured. Body would require a transcript-extraction service. |
+| https://www.lennysnewsletter.com/p/an-ai-state-of-the-union | ✅ Full review (via YouTube transcript) | **Updated 2026-05-13 (full-transcript drain):** the page itself remains video-only; the full 2,155-line manual transcript of the YouTube version (`https://youtu.be/wc8FBhQtdsA`) was drained 2026-05-13 and integrated into `research/05-simon-willison.md` § "Lenny interview" (now ✅ complete) and cross-referenced into this report's Drain note follow-up above. References list (this report) is fully captured. |
 | https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens | 🎬 VIDEO-ONLY | **Updated 2026-05-11:** Same disposition as the sibling Willison interview. Round-2 user note: *"Confirmed this was just a video. Here are references at end."* YouTube video: `https://youtu.be/We7BZVKbCVw`. The "biggest takeaways" stub is *not* a transcript; the audio is the canonical content. **The 10–30 PRs/day and 10–15 parallel-sessions numbers in this report remain un-primary-sourced** — they came from external summaries, not from the Cherny post itself, and would only be confirmable via a YouTube transcript. |
 
 ---
@@ -278,7 +321,7 @@ The editorial summary lists, verbatim, what Willison shares in the conversation:
 3. **"Why mid-career engineers (not juniors) are most at risk right now."** This is the K-shaped/mid-career-squeeze framing.
 4. **"The three agentic engineering patterns Simon uses daily (red/green TDD, templates, hoarding)."** Confirms the three-pattern taxonomy.
 5. **"The next leap: the 'dark factory' pattern where nobody writes or reviews code and AI does its own QA."** Confirms the Dark Factory framing.
-6. **"Why prompt injection is an unsolved security problem and the 'lethal trifecta' that will likely lead to an AI Challenger disaster."** Pairs the lethal trifecta concept with the Challenger / normalization-of-deviance metaphor — i.e., Willison expects an AI Challenger-style disaster precipitated by a prompt-injection chain.
+6. **"Why prompt injection is an unsolved security problem and the 'lethal trifecta' that will likely lead to an AI Challenger disaster."** Pairs the lethal trifecta concept with the Challenger / normalization-of-deviance metaphor — i.e., Willison expects an AI Challenger-style disaster precipitated by a prompt-injection chain. **[2026-05-13 full-transcript drain]** Now corpus-first verbatim-anchored: see report 05 § "Security and the lethal trifecta" and § "The Challenger disaster prediction" (transcript lines 1586–1804). Simon (a) explains why he regrets the term "prompt injection", (b) explicitly defines the three legs of the trifecta (private data, malicious-instruction exposure, exfiltration), (c) calls 97%-effective filters a "failing grade", (d) endorses CaMeL as the most promising structural defense, and (e) admits he has *"made a version of this prediction every six months for the past three years and it hasn't happened"* — a self-falsification clause not in the editorial summary.
 7. **"Why the pelican riding a bicycle became the unofficial benchmark for AI model quality."** Confirms simonw/pelican-bicycle as a referenced informal benchmark.
 
 Because the interview body is paywalled, the verbatim depth on each item above cannot be quoted from this primary source. The references section, however, is fully visible and is enumerated in the next section.
@@ -493,6 +536,17 @@ The visible references section captures the trail of related sources Boris bring
 | "GPT-4+ level" models simonw lists | ~20 organizations | simonw HN 46929190 |
 | Attractor reimplementations within 24h | several (one open source explicitly mentioned: danshapiro/kilroy; also smartcomputer-ai/forge) | jaytaylor HN 46931812 |
 | Reproduction LOC ("~6,000–7,000 lines from Claude") | NOT verified in HN HTML on this read; removed from confidently-cited claims | n/a |
+| Willison's prompt-injection-filter "failing grade" threshold | 97% (3-in-100 attacks succeed → all data exfiltrated) | Lenny × Willison transcript lines 1696–1700 (drained 2026-05-13) |
+| Simon's "Claus disaster prediction" personal-falsification interval | ~6 months for the past 3 years (i.e., ~6 prior unfulfilled predictions) | Lenny × Willison transcript lines 1760–1763 |
+| OpenClaw: first line of code → Super Bowl AI.com ad | ~3.5 months (Nov 25, 2025 → Feb 2026 Super Bowl) | Lenny × Willison transcript lines 1857–1864 |
+| OpenClaw contributors | >1,000 distinct committers | Lenny × Willison transcript lines ~1918 |
+| Simon's `simonw/tools` repo size | 193 client-side HTML/JS tools | Lenny × Willison transcript lines ~1331 |
+| Simon's `simonw/research` repo size | 75 public + ~50 private agent-built research markdowns | Lenny × Willison transcript lines ~1339–1382 |
+| Willison's 50%-engineers / 95%-of-code automation prediction | end of 2026 ("by the end of this year") | Lenny × Willison transcript lines 864–893 |
+| Pre-2022 GitHub-repo market for "uncontaminated" training data | data-labeling firms paying *"a lot of money"* (no figure) — analog: low-background steel | Lenny × Willison transcript lines 836–855 |
+| Anthropic vulnerabilities reported to Firefox/Mozilla | ~100 potential vulnerabilities | Lenny × Willison transcript (early window, partial drain already captured) |
+| Cloudflare + Shopify intern onboarding ramp | 1 month → 1 week (each hiring 1,000 interns over 2025) | Lenny × Willison transcript (early window, ThoughtWorks frame) |
+| StrongDM agent-tester daily token spend | $10,000/day on tokens for simulated end-users (specifically the QA-swarm cost, separate from the $1k/day-per-engineer benchmark) | Lenny × Willison transcript ~line 339 |
 
 ---
 
@@ -521,6 +575,17 @@ The "Top practitioner insights" section above contains the full verbatim text fo
 19. **Willison on phone coding** (Lenny editorial summary): *"How Simon writes 95% of his code from his phone now and why he's mentally exhausted by 11 a.m."* — and the transcript-verbatim version (drained 2026-05-13): *"I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day."*
 20. **Lenny editorial on the upcoming disaster** (verbatim): *"the 'lethal trifecta' that will likely lead to an AI Challenger disaster."*
 21. **cadamsdotcom's harness engineering** (46929918): *"take yourself progressively out of those loops, that's the new job."*
+22. **[2026-05-13 full-transcript drain]** **Willison on the lethal trifecta** (Lenny × Willison transcript lines 1672–1690): *"You have a lethal trifecta any time your agent has three things. It's got access to private information … It's exposed to malicious instructions … and the third leg is exfiltration, or some mechanism the agent can send data back to that attacker. … The only way to fix it is to cut off one of those three legs."*
+23. **[2026-05-13]** **Willison on filter-effectiveness as a failing grade** (lines 1696–1700): *"You can get to like 97% effectiveness on those filters. I think that's a failing grade. That means that three out of 100 of these attacks will steal all of your information."*
+24. **[2026-05-13]** **Willison's Challenger-disaster prediction in full** (lines 1731–1763): *"Every single time you get away with launching a space shuttle without the O-rings failing, you institutionally feel more confident in what you're doing. … We have this normalization of deviance in the field of AI around how we're using these tools. So my prediction is that we're going to see a Challenger disaster. … At the same time, I've made a version of this prediction every six months for the past three years and it hasn't happened. So there we are."*
+25. **[2026-05-13]** **Willison on what proof of safety would require** (lines 1786–1794): *"Even if they did hit 100% I'd want more than just a score. I want proof. I want here is the computer science that we have come up with and put in place that means these attacks are no longer a problem. And I cannot imagine what that proof would look like myself."*
+26. **[2026-05-13]** **Willison on OpenClaw as the biggest opportunity in AI** (lines 1905–1912): *"If you can build safe OpenClaw, if you can deploy a version of OpenClaw that does all the things people love about it and won't randomly leak people's data and delete their files, that's a huge opportunity. I don't know how to do it. If I knew how to do that, I'd be building it right now."*
+27. **[2026-05-13]** **Willison on incumbents' structural barrier** (lines 1887–1890): *"The reason OpenClaw took off is Anthropic and OpenAI could have built this and they didn't because they didn't know how to build it securely."*
+28. **[2026-05-13]** **Willison endorses CaMeL as the most promising defense** (lines 1813–1841): *"There was a paper that Google DeepMind put out a couple of years ago, the Camel paper, which proposed a way of building one of these agents that didn't assume that you can fix prompt injection. … the privileged agent effectively writes code … and that code is evaluated in a way that tracks what's tainted. So it makes sure that once a potentially dangerous instruction has gotten in, the next action, the human has to approve."*
+29. **[2026-05-13]** **Willison on the journalists-and-unreliable-sources principle** (lines 2025–2028): *"As long as the journalist treats the AI as yet another unreliable source, they're actually better equipped to work with AI than most other professions are."*
+30. **[2026-05-13]** **Willison's macroeconomic worry** (lines 910–915): *"I'm not an AI doomer in the slightest. The economics of it do make me nervous. Are we really going to wipe out like a tenth of white collar knowledge work jobs in the next few years? I really hope not because I don't know how the economy adapts to that."*
+31. **[2026-05-13]** **Willison on the end-of-2026 automation prediction** (lines 891–893): *"By the end of this year, it will not be uncommon to have an engineer say that almost all of their code is written by AI."*
+32. **[2026-05-13]** **Willison on the low-background-steel analogy for pre-2022 GitHub repos** (lines 841–844): *"That's the pre-World War Two, the metal that you can dig up from old shipwrecks, which is before the first nuclear explosions and so it's not got the radiation baked into the metal."*
 
 ---
 
@@ -540,7 +605,7 @@ The "Top practitioner insights" section above contains the full verbatim text fo
 
 ## Open questions for synthesis
 
-1. **What is the actual ceiling on parallel agents per human?** Primary-anchored from the 2026-05-13 transcript drains: Willison runs 4 agents in parallel and is wiped out by 11 AM (verbatim); Cherny was seen running 5+ during the recording itself ("I have like five agents running while we're recording this"). The delta reflects role specialization — Cherny *schedules*, doesn't micro-supervise. The fuller Cherny architecture (the 10–15-session number that appeared in earlier corpus summaries) is likely in the un-transcribed minutes 30–90 of the 90-minute Cherny podcast and remains outstanding. Architecture should specify which mode the human operates in (per-agent supervisor vs. scheduler).
+1. **What is the actual ceiling on parallel agents per human?** Primary-anchored from the 2026-05-13 transcript drains: Willison runs 4 agents in parallel and is wiped out by 11 AM (verbatim); Cherny was seen running 5+ during the recording itself ("I have like five agents running while we're recording this"). The delta reflects role specialization — Cherny *schedules*, doesn't micro-supervise. The fuller Cherny architecture (the 10–15-session number that appeared in earlier corpus summaries) is likely in the un-transcribed minutes 30–90 of the 90-minute Cherny podcast and remains outstanding. Architecture should specify which mode the human operates in (per-agent supervisor vs. scheduler). **[2026-05-13 full-transcript drain]** The Willison full transcript adds the candor element: Simon admits to *"an element of gambling and addiction"* in how he uses these tools, and to people losing sleep / waking up at 4 AM to set off more sessions. The ceiling is not just cognitive — it is psychological.
 
 2. **Where do scenarios come from?** Both sources agree scenarios outside the codebase are essential but neither describes how a small team produces *enough* of them. navanchauhan (46929801) uses LLMs to "iteratively develop the spec, the validation harness, and then the implementation" — but the bootstrapping problem is unaddressed.
 
@@ -557,4 +622,8 @@ The "Top practitioner insights" section above contains the full verbatim text fo
 8. **What is the role of formal methods?** benreesman (46926194): *"You get on the ladder by throwing out Python and JSON and learning lean4, you tie property tests to lean theorems via FFI when you have to."* Is the factory model an evolutionary step toward formal verification, or away from it? Unresolved.
 
 9. **Token economics at small scale.** simonw (46934798) hints you can get most of the value below $20k/month. The only independent practitioner cost data point in the corpus is noosphr's $500–$5000/day/seat trading-firm tool. The order-of-magnitude-cheaper-factory empirical investigation has not been done.
+
+10. **[2026-05-13 full-transcript drain]** **Is OpenClaw the load-bearing exemplar of "latent demand for personal digital assistants"?** Simon's spoken framing — that hundreds of thousands of people set up a difficult OpenClaw install *despite* known catastrophic security failures (lost Bitcoin wallets etc.) — is the strongest single primary-source datum on consumer/prosumer demand for an actually-personal AI agent. Combined with the Cherny corpus's "latent demand" product principle, this suggests the *factory architecture* needs to internalize that the highest-value consumer product is precisely the one the incumbents won't ship for liability reasons. The orchestrator should consider whether `research/followup/09-openclaw-and-claws.md` is worth opening as a dedicated report.
+
+11. **[2026-05-13]** **Does the lethal-trifecta argument falsify the "Dark Factory" thesis for any production-facing software factory?** If a factory deploys agents that (a) have read access to production data, (b) ingest untrusted user input, and (c) can write to external systems, it has the lethal trifecta by construction. StrongDM's specific mitigation (their software stays inside the DTU during validation; production deploys go through a separate gating step) is one answer; the question is whether *every* factory must implement a structural CaMeL-style split, or whether some scopes can rely on blast-radius limitation. Unresolved.
 

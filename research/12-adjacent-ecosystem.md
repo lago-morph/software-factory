@@ -264,7 +264,7 @@ The chapter is a tool catalog organized by category, with operational rather tha
 
 **Mapped to our architectures.** Claude Code is the de-facto substrate underneath Compound Atelier (it powers Every.to's compound-engineering plugin), the Refinery (it can host the spec → review → implement loop), the Foundry (hooks + Skills give you phase gates), and the Tournament (Task tool gives you parallel variants).
 
-**Should we look harder?** **Already covered** in `research/09-jaymin-harnesses-partial.md`. No additional dispatch needed.
+**Should we look harder?** **Already covered** in `research/09-jaymin-book-harnesses-practices-mental-models.md`. No additional dispatch needed.
 
 ### A.6.2 Google ADK (Agent Development Kit)
 

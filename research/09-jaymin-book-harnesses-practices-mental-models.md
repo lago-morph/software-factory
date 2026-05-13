@@ -2,7 +2,7 @@
 
 **Date:** 2026-05-11
 **Author:** Round-2 subagent 09 (sub-03 of fanout `20260511-054258`)
-**Status:** Complete. Replaces the partial at `research/09-jaymin-harnesses-partial.md` (which covered only the Ch 6 index page plus a Substack manifesto). This report reads Ch 6 sub-pages 1–7, all seven Ch 8 practices, and Ch 9 mental models §3 (Specs as Source Code), §4 (Context as Code), and §7 (Software Factories) directly from the GitHub raw source on branch `main` of `jayminwest/agentic-engineering-book`. The partial is preserved untouched per the brief; a later editorial pass can collapse the two.
+**Status:** Complete. Supersedes and replaces the partial that previously lived at `research/09-jaymin-harnesses-partial.md` (deleted 2026-05-13 in the editorial-collapse pass per PLAN.md §14.4 task 4). The Ch 6 index summary in the partial was fully superseded by direct reads of the sub-pages here; the partial's unique content — the Substack manifesto digest — was folded into §9 below. This report reads Ch 6 sub-pages 1–7, all seven Ch 8 practices, and Ch 9 mental models §3 (Specs as Source Code), §4 (Context as Code), and §7 (Software Factories) directly from the GitHub raw source on branch `main` of `jayminwest/agentic-engineering-book`, plus the Substack manifesto via the Wayback Machine (capture `web.archive.org/web/20260511002503/`, retrieved through fetch-urls issue #8).
 
 **Sources reviewed**
 
@@ -314,8 +314,83 @@ The deepening pass yields three durable contributions to the synthesis:
 
 The single highest-leverage adoption is **adding hard per-task token-budget ceilings to the shared harness (§4.1)**, paired with Jaymin's model-per-task tier matrix. The single highest-risk gap our architectures do not address is **the Augmentation-vs-Automation reliability threshold distinction** (§4 of this report) — without it, Arch 4 (Tournament) implicitly claims Automation-mode reliability without measuring against the Automation-mode thresholds.
 
-The partial report at `research/09-jaymin-harnesses-partial.md` already covered the Ch 6 index page, the manifesto, and the high-level Raschka / Fowler / Hashimoto / Schmid attributions. This report covers the seven Ch 6 sub-pages, all seven Ch 8 practices, and the three highest-value Ch 9 mental models. Together the two complete the Round-2 §3.2 brief.
+This report covers the seven Ch 6 sub-pages, all seven Ch 8 practices, the three highest-value Ch 9 mental models, and (folded in 2026-05-13 per PLAN.md §14.4 task 4) the Substack manifesto in §9 below. Together these complete the Round-2 §3.2 brief.
 
 ---
 
-*End of report 09 — `research/09-jaymin-book-harnesses-practices-mental-models.md` v1.0*
+## 9. Substack manifesto — doctrinal companion to Ch 6
+
+The Substack post *A Manifesto for Agentic Development* (subtitled "What I've learned in 2,000 hours of using SOTA tooling", published 2025-07-29) predates the April 2026 "harness" consensus described in §1 above by roughly nine months. It is short, personal, and doctrinal — not a book chapter. It encodes seven rules. The vocabulary is older (no use of the word *harness*), but every rule maps cleanly onto a Ch 6 component, and several of them sharpen claims the book chapter only gestures at.
+
+**Author credentials, verbatim:**
+
+> "I've spent the past 8+ months using, what have proven to be, the SOTA LLM-based coding tools. And with 11,500+ commits in the past year, I've put the time in to get an understanding of these things."
+
+**Framing claim, verbatim:**
+
+> "Until Claude Code was released, Aider was, in my opinion, the gold-standard for LLM coding tools, with the Aider leaderboard being a common benchmark talking point. Aider did this through incredibly clever use of context windows, and Anthropic has done the same with a sturdy agentic framework."
+
+This is the seed of what the book later names *harness engineering*: Aider competed on context engineering; Claude Code competes on the surrounding agentic framework. The manifesto frames this as a generational shift in tooling, not as a taxonomy.
+
+### 9.1 The seven rules (verbatim, with mapping to §1's Raschka components)
+
+**Rule 1 — "the context window is your most sacred resource"**
+
+> "I've started thinking about the context window as the 'capability percentage' of the model, in an inverse relationship to how full it is. 10% context used? The model is 90% 'capable'. Anything past 50% full and continuing on the same task is risky."
+
+Maps to **Raschka component 4 (Context management)** in §1. Sharpens the book's "much of apparent model quality is really context quality" with a concrete numeric heuristic: 50% context fill is the soft ceiling.
+
+**Rule 2 — "documentation is the bitter lesson in action"**
+
+> "Several times, on several different projects, I've come to the conclusion that a huge, interconnected web of markdown files was essential to making these tools perform. This is incorrect and will remain incorrect, especially in the context of software. […] By adding documentation to what should be self-documenting, high quality code you are asking for miscommunication and code-documentation drift."
+
+**Tension flag.** This contradicts the *scaffold* category in §1 (which valorizes CLAUDE.md / AGENTS.md / project conventions as pre-runtime artifacts). The manifesto's position is that grep-equipped CLI agents should read the code itself, and that documentation is a liability because it drifts. The book chapter (~9 months later) has clearly moved on from this stance — it treats scaffold as load-bearing. This is not a minor disagreement: the book treats scaffold quality as something the harness depends on; the manifesto treats it as anti-pattern. **Implication for our project:** the scaffold-vs-harness distinction is not a settled doctrine even within Jaymin's own writing. Our `architectures/00-comparison.md` decisions about CLAUDE.md / AGENTS.md should be made with awareness that the most experienced practitioners disagree.
+
+**Rule 3 — "everything should be a one-shot"**
+
+> "If you're fifty or so messages into a Claude Code interaction, or any other tool for that matter, even with context compacting, just stop the instance and restart. […] Slop happens incredibly quickly with LLMs and it can snowball to impact unrelated sections of the codebase if left unchecked. If what you're trying to do can't be one-shot, decrease the scope of your problem."
+
+Maps to **Raschka component 5 (Session memory)** and **Hashimoto's harness engineering loop**. The 50-message restart heuristic is more aggressive than anything in the book chapter. Connects directly to our four architectures' "cycle" boundary: each cycle is a one-shot in Jaymin's sense.
+
+**Rule 4 — "llms can't multitask"**
+
+> "They can't. Agentic systems can, but the models themselves cannot. […] For example, having the agent fix a button's appearance AND the button's functionality, over time, will accelerate the deterioration of performance of the model. One thing at a time. If you want to move quicker, run multiple instances at a time."
+
+The model/agentic-system distinction is exactly the *Agent = Model + Harness* formula stated negatively. Concurrency is a harness affordance, not a model affordance. Maps to **Raschka component 6 (Subagent delegation)**.
+
+**Rule 5 — "never play llm telephone"**
+
+> "It's so easy to do this. Especially as we see agents working in parallel, but having them do communication outside of this little network will, again, accelerate deterioration. This can be a truly useful technique to pass off progress mid-solution from one instance to another in order to reset context windows. But if you continue the chain, or have a full context window, the alignment of the LLM's vision and your own will drift."
+
+A nuanced position: handoff between instances is permitted *as a context-reset mechanism* but forbidden *as a sustained chain*. **Direct implication for Arch 4 (Tournament)** and any architecture with multi-agent dialogue: telephone-style chained communication is named as an anti-pattern. This is also the seed of failure mode **F26** in §6 above.
+
+**Rule 6 — "assume you're finetuning"**
+
+> "Consider how transformer models work at the lowest level, as prediction machines. The most sensitive part of the model is by a wide margin, the context window. The model will adapt to your tone. It will adapt to its own random tone. […] Now, this one is a double edged sword because it is very easy to use this to your advantage. If you're writing code in a high quality, logical codebase with perfectly clean and linted code, you should expect the model to output higher quality code than if it did not have this context."
+
+This is the manifesto's version of the **Agent Psychometrics formula** (additivity of harness quality + model quality) — but stated mechanistically rather than as an additivity claim. Codebase quality enters the model's effective behavior the same way training data does. Strong support for our architectures' insistence on linters/formatters as pre-conditions, not nice-to-haves.
+
+**Rule 7 — "git integrity is paramount"**
+
+> "any agent with access to your cli has access to git. This is the medium through which you should collaborate with agents."
+
+Single-sentence rule. Maps to Ch 6.6 (security/permissions/trust): git is named as *the* collaboration medium between human and agent. Reinforces our four architectures' reliance on worktrees + branches + PRs as the substrate, and supports the framing that the harness — not the model — enforces collaboration discipline.
+
+### 9.2 Closing claim, verbatim
+
+> "Everyone in the world is learning in real time how to use these tools. No one really knows how to truly squeeze the full potential out of these systems, not even the people making them."
+
+A useful epistemic anchor for our synthesis: the most experienced practitioner in the corpus we've reviewed explicitly disclaims authoritative knowledge. Our project's confidence levels should match.
+
+### 9.3 Vocabulary additions from the manifesto
+
+To be carried into `architectures/` and the synthesis alongside §1's harness/scaffold/guides-sensors vocabulary:
+
+- *Capability percentage* — informal model: model effective capability ≈ (1 − context-fill ratio). Heuristic ceiling at 50% fill.
+- *One-shot discipline* — the practice of restarting an agent instance rather than continuing past ~50 messages or past 50% context fill.
+- *LLM telephone* — anti-pattern: sustained chained communication between agent instances. Permitted only as a context-reset handoff, not as ongoing dialogue. (See F26 in §6.)
+- *Codebase as fine-tuning surface* — the claim that codebase quality directly modulates agent output quality through context conditioning. (Compare Raschka's "much of apparent model quality is really context quality.")
+
+---
+
+*End of report 09 — `research/09-jaymin-book-harnesses-practices-mental-models.md` v1.1 (v1.0 + Substack manifesto folded in from the deleted partial, 2026-05-13)*

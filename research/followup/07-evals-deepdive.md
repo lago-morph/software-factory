@@ -143,6 +143,6 @@ Sandbox blocks `anthropic.com`, `hamel.dev`, `simonwillison.net`, and `web.archi
 ## 6. Open follow-ups
 
 - Verbatim retrieval of the four primary URLs via the fetch-blocked-urls workflow, to confirm direct quotes (especially the exact "passing 100%" phrasing and the 60–80% number's surrounding context).
-- Cross-reference with `research/09-jaymin-harnesses-partial.md` for how Overstory frames its own evaluation — Jaymin's framework may already encode some of Husain's discipline implicitly.
+- Cross-reference with `research/09-jaymin-book-harnesses-practices-mental-models.md` for how Overstory frames its own evaluation — Jaymin's framework may already encode some of Husain's discipline implicitly.
 - Map specific judge prompts in `architectures/01-specification-refinery.md` §judge into the binary-per-AC pattern as a concrete worked example.
 - Author a small ADR proposing the "60–80% pass-rate band" as the project-wide eval-health KPI for any judge or fitness component shipped under the factory.

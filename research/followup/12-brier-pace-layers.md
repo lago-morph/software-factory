@@ -1,6 +1,6 @@
 # 12 — Brier's Pace Layers: A Counter-Metaphor to the Software Factory
 
-**Thread:** Round-3 fanout 20260511 sub-30 — drain of `research/manual/2026-05-08-every-noah-brier-culture-of-ai-engineering.txt`
+**Thread:** Round-3 fanout 20260511 sub-30 — drain of `reference-only/brier-culture-of-ai-engineering.txt` (was at `research/manual/2026-05-08-every-noah-brier-culture-of-ai-engineering.txt` at drain time; moved to `/reference-only/` in the 2026-05-13 cleanup pass)
 **Date:** 2026-05-11
 **Source:** every.to *Chain of Thought / Thesis* column, Friday 2026-05-08, "The Culture of AI Engineering: A framework for getting humans, agents, and everything in between to build the same vision," by Noah Brier (Alephic). Editor's intro by Kate Lee.
 **Diff targets:** `research/13-round-2-synthesis.md` §1–§2; `research/followup/01-shapiro-five-levels.md`; `research/07-dark-factory.md`; `research/15-el-kaim-book-bmad-attractor-dark-factory.md`; `research/followup/06-competitor-landscape.md` §3.

@@ -149,7 +149,7 @@ How:
 ### 4.4 Not worth fetching anymore
 
 - **The two Lenny URLs as articles** — confirmed video-only with paywall-stub article shell. There is no text body at the URL. See §4.2 for the YouTube route instead.
-- **The three Klaassen Every.to siblings** — successfully fetched via Wayback in (now-closed) fetch-urls issue #23. Re-fetch would be duplicate work.
+- **The three Klaassen Every.to siblings** — successfully fetched directly via the GH Action runner in (now-closed) fetch-urls issue #23 (the every.to URLs returned HTTP 200 from the runner despite blocking the sandbox). Re-fetch would be duplicate work.
 - **`kaner.com/pdfs/ScenarioIntroVer4.pdf` + Wikipedia PDCA + Deming Institute PDSA** — optional per `research/unfetched-sources.md` "Deferred fetch-action candidates" row 5; structural conclusions firm without these.
 
 ---
@@ -193,7 +193,7 @@ These four files in `research/` are the system of record for what URLs are reach
 
 - `research/blocked-urls.md` — cross-round canonical inventory of URLs that returned non-200 from the GitHub Actions runner. Versioned (currently v5).
 - `research/blocked-urls-round-2.md` — per-issue retrieval log for Round 2's fetch passes (issues #4 and #8).
-- `research/unfetched-sources.md` — URLs the action couldn't recover; categorized by which manual recovery path (A: curl with cookies; B: Save Page As; C: Reader View) will work. Includes a "Deferred fetch-action candidates" table (now 6 rows filed, 4 deferred).
+- `research/unfetched-sources.md` — URLs the action couldn't recover; categorized by which manual recovery path (A: curl with cookies; B: Save Page As; C: Reader View) will work. Includes a "Deferred fetch-action candidates" table (now 6 rows filed via #29/#30/#31 + 1 row retrospectively resolved via #23; 3 rows still deferred).
 - `research/fetch-from-browser.sh` — runnable bash script the user invokes locally with browser cookies. Outputs to `research/manual/`.
 
 External-synthesis artifacts (e.g., the ChatGPT deep-research output we use as Round-5 counterfactual) live under `/reference-only/<short-slug>-<date>/` with a `README.md` orientation file alongside the artifact.

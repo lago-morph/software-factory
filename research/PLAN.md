@@ -1041,7 +1041,7 @@ Two URL families are **NOT** fetch-action candidates and remain user-only — li
 
 ### 14.4 Next-session task list (priority order)
 
-1. **File the deferred fetch issues** per §14.3 / `unfetched-sources.md`. Highest leverage: the Anthropic engineering + hamel.dev + simonwillison.net + arXiv 2503.18813 batch — these directly upgrade reports 23, followup/07, followup/08 from secondary to primary citations.
+1. ~~**File the deferred fetch issues** per §14.3 / `unfetched-sources.md`. Highest leverage: the Anthropic engineering + hamel.dev + simonwillison.net + arXiv 2503.18813 batch — these directly upgrade reports 23, followup/07, followup/08 from secondary to primary citations.~~ **Partially done 2026-05-13** — three batched issues filed: #29 (high-leverage Anthropic / Hamel / Willison / arXiv / Shapiro), #30 (GitHub docs Copilot cluster), #31 (Cloudflare-heavy competitor landscape). Four rows remain unfiled (kaner PDF — optional; replit — action-success uncertain; openai.com codex — known-blocked; every.to siblings — Path B only). See updated status column in `research/unfetched-sources.md`. Drain the new fetched/issue-N branches once the action runs.
 2. **Update `architectures/00-comparison.md`:**
    - Replace §7 with the substrate-stack recommendation from report 13 §6 (preserve original as "§7 (Round 1)").
    - Extend §2.4 failure-mode table with F21–F33 from report 09 + report 13 + the three new governance modes (G12/G13/G14) from the drained report 10.

@@ -1,0 +1,9 @@
+https://docs.github.com/en/copilot/concepts/agents/about-coding-agent
+https://docs.github.com/en/copilot/how-tos/agents/coding-agent
+https://docs.github.com/en/copilot/concepts/copilot-extensions/about-extensions-for-copilot
+https://docs.github.com/en/copilot/how-tos/agents/about-assigning-tasks-to-copilot
+https://docs.github.com/en/copilot/copilot-workspace
+https://docs.github.com/en/copilot/copilot-workspace/about-copilot-workspace
+https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/about-autofix-for-codeql-code-scanning
+https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/working-with-code-scanning-alerts-with-copilot-autofix
+https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql

@@ -2,7 +2,7 @@
 
 **Sources covered:**
 - https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e — **ACCESSED IN FULL** as of 2026-05-11 via a user-supplied "Save Page As" capture, after a Cloudflare-solved browser session, dropped into `reference-only/dark-factory-article.txt` (41 KB, William El Kaim, Apr 8, 2026, "24 min read"). This is the canonical primary source and the basis for all verbatim quotes below.
-- el-kaim.com author profile context (https://medium.com/@welkaim/about, https://welkaim.medium.com/) — author identification only; both remain Cloudflare-gated and contribute no body text.
+- el-kaim.com author profile context (https://medium.com/@welkaim/about, https://welkaim.medium.com/) — **author profile + post index now ACCESSED** via Save-Page-As exports dropped 2026-05-13 (now deleted). Bio: "Technology Innovations, Platforms, Blockchain, & API"; Medium member since August 2020; 756 followers, 142 following. The post-index page surfaced **ten additional El Kaim posts our corpus has not yet drained** (logged as a future-research cluster in `research/PLAN.md`). The about page contributes only metadata; no body text.
 
 **Date:** 2026-05-11 (primary source incorporated; supersedes the 2026-05-10 secondary-source reconstruction)
 

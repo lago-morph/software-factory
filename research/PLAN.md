@@ -342,4 +342,31 @@ Output: `research/01-07-*` plus initial synthesis `research/00-synthesis.md`. F1
 
 ---
 
+## Future research
+
+Captured as the research-pipeline skill prescribes: name the cluster, list sources, justify in one paragraph, estimate effort. These are leads that surfaced during drain work but were not chased in the current round.
+
+### Future research: El Kaim's broader Medium corpus (10+ posts beyond the 9-chapter book)
+
+**Sources** (surfaced from `welkaim.medium.com` post-index page, retrieved manually 2026-05-13):
+
+- *From Vibes to Codex to Claw: Architecture enters the Edge era* (Feb 24, 2026)
+- *When Architecture Starts Thinking: The Shift to Cognitive Infrastructure* (Feb 20, 2026)
+- *The Cyrano de Bergerac Method of Prompting: One Question, a Thousand Voices* (Feb 19, 2026)
+- *From Vibes to Flow: Building the Enterprise Codex for Agentic AI* (Feb 18, 2026)
+- *Spec-Driven Enterprise Architecture with BMAD, AI, and LeanIX* (Feb 10, 2026)
+- *From AI Discovery to AI Governance: Building an Enterprise Copilot on LeanIX* (Dec 16, 2025)
+- *Designing and governing AI agents landscape and architecture with LeanIX* (Nov 10, 2025)
+- *Analysis of AI and Agentic AI Features in major Enterprise Architecture Management Solutions* (Jul 14, 2025)
+- *From Automation to Autonomy: The AI-Driven Transformation of the Enterprise Architecture Tool…* (Jul 13, 2025)
+- *The SAP API Policy as an External Trigger: How the EA Codex absorbs vendor policy changes* (between Ch5 and Ch6; possibly a sidebar to Ch6)
+
+**Justification.** Our four existing El Kaim reports (14–17) are anchored to the 9-chapter AI-Augmented-EA series. The post-index page shows El Kaim has published a **parallel track** of standalone posts that pre-date and accompany the book series and that touch directly on our four candidate architectures: the *Cyrano* post is almost certainly a one-question/many-agents pattern that overlaps with our Council architecture (report 16); the *BMAD/LeanIX* post (Feb 10) is the canonical primary source for material currently reconstructed across reports 15 + 16; the three *LeanIX governance* posts are primary-source material for AI-agent governance that `research/followup/10-governance.md` currently reconstructs from secondary sources; the *Cognitive Infrastructure* post likely names patterns we currently treat as anonymous. Investigating this cluster would let us flip reconstructed-from-search-snippet citations in 5+ reports to primary, and may surface 1–2 named patterns that should be added to the methodology layer.
+
+**Effort.** ~10 Medium posts, all on the same host (`welkaim.medium.com` / `medium.com/@welkaim/...`). Host is action-reachable per round-6 testing (the about page returned content). One batched `[fetch-urls]` issue + one drain pass; ~½ session.
+
+**Recovery path.** File a single `[fetch-urls]` issue with the 10 post URLs (need to harvest the exact URLs first — the post-index page deliberately omits them in the text export; either the user re-exports with hyperlinks preserved, or a `find / -type f -name 'welkaim.medium.com'`-style scan reveals what we already have, or WebSearch by title).
+
+---
+
 *End of PLAN.md v0.9.*

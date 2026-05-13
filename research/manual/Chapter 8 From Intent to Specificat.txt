@@ -1,0 +1,604 @@
+Chapter 8: From Intent to Specification
+William El Kaim
+William El Kaim
+
+Following
+26 min read
+·
+5 days ago
+
+
+
+
+
+This post focuses on how intent and product demand become decisions, how decisions are organized into specifications, how specifications become executable through derived constraints, and how those specifications are verified through evals.
+
+1. The missing architectural act between intent and execution
+Post 5 showed that intent is not enough. “Keep the core clean” expresses a real enterprise concern: preserve upgradeability, reduce modification debt, and avoid turning a transformation program into the next generation of technical lock-in. But the sentence does not say which country variation is legitimate, which extension mechanism is acceptable, or what evidence proves that the implementation respects the posture it claims. Without that translation, clean core remains vulnerable to local interpretation. A country team justifies an exception. A delivery partner reaches for a familiar extension pattern. The phase gate passes anyway, because the program has no precise way to prove that the architecture has actually been respected. This is not a SAP-specific problem, but SAP just makes it visible. The transformation lifecycle is explicit, the core model is politically sensitive, and the consequences of unmanaged variation are expensive.
+
+The same pattern appears in cloud transformations, data platform programs, AI agent initiatives, regulatory remediation, and software product renewal:
+
+The enterprise states a valid intent.
+Product teams translate part of that intent into a PRD.
+Delivery begins to interpret the demand.
+By the time architecture is asked to review, the choices have already started to harden into systems, workflows, integrations, and code. Architecture may still influence the outcome at that point, but it is no longer shaping the design space. It is correcting interpretation after interpretation has already become implementation.
+
+This post examines the missing architectural act that sits between intent and execution. That act is the transformation of enterprise intent and product demand into a governed design space:
+
+Some choices in that space are allowed because they remain consistent with enterprise intent.
+Others are prohibited because they would undermine the architecture. Some are delegated to local teams that can decide safely inside a defined envelope.
+Some require escalation because they cross a structural boundary. And some can be checked automatically because they have been expressed as executable constraints.
+This is what specification means in this series. A specification is not a longer requirements document, is not a diagram with more metadata, and not a policy copied into a repository. It is the structured form through which architectural judgment becomes usable by delivery teams, governance bodies, platforms, pipelines, and AI agents.
+
+2. Intent and PRD are demand artifacts
+Intent expresses enterprise purpose: it explains why change is necessary, what pressure the enterprise is responding to, and what kind of outcome matters enough to justify architectural intervention.
+
+A Product Requirement Document (PRD) expresses product or capability demand. It gives more concrete shape to the desired change by describing users, journeys, features, requirements, acceptance criteria, priorities, and success measures.
+
+Both artifacts are necessary, and both belong on the demand side of architecture. Neither one defines the architectural design space by itself, because neither one is primarily responsible for deciding what must remain structurally true while the demand is being realized.
+
+Consider ACME Pharma, the pharmaceutical enterprise used as the running case throughout this series. ACME wants to improve adverse-event intake across regions. Its enterprise intent can be stated in a disciplined way: accelerate adverse-event intake using AI-assisted triage, while preserving regulatory traceability, human medical review, and authoritative case management in the pharmacovigilance platform. It combines automation, regulated evidence, human accountability, and system-of-record discipline into one architectural problem. It tells the architecture function where the important questions will appear, but it does not answer them. May an AI agent create a case? May extracted patient information be retained in an AI runtime? Is triage priority a recommendation or a regulated classification? What evidence proves that human medical review occurred? The intent raises these questions without resolving any of them.
+
+A PRD derived from that intent would make the product demand more concrete. It might state that regional operators must be able to submit adverse-event intake information from email, call-center transcripts, web forms, and partner reports, that the product must extract patient references, product names, symptoms, event dates, reporter information, country, and seriousness indicators, that it should suggest triage priority so pharmacovigilance reviewers can focus first on high-risk cases, and that the pilot should reduce average intake processing time by forty percent while supporting regional workflows in Europe, North America, and APAC. This PRD is useful because it gives delivery teams a product target. It defines what capability must exist, what workflow must improve, what user experience must change, and what outcome will be measured.
+
+The PRD still does not define architectural acceptability. It describes what the product must achieve, not what it must avoid damaging while doing so.
+
+A delivery team can satisfy the PRD and still create an architecture problem.
+The AI layer might retain regulated patient data outside approved stores.
+Regional workflow tools might evolve into shadow case-management systems.
+The line between AI recommendation and regulated decision might blur in practice.
+Intake evidence might end up trapped where no one can trace it back to the authoritative pharmacovigilance case.
+The PRD makes the demand actionable for product delivery; the specification makes the demand acceptable for the enterprise.
+
+This distinction is central:
+
+Intent and PRDs express what the enterprise wants.
+Architecture specification defines the conditions under which that demand may be realized without breaking the enterprise structures that the intent depends on.
+The PRD tells delivery what the product must achieve; the specification tells delivery what must remain true while achieving it.
+3. The architecture translation problem
+A PRD describes what a product should do, and that is exactly what makes it dangerous as input to architecture. Hidden inside the product language of users, journeys, and features sits a set of unspoken architectural commitments: who owns what data, which system holds authoritative state, where decisions may be made, what evidence must survive the process. None of these are visible in the PRD itself. All of them will be answered by somebody. If architecture does not answer them deliberately, the first delivery team to encounter them will.
+
+Take the adverse-event PRD:
+
+It requires AI extraction of regulated patient information, yet says nothing about where that information may live or how long the runtime may keep it.
+It asks the model to suggest triage priority without specifying whether the suggestion is decision-support evidence or a regulated classification
+The multi-channel intake requirement does not distinguish channels that may register a case from those that may only forward evidence.
+Each of these requirements hides a structural question that the implementation cannot avoid answering.
+
+When architecture does not translate these questions, each team answers them through its own lens:
+
+The AI team optimizes for model context and keeps more regulated data than the enterprise can safely govern.
+The regional team builds local case stores that drift into authority by accident.
+The CRM team retains adverse-event information longer than its role permits. N
+None of these teams is acting unreasonably, but their local rationality compounds into a system that violates the very intent it was built to serve. The translation problem is not a documentation problem. It is the act of making the hidden architecture of demand explicit before implementation hardens around assumptions no one wrote down.
+
+4. Design decisions close the design space
+A governed design space is formed through decisions. The architect decides what is authoritative, what may vary, what is prohibited, what is delegated, and what must escalate. This does not mean that architecture must decide every detail centrally. A large enterprise cannot operate if every local workflow configuration, every prompt adjustment, every API mapping, and every regional reporting difference requires an architecture board. The role of architecture is not to centralize every choice; it is to close the choices that would otherwise undermine enterprise intent, and to define the envelope within which other choices can safely be made.
+
+In the adverse-event example, the most important design question is where adverse-event authority belongs. Several options are plausible:
+
+CRM could hold intake records because many adverse events first appear through customer interaction channels.
+A regional workflow tool could hold suspected cases because local teams need to coordinate work before formal pharmacovigilance review.
+The AI triage service could retain provisional case state because classification may improve when the agent has more context.
+The pharmacovigilance platform could be the only authoritative case system because it is validated, audited, and aligned with regulated case management.
+Each option has an operational argument, which is precisely why intent and PRD are insufficient. They cannot resolve the trade-off merely by restating the need for speed, traceability, and human review. Architecture must decide which concern dominates when these objectives compete.
+
+Figure 1 (Decision record DEC-PV-001) establishes the pharmacovigilance platform as the authoritative system of record for suspected adverse-event cases.
+
+apiVersion: ea.codex/v1
+kind: DecisionRecord
+metadata:
+  id: DEC-PV-001
+  title: Pharmacovigilance platform as adverse-event system of record
+  owner: enterprise-architecture-council
+  status: approved
+context:
+  intentReference: INTENT-PV-001
+  prdReference: PRD-PV-INTAKE-001
+  concern: AI-assisted adverse-event intake
+  problem: >
+    The PRD requires AI-assisted intake across multiple channels and regions.
+    Without an explicit authority decision, adverse-event case state may be
+    fragmented across CRM, AI services, regional workflow tools, and document
+    processing components.
+decision:
+  statement: >
+    The pharmacovigilance platform is the authoritative system of record
+    for all suspected adverse-event cases. CRM, regional workflow tools,
+    document processing services, and AI agents may assist intake, routing,
+    extraction, and summarization, but must not create persistent adverse-event
+    case records outside the pharmacovigilance platform.
+rationale:
+  text: >
+    Regulatory traceability requires a single authoritative case record from
+    the point at which a suspected adverse event is identified. AI-assisted
+    intake and regional workflow coordination are acceptable only if they remain
+    subordinate to validated pharmacovigilance case management.
+rejectedAlternatives:
+  - option: CRM as temporary adverse-event case repository
+    reason: >
+      CRM is an intake channel, not a validated pharmacovigilance case system.
+  - option: Regional workflow tools as local suspected-case stores
+    reason: >
+      This would create fragmented case authority and inconsistent auditability.
+  - option: AI triage service holding provisional case state
+    reason: >
+      This would give the AI layer persistent regulated case state without
+      validated case-management controls.
+consequences:
+  - AI agents may extract evidence and suggest triage, but may not create case records.
+  - Regional workflow tools may manage work queues, but may not hold case authority.
+  - Intake evidence must be linked to the authoritative case identifier.
+  - Regulated case decisions must be approved by authorized pharmacovigilance reviewers.
+reviewTriggers:
+  - Regional regulation prevents centralized case registration.
+  - A new validated pharmacovigilance platform is introduced.
+  - Repeated intake delays show that the current system-of-record boundary is too restrictive.
+  - AI triage becomes part of a validated operating procedure.
+Figure 1: Decision record DEC-PV-001.
+
+The decision does not make the product less ambitious, but makes the product architecturally governable:
+
+CRM can still be an intake channel, but it cannot become the adverse-event case authority.
+Regional workflow tools can still coordinate local work, but they cannot create a shadow case-management layer.
+The AI service can still extract facts, summarize evidence, and suggest triage priority, but it cannot hold independent regulated case state or approve medical decisions.
+The pharmacovigilance platform becomes the anchor around which the other components must organize.
+The important point is that the decision also makes the rejected alternatives visible. This matters because many architecture failures are not caused by teams explicitly ignoring a known decision; they are caused by teams re-opening a question that was never properly closed. When the alternatives are explicit, delivery teams understand not only what was chosen but why other plausible options were rejected. This gives future governance a basis for discipline and revision. If repeated intake delays later show that the pharmacovigilance platform creates unacceptable operational friction, the enterprise can revisit the decision through a review trigger. Until that happens, the boundary holds.
+
+5. Specification organizes those decisions
+A specification connects intent, PRD, concerns, decisions, models, rules, evidence, and authority. It organizes the architectural commitments for a defined concern so that delivery, governance, tools, and AI systems can use them. A specification:
+
+is not a PRD, because a PRD expresses product demand rather than architectural acceptability.
+is not a diagram, because a diagram shows structure without authority.
+is not a policy document, because a policy states a rule without showing the decision that justifies it or the evidence that proves it.
+is not a decision log, because decisions only govern delivery once they are connected to models, rules, constraints, and feedback.
+For the adverse-event initiative, the specification must hold many things together at once. It must connect the enterprise intent and the PRD to the architectural concerns and the governing decision, name the relevant systems and data objects, define the AI action boundary, specify the variation envelope, and point to the evidence sources, escalation triggers, and feedback signals. It is not a passive description of a target state. It is the form in which architecture becomes usable by those who will build, operate, govern, and audit the capability.
+
+Figure 2 shows the Architecture Specification SPEC-PV-001 (ai-assisted-adverse-event-intake). It describes the intent, PRD, concerns, decisions, models, conformance rules, evidence obligations, and authority boundaries for the adverse-event initiative.
+
+apiVersion: ea.codex/v1
+kind: ArchitectureSpecification
+metadata:
+  id: SPEC-PV-001
+  name: ai-assisted-adverse-event-intake
+  owner: enterprise-architecture-council
+  status: approved-for-controlled-pilot
+  version: "1.0"
+demand:
+  intent:
+    id: INTENT-PV-001
+    statement: >
+      Accelerate adverse-event intake across regions using AI-assisted triage,
+      while preserving regulatory traceability, human medical review, and
+      authoritative case management in the pharmacovigilance platform.
+  prd:
+    id: PRD-PV-INTAKE-001
+    product: AI-Assisted Adverse Event Intake
+    selectedRequirements:
+      - Extract adverse-event facts from email, call-center transcripts,
+        web forms, and partner reports.
+      - Suggest triage priority for pharmacovigilance reviewers.
+      - Support regional intake workflows for EU, North America, and APAC.
+      - Reduce average intake processing time by 40% during the pilot.
+architecturalConcerns:
+  - data-authority
+  - system-of-record
+  - ai-action-boundary
+  - human-approval
+  - regional-variation
+  - audit-evidence
+  - patient-data-retention
+model:
+  systems:
+    - id: APP-PV
+      name: Pharmacovigilance Platform
+      role: adverse-event-system-of-record
+      validationStatus: validated
+    - id: APP-CRM
+      name: Customer Interaction Platform
+      role: intake-channel
+      validationStatus: not-validated-for-case-management
+    - id: APP-WF-REGIONAL
+      name: Regional Workflow Tool
+      role: local-work-queue
+      validationStatus: not-validated-for-case-management
+    - id: APP-AI-TRIAGE
+      name: AI Triage Service
+      role: decision-support-service
+      validationStatus: controlled-pilot
+agents:
+  - id: AGENT-PV-TRIAGE
+    name: Adverse Event Intake Assistant
+    permittedActions:
+      - extract-intake-evidence
+      - suggest-triage-priority
+      - draft-case-summary
+      - route-for-human-review
+    prohibitedActions:
+      - create-persistent-case-record
+      - approve-seriousness-classification
+      - confirm-case-validity
+      - close-case
+      - update-regulatory-reporting-status
+dataObjects:
+  - id: DATA-AE-CASE
+    name: Adverse Event Case
+    authority: APP-PV
+    classification: regulated
+  - id: DATA-INTAKE-EVIDENCE
+    name: Intake Evidence
+    authority: APP-PV
+    classification: regulated
+  - id: DATA-AI-SUGGESTION
+    name: AI Triage Suggestion
+    authority: APP-PV
+    classification: decision-support-evidence
+decisions:
+  - DEC-PV-001
+rules:
+  - id: RULE-PV-001
+    name: Authoritative case record
+    statement: >
+      Persistent adverse-event case records must be created and stored only
+      in systems whose role is adverse-event-system-of-record.
+    derivedFrom: DEC-PV-001
+    evidenceSources:
+      - application-inventory
+      - integration-catalog
+      - pharmacovigilance-case-log
+      - data-lineage-register
+  - id: RULE-PV-002
+    name: AI action boundary
+    statement: >
+      AI agents must not create persistent case records, approve seriousness
+      classification, confirm case validity, close cases, or update regulatory
+      reporting status.
+    derivedFrom: DEC-PV-001
+    evidenceSources:
+      - agent-permission-registry
+      - agent-action-log
+      - workflow-audit-log
+  - id: RULE-PV-003
+    name: Human regulated decision
+    statement: >
+      Seriousness classification, case validity confirmation, and regulatory
+      reporting readiness must be approved by an authorized pharmacovigilance
+      reviewer.
+    derivedFrom: DEC-PV-001
+    evidenceSources:
+      - workflow-audit-log
+      - identity-and-access-management-log
+      - pharmacovigilance-case-log
+  - id: RULE-PV-004
+    name: Evidence linkage
+    statement: >
+      AI-extracted intake evidence must be linked to the authoritative
+      adverse-event case identifier before it is used in triage or review.
+    derivedFrom: DEC-PV-001
+    evidenceSources:
+      - document-processing-log
+      - evidence-store
+      - pharmacovigilance-case-log
+variation:
+  allowed:
+    - type: regulatory-localization
+      authority: regional-compliance-architecture
+      condition: >
+        Localized intake requirements may vary by region if authoritative
+        case state remains in APP-PV.
+    - type: language-processing-localization
+      authority: ai-governance-lead
+      condition: >
+        Region-specific extraction prompts or models may vary if extracted
+        evidence remains linked to the authoritative case identifier.
+    - type: intake-channel-localization
+      authority: pharmacovigilance-process-owner
+      condition: >
+        Regional intake channels may vary if they do not persist
+        adverse-event case state outside APP-PV.
+  prohibited:
+    - local-case-record-store
+    - autonomous-seriousness-approval
+    - autonomous-case-closure
+    - patient-data-retention-in-agent-memory
+    - regional-workflow-as-case-authority
+governance:
+  primaryAuthority: enterprise-architecture-council
+  escalationTriggers:
+    - AI agent requests a prohibited action.
+    - Region proposes persistent local case state.
+    - Workflow variation affects seriousness classification.
+    - Evidence cannot be linked to the authoritative case identifier.
+    - Repeated exceptions suggest the global intake model is incomplete.
+feedback:
+  monitoredSignals:
+    - intake-latency
+    - evidence-completeness-rate
+    - ai-triage-override-rate
+    - blocked-agent-action-count
+    - unlinked-evidence-count
+    - regional-exception-count
+  reviewCadence: monthly-during-pilot
+Figure 2: Architecture specification SPEC-PV-001 (ai-assisted-adverse-event-intake).
+
+Download the Medium App
+The specification changes the relationship between product demand and delivery:
+
+The product team still owns the need to reduce intake latency, support regional workflows, and improve evidence completeness.
+Architecture owns the conditions that prevent those goals from being achieved through structurally dangerous shortcuts.
+The pharmacovigilance platform remains authoritative.
+The AI agent remains within a decision-support boundary.
+Regional variation is governed rather than improvised.
+Audit evidence is treated as part of the architecture rather than as an after-the-fact compliance burden.
+A specification of this kind also changes the role of architecture review. The question is no longer whether an architect “likes” the proposed solution. The question is whether the proposed solution remains inside the design space that has already been defined. If it does, delivery should proceed without unnecessary review. If it does not, the issue should escalate through the authority model already described in the specification. This is how specification avoids both under-governance and over-governance: it gives teams autonomy inside a clear envelope and makes boundary violations visible before they become embedded in the solution.
+
+6. Executable constraints are derived from specification
+Some rules become policies, validations, gates, tests, or AI guardrails. Not every rule can be automated, and not every architectural judgment should be reduced to code:
+
+A regional regulatory deviation may require interpretation.
+recurring exception may signal that the global design is incomplete, not that a team is non-compliant.
+A pattern of human overrides may show that an AI triage model is not yet reliable enough for the workflow it sits in.
+Architecture remains a human discipline, because enterprises are full of trade-offs that resist binary evaluation.
+
+At the same time, some parts of a specification should not be left to late manual review. The specification may say that an AI agent must not approve seriousness classification, close adverse-event cases, or create persistent case records. The enterprise should not have to wait for a governance meeting to discover that the agent was deployed with those permissions anyway. The specification may say that extracted evidence must be linked to the authoritative case identifier. The enterprise should not have to wait for an audit to discover that evidence is trapped in an isolated processing store. Executable constraints bring architecture to the point where the decision is about to become action.
+
+The following Rego policy (pv_intake.agent_permissions) evaluates whether an AI agent permission request complies with the specification and decision above.
+
+package pv_intake.agent_permissions
+import future.keywords.if
+import future.keywords.in
+import future.keywords.contains
+default allow := false
+required_specification := "SPEC-PV-001"
+required_decision := "DEC-PV-001"
+prohibited_actions := {
+  "create-persistent-case-record",
+  "approve-seriousness-classification",
+  "confirm-case-validity",
+  "close-case",
+  "update-regulatory-reporting-status"
+}
+allow if {
+  input.agent.specificationId == required_specification
+  input.agent.decisionId == required_decision
+  no_prohibited_actions
+  evidence_logging_configured
+  human_review_route_configured
+}
+no_prohibited_actions if {
+  every action in input.agent.requestedActions {
+    not action in prohibited_actions
+  }
+}
+evidence_logging_configured if {
+  input.agent.controls.evidenceLogging == true
+  input.agent.controls.actionLogTarget == "pharmacovigilance-case-log"
+}
+human_review_route_configured if {
+  input.agent.controls.humanReviewRoute.required == true
+  input.agent.controls.humanReviewRoute.role == "pharmacovigilance-reviewer"
+}
+deny_reasons contains msg if {
+  some action in input.agent.requestedActions
+  action in prohibited_actions
+  msg := sprintf(
+    "Action '%s' is prohibited by %s and governed by %s",
+    [action, required_specification, required_decision]
+  )
+}
+deny_reasons contains "Agent actions must be logged to the pharmacovigilance case log" if {
+  input.agent.controls.actionLogTarget != "pharmacovigilance-case-log"
+}
+deny_reasons contains "Human pharmacovigilance review route is required" if {
+  not human_review_route_configured
+}
+result := {
+  "allowed": allow,
+  "agent": input.agent.id,
+  "specification": input.agent.specificationId,
+  "decision": input.agent.decisionId,
+  "denyReasons": deny_reasons
+Figure 3: Rego policy pv_intake.agent_permissions.
+
+A compliant request, shown in Figure 4, remains inside the design space defined by the specification. The agent extracts evidence, suggests triage priority, drafts a summary, and routes the case for human review. It logs actions to the pharmacovigilance case log and uses the required review route. The policy does not approve the agent because the team claims it is safe; it approves the agent because the requested behavior conforms to the architecture.
+
+{
+  "agent": {
+    "id": "AGENT-PV-TRIAGE",
+    "specificationId": "SPEC-PV-001",
+    "decisionId": "DEC-PV-001",
+    "requestedActions": [
+      "extract-intake-evidence",
+      "suggest-triage-priority",
+      "draft-case-summary",
+      "route-for-human-review"
+    ],
+    "controls": {
+      "evidenceLogging": true,
+      "actionLogTarget": "pharmacovigilance-case-log",
+      "humanReviewRoute": {
+        "required": true,
+        "role": "pharmacovigilance-reviewer"
+      }
+    }
+  }
+}
+Figure 4: Compliant agent permission request.
+
+Figure 5 sshows a non-compliant request and reveals the value of making the constraint executable. The agent asks to approve seriousness classification and close cases, logs to local agent memory, and lacks a required human review route. Those are not subtle architectural preferences; they are violations of the design decision that made the pharmacovigilance platform authoritative and preserved human accountability for regulated decisions.
+
+{
+  "agent": {
+    "id": "AGENT-PV-TRIAGE-V2",
+    "specificationId": "SPEC-PV-001",
+    "decisionId": "DEC-PV-001",
+    "requestedActions": [
+      "extract-intake-evidence",
+      "approve-seriousness-classification",
+      "close-case"
+    ],
+    "controls": {
+      "evidenceLogging": true,
+      "actionLogTarget": "agent-local-memory",
+      "humanReviewRoute": {
+        "required": false,
+        "role": null
+      }
+    }
+  }
+}
+Figure 5: Non-compliant agent permission request.
+
+The rejection is not a late architectural opinion. It is the consequence of an explicit decision, organized into a specification and evaluated at the point of action.
+
+The policy can also explain the rejection, which is critical for adoption. A gate that simply blocks work creates frustration; a traceable constraint tells the team what boundary was crossed and what must change. The team can remove prohibited actions, route evidence to the correct log, configure the required human review path, or escalate the request if it represents a legitimate change in architecture.
+
+Executable constraints therefore do not replace architecture. They extend architecture into delivery. They allow architectural decisions to appear inside pipelines, workflow systems, AI runtimes, access-control checks, test suites, deployment gates, and operational monitors, where they can affect execution before non-conformance becomes expensive.
+
+7. Evals: proving the specification holds in practice
+Executable constraints catch what can be reduced to a deterministic rule. An agent tries to create a case and the policy blocks it. An integration omits a required evidence link and the gate rejects it. These checks are necessary, but they only cover behavior that can be expressed as a binary condition. A large part of what a specification claims about AI behavior cannot.
+
+The specification asserts that the AI Triage Service extracts adverse-event facts reliably, that its triage suggestions correspond to what an experienced pharmacovigilance reviewer would have prioritized, that extraction prompts continue to produce usable evidence when the underlying model is updated, and that regional variations in intake language do not degrade extraction quality below a tolerable threshold. None of these claims can be evaluated by inspecting the agent’s permission set. They can only be answered by running the agent against cases whose correct answers are already known, and measuring how closely the agent’s output matches the expected result. The enterprise needs a system that does this systematically, repeatably, and at a cadence that catches drift before production does.
+
+That system is evals. And in a specification-driven workflow, evals are not an optional quality gate bolted on at the end.
+
+They are the mechanism that makes the entire workflow trustworthy.
+
+A specification claims that the AI Triage Service may operate inside a decision-support boundary. An eval proves that the service is actually competent enough to sit inside that boundary.
+A specification names a reviewer override rate as a feedback signal. An eval establishes the baseline against which future model versions, prompt changes, or regional adaptations will be measured.
+Without this layer, the architectural claim that AI may extract and suggest floats free of evidence. The specification says the AI is trustworthy for a defined use; the eval proves it.
+
+For the ACME Pharma case, an adverse-event intake eval is constructed around a curated set of historical intake cases whose ground truth is already known: the patient reference, the product, the symptoms, the event dates, the reporter, the country, the seriousness indicator, and the triage priority that a senior pharmacovigilance reviewer assigned. A run of the eval submits each unstructured intake payload to the AI Triage Service, compares the extracted fields against ground truth, and produces metrics on extraction accuracy per field, agreement with the human-assigned triage priority, false-negative rate on serious events, latency, and cost per case. Each metric has a threshold attached. A run below threshold blocks deployment of the new configuration the same way a failing policy check blocks a prohibited action. A run above threshold is retained as the new baseline for the next regression comparison.
+
+The eval suite is itself a Codex object, bound to the specification through a stable identifier. It cannot drift from what architecture governs, because every metric it measures traces to a commitment the specification already makes. Figure 6 shows what an eval description could be in practice (binds to SPEC-PV-001 and DEC-PV-001; defines datasets, metrics, thresholds, and regression guards that prove the specification holds in practice).
+
+apiVersion: ea.codex/v1
+kind: EvaluationSuite
+metadata:
+  id: EVAL-PV-001
+  name: ai-assisted-adverse-event-intake-eval
+  owner: pharmacovigilance-ai-governance
+  status: active
+specificationReference: SPEC-PV-001
+decisionReference: DEC-PV-001
+datasets:
+  - id: DATASET-PV-INTAKE-GOLD-EU
+    name: EU adverse-event intake ground truth
+    cases: 500
+    curator: pharmacovigilance-medical-reviewers
+  - id: DATASET-PV-INTAKE-GOLD-NA
+    name: North America adverse-event intake ground truth
+    cases: 500
+    curator: pharmacovigilance-medical-reviewers
+  - id: DATASET-PV-INTAKE-GOLD-APAC
+    name: APAC adverse-event intake ground truth
+    cases: 500
+    curator: pharmacovigilance-medical-reviewers
+metrics:
+  - id: extraction-accuracy-patient-reference
+    type: field-level-accuracy
+    threshold: 0.95
+    protects: RULE-PV-004
+  - id: extraction-accuracy-product-name
+    type: field-level-accuracy
+    threshold: 0.95
+    protects: RULE-PV-004
+  - id: extraction-accuracy-seriousness-indicator
+    type: field-level-accuracy
+    threshold: 0.98
+    protects: RULE-PV-003
+  - id: triage-priority-agreement
+    type: ordinal-agreement-with-reviewer
+    threshold: 0.85
+    protects: RULE-PV-002
+  - id: serious-event-recall
+    type: binary-recall
+    threshold: 1.0
+    protects: RULE-PV-003
+  - id: latency-p95-seconds
+    type: latency
+    threshold: 30
+    protects: PRD-PV-INTAKE-001
+blockingGates:
+  - extraction-accuracy-patient-reference
+  - extraction-accuracy-seriousness-indicator
+  - serious-event-recall
+regressionPolicy:
+  maxAllowedDegradation:
+    triage-priority-agreement: 0.02
+    extraction-accuracy-product-name: 0.01
+reviewTriggers:
+  - underlying-model-update
+  - prompt-change
+  - new-regional-dataset
+  - reviewer-override-rate-exceeds-baseline
+Figure 6: Evaluation suite EVAL-PV-001
+
+The extraction accuracy thresholds protect the rule that evidence linkage must be reliable:
+
+The serious-event recall threshold protects the rule that the AI may not quietly miss regulated cases.
+The latency threshold protects the intake processing time target in the PRD.
+The regression policy protects the specification from silent degradation when the underlying model is updated.
+Each number in the eval is a derivative of a commitment made higher up the stack.
+
+The discipline that applies to Rego policies applies here. An eval run is not a report waiting to be read. It is a gate. A new agent configuration, a new prompt version, a new model, or a new regional extraction pipeline passes through the eval suite before it reaches production. If the suite fails on a blocking gate, the deployment stops and the failure is traced back to the metric, the dataset, and the specification rule it protects. If the suite passes, the deployment proceeds and the metrics are retained as the new baseline. Governance no longer depends on an architect re-reviewing the AI service every time it changes. It depends on the eval suite to prove that the service still operates within the design space the specification defined.
+
+Evals also change how feedback returns to architecture. The specification names monitored signals such as AI triage override rate and blocked-agent-action count, which come from production behavior. The eval suite produces complementary signals that come from controlled conditions: extraction accuracy per field, agreement with the human baseline, regression against prior model versions. Production tells architecture what is happening under real load; evals tell architecture what the system is capable of under known inputs. The combination is what distinguishes a specification whose claims are asserted from a specification whose claims are verified.
+
+This is why evals belong inside the specification rather than alongside it. A specification that describes the AI action boundary and the evidence linkage rules without referencing an eval suite that proves the AI can meet them is an architectural claim without architectural evidence. The Rego policy enforces what the agent is allowed to do. The eval suite proves that what the agent does, when it is allowed to act, is worth allowing in the first place. Both are executable controls. Both derive from the specification. Together they make specification-driven architecture trustworthy rather than merely well-organized.
+
+8. The delivery implication
+Delivery does not receive only a PRD, it receives a PRD plus architecture specification
+
+The PRD defines the product problem, the user outcomes, the functional scope, the acceptance criteria, and the success measures.
+The specification defines the architectural envelope: authorities, decisions, constraints, variation rules, evidence obligations, escalation triggers, and executable controls.
+The two artifacts should evolve together, because product demand and architectural acceptability influence each other throughout the early life of an initiative.
+
+In the adverse-event example, the PRD may begin by requiring AI-suggested triage priority. Architecture refines that requirement by defining the suggestion as decision-support evidence rather than regulated decision authority. The PRD may require regional workflow support. Architecture defines the variation envelope so that regional workflows can differ without becoming local case-management systems. The PRD may target a forty percent reduction in intake processing time. Architecture accepts the objective while prohibiting shortcuts that move regulated case state into uncontrolled systems or allow AI to perform actions that require human medical review.
+
+This is not architecture blocking product delivery. It is architecture making product delivery possible inside the enterprise. A delivery team with only a PRD must infer boundaries from principles, past experience, local interpretation, or late review. A delivery team with a PRD and an architecture specification knows what to build, what not to violate, what may vary, what requires escalation, which checks will run, and which evidence must exist. AI assistants and coding agents receive structured context rather than vague prompts. Governance forums receive traceable decisions rather than late-stage surprises. Audit teams receive evidence paths rather than reconstructed explanations.
+
+This changes the practical role of architecture. Architecture is no longer a downstream reviewer of product intent. It becomes the function that translates product intent into a design space delivery can safely inhabit.
+
+
+From Intent to Specification
+9. Risks, limits, and trade-offs
+Specification-driven architecture has its own failure modes, and any honest deployment must reckon with them.
+
+The most immediate cost is the work itself. Writing a specification takes more discipline than writing a principles document or a target-state slide. Each decision must be defended, each rule must be derivable from a decision, each constraint must be checkable, and each variation envelope must be explicit. In an enterprise that does not yet have the muscle for this kind of work, the first specifications will be slow and uneven. The investment only pays back when the specifications are reused across multiple delivery cycles and when the conformance checks they enable replace late-stage rework.
+
+A related risk is specification rigidity. A specification that is too narrowly drawn may block useful evolution. A team that encounters a legitimate exception finds the specification standing in the way and routes around it informally. The specification then becomes a fiction maintained for governance purposes while real delivery happens elsewhere. The defense against rigidity is the variation envelope: explicit ranges of allowed local adaptation that the specification names rather than forbidding by omission. A specification that has no variation envelope and no exception process will either be ignored or will hold the enterprise back.
+
+Implicit knowledge resists formalization. Some architectural judgment cannot be captured cleanly in a specification because it depends on context, negotiation, or ethical considerations that change with each case. The honest response is to keep those decisions in human review rather than to force a structure that pretends to capture what it cannot. The specification should name the boundary at which formal structure ends and human judgment begins, rather than papering over the boundary with thin formalization.
+
+The political question of who owns the specification is not trivial. A specification that lives in architecture’s repository but governs product delivery is a contract between two functions. If architecture writes the specification without product input, delivery teams will treat it as imposed. If product writes the specification without architectural discipline, the specification will not constrain anything. The healthy pattern is shared authorship under architectural authority: the architecture function holds the pen on what must remain true, while product and delivery contribute the operational reality that shapes how decisions are framed.
+
+Tooling for specification-driven architecture is still maturing. Editors do not natively understand schemas like ea.codex/v1. Validation harnesses require setup. The integration between specifications and policy engines, agent runtimes, and delivery pipelines is bespoke in many enterprises. The tooling will improve, but for now the architect adopting this discipline must invest in the toolchain alongside the specifications themselves. Trying to operate without that investment produces specifications that are formally correct and operationally inert.
+
+The deepest failure mode is the false specification: a document that uses the structured form, names the right fields, and references the right decisions, but whose constraints cannot actually be checked and whose evidence cannot actually be produced. This is worse than no specification at all, because it gives governance forums the appearance of control without the substance. The discipline that prevents false specifications is end-to-end execution: every conformance rule must trace to a check that runs, every evidence obligation must trace to a record that exists, and every escalation trigger must trace to a path that activates. A specification that fails this trace is not a specification yet. It is a specification proposal awaiting the work that would make it real.
+
+Appendix A. ACME Pharma: pharmacovigilance specification end to end
+The ACME Pharma scenario has run through the preceding sections in pieces. This section pulls the pieces together as a single coherent walkthrough of how intent becomes executable architecture for the AI-assisted adverse-event intake capability.
+
+ACME’s enterprise intent is to accelerate adverse-event intake across regions using AI-assisted triage while preserving regulatory traceability, human medical review, and authoritative case management in the pharmacovigilance platform. The product team’s PRD turns that intent into a concrete demand: extract adverse-event facts from multiple intake channels, suggest triage priority, support regional workflows in EU, North America, and APAC, and reduce average intake processing time by forty percent during the pilot. The intent and the PRD together define what the enterprise wants. They do not define what must remain true while delivery realizes it.
+
+The architecture function extracts the hidden concerns. The pharmacovigilance platform must remain the system of record for regulated case state. AI may extract and suggest, but it may not finalize a regulated decision. Patient-identifying information must be retained only in approved stores and only for as long as approved. Regional intake workflows must respect local regulatory variations without becoming shadow case-management systems. Each of these concerns must become a design decision that the rest of the architecture can be checked against.
+
+The governing design decision is DEC-PV-001: the pharmacovigilance platform is the authoritative system of record for adverse-event cases. From that decision, several rules follow. The AI Triage Service may extract event facts and suggest triage priority, but case creation, modification, and closure remain in the pharmacovigilance platform. Regional workflow tools may queue work and capture intake metadata, but they may not hold case state. Patient-identifying information processed by the AI layer must not persist in AI runtime storage beyond the duration of a single intake. Every AI suggestion that influences a case must be auditable back to the source, the model version, and the human reviewer who acted on it.
+
+These rules become SPEC-PV-001, the architecture specification already shown in section 5. The specification is not a description of what the architecture wants. It is the structured form that delivery teams, governance forums, and AI agents read from. SPEC-PV-001 binds intent, PRD, concerns, decisions, system model, agent permission boundary, data authority assignments, variation envelope for regional adaptation, evidence requirements, escalation triggers, and the executable Rego policy that enforces the agent permission boundary at runtime. It is one Codex object, addressable by stable identifier, reviewed through merge requests, and consumed by every system that needs to know what is allowed in this architectural envelope.
+
+The executable layer follows from the specification. The Rego policy shown in section 6 is generated from the specification’s permission rules. Any tool call the AI Triage Service attempts is evaluated against the policy before execution. A call that attempts to write to the pharmacovigilance platform’s case-state API fails the policy check and is rejected at the gateway. A call that retrieves a case for read-only review passes. The architectural decision becomes a runtime constraint without anyone re-deriving it.
+
+Alongside the Rego policy, the specification binds an eval suite, EVAL-PV-001, against three regional ground-truth datasets curated by pharmacovigilance medical reviewers. Every change to the AI Triage Service, whether a new prompt version, an updated underlying model, or a new regional extraction pipeline, runs through the eval suite before it reaches the pilot. A deployment below the blocking gates on serious-event recall or patient-reference accuracy is rejected the same way the Rego policy rejects a prohibited action. The agent is permitted to act because the specification allows it. The agent is trustworthy to act because the eval suite proves it.
+
+The delivery context is also shaped by the specification. Product engineering receives PRD-PV-INTAKE-001 plus SPEC-PV-001 as paired inputs. Engineering knows what to build, what not to violate, what may vary across regions, what requires escalation, which checks will run on the AI agent’s actions, and which evidence must be captured. AI coding assistants receive structured context from the Codex when they generate code that touches regulated workflows; the context includes the relevant decision, the relevant rules, and the variation envelope. The pull request review is checked against the same specification, so an architect reviewing a change does not need to re-derive whether the change respects the architecture; the conformance is checked structurally.
+
+The feedback loop closes through the metrics named in the specification’s feedback section. Intake latency, evidence completeness rate, AI triage override rate, blocked agent action count, and regional exception count flow back to the architecture function on a regular cadence. A high override rate suggests that the AI triage suggestions are not aligned with reviewer judgment, which may indicate a gap in the source data or in the prompt context. A high blocked-action count suggests that the agent is repeatedly attempting actions that the policy rejects, which may indicate an out-of-date design decision or a flaw in the policy translation. Each metric is a learning signal for the next revision of SPEC-PV-001.
+
+The result is not a more elaborate document, but a different relationship between architecture and delivery.
+
+Architecture has shaped the design space before delivery began to inhabit it.
+Delivery has built within an envelope that respects what the enterprise needs to remain true.
+Governance has reviewed structured commitments rather than late-stage outcomes.
+AI has acted under bounded authority rather than improvising. And the architecture function has the data to refine the specification as the operating context evolves.

@@ -24,8 +24,28 @@
 - https://simonwillison.net/2026/May/6/vibe-coding-and-agentic-engineering/ — local: `simonwillison.net__2026__May__6__vibe-coding-and-agentic-engineering.html`
 - https://simonwillison.net/tags/evals/ — local: `simonwillison.net__tags__evals.html`
 - https://simonwillison.net/tags/agentic-engineering/ — local: `simonwillison.net__tags__agentic-engineering.html`
+- 🟡 https://youtu.be/wc8FBhQtdsA — Lenny Rachitsky podcast, *"An AI state of the union"* with Simon Willison — local: `research/manual/lenny-An AI state of the union.txt` — **partial** manual transcript (first ~30 of ~90 minutes; remaining ~60 minutes outstanding)
 
-**Date:** 2026-05-10
+**Date:** 2026-05-10 (drain update 2026-05-13)
+
+## Drain note (issue #36 extras) — 2026-05-13
+
+A manual partial transcript of the Lenny Rachitsky × Simon Willison podcast *"An AI state of the union"* (YouTube `https://youtu.be/wc8FBhQtdsA`) was integrated as a new primary source. **Scope caveat:** the transcript covers only the **first ~30 minutes of a ~90-minute episode**; the remaining ~60 minutes is unreviewed and may contain additional claims (notably the *"Challenger disaster of AI"* prediction is teased in the cold open but its full elaboration likely sits in the un-transcribed remainder; security/lethal-trifecta material is also signposted by Lenny as "later in the episode" but does not appear in the captured window). The interview section (§ Lenny interview, below) is therefore marked 🟡 **partial**.
+
+**Verified claims (primary anchoring now possible):**
+
+- **"4 agents in parallel" + "wiped out by 11am" — reversal-of-reversal.** The corpus has been through two prior revisions on this claim. The v1 report had *"4 agents in parallel exhausts me by 11 AM"* as a verbatim Willison quote; that was refuted (research/06-hn-and-lenny.md L33–34; research/blocked-urls.md L112; research/00-synthesis.md L15) as a v1 fabrication, because the visible Lenny editorial summary only said *"mentally exhausted by 11 a.m."* without naming a number — the "4" was treated as invented. The full transcript now shows Simon saying both things, separately but in the same passage: *"I can fire up four agents in parallel and have them work on four different problems. By 11am I am wiped out."* — and again later: *"I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day."* **The original "4 agents" number was REAL.** This is now the third reversal in the chain (v1 asserted → drain refuted as fabrication → primary transcript confirms). The corpus's softened "mentally exhausted by 11 AM" formulation in 06-hn-and-lenny.md and 00-synthesis.md is now under-stated and should be re-strengthened in a subsequent pass (out of scope for this report; flagged for orchestrator).
+- **"95% of code I produce, I didn't type it myself"** — previously inferred/paraphrased; now primary verbatim.
+- **"using coding agents well is taking every inch of my 25 years of experience as a software engineer"** — anchor for the "amplifier of existing skills" claim already in the report.
+- **"I write so much of my code on my phone, it's wild. I can get good work done walking the dog along the beach"** — anchor for asynchronous/mobile leverage technique.
+- **The "November inflection" framing** (GPT 5.1 + Claude Opus 4.5 crossing a threshold) — gives Simon a specific dated inflection point distinct from the existing corpus's reliance on the May 6, 2026 post.
+
+**Likely-in-the-un-transcribed-60-minutes (flagged for orchestrator if a full transcript is run overnight):**
+
+- The full elaboration of the **"Challenger disaster of AI"** prediction (cold-open tease quotes Simon: *"We've been using these systems in increasingly unsafe ways. This is going to catch up with us. My prediction is that we're going to see a challenging disaster."* — but the supporting argument almost certainly continues past the 30-minute mark).
+- **Lethal-trifecta / prompt-injection** detail (Lenny's intro flags Simon as the coiner of "prompt injection" and the cold-open foreshadows a security discussion; the captured window does not reach it).
+- Specific tool / model namings beyond the few in the captured window (Claude Code, Codex CLI, Codex Cloud, GPT 5.1, Claude Opus 4.5/4.6, Playwright, Firefox/Mozilla, ThoughtWorks, Cloudflare, Shopify).
+- Any concrete advice on the **mid-career-engineer squeeze** beyond the ThoughtWorks framing (Simon flags the problem but the captured window ends before any prescriptive advice).
 
 ## Revision notes
 
@@ -176,6 +196,130 @@ The Agentic Engineering Patterns guide (May 2026 snapshot) is structured as **6 
 
 **Ultrathink** (Apr 19, 2025). Reverse-engineering Claude Code's CLI revealed exact thinking-budget tiers: phrases containing "think harder", "think intensely", "think longer", "think really hard", "think super hard", "think very hard" or "ultrathink" → 31,999 tokens; "think about it", "think a lot", "think deeply", "think hard", "think more", "megathink" → 10,000 tokens; "think" alone → 4,000 tokens. The takeaway: prompt vocabulary is load-bearing — small word choices map to large compute budgets.
 
+## Lenny interview: "An AI state of the union" (🟡 partial transcript — first ~30 of ~90 minutes)
+
+**Source:** Lenny Rachitsky podcast with Simon Willison, *"An AI state of the union"*, YouTube `https://youtu.be/wc8FBhQtdsA`. Manual transcript captured in `research/manual/lenny-An AI state of the union.txt` (~6,500 words, first ~30 minutes only; remaining ~60 minutes outstanding — see Drain note at top).
+
+This is a different *kind* of primary source from Simon's blog posts: it captures him speaking in real time, with looser framing than his written work. Several claims that previously sat in the corpus as inferred, paraphrased, or "Simon mentioned in interview" are now primary-anchored verbatim from this transcript. Where the transcript adds a load-bearing new claim not present in his written corpus, it is flagged **NEW**.
+
+### Cold-open headline claims (Lenny's edit, but in Simon's own voice)
+
+The episode opens with a montage of Simon clips before the interview proper:
+
+> *"A lot of people woke up in January and February and started realizing, Oh, wow, I can churn out 10,000 lines of code in a day."*
+
+> *"The open question for me is, how many other knowledge work fields are actually prone to these agent loops?"* — **NEW** framing: Simon is now using "agent loops" (his canonical "tools in a loop" formulation) as the load-bearing primitive when reasoning about *generalization beyond software engineering* — i.e. the unit of analysis for "will AI eat field X?" is whether the work in X is *amenable to being reduced to an agent loop*. This is a sharper test than the usual "is this knowledge work?" framing.
+
+> *"Probably 95% of the code that I produce, I didn't type it myself. I write so much of my code on my phone, it's wild. I can get good work done walking the dog along the beach."*
+
+> *"My New Year's resolution every previous year, I've always told myself, this year I'm going to focus more, I'm going to take on less things. This year, my ambition was take on more stuff and be more ambitious."* — **NEW** personal data point: the productivity boost has *inverted* Simon's own multi-year focus discipline. Useful corroboration of the corpus thesis that the cost of trying speculative ideas has collapsed.
+
+> *"Using coding agents well is taking every inch of my 25 years of experience as a software engineer. I can fire up four agents in parallel and have them work on four different problems. By 11am I am wiped out."*
+
+> *"You have this prediction that we're going to have a massive disaster at some point. You call it the Challenger disaster of AI."* (Lenny prompt)
+>
+> *"Lots of people knew that those little O rings were unreliable, but every single time you get away with launching a space shuttle without the O rings failing, you institutionally feel more confident in what you're doing. We've been using these systems in increasingly unsafe ways. This is going to catch up with us. My prediction is that we're going to see a challenging disaster."* (Simon) — **NEW** named prediction. This is the **Challenger disaster of AI** thesis, explicitly framed as an analogy to NASA's pre-Challenger normalization-of-deviance dynamic (which Simon already names in his May 6, 2026 blog post — see corpus quote #16). The cold-open captures the *thesis statement* but the supporting elaboration likely sits past the 30-minute window. Cross-reference: the same "normalization of deviance" mechanism Simon names personally in May 6, 2026 ("every time a model turns out to have written the right code without me monitoring it closely there's a risk that I'll trust it at the wrong moment in the future and get burned") is here generalized to a *civilizational-scale* prediction.
+
+### The November 2025 inflection point
+
+Simon dates the qualitative jump:
+
+> *"In November, we had what I call the inflection point where GPT 5.1 and Claude Opus 4.5 came along, and they were both just they were incrementally better than the previous models, but in a way that crossed a threshold where, previously, if you had these coding agents, you could get them to write you some code, and most of the time it would mostly work, but you had to pay very close attention to it, and suddenly we went from that to almost all of the time, it does what you told it to do, which makes all of the difference in the world."*
+
+> *"A lot of people woke up in January and February and started realizing, Oh, wow, this technology, which I've been kind of paying attention to, suddenly it's got really, really good."*
+
+He locates the broader 2025 arc as well:
+
+> *"2025 was the year that, especially anthropic and opening, AI realized that code is the application … both anthropic and OpenAI spent the whole of 2025 focusing all of their training efforts on coding."*
+
+> *"Code is easier than almost every other problem that you pose these agents, because code is obviously right or wrong … It came for us first."*
+
+### Productivity and personal-leverage claims (verbatim)
+
+The "4 agents → 11 AM exhaustion" passage in full (reversal-of-reversal — see Drain note):
+
+> *"I'm finding that using coding agents well is taking every inch of my 25 years of experience as a software engineer, and it is mentally exhausting … I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day, like I have because there is a limit on human cognition in how much, even if you're not reviewing everything you're doing, just how much you can hold in your head at one time. And it's very easy to pop that stack at the moment."*
+
+> *"There's an element of sort of gambling and addiction to how we're using some of these tools."* — **NEW** candor.
+
+> *"My 25 years of existing, like pre AI experience, which I can now amplify, because I can talk to the agents at a very high level. I can use sophisticated engineering, like language that I've mastered over the years, which they appear to know as well, and we can collaborate incredibly effectively."*
+
+> *"I've got 25 years of experience in how long it takes to build something, and that's all completely gone … because I can look at a problem and say, Okay, well, this is going to take two weeks. It's not worth it. And now it's like, yeah, but maybe it's going to take 20 minutes."* — strong corroboration of the corpus's "fire off a prompt anyway" heuristic, framed here as a *cost-estimation skill that has been invalidated*.
+
+> *"I constantly throw tasks at AI that I don't think it'll be able to do, because every now and then it does it, and when it doesn't do it, you learn … that's actually cutting edge AI research. You can be the first person in the world to spot that AI can now do X."* — **NEW** framing: individual practitioners testing capability frontiers is itself a form of AI research.
+
+### Vibe coding vs. agentic engineering — Simon's spoken articulation
+
+The transcript contains Simon's own clearest spoken version of the distinction the corpus already records from his Feb 23, 2026 meta-post:
+
+> *"If you're vibe coding something for yourself, where the only person who gets hurt, if it has bugs, is you. Yeah, go wild. That's completely fine. The moment you're vibe coding code for other people to use where your bugs might actually harm somebody else, that's when you need to take a step back."*
+
+> *"The big debate, the ongoing debate, has been, what do we call it? When a professional software engineer uses these tools to write real code that's production ready, that they've reviewed and they've checked all of the details … a lot of people call that vibe coding as well. I think that devalues vibe coding as a term."*
+
+> *"That's why I've gone with agentic engineering, because I think the thing to emphasize is these coding agents."*
+
+> *"I'm kind of writing a book about it now that I'm publishing a chapter at a time on my blog … the best form of writing, because I don't have an editor or any pressure from a publisher."* — confirms the *Agentic Engineering Patterns* guide is, in Simon's own framing, a *book in progress*.
+
+### Software factory / StrongDM — Simon's spoken framing
+
+The transcript adds spoken-register detail not in the Feb 7, 2026 written post:
+
+> *"There's a policy of, nobody writes any code … you cannot type code into a computer. Exactly. And honestly, like I thought six months ago, I thought that was crazy. And today, probably 95% of the code that I produce I didn't type it myself."*
+
+> *"The next rule, though, is nobody reads the code. And this is the thing which strong DM started doing back in I think it was August last year."*
+
+> *"They had a swarm of agent testers who were actually simulating end users … they were spending $10,000 a day on tokens, I think, simulating these end users."* — **NEW** number: StrongDM's *daily* spend on simulated-tester tokens specifically. Note this is **larger** than the $1,000-per-engineer-per-day figure already in the corpus; whether it overlaps or is additional is not clear from the transcript.
+
+> *"That's not the kind of thing that you should be vibe coding at all based on most people's understanding of how the world works, but … they're a legitimate security company who've been doing this stuff without AI for years. So it's not like they didn't understand the risks."*
+
+### Ideation and product-design claims — **NEW**
+
+Simon's strongest spoken claim on where humans add value when coding is no longer the bottleneck:
+
+> *"Now the bottlenecks are everywhere else, right? Like, how do we redesign our processes now that the bit that used to take the longest … now maybe that takes three hours?"*
+
+> *"Anyone who's done any product work knows that your initial ideas are always wrong. What matters is proving them right. It's testing them. We can test things so much faster now."*
+
+> *"Any sort of feature that I want design, I'll often prototype three different ways it could work, because that takes very little time."* — **NEW** workflow: Simon now prototypes *3 alternatives by default* for any design decision.
+
+> *"Anyone who's doing sort of product design isn't vibe coding little prototypes is missing out on the latest … most powerful sort of boost that we get in that step."*
+
+> *"I don't think you're going to get as good results from chat GPT pretending to click around on your prototype than you would from an actual human being."* — **NEW** explicit rejection of LLM-as-user-tester for usability validation. This is a stronger stance than anything in the written corpus.
+
+> On AI as brainstorming partner: *"They've been strong enough to do really good brainstorming … the AI is so good at that first two thirds of the ideas … you get them to spit out all of the obvious stuff … and then if you ask them for 20 more … you're beginning to get things which are not good ideas, but they point you in interesting directions."*
+
+> **NEW** prompting trick: *"You can tell AI to combine weird fields. You can say, Okay, I want ideas for marketing my new SaaS platform, inspired by marine biology, and you see what happens, and most of it will be complete junk, but there might be a spark that gets you to the good idea."*
+
+### Engineer-tier claims — **NEW** (ThoughtWorks framing)
+
+Simon reports a ThoughtWorks engineering-VP off-site finding he endorses:
+
+> *"This stuff is really good for experienced engineers, like it amplifies their skills … It's really good for new engineers because it solves so many of those onboarding problems, like, if you talk to Cloudflare and Shopify, both said they were hiring 1000 interns over the course of 2025 because the intern onboarding costs … went from a month before your intern can do anything useful … to a week."*
+
+> *"The problem is the people in the middle, like, if you're mid career, if you haven't made it to sort of super senior engineer yet, but you're not sort of new either. That's the group which ThoughtWorks resolved were probably in the most trouble right now."*
+
+This is a load-bearing claim for any factory architecture's hiring/staffing model: the corpus already has "AI as amplifier of existing expertise"; this adds the **explicit U-curve**: experienced wins, novice wins, mid-career squeezed.
+
+### Security adjacencies — partial
+
+The transcript contains *no* mention of the lethal trifecta or Dual LLM pattern in the captured window (Lenny's intro names Simon as the coiner of "prompt injection" but the discussion doesn't reach security in the first 30 minutes; the cold-open security tease is the "Challenger disaster" prediction, not the trifecta). What *is* present:
+
+> *"Both open AI and anthropic have specialist security models that they will not release to the general public because they can be used to break into websites … invite only, like registered security researchers can apply for access."* — **NEW** datum.
+
+> *"Anthropic had discovered 100 like potential vulnerabilities in Firefox and responsibly reported them to Mozilla, who then fixed them."* — **NEW** datum (recent Firefox release credit).
+
+> *"It's incredibly frustrating for maintainers, because there are these people who don't know what they're doing, who are asking chat GPT to find a security hole and then reporting it to the maintainer and the report looks good … it's a total waste of time."* — **NEW** stance: AI-amplified vulnerability-report spam is a real ecosystem cost.
+
+Note: this section does **not** refute anything in `research/followup/08-security-primitives.md`. The trifecta framing is presumably in the un-transcribed 60 minutes (cross-reference only — no edits to 08).
+
+### What is *not* in this 30-minute window but signposted
+
+- The full "Challenger disaster" elaboration (only the thesis sentence is captured).
+- The lethal trifecta / prompt-injection deep dive (Lenny names Simon as the trifecta-coiner in the intro but the in-window discussion doesn't reach it).
+- Any concrete *advice* for mid-career engineers beyond naming the problem.
+- Data-journalism / Datasette discussion (Lenny names Datasette in the intro).
+- Any discussion of the AI sloth term Simon popularized (named in Lenny's intro).
+
 ## Agents and roles
 
 Simon does not propose a multi-role *human* taxonomy. The implicit agent/role distinction in his writing is:
@@ -288,6 +432,11 @@ Simon does *not* endorse pure satisfaction-scored LLM-judged compliance without 
 18. *"The entire software development lifecycle was, it turns out, designed around the idea that it takes a day to produce a few hundred lines of code. And now it doesn't."* — May 6, 2026 (quoting himself on Heavybit podcast).
 19. *"That's because there's one key feature that remains unique to human staff: accountability. A human can take responsibility for their actions and learn from their mistakes. Putting an AI agent on a performance improvement plan makes no sense at all!"* — Sept 18, 2025.
 20. *"I continue to believe that a robust approach to evals is the single most important distinguishing factor between well-engineered, reliable AI systems and YOLO cross-fingers and hope it works development."* — evals tag commentary (Jul 3, 2025 entry).
+21. *"Probably 95% of the code that I produce, I didn't type it myself."* — Lenny podcast (~30-min mark, https://youtu.be/wc8FBhQtdsA).
+22. *"I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day."* — Lenny podcast. **Reverses a prior corpus refutation; see Drain note 2026-05-13.**
+23. *"The open question for me is, how many other knowledge work fields are actually prone to these agent loops?"* — Lenny podcast cold-open.
+24. *"We've been using these systems in increasingly unsafe ways. This is going to catch up with us. My prediction is that we're going to see a [Challenger] disaster."* — Lenny podcast cold-open ("the Challenger disaster of AI").
+25. *"There's an element of sort of gambling and addiction to how we're using some of these tools."* — Lenny podcast.
 
 ## Recommended additional sources
 
@@ -304,7 +453,7 @@ Simon does *not* endorse pure satisfaction-scored LLM-judged compliance without 
 11. **Jesse Vincent, "How I'm using coding agents in September 2025"** — Simon endorses as the most detailed parallel-agent workflow he's read.
 12. **Josh Bleecher Snyder, "The 7 Prompting Habits of Highly Effective Engineers"** — source of "send out a scout."
 13. **Peter Steinberger, "Just Talk To It—the no-bs Way of Agentic Engineering"** — Simon's recommended Codex CLI workflow read.
-14. **Lenny Rachitsky podcast with Simon (Apr 2026)** and **Heavybit High Leverage podcast with Simon (May 2026)** — these are where Simon thinks out loud about the vibe-coding/agentic-engineering convergence; the May 6 post excerpts the second.
+14. **Lenny Rachitsky podcast with Simon, *"An AI state of the union"*** — `https://youtu.be/wc8FBhQtdsA`. Partial manual transcript (first ~30 min) **now integrated** as a primary source — see new H2 "Lenny interview" section above. Remaining ~60 minutes is the most-promising outstanding fetch in this report (likely contains the full "Challenger disaster of AI" elaboration and the lethal-trifecta discussion). **Heavybit High Leverage podcast with Simon (May 2026)** — outstanding; the May 6 post excerpts it.
 
 ## Open questions for synthesis
 

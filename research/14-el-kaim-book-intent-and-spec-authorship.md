@@ -1,9 +1,21 @@
 # El Kaim — Intent-Driven Architecture and Spec Authorship
 
-**Round-4 Cluster A.** Source: William El Kaim, *AI-Augmented Enterprise Architecture* series, Chapters 1, 3, 6, 7.
-**Scope:** vocabulary; the nine-field structured-intent model; the three authoring paths and the OPA/Rego meta-validation gate; cautionary cases for unstabilized direction; concrete proposals for our spec template.
+**Round-4 Cluster A.** Source: William El Kaim, *AI-Augmented Enterprise Architecture* series, Chapters 1, 3, 6, 7, 8.
+**Scope:** vocabulary; the nine-field structured-intent model; the three authoring paths and the OPA/Rego meta-validation gate; cautionary cases for unstabilized direction; concrete proposals for our spec template; **the architectural translation from intent and PRD into a governed design space — design decisions, architecture specifications, derived executable constraints, and eval suites bound to the spec** (Chapter 8).
 
-Per round conventions, El Kaim's "ACME Pharma" running example is generalized when quoted; SAP / clean-core material from Chapter 5 is out of scope (separate cluster).
+Per round conventions, El Kaim's "ACME Pharma" running example is generalized to enterprise-level language when quoted; SAP / clean-core material from Chapter 5 is out of scope (separate cluster). Chapter 9's SPL / variability material is being drained in parallel into a separate report.
+
+---
+
+## Drain note (Chapter 8) — 2026-05-13
+
+Chapter 8 ("From Intent to Specification") was drained into this report on 2026-05-13 from the manual fetch in `research/manual/`. What changed:
+
+- **New sections added:** §10 (the missing architectural act between intent and execution); §11 (intent and PRD as *demand* artifacts vs. specification as *acceptability*); §12 (design decisions close the design space); §13 (the architecture specification object); §14 (derived executable constraints — the bridge from spec to OPA/Rego); §15 (evals as the second executable control); §16 (delivery implication: PRD + spec as paired inputs); §17 (risks and named anti-patterns Ch8 surfaces, including the *false specification* failure mode).
+- **Refinements (not refutations) to existing sections.** Chapter 8 does *not* refute the nine-field intent model in §3; it operates one level *downstream* of it. Where §3 lists `invariants` with optional `bindingHint`, Chapter 8 makes the binding concrete: an invariant projects into one or more `rules` inside an `ArchitectureSpecification` object, each `derivedFrom` a `DecisionRecord`, each with named `evidenceSources`. §3 is left intact; a forward reference to §13–§14 has been added.
+- **Refinement to §5 (OPA/Rego dual role).** Ch6/Ch7 named the dual role abstractly. Ch8 makes Role 2 (downstream enforcement) concrete with a worked Rego package (`pv_intake.agent_permissions`) and matched compliant / non-compliant request payloads, and adds a *third* executable control alongside policy: the eval suite (§15).
+- **New typed object surfaced.** `kind: ArchitectureSpecification` (apiVersion `ea.codex/v1`) — a Codex object that binds demand (intent + PRD) → concerns → decisions → model (systems, agents, data objects) → rules → variation envelope → governance → feedback in a single artifact, addressable by stable ID.
+- **No claims refuted.** Chapter 8 deepens the Round-4 picture; nothing earlier in the report needed retraction.
 
 ---
 
@@ -50,6 +62,8 @@ Chapter 3 §4.1 enumerates the nine spec-block fields (with `metadata` as a sibl
 The model is deliberately Kubernetes-shaped (`apiVersion`, `kind: EnterpriseIntent`, `metadata`, `spec`) to make it "consumable by the same class of tooling that already handles declarative YAML objects." (Ch3 §4.1) The invariant `rule` field is typed as a string, not a formal expression language, so that "the intent declares the constraint; the specification declares how it is enforced." (Ch3 Appendix A.3)
 
 The load-bearing fields we currently lack are **invariants**, **non-goals**, and **decision seeds**.
+
+*Forward reference.* Chapter 8 makes the downstream binding of these fields concrete: each invariant projects into one or more `rules` inside an `ArchitectureSpecification` object whose `derivedFrom` points back to a `DecisionRecord`, and each rule names explicit `evidenceSources`. See §13 and §14.
 
 ---
 
@@ -133,12 +147,162 @@ The five Codex disciplines (Ch6 §5.1–5.5) are typed objects, explicit relatio
 
 ---
 
+## 10. The missing architectural act between intent and execution (Chapter 8 §1)
+
+Chapter 8 names a gap our existing sections gestured at but did not give a name. Between intent (Chapter 3) and execution (Chapter 7) sits an act of architectural translation that, when skipped, lets product demand harden into systems before architecture is asked. By the time architecture is asked to review, "the choices have already started to harden into systems, workflows, integrations, and code. Architecture may still influence the outcome at that point, but it is no longer shaping the design space. It is correcting interpretation after interpretation has already become implementation." (Ch8 §1)
+
+The chapter's reframe: that missing act is the transformation of intent plus product demand into a **governed design space**:
+
+- "Some choices in that space are allowed because they remain consistent with enterprise intent.
+- Others are prohibited because they would undermine the architecture.
+- Some are delegated to local teams that can decide safely inside a defined envelope.
+- Some require escalation because they cross a structural boundary.
+- And some can be checked automatically because they have been expressed as executable constraints." (Ch8 §1)
+
+This is what the word *specification* means in El Kaim's vocabulary. He is explicit about what it is not: "A specification is not a longer requirements document, is not a diagram with more metadata, and not a policy copied into a repository. It is the structured form through which architectural judgment becomes usable by delivery teams, governance bodies, platforms, pipelines, and AI agents." (Ch8 §1)
+
+For our fanout / subagent dispatch context, the governed-design-space framing is load-bearing: it is the artifact a subagent reads to know which choices are pre-decided (and citable), which are inside its envelope, and which it must surface for escalation rather than answer locally.
+
+---
+
+## 11. Intent and PRD are *demand* artifacts; the specification defines *acceptability* (Chapter 8 §2–§3)
+
+Chapter 8 sharpens the typed chain from §2 by separating *demand* from *acceptability*.
+
+> "Intent and PRDs express what the enterprise wants. Architecture specification defines the conditions under which that demand may be realized without breaking the enterprise structures that the intent depends on. The PRD tells delivery what the product must achieve; the specification tells delivery what must remain true while achieving it." (Ch8 §2)
+
+A PRD can be fully satisfied while a serious architecture problem is created. In the running enterprise-pharmacovigilance example: an AI layer might retain regulated patient data outside approved stores; regional workflow tools might evolve into shadow case-management systems; the line between AI recommendation and regulated decision might blur in practice; intake evidence might end up trapped where no one can trace it back to the authoritative case. (Ch8 §2)
+
+§3 names the translation problem: "Hidden inside the product language of users, journeys, and features sits a set of unspoken architectural commitments: who owns what data, which system holds authoritative state, where decisions may be made, what evidence must survive the process. None of these are visible in the PRD itself. All of them will be answered by somebody. If architecture does not answer them deliberately, the first delivery team to encounter them will." (Ch8 §3)
+
+This restates §2's Healthcare.gov/Universal Credit reading at the artifact level: under-stabilized translation makes local rationality compound into structural failure. "None of these teams is acting unreasonably, but their local rationality compounds into a system that violates the very intent it was built to serve." (Ch8 §3)
+
+---
+
+## 12. Design decisions close the design space (Chapter 8 §4)
+
+Chapter 8 introduces the `DecisionRecord` (kind: `DecisionRecord`, apiVersion `ea.codex/v1`) as a distinct typed object that sits between intent and specification. Each record names: an `intentReference`, a `prdReference`, the architectural `concern`, the `problem` statement, the `decision.statement`, `rationale`, `rejectedAlternatives` (each with its `reason`), `consequences`, and `reviewTriggers`.
+
+The principle: "The role of architecture is not to centralize every choice; it is to close the choices that would otherwise undermine enterprise intent, and to define the envelope within which other choices can safely be made." (Ch8 §4)
+
+The most architecturally significant move in the worked example is the explicit recording of *rejected alternatives*. El Kaim's claim: "Many architecture failures are not caused by teams explicitly ignoring a known decision; they are caused by teams re-opening a question that was never properly closed. When the alternatives are explicit, delivery teams understand not only what was chosen but why other plausible options were rejected." (Ch8 §4) Until a documented `reviewTrigger` fires, "the boundary holds."
+
+This is the typed object our existing §9.5 ("Treat `decisionSeed` resolution as an ADR") was reaching toward. The `DecisionRecord` shape matches our ADR convention's section order (Context → Decision → Alternatives considered → Consequences) and adds two fields ADRs typically lack: `intentReference` / `prdReference` (explicit back-links to the demand) and `reviewTriggers` (named conditions that can reopen the decision).
+
+---
+
+## 13. The architecture specification as a typed Codex object (Chapter 8 §5)
+
+The `ArchitectureSpecification` (kind: `ArchitectureSpecification`, apiVersion `ea.codex/v1`) is the integrating object. Its blocks:
+
+- `demand` — `intent` (id + statement) and `prd` (id + product + `selectedRequirements`).
+- `architecturalConcerns` — short tags like `data-authority`, `system-of-record`, `ai-action-boundary`, `human-approval`, `regional-variation`, `audit-evidence`, `patient-data-retention`.
+- `model.systems` — each with `id`, `name`, `role`, `validationStatus` (e.g. `validated`, `not-validated-for-case-management`, `controlled-pilot`).
+- `agents` — each with `id`, `name`, `permittedActions`, `prohibitedActions`. This is where the AI-action boundary lives.
+- `dataObjects` — each with `id`, `name`, `authority` (system id), `classification` (e.g. `regulated`, `decision-support-evidence`).
+- `decisions` — list of DecisionRecord ids.
+- `rules` — each with `id`, `name`, `statement`, `derivedFrom` (DecisionRecord id), `evidenceSources` (named logs / registers).
+- `variation.allowed` — each entry has `type`, `authority`, `condition`; and `variation.prohibited` — list of named forbidden shapes.
+- `governance.primaryAuthority` and `governance.escalationTriggers`.
+- `feedback.monitoredSignals` and `feedback.reviewCadence`.
+
+The chapter's framing of what this changes: "A specification of this kind also changes the role of architecture review. The question is no longer whether an architect 'likes' the proposed solution. The question is whether the proposed solution remains inside the design space that has already been defined. If it does, delivery should proceed without unnecessary review. If it does not, the issue should escalate through the authority model already described in the specification." (Ch8 §5)
+
+The structural shape — demand + concerns + model + decisions + rules + variation + governance + feedback in one addressable object — is the practical fulfillment of the Codex disciplines from §7. Compared with our `spec-driven-ai-dev.md` Layer 1–4 prose, the `ArchitectureSpecification` makes *the relations* explicit: every rule has a `derivedFrom` pointer, every data object has an `authority` pointer, every variation has an `authority` and a `condition`.
+
+---
+
+## 14. Derived executable constraints — the bridge to OPA/Rego made concrete (Chapter 8 §6)
+
+Chapter 6/7 established the OPA/Rego dual role abstractly. Chapter 8 supplies the worked example. Each `rule` in the specification can project into a Rego policy whose `package` name (e.g. `pv_intake.agent_permissions`) is bound by ID to the specification (`required_specification := "SPEC-PV-001"`) and decision (`required_decision := "DEC-PV-001"`).
+
+El Kaim is explicit about what executable constraints do *not* replace:
+
+> "Not every rule can be automated, and not every architectural judgment should be reduced to code: A regional regulatory deviation may require interpretation. A recurring exception may signal that the global design is incomplete, not that a team is non-compliant. A pattern of human overrides may show that an AI triage model is not yet reliable enough for the workflow it sits in. Architecture remains a human discipline, because enterprises are full of trade-offs that resist binary evaluation." (Ch8 §6)
+
+And what they *do* do:
+
+> "Executable constraints therefore do not replace architecture. They extend architecture into delivery. They allow architectural decisions to appear inside pipelines, workflow systems, AI runtimes, access-control checks, test suites, deployment gates, and operational monitors, where they can affect execution before non-conformance becomes expensive." (Ch8 §6)
+
+A critical operational detail: the policy must explain its rejection, not merely block. "A gate that simply blocks work creates frustration; a traceable constraint tells the team what boundary was crossed and what must change." (Ch8 §6) The Rego `deny_reasons` set in the worked example produces messages that name the violated action, the specification ID, and the decision ID — a traceable rejection rather than an opaque one. This is directly applicable to our preflight linter design from §9.3: every blocked check should cite the rule, the decision, and the intent it derives from.
+
+For our security-primitives line of inquiry, this is also where Chapter 8 reinforces `research/followup/08-security-primitives.md`: OPA/Rego is not merely an authorization layer; in the specification-driven workflow it is the runtime expression of an architectural decision, with stable ID linkage back through `DecisionRecord` to `EnterpriseIntent`.
+
+---
+
+## 15. Evals as the second executable control (Chapter 8 §7)
+
+Chapter 8's most important contribution to our existing evals work is its claim that **evals belong inside the specification, not alongside it**. They are the second executable control bound to the spec, parallel to the Rego policy.
+
+The argument: Rego catches what can be reduced to a deterministic rule; a large part of what a specification claims about AI behavior cannot. "The specification asserts that the AI Triage Service extracts adverse-event facts reliably, that its triage suggestions correspond to what an experienced pharmacovigilance reviewer would have prioritized, that extraction prompts continue to produce usable evidence when the underlying model is updated, and that regional variations in intake language do not degrade extraction quality below a tolerable threshold. None of these claims can be evaluated by inspecting the agent's permission set." (Ch8 §7)
+
+> "A specification claims that the AI Triage Service may operate inside a decision-support boundary. An eval proves that the service is actually competent enough to sit inside that boundary." (Ch8 §7)
+
+The typed object is `kind: EvaluationSuite` (apiVersion `ea.codex/v1`) with:
+
+- `specificationReference` and `decisionReference` (stable IDs back to the spec and the governing decision).
+- `datasets` — each with curator and case count, typically partitioned by region or other variation axis.
+- `metrics` — each with `id`, `type` (e.g. `field-level-accuracy`, `ordinal-agreement-with-reviewer`, `binary-recall`, `latency`), `threshold`, and crucially `protects: RULE-PV-NNN` — a direct link to a specification rule.
+- `blockingGates` — metrics whose failure stops deployment.
+- `regressionPolicy.maxAllowedDegradation` — caps on drift relative to the prior baseline.
+- `reviewTriggers` — named conditions (model update, prompt change, new regional dataset, reviewer override rate exceeds baseline).
+
+The discipline is symmetric with Rego: an eval run is a gate, not a report. "A new agent configuration, a new prompt version, a new model, or a new regional extraction pipeline passes through the eval suite before it reaches production. If the suite fails on a blocking gate, the deployment stops and the failure is traced back to the metric, the dataset, and the specification rule it protects." (Ch8 §7)
+
+The two-source feedback model: production behavior produces signals like override rate and blocked-action count; the eval suite produces complementary signals under controlled inputs. "Production tells architecture what is happening under real load; evals tell architecture what the system is capable of under known inputs. The combination is what distinguishes a specification whose claims are asserted from a specification whose claims are verified." (Ch8 §7)
+
+This is the part of Chapter 8 most directly relevant to `research/followup/07-evals-deepdive.md`. The `protects: RULE-ID` link from metric back to specification rule is the structural piece that follow-up should foreground. Our prior evals work treated eval suites as quality gates; Chapter 8's contribution is to bind each metric to a specific architectural commitment, so a metric failure is traceable to a violated specification rule rather than to a vague "quality regression."
+
+The chapter's punchline on the relationship between the two executable controls:
+
+> "The Rego policy enforces what the agent is allowed to do. The eval suite proves that what the agent does, when it is allowed to act, is worth allowing in the first place. Both are executable controls. Both derive from the specification. Together they make specification-driven architecture trustworthy rather than merely well-organized." (Ch8 §7)
+
+---
+
+## 16. Delivery implication: PRD + specification as paired inputs (Chapter 8 §8)
+
+The chapter's operational claim: "Delivery does not receive only a PRD, it receives a PRD plus architecture specification." (Ch8 §8) The two artifacts evolve together; product demand and architectural acceptability influence each other through the early life of an initiative.
+
+For our fanout / subagent dispatch design, this is the directly applicable shape. A subagent brief should not be a PRD analog (story, outcome, success criteria) alone; it should be PRD + specification, where the specification block carries the design space: which decisions are pre-resolved (with their IDs), which agents/tools are inside the permitted-action set, which actions are prohibited, what evidence must be produced, what may vary by execution-time context, and which executable controls (Rego policies, eval gates) will run against the output.
+
+Chapter 8 frames this as a role shift: "Architecture is no longer a downstream reviewer of product intent. It becomes the function that translates product intent into a design space delivery can safely inhabit." (Ch8 §8) The analog in our setting is the operator role at fanout time: not a late reviewer of subagent output, but the function that stabilizes the design space before dispatch.
+
+---
+
+## 17. Risks, limits, and the *false specification* failure mode (Chapter 8 §9)
+
+Chapter 8 names six failure modes for specification-driven architecture:
+
+1. **Cost of discipline.** "Writing a specification takes more discipline than writing a principles document or a target-state slide... The investment only pays back when the specifications are reused across multiple delivery cycles and when the conformance checks they enable replace late-stage rework." (Ch8 §9)
+2. **Specification rigidity.** "A specification that is too narrowly drawn may block useful evolution... The defense against rigidity is the variation envelope: explicit ranges of allowed local adaptation that the specification names rather than forbidding by omission." (Ch8 §9)
+3. **Implicit knowledge resists formalization.** "The specification should name the boundary at which formal structure ends and human judgment begins, rather than papering over the boundary with thin formalization." (Ch8 §9)
+4. **Ownership politics.** "A specification that lives in architecture's repository but governs product delivery is a contract between two functions... The healthy pattern is shared authorship under architectural authority: the architecture function holds the pen on what must remain true, while product and delivery contribute the operational reality that shapes how decisions are framed." (Ch8 §9)
+5. **Tooling immaturity.** "Editors do not natively understand schemas like ea.codex/v1. Validation harnesses require setup. The integration between specifications and policy engines, agent runtimes, and delivery pipelines is bespoke in many enterprises... Trying to operate without that investment produces specifications that are formally correct and operationally inert." (Ch8 §9)
+6. **The false specification.** "A document that uses the structured form, names the right fields, and references the right decisions, but whose constraints cannot actually be checked and whose evidence cannot actually be produced. This is worse than no specification at all, because it gives governance forums the appearance of control without the substance. The discipline that prevents false specifications is end-to-end execution: every conformance rule must trace to a check that runs, every evidence obligation must trace to a record that exists, and every escalation trigger must trace to a path that activates. A specification that fails this trace is not a specification yet. It is a specification proposal awaiting the work that would make it real." (Ch8 §9)
+
+The *false specification* is the named anti-pattern we should track explicitly. It generalizes our preflight-linter design from §9.3: not just "does the field resolve?" but "does the executable control bound to this rule actually exist, and does it run?" The trace test (rule → check that runs; obligation → record that exists; trigger → path that activates) is a concrete acceptance criterion we can adopt verbatim.
+
+This is also the failure mode that connects Chapter 8 back to Chapter 7's warning that AI amplifies semantic weakness: a false specification handed to an AI coding assistant produces structurally plausible output that no executable control will catch.
+
+---
+
 ## Sources
 
 - *Chapter 1, The Limits of Traditional Enterprise Architecture* — §1 (vocabulary), §3 (decision system), §4.1–4.3 (typed decision), §5 (encoded decision example), §7 (risks).
 - *Chapter 3, Intent-Driven Architecture* — §2 (Healthcare.gov, Universal Credit), §3 (Working Backwards / Hoshin Kanri / Backstage / Crossplane), §4.1 (nine-field anatomy), §4.2 (worked example), §5.1–5.3 (three authoring paths), §5.4 (OPA dual role), §5.5–5.6 (six-stage pipeline), Appendix A (grammar, JSON Schema, semantic notes).
 - *Chapter 6, The Enterprise Architecture Codex* — §1 (vibes-to-codex), §2 (four building blocks), §3 (cognitive infrastructure), §4 (why documents fail), §5 (typed objects, relations, lifecycle, validation, metamodel).
 - *Chapter 7, Automating Enterprise Architecture Execution* — §1 (motion punchline: AI amplifies semantic weakness).
+- *Chapter 8, From Intent to Specification* — §1 (the missing architectural act; governed-design-space framing), §2 (intent and PRD as demand artifacts), §3 (the architecture translation problem), §4 (`DecisionRecord` typed object and rejected-alternatives discipline), §5 (`ArchitectureSpecification` typed object), §6 (derived executable constraints — worked Rego policy `pv_intake.agent_permissions` with compliant / non-compliant request examples and traceable `deny_reasons`), §7 (`EvaluationSuite` typed object — evals as the second executable control bound by `protects: RULE-ID` to specification rules), §8 (delivery implication — PRD + specification as paired inputs), §9 (six failure modes, including the *false specification*), Appendix A (end-to-end walkthrough). **Read end-to-end from manual fetch 2026-05-13.**
+
+**Sources reviewed status:**
+
+| Chapter | Status |
+| --- | --- |
+| Chapter 1 | Covered (Round-4 initial pass) |
+| Chapter 3 | Covered (Round-4 initial pass) |
+| Chapter 6 | Covered (Round-4 initial pass) |
+| Chapter 7 | Covered, §1 only (Round-4 initial pass) |
+| Chapter 8 | Read end-to-end from manual fetch 2026-05-13 |
 
 **Blocked URLs encountered:** none. Per round conventions, the chapter resource sections were not fetched.
 
@@ -146,4 +310,7 @@ The five Codex disciplines (Ch6 §5.1–5.5) are typed objects, explicit relatio
 
 - Cluster B / Chapter 2: *continuous architecture* framing alongside the intent artifact for our Healer / production-trace loop.
 - Cluster C / Chapter 4: "agent harness" vs "intent thinking" split (Ch7 §2); the architecture-package object (Ch7 §2.2) as candidate replacement for per-issue `STRATEGY.md`.
-- Author the actual JSON Schema for our spec template's Intent block, mirroring Ch3 Appendix A.2.
+- Author the actual JSON Schema for our spec template's Intent block, mirroring Ch3 Appendix A.2; extend with a sibling `ArchitectureSpecification` schema mirroring Ch8 §5.
+- Update `research/followup/07-evals-deepdive.md` with the `protects: RULE-ID` linkage pattern from Ch8 §7: each eval metric should point back to a specific specification rule, so a metric failure is traceable to a violated architectural commitment.
+- Update `research/followup/08-security-primitives.md` with the Ch8 §6 framing of OPA/Rego as the *runtime expression of an architectural decision* (Rego package bound by ID to `DecisionRecord` and `ArchitectureSpecification`), and the traceable-`deny_reasons` pattern.
+- Cross-reference with the parallel Chapter 9 drain in `research/24-el-kaim-book-product-line-variability.md` once that report is in place; Ch8's `variation.allowed` / `variation.prohibited` envelope is the surface Ch9's SPL framing builds on.

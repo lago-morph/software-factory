@@ -76,13 +76,14 @@ These three tasks were explicitly excluded from subagent dispatch in the origina
 | **Update `spec-driven-ai-dev.md`** | Add 4 new fields proposed by Round-4 report 14 (cluster A): non-goals; decision-seeds; invariant-with-bindingHint; explicit Intent section. | `research/14-el-kaim-book-intent-and-spec-authorship.md` §"Recommendation" | Spec template ships without the El Kaim 9-field discipline. Generated specs continue to omit non-goals, which is the single highest-leverage of the four. |
 | **Round 2 complete stanza** | Append a "Round 2 complete" stanza at the bottom of §11 (was §10 in v0.7) with the drain merge commit hash `423940f`. | Bookkeeping. | Audit trail is incomplete. |
 
-### 3.3 ~~In-flight fetch-urls workflow~~ **RESOLVED 2026-05-13 — all three issues drained**
+### 3.3 ~~In-flight fetch-urls workflow~~ **RESOLVED 2026-05-13 — issues #29/#30/#31 + round-7 follow-up #36 all drained**
 
-Three batched fetch issues filed earlier in the session landed on origin as `fetched/issue-29`, `fetched/issue-30`, `fetched/issue-31`. Drained in a single parallel-subagent pass (6 subagents, one per target report). Per-URL outcomes recorded in **`research/blocked-urls-round-6.md`**; commit-level summary:
+Three batched fetch issues filed earlier in the session landed on origin as `fetched/issue-29`, `fetched/issue-30`, `fetched/issue-31`. A follow-up batched issue #36 (filed at the end of round 6) landed as `fetched/issue-36`. All four drained. Per-URL outcomes recorded in **`research/blocked-urls-round-6.md`** (issues #29/#30/#31) and **`research/blocked-urls-round-7.md`** (issue #36). Commit-level summary:
 
 - **#29** (Anthropic × 5 + Hamel × 4 + Simon × 5 + arXiv + Shapiro × 2): 16/18 OK. Drained into `research/23-anthropic-engineering-trilogy.md` (5 Anthropic posts; **§8 new — Claude Code sandboxing**), `research/followup/07-evals-deepdive.md` (4 Hamel + 2 Simon), `research/followup/08-security-primitives.md` (3 Simon + arXiv CaMeL), `research/followup/01-shapiro-five-levels.md` (1 Shapiro companion post — canonical five-levels slug 404'd; correct slug now known). **Two 404s with corrected follow-up paths** (arxiv html v2, shapiro five-levels slug guess).
 - **#30** (GitHub Copilot docs × 9): 3/9 OK. Drained into `research/19-github-copilot-cloud-agent.md`. **6 URLs returned 404** — GitHub docs reorganized; five report citations now flagged `[2026-05-13 404; pending re-anchor]`.
 - **#31** (Devin / Factory / 8090 / Superconductor / Superpowers × 9): 6/9 OK. **Cloudflare blocks did NOT propagate to the runner.** Drained into `research/followup/06-competitor-landscape.md`. **Pricing model on Devin fully refuted** (current tiers Free/Pro $20/Max $200/Teams $80/Enterprise; no public ACU). **Factory adds "Droid Computers" primitive.** **Superconductor.io is wrong domain** — live product is at `.com`. 3 upstream 404s logged.
+- **#36** (round-7 follow-ups: corrected Shapiro slug + arxiv pdf/v1 + superconductor.com + 3 platform.claude.com docs × 7): 5/7 OK by HTTP, but only 2 produced usable content. Drained into `research/followup/01-shapiro-five-levels.md` (Shapiro canonical post — **all 3 acknowledged gaps closed; Shapiro positions himself at Level 4 not Level 5; 8 El Kaim-vs-Shapiro discrepancies surfaced**) and `research/followup/06-competitor-landscape.md` §4 (Superconductor.com — the **multiplayer / "take the wheel" shared-agent-session** is its unique differentiator vs Devin/Factory/8090/Superpowers). Three failures: arxiv PDF (200 but binary), arxiv v1 html (404 same as v2), 3 `platform.claude.com` pages (200 but JS-SPA shells with `Loading...` placeholders). Recorded in `research/blocked-urls-round-7.md` with recovery routes; the platform.claude.com gap escalated to Path B.
 
 **Cross-corpus lesson surfaced by this drain (now also in `research/blocked-urls-round-6.md`):** most of the prior "Cloudflare-only / paywall-only" classifications in `research/unfetched-sources.md` were **wrong** — the action runner reaches `simonwillison.net`, `hamel.dev`, `anthropic.com/engineering`, `arxiv.org/abs`, `danshapiro.com`, `devin.ai`, `factory.ai`, `8090.inc`, `blog.fsck.com` directly with HTTP 200. **Before invoking Path B (browser-cookie / Save Page As) for any future URL on these hosts, file a `[fetch-urls]` issue first.** This generalizes the pt-2 recommendation already in §3.1.
 
@@ -90,7 +91,8 @@ Three batched fetch issues filed earlier in the session landed on origin as `fet
 - **Report 23:** Opus model is 4.5 not 4.6 (S12, S13, S15); testing tool is Puppeteer MCP not Playwright in S12; companion repo is `claude-quickstarts/autonomous-coding` not `cwc-long-running-agents`; "30–50 tokens per skill" not in S13; "Progressive disclosure that loads too eagerly defeats its purpose" not in S13; several "S13" security quotes are actually from `platform.claude.com/.../agent-skills/overview` (not yet drained — added to follow-up queue).
 - **followup/08:** 3 "verbatim" trifecta-leg sentences were snippet-confabulated; "Any time a system combines access to private data..." quote not in primary (real line: "Any time you combine those three lethal ingredients together you are ripe for exploitation"); "first credible prompt injection defense" Willison quote was misquoted (load-bearing "doesn't just throw more AI" qualifier omitted); CaMeL attribution corrected to Google DeepMind + ETH Zürich; 77%/84% AgentDojo figures now exact.
 - **followup/07:** prior issue-#24 removal of ">90% expert agreement in three iterations" REVERSED — the claim is real, source was wrong; it's from Hamel's llm-judge post (Honeycomb / Phillip Carter case study), not the FAQ.
-- **followup/06:** Devin pricing structure entirely refuted (no public ACU pricing); Factory positioning softened; Superconductor wrong-domain.
+- **followup/06:** Devin pricing structure entirely refuted (no public ACU pricing); Factory positioning softened; Superconductor wrong-domain. **Round-7 update:** Superconductor §4 fully re-anchored to .com; primary differentiator is the multiplayer "take the wheel" shared-agent-session primitive (no other vendor offers human-to-human handoff *during* an agent run); on-codebase agent benchmarking is a customer-exposed judge primitive; `oscardobsonbrown/superconductor` GitHub repo previously cited turns out to be a different project entirely (mis-attribution corrected).
+- **followup/01 (round-7):** Shapiro positions himself at **Level 4** ("I'm here"), refuting prior corpus framings of him as a Level-5 practitioner. Eight El Kaim-vs-Shapiro discrepancies documented; the most consequential is that El Kaim's *"Nobody writes the code. Nobody reads the code."* L5 framing is NOT in Shapiro's canonical Five Levels post (it conflates the canonical post with the companion post). El Kaim added L4 "spec is the most valuable thing you produce" — Shapiro's actual L4 mentions "You craft skills (for Claude Code)" instead. **Cross-corpus propagation flags** logged in §6 below: report 07, StrongDM reports 01/02, anywhere Kilroy is called "Shapiro's Level-5 reference implementation."
 
 **Follow-up fetch queue (next batched issue):** Shapiro five-levels correct slug, arxiv 2503.18813 paper body (try pdf or html v1), Superconductor.com, Cognition Devin announcement URL, 6 GitHub docs canonical URLs, `platform.claude.com` Agent Skills security guidance. See `research/blocked-urls-round-6.md` §"Follow-ups" for the actionable list.
 
@@ -140,12 +142,9 @@ Drains into `research/06-hn-and-lenny.md` and `research/followup/03-cherny-inter
 
 These three URL families are known-or-likely action-blocked. Path B (browser "Save Page As → Web Page, Complete") is the only realistic route. Each is "nice to have"; the relevant reports are firm without verbatim source-level fidelity.
 
-**1. `medium.com/@welkaim/about` + `welkaim.medium.com/`** — Author profile and bio context. Affects `research/07-dark-factory.md` background only. Cloudflare-blocked across all attempted routes. **Path B only.**
+**1. ~~`medium.com/@welkaim/about` + `welkaim.medium.com/`~~** — **RESOLVED 2026-05-13** via Path B drop. Bio captured in `research/07-dark-factory.md` header; post-index revealed 10+ unread El Kaim posts (logged as future-research cluster, see "Future research" at the bottom of this file).
 
-How:
-1. Open each URL in a browser that has solved the Cloudflare challenge (one-time interactive captcha; persists in cookies).
-2. File → Save Page As → Web Page, Complete.
-3. Drop the resulting `.html` into `research/manual/`.
+**1a. `platform.claude.com/docs/en/agent-skills/{overview,best-practices,security}`** — **NEW Path B item from round 7.** The action returned HTTP 200 but the body is a JS-rendered SPA shell (~17 `Loading...` placeholders); curl can't execute the JS. Affects `research/23-anthropic-engineering-trilogy.md` §3 (security-quote attribution still open — several quotes attributed to S13 are actually from these pages per the round-6 drain). **Path B only**: open each URL in a logged-in Console session, wait for the page to render, File → Save Page As → Web Page, Complete; drop the `.html` into `research/manual/`. ~3 URLs.
 
 **2. `docs.replit.com/*` + `blog.replit.com/*` (~20 URLs).** Affects `research/20-replit-agent.md`. Cloudflare-gated; action success uncertain (per `blocked-urls.md` v5 the `*.openai.com` analog is known-blocked from action too).
 
@@ -188,10 +187,21 @@ When picking this up cold:
 
 1. `git status` — confirm clean working tree.
 2. `git log origin/main..HEAD --oneline` — see what's ahead of main.
-3. Check open issues: `mcp__github__list_issues` for `lago-morph/software-factory` state=OPEN. Expect #29, #30, #31 (plus any new) — drain any `fetched/issue-N` branches that have landed.
+3. Check open issues: `mcp__github__list_issues` for `lago-morph/software-factory` state=OPEN. Expect any new `[fetch-urls]` issues — drain any `fetched/issue-N` branches that have landed. (Issues #29/#30/#31/#36 are all drained and closed as of 2026-05-13.)
 4. Read this PLAN.md §1 + §3 first. If §3.1 still shows the lost work as unresolved, that is the highest-leverage action.
 5. If new manual content is in `research/manual/` (anything other than `README.md`), activate the `research-pipeline` skill — Phase 0 will drain it.
 6. The `parallel-subagent-fanout` skill is the right tool when 4+ independent subtasks accumulate.
+
+### 6.1 Cross-corpus propagation flags (open from round 7 Shapiro drain)
+
+Round 7's Shapiro canonical-post drain refuted prior corpus framings of Shapiro as a Level-5 practitioner (he positions himself at L4 with the verbatim "I'm here.") and surfaced 8 El Kaim-vs-Shapiro discrepancies. The following propagation edits are PENDING — they were identified during drain but not pushed into all referenced reports:
+
+- **`research/07-dark-factory.md`** — should note that El Kaim *paraphrases* and conflates Shapiro's canonical Five Levels post with the companion "You don't write the code" post; flag the L4 and L5 divergences. The "Nobody writes / Nobody reads" L5 framing currently in the report is El Kaim's, not Shapiro's.
+- **`research/01-strongdm-factory.md`** and **`research/02-strongdm-attractor.md`** — anywhere the named StrongDM team-size datum ("less than five people" / "Justin McCarthy three-person team") is attributed to Shapiro's Five Levels post: the Five Levels post says only "less than five people"; the named StrongDM/Justin/three-person datum traces to the companion post only.
+- **Anywhere in the corpus** Kilroy is called "Shapiro's Level-5 reference implementation": Kilroy is *not mentioned* in the canonical Five Levels post; that positioning exists only in the companion post.
+- **Anywhere in the corpus** Shapiro is described as "a Level 5 practitioner" or "Level 4–5 practitioner-tooler": refute with Shapiro's verbatim L4 self-position ("I'm here.").
+
+Suggested approach: a single `Grep` pass for the strings above, then a small subagent dispatch to apply the corrections. Estimated effort: ~30 min wall time. Not picked up in this session because the user did not explicitly request the cross-corpus correction sweep — this checklist exists so the next session can catch it.
 
 ---
 
@@ -339,6 +349,53 @@ Output: `research/01-07-*` plus initial synthesis `research/00-synthesis.md`. F1
 | v0.7 | 2026-05-11 | Adds §14 (Round-6 night-run record); routes future sessions to the deferred-fetch table |
 | **v0.8** | **2026-05-13** | **Cleanup pass.** Source files reorganized into `/reference-only/`. Stale §10.2/§10.4 references retired. Editorial collapse of 09 partial completed (Substack manifesto folded into §9 of unified report). 7 drained fetch-urls issues closed (#4, #8, #23, #24, #26, #27, #28). 3 new batched issues filed (#29, #30, #31). Live work moved to §§1–6; per-round detail compressed into §§11–17. **Discovered: pt-2 drain work on side branch never merged — see §3.1.** |
 | **v0.9** | **2026-05-13** | **Pt-2 cherry-pick recovery.** Brought sub-30 / sub-31 / sub-32 / recording commits onto main via `claude/recover-pt2-drain`. Adds `research/followup/12-brier-pace-layers.md` (Brier pace-layers report, ~2,571 words, F34 candidate); upgrades `research/followup/05-klaassen-siblings.md` and `research/followup/07-evals-deepdive.md` from inferential to primary-source-anchored. §3.1 changed from HIGHEST-priority bottleneck to RESOLVED. |
+
+---
+
+## Future research
+
+Captured as the research-pipeline skill prescribes: name the cluster, list sources, justify in one paragraph, estimate effort. These are leads that surfaced during drain work but were not chased in the current round.
+
+### Future research: El Kaim's broader Medium corpus (10+ posts beyond the 9-chapter book)
+
+**Sources** (surfaced from `welkaim.medium.com` post-index page, retrieved manually 2026-05-13):
+
+- *From Vibes to Codex to Claw: Architecture enters the Edge era* (Feb 24, 2026)
+- *When Architecture Starts Thinking: The Shift to Cognitive Infrastructure* (Feb 20, 2026)
+- *The Cyrano de Bergerac Method of Prompting: One Question, a Thousand Voices* (Feb 19, 2026)
+- *From Vibes to Flow: Building the Enterprise Codex for Agentic AI* (Feb 18, 2026)
+- *Spec-Driven Enterprise Architecture with BMAD, AI, and LeanIX* (Feb 10, 2026)
+- *From AI Discovery to AI Governance: Building an Enterprise Copilot on LeanIX* (Dec 16, 2025)
+- *Designing and governing AI agents landscape and architecture with LeanIX* (Nov 10, 2025)
+- *Analysis of AI and Agentic AI Features in major Enterprise Architecture Management Solutions* (Jul 14, 2025)
+- *From Automation to Autonomy: The AI-Driven Transformation of the Enterprise Architecture Tool…* (Jul 13, 2025)
+- *The SAP API Policy as an External Trigger: How the EA Codex absorbs vendor policy changes* (between Ch5 and Ch6; possibly a sidebar to Ch6)
+
+**Justification.** Our four existing El Kaim reports (14–17) are anchored to the 9-chapter AI-Augmented-EA series. The post-index page shows El Kaim has published a **parallel track** of standalone posts that pre-date and accompany the book series and that touch directly on our four candidate architectures: the *Cyrano* post is almost certainly a one-question/many-agents pattern that overlaps with our Council architecture (report 16); the *BMAD/LeanIX* post (Feb 10) is the canonical primary source for material currently reconstructed across reports 15 + 16; the three *LeanIX governance* posts are primary-source material for AI-agent governance that `research/followup/10-governance.md` currently reconstructs from secondary sources; the *Cognitive Infrastructure* post likely names patterns we currently treat as anonymous. Investigating this cluster would let us flip reconstructed-from-search-snippet citations in 5+ reports to primary, and may surface 1–2 named patterns that should be added to the methodology layer.
+
+**Effort.** ~10 Medium posts, all on the same host (`welkaim.medium.com` / `medium.com/@welkaim/...`). Host is action-reachable per round-6 testing (the about page returned content). One batched `[fetch-urls]` issue + one drain pass; ~½ session.
+
+**Recovery path.** File a single `[fetch-urls]` issue with the 10 post URLs (need to harvest the exact URLs first — the post-index page deliberately omits them in the text export; either the user re-exports with hyperlinks preserved, or a `find / -type f -name 'welkaim.medium.com'`-style scan reveals what we already have, or WebSearch by title).
+
+### Future research: Noah Radford — "the road runner economy"
+
+**Sources:**
+- https://nraford7.github.io/road-runner-economy/
+
+**Justification.** Surfaced as a drafting-readers acknowledgement at the bottom of Shapiro's canonical "Five Levels — From Spicy Autocomplete to the Software Factory" post. Shapiro explicitly endorses the framing. None of our 24 reports + 13 followups references Radford or the "road runner economy" framing, yet Shapiro's L4–L5 narrative leans on it. If Radford's essay names a deflationary-economics dynamic our corpus currently treats as anonymous (e.g., the "code is becoming free; meaning is the moat" / "manual labor in a deflationary economy" framing that runs through the L0 description), we have a primary anchor we're missing. Could change the framing of `research/00-synthesis.md` §1 (why the methodology matters) or seed a new economics-of-the-software-factory section in `research/13-round-2-synthesis.md`.
+
+**Effort.** Single GitHub Pages essay (`raw.githubusercontent.com`-style URL or its `nraford7.github.io` mirror). Expected reachable from action without issue; one-page WebFetch may be sufficient. ~½ hour wall time.
+
+### Future research: platform.claude.com Agent Skills docs (Path B-only)
+
+**Sources:**
+- https://platform.claude.com/docs/en/agent-skills/overview
+- https://platform.claude.com/docs/en/agent-skills/best-practices
+- https://platform.claude.com/docs/en/agent-skills/security
+
+**Justification.** Round 6 drain on `research/23-anthropic-engineering-trilogy.md` §3 surfaced that several quotes the report had attributed to Anthropic's S13 ("Equipping agents...") are not in S13 — they live in these platform docs pages instead. Current §3 retains the misattributed quotes flagged for re-anchoring. Without the actual platform-docs body, we cannot complete the re-anchoring cleanly. Affects: report 23 §3 (security guidance for Skills), and indirectly any future architecture decision that wants to cite Anthropic's *official* skill-security stance vs. the engineering-blog framing.
+
+**Effort.** 3 pages, JS-rendered SPA so action-fetch returns content-free shells. **Path B only** (user does Save Page As after a logged-in Console session has rendered the JS). Then standard drain pass; ~30 min.
 
 ---
 

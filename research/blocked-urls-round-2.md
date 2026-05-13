@@ -28,8 +28,8 @@ These are the canonical-source documents for the three sources, in forms the rep
 | # | URL | Fetch status |
 |---|---|---|
 | 1 | https://www.jayminwest.com/agentic-engineering-book | ✅ via #4 (188 KB; rendered TOC matches raw markdown) |
-| 2 | https://www.jayminwest.com/agentic-engineering-book/6-harnesses | ✅ via #4 (113 KB; consumed by `research/09-jaymin-harnesses-partial.md`) |
-| 3 | https://jayminwest.substack.com/p/a-manifesto-for-agentic-development | ✅ via #8 Wayback (capture 2026-05-11 00:25:03; full manifesto body recovered; consumed by `research/09-jaymin-harnesses-partial.md` §12) |
+| 2 | https://www.jayminwest.com/agentic-engineering-book/6-harnesses | ✅ via #4 (113 KB; originally consumed by `research/09-jaymin-harnesses-partial.md`, now superseded by `research/09-jaymin-book-harnesses-practices-mental-models.md`) |
+| 3 | https://jayminwest.substack.com/p/a-manifesto-for-agentic-development | ✅ via #8 Wayback (capture 2026-05-11 00:25:03; full manifesto body recovered; consumed by `research/09-jaymin-book-harnesses-practices-mental-models.md` §9 — folded in from the deleted partial 2026-05-13) |
 | 4 | https://docs.all-hands.dev/usage/how-to/headless-mode | ✅ via #4 (400 KB; consumed by `research/11-openhands-substrate-audit.md`) |
 | 5 | https://docs.all-hands.dev/ | ✅ via #4 (353 KB; doc-tree fingerprint) |
 | 6 | https://arxiv.org/abs/2511.03690 | ✅ via #4 (abstract + metadata) |

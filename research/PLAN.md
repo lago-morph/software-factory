@@ -1026,7 +1026,7 @@ This comparison is **not** a Round-5 dispatch — it's a deliberate section to a
 - `architectures/00-comparison.md` was **not** edited. The Round-2 synthesis (report 13) proposes a substrate-stack recommendation in its §6 ("OpenHands SDK + Overstory-design-in-Python overlay + Compound Atelier as methodology overlay at L3") that should replace §7 of the comparison doc. The synthesis preserves the original §7 in its proposal as "§7 (Round 1)" so the diff is traceable. **This is a curated human-review step**, not a subagent task.
 - `spec-driven-ai-dev.md` was **not** edited. Report 14 (cluster A) proposes a four-field extension (non-goals, decision-seeds, invariant-with-bindingHint, explicit Intent section) that should be folded in.
 - `research/00-synthesis.md` was **not** edited. Report 13 supersedes it for Round-2-and-later claims.
-- `research/09-jaymin-harnesses-partial.md` was **preserved** per the brief. It should be collapsed into report 09 editorially.
+- ~~`research/09-jaymin-harnesses-partial.md` was **preserved** per the brief. It should be collapsed into report 09 editorially.~~ **Done 2026-05-13.** Unique manifesto content folded into `research/09-jaymin-book-harnesses-practices-mental-models.md` §9; partial deleted.
 
 ### 14.3 Deferred fetch — primary sources still gated
 
@@ -1041,12 +1041,12 @@ Two URL families are **NOT** fetch-action candidates and remain user-only — li
 
 ### 14.4 Next-session task list (priority order)
 
-1. **File the deferred fetch issues** per §14.3 / `unfetched-sources.md`. Highest leverage: the Anthropic engineering + hamel.dev + simonwillison.net + arXiv 2503.18813 batch — these directly upgrade reports 23, followup/07, followup/08 from secondary to primary citations.
+1. ~~**File the deferred fetch issues** per §14.3 / `unfetched-sources.md`. Highest leverage: the Anthropic engineering + hamel.dev + simonwillison.net + arXiv 2503.18813 batch — these directly upgrade reports 23, followup/07, followup/08 from secondary to primary citations.~~ **Partially done 2026-05-13** — three batched issues filed: #29 (high-leverage Anthropic / Hamel / Willison / arXiv / Shapiro), #30 (GitHub docs Copilot cluster), #31 (Cloudflare-heavy competitor landscape). Four rows remain unfiled (kaner PDF — optional; replit — action-success uncertain; openai.com codex — known-blocked; every.to siblings — Path B only). See updated status column in `research/unfetched-sources.md`. Drain the new fetched/issue-N branches once the action runs.
 2. **Update `architectures/00-comparison.md`:**
    - Replace §7 with the substrate-stack recommendation from report 13 §6 (preserve original as "§7 (Round 1)").
    - Extend §2.4 failure-mode table with F21–F33 from report 09 + report 13 + the three new governance modes (G12/G13/G14) from the drained report 10.
 3. **Update `spec-driven-ai-dev.md`** with the four-field extension proposed by report 14 (cluster A).
-4. **Editorial collapse:** fold `research/09-jaymin-harnesses-partial.md` into `research/09-jaymin-book-harnesses-practices-mental-models.md`, then delete the partial.
+4. ~~**Editorial collapse:** fold `research/09-jaymin-harnesses-partial.md` into `research/09-jaymin-book-harnesses-practices-mental-models.md`, then delete the partial.~~ **Done 2026-05-13** — manifesto folded into report 09 §9; partial deleted; dangling references in reports 12, 13, 18, blocked-urls-round-2, followup/07 updated to point at the unified report.
 5. **Close Round 2** by adding a "Round 2 complete" stanza at the bottom of PLAN.md §10 with the merge commit hash (`423940f` after the drain pass).
 6. **YouTube transcript extraction** for the two Lenny URLs (user-driven, or a future session that integrates a transcript service) — primary unlock for the Cherny corpus claims that remain un-primary-sourced (10–30 PRs/day, 10–15 parallel sessions).
 

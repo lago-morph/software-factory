@@ -2,7 +2,7 @@
 
 **Round:** 2 — fanout `20260511-054258`, sub-26 (synthesis position 13)
 **Date:** 2026-05-11
-**Inputs:** `research/08-jaymin-book-foundations-patterns.md`, `research/09-jaymin-book-harnesses-practices-mental-models.md`, `research/09-jaymin-harnesses-partial.md`, `research/10-overstory-substrate-audit.md`, `research/11-openhands-substrate-audit.md`, `research/12-adjacent-ecosystem.md`.
+**Inputs:** `research/08-jaymin-book-foundations-patterns.md`, `research/09-jaymin-book-harnesses-practices-mental-models.md` (which now incorporates the prior partial's Substack-manifesto digest in §9; partial deleted 2026-05-13), `research/10-overstory-substrate-audit.md`, `research/11-openhands-substrate-audit.md`, `research/12-adjacent-ecosystem.md`.
 **Diff targets:** `research/00-synthesis.md` §2 and §3; `architectures/00-comparison.md` §2.4 (F1–F20), §4.1 (shared infrastructure), §7 (recommended path).
 **Output protocol:** proposal only. This document does **not** edit `architectures/00-comparison.md`; the orchestrator + future user pass is responsible for the §7 replacement.
 

@@ -3,7 +3,7 @@
 **Date:** 2026-05-11
 **Author:** Round-5 subagent sub-20 (fanout 20260511-054258)
 **Cluster:** Round-5 13.1.1 per `research/PLAN.md` §13.1.1
-**Companion reports:** `research/11-openhands-substrate-audit.md` (OpenHands analog), `research/04-every-skill-libraries.md` (Every skill registry analog), `research/09-jaymin-harnesses-partial.md` (harness terminology), `research/00-synthesis.md` (cross-substrate framing).
+**Companion reports:** `research/11-openhands-substrate-audit.md` (OpenHands analog), `research/04-every-skill-libraries.md` (Every skill registry analog), `research/09-jaymin-book-harnesses-practices-mental-models.md` (harness terminology), `research/00-synthesis.md` (cross-substrate framing).
 **Stance in one sentence:** Codex is *not* a model — it is a five-surface harness around a stable App Server protocol, with AGENTS.md as the spec-ingestion contract, Subagents as the orchestration primitive, and a layered sandbox/approval matrix as the trifecta defense.
 
 ---

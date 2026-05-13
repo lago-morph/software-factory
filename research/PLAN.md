@@ -109,7 +109,9 @@ Three batched fetch issues filed earlier in the session landed on origin as `fet
 
 ### 3.5 YouTube-video-only content (un-primary-sourced)
 
-The two Lenny URLs (Cherny + Willison interviews) turned out to be **video-only** with paywall-stub article landing pages. The corpus-quoted Cherny claims ("10–30 PRs/day", "10–15 parallel sessions") remain un-primary-sourced. Unlocked only by a YouTube transcript-extraction service (NOT a paywall bypass). See §4.
+The two Lenny URLs (Cherny + Willison interviews) turned out to be **video-only** with paywall-stub article landing pages. Unlocked only by a YouTube transcript-extraction service (NOT a paywall bypass). See §4.
+
+**Status update 2026-05-13 (drain):** The **Willison side is now ✅ FULL** — the user dropped the full ~90-min YouTube transcript at `research/manual/lenny-An AI state of the union.txt` and it has been fully drained into `research/05-simon-willison.md` and `research/06-hn-and-lenny.md`. Lethal-trifecta walkthrough (with the **97%-failing-grade** doctrine), Challenger-disaster prediction (including the self-falsification clause), OpenClaw/Claws latent-demand exemplar, end-of-2026 prediction, and macroeconomic worry are all now primary-source-anchored. **The Cherny side remains 🟡 partial** — only the first ~30 min was manually transcribed; the corpus-quoted Cherny claims ("10–30 PRs/day", "10–15 parallel sessions") are partially anchored but the remaining ~60 min is outstanding (still the §4.2 task).
 
 ---
 
@@ -124,19 +126,19 @@ Three priority tiers. Highest-leverage items first.
 ### 4.2 Medium priority — primary-source unlock
 
 **YouTube transcripts for the two Lenny URLs.**
-- `https://youtu.be/We7BZVKbCVw` — Boris Cherny on Lenny (head of Claude Code interview)
-- `https://youtu.be/wc8FBhQtdsA` — Simon Willison on Lenny (AI state of the union)
+- ~~`https://youtu.be/wc8FBhQtdsA` — Simon Willison on Lenny (AI state of the union)~~ — **DONE 2026-05-13.** Full ~90-min transcript dropped at `research/manual/lenny-An AI state of the union.txt`, drained into reports 05 and 06, then moved to `reference-only/lenny-podcast-transcripts/willison-ai-state-of-the-union-full.txt` (the earlier `first30min` partial was superseded and deleted).
+- `https://youtu.be/We7BZVKbCVw` — Boris Cherny on Lenny (head of Claude Code interview) — **still outstanding.** Only the first ~30 min has been manually transcribed.
 
-How:
+How (Cherny remainder):
 1. Open the YouTube URL in a browser logged into your YouTube account.
 2. Click "Show transcript" under the video description (or use the three-dot menu).
 3. Copy the full transcript text.
-4. Paste each into `research/manual/lenny-cherny-transcript.txt` and `research/manual/lenny-willison-transcript.txt` respectively.
+4. Paste it into `research/manual/lenny-cherny-transcript-full.txt` (or replace the existing partial).
 5. Commit and push.
 
 Alternative: use a transcript service (Otter.ai, Tactiq, etc.) that returns cleaner timestamps.
 
-Drains into `research/06-hn-and-lenny.md` and `research/followup/03-cherny-interview.md`. **Primary unlock for the "10–30 PRs/day" and "10–15 parallel sessions" Cherny claims** that the corpus quotes but has never primary-sourced.
+Drains into `research/06-hn-and-lenny.md` and `research/followup/03-cherny-interview.md`. **Primary unlock for the "10–30 PRs/day" and "10–15 parallel sessions" Cherny claims** that the corpus quotes but has never been fully primary-sourced.
 
 ### 4.3 Low priority — background completeness
 
@@ -155,7 +157,7 @@ How:
 
 ### 4.4 Not worth fetching anymore
 
-- **The two Lenny URLs as articles** — confirmed video-only with paywall-stub article shell. There is no text body at the URL. See §4.2 for the YouTube route instead.
+- **The two Lenny URLs as articles** — confirmed video-only with paywall-stub article shell. There is no text body at the URL. See §4.2 for the YouTube route instead (Willison side done 2026-05-13; Cherny remainder still outstanding).
 - **The three Klaassen Every.to siblings** — successfully fetched directly via the GH Action runner in (now-closed) fetch-urls issue #23 (the every.to URLs returned HTTP 200 from the runner despite blocking the sandbox). Re-fetch would be duplicate work.
 - **`kaner.com/pdfs/ScenarioIntroVer4.pdf` + Wikipedia PDCA + Deming Institute PDSA** — optional per `research/unfetched-sources.md` "Deferred fetch-action candidates" row 5; structural conclusions firm without these.
 

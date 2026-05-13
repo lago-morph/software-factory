@@ -1,6 +1,6 @@
 # Research Index
 
-**Last updated:** 2026-05-13 (after issue #29/#30/#31 drain).
+**Last updated:** 2026-05-13 (after issue #29/#30/#31 drain + full Lenny × Willison transcript drain).
 
 Single-glance index of every numbered report and followup in `research/`. For per-source provenance see each report's "Sources reviewed" table; for round-level reachability status see `research/blocked-urls.md` (canonical, v5) and `research/blocked-urls-round-6.md` (most recent batch). The resumable plan is `research/PLAN.md`.
 
@@ -17,8 +17,8 @@ Single-glance index of every numbered report and followup in `research/`. For pe
 | 02 | strongdm-attractor | ✅ | StrongDM's Attractor product page + 17+ community ports (Kilroy, Forge, etc.). |
 | 03 | every-compound-engineering | ✅ | Every's compound-engineering guide + Klaassen "My AI had already fixed" (Cora playbook drained from primary). |
 | 04 | every-skill-libraries | ✅ | Every's SKILL.md convention; Compound Knowledge plugin. |
-| 05 | simon-willison | ✅ | Simon Willison's `agentic-engineering-patterns` 12-chapter guide + software-factory post. **Extended 2026-05-13** with partial Lenny × Willison podcast transcript (first 30 of 90 min): new H2 with "Challenger disaster of AI" prediction; **reversal-of-reversal on the "4 agents → 11 AM" claim** (the v3 "fabrication" correction was itself wrong — the count is real and verbatim). |
-| 06 | hn-and-lenny | ✅ | HN thread on dark factories + Lenny Cherny/Willison interview references. **Updated 2026-05-13:** both Lenny podcasts now primary-anchored via partial transcripts (30 of 90 min each); Cherny "10–30 PRs/day, 100% Claude-written" verbatim; reversal-of-reversal on Willison's "4 agents → 11 AM" applied. Full transcripts pending (user offered overnight run). |
+| 05 | simon-willison | ✅ | Simon Willison's `agentic-engineering-patterns` 12-chapter guide + software-factory post. **Extended 2026-05-13** with FULL Lenny × Willison podcast transcript (all ~90 min — supersedes the earlier partial 30-min drain): Challenger-disaster prediction fully captured (incl. self-falsification clause and *Normalization of Deviance* citation); lethal-trifecta walkthrough with **97%-is-a-failing-grade** doctrine; **OpenClaw / "Claws"** as load-bearing latent-demand exemplar; end-of-2026 prediction (50% of engineers ≥95% AI-written code); low-background-steel analogy for pre-2022 GitHub repos; macroeconomic worry on the record. |
+| 06 | hn-and-lenny | ✅ | HN thread on dark factories + Lenny Cherny/Willison interview references. **Updated 2026-05-13:** Willison Lenny podcast now ✅ FULL via complete transcript drain (cross-refs report 05 for elaborated material; 11 new quantitative claims added; reversal-of-reversal on the "4 agents → 11 AM" claim retained). Cherny Lenny episode remains 🟡 partial (separate transcript still outstanding). |
 | 07 | dark-factory | ✅ | El Kaim's "The Dark Factory" Medium article (anchored on `reference-only/dark-factory-article.txt`). |
 | 08 | jaymin-book-foundations-patterns | ✅ | Jaymin West's book: Chapters 1–5 (foundations + patterns). |
 | 09 | jaymin-book-harnesses-practices-mental-models | ✅ | Jaymin West's book: Chapter 6 (harnesses) + practices + mental models. Replaces the deleted partial. |

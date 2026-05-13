@@ -11,7 +11,7 @@
 
 **Done:**
 - **Round 1** — 7 reports (`research/01-07-*`) + initial synthesis (`research/00-synthesis.md`).
-- **Round 2** — 5 reports + synthesis (`research/08-12-*`, `research/13-round-2-synthesis.md`). 21 new failure modes (F21–F33) catalogued; never folded into `architectures/00-comparison.md` §2.4.
+- **Round 2** — 5 reports + synthesis (`research/08-12-*`, `research/13-round-2-synthesis.md`). 13 new failure modes (F21–F33) catalogued; never folded into `architectures/00-comparison.md` §2.4.
 - **Round 3** — 12 follow-up threads (Threads 1–11 → `research/followup/01-11-*`; Thread 12 *Dark Factory via archive.org* was RESOLVED without a new file when the article was retrieved via Path B and folded into `research/07-dark-factory.md`). A separate post-Round-3 effort produced `research/followup/12-brier-pace-layers.md` plus primary-source upgrades to followup/05 and followup/07 — these were on a side branch only until the 2026-05-13 cherry-pick (see §3.1).
 - **Round 4** — 4 reports off the El Kaim enterprise-architecture book (`research/14-17-*`). The book chapters are now at `reference-only/el-kaim-book/`.
 - **Round 5** — 6 reports off counterfactual harvest against a ChatGPT deep-research artifact (`research/18-23-*`). The artifact is at `reference-only/chatgpt-deep-research-2026-05-11/`.
@@ -243,9 +243,9 @@ Sections 11–17 below preserve the per-round dispatch records that v0.1–v0.7 
 
 ## 11. Round 2 — Subagent dispatch record (was §§1–9 of v0.1–v0.4)
 
-Round 2 dispatched 6 subagents plus a synthesis run. The lead question: *what can we reuse from Jaymin's book, the Overstory repo, and OpenHands to build the four architectures?*
+Round 2 dispatched 6 subagents (the last, subagent 13, was the sequential synthesis run; the other 5 ran in parallel). The lead question: *what can we reuse from Jaymin's book, the Overstory repo, and OpenHands to build the four architectures?*
 
-Subagent dispatch (parallelizable):
+Subagent dispatch:
 - **08 — Jaymin Book Foundations + Patterns** (Ch 1–5, 7) → `research/08-jaymin-book-foundations-patterns.md`
 - **09 — Jaymin Book Harnesses + Practices + Mental Models** (Ch 6, 8, 9) → `research/09-jaymin-book-harnesses-practices-mental-models.md` (v1.1 after the 2026-05-13 editorial collapse folded in the prior partial's Substack manifesto digest)
 - **10 — Overstory substrate audit** → `research/10-overstory-substrate-audit.md`

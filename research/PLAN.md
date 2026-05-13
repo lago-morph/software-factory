@@ -1,9 +1,9 @@
 # Software Factory Research — PLAN.md
 
 **Version:** v0.9 (2026-05-13)
-**Status:** Five rounds of research complete (24 numbered reports + 11 follow-up threads + 5 architecture docs + 1 methodology doc). Source files reorganized: live primary material is in `/reference-only/`; transient drop zone is `research/manual/`. Three fetch-urls issues open and awaiting action runs; one significant batch of unmerged work on a side branch; three curated human-review tasks pending; five retrospective decisions queued.
+**Status:** Five rounds of research complete (24 numbered reports + 12 follow-up reports + 5 architecture docs + 1 methodology doc). Source files reorganized: live primary material is in `/reference-only/`; transient drop zone is `research/manual/`. Three fetch-urls issues open and awaiting action runs; three curated human-review tasks pending; five retrospective decisions queued.
 
-**Earlier versions:** v0.1–v0.7 lived as accreted Round-by-Round sections (§§1–14 below as Archive). v0.8 rewrites the live status at the top and compresses the per-round detail. The audit trail is preserved in §§11–18; the live work is in §§1–10.
+**Earlier versions:** v0.1–v0.7 lived as accreted Round-by-Round sections (§§11–17 below as Archive). v0.8 rewrites the live status at the top and compresses the per-round detail; v0.9 records the pt-2 cherry-pick recovery and updates §3.1 from bottleneck → RESOLVED. The audit trail is preserved in the archive sections; the live work is in §§1–6.
 
 ---
 
@@ -18,11 +18,10 @@
 - **Round 6** — 26-subtask parallel-fanout night run on 2026-05-11 (`harness/runs/20260511-054258/`) that produced most of the above. One follow-up "pt-2" wave (3 subagents) was originally orphaned on a side branch but was recovered onto main via the 2026-05-13 cherry-pick (see §3.1).
 - **Session 2026-05-13** — editorial collapse of the 09 partial into the unified report; closed 7 drained fetch-urls issues; filed 3 new batched fetch-urls issues (#29 / #30 / #31); reorganized source files into `/reference-only/`.
 
-**Not done:**
-- §3 Bottlenecks
-- §4 Manual fetch instructions
-- §5 Work remaining
-- §6 Curated human-review tasks (the original §14.4 tasks 2, 3, 5)
+**Open items live in:**
+- §3 Bottlenecks — four live items: §3.2 curated human-review backlog (the original §14.4 tasks 2, 3, 5), §3.3 in-flight fetch-urls workflow (#29 / #30 / #31), §3.4 retrospective decisions, §3.5 YouTube-video-only Cherny claims.
+- §4 Manual fetch instructions (prioritized).
+- §5 Work remaining (priority order).
 
 ---
 

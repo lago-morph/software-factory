@@ -50,7 +50,9 @@ For paywalled articles where you've already read the body, your browser's Reader
 
 ## Deferred fetch-action candidates (added 2026-05-11 post-drain; partially filed 2026-05-13)
 
-These were blocked from the sandbox during the 2026-05-11 parallel-fanout run (`harness/runs/20260511-054258/`) but the subagent did **not** file a `[fetch-urls]` issue. Each is a candidate for the GitHub Action's runner IP — historically the action retrieves these even when the sandbox can't. **2026-05-13 update:** rows 1-4, 6, 9 batched into three filed issues (#29 high-leverage, #30 GitHub docs, #31 competitor landscape). Rows 5, 7, 8, 10 remain unfiled — see status column.
+These were blocked from the sandbox during the 2026-05-11 parallel-fanout run (`harness/runs/20260511-054258/`) but the subagent did **not** file a `[fetch-urls]` issue. Each is a candidate for the GitHub Action's runner IP — historically the action retrieves these even when the sandbox can't. **2026-05-13 update:** rows 1-4, 6, 9 batched into three filed issues (#29 high-leverage, #30 GitHub docs, #31 competitor landscape); row 10 already covered by an earlier filed issue (#23) and resolved in the pt-2 drain. Rows 5, 7, 8 remain unfiled — see status column.
+
+**Corpus-level lesson from pt-2 drain (2026-05-11):** the Klaassen Every trilogy and the Anthropic / Hamel / Willison evals batches were both successfully action-fetched once filed — confirming that `every.to/chain-of-thought/`, `anthropic.com/engineering/`, `hamel.dev`, and `simonwillison.net` are all **action-fetchable for publicly-visible bodies** despite the sandbox 403s. The "Defer to user — Path B only" labeling some of these previously carried was overcautious. **File a `[fetch-urls]` issue first**, escalate to Path B only when the action also returns ❌.
 
 | URL family | Reports affected | Filing strategy | Status |
 |---|---|---|---|
@@ -63,9 +65,9 @@ These were blocked from the sandbox during the 2026-05-11 parallel-fanout run (`
 | `docs.replit.com/*` + `blog.replit.com/*` (~20 URLs across both — see `research/20-replit-agent.md` blocked-URL list) | `research/20-replit-agent.md` | One issue; Cloudflare-gated. Action success uncertain — `blocked-urls.md` v5 catalogs `*.openai.com` 403s; Replit may behave similarly. | ⏸ Not filed. Action-success uncertain — defer until either v6 catalog updates or user requests. |
 | `developers.openai.com/codex/*` + `openai.com/index/harness-engineering/` + `openai.com/index/unlocking-the-codex-harness/` | `research/18-openai-codex-substrate.md` | Listed in `blocked-urls.md` v5 as known-blocked from action too — would need Path B if filed. | ⏸ Not filed. Known-blocked from action — Path B is the realistic recovery; defer to user. |
 | `docs.github.com/en/copilot/*` (Copilot cloud agent + Autofix + CodeQL pages) | `research/19-github-copilot-cloud-agent.md` | One issue. GitHub's own docs site is normally reachable from a GH-hosted runner. | ✅ Filed as #30 (2026-05-13). |
-| `every.to/chain-of-thought/*` (3 Klaassen siblings) | `research/followup/05-klaassen-siblings.md` | Likely action-blocked too (every.to consistently 403s GH IPs); Path B is the realistic recovery — not a fetch-issue candidate. **Defer to user.** | ⏸ Not filed. Path B only. (Note: a related batch was successfully retrieved via Wayback in closed issue #23 — Path A with Wayback may also be viable here as a future retry.) |
+| `every.to/chain-of-thought/*` (3 Klaassen siblings) | `research/followup/05-klaassen-siblings.md` | Originally tagged "Path B only" assuming every.to would 403 the runner. The pt-2 drain refuted that — fetch-urls issue #23 fetched the three Klaassen URLs **directly** with HTTP 200 from the runner. | ✅ Resolved 2026-05-11 pt-2 via fetched/issue-23 (drain landed on main via the 2026-05-13 cherry-pick). |
 
-**How to action remaining rows:** rows 5 (optional), 7 (replit), 8 (openai.com codex), 10 (every.to siblings) all carry known-low-success or low-priority flags. Defer to user judgement. If filed, group into one issue per host-cluster with explicit Path B fallback documented in the issue body.
+**How to action remaining rows:** rows 5 (optional), 7 (replit), 8 (openai.com codex) all carry known-low-success or low-priority flags. Defer to user judgement. If filed, group into one issue per host-cluster with explicit Path B fallback documented in the issue body.
 
 ## Disposition after retrieval
 

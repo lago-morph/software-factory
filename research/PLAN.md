@@ -212,8 +212,8 @@ The runner has full network egress and writes to a fresh `fetched/issue-N` branc
 
 **Token cost envelope (approximate):**
 - Round 1: ~30k tokens × 7 subagents
-- Round 2: ~50k × 13 subagents (lead-agent partial pass added)
-- Rounds 3–6: night run consumed ~$15–25 in Anthropic API calls per the run report
+- Round 2: ~50k tokens × 6 subagents + lead-agent partial passes (per §11 / §17 v0.2)
+- Rounds 3–6: catalogued in the parallel-fanout night run on 2026-05-11. Token-level detail per subtask lives in `harness/runs/20260511-054258/report.md` and `report-pt2.md`; no dollar total recorded.
 
 **Out of scope (deliberately):**
 - Replacing the four architectures with a single "winner". The comparison stays a comparison.

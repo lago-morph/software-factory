@@ -109,7 +109,7 @@ The primary-source pass surfaced new external references worth fetching. Highest
 Most architecture decisions were *not* materially changed by the primary-source pass. The four architectures remain stable. Specific corrections that propagated:
 
 - **DTU = Digital Twin Universe** (not Users) — corrected in all four architecture specs.
-- **"Willison: 4 agents → 11 AM" was fabricated** — softened to "mentally exhausted by 11 AM" in synthesis and Architecture 4 (which had cited the specific number).
+- **~~"Willison: 4 agents → 11 AM" was fabricated~~** — **REVERSAL-OF-REVERSAL (2026-05-13).** The "softened to remove the specific number" correction in v3 was itself wrong. The Lenny × Willison podcast transcript drained 2026-05-13 (manual upload, first 30 of 90 min) contains the verbatim line *"I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day."* Both the 4-agent count AND the 11 AM exhaustion are real and primary-anchored. The original v1 attribution was correct after all. Synthesis §"Revision notes", §"Parallelism", §"Quick anchor data", and the round-1 HN-row table have all been corrected.
 - **Simon's review stance is more nuanced** — synthesis §3.1 updated; Architecture 1 reference unchanged (Simon is not the only justification for that architecture).
 - **Self-improving prompts** (Klaassen frustration-detector, Tedesco Montaigne) — added to Architecture 2 as a documented pattern.
 - **Scenarios partially agent-generated** — added as a primitive in synthesis §5.1 and referenced in Architecture 1's scenario discussion.

@@ -1,0 +1,128 @@
+# The Culture of AI Engineering
+
+**Source:** every.to (Thesis column)
+**Author:** Noah Brier (co-founder, Alephic; previously co-founder, Percolate)
+**Editor's intro:** Kate Lee
+**Illustration:** Sarah Jay Halliday / Every
+**Published:** Friday, 2026-05-08 (per user; "just last Friday" relative to 2026-05-11)
+**Captured:** 2026-05-11 (user-pasted into chat; saved verbatim to research/manual/ for Phase 0 drain)
+**Subtitle:** A framework for getting humans, agents, and everything in between to build the same vision
+
+---
+
+## Editor's intro (Kate Lee)
+
+Noah Brier cofounded Percolate in 2011 and learned the CEO's hardest job: keeping a whole company pointed in the same direction. Now, at his AI consultancy Alephic—and in his own work, where he uses Claude Code as a second brain—he's facing that same problem with agents in the mix. AI was supposed to make coordination easier. Instead, Noah argues, it has created new coordination problems of its own. In this piece, he pushes back on the "software factory" metaphor and offers a framework, drawn from Stewart Brand's pace layers, for getting carbon and silicon to build the same thing.—Kate Lee
+
+---
+
+## Body
+
+Strong DM is a software company whose three-person AI team calls their system for autonomous code generation a "Software Factory." Entrepreneur Dan Shapiro's widely circulated framework for AI coding culminates in "the Dark Factory," named after a Japanese robotics plant that runs with the lights off. Factory.ai, which has raised millions from Sequoia and Khosla Ventures, has built an entire business around the metaphor—its autonomous coding agents are called Droids.
+
+I've been incorporating many of StrongDM's concepts about agentic software development into our work at Alephic, the consulting company I co-founded—but I have one fundamental disagreement: I think factory is the wrong metaphor.
+
+If the hardest problem is making something people want, then the process of building software looks a lot more like Andy Warhol's factory than Henry Ford's. Both are focused on throughput, but Ford's is focused on mechanization and stamping out identical cars with as little variance as possible. Warhol, on the other hand, was concerned with ensuring all work aligned with a single creative vision.
+
+Ford's factory—or more specifically, the assembly lines inside it—was designed to eliminate imperfections. Six Sigma, the quality methodology made famous by General Electric and beloved of manufacturers, is literally a measure of the defect rate. Quality starts with deciding what to build. This is why product-market fit is the lingua franca of startups: If you haven't built something the market needs, nothing else—including the quality of your code—matters.
+
+Too much of the industry treats software as a problem to be optimized and solved. That may be true for code writing and testing, but the better metaphor is staring us in the face: It's a software company, not a software factory.
+
+Just as in the days before AI, the hardest problem for a business is still creating this vision and alignment around it—how to keep an entire team of humans, and now humans and agents (and humans with agents), building toward the same vision, from the system architecture down to the individual lines of code. As I've learned long before agents existed, achieving this is much more akin to building a startup than assembling a car. What follows is my attempt at a framework for keeping an entire system of humans and agents building the same thing.
+
+### [Sponsor block — Braintrust Evals Course]
+
+Stop shipping AI on vibes. A lot of people are using AI blind. They build with LLMs, deploy prompt changes, and hope they improve things. There aren't any measurement frameworks. Braintrust fixes this. They just launched an Evals Course, which is a hands-on curriculum for moving past guesswork. Learn how to build eval datasets from production logs, manage agent workflows, and analyze failures systematically. Based on real workflows from teams at Notion, Stripe, and Ramp.
+
+### The alignment problem isn't new—and AI didn't solve it
+
+I ran into this alignment problem years ago, when I cofounded the company Percolate, a content marketing platform, in 2011. As we grew the business from zero to 100 people in less than three years, my job as CEO shifted from building the product to building a company capable of building the product. My agents were people, and my job was to design the system they worked within. Culture, I concluded, was one of the strongest levers I had.
+
+As Ben Horowitz put it, culture is "how your company makes decisions when you're not there." This was exactly what I needed: documents, tools, and rituals that helped each individual make the best possible decision without having to run every decision up the chain. I probably spent half my time on this, building a living culture document, running onboarding sessions for every new hire, and developing internal tools that automatically routed knowledge to the right people.
+
+Every new technology promises to solve these coordination problems. But of course, nothing is that simple. What they do in reality is reshape the landscape around them and, in the process, create new problems that didn't exist before. AI is no different.
+
+Open-source software offers an early glimpse of the kind of unexpected problems that AI can create: Whereas the primary challenge a few years ago was finding maintainers willing to contribute code on goodwill alone, today's challenge is sifting through hundreds of crappy AI-generated pull requests flooding GitHub.
+
+Now, 15 years later, my audience at Alephic is not just the humans who work with me. Those humans are often paired with agents, and, increasingly, the agents themselves are delivering work independently. Yet the core problem is identical.
+
+If you've used a coding agent for more than a week, you've already experienced this: The code works, but it often feels written by someone most definitely not you—ignoring obvious abstractions and stylistic norms that are present in the codebase. It looks, in other words, like a new engineer on the team who hasn't been properly onboarded. We write onboarding documents and do training for our human colleagues, but most people don't do this for agents. Yet.
+
+### Pace layers of AI engineering
+
+I still have an onboarding document and set of activities every new hire goes through during their first week, including building a module in our homegrown learning system as their first coding task (a few recent editions were GPUs, quantization, and agentic commerce protocols).
+
+But I am also building tools that go further and ensuring our code is maintainable, consistent, and built the way we'd want it built.
+
+I think about our tooling as a kind of cultural stack, where standards inform architectures, which in turn inform specs, plans, and code. The layers are inspired by counterculture systems thinker Stewart Brand's pace layers framework. It's a model for how society changes at different speeds, from nature, which shifts over millennia, to fashion, which can change by the day. The lower layers move slowly; the upper ones move fast.
+
+> **[Figure 1]** Stewart Brand's Pace Layers framework offers a vision of how society works, from nature (changes over millennia) to fashion (changes daily). (Source: Stewart Brand.)
+
+Brand argued that much of societal tension exists where the layers meet—when fashion reshapes culture (think about how social media rewired our norms about privacy) or culture becomes governance (how shifting attitudes towards marriage equality became law). Fashion, in Brand's framing, isn't trivial—it's the froth layer where society experiments quickly and irresponsibly, and the occasional good idea sifts down to reshape the slower layers below. All things are ultimately reliant on the layer beneath them. Culture is subject to the laws of nature, governance to the laws of culture.
+
+Those boundaries can and do shift, but recognizing the layers and the differing speeds at which they move is central to understanding why systems resist change, and what it takes to change them.
+
+> **[Figure 2]** The "pace layers" of AI engineering help both humans and agents move in the same direction. (Credit: Noah Brier.)
+
+Here's how I've been thinking about the "pace layers" of AI engineering and how we're building tooling at Alephic to help both humans and agents move in the same direction:
+
+1. **Code is fashion now.** Whereas it once sat deeper in the stack, where it was slower moving and insulated by other layers, in a world of AI, code is free to produce and reproduce. The challenge is how to do it right: free of bugs at the macro level, and aligned with your own vision and best practices at the micro level. By the time we get to this layer, we have to trust that the layers beneath are strong enough to steer the system to the places we need it to go.
+
+2. **Plans sit beneath code.** Before an agent writes anything, it should pause to survey the problem—what are the possible approaches, and what are the trade-offs? Only after completing this step should the agent pick a direction and build. Many algorithms in computer science rely on the explore-exploit shift—when you time-box a broad search phase before zeroing in on a solution to run with—and this plan phase is no different. A plan doesn't have to be a formal document, but it must separate the thinking from the doing. Without this pause, exploration and execution get mashed together.
+
+3. **Specs sit beneath plans.** A good plan needs a good specification. That can be a ticket (a task that needs doing), a document, or just a conversation, but it explains what we are building, why we are building it, how you know you've done it right, and, critically, what we are not tackling right now. That last bit is particularly important for overeager AI that wants to please by building everything you wanted and a little more. There's a good debate in the engineering community about what constitutes a good spec. It's the simplest set of directives that shrink the planning space: a goal, a set of acceptance criteria, and an explicit list of out-of-scope problems.
+
+4. **Architecture is the theory of the system.** I've been keeping an ARCHITECTURE.md doc in all my codebases for a while now, borrowing from computer scientist Peter Naur's idea that the real program isn't the code, it's the mental model the developers carry. The document shows how the business problem maps to the codebase, so you can predict where to find the code that solves this problem. It captures the key decisions and why they were made, and lays out the rules that must always hold, such as "no database queries outside the repository layer" and "no framework imports in the business logic." Critically, it also names what's still an open question, so AI doesn't silently make architectural decisions for you, taking the codebase somewhere you didn't intend.
+
+5. **Standards are the foundation.** Some are general principles of good software-building; others reflect our specific beliefs about how software should be built. One of the insights that drove me to start the company was when, years ago, I asked a developer I had worked with for a decade if I could have all his configuration files, the ones that encode his rules for how code should be written. When I applied this rulebook to my own work, I became a significantly better developer. His strict approach to linting, or automated rules that reject code with unused imports or superfluous definitions, meant my code wouldn't even run unless it met his standards. Cutting corners was no longer an option. At Alephic, we enforce many of these standards with tools like tests and static analysis, which let the computer check your code automatically. But a lot of this guidance also lives in skills we distribute across the company, so people can use it in whatever harness they choose. The code-organization skill memorializes how we want team members to organize their codebases, and coding-best-practices hardcodes the stylistic and technical preferences our platform engineering team has established.
+
+With AI, we can take these ideas beyond the mechanisms of cultural exchange I had in my Percolate days (like documents and meetings) and encode them into tools that every person can interact with every day.
+
+The layers at the bottom move the slowest, so they should get updated the least frequently. For instance, I could start keeping a document in a single project as a way to give agents context on how the codebase was organized. If it works well enough, I turn it into a skill so the rest of the team can adopt the pattern across their projects. Then, I can decide that it's a fundamental piece of how we build and, eventually, a best practice I want to enforce for the entire team.
+
+### Companies > factories
+
+While Henry Ford may be famous for the assembly line, he's arguably more famous for his (likely apocryphal) quip about how if he asked people what they wanted, they'd say faster horses. Assembly lines exist to serve factories, just like factories exist to serve products, and products exist to serve companies. You don't build a factory without an idea worth building it for.
+
+The factory is one piece in a larger organization, where layers of co-dependent systems interact and move at different speeds. The interesting problems around alignment occur at the seams, where layers rub against each other: Is this a problem that should be solved with a meeting, a document, a skill, or a test? When does something graduate from a pattern in a codebase to something that should be established in all codebases?
+
+At first glance, AI seems to smooth over these frictions. But that's only true if you don't scratch below the surface. What you find there is that the same problems that plague companies plague agents: incomplete information, overeager employees trying to solve the wrong problem, not wanting to admit you don't know. The difference is speed. As Mario Zechner, who built open-source coding agent Pi, recently observed, the mess that used to take a large organization years to accumulate now arrives in weeks with a two-person team and a fleet of agents.
+
+That is not a reason to retreat to being obsessed with defects. It's a reason to take the harder problem seriously: how to keep an entire system of humans, agents, and the layers between them aligned. This problem has a decidedly human shape. Civilizations have been organizing large groups of autonomous agents to do good work for a very long time. The agents were just carbon instead of silicon.
+
+### The man underneath the layers
+
+*As part of this thesis, Every chatted to Noah about how he works and what inspires him.*
+
+- **If there's a chessboard out:** there's a good chance [my kids and I] will do that instead of reverting to less enriching activities like being on screens. That chess set was designed by some friends and inspired by the New York City outdoor chess scene.
+- **To keep me from checking email during calls:** I like to take notes on paper, currently with a Campus notebook and rOtring 600 pen.
+- **Re-reading the Simple Sabotage Field Manual:** a 1944 document by the precursor to the CIA, I was struck by how closely the instructions for sabotage match the realities of corporate life in America. I hired a designer and printed a few hundred beautifully bound copies, which I gave away at my conference.
+- **A few books I've pulled off the shelf recently:** *Toyota Production System* (I'm thinking a lot about how we can take inspiration from these kinds of organizing principles to align agents), *The Medium Is the Message* (Marshall McLuhan is a hero of mine and this comes off the shelf frequently when I just want to bump my brain a bit), and *Orchestrating Ambiguity* (recently recommended to me, it's a book of books about how to design for emergence in organizations).
+- **I really love working:** before anyone else has woken up, but that also requires that I wake up before then. So mostly it's just morning time after I get my kids on the bus.
+- **My dog's name:** is Kaiya. She's two and a half, and very much a mutt.
+
+*Noah Brier is the co-founder of Alephic.*
+
+---
+
+## Notes for the drain pass
+
+Cross-references to existing reports:
+
+- **07-dark-factory.md** — Brier explicitly names Dan Shapiro's "Dark Factory" framework as one of the three exemplars he's pushing back against. Direct primary-source response to that lineage. Counter-thesis: factory is the wrong metaphor; software building is more like Warhol's factory (vision alignment) than Ford's (defect elimination).
+- **01-strongdm-factory.md / 02-strongdm-attractor.md** — Brier names StrongDM's "Software Factory" as one of the three exemplars, and says explicitly he is "incorporating many of StrongDM's concepts about agentic software development into our work at Alephic." So he is both a user and a critic of the StrongDM framing.
+- **03-every-compound-engineering.md / 04-every-skill-libraries.md** — This *is* an Every piece, by an Every contributor (Noah Brier / Alephic), and it explicitly mentions skills as a distribution mechanism ("code-organization skill", "coding-best-practices"). Direct primary source for Every's skill-library thesis from a non-Every-staff practitioner.
+- **00-synthesis.md** — The pace-layers framework (standards → architecture → specs → plans → code) is a new organizing structure that the synthesis should engage with. Five-layer stack is novel framing for the corpus; nothing else in the research uses Brand's pace layers explicitly.
+- **PLAN.md** — Mario Zechner / open-source coding agent "Pi" is named here as a quoted source ("the mess that used to take a large organization years to accumulate now arrives in weeks with a two-person team and a fleet of agents"). Potential new research thread; not currently in the unfetched-sources list.
+
+New named entities introduced (potential future research targets):
+
+- **Alephic** — Noah Brier's AI consultancy (the author's company)
+- **Factory.ai** — funded by Sequoia + Khosla; "Droids" coding agents (already loosely tracked)
+- **Pi** — open-source coding agent by Mario Zechner
+- **ARCHITECTURE.md** as a Naur-inspired convention — Brier links the practice to Peter Naur's "programming as theory building"
+- **Simple Sabotage Field Manual** (1944, OSS) — mentioned by Brier as a lens on corporate dysfunction
+- **Orchestrating Ambiguity** — book mentioned by Brier; "a book of books about how to design for emergence in organizations"
+- **Toyota Production System** (book) — Brier cites it as an inspiration for aligning agents (relevant to the lean/six-sigma thread in report 07)
+
+Editorial cruft trimmed from the saved copy: navigation chrome ("Subscribe", "What did you think of this post?", "AI Tools Showcase", Sparkle/Cora/Spiral/Monologue product blurbs, unsubscribe footer, mailing address). The full body of the article and sidebar Q&A is preserved verbatim above.

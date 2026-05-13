@@ -1,7 +1,7 @@
 # The Dark Factory (el-kaim.com) — Research Report
 
 **Sources covered:**
-- https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e — **ACCESSED IN FULL** as of 2026-05-11 via a user-supplied "Save Page As" capture, after a Cloudflare-solved browser session, dropped into `research/manual/The Dark Factory How Software Is Le.txt` (41 KB, William El Kaim, Apr 8, 2026, "24 min read"). This is the canonical primary source and the basis for all verbatim quotes below.
+- https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e — **ACCESSED IN FULL** as of 2026-05-11 via a user-supplied "Save Page As" capture, after a Cloudflare-solved browser session, dropped into `reference-only/dark-factory-article.txt` (41 KB, William El Kaim, Apr 8, 2026, "24 min read"). This is the canonical primary source and the basis for all verbatim quotes below.
 - el-kaim.com author profile context (https://medium.com/@welkaim/about, https://welkaim.medium.com/) — author identification only; both remain Cloudflare-gated and contribute no body text.
 
 **Date:** 2026-05-11 (primary source incorporated; supersedes the 2026-05-10 secondary-source reconstruction)
@@ -10,7 +10,7 @@
 
 ## Revision notes (2026-05-11 — primary source incorporated)
 
-The previous two revisions of this report were reconstructions: the el-kaim.com URL had returned a Cloudflare interstitial on every fetch path tried (direct, Wayback, manual-cookie). On 2026-05-11 the user manually exported the article from a browser session that had solved the Cloudflare challenge, into `research/manual/The Dark Factory How Software Is Le.txt`. That file is the **full 24-minute article**. This revision treats it as canonical and rewrites the report accordingly. Itemized changes:
+The previous two revisions of this report were reconstructions: the el-kaim.com URL had returned a Cloudflare interstitial on every fetch path tried (direct, Wayback, manual-cookie). On 2026-05-11 the user manually exported the article from a browser session that had solved the Cloudflare challenge, into `reference-only/dark-factory-article.txt`. That file is the **full 24-minute article**. This revision treats it as canonical and rewrites the report accordingly. Itemized changes:
 
 **Status flip.** The "Status note" block that said the primary source remained inaccessible is removed. The Sources-status row for el-kaim.com is flipped from ❌ to ✅ FULL (manual fetch 2026-05-11). All other rows are unchanged.
 
@@ -447,7 +447,7 @@ What El Kaim does *not* warn about (still): alignment, displaced labor, regulato
 
 ## Notable quotes (verbatim from primary source)
 
-All verbatim from `research/manual/The Dark Factory How Software Is Le.txt` (William El Kaim, "The Dark Factory: How Software Is Learning to Build Itself," el-kaim.com, Apr 8, 2026). Ordered to match the article's flow.
+All verbatim from `reference-only/dark-factory-article.txt` (William El Kaim, "The Dark Factory: How Software Is Learning to Build Itself," el-kaim.com, Apr 8, 2026). Ordered to match the article's flow.
 
 1. *"The idea of the dark factory is often presented as if software has suddenly become fully autonomous. That framing is misleading. The real shift is not that machines now 'magically build software alone.'"*
 2. *"humans no longer spend most of their time writing code or reviewing code. Instead, they define specifications, construct execution environments, design validation scenarios, and supervise the systems that generate and correct the software."*
@@ -543,7 +543,7 @@ The article ends with an explicit references list. Reproduced verbatim for downs
 
 | Source URL | Status | Notes |
 |---|---|---|
-| https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e | ✅ FULL | Manual browser-cookie fetch 2026-05-11; full 41 KB / 24-minute article exported to `research/manual/The Dark Factory How Software Is Le.txt`. Canonical primary source for this report. |
+| https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e | ✅ FULL | Manual browser-cookie fetch 2026-05-11; full 41 KB / 24-minute article exported to `reference-only/dark-factory-article.txt`. Canonical primary source for this report. |
 | https://medium.com/@welkaim/about | ❌ | Cloudflare interstitial only; author-identification context, no body. |
 | https://welkaim.medium.com/ | ❌ | Cloudflare interstitial only; author-identification context, no body. |
 

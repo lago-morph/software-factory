@@ -2,8 +2,8 @@
 
 **Date:** 2026-05-11
 **Round:** 4, Cluster B (per `research/PLAN.md` §12.2)
-**Primary source (load-bearing, full read):** `research/manual/multi/Chapter 7 Automating Enterprise Arc.txt` — William El Kaim, "Chapter 7: Automating Enterprise Architecture Execution," ~32-minute Medium post, posted "5 days ago" relative to the manual capture; 445 lines / 446-line file with sources list.
-**Secondary source (skimmed, used for second worked example):** `research/manual/multi/Chapter 5 Automating RISE with SAP.txt` — same author, Apr 28 2026, "29 min read," 662 lines. Sections 2–4 confirm SAP Activate as a DAG = attractor-phase-graph mapping; sections 5–6 reinforce the variability-spec-as-seed framing.
+**Primary source (load-bearing, full read):** `reference-only/el-kaim-book/Chapter 7 Automating Enterprise Arc.txt` — William El Kaim, "Chapter 7: Automating Enterprise Architecture Execution," ~32-minute Medium post, posted "5 days ago" relative to the manual capture; 445 lines / 446-line file with sources list.
+**Secondary source (skimmed, used for second worked example):** `reference-only/el-kaim-book/Chapter 5 Automating RISE with SAP.txt` — same author, Apr 28 2026, "29 min read," 662 lines. Sections 2–4 confirm SAP Activate as a DAG = attractor-phase-graph mapping; sections 5–6 reinforce the variability-spec-as-seed framing.
 **Context only:** `research/02-strongdm-attractor.md`, `research/07-dark-factory.md`, `architectures/0N-*.md`, `architectures/00-comparison.md`.
 **Conventions:** El Kaim uses "RX Pharma" as his running pharmaceutical example. Quoted faithfully here, but treated as a generic regulated-industry illustration. All chapter section numbers (§1, §2.2 etc.) are El Kaim's, not mine.
 

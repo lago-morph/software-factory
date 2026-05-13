@@ -3,7 +3,7 @@
 **Round:** 5, Cluster 13.1.6 (PLAN.md §13.1.6)
 **Author:** subagent on `claude/parallelize-with-subagents-SO0nR--sub-25`
 **Date:** 2026-05-11
-**Primary sources:** S12, S13, S14 (per `research/external-syntheses/chatgpt-deep-research-2026-05-11/sources.md`), plus the application-development harness post flagged in §"Weak or missing citations".
+**Primary sources:** S12, S13, S14 (per `reference-only/chatgpt-deep-research-2026-05-11/sources.md`), plus the application-development harness post flagged in §"Weak or missing citations".
 
 | ID | Article | URL | Published |
 |---|---|---|---|

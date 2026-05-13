@@ -1,8 +1,8 @@
 # El Kaim — The Enterprise Architecture Codex and the Claude-Skill Substrate
 
 **Source chapters (local, do not delete):**
-- `research/manual/multi/Chapter 6 The Enterprise Architectu.txt` (William El Kaim, "The Enterprise Architecture Codex", Apr 2026 — load-bearing, §§1–13)
-- `research/manual/multi/Chapter 4 Why AI and Automation Cha.txt` §3 (MCP, architecture-as-code, named skills, coding agents in the delivery flow)
+- `reference-only/el-kaim-book/Chapter 6 The Enterprise Architectu.txt` (William El Kaim, "The Enterprise Architecture Codex", Apr 2026 — load-bearing, §§1–13)
+- `reference-only/el-kaim-book/Chapter 4 Why AI and Automation Cha.txt` §3 (MCP, architecture-as-code, named skills, coding agents in the delivery flow)
 
 **Cross-references in this repo:**
 - `research/04-every-skill-libraries.md` (Every.to skill-library taxonomy, frontmatter conventions, marketplace pattern)

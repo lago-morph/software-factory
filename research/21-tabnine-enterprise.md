@@ -1,6 +1,6 @@
 # Tabnine — Enterprise Governance Posture as a Product
 
-**Source cluster:** S17 in `research/external-syntheses/chatgpt-deep-research-2026-05-11/sources.md`, expanded per the "Weak or missing citations" §: five non-umbrella subpages on deployment, privacy, context engine, agent guidelines, and provenance/attribution.
+**Source cluster:** S17 in `reference-only/chatgpt-deep-research-2026-05-11/sources.md`, expanded per the "Weak or missing citations" §: five non-umbrella subpages on deployment, privacy, context engine, agent guidelines, and provenance/attribution.
 **Round / cluster:** Round 5, Cluster 13.1.4, per `research/PLAN.md` §13.1.4.
 **Stance:** *Tabnine's enterprise positioning is the closest existing-product analog to the governance discipline that `research/followup/10-governance.md` (Round-3 §11.10) and `research/16-el-kaim-book-council-and-delegation.md` (Round-4 L1–L4) argue any regulator-defensible factory needs. Treated as a product specification rather than as marketing, it supplies four primitives — private deployment, governed context, typed instructions, and per-output provenance — that the four architectures of this corpus do not currently name as first-class.*
 
@@ -243,4 +243,4 @@ Preserved from the snippet-era version, with one sharpening: Tabnine's posture i
 
 ---
 
-*Sources: T1–T10 (see §0 source-status table for URLs and access status), all probed 2026-05-11 and drained from `research/fetched/issue-27/` on the same day. Context: `research/followup/10-governance.md`, `research/16-el-kaim-book-council-and-delegation.md`, `architectures/03-phase-gated-foundry.md`, `research/external-syntheses/chatgpt-deep-research-2026-05-11/sources.md`.*
+*Sources: T1–T10 (see §0 source-status table for URLs and access status), all probed 2026-05-11 and drained from `research/fetched/issue-27/` on the same day. Context: `research/followup/10-governance.md`, `research/16-el-kaim-book-council-and-delegation.md`, `architectures/03-phase-gated-foundry.md`, `reference-only/chatgpt-deep-research-2026-05-11/sources.md`.*

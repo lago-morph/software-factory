@@ -76,15 +76,23 @@ These three tasks were explicitly excluded from subagent dispatch in the origina
 | **Update `spec-driven-ai-dev.md`** | Add 4 new fields proposed by Round-4 report 14 (cluster A): non-goals; decision-seeds; invariant-with-bindingHint; explicit Intent section. | `research/14-el-kaim-book-intent-and-spec-authorship.md` §"Recommendation" | Spec template ships without the El Kaim 9-field discipline. Generated specs continue to omit non-goals, which is the single highest-leverage of the four. |
 | **Round 2 complete stanza** | Append a "Round 2 complete" stanza at the bottom of §11 (was §10 in v0.7) with the drain merge commit hash `423940f`. | Bookkeeping. | Audit trail is incomplete. |
 
-### 3.3 In-flight fetch-urls workflow (filed 2026-05-13)
+### 3.3 ~~In-flight fetch-urls workflow~~ **RESOLVED 2026-05-13 — all three issues drained**
 
-Three issues await action runs:
+Three batched fetch issues filed earlier in the session landed on origin as `fetched/issue-29`, `fetched/issue-30`, `fetched/issue-31`. Drained in a single parallel-subagent pass (6 subagents, one per target report). Per-URL outcomes recorded in **`research/blocked-urls-round-6.md`**; commit-level summary:
 
-- **#29** — High-leverage batch: Anthropic engineering × 5 + Hamel/Husain × 4 + Simon Willison × 5 + arXiv CaMeL + Dan Shapiro × 2 (~17 URLs). Upgrades reports 23, followup/01, followup/07, followup/08 from secondary citations to primary.
-- **#30** — GitHub Copilot cloud agent docs (~9 URLs). Upgrades report 19.
-- **#31** — Cloudflare-heavy competitor landscape: Devin / Factory.ai / 8090 / Superconductor / fsck.com (~9 URLs). Upgrades followup/06. Action may 403; fallback is Path B.
+- **#29** (Anthropic × 5 + Hamel × 4 + Simon × 5 + arXiv + Shapiro × 2): 16/18 OK. Drained into `research/23-anthropic-engineering-trilogy.md` (5 Anthropic posts; **§8 new — Claude Code sandboxing**), `research/followup/07-evals-deepdive.md` (4 Hamel + 2 Simon), `research/followup/08-security-primitives.md` (3 Simon + arXiv CaMeL), `research/followup/01-shapiro-five-levels.md` (1 Shapiro companion post — canonical five-levels slug 404'd; correct slug now known). **Two 404s with corrected follow-up paths** (arxiv html v2, shapiro five-levels slug guess).
+- **#30** (GitHub Copilot docs × 9): 3/9 OK. Drained into `research/19-github-copilot-cloud-agent.md`. **6 URLs returned 404** — GitHub docs reorganized; five report citations now flagged `[2026-05-13 404; pending re-anchor]`.
+- **#31** (Devin / Factory / 8090 / Superconductor / Superpowers × 9): 6/9 OK. **Cloudflare blocks did NOT propagate to the runner.** Drained into `research/followup/06-competitor-landscape.md`. **Pricing model on Devin fully refuted** (current tiers Free/Pro $20/Max $200/Teams $80/Enterprise; no public ACU). **Factory adds "Droid Computers" primitive.** **Superconductor.io is wrong domain** — live product is at `.com`. 3 upstream 404s logged.
 
-Each will produce a `fetched/issue-N` branch when the action completes. Standard `research-pipeline` drain pass folds them in.
+**Cross-corpus lesson surfaced by this drain (now also in `research/blocked-urls-round-6.md`):** most of the prior "Cloudflare-only / paywall-only" classifications in `research/unfetched-sources.md` were **wrong** — the action runner reaches `simonwillison.net`, `hamel.dev`, `anthropic.com/engineering`, `arxiv.org/abs`, `danshapiro.com`, `devin.ai`, `factory.ai`, `8090.inc`, `blog.fsck.com` directly with HTTP 200. **Before invoking Path B (browser-cookie / Save Page As) for any future URL on these hosts, file a `[fetch-urls]` issue first.** This generalizes the pt-2 recommendation already in §3.1.
+
+**Refutations surfaced (audit-trail-grade):**
+- **Report 23:** Opus model is 4.5 not 4.6 (S12, S13, S15); testing tool is Puppeteer MCP not Playwright in S12; companion repo is `claude-quickstarts/autonomous-coding` not `cwc-long-running-agents`; "30–50 tokens per skill" not in S13; "Progressive disclosure that loads too eagerly defeats its purpose" not in S13; several "S13" security quotes are actually from `platform.claude.com/.../agent-skills/overview` (not yet drained — added to follow-up queue).
+- **followup/08:** 3 "verbatim" trifecta-leg sentences were snippet-confabulated; "Any time a system combines access to private data..." quote not in primary (real line: "Any time you combine those three lethal ingredients together you are ripe for exploitation"); "first credible prompt injection defense" Willison quote was misquoted (load-bearing "doesn't just throw more AI" qualifier omitted); CaMeL attribution corrected to Google DeepMind + ETH Zürich; 77%/84% AgentDojo figures now exact.
+- **followup/07:** prior issue-#24 removal of ">90% expert agreement in three iterations" REVERSED — the claim is real, source was wrong; it's from Hamel's llm-judge post (Honeycomb / Phillip Carter case study), not the FAQ.
+- **followup/06:** Devin pricing structure entirely refuted (no public ACU pricing); Factory positioning softened; Superconductor wrong-domain.
+
+**Follow-up fetch queue (next batched issue):** Shapiro five-levels correct slug, arxiv 2503.18813 paper body (try pdf or html v1), Superconductor.com, Cognition Devin announcement URL, 6 GitHub docs canonical URLs, `platform.claude.com` Agent Skills security guidance. See `research/blocked-urls-round-6.md` §"Follow-ups" for the actionable list.
 
 ### 3.4 Pending retrospective decisions
 
@@ -109,7 +117,7 @@ Three priority tiers. Highest-leverage items first.
 
 ### 4.1 Highest priority — do these if you have time
 
-**None today.** The high-leverage URL families are all in-flight via issues #29, #30, #31. Wait for the action to run. Drain happens automatically next session.
+**None today.** The #29 / #30 / #31 in-flight batches landed and were drained 2026-05-13 — see §3.3. The remaining follow-up URLs are queued for a future single batched issue (see `research/blocked-urls-round-6.md` §"Follow-ups"); none requires manual fetch.
 
 ### 4.2 Medium priority — primary-source unlock
 

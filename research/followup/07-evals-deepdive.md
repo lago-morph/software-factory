@@ -26,9 +26,79 @@ Source-status table at the foot of this report has been flipped from ❌/⚠️ 
 
 ---
 
+## Drain note (issue #29) — 2026-05-13
+
+Issue #29 fetched six more primary sources that this report had been citing only through search summaries or had cross-referenced as future follow-ups. After draining:
+
+- **Hamel, "Your AI Product Needs Evals" (Mar 2024)** is now anchored as the *philosophical* root of the discipline — the post the FAQ, the llm-judge guide, and the field-guide all build on. New §"0. The philosophical anchor (Husain 2024)" added below to host the load-bearing quotes ("a failure to create robust evaluation systems," "Iterating Quickly == Success," the three-level Level 1/2/3 hierarchy, "Eval Systems Unlock Superpowers For Free").
+- **Hamel, "Creating an LLM-as-a-Judge" / "Critique Shadowing" (Oct 2024)** is now anchored as the operational manual for any judge in our architectures. A new §"3.9 Critique Shadowing (the llm-judge guide)" walks through the 7-step process (Principal Domain Expert → diverse dataset → pass/fail with critiques → fix errors → iterate prompt to alignment → error analysis → specialized judges).
+- **Reinstated and re-attributed claim:** the previous report removed ">90% expert agreement in three iterations" because the FAQ didn't carry it. The llm-judge post DOES carry it verbatim, in the Honeycomb Query Assistant case study with Phillip Carter: "It took us only three iterations to achieve > 90% agreement between the LLM and Phillip." The field-guide post re-states the same fact ("It took three iterations to achieve >90% agreement"). The claim is restored, sourced correctly to hamel.dev/blog/posts/llm-judge/ §"Keep Iterating on the Prompt Until Convergence With Domain Expert" and to the field-guide §5.3.
+- **Hamel, "A Field Guide to Rapidly Improving AI Products" (Mar 2025)** adds three substantial new claims none of the prior sources carried: (a) a NurtureBoss case study where bottom-up error analysis took date-handling success from 33% → 95%, with three issue clusters accounting for over 60% of all failures; (b) the explicit "**experiments, not features**" roadmap reframing via Bryan Bischof's "capability funnel" and Eugene Yan's "fifteen-five" failure-sharing ritual; (c) the operational claim that few-shot critique examples in judge prompts "often yields 15-20% higher agreement rates between human and LLM evaluations." New §"4.6 Roadmap reframing — count experiments, not features" added.
+- **Simon Willison, "FAQs about AI evals" (Jul 3, 2025)** is short — essentially two pull quotes (the 60–80% and the 70% pass-rate ones) plus an endorsement. It is a second-order endorsement of the FAQ, not a source of new claims; its citation in the existing report ("Simon Willison's July 3, 2025 endorsement…") is now anchored on the verbatim post text.
+- **Simon Willison, "How we built our multi-agent research system" (Jun 14, 2025)** adds two things Anthropic's own post did not foreground: (i) the **"tools in a loop" definition of agent** Simon pulled into focus ("A multi-agent system consists of multiple agents (LLMs autonomously using tools in a loop) working together"); (ii) the existence of the open-sourced **research-lead-agent and research-subagent prompts** at `anthropics/anthropic-cookbook/patterns/agents/prompts`, including the OODA-loop instruction block for subagents. New §"2.6 The open-sourced prompts (via Simon Willison)" added.
+- **No refutations this round.** The drain reinforces and extends; one prior removal (the >90%/three-iterations claim) is now restored with corrected attribution.
+
+Six URLs in the sources table flipped to ✅; the residual ⏳/⚠️ marks on the llm-judge URL and on the "demystifying evals" Anthropic post are now resolved (llm-judge ✅; demystifying-evals still ⏳ but de-prioritized since the llm-judge post is the canonical operational manual).
+
+---
+
 ## 1. Why this thread exists
 
-Every architecture in `architectures/` depends on evaluation whose quality is taken for granted: Architecture 1 (Refinery) uses an LLM judge against ACs; Architecture 3 (Foundry) uses independent V&V agents at phase gates; Architecture 4 (Tournament) uses a fitness vector to drive selection; Architecture 2 (Atelier) uses a multi-persona review panel where reviewers act as judges. All four assume the judge / fitness / V&V is good enough to discriminate. Two recent primary sources push back on that assumption and supply concrete guidance. This report extracts both and maps them onto our four architectures.
+Every architecture in `architectures/` depends on evaluation whose quality is taken for granted: Architecture 1 (Refinery) uses an LLM judge against ACs; Architecture 3 (Foundry) uses independent V&V agents at phase gates; Architecture 4 (Tournament) uses a fitness vector to drive selection; Architecture 2 (Atelier) uses a multi-persona review panel where reviewers act as judges. All four assume the judge / fitness / V&V is good enough to discriminate. Several primary sources push back on that assumption and supply concrete guidance. This report extracts the load-bearing ones and maps them onto our four architectures.
+
+---
+
+## 0. The philosophical anchor — Husain, "Your AI Product Needs Evals" (March 2024)
+
+The earliest of Hamel Husain's evals posts (hamel.dev/blog/posts/evals/, March 29, 2024) is the philosophical anchor under everything that follows. The opening sentence states the discipline's thesis directly (verbatim):
+
+> "I've seen many successful and unsuccessful approaches to building LLM products. I've found that unsuccessful products almost always share a common root cause: **a failure to create robust evaluation systems.**"
+
+The post frames evals not as a QA activity but as **the limiting reagent of iteration speed**. From §"Iterating Quickly == Success" (verbatim):
+
+> "Like software engineering, success with AI hinges on how fast you can iterate. You must have processes and tools for: 1. Evaluating quality (ex: tests). 2. Debugging issues (ex: logging & inspecting data). 3. Changing the behavior or the system (prompt eng, fine-tuning, writing code). **Many people focus exclusively on #3 above, which prevents them from improving their LLM products beyond a demo.** […] If you streamline your evaluation process, all other activities become easy."
+
+This is the explicit ideological commitment that the FAQ later operationalizes ("60-80% of development time on error analysis"). The 2024 post supplies the *why*; the 2026 FAQ supplies the *how-much*. Quote the 2024 post when justifying the discipline; quote the FAQ when justifying the budget.
+
+### 0.1 The three-level evaluation hierarchy
+
+Husain's 2024 taxonomy (still the canonical one in the 2025 field-guide and 2024 llm-judge post):
+
+- **Level 1: Unit tests.** Cheap pytest-style assertions, run on every code change. "Rechat has hundreds of these unit tests. We continuously update them based on new failures we observe in the data."
+- **Level 2: Human & Model eval.** Trace logging + a custom data viewer + alignment with a domain expert. Run on a cadence, not on every change.
+- **Level 3: A/B testing.** Only after the product is mature enough to deserve real-user exposure.
+
+Verbatim cost ordering (§"The Types Of Evaluation"):
+
+> "The cost of Level 3 > Level 2 > Level 1. This dictates the cadence and manner you execute them. […] It's also helpful to conquer a good portion of your Level 1 tests before you move into model-based tests."
+
+Verbatim methodology on pass rate at Level 1 (matching the 2026 FAQ's "70% band" claim, four years earlier):
+
+> "Unlike traditional unit tests, you don't necessarily need a 100% pass rate. Your pass rate is a product decision, depending on the failures you are willing to tolerate."
+
+### 0.2 "Eval Systems Unlock Superpowers For Free"
+
+The 2024 post's most quoted section name argues that the same infrastructure built for evals serves three other workflows — **debugging**, **fine-tuning data curation**, and **synthetic data generation** — for free. Verbatim (§"Eval Systems Unlock Superpowers For Free", with footnote attributing the framing to Bryan Bischof at Hex):
+
+> "There is an incredibly large overlap between the infrastructure needed for evaluation and that for debugging."
+
+And earlier (§"Data Synthesis & Curation"):
+
+> "99% of the labor involved with fine-tuning is assembling high-quality data that covers your AI product's surface area. However, if you have a solid evaluation system like Rechat's, you already have a robust data generation and curation engine!"
+
+**Implication for all four architectures:** every dollar invested in an eval system is double-counted as a debugging tool and a synthetic-data engine. Whatever budget the architecture spends on V&V, judges, or fitness functions can be amortized against future fine-tuning rounds and against incident response. The Foundry's V&V infrastructure, for instance, doubles as the post-mortem toolkit when a phase fails.
+
+### 0.3 Husain's closing list (verbatim, from §"Conclusion")
+
+A useful checklist to cross-reference against any architecture's eval design:
+
+> "- Remove ALL friction from looking at data.
+> - Keep it simple. Don't buy fancy LLM tools. Use what you have first.
+> - You are doing it wrong if you aren't looking at lots of data.
+> - Don't rely on generic evaluation frameworks to measure the quality of your AI. Instead, create an evaluation system specific to your problem.
+> - Write lots of tests and frequently update them.
+> - LLMs can be used to unblock the creation of an eval system. Examples include using a LLM to: Generate test cases and write assertions; Generate synthetic data; Critique and label data etc.
+> - Re-use your eval infrastructure for debugging and fine-tuning."
 
 ---
 
@@ -105,6 +175,26 @@ Anthropic's eight numbered principles (§"Prompt engineering and evaluations…"
 
 Production reliability lessons (§"Production reliability and engineering challenges"): agents are stateful; errors compound; restarts are expensive, so resume-from-checkpoint is essential; deployment uses **rainbow deployments** to avoid disrupting in-flight agents; current bottleneck is synchronous subagent execution.
 
+### 2.6 Simon Willison's commentary — what he highlighted that Anthropic understated
+
+Simon Willison's June 14, 2025 link-blog post (simonwillison.net/2025/Jun/14/multi-agent-research-system/) is largely confirmatory of Anthropic's post but surfaces two things worth citing:
+
+**(i) The "tools in a loop" agent definition.** Simon pulls forward what Anthropic frames in passing — but he treats it as the operational definition the rest of the engineering essay depends on:
+
+> "A multi-agent system consists of multiple agents (LLMs autonomously using tools in a loop) working together. Our Research feature involves an agent that plans a research process based on user queries, and then uses tools to create parallel agents that search for information simultaneously."
+
+This phrasing is the cleanest available citation when our own architecture docs need to distinguish "agent" from "pipeline." All four of our architectures should use "tools in a loop" as the test for whether a component is an agent in the multi-agent sense.
+
+**(ii) Open-sourced prompts.** Anthropic released the actual research-lead-agent and research-subagent prompts in their cookbook (`anthropics/anthropic-cookbook/patterns/agents/prompts`). Simon quotes two load-bearing fragments. The first is the parallel-tool-call directive in the lead agent's prompt:
+
+> "`<use_parallel_tool_calls> For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially. Call tools in parallel to run subagents at the same time. You MUST use parallel tool calls for creating multiple subagents (typically running 3 subagents at the same time) at the start of the research, unless it is a straightforward query. […] </use_parallel_tool_calls>`"
+
+The second is the **OODA research loop** block prescribed for each subagent (loaded directly into the subagent system prompt):
+
+> "`Research loop: Execute an excellent OODA (observe, orient, decide, act) loop by (a) observing what information has been gathered so far, what still needs to be gathered to accomplish the task, and what tools are available currently; (b) orienting toward what tools and queries would be best to gather the needed information and updating beliefs based on what has been learned so far; (c) making an informed, well-reasoned decision to use a specific tool in a certain way; (d) acting to use this tool. Repeat this loop in an efficient way to research well and learn based on new results.`"
+
+**Implication for Architecture 3 (Foundry) and Architecture 4 (Tournament):** Anthropic's open-sourced prompts are a working template for the subagent system prompts in both architectures. The OODA fragment in particular is a candidate for adoption verbatim in any V&V subagent (Foundry) or fitness-evaluator subagent (Tournament) that needs to drive a multi-step research loop. Cite the cookbook URL directly in the relevant architecture docs.
+
 ---
 
 ## 3. Husain & Shankar — "Frequently Asked Questions About AI Evals"
@@ -164,7 +254,11 @@ From §"Can I use the same model for both the main task and evaluation?":
 
 > "For LLM-as-Judge selection, using the same model is usually fine because the judge is doing a different task than your main LLM pipeline. While research has shown that models can exhibit bias when evaluating their own outputs, what ultimately matters is how well your judge aligns with human judgments. The judges we recommend building do scoped binary classification tasks. We've found that iterative alignment with human labels is usually achievable on this constrained task. Focus on achieving high True Positive Rate (TPR) and True Negative Rate (TNR) with your judge on a held out labeled test set. If you struggle to achieve good alignment with human scores, then consider trying a different model."
 
-**Correction vs prior report:** the FAQ does not state "Hamel reports >90% agreement with a domain expert in three iterations." The FAQ instead recommends iterative TPR/TNR alignment on a held-out set, with model-switching reserved for cases where alignment fails. The earlier numeric claim was a misattribution from search summaries and has been removed.
+**Correction vs prior report (revised under issue #29):** the *FAQ* does not state "Hamel reports >90% agreement with a domain expert in three iterations" — earlier-prior-report removed the claim on those grounds. But the **llm-judge post does carry it verbatim** in the Honeycomb Query Assistant case study (hamel.dev/blog/posts/llm-judge/ §"Keep Iterating on the Prompt Until Convergence With Domain Expert"):
+
+> "It took us only three iterations to achieve > 90% agreement between the LLM and Phillip. Your mileage may vary depending on the complexity of the task."
+
+The 2025 field-guide post re-states the same finding (§"Measure Alignment Between Automated Evals and Human Judgment"): "It took three iterations to achieve >90% agreement, but this investment paid off in a system the team could trust." The claim is therefore **reinstated and re-anchored** to the llm-judge / field-guide rather than to the FAQ. Both posts also append the warning that raw agreement is misleading on imbalanced datasets — precision/recall (or TPR/TNR per the FAQ) should be the metric of record once the class balance shifts.
 
 Avoid generic metrics (§"Should I use 'ready-to-use' evaluation metrics?"):
 
@@ -191,6 +285,60 @@ A quote the FAQ pulls from the course: "*The abuse of generic metrics is endemic
 4. For LLM-judge clusters: binary, one failure mode per prompt, iteratively align with a domain expert until TPR & TNR are acceptable on a held-out set.
 5. Re-run error analysis every 2–4 weeks; harvest new modes; harden the set when pass rate climbs out of the discriminating band.
 6. Keep an "open-bench" of edge cases that humans review but the judge does not — to detect drift.
+
+### 3.9 Critique Shadowing — the llm-judge operational manual (Husain, Oct 2024)
+
+Husain's "Using LLM-as-a-Judge For Evaluation: A Complete Guide" (hamel.dev/blog/posts/llm-judge/) is the operational manual the FAQ assumes you've read. It names the process **Critique Shadowing** and breaks it into seven steps. Each step has a load-bearing detail not present in the FAQ:
+
+**Step 1 — Find *The* Principal Domain Expert.** Verbatim (§"Step 1"):
+
+> "In most organizations there is usually one (maybe two) key individuals whose judgment is crucial for the success of your AI product. […] Many developers attempt to act as the domain expert themselves, or find a convenient proxy (ex: their superior). This is a recipe for disaster. People will have varying opinions about what is acceptable, and you can't make everyone happy. What's important is that your principal domain expert is satisfied."
+
+The "benevolent dictator" guidance in the FAQ §3.7 derives from this. Husain explicitly lists exception cases: for independent developers the developer *is* the expert; for small companies it may be the CEO; for AI-augmenting-leadership scenarios "you should regularly validate their assumptions against real user feedback."
+
+**Step 2 — Create a Dataset across three dimensions.** Husain's canonical taxonomy is **Features × Scenarios × Personas**, with worked tables for a B2C example (order tracking / contact search / meeting scheduler × multiple-matches / no-matches / ambiguous-request / invalid-data / system-errors / incomplete-information / unsupported-feature × new-user / expert / non-native-speaker / busy-professional / technophobe / elderly). Verbatim caveat:
+
+> "This taxonomy (features, scenarios, personas) is not universal. […] The idea is you should outline dimensions that make sense for your use case and generate data that covers them. You'll likely refine these after the first round of evaluations."
+
+**Step 3 — Pass/fail with critiques.** The non-negotiable: the domain expert outputs a binary plus a *detailed* critique. The critique's purpose is not just explanation:
+
+> "The critique should be detailed enough so that you can use it in a few-shot prompt for a LLM judge. In other words, it should be detailed enough that a new employee could understand it. Being too terse is a common mistake."
+
+Critiques have a hidden second function — they force domain experts to externalize tacit knowledge:
+
+> "In practice, domain experts may not have fully internalized all the judgment criteria. By forcing them to make a pass/fail decision and explain their reasoning, they clarify their expectations and provide valuable guidance for refining the AI."
+
+**Step 4 — Fix obvious errors before building the judge.** "Remember, the whole point of the LLM as a judge is to help you find these errors, so it's totally fine if you find them earlier!" Don't build a judge to detect bugs that human review surfaces immediately.
+
+**Step 5 — Build the judge iteratively, using the critiques as few-shot examples.** The Honeycomb Query Assistant prompt template is given verbatim and is reproducible: NLQ in `<nlq>`, generated query in `<query>`, critique + outcome in `<critique>` tags, three labelled examples wrapped in `<examples>…</examples>`. Three iterations were enough to reach >90% agreement (see §3.6 above for the corrected attribution).
+
+Husain explicitly warns against four common judge-prompt mistakes (§"Mistakes I've noticed in LLM judge prompts"): no critiques in the examples; terse critiques; missing external context (user metadata, system state); insufficiently diverse examples.
+
+**Step 6 — Error analysis on the judge's outputs.** Once the judge is aligned, run it on unseen data and **slice the failure rate by dimension** (feature × scenario × persona). Husain's worked example table shows a "No Matches × New User" cell at 75% failure for Order Tracking, vs ~20% elsewhere — the kind of localized hotspot that bottom-up error analysis surfaces but generic metrics hide. Root-cause every failed trace into a small taxonomy (his example: Missing User Education 40%, Authentication/Access Issues 30%, Poor Context Handling 20%, Inadequate Error Messages 10%). 15 minutes of classification is enough to start.
+
+**Step 7 — Specialized judges only after Steps 1-6.** "The key takeaway is don't jump directly to using specialized LLM judges until you have gone through this critique shadowing process."
+
+**The meta-claim, verbatim (§"It's Not The Judge That Created Value, After all"):**
+
+> "The real value of this process is looking at your data and doing careful analysis. Even though an AI judge can be a helpful tool, going through this process is what drives results. I would go as far as saying that creating a LLM judge is a nice 'hack' I use to trick people into carefully looking at their data!"
+
+**Implication for our architectures:** Critique Shadowing is the procedure that should produce the *initial* judge / V&V / fitness component prompts in every architecture — not designer intuition. Architecture 1's judge prompts, Architecture 3's V&V agent prompts, Architecture 4's fitness component prompts, and Architecture 2's persona reviewer prompts should each be the output of running Steps 1-5 on a real dataset with a real domain expert (the Operator, or a designated SME). The FAQ's continuous discipline (§3.7's 2-4 week error-analysis cycle) is then how the judge stays aligned over time.
+
+### 3.10 Synthetic data with zero users — the Rechat/Lucy pattern
+
+The llm-judge post and field-guide together give a concrete, reproducible recipe for bootstrapping evals when no user data exists. The field-guide formalizes it as **dimensions → grounded prompts → real-data-backed scenario verification**. Verbatim from field-guide §4:
+
+> "The key to useful synthetic data is grounding it in real system constraints. […] 1. Using real listing IDs and addresses from their database. 2. Incorporating actual agent schedules and availability windows. 3. Respecting business rules like showing restrictions and notice periods. 4. Including market-specific details like HOA requirements or local regulations."
+
+And the verification loop (verbatim):
+
+> "Verify scenario coverage: Ensure your generated data actually triggers the scenarios you want to test. A query intended to test 'no matches found' should actually return zero results when run against your system."
+
+This raises the bar above the FAQ's "hand-write 20 dimension tuples" guidance: the tuples must be *backed by real system state*, and the generated query must be *executed against that state* to confirm the scenario fires. For Architecture 4 (Tournament), this means every fitness scenario should be backed by a real artifact in a test fixture, not just a textual description.
+
+Bryan Bischof's blessing (quoted in both posts):
+
+> "LLMs are surprisingly good at generating excellent - and diverse - examples of user prompts. […] If this sounds a bit like the Large Language Snake is eating its tail, I was just as surprised as you! All I can say is: it works, ship it."
 
 ---
 
@@ -233,7 +381,31 @@ The Tournament's fitness function is the highest-stakes judge of the four and th
 - **Adopt Anthropic's single-judge-with-rubric for satisfaction.** The satisfaction-as-judge channel should be a single LLM call against a stable rubric, calibrated against held-out human satisfaction ratings.
 - **Token economics matter.** Anthropic's 15× multi-agent tax means each generation in a tournament with N subagent evaluators per genome multiplies cost; the Tournament value-of-task threshold needs to clear this bar before scaling population size.
 
-### 4.5 Cross-cutting recommendation
+### 4.5 Roadmap reframing — count experiments, not features (Husain field-guide §6)
+
+Hamel's field-guide closes with a roadmap-level argument that lands directly on the planning posture in `architectures/`. Verbatim:
+
+> "Traditional roadmaps assume we know what's possible. With conventional software, that's often true — given enough time and resources, you can build most features reliably. With AI, especially at the cutting edge, you're constantly testing the boundaries of what's feasible. […] The key metric for AI roadmaps isn't features shipped — it's experiments run."
+
+Two operational patterns:
+
+**(a) The Capability Funnel (Bryan Bischof, ex-Hex).** Decompose every feature into progressive levels of utility so that *partial* progress is legible. Example for a query assistant: (1) syntactically valid queries → (2) execute without errors → (3) return relevant results → (4) match user intent → (5) optimal queries that solve the user's problem. The funnel makes it possible to report "we're at level 3, climbing to level 4" instead of binary ship/no-ship — a much better fit for the long-tailed failure curves all four architectures generate.
+
+**(b) The Fifteen-Five failure-sharing ritual (Eugene Yan).** A weekly written update — fifteen minutes to write, five minutes to read — that **explicitly documents failures alongside successes**, normalized by leadership going out of their way to share their own. Verbatim:
+
+> "In my fifteen-fives, I document my failures and my successes. Within our team, we also have weekly 'no-prep sharing sessions' where we discuss what we've been working on and what we've learned. When I do this, I go out of my way to share failures."
+
+The point is *cultural infrastructure* for an experiment-driven roadmap: failures become learning artifacts that other team members re-use, not events that get hidden.
+
+**Eugene Yan's project-shape timeline** (also verbatim, useful as a project-planning template):
+
+> "First, I take two weeks to do a data feasibility analysis, i.e 'do I have the right data?' Then I take an additional month to do a technical feasibility analysis, i.e 'can AI solve this?' After that, if it still works I'll spend six weeks building a prototype we can A/B test."
+
+**Concrete numerical claim worth tracking:** Husain reports that including critique examples as few-shot in judge prompts "often yields 15-20% higher agreement rates between human and LLM evaluations compared to prompts without example critiques." (Field-guide §5.) Use this as the operational ROI argument when an architecture's judge prompts don't include critique examples.
+
+**Implication for our docs:** the project plan in `research/PLAN.md` and the per-architecture roadmaps should count **experiments run per week** as a leading indicator, with feature ship dates as lagging indicators contingent on experiment outcomes. The Foundry's phase-gate cadence and the Tournament's generation cadence are already structured this way; the Refinery and Atelier roadmaps should adopt the same framing.
+
+### 4.6 Cross-cutting recommendation
 
 All four architectures should:
 
@@ -249,14 +421,16 @@ All four architectures should:
 
 | Source | URL | Status |
 |---|---|---|
-| Anthropic — multi-agent research system | https://www.anthropic.com/engineering/multi-agent-research-system | ✅ Drained from `fetched/issue-24/` 2026-05-11 |
-| Hamel Husain — Evals FAQ | https://hamel.dev/blog/posts/evals-faq/ | ✅ Drained from `fetched/issue-24/` 2026-05-11 |
-| Simon Willison — endorsement of FAQ | https://simonwillison.net/2025/Jul/3/faqs-about-ai-evals/ | ✅ Drained from `fetched/issue-24/` 2026-05-11 |
-| Simon Willison — endorsement of Anthropic post | https://simonwillison.net/2025/Jun/14/multi-agent-research-system/ | ✅ Drained from `fetched/issue-24/` 2026-05-11 |
-| Anthropic — Demystifying evals for AI agents | https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents | Referenced via search excerpts (not in this drain) |
-| Hamel Husain — LLM-as-judge guide | https://hamel.dev/blog/posts/llm-judge/ | 403; referenced via search excerpts (not in this drain) |
+| Anthropic — multi-agent research system | https://www.anthropic.com/engineering/multi-agent-research-system | ✅ Drained from `fetched/issue-24/` 2026-05-11 (orchestrator-worker pattern, 90.2% gain, single-judge finding, eight prompt principles, end-state eval) |
+| Hamel Husain — Evals FAQ | https://hamel.dev/blog/posts/evals-faq/ | ✅ Drained from `fetched/issue-24/` 2026-05-11 (60-80% budget, 70% pass-rate band, open/axial coding, binary > Likert, criteria drift) |
+| Simon Willison — endorsement of FAQ | https://simonwillison.net/2025/Jul/3/faqs-about-ai-evals/ | ✅ Re-anchored from `fetched/issue-29/` 2026-05-13 (second-order endorsement; verbatim pull quotes of the 60-80% and 70% pass-rate claims) |
+| Simon Willison — endorsement of Anthropic post | https://simonwillison.net/2025/Jun/14/multi-agent-research-system/ | ✅ Re-anchored from `fetched/issue-29/` 2026-05-13 (foregrounds "tools in a loop" agent definition; surfaces open-sourced cookbook prompts and OODA loop block — §2.6) |
+| Hamel Husain — "Your AI Product Needs Evals" | https://hamel.dev/blog/posts/evals/ | ✅ Drained from `fetched/issue-29/` 2026-05-13 (philosophical anchor; Level 1/2/3 hierarchy; "Eval Systems Unlock Superpowers For Free" — new §0) |
+| Hamel Husain — "Creating an LLM-as-a-Judge" / Critique Shadowing | https://hamel.dev/blog/posts/llm-judge/ | ✅ Drained from `fetched/issue-29/` 2026-05-13 (7-step Critique Shadowing operational manual; Honeycomb >90%/3-iterations case; Features×Scenarios×Personas dataset taxonomy — new §3.9) |
+| Hamel Husain — "A Field Guide to Rapidly Improving AI Products" | https://hamel.dev/blog/posts/field-guide/ | ✅ Drained from `fetched/issue-29/` 2026-05-13 (NurtureBoss 33%→95% case; Capability Funnel; fifteen-five ritual; "experiments not features" — new §4.5; 15-20% agreement lift from critique few-shots) |
+| Anthropic — Demystifying evals for AI agents | https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents | ⏳ De-prioritized — the llm-judge post is now the canonical operational manual; this URL can be back-filled later only if a specific claim depends on it. |
 
-All four primary URLs targeted by this drain are now anchored on verbatim quotes from the fetched markdown renders. The two remaining ⚠️ sources are tangential cross-references (the FAQ links to them but they are not the load-bearing citation for any claim above).
+All six URLs targeted by the issue #29 drain are now anchored on verbatim quotes from the fetched markdown renders. Combined with the four URLs anchored under issue #24, the report is end-to-end primary-source-anchored. The only outstanding source is the "Demystifying evals" Anthropic post which is now superseded as the operational manual by Husain's llm-judge guide.
 
 ---
 
@@ -265,4 +439,6 @@ All four primary URLs targeted by this drain are now anchored on verbatim quotes
 - Cross-reference with `research/09-jaymin-book-harnesses-practices-mental-models.md` for how Overstory frames its own evaluation — Jaymin's framework may already encode some of Husain's discipline implicitly.
 - Map specific judge prompts in `architectures/01-specification-refinery.md` §judge into the binary-per-AC pattern as a concrete worked example.
 - Author a small ADR proposing the "70% pass-rate band" as the project-wide eval-health KPI for any judge or fitness component shipped under the factory.
-- Fetch the two remaining tangential URLs (`anthropic.com/engineering/demystifying-evals-for-ai-agents`, `hamel.dev/blog/posts/llm-judge/`) in a follow-up fetch round to back-fill the few remaining secondary citations.
+- ~~Fetch the two remaining tangential URLs (`anthropic.com/engineering/demystifying-evals-for-ai-agents`, `hamel.dev/blog/posts/llm-judge/`) in a follow-up fetch round to back-fill the few remaining secondary citations.~~ **Done (partial):** `hamel.dev/blog/posts/llm-judge/` drained under issue #29 (now the canonical Critique Shadowing manual, §3.9). The Anthropic "Demystifying evals" post is de-prioritized — no current claim depends on it.
+- Consider adopting Anthropic's open-sourced research-lead-agent and research-subagent prompts (anthropics/anthropic-cookbook/patterns/agents/prompts) as the starting template for Foundry V&V subagents and Tournament fitness-evaluator subagents; the OODA-loop block in particular looks directly reusable (§2.6).
+- Map the Capability Funnel (§4.5) onto each of the four architectures' progress reporting — e.g., Foundry phase gates and Tournament generation milestones probably already encode it implicitly but should make the levels explicit.

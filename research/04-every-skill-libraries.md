@@ -139,6 +139,16 @@ Patterns that make a single human run many agents efficiently:
 - **Granularity choice: a skill is one thing.** From skill-generalizer: skills should be "specific" and "do one thing well." `commit` doesn't `push`; `push` doesn't `land`; `land` doesn't `pull`. Each is a single verifiable transition.
 - **YAML frontmatter is the trigger contract.** `name`, `description` (with explicit trigger phrases), `tags`, `version`, `allowed-tools`. The description *is* the discovery mechanism.
 - **Skills can have side-files.** `scripts/`, `references/`, `assets/` under a SKILL.md, capped at 50 files / 1MB. The body of SKILL.md remains the index.
+
+> **Cross-reference from `research/23-anthropic-engineering-trilogy.md` §3 drain (2026-05-13):** Anthropic's primary platform docs and cookbook notebooks tighten / contradict four of the conventions above:
+>
+> 1. **`name` is bounded:** max 64 chars, lowercase-alphanumeric+hyphens only, reserved words `anthropic` and `claude` are forbidden, no XML tags. Every's docs don't surface these constraints — they're inherited from the canonical Anthropic spec.
+> 2. **`description` is bounded:** non-empty, max 1024 chars, no XML tags. (Every's docs say only that the field "doubles as the trigger contract" without quoting a length.)
+> 3. **`allowed-tools` is a Claude Code extension, not canonical SKILL.md.** Anthropic's platform docs and cookbook notebooks do not include `allowed-tools` in the canonical frontmatter schema; it's a Claude-Code-host-specific extra. Symphony-style skills that use it are Claude-Code-portable but may not load on the API / claude.ai surfaces.
+> 4. **The Level-1 (progressive disclosure) budget is ~100 tokens per Skill** (per Anthropic platform docs), not the "30–50 tokens" figure that circulated in earlier reconstructions. Symphony and `everyskill` descriptions written to a 30–50-token budget are leaving headroom unused; loosening to ~100 tokens per description gives the host loader more discriminative power for trigger-matching.
+> 5. **The 50-file / 1MB cap is less permissive than Anthropic's framing.** The Anthropic platform docs treat Level-3 (script-execution) content as "effectively unlimited" because *script code never enters the context window* — only output does. The 50-file / 1MB cap quoted above is real but applies to bundle size, not to context cost; large scripts are fine as long as they only emit short outputs.
+>
+> Cross-surface non-portability is also relevant: Anthropic Custom Skills do NOT sync across claude.ai / API / Claude Code — three separate uploads are required. Every's `everyskill` registry sits *above* this fragmentation; users still pay the per-surface upload cost.
 - **Preconditions enumerated, exits enumerated, banned commands enumerated.** Symphony's skills all open with preconditions and a "never do X" section. This makes them robust to being called from wrong states.
 - **Numbered phases over conversational instructions.** The commands and skills all use numbered phases (Phase 1: Research; Phase 2: Plan; ...). This makes them resumable and skim-able.
 

@@ -12,7 +12,7 @@
 **Done:**
 - **Round 1** — 7 reports (`research/01-07-*`) + initial synthesis (`research/00-synthesis.md`).
 - **Round 2** — 5 reports + synthesis (`research/08-12-*`, `research/13-round-2-synthesis.md`). 21 new failure modes (F21–F33) catalogued; never folded into `architectures/00-comparison.md` §2.4.
-- **Round 3** — 11 follow-up threads (`research/followup/01-11-*`). The 12th thread was the Brier *Culture of AI Engineering* article — its drain commit sits on a side branch and was never merged (see §3.1 below).
+- **Round 3** — 12 follow-up threads (Threads 1–11 → `research/followup/01-11-*`; Thread 12 *Dark Factory via archive.org* was RESOLVED without a new file when the article was retrieved via Path B and folded into `research/07-dark-factory.md`). A separate post-Round-3 effort drained Noah Brier's *Culture of AI Engineering* article into a new `research/followup/12-brier-pace-layers.md`, but that drain commit sits on a side branch and was never merged (see §3.1).
 - **Round 4** — 4 reports off the El Kaim enterprise-architecture book (`research/14-17-*`). The book chapters are now at `reference-only/el-kaim-book/`.
 - **Round 5** — 6 reports off counterfactual harvest against a ChatGPT deep-research artifact (`research/18-23-*`). The artifact is at `reference-only/chatgpt-deep-research-2026-05-11/`.
 - **Round 6** — 26-subtask parallel-fanout night run on 2026-05-11 (`harness/runs/20260511-054258/`) that produced most of the above. **One follow-up wave (pt-2 drain, three subagents) was never merged to main — see §3.1.**
@@ -36,7 +36,7 @@
     el-kaim-book/       → 7 chapters of El Kaim's EA book (~430 KB)
     chatgpt-deep-research-2026-05-11/  → counterfactual synthesis artifact
     dark-factory-article.txt           → El Kaim Medium article (anchors report 07)
-    brier-culture-of-ai-engineering.txt → Brier Every.to article (anchors followup/12 — UNMERGED, see §3.1)
+    brier-culture-of-ai-engineering.txt → Brier Every.to article (anchors followup/12-brier-pace-layers.md, which exists on a side branch only — UNMERGED, see §3.1)
     every-my-ai-had-already-fixed.txt   → Klaassen Every.to article (anchors report 03)
 /research/              → 24 numbered reports + 11 followup reports + workflow tooling
     PLAN.md             → this file
@@ -55,19 +55,20 @@ initial-sources.md      → original Round-1 seed list (frozen)
 
 ### 3.1 Unmerged pt-2 drain work on `claude/parallelize-with-subagents-SO0nR` (HIGHEST PRIORITY)
 
-PR #25 (merge commit `a67877f`) was merged at 12:48 UTC on 2026-05-11. **18 minutes later** the same branch received the pt-2 drain — three subagents running in parallel, each merged into the parallelize branch via:
+PR #25 (merge commit `a67877f` on origin/main) was merged at 12:48 UTC on 2026-05-11. **18 minutes later** the same branch `origin/claude/parallelize-with-subagents-SO0nR` received the pt-2 drain — three subagents running in parallel, each producing a drain commit + merge:
 
-- `925da5b` sub-30 — drains Brier article into a new `research/followup/12-brier-pace-layers.md` (146 lines, **entire report**), deletes the source txt
-- `131e712` sub-31 merge — upgrades `research/followup/05-klaassen-siblings.md` from inferential to primary-source-anchored (using fetched/issue-23 Wayback content)
-- `61d4d4e` sub-32 merge — upgrades `research/followup/07-evals-deepdive.md` similarly (using fetched/issue-24 Anthropic + Husain + Willison content)
+- sub-30 — drain `925da5b` + merge `4225dbb` — creates a new `research/followup/12-brier-pace-layers.md` (146 lines, **entire report**), deletes the source txt
+- sub-31 — drain `2bf481b` + merge `131e712` — upgrades `research/followup/05-klaassen-siblings.md` from inferential to primary-source-anchored (uses fetched/issue-23 Wayback content)
+- sub-32 — drain `ad565aa` + merge `61d4d4e` — upgrades `research/followup/07-evals-deepdive.md` similarly (uses fetched/issue-24 Anthropic + Husain + Willison content)
 - `984c91d` — recording commit: "6 reconstructed claims refuted; 25+ new primary-source claims; new F34 candidate"
 
-**None of these reached `origin/main`.** The side branch `origin/claude/parallelize-with-subagents-SO0nR` still has them. The Brier source file `reference-only/brier-culture-of-ai-engineering.txt` (restored 2026-05-13) is the *raw input* for that lost analysis; the *output* report does not exist on main.
+**None of these reached `origin/main`.** The Brier source file `reference-only/brier-culture-of-ai-engineering.txt` (restored 2026-05-13) is the *raw input* for that lost analysis; the *output* report does not exist on main.
 
-**Decision needed:**
-- Option A: cherry-pick the four commits onto a fresh branch off main, open a PR. Recovers ~146 lines of new analysis (followup/12) + the two primary-source upgrades.
-- Option B: re-run the drain. Sources are in `/reference-only/` and the three fetched/issue-N branches still exist remotely.
-- Option C: write off.
+**Decision needed.** Cherry-picking individual drain commits will conflict because their parents reference files (the `research/manual/<file>.txt` cache) that don't exist on main. Cleaner options:
+
+- **Option A (recommended):** Open a new PR from `origin/claude/parallelize-with-subagents-SO0nR` directly to `main`. Expect conflicts on `PLAN.md` and `unfetched-sources.md` (both files changed in this branch's 2026-05-13 cleanup pass — resolution: keep the cleanup-pass version). Recovers ~146 lines of new analysis plus the two primary-source upgrades.
+- **Option B:** Re-run the drain in a fresh session. Sources are in `/reference-only/` and the three `fetched/issue-23/24` branches still exist remotely.
+- **Option C:** Write off the work.
 
 Recommendation: **Option A**. The work is finished and reviewed; the loss is a merge accident, not a quality concern.
 
@@ -161,7 +162,7 @@ How:
 
 ## 5. Work remaining (priority order)
 
-1. **Resolve §3.1 (lost pt-2 work)** — cherry-pick `925da5b` + `131e712` + `61d4d4e` + `984c91d` from `origin/claude/parallelize-with-subagents-SO0nR` onto a fresh branch off `origin/main`. Open PR. Recovers `research/followup/12-brier-pace-layers.md` plus primary-source upgrades to followup/05 and followup/07.
+1. **Resolve §3.1 (lost pt-2 work)** — open a PR from `origin/claude/parallelize-with-subagents-SO0nR` to `main` directly (rather than cherry-picking; see §3.1 Option A for why). Recovers `research/followup/12-brier-pace-layers.md` plus primary-source upgrades to followup/05 and followup/07.
 
 2. **Drain in-flight fetch-urls issues** when the action completes:
    - `fetched/issue-29` → drain into reports 23, followup/01, followup/07, followup/08
@@ -234,7 +235,7 @@ The runner has full network egress and writes to a fresh `fetched/issue-N` branc
 |---|---|---|---|
 | 1 | `research/01-07-*`, `research/00-synthesis.md` | ✅ Complete | 7-source initial reconstruction; F1–F20 failure modes |
 | 2 | `research/08-12-*`, `research/13-round-2-synthesis.md` | ✅ Complete | Jaymin book + Overstory + OpenHands substrate audits; F21–F33 |
-| 3 | `research/followup/01-11-*` | ✅ Complete | 11 follow-up threads. **Thread 12 (Brier) → unmerged, see §3.1** |
+| 3 | `research/followup/01-11-*` | ✅ Complete | 12 threads; Thread 12 (Dark Factory archive.org) resolved into report 07 without a separate file. Plus an unmerged post-Round-3 Brier drain at `followup/12-brier-pace-layers.md` on a side branch — see §3.1. |
 | 4 | `research/14-17-*` | ✅ Complete | El Kaim book: spec authorship, BMAD, council, codex+skills |
 | 5 | `research/18-23-*` | ✅ Complete | Counterfactual harvest: OpenAI Codex, GitHub Copilot, Replit, Tabnine, academic foundations, Anthropic engineering |
 
@@ -262,9 +263,9 @@ Subagent dispatch (parallelizable):
 
 **Round 2 completed:** drain merge `423940f` on 2026-05-11. (Round 2 complete stanza per §3.2 task 3 still to be appended here in a follow-up edit.)
 
-## 12. Round 3 — 11 follow-up threads (was §11 of v0.3–v0.7)
+## 12. Round 3 — 12 follow-up threads (was §11 of v0.3–v0.7)
 
-Twelve threads catalogued from a former root-level `followup.md`. Dispatched as `research/followup/01-12-*`. **Thread 12 (Brier *Culture of AI Engineering*) was drained on a side branch and never merged to main — see §3.1.**
+Twelve threads catalogued from a former root-level `followup.md`. Threads 1–11 were dispatched as `research/followup/01-11-*`. Thread 12 (*Dark Factory via archive.org*) was resolved without producing a separate followup file — when the user retrieved the article via Path B (Save Page As) on 2026-05-11, its content folded directly into `research/07-dark-factory.md`.
 
 | # | Topic | Output | Status |
 |---|---|---|---|
@@ -279,7 +280,9 @@ Twelve threads catalogued from a former root-level `followup.md`. Dispatched as 
 | 9 | Methodology ancestors (Kaner / Rumelt / Deming) | `followup/09-methodology-ancestors.md` | ✅ structural conclusions firm; primary verification optional per §4.4 |
 | 10 | Governance / liability angle | `followup/10-governance.md` | ✅ primary-source-anchored via drained issue #26 (Stanford CodeX / BCG Platinion / Pragmatic CTO) |
 | 11 | Compound Knowledge plugin deep-dive | `followup/11-compound-knowledge.md` | ✅ |
-| 12 | Brier *Culture of AI Engineering* (Every.to, 2026-05-08) | `followup/12-brier-pace-layers.md` | ⚠️ **UNMERGED — see §3.1** |
+| 12 | Dark Factory via archive.org | resolved into `research/07-dark-factory.md` (no separate file) | ✅ **RESOLVED 2026-05-11** via user Path-B retrieval |
+
+**Separate post-Round-3 work (on side branch only):** the `925da5b` sub-30 commit drained Noah Brier's *Culture of AI Engineering* (every.to, 2026-05-08) into a new `research/followup/12-brier-pace-layers.md`. That commit never reached main — see §3.1.
 
 ## 13. Round 4 — El Kaim enterprise-architecture book (was §12 of v0.4–v0.7)
 

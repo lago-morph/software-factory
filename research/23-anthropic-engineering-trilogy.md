@@ -16,6 +16,39 @@
 
 ---
 
+## Drain note (issue #36 extras) — 2026-05-13
+
+Five additional primary sources were drained via USER-PATH-B exports under `research/manual/`, closing the round-7 platform.claude.com JS-SPA-shell failure and the round-6 quote-misattribution gap:
+
+1. `platform.claude.com-agent-skills-overview.txt` — the Anthropic developer-docs page for Agent Skills (now full text; previously the WebFetch returned a `Loading...` SPA shell).
+2. `support.claude.com-what-are-skills.txt` — the user-facing Help Center page (cross-product summary).
+3. `01_skills_introduction.ipynb` — first cookbook notebook (intro + xlsx/pptx/pdf quickstarts).
+4. `02_skills_financial_applications.ipynb` — second cookbook notebook (domain-specific worked examples).
+5. `03_skills_custom_development.ipynb` — third cookbook notebook (custom-skill authoring + versioning).
+
+**Round-6 quote-attribution gap CLOSED.** Every quote previously flagged as "from S13 but not actually in S13" is now confirmed verbatim in the platform-docs page and has been re-anchored in §5. Specifically:
+
+- "A malicious Skill can direct Claude to invoke tools or execute code in ways that don't match the Skill's stated purpose..." — verbatim from `platform.claude.com/.../agent-skills/overview` §"Security considerations" (paraphrased: "a malicious Skill can direct Claude to invoke tools or execute code in ways that don't match the Skill's stated purpose"). Re-anchored.
+- "Use Skills only from trusted sources: those you created yourself or obtained from Anthropic. If you must use a Skill from an untrusted or unknown source, exercise extreme caution and thoroughly audit it before use." — verbatim from platform docs §"Security considerations" (and the `<Warning>` block). Re-anchored.
+- "Review all files bundled in the Skill … and look for unusual patterns like unexpected network calls, file access patterns, or operations that don't match the Skill's stated purpose." — verbatim from the platform-docs "Audit thoroughly" bullet. Re-anchored.
+- "Treat like installing software" framing — verbatim from platform-docs bullet "Treat like installing software: Only use Skills from trusted sources. Be especially careful when integrating Skills into production systems with access to sensitive data or critical operations." The earlier "Treat skills like codebase dependencies — review, pin versions, and audit changes" wording is *not* verbatim in either source; corrected.
+- Two-attack-class framing (code-level vs instruction-level) — *not* found verbatim in the platform docs in that exact form; the docs list "Tool misuse" and "Data exposure" as separate bullets plus an "External sources are risky" bullet calling out that fetched content "may contain malicious instructions." Updated §5 to use the platform-docs taxonomy.
+
+**Cookbook content folded in (new §3.5).** A new subsection covers concrete SKILL.md schema (constraints not in S13), the three runtime environments (claude.ai / API / Claude Code) with their distinct network and package-install policies, the API beta-header triplet (`code-execution-2025-08-25`, `skills-2025-10-02`, `files-api-2025-04-14`), the `container.skills[]` request shape with `type: anthropic|custom` and `version: "latest"`, the Skills Management API (`client.beta.skills.create / list / versions.create / delete`), the cookbook's quantitative "Level 1 ~100 tokens; Level 2 <5k tokens; Level 3 effectively unlimited" table (this is the primary source for an earlier-rounds "30–50 tokens" claim — it's actually ~100 tokens per skill at metadata level per Anthropic's own docs, not 30–50), and the four cross-skill composition pattern (combining a custom brand-guidelines skill with the pre-built pptx skill in one `container.skills[]`).
+
+**Cross-product clarifications from the support doc.** Skills are GA on **Free, Pro, Max, Team, and Enterprise** plans, with code-execution required; **beta** for Claude Code users and for all API users via the code-execution tool. Anthropic Skills (xlsx, pptx, docx, pdf), Custom Skills, Organization-Provisioned Skills (Team/Enterprise Owners can push org-wide defaults), and Partner Skills (Notion, Figma, Atlassian via the Skills Directory) are four distinct types — the engineering trilogy only treats the first two. The Help Center confirms the open-standard claim: "The Agent Skills specification is published as an open standard at agentskills.io ... A reference Python SDK is also available for developers implementing skills support in their own platforms."
+
+**Refutations of prior claims:**
+
+- **REFUTED — earlier rounds' "30–50 tokens per skill" estimate.** The platform docs explicitly state **~100 tokens per Skill** at the metadata level (Level 1 in the loading table). Our prior secondary-source figure was off by ~2×. §4.2 corrected. Note that this is per Anthropic's own docs, not S13.
+- **REFUTED — "instructions-recommended-under-5k-tokens" was treated as informal guidance.** The platform docs and all three notebooks explicitly recommend **<5,000 tokens** for SKILL.md / Level 2 content. This is normative, not aspirational.
+- **REFUTED — implicit assumption that custom Skills sync across surfaces.** The platform docs are explicit: "**Custom Skills do not sync across surfaces.** Skills uploaded to claude.ai must be separately uploaded to the API; Skills uploaded through the API are not available on claude.ai; Claude Code Skills are filesystem-based and separate from both." This is a portability gap our prior write-up did not flag.
+- **REFUTED — assumption that API-runtime Skills can hit external networks.** The platform docs are explicit: on the Claude API surface, Skills have **No network access**, **No runtime package installation**, and **Pre-configured dependencies only**. Only Claude Code has full network access; claude.ai has "varying" access. This materially changes the threat model: API-surface Skills cannot exfiltrate over the network at all.
+
+**Cross-reference flagged for `research/04-every-skill-libraries.md` (not edited in this drain):** Every's SKILL.md frontmatter convention adds `tags`, `version`, and `allowed-tools` fields beyond Anthropic's required `name` + `description`. Anthropic's spec imposes constraints Every's docs do not surface: `name` max **64 chars**, lowercase letters/numbers/hyphens only, **reserved words "anthropic" and "claude" forbidden**, no XML tags; `description` max **1024 chars**, no XML tags. Report 04's claim that "the description *is* the discovery mechanism" matches Anthropic's framing precisely — the docs say "The `description` should include both what the Skill does and when Claude should use it." Worth flagging at report 04's next drain that Anthropic's constraints are stricter than Every's, that `allowed-tools` is *not* part of Anthropic's canonical schema (it's a Claude Code-specific extension), and that Anthropic's Level-1 budget is ~100 tokens per skill (a number Every's reports do not specify but is the load-economics constraint the convention is designed around).
+
+---
+
 ## Drain note (issue #29) — 2026-05-13
 
 This report was originally written from WebSearch result summaries and secondary outlet coverage because all five `www.anthropic.com/engineering/*` URLs (S12, S13, S14, S15, plus the sandboxing post) returned 403 from the sandbox. On 2026-05-13 the five primary URLs were fetched via the `fetch-blocked-urls` workflow under issue #29 and drained into this report. Concretely:
@@ -198,7 +231,7 @@ S13 (Barry Zhang, Keith Lazuka, Mahesh Murag, Oct 16, 2025; updated Dec 18, 2025
 
 Per S13, skills load in **three discrete stages**, verbatim:
 
-1. **Tier 1 — Metadata (eager).** "This metadata is the **first level** of *progressive disclosure*: it provides just enough information for Claude to know when each skill should be used without loading all of it into context." *Note: the "30–50 tokens per skill" budget cited in earlier rounds is a secondary-source estimate, not in S13. S13 does not state a token count.*
+1. **Tier 1 — Metadata (eager).** "This metadata is the **first level** of *progressive disclosure*: it provides just enough information for Claude to know when each skill should be used without loading all of it into context." *Note: the "30–50 tokens per skill" budget cited in earlier rounds is a secondary-source estimate, not in S13. S13 does not state a token count. The platform docs (drained issue #36) do state a quantitative budget — **~100 tokens per Skill** at the metadata level, **under 5k tokens** for the SKILL.md body when triggered, and **effectively unlimited** for bundled Level-3 files since they consume zero context unless read.*
 2. **Tier 2 — SKILL.md body (lazy, on relevance).** "The actual body of this file is the **second level** of detail. If Claude thinks the skill is relevant to the current task, it will load the skill by reading its full `SKILL.md` into context."
 3. **Tier 3 — Bundled files (lazy, on use).** "These additional linked files are the **third level** (and beyond) of detail, which Claude can choose to navigate and discover only as needed." S13's worked example: the PDF skill bundles `reference.md` and `forms.md` separately, so the SKILL.md author can "trust that Claude will read `forms.md` only when filling out a form."
 
@@ -212,25 +245,121 @@ This is still the rule `04-every-skill-libraries.md` records only implicitly —
 
 S13 closes with a deliberately mundane analogy: "Like a well-organized manual that starts with a table of contents, then specific chapters, and finally a detailed appendix, skills let Claude load information only as needed."
 
+### 4.4 What the cookbook adds — concrete schema, API surface, and runtime constraints (drained issue #36)
+
+S13 is the conceptual frame. The platform-docs page (`platform.claude.com/.../agent-skills/overview`) and the three official cookbook notebooks (`anthropics/claude-cookbooks/skills/notebooks/{01,02,03}_*.ipynb`) are the concrete reference. Together they specify:
+
+**SKILL.md schema (normative, from platform docs):**
+
+- Required fields: `name`, `description`.
+- `name`: max **64 characters**, lowercase letters/numbers/hyphens only, no XML tags, **reserved words "anthropic" and "claude" are forbidden**.
+- `description`: non-empty, max **1024 characters**, no XML tags. Authoring guidance: "The `description` should include both what the Skill does and when Claude should use it." This is the trigger contract.
+- Cookbook notebook 3's minimal canonical layout: `skill_name/{SKILL.md, *.md, scripts/, resources/}`. SKILL.md is the only required file. Multiple top-level `.md` files are all loaded as Level-2 content (not just SKILL.md and REFERENCE.md, despite what the engineering examples imply).
+
+**The Level-1/2/3 token table (verbatim from platform docs):**
+
+| Level | When loaded | Token cost | Content |
+|---|---|---|---|
+| 1: Metadata | Always (at startup) | **~100 tokens per Skill** | `name` and `description` from YAML frontmatter |
+| 2: Instructions | When Skill is triggered | **Under 5k tokens** | SKILL.md body |
+| 3+: Resources | As needed | **Effectively unlimited** | Bundled files (read via bash; script *code* never enters context — only output) |
+
+The "effectively unlimited Level 3" claim is grounded in a specific mechanism: **scripts are executed via bash and only their output enters context**. From the docs: "When Claude runs `validate_form.py`, the script's code never loads into the context window. Only the script's output (like 'Validation passed' or specific error messages) consumes tokens." This is a tighter primitive than report 04's "side-files capped at 50 files / 1MB" framing — Anthropic's spec is bandwidth-unbounded by design.
+
+**The API surface (verbatim, from notebook 1):**
+
+```python
+response = client.beta.messages.create(
+    model="claude-sonnet-4-6",
+    container={"skills": [
+        {"type": "anthropic", "skill_id": "xlsx", "version": "latest"}
+    ]},
+    tools=[{"type": "code_execution_20250825", "name": "code_execution"}],
+    messages=[...],
+    betas=["code-execution-2025-08-25", "files-api-2025-04-14", "skills-2025-10-02"]
+)
+```
+
+Three load-bearing constraints:
+
+1. **`client.beta.messages.create()`**, not `client.messages.create()` — the `container` parameter is beta-only.
+2. **Three beta headers always required together** — `code-execution-2025-08-25`, `skills-2025-10-02`, `files-api-2025-04-14`. The cookbook explicitly flags: "When using Skills, you MUST include the code_execution tool in your request." Skills *require* code execution.
+3. **`container.skills[]`** is a list of `{type, skill_id, version}` objects. `type` is `"anthropic"` (pre-built) or `"custom"` (user-uploaded). The cookbook's brand-guidelines example demonstrates **multi-skill composition in a single request** — combine a custom skill with a pre-built skill: `[{"type":"custom","skill_id":brand_id,...}, {"type":"anthropic","skill_id":"pptx",...}]`. The host agent loads both metadata blocks at startup.
+
+**Skills Management API (verbatim, notebook 3):**
+
+```python
+client.beta.skills.create(display_title="My Skill", files=files_from_dir("path/to/skill"))
+client.beta.skills.list(source="custom")            # or source="anthropic"
+client.beta.skills.versions.create(skill_id=..., files=files_from_dir(...))
+client.beta.skills.versions.list(skill_id=...)
+client.beta.skills.versions.delete(skill_id=..., version=...)
+client.beta.skills.delete(skill_id)
+```
+
+**Versioning model:** custom skills use epoch-timestamp version numbers (not semver); `"latest"` is the recommended pin for Anthropic-managed skills. The cookbook explicitly demonstrates a *version-creation workflow* — make an edit, call `versions.create` against the same `skill_id`, and the new version becomes `latest`. There is no rollback API surfaced; rollback is "specify a non-latest version explicitly." Skills *cannot be re-uploaded under the same display_title* — duplicate-name uploads fail with "cannot reuse an existing display_title."
+
+**Runtime constraints by surface (normative, platform docs §"Runtime environment constraints"):**
+
+| Surface | Network access | Package install | Notes |
+|---|---|---|---|
+| claude.ai | Varying (per user/admin settings) | n/a | Custom skills are per-user; no admin org-wide management |
+| Claude API | **None** — no external API calls | **None** — pre-installed packages only | Skills are workspace-shared |
+| Claude Code | Full | Local-only encouraged | Filesystem-based; personal at `~/.claude/skills/` or project at `.claude/skills/`; sharable via Claude Code Plugins |
+
+This materially constrains the threat model: an API-surface Skill *cannot exfiltrate over the network* because the runtime gives it no network. The post-S13 platform stance is that the *primary defensive layer is runtime restriction at the code-execution boundary*, not skill-content scanning — consistent with the sandboxing post in §8.
+
+**Sharing scope:**
+- claude.ai — individual-user-only, no admin org-wide push.
+- API — workspace-wide; all workspace members see uploaded skills.
+- Claude Code — personal or project-scoped; sharing via Plugins.
+
+**Cross-surface non-portability:** "Skills uploaded to claude.ai must be separately uploaded to the API; Skills uploaded through the API are not available on claude.ai; Claude Code Skills are filesystem-based and separate from both." Custom Skills *do not sync across surfaces*. This is a real portability gap the engineering posts gloss over.
+
+**Domain-specific worked example (notebook 2):** the financial-applications notebook demonstrates a three-stage pipeline pattern: `xlsx` skill → `pptx` skill → `pdf` skill, with structured-data input (`pd.DataFrame.to_string()`, `json.dumps()`) consistently flowing into each stage. The notebook explicitly recommends: "Structured data (JSON/CSV) is more efficient than prose." This is a concrete authoring discipline the engineering posts only allude to.
+
+**Custom-skill authoring discipline (notebook 3):**
+
+1. **Single responsibility per skill** — "Each skill should focus on one area of expertise."
+2. **SKILL.md under 5,000 tokens** (the Level-2 budget).
+3. **Composition over mega-skills** — "Combine skills vs. mega-skill" is listed under "Performance Optimization."
+4. **Test before production** — the notebook ships a `test_skill(client, skill_id, prompt)` helper that runs each new skill against a fixed test prompt.
+5. **Security checklist** (notebook 3's §"Security Considerations"): no hardcoded API keys; no sensitive data in skill files; sanitize inputs in scripts; log skill usage for audit trail.
+
+This last item is the closest the cookbook comes to formal skill-security guidance — and it is *authoring-side*, not consumption-side. The platform docs §"Security considerations" carry the consumption-side framing (audit, trust source, treat-like-installing-software). There is no Anthropic-shipped scanner in either source.
+
+**The S13 / platform-docs / cookbook tier together:** S13 is the design memo (why progressive disclosure); the platform docs are the normative schema and runtime contract (what's allowed, with what token costs); the cookbook is the implementation tutorial (working code, common errors, composition patterns). All three are needed to author a production skill; none is sufficient alone.
+
 ---
 
 ## 5. Security considerations Anthropic flags around skills
 
-**Sourcing correction (issue #29 drain):** several quotes in earlier rounds were attributed to S13 but do not appear in the S13 primary text. They are presumably from `platform.claude.com/docs/.../agent-skills/overview` (not drained in this round). Re-attributed below: S13-direct vs platform-docs-attributed.
+**Sourcing correction (issues #29 + #36 drains):** several quotes in earlier rounds were attributed to S13 but do not appear in the S13 primary text. The platform-docs page (`platform.claude.com/docs/en/agents-and-tools/agent-skills/overview`) was drained in round 7 (issue #36) and now anchors these. Re-attributed below: S13-direct vs platform-docs-direct.
 
 **From S13 directly (verbatim):** "Skills provide Claude with new capabilities through instructions and code. While this makes them powerful, it also means that malicious skills may introduce vulnerabilities in the environment where they're used or direct Claude to exfiltrate data and take unintended actions. We recommend installing skills only from trusted sources. When installing a skill from a less-trusted source, thoroughly audit it before use. Start by reading the contents of the files bundled in the skill to understand what it does, paying particular attention to code dependencies and bundled resources like images or scripts. Similarly, pay attention to instructions or code within the skill that instruct Claude to connect to potentially untrusted external network sources."
 
-**Attributed to platform docs, not S13 (sourcing TBD — fetch follow-up):**
+**From `platform.claude.com/.../agent-skills/overview` §"Security considerations" (now drained, verbatim):**
 
-1. "A malicious Skill can direct Claude to invoke tools or execute code in ways that don't match the Skill's stated purpose, potentially leading to data exfiltration, unauthorized system access, or other security risks."
-2. "Two attack classes." (a) Code-level — bundled scripts that exfiltrate credentials. (b) Instruction-level — malicious directives in SKILL.md (canonical example: append `$ANTHROPIC_API_KEY` to URL requests).
-3. "Treat skills like codebase dependencies — review, pin versions, and audit changes."
-4. "Use Skills only from trusted sources: those you created yourself or obtained from Anthropic. If you must use a Skill from an untrusted or unknown source, exercise extreme caution and thoroughly audit it before use."
-5. Audit means: "Review all files bundled in the Skill … and look for unusual patterns like unexpected network calls, file access patterns, or operations that don't match the Skill's stated purpose."
+1. Top-level framing: "Use Skills only from trusted sources: those you created yourself or obtained from Anthropic. Skills provide Claude with new capabilities through instructions and code, and while this makes them powerful, it also means **a malicious Skill can direct Claude to invoke tools or execute code in ways that don't match the Skill's stated purpose**."
+2. The `<Warning>` block: "If you must use a Skill from an untrusted or unknown source, exercise extreme caution and thoroughly audit it before use. Depending on what access Claude has when executing the Skill, malicious Skills could lead to **data exfiltration, unauthorized system access, or other security risks**."
+3. The five-bullet checklist (verbatim):
+   - **Audit thoroughly**: "Review all files bundled in the Skill: SKILL.md, scripts, images, and other resources. Look for unusual patterns like unexpected network calls, file access patterns, or operations that don't match the Skill's stated purpose."
+   - **External sources are risky**: "Skills that fetch data from external URLs pose particular risk, as fetched content may contain malicious instructions. Even trustworthy Skills can be compromised if their external dependencies change over time."
+   - **Tool misuse**: "Malicious Skills can invoke tools (file operations, bash commands, code execution) in harmful ways."
+   - **Data exposure**: "Skills with access to sensitive data could be designed to leak information to external systems."
+   - **Treat like installing software**: "Only use Skills from trusted sources. Be especially careful when integrating Skills into production systems with access to sensitive data or critical operations."
+
+**Corrections to prior rounds' framing:**
+
+- The "Two attack classes (code-level vs instruction-level)" taxonomy our prior version used is *not* what the platform docs say. The docs taxonomy is **Tool misuse + Data exposure + External-sources risk**, with the "external sources" bullet being the closest analog to instruction-level injection ("fetched content may contain malicious instructions"). Replaced.
+- "Treat skills like codebase dependencies — review, pin versions, and audit changes" is *not* verbatim in either source. The closest verbatim is the **"Treat like installing software"** bullet above. The dependency-management framing (review/pin/audit) is a useful synthesis but should be marked as a *paraphrase* of the docs, not a quote.
+- The platform docs **explicitly flag external-dependency drift** as a separate concern: "Even trustworthy Skills can be compromised if their external dependencies change over time." This is the closest Anthropic comes to a *supply-chain* framing in either S13 or the docs.
 
 **From VentureBeat (secondary, on why scanners miss it):** "there is no code to scan, no binary payload, no known signature, and the 'malicious code' is English text … which traditional SAST, DAST, and malware scanners miss entirely."
 
-**S13's own security stance is minimalist** — three sentences, summarizing to "trust the source, audit before use." The more elaborate threat-model and treat-as-dependency framing is a docs-page contribution, not the engineering post.
+**Runtime as primary defense.** The platform docs make explicit (cross-ref §4.4) that the **runtime enforces what scanning cannot**: API-surface Skills have *zero* network access; claude.ai Skills run inside the code-execution sandbox; Claude Code Skills inherit the user's network but can be wrapped by the §8 sandbox-runtime. Anthropic's stance: trust the source on the *content* side, lock the *runtime* on the execution side.
+
+**S13's own security stance is minimalist** — three sentences, summarizing to "trust the source, audit before use." The more elaborate threat-model and treat-like-installing-software framing is a platform-docs contribution, not the engineering post. The cookbook's notebook-3 §"Security Considerations" adds an *authoring-side* checklist (no hardcoded credentials; no sensitive data in skill files; sanitize inputs; log usage) that neither S13 nor the platform docs cover.
 
 Downstream ecosystem evidence the design anticipates: as of Feb–Mar 2026, public skill registries had material malicious-skill problems (ClawHub "ClawHavoc" — 341 malicious skills; Mobb.ai — 140,963 issues across 22,511 skills; Snyk ToxicSkills — prompt injection in 36% of skills tested). S13 names the threat class but ships no scanner — the stance is *trust-based, audit-required*. See §9 for the *sandboxing* complement that arrived in Oct 2025 — once skills run inside a sandbox with filesystem + network isolation, the threat surface narrows considerably.
 
@@ -325,7 +454,11 @@ The pairing is now: **S12/S14/S15 specify how long-running agents *do work*; the
 | S15 — Harness design for long-running app development | ✅ Drained from `fetched/issue-29/` 2026-05-13 | Prithvi Rajasekaran, Anthropic Labs, Mar 24 2026; sprint contract pattern; context anxiety / context-resets discipline; v1→v2 (Opus 4.5→4.6) harness evolution with v2 dropping sprints; cost data primary |
 | Claude Code sandboxing post (new §8) | ✅ Drained from `fetched/issue-29/` 2026-05-13 | David Dworken & Oliver Weller-Davies, Oct 20 2025; 84% permission-prompt reduction; bubblewrap + seatbelt; open-sourced as `anthropic-experimental/sandbox-runtime` |
 | `anthropics/cwc-long-running-agents` | FULL | Related to S12 pattern but not the canonical S12 companion (correction this round) |
-| `platform.claude.com/.../agent-skills/overview` | partial via search | Source of several security quotes previously misattributed to S13 |
+| `platform.claude.com/.../agent-skills/overview` | ✅ Drained via USER-PATH-B export 2026-05-13 (issue #36 extras) | Closes round-7 SPA-shell failure. Source of: SKILL.md schema constraints (64-char name, 1024-char description, reserved words "anthropic"/"claude" forbidden); the Level-1/2/3 token table (~100 / <5k / unlimited); API beta-header triplet; runtime-per-surface constraint matrix (claude.ai vs API vs Claude Code); cross-surface non-portability; and the §5 security-quotes re-anchoring (round-6 misattribution gap closed) |
+| `support.claude.com/.../what-are-skills` (Help Center) | ✅ Drained via USER-PATH-B export 2026-05-13 (issue #36 extras) | Cross-product summary; plan availability (Free/Pro/Max/Team/Enterprise + Claude Code beta + API beta); four skill types (Anthropic / Custom / Org-Provisioned / Partner); confirms open-standard claim ("published as an open standard at agentskills.io ... reference Python SDK"); Projects-vs-Skills and MCP-vs-Skills disambiguation |
+| Cookbook notebook 1 — `anthropics/claude-cookbooks/skills/notebooks/01_skills_introduction.ipynb` | ✅ Drained via USER-PATH-B export 2026-05-13 (issue #36 extras) | API surface (`client.beta.messages.create`, `container={"skills":[...]}`); beta-header triplet; xlsx/pptx/pdf pre-built skills; token-savings framing ("~98% on initial context"); the "MUST include code_execution tool" requirement |
+| Cookbook notebook 2 — `02_skills_financial_applications.ipynb` | ✅ Drained via USER-PATH-B export 2026-05-13 (issue #36 extras) | Domain-specific worked example: xlsx → pptx → pdf pipeline pattern with structured-data flow; "Structured data (JSON/CSV) is more efficient than prose" authoring discipline; multi-document automated-reporting pipeline shape |
+| Cookbook notebook 3 — `03_skills_custom_development.ipynb` | ✅ Drained via USER-PATH-B export 2026-05-13 (issue #36 extras) | Skills Management API (`beta.skills.create/list/versions.create/delete`); custom-skill directory layout; versioning model (epoch-timestamped, no rollback API); multi-skill composition in one `container` (custom brand + pre-built pptx); duplicate display_title constraint; authoring-side security checklist (no hardcoded creds, sanitize inputs, log usage); single-responsibility / under-5k-tokens authoring principles |
 
 **Blocked URLs encountered:** previously four anthropic.com engineering URLs (S12, S13, S14, S15) returned 403. All now drained via issue #29 plus the sandboxing post.
 
@@ -333,10 +466,13 @@ The pairing is now: **S12/S14/S15 specify how long-running agents *do work*; the
 
 **Open follow-ups:**
 
-1. Fetch `platform.claude.com/docs/.../agent-skills/overview` to anchor the security quotes currently re-attributed in §5.
+1. ~~Fetch `platform.claude.com/docs/.../agent-skills/overview`~~ — **CLOSED 2026-05-13** by USER-PATH-B export (issue #36 extras). §5 security quotes are now anchored verbatim against the platform docs.
 2. Lift §7 into `architectures/02-compound-atelier.md` — likely §3.4 (split Curator into inline check + periodic consolidation per CK) and §7 (three-tier disclosure per Anthropic).
 3. The S15 sprint-contract pattern (file-based negotiation of "done" before code is written) deserves cross-reference into the architectures' phase-gate / AC-grounding design.
 4. The S14 GCC-as-oracle pattern is a new architectural primitive worth capturing: "known-good oracle + bisect" as a way to enable parallelism on monolithic builds.
-5. Track Agent Skills as open standard (agentskills.io) — verify the cross-vendor adoption status in a follow-up round.
+5. Track Agent Skills as open standard (agentskills.io) — verify the cross-vendor adoption status in a follow-up round. (Both the support doc and the platform docs now confirm open-standard status with a reference Python SDK; the adoption-side surface — *who* outside Anthropic has implemented the spec — remains unverified.)
+6. **NEW (issue #36 extras drain):** Propagate to `research/04-every-skill-libraries.md` next drain: (a) Anthropic's strict name constraints (64-char, lowercase-alphanumeric-hyphen, "anthropic"/"claude" forbidden); (b) the ~100/Skill metadata budget; (c) the cross-surface non-portability gap; (d) note that `allowed-tools` is a Claude Code extension, not part of the Anthropic canonical schema.
+7. **NEW:** Cross-surface portability gap. Custom Skills don't sync across claude.ai / API / Claude Code. For any factory architecture proposing skills as the universal-knowledge primitive, this is a real friction — the same skill must be uploaded three times, and Claude-Code-Plugins is the only sharing mechanism that doesn't require manual re-upload.
+8. **NEW:** API-surface no-network constraint is a structural defense. Worth folding into `research/00-synthesis.md` and the architectures' threat-model sections — for API-deployed agents, network exfiltration is *runtime-impossible*, which materially changes the trust calculus for partner/registry skills.
 
 **Status:** SUCCESS — all five Anthropic engineering URLs drained via issue #29; major corrections applied to model versions, companion-repo attribution, testing tools, and quote sourcing. The three-way comparison with El Kaim's Codex and Every's Compound Knowledge plugin remains intact and is now anchored on primary S13 text. The sandboxing post is integrated as the security companion the trilogy was missing.

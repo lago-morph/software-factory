@@ -5,7 +5,26 @@
 - https://www.lennysnewsletter.com/p/an-ai-state-of-the-union — Lenny Rachitsky interview with Simon Willison ("An AI state of the union: We've passed the inflection point, dark factories are coming, and automation timelines"). **ACCESSED** via local mirror: `/home/user/software-factory/www.lennysnewsletter.com__p__an-ai-state-of-the-union.html`. The interview body is paywalled; the visible portion is the editorial summary, sponsors, and the 45-entry references section. Verbatim Willison quotes are reconstructed from the visible summary bullets plus referenced Willison blog posts (cited inline).
 - https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens — Lenny Rachitsky interview with Boris Cherny ("Head of Claude Code: What happens after coding is solved | Boris Cherny", Feb 19, 2026). **PARTIAL** access via Wayback Machine snapshot (capture timestamp 2026-05-04). Both the direct URL and the Wayback capture paywall the interview body and the "biggest takeaways" section. Visible material: editorial intro, "We discuss" topic list, "Where to find Boris Cherny" links, the full "Referenced:" link list, and "Recommended books".
 
-**Date:** 2026-05-11 (Boris Cherny interview added from Wayback snapshot, visible portions only)
+**Date:** 2026-05-11 (Boris Cherny interview added from Wayback snapshot, visible portions only); 2026-05-13 (both Lenny interview bodies now primary-source-anchored via partial transcripts — see Drain note below)
+
+---
+
+## Drain note (2026-05-13) — both Lenny podcasts now primary-source-anchored (partial)
+
+The two Lenny interviews that this report has been working around with paywall-visible-summary-only material since round 1 are now primary-source-anchored, but **partially** — first ~30 minutes of each ~90-minute podcast was manually transcribed and dropped on 2026-05-13. The user offered to run the overnight full transcription; we recommend accepting (the un-transcribed 60 minutes per podcast almost certainly contains the parallel-session architecture, the lethal-trifecta discussion, the Challenger-disaster argument, and other claims central to PLAN.md §3 bottlenecks).
+
+**Detailed primary-source-anchored drains live in their target reports:**
+- Cherny → `research/followup/03-cherny-interview.md` (8 corpus claims now verbatim-anchored + 8+ new primary findings, notably $100K+/month per-engineer token spend at Anthropic, 9-month personal ramp curve, two-stage merge gate with Claude reviewing 100% of PRs)
+- Willison → `research/05-simon-willison.md` (added new H2 section; full Notable-Quotes block; the "Challenger disaster of AI" prediction now corpus-first)
+
+**MAJOR FINDING — reversal-of-reversal on Willison's "4 agents → 11 AM" claim.** The Lenny × Willison transcript contains verbatim: *"I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day."* This means:
+- The v1 attribution of "4 agents in parallel exhausts me by 11 AM" to Willison was **CORRECT all along**.
+- The v3 "correction" — which softened the claim to "mentally exhausted by 11 a.m." and asserted the "4 agents" number was a fabrication — was **itself wrong** because the Lenny editorial paraphrase was an editorial compression, not a claim that the count never existed.
+- Every cross-corpus reference that propagated the v3 "fabrication" framing has been corrected as of 2026-05-13 (this commit, plus updates to `research/00-synthesis.md` and `research/blocked-urls.md`).
+
+The body of this report below still contains v2/v3-era framings around the 4-agents claim; **inline corrections are applied in the relevant sections** with `[2026-05-13 reversal-of-reversal]` markers. The "primary"-quality framing in this v3 report header is also updated: the visible Lenny editorial summary has been the source for some claims; the actual transcript is now the source for others; the table and notable-quotes sections reflect this.
+
+---
 
 ## Sources status
 
@@ -31,7 +50,7 @@ Major changes from the previous version of this report (which was reconstructed 
 
 **Corrected:**
 - HN id `46955602` cited in the original **does not exist** in this thread (ID range: 46924444–47023528). The "Programming as a professional discipline will be over in a year or two" quote attributed to it was a fabrication. Closest real analogue: **bitwize** HN 46955522: *"I think you're going to see drastic shrinkage of SWE departments over 2026 and 2027."*
-- The "Willison: 4 agents → exhausted by 11 AM" exact-quote in the original is **not** in the visible Lenny text. Verbatim line is: *"How Simon writes 95% of his code from his phone now and why he's mentally exhausted by 11 a.m."* The "4 parallel agents" number has been removed from the Quantitative Claims table.
+- ~~The "Willison: 4 agents → exhausted by 11 AM" exact-quote in the original is **not** in the visible Lenny text.~~ **[2026-05-13 reversal-of-reversal]** This v3-era correction was itself wrong. The Lenny editorial summary line *"How Simon writes 95% of his code from his phone now and why he's mentally exhausted by 11 a.m."* is an editorial paraphrase; the actual interview transcript (drained 2026-05-13, partial 30/90 min) contains the verbatim line *"I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day."* The Quantitative Claims table has been restored with the 4-agents number.
 - "Boris Cherny: 10–30 PRs/day" comes from the separate Cherny Feb-19-2026 Lenny interview, not this Willison interview (this Lenny post references it). Provenance retagged.
 - StrongDM team formation softened from "July 14, 2025" (absent from sources) to "July 2025" per navanchauhan 46927763.
 - "16k Rust + 9.5k Go + 6.7k TS" LOC figure is not in the HN thread — comes from third-party summary; provenance flagged.
@@ -54,7 +73,7 @@ Both pieces are reactions to the same inflection point: between Q4 2025 and Q1 2
 
 The shared substantive thesis across both sources: **the load-bearing artifact in a software factory is no longer the code — it is (1) the spec, (2) the scenarios held outside the codebase, and (3) the validation harness that mirrors production reality.** StrongDM's most-praised innovation is the "Digital Twin Universe" — synthetic clones of Okta, Jira, Slack, Google Docs/Drive/Sheets that allow thousands of end-to-end test runs without rate limits. Their most-criticized move is making the LLM the author of both the implementation and the twin (the "Hallucination Loop" critique from polyglotfacto, HN 46961871).
 
-Practitioner sentiment splits three ways. **Enthusiasts** — including the StrongDM team themselves and simonw — report that scenario-driven, harness-validated agentic loops do converge on working software given enough tokens and a strong definition of done. **Pragmatists** (most of the HN thread, Willison himself) say the factory model only works if you have already invested heavily in test infrastructure, scenario design, and reward-hacking defenses — and that running parallel agents leaves the human "mentally exhausted by 11 a.m." (the verbatim line from the Lenny summary). **Skeptics** point to: (a) reward hacking (`assert True`, `return true` to pass tests), (b) shared-blind-spot failure when the same model writes code and twin, (c) the open-sourced StrongDM `cxdb` Rust code being riddled with `Arc<Mutex>` anti-patterns on first inspection (polyglotfacto), (d) the "no benchmarks, no defect rates, no production outcomes" rebuke (belter, mccoyb), and (e) the $1,000/day-per-engineer token spend benchmark, which several commenters argue inverts the cost-economics of small teams.
+Practitioner sentiment splits three ways. **Enthusiasts** — including the StrongDM team themselves and simonw — report that scenario-driven, harness-validated agentic loops do converge on working software given enough tokens and a strong definition of done. **Pragmatists** (most of the HN thread, Willison himself) say the factory model only works if you have already invested heavily in test infrastructure, scenario design, and reward-hacking defenses — and that running parallel agents leaves the human, in Simon's verbatim words from the Lenny × Willison transcript drained 2026-05-13, *"I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day."* **Skeptics** point to: (a) reward hacking (`assert True`, `return true` to pass tests), (b) shared-blind-spot failure when the same model writes code and twin, (c) the open-sourced StrongDM `cxdb` Rust code being riddled with `Arc<Mutex>` anti-patterns on first inspection (polyglotfacto), (d) the "no benchmarks, no defect rates, no production outcomes" rebuke (belter, mccoyb), and (e) the $1,000/day-per-engineer token spend benchmark, which several commenters argue inverts the cost-economics of small teams.
 
 For software factory architecture design, three implications repeat: **scenarios must live outside the codebase** (treat them like an ML holdout set); **validation harnesses must be end-to-end with real environment fidelity** (twins, not mocks — though several commenters argue "twins" are just mocks with a marketing layer); and **humans steering parallel agents have a real cognitive ceiling** — meaning factory throughput depends on async/non-interactive loops, not human-in-the-loop multiplexing.
 
@@ -255,7 +274,7 @@ The Lenny interview ("An AI state of the union: We've passed the inflection poin
 The editorial summary lists, verbatim, what Willison shares in the conversation:
 
 1. **"Why November 2025 was the inflection point when AI coding agents crossed from 'mostly works' to 'actually works.'"** This is paired with the linked Willison X post: *"It genuinely feels to me like GPT-5.2 and Opus 4.5 in November represent an inflection point."*
-2. **"How Simon writes 95% of his code from his phone now and why he's mentally exhausted by 11 a.m."** This is the verbatim, paywall-visible line. (The original report's "4 agents in parallel exhausts me by 11 AM" formulation is not supported by the visible text and has been corrected here.)
+2. **"How Simon writes 95% of his code from his phone now and why he's mentally exhausted by 11 a.m."** This is the verbatim paywall-visible Lenny editorial paraphrase. The actual transcript line (drained 2026-05-13) is *"I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day."* The original v1 report's "4 agents in parallel exhausts me by 11 AM" formulation was correct after all; the v3 "corrected here" annotation was itself wrong.
 3. **"Why mid-career engineers (not juniors) are most at risk right now."** This is the K-shaped/mid-career-squeeze framing.
 4. **"The three agentic engineering patterns Simon uses daily (red/green TDD, templates, hoarding)."** Confirms the three-pattern taxonomy.
 5. **"The next leap: the 'dark factory' pattern where nobody writes or reviews code and AI does its own QA."** Confirms the Dark Factory framing.
@@ -403,7 +422,7 @@ The visible references section captures the trail of related sources Boris bring
 ## Top 3-5 referenced posts — brief summaries
 
 ### 1. "Head of Claude Code: What happens after coding is solved" — Boris Cherny (Lenny ref #4)
-**URL:** https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens. Cherny (head of Claude Code at Anthropic) reportedly has not edited a single line of code by hand since November 2025, ships 10–30 PRs/day, and orchestrates 10–15 parallel sessions as "workers." The human's role becomes *scheduler of capacity*. The 10–15 (Cherny) vs. "mentally exhausted by 11 a.m." (Willison) delta suggests the binding constraint is human role specialization, not raw model capability. (The two specific Cherny stats above — 10–30 PRs/day and 10–15 parallel sessions — were carried over from the previous version of this report and remain *unverified against primary source*: see the dedicated Boris Cherny section below for what the Wayback snapshot does and does not actually say.)
+**URL:** https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens (audio: https://youtu.be/We7BZVKbCVw). Cherny (head of Claude Code at Anthropic) has not edited a single line of code by hand since November 2025, ships 10–30 PRs/day (verbatim: *"Every day I ship like 10, 20, 30 pull requests"*), and runs 5+ parallel sessions ("I have like five agents running while we're recording this"). The human's role becomes *scheduler of capacity*. The 5+ (Cherny) vs. 4 (Willison) delta is small at the count level but large at the cognitive-load level: Cherny *schedules*, Willison *micro-supervises*, hence Willison's 11 AM exhaustion vs. Cherny's "I have not enjoyed coding as much as I do today." **[2026-05-13]** The Cherny stats above were carried over from v1 as un-primary-sourced and have now been verified verbatim against the Lenny × Cherny podcast transcript (manual partial transcript, first 30 of 90 min, drained 2026-05-13 into `research/followup/03-cherny-interview.md`). New corpus-first findings from the same drain: Cherny ramped Feb 20% → May 30% → Nov 100%, Anthropic engineers spend $100K+/month on tokens (can be 2–5× monthly comp), team throughput up ~8× year-over-year (4× headcount × +200% per-engineer productivity), two-stage merge gate (Claude reviews 100% of PRs, then human review except on prototype code), "Latent demand" is the explicit Claude Code product principle.
 
 ### 2. "The lethal trifecta for AI agents" — Simon Willison, Jun 16, 2025 (Lenny ref #30)
 **URL:** https://simonwillison.net/2025/Jun/16/the-lethal-trifecta. Prompt injection becomes catastrophic when an agent has all three: (1) private data access, (2) exposure to untrusted content, (3) external communication. Block any one. The Lenny editorial pairs this directly with the Challenger metaphor — Willison expects a Challenger-style AI disaster from a prompt-injection chain. A factory whose agents have file-system, network, *and* secret access has all three legs.
@@ -462,7 +481,7 @@ The visible references section captures the trail of related sources Boris bring
 | Independent practitioner cost (trading-firm) | $500–$5000/day per seat | noosphr HN 46925882 |
 | Boris Cherny stats | 10–30 PRs/day; no hand-edited code since Nov 2025; 10–15 parallel sessions | Cherny interview (Lenny ref #4, secondary) |
 | Willison's coding-from-phone share | 95% (verbatim) | Lenny editorial summary |
-| Willison's exhaustion time | "mentally exhausted by 11 a.m." (verbatim) | Lenny editorial summary |
+| Willison's parallel-agent count + exhaustion time | 4 agents in parallel → wiped out by 11 AM (verbatim) | Lenny × Willison transcript (drained 2026-05-13) |
 | bluesnowmonkey's fakes count | 22 fake API implementations and climbing | HN 46929529 |
 | Inflection-point models | GPT-5.2 and Opus 4.5 (November 2025) | Willison X post (Lenny ref #1) |
 | StrongDM team-form → working demo cycle | ~3 months ("working together for three months") | simonw HN 46934270 |
@@ -499,7 +518,7 @@ The "Top practitioner insights" section above contains the full verbatim text fo
 16. **richardw's "$90k vandal"** (46929915): *"It's a $90k engineer that sometimes acts like a vandal, who never has thoughts like 'this seems to be a bad way to go. Let me ask the boss.'"*
 17. **belter's de-marketing** (46926212): *"Digital Twin Universe is mocks, Gene Transfusion is reading reference code, Semport is transpilation. The site has zero benchmarks, zero defect rates, zero cost comparisons, zero production outcomes."*
 18. **Willison on November 2025** (Lenny ref #1 X post): *"It genuinely feels to me like GPT-5.2 and Opus 4.5 in November represent an inflection point."*
-19. **Willison on phone coding** (Lenny editorial verbatim): *"How Simon writes 95% of his code from his phone now and why he's mentally exhausted by 11 a.m."*
+19. **Willison on phone coding** (Lenny editorial summary): *"How Simon writes 95% of his code from his phone now and why he's mentally exhausted by 11 a.m."* — and the transcript-verbatim version (drained 2026-05-13): *"I can fire up like four agents in parallel and have him work on four different problems, and by like, 11am I am wiped out for the day."*
 20. **Lenny editorial on the upcoming disaster** (verbatim): *"the 'lethal trifecta' that will likely lead to an AI Challenger disaster."*
 21. **cadamsdotcom's harness engineering** (46929918): *"take yourself progressively out of those loops, that's the new job."*
 
@@ -521,7 +540,7 @@ The "Top practitioner insights" section above contains the full verbatim text fo
 
 ## Open questions for synthesis
 
-1. **What is the actual ceiling on parallel agents per human?** The visible Lenny text says Willison is "mentally exhausted by 11 a.m." but names no specific number. Cherny is reported to run 10–15. The delta probably reflects role specialization (Cherny *schedules*, doesn't micro-supervise). Architecture should specify which mode the human operates in.
+1. **What is the actual ceiling on parallel agents per human?** Primary-anchored from the 2026-05-13 transcript drains: Willison runs 4 agents in parallel and is wiped out by 11 AM (verbatim); Cherny was seen running 5+ during the recording itself ("I have like five agents running while we're recording this"). The delta reflects role specialization — Cherny *schedules*, doesn't micro-supervise. The fuller Cherny architecture (the 10–15-session number that appeared in earlier corpus summaries) is likely in the un-transcribed minutes 30–90 of the 90-minute Cherny podcast and remains outstanding. Architecture should specify which mode the human operates in (per-agent supervisor vs. scheduler).
 
 2. **Where do scenarios come from?** Both sources agree scenarios outside the codebase are essential but neither describes how a small team produces *enough* of them. navanchauhan (46929801) uses LLMs to "iteratively develop the spec, the validation harness, and then the implementation" — but the bootstrapping problem is unaddressed.
 

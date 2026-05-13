@@ -1,6 +1,6 @@
 # Research Report 18 — OpenAI Codex Substrate Audit
 
-**Date:** 2026-05-11
+**Date:** 2026-05-11 (drained 2026-05-13 against fetched primaries — see drain note below)
 **Author:** Round-5 subagent sub-20 (fanout 20260511-054258)
 **Cluster:** Round-5 13.1.1 per `research/PLAN.md` §13.1.1
 **Companion reports:** `research/11-openhands-substrate-audit.md` (OpenHands analog), `research/04-every-skill-libraries.md` (Every skill registry analog), `research/09-jaymin-book-harnesses-practices-mental-models.md` (harness terminology), `research/00-synthesis.md` (cross-substrate framing).
@@ -8,33 +8,61 @@
 
 ---
 
+## Drain note (issue #41) — 2026-05-13
+
+**Status.** This report was originally built from WebSearch + open-source-mirror reconstruction because every `*.openai.com` URL 403s from this sandbox (consistent with `research/blocked-urls.md` v5). A GitHub-Actions-backed fetch run (issue #41) retrieved primary content for 5 of the 8 originally-🟡 rows in §0.
+
+**Fetch outcome (8 originally-🟡 rows in §0):**
+
+**Successfully primary-fetched (5 of 8 rows, all `developers.openai.com/codex/*`) — content drained into this revision:**
+
+1. `https://developers.openai.com/codex` (S8 — Codex overview) — fetched.
+2. `https://developers.openai.com/codex/guides/agents-md` (S10 — AGENTS.md) — fetched.
+3. `https://developers.openai.com/codex/subagents` (S11 — Subagents) — fetched.
+4. `https://developers.openai.com/codex/agent-approvals-security` (S23 — Approvals) — fetched.
+5. `https://developers.openai.com/codex/cloud/environments` (Cloud env docs) — fetched.
+
+**Cloudflare-blocked at the action runner (3 of 8 rows, all `openai.com/index/*`) — action route exhausted for this host:**
+
+- `https://openai.com/index/harness-engineering/` (S9)
+- `https://openai.com/index/unlocking-the-codex-harness/` (App Server article)
+- (and the SWE-bench-verified URL, not separately rowed in §0 but cited in §5)
+
+The fetcher action runs from a GitHub Actions IP block that `openai.com/index/*` serves Cloudflare JS challenges to (small response bodies containing `"Just a moment..."`). Path B (Wayback / cookie-fetch from a human-attended browser) remains the only realistic recovery option for these three URLs. The corresponding fetched stubs were deleted from `research/fetched/issue-41/` before this drain. These rows stay 🟡 with that explanation; per-claim quotations in §1 and §5 continue to rely on the open-source mirrors documented previously.
+
+**Per-claim upgrade status is recorded in §1–§4 with the marker `[2026-05-13 primary fetch ✅]` for upgraded claims and `[2026-05-13 primary fetch REFUTES]` for claims the primary contradicts.** Two REFUTES were found (Linux sandbox primitive; approval-mode names), corrected in place. The five `developers.openai.com/codex/*` rows flip to ✅ in §0; the three `openai.com/index/*` rows stay 🟡.
+
+---
+
 ## 0. Sources reviewed
 
-Status legend: ✅ primary URL reachable · 🟡 primary 403 from sandbox, content reconstructed from open-source mirrors and WebSearch extracts cross-checked against ≥2 independent re-hosters.
+Status legend: ✅ primary URL reachable (or successfully primary-fetched 2026-05-13 via issue #41) · 🟡 primary 403/CF-blocked from sandbox AND action runner, content reconstructed from open-source mirrors and WebSearch extracts cross-checked against ≥2 independent re-hosters.
 
 | ID | URL | Status | Reconstruction route |
 |---|---|---|---|
-| S8 — Codex overview | `https://developers.openai.com/codex` | 🟡 | WebSearch + App Server article's surface enumeration. |
-| S9 — Harness engineering (2026-02-11) | `https://openai.com/index/harness-engineering/` | 🟡 | Verbatim quotes via `raw.githubusercontent.com/celesteanders/harness/main/docs/research/260211_openai_harness_engineering_codex.md`; cross-checked vs. latent.space and swequiz.com. |
-| S10 — AGENTS.md | `https://developers.openai.com/codex/guides/agents-md` | 🟡 | WebSearch detailed extract; cross-checked vs. open-source `openai/codex/docs/agents_md.md` and `agents.md/` spec site. |
-| S11 — Subagents | `https://developers.openai.com/codex/subagents` | 🟡 | WebSearch extracts. |
-| S23 — Agent approvals & security | `https://developers.openai.com/codex/agent-approvals-security` | 🟡 | WebSearch + sibling `concepts/sandboxing` and `security` snippets. |
-| App Server article — Celia Chen, 2026-02-04 | `https://openai.com/index/unlocking-the-codex-harness/` | 🟡 | Verbatim re-host: `raw.githubusercontent.com/newton20/harness-engineering-kb/master/raw/openai-com-index-unlocking-the-codex-harness.md`; cross-checked vs. infoq.com and `codex-rs/app-server/README.md`. |
+| S8 — Codex overview | `https://developers.openai.com/codex` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch + App Server article's surface enumeration). |
+| S9 — Harness engineering (2026-02-11) | `https://openai.com/index/harness-engineering/` | 🟡 | Cloudflare JS challenge at action runner 2026-05-13; action route exhausted for `openai.com/index/*` host. Verbatim quotes still via `raw.githubusercontent.com/celesteanders/harness/main/docs/research/260211_openai_harness_engineering_codex.md`; cross-checked vs. latent.space and swequiz.com. |
+| S10 — AGENTS.md | `https://developers.openai.com/codex/guides/agents-md` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch detailed extract; cross-checked vs. open-source `openai/codex/docs/agents_md.md` and `agents.md/` spec site). |
+| S11 — Subagents | `https://developers.openai.com/codex/subagents` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch extracts). |
+| S23 — Agent approvals & security | `https://developers.openai.com/codex/agent-approvals-security` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch + sibling `concepts/sandboxing` and `security` snippets). |
+| App Server article — Celia Chen, 2026-02-04 | `https://openai.com/index/unlocking-the-codex-harness/` | 🟡 | Cloudflare JS challenge at action runner 2026-05-13; action route exhausted for `openai.com/index/*` host. Verbatim re-host still via `raw.githubusercontent.com/newton20/harness-engineering-kb/master/raw/openai-com-index-unlocking-the-codex-harness.md`; cross-checked vs. infoq.com and `codex-rs/app-server/README.md`. |
 | Open-source `codex-rs/app-server/README.md` | `github.com/openai/codex/blob/main/codex-rs/app-server/README.md` | ✅ | JSON-RPC 2.0 transports, Thread/Turn/Item primitives, endpoint surface. |
 | Open-source `docs/agents_md.md` | `github.com/openai/codex/blob/main/docs/agents_md.md` | ✅ | Confirms `child_agents_md` config-toml feature flag. |
-| Cloud-env docs | `https://developers.openai.com/codex/cloud/environments` | 🟡 | WebSearch: isolated containers, network off by default, allowlist mechanism. |
+| Cloud-env docs | `https://developers.openai.com/codex/cloud/environments` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch: isolated containers, network off by default, allowlist mechanism). |
 
-**Reachability note:** every `*.openai.com` URL 403s from this sandbox (consistent with `research/blocked-urls.md` v5). Content recovered via mirrors is consistent across ≥2 independent re-hosters for every load-bearing claim. No new fetch issue filed; a retroactive cookie-fetch or Wayback pass would tighten quotation fidelity but would not change any conclusion below. Recorded as open follow-up in §7.
+**Reachability note:** the five `developers.openai.com/codex/*` URLs are now primary-anchored (issue #41 action route). The three `openai.com/index/*` URLs returned Cloudflare JS challenges to the action runner (`"Just a moment..."` bodies under 6 KB) — same failure class as direct WebFetch from the sandbox; **the action route is exhausted for that host**. Wayback / browser-cookie-fetch (path B) is the only remaining recovery option. Recorded as open follow-up in §7.
 
 ---
 
 ## 1. The five-surface deployment model
 
-The App Server article (Celia Chen, OpenAI, 2026-02-04 — "Unlocking the Codex harness") states:
+The App Server article (Celia Chen, OpenAI, 2026-02-04 — "Unlocking the Codex harness") states (still on 🟡 mirror reconstruction; the canonical `openai.com/index/unlocking-the-codex-harness/` URL returned Cloudflare to the action runner on 2026-05-13):
 
 > *"OpenAI's coding agent Codex exists across many different surfaces: the web app, the CLI, the IDE extension, and the new Codex macOS app. Under the hood, they're all powered by the same Codex harness — the agent loop and logic that underlies all Codex experiences."*
 
 That is four surfaces by Chen's enumeration; the fifth — the SDK (Python + TypeScript at `developers.openai.com/codex/sdk`) — is a programmatic client of the same App Server protocol, distinct because it is the only surface designed to be driven by other programs rather than humans.
+
+**The primary `developers.openai.com/codex` overview page [2026-05-13 primary fetch ✅]** (`da15743d70_developers.openai.com__codex.md` lines 754-775) is a short marketing landing page that describes Codex as "OpenAI's coding agent for software development" available on "ChatGPT Plus, Pro, Business, Edu, and Enterprise plans," with five capability bullets (write code, understand unfamiliar codebases, review code, debug and fix problems, automate development tasks). It does **not** itself enumerate the five surfaces in body copy — but the page's documentation sidebar (`da15743d70` lines 272-310, 646-682) **organizes the entire docs corpus into exactly the surface groups: "App" (overview/features/settings/review/automations/worktrees/local-environments/in-app browser/Chrome extension/Computer Use/Commands/Windows/Troubleshooting), "IDE Extension" (overview/features/settings/IDE Commands/Slash commands), "CLI" (overview/features/Command Line Options/Slash commands), "Web" (overview/Environments/Internet Access), and a separate "Integrations" group (GitHub/Slack/Linear)** plus "Automation" containing "Codex SDK," "App Server," "MCP Server," and "GitHub Action." So the canonical IA recognizes four interactive surfaces (App, IDE, CLI, Web/Cloud) **plus** the SDK as a fifth "automation" surface (matching the report's count), with Integrations + GitHub Action as cross-cutting glue rather than surfaces in their own right. This is consistent with — and slightly tightens — the original five-surface taxonomy.
 
 | # | Surface | Substrate role | OpenHands analog (`11-openhands-substrate-audit.md` §2) |
 |---|---|---|---|
@@ -52,17 +80,27 @@ That is four surfaces by Chen's enumeration; the fifth — the SDK (Python + Typ
 
 ## 2. AGENTS.md instruction layering — full model
 
-Per S10 + the `agents.md` open spec site:
+Per S10 + the `agents.md` open spec site [2026-05-13 primary fetch ✅ for S10]:
 
-**Discovery, root-to-leaf:** (1) **Global scope** — Codex reads `~/.codex/AGENTS.override.md` if present, else `~/.codex/AGENTS.md`; only the first non-empty file at this level is used. (2) **Project scope** — Codex walks from project root down to the current working directory, at each level checking `AGENTS.override.md`, then `AGENTS.md`, then any names in `project_doc_fallback_filenames`.
+**Discovery, root-to-leaf** [2026-05-13 primary fetch ✅] (`77457a7169_developers.openai.com__codex__guides__agents-md.md` lines 769-772, **verbatim**): *"Codex builds an instruction chain when it starts (once per run; in the TUI this usually means once per launched session). Discovery follows this precedence order: 1. **Global scope:** In your Codex home directory (defaults to `~/.codex`, unless you set `CODEX_HOME`), Codex reads `AGENTS.override.md` if it exists. Otherwise, Codex reads `AGENTS.md`. Codex uses only the first non-empty file at this level. 2. **Project scope:** Starting at the project root (typically the Git root), Codex walks down to your current working directory. If Codex cannot find a project root, it only checks the current directory. In each directory along the path, it checks for `AGENTS.override.md`, then `AGENTS.md`, then any fallback names in `project_doc_fallback_filenames`. Codex includes at most one file per directory."*
 
-**Precedence:** files closer to the working directory override earlier guidance by appearing **later in the concatenated prompt**. Each file is injected as its own user-role message near the top of conversation history, in root-to-leaf order, prefixed with `# AGENTS.md instructions for <directory>` (path relative to repo root).
+**Precedence** [2026-05-13 primary fetch ✅] (`77457a7169_*.md` line 773, **verbatim**): *"Codex concatenates files from the root down, joining them with blank lines. Files closer to your current directory override earlier guidance because they appear later in the combined prompt."*
 
-**Override semantics:** at any level where `AGENTS.override.md` exists, Codex reads it and **skips `AGENTS.md` at the same level**. Override replaces, not adds — the per-scope escape hatch.
+**[2026-05-13 primary fetch REFUTES]** the earlier claim that "each file is injected as its own user-role message near the top of conversation history... prefixed with `# AGENTS.md instructions for <directory>` (path relative to repo root)." The primary page says **concatenation joined with blank lines**, with no per-file user-role-message wrapper and no `# AGENTS.md instructions for <dir>` header convention. The header convention was a WebSearch-era reconstruction artifact; the actual mechanism is plain concatenation. Operationally this matters for provenance debugging — there is **no** built-in header marking the boundary between scopes; provenance comes from the file content itself and from session logs (`~/.codex/log/codex-tui.log` or `session-*.jsonl`).
 
-**Size budget:** `project_doc_max_bytes` default **32 KiB**; files past the cap are dropped. Empty files skipped silently.
+**Override semantics** [2026-05-13 primary fetch ✅] (`77457a7169_*.md` lines 769-772 + 838-842 + 851): at any level where `AGENTS.override.md` exists, Codex reads it and **skips `AGENTS.md` at the same level** (primary illustration line 849: *"AGENTS.md Ignored because an override exists"*). Override replaces, not adds — the per-scope escape hatch.
 
-**Subagent layering:** with the `child_agents_md` flag (confirmed in `openai/codex/docs/agents_md.md`), Codex appends scope-and-precedence guidance so a subagent dispatched into `services/billing/` sees that subdirectory's slice, not just root.
+**Size budget** [2026-05-13 primary fetch ✅] (`77457a7169_*.md` line 777, **verbatim**): *"Codex skips empty files and stops adding files once the combined size reaches the limit defined by `project_doc_max_bytes` (32 KiB by default)."* Configurable; primary example raises it to 65536 (line 872).
+
+**Fallback filenames** [2026-05-13 primary fetch ✅] (`77457a7169_*.md` lines 869-872): the `project_doc_fallback_filenames` knob accepts a list of additional filenames (e.g. `["TEAM_GUIDE.md", ".agents.md"]`) treated as instruction files; **filenames not on this list are ignored for instruction discovery**.
+
+**`CODEX_HOME` env var** [2026-05-13 primary fetch ✅] (`77457a7169_*.md` lines 771, 898-902): the global-scope directory is overridable via `CODEX_HOME`, useful for project-scoped automation users.
+
+**Verification & troubleshooting** [2026-05-13 primary fetch ✅] (`77457a7169_*.md` lines 905-921): primary recommends `codex --ask-for-approval never "Summarize the current instructions."` to confirm load order, and points at `~/.codex/log/codex-tui.log` or `session-*.jsonl` for auditing which instruction files Codex loaded.
+
+**Subagent layering:** with the `child_agents_md` flag (confirmed in `openai/codex/docs/agents_md.md` open source), Codex appends scope-and-precedence guidance so a subagent dispatched into `services/billing/` sees that subdirectory's slice, not just root. **Note:** the primary `developers.openai.com/codex/guides/agents-md` page does **not** mention `child_agents_md`; the flag is documented only in the open-source `docs/agents_md.md`. The subagents primary page (S11) instead specifies in `77457a7169` line 807 (and `d179e7b09d` line 807) that *"Subagents inherit your current sandbox policy"* — separate concern from AGENTS.md inheritance.
+
+**Cloud composition** [2026-05-13 primary fetch ✅] (`bf11b65a14_developers.openai.com__codex__cloud__environments.md` line 776, **verbatim**): *"If your repo includes `AGENTS.md`, the agent uses it to find project-specific lint and test commands."* — confirms AGENTS.md drives cloud-environment task discovery.
 
 **Diff against our `.claude/` equivalents** (we use `.claude/skills/<name>/SKILL.md` plus optional `CLAUDE.md`):
 
@@ -82,13 +120,65 @@ Per S10 + the `agents.md` open spec site:
 
 ## 3. Subagents — orchestration primitive
 
-Per S11:
+Per S11 [2026-05-13 primary fetch ✅] (`d179e7b09d_developers.openai.com__codex__subagents.md`):
 
-> *"A subagent is a specialized Codex instance spawned by the main agent to handle one piece of a larger task, and Codex can now run those subagents in parallel and collect their results into a single response. ... Codex handles orchestration across agents, including spawning new subagents, routing follow-up instructions, waiting for results, and closing agent threads."*
+**Core definition** [2026-05-13 primary fetch ✅] (`d179e7b09d_*.md` lines 765-767, **verbatim**): *"Codex can run subagent workflows by spawning specialized agents in parallel and then collecting their results in one response. This can be particularly helpful for complex tasks that are highly parallel, such as codebase exploration or implementing a multi-step feature plan. With subagent workflows, you can also define your own custom agents with different model configurations and instructions depending on the task."*
+
+**Orchestration** [2026-05-13 primary fetch ✅] (`d179e7b09d_*.md` lines 781-785, **verbatim**): *"Codex handles orchestration across agents, including spawning new subagents, routing follow-up instructions, waiting for results, and closing agent threads. When many agents are running, Codex waits until all requested results are available, then returns a consolidated response. Codex only spawns a new agent when you explicitly ask it to do so."*
+
+**Availability** [2026-05-13 primary fetch ✅] (`d179e7b09d_*.md` lines 771-777): subagent workflows are enabled by default in current Codex releases; "currently surfaced in the Codex app and CLI. Visibility in the IDE Extension is coming soon." Token consumption is higher than single-agent runs because each subagent does its own model and tool work.
+
+### 3.1. Built-in agents [2026-05-13 primary fetch ✅ — NEW]
+
+Codex ships with three built-in agents (`d179e7b09d_*.md` lines 819-823, **verbatim**):
+
+- **`default`**: general-purpose fallback agent.
+- **`worker`**: execution-focused agent for implementation and fixes.
+- **`explorer`**: read-heavy codebase exploration agent.
+
+These map roughly to the construction / V&V split central to Architecture 3. The triad is small enough that the factory should plausibly adopt the same naming convention for its own substrate-agnostic role taxonomy.
+
+### 3.2. Custom-agent TOML schema [2026-05-13 primary fetch ✅ — NEW]
+
+Custom agents are defined as standalone TOML files at `~/.codex/agents/` (personal scope) or `.codex/agents/` (project scope) (`d179e7b09d_*.md` line 827). Required fields: `name`, `description`, `developer_instructions`. Optional inheritable fields: `nickname_candidates`, `model`, `model_reasoning_effort`, `sandbox_mode`, `mcp_servers`, `skills.config` — all inherit from parent session when omitted (line 839). If a custom-agent `name` matches a built-in (e.g. `explorer`), the custom version takes precedence (line 856).
+
+Global settings live under `[agents]` in config.toml:
+
+| Field | Default | Purpose |
+|---|---|---|
+| `agents.max_threads` | **6** | Concurrent open agent thread cap |
+| `agents.max_depth` | **1** | Spawned agent nesting depth (root session = 0) |
+| `agents.job_max_runtime_seconds` | 1800 | Per-worker timeout for `spawn_agents_on_csv` jobs |
+
+The `max_depth = 1` default is load-bearing: *"allows a direct child agent to spawn but prevents deeper nesting. Keep the default unless you specifically need recursive delegation. Raising this value can turn broad delegation instructions into repeated fan-out"* (`d179e7b09d_*.md` line 854). **Factory implication:** the default disallows the "grandchild" subagent pattern; Architecture 4's per-genome subagents must be flat, not hierarchical, unless `max_depth` is explicitly raised.
+
+### 3.3. Subagent sandbox inheritance [2026-05-13 primary fetch ✅] — RESOLVES open follow-up
+
+The original report §7 listed *"Non-Cloud subagent workspace inheritance"* as an open follow-up. The primary page resolves it (`d179e7b09d_*.md` lines 805-815, **verbatim**):
+
+> *"Subagents inherit your current sandbox policy. ... Codex also reapplies the parent turn's live runtime overrides when it spawns a child. That includes sandbox and approval choices you set interactively during the session, such as `/approvals` changes or `--yolo`, even if the selected custom agent file sets different defaults. You can also override the sandbox configuration for individual custom agents, such as explicitly marking one to work in read-only mode."*
+
+So: on CLI/IDE/App, subagents share the parent's sandbox policy (including any live `/approvals` or `--yolo` overrides), with per-agent file-level overrides possible (e.g. forcing `sandbox_mode = "read-only"` for an `explorer`-type agent). On Cloud, each subagent runs in its own container (separately confirmed at S23 line 784). **Factory implication for Architecture 2 reviewer panels:** without Cloud, all reviewer subagents share workspace with the implementer — the reviewer-panel isolation discipline must explicitly use Cloud dispatch, or accept that CLI/IDE reviewer panels see the implementer's working tree.
+
+### 3.4. Custom-agent examples — three-agent PR-review pattern [2026-05-13 primary fetch ✅ — NEW]
+
+The primary docs ship a complete three-agent PR-review pattern (`d179e7b09d_*.md` lines 898-963) that is directly adoptable for Architecture 2's reviewer panel:
+
+- `pr_explorer` — `model = "gpt-5.3-codex-spark"`, `sandbox_mode = "read-only"`, maps codebase + gathers evidence
+- `reviewer` — `model = "gpt-5.4"`, `model_reasoning_effort = "high"`, `sandbox_mode = "read-only"`, correctness/security/missing-tests
+- `docs_researcher` — `model = "gpt-5.4-mini"`, `sandbox_mode = "read-only"`, MCP-backed docs verification
+
+This is the canonical "different-model-for-V&V" pattern made concrete at the substrate level. Architecture 3's "different model family for V&V" requirement maps directly to the `model = "..."` per-file knob.
+
+### 3.5. CSV-fanout primitive [2026-05-13 primary fetch ✅ — NEW]
+
+`spawn_agents_on_csv` (marked **experimental** by primary, line 965) lets Codex *"spawn one worker subagent per row, wait for the full batch to finish, and export the combined results to CSV"* (`d179e7b09d_*.md` lines 965-1007). Inputs: `csv_path`, `instruction` (with `{column}` placeholders), `id_column`, `output_schema`, `output_csv_path`, `max_concurrency`, `max_runtime_seconds`. Each worker must call `report_agent_job_result` exactly once.
+
+**Factory implication:** this is the substrate-level fan-out primitive for the Compound Atelier's per-workshop reviewer panel and the Evolutionary Tournament's per-genome dispatch. It is **experimental** — relying on it for Architecture 4's tournament infrastructure should be flagged as a substrate-stability risk.
+
+### 3.6. Composition with Cloud and AGENTS.md (existing analysis, retained)
 
 **Composition with Cloud.** On CLI/IDE/App surfaces, parallelism is bounded by the single host process (multiple Threads exist via the App Server's `create`/`resume`/`fork` endpoints but share compute/FS). On **Cloud**, each subagent task runs in its **own isolated OpenAI-managed container**, repo preloaded — this is where Subagents become a real scaling mechanism. Cloud + Subagents + AGENTS.md scoping is the triangle that makes "weeks of work in days" plausible.
-
-**Custom subagents:** "different model configurations and instructions depending on the task" — same shape as Claude Code's `agents/` directory and Every's `everyskill` registry, but routed through the App Server's plugins/skills surface rather than filesystem.
 
 **Vs. OpenHands** (`11-openhands-substrate-audit.md` §4): OpenHands V1 sub-agent delegation is "blocking-parallel only, sub-agents inherit parent model/workspace." Codex differs on two axes: **non-blocking parallelism** (orchestrator collects results — fan-out, not serial) and **isolated workspaces** in Cloud (each container fresh, not parent-inherited). Codex's model maps to our `parallel-subagent-fanout` skill; OpenHands' maps to plan-and-delegate.
 
@@ -98,36 +188,72 @@ Per S11:
 
 ## 4. Approvals, sandbox, network — the lethal-trifecta defense
 
-Simon Willison's "lethal trifecta" (`research/05-simon-willison.md`): **untrusted input + private data + ability to exfiltrate**. Codex's defense is a *two-axis policy* — sandbox mode controls technical boundaries; approval mode controls when Codex stops at them. The two compose.
+Simon Willison's "lethal trifecta" (`research/05-simon-willison.md`): **untrusted input + private data + ability to exfiltrate**. Codex's defense is a *two-axis policy* — sandbox mode controls technical boundaries; approval mode controls when Codex stops at them. The two compose. [2026-05-13 primary fetch ✅] (`ed3b262d33_developers.openai.com__agent-approvals-security.md` lines 773-779, **verbatim**): *"Codex security controls come from two layers that work together: **Sandbox mode**: What Codex can do technically (for example, where it can write and whether it can reach the network) when it executes model-generated commands. **Approval policy**: When Codex must ask you before it executes an action (for example, leaving the sandbox, using the network, or running commands outside a trusted set)."*
 
-**Sandbox modes (S23 + `concepts/sandboxing`):**
+**Sandbox modes** [2026-05-13 primary fetch ✅] (`ed3b262d33_*.md` lines 769, 782-787, 859):
 
 | Mode | FS | Net | Use |
 |---|---|---|---|
 | `read-only` | none | none | Review/exploration; toggle via `/permissions`. |
-| `workspace-write` (default) | within workspace | off by default | Default low-friction local. |
-| `danger-full-access` | unrestricted | unrestricted | Pair with `approval_policy = "never"` for unattended disposable-container automation. |
+| `workspace-write` (default) | within workspace | **off by default** (verbatim line 785) | Default low-friction local. |
+| `danger-full-access` | unrestricted | unrestricted | Pair with `approval_policy = "never"` for unattended disposable-container automation; alias `--yolo` / `--dangerously-bypass-approvals-and-sandbox`. |
 
-Implementation: **Landlock + seccomp** on Linux (Seatbelt on macOS implied by macOS-app existence; not in 403'd primary). Described as "the only major agent with sandboxing enabled by default" — stronger than OpenHands V1 (sandbox opt-in per `11-openhands-substrate-audit.md` §4a) or Claude Code (permission prompts, not kernel isolation).
+The default of "off by default" for network access is verbatim from primary line 769: *"By default, the agent runs with network access turned off."*
 
-**Approval modes (S23):**
+**[2026-05-13 primary fetch REFUTES]** the previous claim that Codex enforces "**Landlock** + seccomp on Linux." The primary page is explicit (`ed3b262d33_*.md` lines 953-957, **verbatim**):
 
-| Mode | Behaviour |
+> *"Codex enforces the sandbox differently depending on your OS:*
+> *• **macOS** uses Seatbelt policies and runs commands using `sandbox-exec` with a profile (`-p`)...*
+> *• **Linux** uses `bwrap` plus `seccomp` by default.*
+> *• **Windows** uses the Linux sandbox implementation when running in WSL2... When running natively on Windows, Codex uses a Windows sandbox implementation."*
+
+So the Linux primitive is **`bwrap` (Bubblewrap) + `seccomp`**, not Landlock. This matters for any threat-model analysis: bwrap is a setuid user-namespace wrapper (different security envelope and different host-config dependencies than Landlock — line 979 notes the sandbox *"may not work if the host or container configuration blocks the namespace, setuid `bwrap`, or `seccomp` operations that Codex needs"*).
+
+**Approval modes** [2026-05-13 primary fetch ✅ partial; one prior row REFUTED]. Primary (`ed3b262d33_*.md` lines 853-861, 888-899) describes these by flag:
+
+| Flag value | Behaviour |
 |---|---|
-| `never` | "Never ask the user for approval; persist and work around constraints." Required for CI/cloud/eval. |
-| `on-request` | "Commands run in sandbox by default; specify in your tool call to escalate without sandbox." Default interactive. |
-| `on-failure` | "Allow all in sandbox; failures escalated for approval to re-run without sandbox." Trusted-but-flaky. |
-| `untrusted` | "Escalate most commands for approval, apart from a limited allowlist of safe 'read' commands." Max-skepticism. |
+| `--ask-for-approval never` (or `-a never`) | "Never ask the user for approval"; works with any `--sandbox` mode; Codex makes best effort within constraints (line 856-857). |
+| `--ask-for-approval on-request` | Default for `Auto` preset. Codex can read/edit/run in workspace automatically; asks approval to edit outside workspace or to run commands needing network (line 789-791). |
+| `--ask-for-approval untrusted` | "Codex runs only known-safe read operations automatically. Commands that can mutate state or trigger external execution paths (for example, destructive Git operations or Git output/config-override flags) require approval" (line 901). |
 
-Naming-history note: earlier Codex CLI used `suggest` / `auto-edit` / `full-auto` (inventivehq.com KB). Current canonical names are the four above; both appear in the wild.
+**[2026-05-13 primary fetch REFUTES]** the previous table row for `on-failure` ("Allow all in sandbox; failures escalated for approval to re-run without sandbox. Trusted-but-flaky."). The primary `agent-approvals-security` page **does not list `on-failure` as a current approval mode** — the documented modes are `never`, `on-request`, and `untrusted` (plus the `granular` approval policy for fine-grained category control, line 861). The `on-failure` row appears to be a WebSearch-era artifact, possibly from an older Codex CLI version (or conflated with the earlier `suggest`/`auto-edit`/`full-auto` naming generation). Treat `on-failure` as **not currently documented**; the `untrusted` row is correctly characterized.
 
-**Auto-reviewer:** `approvals_reviewer = "auto_review"` routes eligible approval requests through a *reviewer agent* — evaluates "sandbox escalations, network requests, request_permissions prompts, or side-effecting app and MCP tool calls." Prompt-injection defense in depth: requestor ≠ evaluator. Same shape as Architecture 3's "V&V on a different model family from construction," at finer granularity.
+A new mode-of-modes appears in primary: **`approval_policy = { granular = { ... } }`** (line 861, 917-924) which lets you keep specific approval categories interactive while auto-rejecting others. Categories: `sandbox_approval`, `rules` (execpolicy), `mcp_elicitations`, `request_permissions`, `skill_approval`. **Factory implication:** the granular policy is the cleanest fit for Architecture 3's V&V phase, where the desired posture is "auto-reject everything except sandbox-escapes, which still require human sign-off."
 
-**Cloud egress (`cloud/environments`):**
+**Auto-reviewer** [2026-05-13 primary fetch ✅] (`ed3b262d33_*.md` lines 863-886, **verbatim**): default is `approvals_reviewer = "user"`; setting `approvals_reviewer = "auto_review"` routes eligible approval requests through a reviewer agent. *"The reviewer evaluates only actions that already need approval, such as sandbox escalations, blocked network requests, `request_permissions` prompts, or side-effecting app and MCP tool calls. Actions that stay inside the sandbox continue without an extra review step."* (line 878).
 
-> *"Setup scripts run with internet access, but agent internet access is off by default. ... By default, Codex cloud agents have no internet access during runtime ... allowlist for common software dependency domains, add domains and trusted sites, and specify allowed HTTP methods."*
+**Auto-reviewer risk lattice [2026-05-13 primary fetch ✅ — NEW]** (line 880, **verbatim**): *"The reviewer policy checks for data exfiltration, credential probing, persistent security weakening, and destructive actions. Low-risk and medium-risk actions can proceed when policy allows them. The policy denies critical-risk actions. High-risk actions require enough user authorization and no matching deny rule. Prompt-build, review-session, and parse failures fail closed. Timeouts are surfaced separately, but the action still does not run."*
 
-The **trifecta closure**: setup phase (where `npm install` etc. need network) gets it; agent phase (where untrusted-input lives — issue bodies, PR comments, tool output) defaults to none. Exfiltration leg severed by default on Cloud.
+This is a **four-tier risk lattice** (low / medium / high / critical) with **fail-closed semantics** on prompt-build / review / parse failures — substantially stronger than the original report's binary characterization. The default reviewer policy is at `github.com/openai/codex/blob/main/codex-rs/core/src/guardian/policy.md` (line 882; open-source — a follow-up fetch target). Enterprises can replace the tenant-specific section via `guardian_policy_config` in managed requirements (line 882). **This resolves report §7's open follow-up on `auto_review` model configurability** — the policy text is configurable; the reviewer-model identity itself is still not surfaced on this page but can be constrained with `allowed_approvals_reviewers` (line 886).
+
+**Web search [2026-05-13 primary fetch ✅ — NEW detail]** (`ed3b262d33_*.md` lines 805-810, **verbatim**): *"Codex defaults to using a web search cache to access results. The cache is an OpenAI-maintained index of web results, so cached mode returns pre-indexed results instead of fetching live pages. This reduces exposure to prompt injection from arbitrary live content, but you should still treat web results as untrusted. If you are using `--yolo` or another full access sandbox setting, web search defaults to live results."* Config: `web_search = "cached"` (default) / `"live"` / `"disabled"`. The cached-by-default web search is itself a trifecta defense — it pinches off the "untrusted input" leg unless the operator explicitly opts in to live browsing.
+
+**Cloud egress** [2026-05-13 primary fetch ✅] (`bf11b65a14_developers.openai.com__cloud__environments.md` lines 769-775, **verbatim** for steps 3-4): *"Codex applies your internet access settings. Setup scripts run with internet access. Agent internet access is off by default, but you can enable limited or unrestricted access if needed."* And `ed3b262d33_*.md` line 784, **verbatim**: *"Codex cloud: Runs in isolated OpenAI-managed containers, preventing access to your host system or unrelated data. Uses a two-phase runtime model: setup runs before the agent phase and can access the network to install specified dependencies, then the agent phase runs offline by default unless you enable internet access for that environment. Secrets configured for cloud environments are available only during setup and are removed before the agent phase starts."*
+
+The **trifecta closure** still holds: setup phase (where `npm install` etc. need network) gets it; agent phase (where untrusted-input lives — issue bodies, PR comments, tool output) defaults to none, and **secrets are wiped from environment between phases** (a stronger guarantee than the original report captured — the agent phase cannot see setup-phase secrets even with full network access enabled).
+
+### 4.1. Cloud-environment substrate details [2026-05-13 primary fetch ✅ — NEW]
+
+From `bf11b65a14_*.md` (cloud environments primary):
+
+- **Default container image** (lines 781-789): `universal` image, pre-installed with common languages/packages/tools. Reference Dockerfile at `github.com/openai/codex-universal` is pullable and testable locally — this is a **substrate-level reproducibility lever**: factory CI can pull the same image to reproduce cloud-agent runs locally.
+- **Container caching** (lines 822-840): Codex caches container state **for up to 12 hours**; cache invalidates automatically on changes to setup script, maintenance script, env vars, or secrets. **Business/Enterprise: caches are shared across all users who have access to the environment.** This is a parallelism-friendly substrate primitive: a fleet of Architecture 4 tournament runs hits a warm cache after the first.
+- **Network proxy** (line 846): *"Environments run behind an HTTP/HTTPS network proxy for security and abuse prevention purposes. All outbound internet traffic passes through this proxy."* — implies all cloud egress is observable / loggable at the proxy.
+- **Maintenance script** (line 774, 833-835): an optional script that runs when a cached container is resumed — *"useful when the setup script ran on an older commit and dependencies need to be updated."*
+
+### 4.2. Workspace protected paths [2026-05-13 primary fetch ✅ — NEW]
+
+From `ed3b262d33_*.md` lines 828-851: in default `workspace-write`, the workspace is writable but four classes of paths are kept read-only:
+
+- `<writable_root>/.git` (whether directory or pointer file; if pointer, the resolved git dir too)
+- `<writable_root>/.agents` (if a directory)
+- `<writable_root>/.codex` (if a directory)
+- Protection is **recursive** under those paths.
+
+Additionally, **named filesystem permission profiles** can deny **reads** for exact paths or glob patterns (line 847-851 example: `"**/*.env" = "none"`) — important for local secrets that would otherwise be readable.
+
+**Factory implication:** the `.git`-read-only default protects the implementer-agent's repo from mid-session mutation by the agent itself, and the `.codex`/`.agents` read-only defaults protect the configuration substrate from feedback loops where an agent rewrites its own AGENTS.md or subagent definitions mid-task. The factory should adopt the same convention: any "config-of-the-agent" surface lives at a read-only well-known path.
 
 **Factory implications:**
 
@@ -173,7 +299,7 @@ Mapping Codex's five surfaces + AGENTS.md + Subagents + sandbox×approval to eac
 
 **Arch 2 — Compound Atelier** ("each unit makes the next easier"). Per-workshop AGENTS.md slices in workshop-specific subdirectories; root AGENTS.md holds the Plan → Work → Review → Compound loop; override files are workshop escape hatches. The reviewer panel is the canonical fanout: each reviewer is a parallel Cloud-dispatched Subagent — Codex's "collect results into a single response" is exactly the panel-aggregation primitive. Cloud isolation is critical: reviewers must not share workspace with the implementer or each other. `auto_review` is less load-bearing (the panel itself is the reviewer), but the *implementer* should still run with it.
 
-**Arch 3 — Phase-Gated Foundry** ("formal phases become right when agents make them fast"). Phase-specific AGENTS.md per phase; overrides express phase-specific spec divergence. Construction: `workspace-write` + `never`. V&V: `untrusted` (escalate anything non-allowlisted). `auto_review` is a strong fit — the architecture *requires* V&V on a different model family from construction; `auto_review` is the substrate-level enforcement. Subagents are model-typed per role (Opus for construction, Sonnet for V&V). Each phase = separate Cloud task; gates are dispatch boundaries.
+**Arch 3 — Phase-Gated Foundry** ("formal phases become right when agents make them fast"). Phase-specific AGENTS.md per phase; overrides express phase-specific spec divergence. Construction: `workspace-write` + `never`. V&V: `untrusted` (escalate anything non-allowlisted) **or** `granular` approval policy with sandbox-escape and request_permissions categories left interactive [2026-05-13 primary fetch ✅ for `granular`]. `auto_review` is a strong fit — the architecture *requires* V&V on a different model family from construction; the auto-review four-tier risk lattice (low/medium/high/critical, fail-closed) is the substrate-level enforcement, with custom `guardian_policy_config` available for enterprise tightening. Subagents are model-typed per role via the custom-agent TOML `model = "..."` knob (`d179e7b09d_*.md` lines 920, 934, 948); the primary three-agent PR-review pattern (§3.4) is directly adoptable. Each phase = separate Cloud task; gates are dispatch boundaries.
 
 **Arch 4 — Evolutionary Tournament** ("set up conditions under which the right answer wins"). Single root AGENTS.md + per-genome override files. Cloud + Subagents are maximally load-bearing — each generation is N parallel Cloud subagents, one per genome; Codex's fanout-and-collect is the selection substrate. Mandatory: `workspace-write` + `never` (validation harness selects, not the agent), network off + allowlist (exfiltration risk × N). **`auto_review` likely disabled** — per-agent review wastes compute when the validation harness is the review. S9's "rigid architectural model" (Types → Config → Repo → Service → Runtime → UI) is adoptable as the *genome envelope*: variants compete within the same dependency layering.
 
@@ -183,15 +309,18 @@ Mapping Codex's five surfaces + AGENTS.md + Subagents + sandbox×approval to eac
 
 ## 7. Open follow-ups
 
-- **Primary-URL re-fetch.** All seven primary URLs (S8/S9/S10/S11/S23/App Server/cloud-env) 403 from sandbox; mirrored content consistent across ≥2 sources for every load-bearing claim, but verbatim fidelity would tighten with cookie-fetch or Wayback. File issue only if downstream needs more exact quotation.
+- **Primary-URL re-fetch.** 5 of 8 primary URLs are now ✅ primary-fetched (2026-05-13 issue #41). The remaining 3 (`openai.com/index/harness-engineering/`, `openai.com/index/unlocking-the-codex-harness/`, swe-bench-verified) return Cloudflare JS challenges to the action runner — **action route is exhausted** for `openai.com/index/*`. Path B (Wayback or human-attended browser cookie-fetch) is the only remaining option; file a path-B issue only if a quotation REFUTATION emerges from those mirrors.
 - **App Server transport surface.** `websocket`/`unix-socket` are "experimental" per `codex-rs/app-server/README.md`. Factory dashboards likely want websocket; experimental status is a tracked risk.
-- **`auto_review` model selection.** S23 confirms `approvals_reviewer = "auto_review"` exists; doesn't name the reviewer model or its configurability. Matters for Architecture 3's "different model family" enforcement.
-- **Non-Cloud subagent workspace inheritance.** Cloud subagents are isolated containers (confirmed); CLI/IDE/App subagent workspace inheritance is unconfirmed. Affects Architecture 2's reviewer-panel isolation discipline.
+- **~~`auto_review` model selection.~~ [2026-05-13 partially resolved]** S23 primary (line 882) places the default reviewer policy at `github.com/openai/codex/blob/main/codex-rs/core/src/guardian/policy.md` (open-source; fetchable) and confirms enterprises can override via `guardian_policy_config` in managed requirements; `allowed_approvals_reviewers` can constrain reviewer selection (line 886). **Remaining unknown:** the *identity* of the default reviewer model is still not surfaced on this page.
+- **~~Non-Cloud subagent workspace inheritance.~~ [2026-05-13 RESOLVED via §3.3]** Primary S11 (lines 805-815) confirms subagents inherit parent sandbox policy plus live runtime overrides; per-agent file-level overrides possible. Architecture 2 reviewer-panel isolation discipline must explicitly use Cloud dispatch if isolation from the implementer is required.
+- **Open-source `guardian/policy.md` fetch.** New follow-up: the auto-review default policy text is open-source — fetching it would deepen §4.1 with the actual rule definitions (currently we only have the abstract risk lattice).
+- **`spawn_agents_on_csv` stability.** Marked **experimental** by primary; if Architecture 4 relies on it, monitor for breaking changes in changelog.
 - **GPT-5.2 Codex system cards.** PDFs at `cdn.openai.com/pdf/...gpt-5-codex...` (Sep 2025), `5p1_codex_max_card_03.pdf` (Nov 2025), `oai_5_2_Codex.pdf` (Dec 2025) contain primary attestations of sandbox/approval/prompt-injection mitigations. Not consumed here; would deepen §4.
 - **Defect-rate context for the 1,500-PR figure.** S9 reports no post-merge defect density; "looking-the-part hazard" (Willison, May 6 2026) makes this load-bearing. Worth a follow-up if OpenAI publishes 6/12-month update.
+- **macOS / Windows sandbox primitives.** Now anchored at primary (Seatbelt + sandbox-exec on macOS; Windows sandbox or WSL2-Linux on Windows) — but the macOS Seatbelt profile text is not surfaced; threat-model audit would want the actual `-p` profile content.
 
 ---
 
 ## 8. Verdict
 
-Codex is the most thoroughly factored coding-agent substrate currently documented: five surfaces over one stable JSON-RPC App Server, layered AGENTS.md spec-ingestion with explicit override and size-budget semantics, Subagents orchestration that composes natively with Cloud for true parallelism, and a two-axis sandbox×approval policy with `auto_review` defense-in-depth that severs the trifecta's exfiltration leg by default. The S9 harness-engineering experiment (2026-02-11) — 3-to-7 engineers, ~1M LOC, ~1,500 merged PRs in five months, ~3.5 PRs/engineer/day, ~1/10th the human-coded baseline — is the strongest single attestation that an agent-first factory works at team scale; it is also a date-stamped snapshot of an ongoing experiment, and its defect-rate counterfactual is unreported. Adopt: App Server's "stable protocol around the agent loop" as organizing principle; AGENTS.md layering as spec-ingestion contract (complementary to our `.claude/skills/` registry, not replacing it); Subagents-on-Cloud as parallelism substrate for Architectures 2 and 4; two-axis sandbox×approval with default-off network as the lethal-trifecta defense across all four.
+Codex is the most thoroughly factored coding-agent substrate currently documented: five surfaces over one stable JSON-RPC App Server, layered AGENTS.md spec-ingestion with explicit override and size-budget semantics (primary-anchored 2026-05-13), Subagents orchestration with three built-in agents (`default`/`worker`/`explorer`) plus per-project custom-agent TOML files (primary-anchored 2026-05-13) that composes natively with Cloud for true parallelism, and a two-axis sandbox×approval policy with `auto_review` defense-in-depth (four-tier risk lattice with fail-closed semantics, primary-anchored 2026-05-13) that severs the trifecta's exfiltration leg by default. Linux sandbox primitive is **`bwrap` + `seccomp`** (not Landlock as originally reconstructed) [2026-05-13 primary fetch REFUTES]; macOS is Seatbelt; Windows uses WSL2 (Linux sandbox) or a native Windows sandbox. The S9 harness-engineering experiment (2026-02-11) — 3-to-7 engineers, ~1M LOC, ~1,500 merged PRs in five months, ~3.5 PRs/engineer/day, ~1/10th the human-coded baseline — is the strongest single attestation that an agent-first factory works at team scale (still 🟡 mirror-anchored; Cloudflare blocks the action route); it is also a date-stamped snapshot of an ongoing experiment, and its defect-rate counterfactual is unreported. Adopt: App Server's "stable protocol around the agent loop" as organizing principle; AGENTS.md layering as spec-ingestion contract (complementary to our `.claude/skills/` registry, not replacing it); Subagents-on-Cloud as parallelism substrate for Architectures 2 and 4; two-axis sandbox×approval with default-off network and `granular` approval categories as the lethal-trifecta defense across all four.

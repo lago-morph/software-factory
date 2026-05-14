@@ -1,6 +1,6 @@
 # Research Index
 
-**Last updated:** 2026-05-13 (after issue #29/#30/#31 drain + full Lenny × Willison transcript drain).
+**Last updated:** 2026-05-13 (after issue #29/#30/#31 drain + full Lenny × Willison transcript drain + issue #41/#42 round-8 drain).
 
 Single-glance index of every numbered report and followup in `research/`. For per-source provenance see each report's "Sources reviewed" table; for round-level reachability status see `research/blocked-urls.md` (canonical, v5) and `research/blocked-urls-round-6.md` (most recent batch). The resumable plan is `research/PLAN.md`.
 
@@ -30,9 +30,9 @@ Single-glance index of every numbered report and followup in `research/`. For pe
 | 15 | el-kaim-book-bmad-attractor-dark-factory | ✅ | El Kaim EA book — BMAD + Attractor + Dark Factory linkage. |
 | 16 | el-kaim-book-council-and-delegation | ✅ | El Kaim EA book — Council pattern + delegation. |
 | 17 | el-kaim-book-codex-and-skill-substrate | ✅ | El Kaim EA book — Codex + skill substrate. |
-| 18 | openai-codex-substrate | 🟡 | OpenAI Codex substrate audit. Several `openai.com/index/*` and `developers.openai.com/codex/*` URLs still blocked-on-fetch (Path B only). |
-| 19 | github-copilot-cloud-agent | 🟡 | GitHub Copilot cloud-agent substrate. **Updated 2026-05-13** with issue-#30 primary-source upgrades on umbrella how-to + CodeQL/Autofix; 5 claims still flagged `[2026-05-13 404; pending re-anchor]` because 6 of 9 docs.github.com URLs returned 404 (reorg). |
-| 20 | replit-agent | 🟡 | Replit Agent substrate audit. `docs.replit.com/*` Cloudflare-gated; not yet attempted via action. |
+| 18 | openai-codex-substrate | 🟡 | OpenAI Codex substrate audit. **Updated 2026-05-13** with issue-#41 drain: 5 `developers.openai.com/codex/*` URLs now ✅ primary-anchored (3 refutations: bwrap+seccomp not Landlock; no `on-failure` approval mode; AGENTS.md plain-concat not header-wrapped). Subagents/approval-security/cloud-env sections heavily rewritten. Remains 🟡 because the 3 `openai.com/index/*` URLs (harness-engineering, App Server article, SWE-bench-verified) still return Cloudflare JS-challenged bodies; substrate-mechanics ✅, productivity-numbers still 🟡. |
+| 19 | github-copilot-cloud-agent | ✅ | GitHub Copilot cloud-agent substrate. **Updated 2026-05-13 (round-8 / issue #42):** 6 canonical re-finds primary-anchored — flipped 🟡 → ✅. New §3.1 on Copilot Spaces (team-shared context bundle — closest commercial AGENTS.md analog at team scope). Two REFUTES (copilot/*-branch-only and CI-approval-gate framings dropped from canonical concept page). Copilot Workspace marked sunset (folded into cloud agent's "Research, plan, iterate"). |
+| 20 | replit-agent | ✅ | Replit Agent substrate audit. **Updated 2026-05-13 (round-8 / issue #41):** all 13 R-* rows flipped 🟡 → ✅ via primary fetch. Multiple refutations of community-mirror reconstructions: ~100-line `replit.md` auto-condensation (not in docs); Connectors-powered-by-MCP (Connectors and MCP are distinct integration surfaces); Mastra-as-implementation; Agent-4 "splits to forks" (actually sub-agents inside one workspace, Pro/Enterprise gated); $0.06 billing floor; "every app includes free hosting". NEW: 4-mode framework (Lite/Economy/Power/Turbo); Connectors substrate derives from OpenInt acquisition; App-Testing limited to Full-Stack-JS + Streamlit-Python; 200-min autonomy is Max-Autonomy Beta toggle. |
 | 21 | tabnine-enterprise | ✅ | Tabnine enterprise substrate. |
 | 22 | academic-foundations | ✅ | Academic foundations across software-engineering research. |
 | 23 | anthropic-engineering-trilogy | ✅ | Anthropic engineering posts S12–S15 + Claude Code sandboxing post + Agent Skills primary docs + 3 cookbook notebooks. **Updated 2026-05-13** with issue-#29 drain (full primary anchoring, 6 refutations, new §8 sandboxing) + issue-#36-extras drain (round-6 attribution-gap closed, 5 cookbook findings change methodology recommendation, concrete schema constraints: name max 64 chars, Level-1 budget ~100 tokens not 30–50, API-surface Skills have ZERO network access by runtime fiat). |
@@ -49,7 +49,7 @@ Single-glance index of every numbered report and followup in `research/`. For pe
 | 05 | klaassen-siblings | ✅ | Klaassen's three every.to "Stop Coding..." sibling articles (drained pt-2 / issue-23). |
 | 06 | competitor-landscape | ✅ | Five named competitors (Devin / Factory / 8090 / Superconductor / Superpowers). **Updated 2026-05-13** with issue-#31 + issue-#36 drains; Devin pricing refuted, Factory adds Droid Computers primitive, Superconductor §4 fully re-anchored to .com (multiplayer "take the wheel" shared-agent-session is its unique differentiator). |
 | 07 | evals-deepdive | ✅ | Anthropic multi-agent + Husain/Shankar FAQ + Hamel tetralogy + Simon FAQ. **Updated 2026-05-13** with issue-#29 drain: 4 Hamel posts now primary-anchored; new sections on Critique Shadowing, Capability Funnel, fifteen-five, synthetic data. |
-| 08 | security-primitives | ✅ | Lethal trifecta + Dual LLM + CaMeL + Claude Code sandboxing. **Updated 2026-05-13** with issue-#29 drain: 5 refutations of prior reconstruction; CaMeL section now seven subsections with verbatim primary quotes. |
+| 08 | security-primitives | ✅ | Lethal trifecta + Dual LLM + CaMeL + Claude Code sandboxing. **Updated 2026-05-13** with issue-#29 drain (5 refutations) + **round-8 / issue #42 CaMeL paper-body recovery via arXiv `/e-print/` LaTeX route**: §3 CaMeL coverage expanded from 7 to ~15 subsections (PI-SEC formal security game, six-component architecture, NORMAL/STRICT interpreter modes, side-channel attacks, secondary scenarios, baseline comparison, overhead numbers). 17 `[paper-body fetch ✅/REFUTES]` markers. |
 | 09 | methodology-ancestors | ✅ | Methodology ancestors (lean, agile, V&V, etc.). |
 | 10 | governance | ✅ | Governance/oversight literature; complements report 10 substrate audit. |
 | 11 | compound-knowledge | ✅ | Every's Compound Knowledge plugin (companion to report 04). |

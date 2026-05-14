@@ -120,6 +120,6 @@ These survived round 8 with known recovery routes:
 ## Files retained on disk
 
 - **`reference-only/camel-paper/{main.tex, defns.tex, main.bbl, README.md}`** — canonical LaTeX source for arXiv 2503.18813. Permanent reference; do not delete.
-- **`research/fetched/issue-36/80e2d2ebd8_arxiv.org__html__2503.18813v1.html`** — retained from round 7 as 404 evidence. Could now be deleted (the e-print route subsumes this), but keeping is harmless.
+- ~~**`research/fetched/issue-36/80e2d2ebd8_arxiv.org__html__2503.18813v1.html`** — retained from round 7 as 404 evidence.~~ **Deleted 2026-05-14** during the Lenny × Cherny drain pass. The e-print recovery route in round 8 fully subsumes it; the `research/fetched/issue-36/` directory is now empty and was removed.
 
 All other issue-41 / issue-42 fetched files were consumed by drain subagents and deleted; the directories themselves are gone. The `.fetch-work/urls.txt` manifests were never committed.

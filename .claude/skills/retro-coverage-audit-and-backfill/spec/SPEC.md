@@ -26,11 +26,11 @@ Without the flag, the corpus loses this distinction. A reader auditing "what did
 
 ### Invariant 2 — Coverage-dating preserves the chronological audit trail.
 
-The retrospective corpus is browsed chronologically against the PR stream. A reader looking up "what happened around PR #25?" expects to find `retrospective/2026-05-11-NN.md` (PR #25 merged on 2026-05-11), not whatever date the synthetic was authored.
+The retrospective corpus is browsed chronologically against the PR stream. A reader looking up "what happened around PR #25?" expects to find `retrospective/2026-05-11-25.md` (PR #25 merged on 2026-05-11), not whatever date the synthetic was authored. The PR-anchored suffix makes this lookup trivially direct: the filename's tail IS the PR number.
 
 Dating to coverage also makes future coverage audits (re-runs of this very skill) work correctly: the audit compares retro files to PR merge dates; if synthetic retros were dated to authorship, the audit would misattribute their coverage.
 
-Sequence numbers are append-only for the same reason: if `2026-05-11-02` is a back-fill authored on 2026-05-14, do NOT renumber it to `2026-05-11-03` later just because a "more authentic" `2026-05-11-01.5` is back-filled afterward. The numbering is part of the audit trail; stability matters more than perfect ordering.
+Filenames are append-only for the same reason: a `2026-05-11-25.md` back-fill authored on 2026-05-14 keeps its name even if a later back-fill produces a more-authentic retro covering the same window. If two retros legitimately end at the same date and last-PR (e.g., one infra narrative, one docs narrative), the collision is resolved by an appended letter suffix (`-25-a`, `-25-b`, …) — never by renaming or renumbering. Naming stability is part of the audit trail.
 
 ---
 
@@ -77,7 +77,7 @@ Output: inline coverage report. No on-disk artifacts.
 
 **Step 7 — fetch PR bodies.** Single parallel block, 13 calls to `mcp__github__pull_request_read method=get` for `#11, #12, #13, #14, #15, #16, #17, #18, #19, #20, #21, #22, #25`. All returned. `#25`'s body was empty (initialization-state PR for a fanout); recovered from title + commit-count.
 
-**Step 8 — date and sequence.** Last PR in zone = `#25`, merged `2026-05-11T12:48:03Z`. `COVERAGE_DATE = 2026-05-11`. Existing files: `2026-05-11-01.md`. `SEQ = 02`. Path = `retrospective/2026-05-11-02.md`.
+**Step 8 — date and last-PR anchor.** Last PR in zone = `#25`, merged `2026-05-11T12:48:03Z`. `COVERAGE_DATE = 2026-05-11`. `PR = 25`. Path = `retrospective/2026-05-11-25.md`. (No collision with existing files — `2026-05-11-01.md` is the contemporaneous retro using the legacy day-sequence scheme; the new PR-anchored name lands in a different slot.)
 
 **Step 9 — synthesize narrative.** From 13 PR bodies, extracted 10 phases:
 
@@ -98,7 +98,7 @@ Output: inline coverage report. No on-disk artifacts.
 - The Lenny video-only reclassification — inferable from PR #19's body quoting the user's note ("just a video"). Three retrieval routes had chased a body that didn't exist.
 - The meta-observation that retro 1 was written mid-session — inferable from comparing retro 1's coverage window (up to #10) to the PR stream's continued activity (11 more PRs after retro 1's commit).
 
-**Step 10 — write.** `retrospective/2026-05-11-02.md`, 323 lines. Metadata block flagged `SYNTHETIC / BACK-FILLED`. End-of-file marker re-states the provenance.
+**Step 10 — write.** `retrospective/2026-05-11-25.md`, 323 lines. Metadata block flagged `SYNTHETIC / BACK-FILLED`. End-of-file marker re-states the provenance.
 
 **Step 11 — commit.** Hash `f06e2f5`. Pushed to `claude/analyze-retro-coverage-WDhhM`. No PR opened (synthetic retros default to local-history-only).
 
@@ -114,7 +114,7 @@ Step 7 fetches all PR bodies in a single message with N parallel tool calls (one
 
 ### Why an empty sibling directory is OK for synthetics
 
-The standard retro layout pairs `retrospective/YYYY-MM-DD-NN.md` with `retrospective/YYYY-MM-DD-NN/`. Contemporaneous retros populate the sibling directory with skill specs and `AGENTS-suggestions.md`.
+The standard retro layout pairs `retrospective/YYYY-MM-DD-PPP.md` with `retrospective/YYYY-MM-DD-PPP/` (where `PPP` is the last PR number; or the legacy `-NN` suffix for the no-PR fallback). Contemporaneous retros populate the sibling directory with skill specs and `AGENTS-suggestions.md`.
 
 Synthetic retros should not fabricate skill specs from material they didn't witness. The directory is created for layout consistency but may be empty. Git will ignore an empty directory at commit time — that's fine; the directory is implicit and any future user-driven skill-spec authoring will materialize it.
 
@@ -161,20 +161,22 @@ The harness saves the response to `/root/.claude/projects/.../tool-results/<file
 
 Treat both as covering it. Coverage is union-typed; a PR named in multiple retros' "Commit hashes by PR" sections is over-covered, not contested.
 
-### Failure: a contemporaneous retro exists for the same date and sequence number you'd assign
+### Failure: a contemporaneous retro exists at the same date and same last-PR you'd assign
 
-Take the next available sequence number. If `2026-05-11-01.md` exists and is contemporaneous, the synthetic for that day becomes `2026-05-11-02.md`. The sequence rule is mechanical (`count + 1`) and does not encode authorship type.
+This only happens if the synthetic's zone ends at exactly the same PR a contemporaneous retro already covered. In practice this almost always means the zone definition is wrong — re-examine the dark-zone bounds, because the contemporaneous retro probably already covered the work and the zone was misclassified as dark.
+
+If two retros legitimately end at the same date and last-PR (e.g., a contemporaneous infra narrative and a synthetic docs narrative covering the same window from different angles), resolve the collision by appending a lowercase letter suffix: `2026-05-11-25-a.md`, `2026-05-11-25-b.md`, … Letter suffixes are append-only and never re-letter an existing file.
 
 ### Failure: the user wants the synthetic to become a PR
 
-That's fine — open it explicitly via `mcp__github__create_pull_request` with a title like `Synthetic retrospective YYYY-MM-DD-NN for PRs #X–#Y`. Make the PR body re-state the SYNTHETIC / BACK-FILLED provenance so reviewers see it without opening the file.
+That's fine — open it explicitly via `mcp__github__create_pull_request` with a title like `Synthetic retrospective YYYY-MM-DD-PPP for PRs #X–#Y` (where `PPP` is the last PR in the zone, the same anchor used in the filename). Make the PR body re-state the SYNTHETIC / BACK-FILLED provenance so reviewers see it without opening the file.
 
 ---
 
 ## Files this skill creates / modifies
 
-- `retrospective/YYYY-MM-DD-NN.md` — one per synthesized retro. NN follows the next-available-sequence rule. YYYY-MM-DD is the coverage date (Invariant 2).
-- `retrospective/YYYY-MM-DD-NN/` — sibling directory per the standard retro layout. Often empty for synthetics; acceptable.
+- `retrospective/YYYY-MM-DD-PPP.md` — one per synthesized retro. `PPP` is the number of the last PR in the zone (the same PR that anchors the coverage date). `YYYY-MM-DD` is the coverage date (Invariant 2). On collision with an existing file at the same date and last-PR, append `-a`, `-b`, … to the suffix.
+- `retrospective/YYYY-MM-DD-PPP/` — sibling directory per the standard retro layout. Often empty for synthetics; acceptable.
 - No modifications to existing retros. Existing retros are read-only inputs.
 
 ---

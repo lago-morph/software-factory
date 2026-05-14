@@ -1,9 +1,9 @@
 # Software Factory Research — PLAN.md
 
-**Version:** v0.9 (2026-05-13)
-**Status:** Five rounds of research complete (24 numbered reports + 12 follow-up reports + 5 architecture docs + 1 methodology doc). Source files reorganized: live primary material is in `/reference-only/`; transient drop zone is `research/manual/`. Three fetch-urls issues open and awaiting action runs; three curated human-review tasks pending; five retrospective decisions queued.
+**Version:** v0.10 (2026-05-14)
+**Status:** Research phase is at "primary-source complete" by every meaningful measure. 24 numbered reports + 12 follow-up reports + 5 architecture docs + 1 methodology doc + 1 research → action plan (`research-plan.md`). All filed fetch-urls issues are drained on main (issues #41/#42 still show OPEN on GitHub but their work landed in PR #44 — housekeeping closure pending). The Cherny Lenny transcript remainder + ~7 outstanding URLs (5 confirmed Path-B-only; 2 still eligible for retry via action or Wayback) are the only outstanding primary-source gaps. Forward work is now **decision work**, not fetch work: three curated human-review tasks pending; **13 unbuilt skill specs / 45 AGENTS suggestions / 26 proposed ADRs across five retrospectives** queued; `research-plan.md` proposes a v3 architecture collapse that requires a user decision.
 
-**Earlier versions:** v0.1–v0.7 lived as accreted Round-by-Round sections (§§11–17 below as Archive). v0.8 rewrites the live status at the top and compresses the per-round detail; v0.9 records the pt-2 cherry-pick recovery and updates §3.1 from bottleneck → RESOLVED. The audit trail is preserved in the archive sections; the live work is in §§1–6.
+**Earlier versions:** v0.1–v0.7 lived as accreted Round-by-Round sections (§§11–17 below as Archive). v0.8 rewrites the live status at the top and compresses the per-round detail; v0.9 records the pt-2 cherry-pick recovery and updates §3.1 from bottleneck → RESOLVED; v0.10 records rounds 7–8 drains (Shapiro canonical, El Kaim post-index + Chapter 9, platform.claude.com Skills overview Path B, issues #41/#42, Lenny × Willison full transcript), the four retrospectives that landed 2026-05-13/14 (which v0.9's §3.4 did not yet enumerate), and `research-plan.md`. The audit trail is preserved in the archive sections; the live work is in §§1–6.
 
 ---
 
@@ -16,12 +16,14 @@
 - **Round 4** — 4 reports off the El Kaim enterprise-architecture book (`research/14-17-*`). The book chapters are now at `reference-only/el-kaim-book/`.
 - **Round 5** — 6 reports off counterfactual harvest against a ChatGPT deep-research artifact (`research/18-23-*`). The artifact is at `reference-only/chatgpt-deep-research-2026-05-11/`.
 - **Round 6** — 26-subtask parallel-fanout night run on 2026-05-11 (`harness/runs/20260511-054258/`) that produced most of the above. One follow-up "pt-2" wave (3 subagents) was originally orphaned on a side branch but was recovered onto main via the 2026-05-13 cherry-pick (see §3.1).
-- **Session 2026-05-13** — editorial collapse of the 09 partial into the unified report; closed 7 drained fetch-urls issues; filed 3 new batched fetch-urls issues (#29 / #30 / #31); reorganized source files into `/reference-only/`.
+- **Session 2026-05-13 — three drain cycles** — editorial collapse of the 09 partial into the unified report; closed 7 drained fetch-urls issues; filed 3 new batched fetch-urls issues (#29 / #30 / #31), all drained same-day; reorganized source files into `/reference-only/`. **Retrospective 2026-05-13-01** authored (4 skills, 9 AGENTS suggestions, 5 ADRs — see §3.4). **Round-7 follow-up** (issue #36 + manual drops): Shapiro canonical Five Levels post drained (8 El Kaim-vs-Shapiro discrepancies documented; cross-corpus flags in §6.1); El Kaim post-index Path B'd → 10-post Medium cluster logged as future research; El Kaim Chapter 9 manual drain → **new report 24 (el-kaim-book-product-line-variability)**; failure mode **F35 — Federation-as-Family Drift** promoted; `platform.claude.com/.../agent-skills/overview` Path B'd → report 23 attribution audit closed for overview, two SPA pages still pending. F34 (cross-layer drift) promoted by Brier pace-layers drain.
+- **Session 2026-05-14 — round-8 drains + Lenny × Willison** — Issues #41 and #42 drained (PR #44): all 13 Replit URLs primary-anchored (report 20 partial → primary-anchored); 5/7 `developers.openai.com/codex/*` URLs primary-anchored (report 18 stays partial due to the 3 `openai.com/index/*` URLs returning Cloudflare JS challenges to the action runner); 6/6 GitHub Copilot canonical re-finds primary-anchored (report 19 partial → primary-anchored; new §3.1 on Copilot Spaces); **CaMeL paper body recovered via arXiv `/e-print/` LaTeX-tarball route** (followup/08 §3 expanded from 7 to ~15 subsections, paper-body-anchored). Lenny × Willison **full ~90-min transcript** drained (PR #43): reports 05 and 06 flipped to FULL (Challenger-disaster prediction, lethal-trifecta walkthrough with 97%-failing-grade doctrine, OpenClaw thesis, end-of-2026 prediction). Three retrospectives landed: 2026-05-13-02, 2026-05-14-01, 2026-05-14-02. `research-plan.md` filed (PR #46) proposing the unified-synthesis + v3-single-architecture collapse.
 
 **Open items live in:**
-- §3 Bottlenecks — four live items: §3.2 curated human-review backlog (the original §14.4 tasks 2, 3, 5), §3.3 in-flight fetch-urls workflow (#29 / #30 / #31), §3.4 retrospective decisions, §3.5 YouTube-video-only Cherny claims.
+- §3 Bottlenecks — three live items: §3.2 curated human-review backlog (the original §14.4 tasks 2, 3, 5), §3.4 retrospective decisions (now five retrospectives cumulative), §3.5 YouTube-video-only Cherny claims. §3.3 fully RESOLVED (all filed issues drained).
 - §4 Manual fetch instructions (prioritized).
 - §5 Work remaining (priority order).
+- `research-plan.md` (root) — the structural pivot proposal. Decision pending.
 
 ---
 
@@ -29,19 +31,21 @@
 
 ```
 /architectures/         → 4 candidate methodologies + comparison
-/docs/adr/              → ADR system (only ADR-0001 written; 7 more proposed in retrospective)
+/docs/adr/              → ADR system (only ADR-0001 written; 26 more proposed across five retrospectives — see §3.4)
 /harness/runs/          → Historical fanout-run records
 /reference-only/        → Primary sources kept on disk for re-quoting
-    el-kaim-book/       → 7 chapters of El Kaim's EA book (~430 KB)
+    el-kaim-book/       → 8 chapters of El Kaim's EA book (Ch 1–7 ~430 KB + Ch 9 manual drop)
     chatgpt-deep-research-2026-05-11/  → counterfactual synthesis artifact
     dark-factory-article.txt           → El Kaim Medium article (anchors report 07)
     brier-culture-of-ai-engineering.txt → Brier Every.to article (anchors `research/followup/12-brier-pace-layers.md`)
     every-my-ai-had-already-fixed.txt   → Klaassen Every.to article (anchors report 03)
+    camel-paper/                       → CaMeL paper LaTeX source (main.tex, defns.tex, main.bbl) — recovered via arXiv /e-print/ in round-8, anchors `research/followup/08-security-primitives.md` §3
+    lenny-podcast-transcripts/         → YouTube-transcribed Lenny podcasts (Willison full ~90-min ✅; Cherny first-30-min only, remainder outstanding)
 /research/              → 24 numbered reports + 12 followup reports + workflow tooling
     PLAN.md             → this file
     manual/             → transient drop zone for new manual fetches
     fetch-from-browser.sh, unfetched-sources.md, blocked-urls*.md → fetch-loop tooling
-/retrospective/         → 2026-05-11-01 retrospective + 4 sibling skill specs
+/retrospective/         → 5 retrospectives (2026-05-11-01, 2026-05-13-01, 2026-05-13-02, 2026-05-14-01, 2026-05-14-02) + sibling skill specs and AGENTS-suggestions files; see §3.4
 /.claude/skills/        → 8 installed skills
 /.github/               → fetch-blocked-urls action + scripts
 spec-driven-ai-dev.md   → root-level methodology doc (pending update; see §3.2 task 2)
@@ -94,7 +98,7 @@ Three batched fetch issues filed earlier in the session landed on origin as `fet
 - **followup/06:** Devin pricing structure entirely refuted (no public ACU pricing); Factory positioning softened; Superconductor wrong-domain. **Round-7 update:** Superconductor §4 fully re-anchored to .com; primary differentiator is the multiplayer "take the wheel" shared-agent-session primitive (no other vendor offers human-to-human handoff *during* an agent run); on-codebase agent benchmarking is a customer-exposed judge primitive; `oscardobsonbrown/superconductor` GitHub repo previously cited turns out to be a different project entirely (mis-attribution corrected).
 - **followup/01 (round-7):** Shapiro positions himself at **Level 4** ("I'm here"), refuting prior corpus framings of him as a Level-5 practitioner. Eight El Kaim-vs-Shapiro discrepancies documented; the most consequential is that El Kaim's *"Nobody writes the code. Nobody reads the code."* L5 framing is NOT in Shapiro's canonical Five Levels post (it conflates the canonical post with the companion post). El Kaim added L4 "spec is the most valuable thing you produce" — Shapiro's actual L4 mentions "You craft skills (for Claude Code)" instead. **Cross-corpus propagation flags** logged in §6 below: report 07, StrongDM reports 01/02, anywhere Kilroy is called "Shapiro's Level-5 reference implementation."
 
-**Follow-up fetch queue (next batched issue):** ~~Shapiro five-levels correct slug, arxiv 2503.18813 paper body, Superconductor.com, Cognition Devin announcement URL, 6 GitHub docs canonical URLs~~ — **all closed by rounds 6–8 drains**. Still queued (low priority): `platform.claude.com` Agent Skills security guidance (Path B only — JS-SPA shells); `openai.com/index/*` 3 URLs (Path B only — Cloudflare JS-challenged bodies); `docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations` (would directly re-anchor a REFUTES on report 19). See `research/blocked-urls-round-8.md` §"Follow-ups" for the full actionable list.
+**Follow-up fetch queue (next batched issue):** ~~Shapiro five-levels correct slug, arxiv 2503.18813 paper body, Superconductor.com, Cognition Devin announcement URL, 6 GitHub docs canonical URLs~~ — **all closed by rounds 6–8 drains**. Still queued (low priority, ~7 URLs total per §4.3): 2 `platform.claude.com` Agent Skills pages (best-practices + security; Path B only — JS-SPA shells); 3 `openai.com/index/*` URLs (Path B only — Cloudflare JS-challenged bodies); `pli.princeton.edu/.../swe-bench` (Wayback fallback may work); `docs.github.com/.../cloud-agent/risks-and-mitigations` (never tried via action; likely action-fetchable; would directly re-anchor a REFUTES on report 19). See `research/blocked-urls-round-8.md` §"Follow-ups" for the full actionable list.
 
 #### Round-8 drain (issues #41 + #42) — added 2026-05-13
 
@@ -103,14 +107,18 @@ Three batched fetch issues filed earlier in the session landed on origin as `fet
 
 ### 3.4 Pending retrospective decisions
 
-`retrospective/2026-05-11-01/` contains user-decision-pending artifacts not tracked elsewhere:
+Five retrospectives now carry user-decision-pending artifacts. Cumulative backlog: **13 unbuilt skill specs / 45 AGENTS.md suggestions / 26 proposed ADRs**. The project still has no `AGENTS.md` file. Only the `adr` skill (from 2026-05-11-01) has been built; the other 13 are unbuilt.
 
-- **3 unbuilt skill specs** (only `adr` was built in that session):
-  - `provenance-aware-reconstruction-spec.md` (high priority, ~¼ day)
-  - `sync-to-main-before-building-spec.md` (high priority, ~¼ day)
-  - `verbatim-fetch-via-curl-spec.md` (medium priority, ~¼ day)
-- **15 AGENTS.md additions** in `AGENTS-suggestions.md`. The project has no `AGENTS.md` yet.
-- **7 proposed ADRs** (titles only in the retrospective; specs would be authored via the `adr` skill).
+| Retrospective | Skill specs (unbuilt) | AGENTS suggestions | Proposed ADRs |
+|---|---|---|---|
+| `2026-05-11-01` (original) | 3: `provenance-aware-reconstruction`, `sync-to-main-before-building`, `verbatim-fetch-via-curl` | 15 | 7 |
+| `2026-05-13-01` (PLAN audit-pass cycle + pt-2 cherry-pick) | 4: `bulk-sed-audit`, `claim-verification`, `git-cherry-pick-resolution`, `large-restructure-self-audit` | 9 | 5 |
+| `2026-05-13-02` (three drain cycles + cross-corpus audit) | 3: `cross-corpus-propagation`, `drain-audit`, `subagent-cleanup-sweep` | 10 | 5 |
+| `2026-05-14-01` (Lenny full transcript + issues #41/#42 + stale-branch audit) | 3: `fetch-action-quality-check`, `arxiv-e-print-recovery`, `stale-branch-audit` | 7 | 4 |
+| `2026-05-14-02` (short Q&A producing `research-plan.md`) | 0 | 4 | 5 |
+| **Totals** | **13** | **45** | **26** |
+
+ADR titles live in §"Part 4 — proposed ADRs" of each retrospective body. Skill specs live in the sibling directory of each retrospective (e.g., `retrospective/2026-05-14-01/`). AGENTS suggestions live in `retrospective/<date>/AGENTS-suggestions.md`.
 
 ### 3.5 YouTube-video-only content (un-primary-sourced)
 
@@ -126,7 +134,7 @@ Three priority tiers. Highest-leverage items first.
 
 ### 4.1 Highest priority — do these if you have time
 
-**None today.** The #29 / #30 / #31 in-flight batches landed and were drained 2026-05-13 — see §3.3. The remaining follow-up URLs are queued for a future single batched issue (see `research/blocked-urls-round-6.md` §"Follow-ups"); none requires manual fetch.
+**None today.** All filed `[fetch-urls]` issues (#29/#30/#31/#36/#41/#42) have been drained — see §3.3. The remaining ~7 outstanding URLs (5 confirmed Path-B-only; 2 still eligible for retry) are listed in §4.3 below.
 
 ### 4.2 Medium priority — primary-source unlock
 
@@ -147,18 +155,19 @@ Drains into `research/06-hn-and-lenny.md` and `research/followup/03-cherny-inter
 
 ### 4.3 Low priority — background completeness
 
-These three URL families are known-or-likely action-blocked. Path B (browser "Save Page As → Web Page, Complete") is the only realistic route. Each is "nice to have"; the relevant reports are firm without verbatim source-level fidelity.
+The remaining outstanding URLs after rounds 6–8 drains. Items 1a and 3 are confirmed Path-B-only; items 4 and 5 are still eligible for retry (via action or Wayback). All "nice to have"; the relevant reports are firm without these.
 
 **1. ~~`medium.com/@welkaim/about` + `welkaim.medium.com/`~~** — **RESOLVED 2026-05-13** via Path B drop. Bio captured in `research/07-dark-factory.md` header; post-index revealed 10+ unread El Kaim posts (logged as future-research cluster, see "Future research" at the bottom of this file).
 
-**1a. `platform.claude.com/docs/en/agent-skills/{overview,best-practices,security}`** — **NEW Path B item from round 7.** The action returned HTTP 200 but the body is a JS-rendered SPA shell (~17 `Loading...` placeholders); curl can't execute the JS. Affects `research/23-anthropic-engineering-trilogy.md` §3 (security-quote attribution still open — several quotes attributed to S13 are actually from these pages per the round-6 drain). **Path B only**: open each URL in a logged-in Console session, wait for the page to render, File → Save Page As → Web Page, Complete; drop the `.html` into `research/manual/`. ~3 URLs.
+**1a. `platform.claude.com/docs/en/agent-skills/{best-practices,security}`** — overview was Path-B'd in round 7 and drained into `research/23-anthropic-engineering-trilogy.md` §3. The two remaining pages are still JS-SPA shells from action. **Path B only**: open each URL in a logged-in Console session, wait for the page to render, File → Save Page As → Web Page, Complete; drop the `.html` into `research/manual/`. ~2 URLs.
 
-**2. `docs.replit.com/*` + `blog.replit.com/*` (~20 URLs).** Affects `research/20-replit-agent.md`. Cloudflare-gated; action success uncertain (per `blocked-urls.md` v5 the `*.openai.com` analog is known-blocked from action too).
+**2. ~~`docs.replit.com/*` + `blog.replit.com/*`~~** — **RESOLVED 2026-05-13/-14** via round-8 issue #41. All 13 R-* URLs primary-anchored; report 20 flipped 🟡 → ✅. The "Cloudflare-gated" classification turned out to be wrong (the round-6 lesson generalizes: old "blocked" tags age poorly).
 
-How:
-- Try filing a `[fetch-urls]` issue first. If action 403s, fall back to Path B for the URLs listed in `research/20-replit-agent.md`'s blocked-URL section.
+**3. ~~`developers.openai.com/codex/*`~~ + `openai.com/index/{harness-engineering, unlocking-the-codex-harness, introducing-swe-bench-verified}`** — round-8 issue #41 drained 5/7 `developers.openai.com/codex/*` URLs successfully. The 3 `openai.com/index/*` URLs return Cloudflare JS-challenged bodies from the action (confirmed round 8); **Path B only.** Affects `research/18-openai-codex-substrate.md` (which remains 🟡 solely because of these 3 URLs).
 
-**3. `developers.openai.com/codex/*` + `openai.com/index/{harness-engineering, unlocking-the-codex-harness}`.** Affects `research/18-openai-codex-substrate.md`. Listed in `blocked-urls.md` v5 as known-blocked from action. Path B only.
+**4. `pli.princeton.edu/.../swe-bench`** — round-8 Cloudflare-blocked from the action runner. **Wayback fallback may work** — `web.archive.org/web/*/pli.princeton.edu/...` is the recommended next attempt. Affects `research/22-academic-foundations.md`.
+
+**5. `docs.github.com/.../cloud-agent/risks-and-mitigations`** — never attempted via action; surfaced in round-8 as a follow-up that would directly re-anchor one REFUTES in `research/19-github-copilot-cloud-agent.md`. **Likely action-fetchable** — file a single-URL `[fetch-urls]` issue if pursued. Low priority — report 19 already at ✅.
 
 ### 4.4 Not worth fetching anymore
 
@@ -172,19 +181,22 @@ How:
 
 1. ~~**Resolve §3.1 (lost pt-2 work)**~~ — **Done 2026-05-13** via cherry-pick onto `claude/recover-pt2-drain`. See §3.1 for the recovered outcomes.
 
-2. **Drain in-flight fetch-urls issues** when the action completes:
-   - `fetched/issue-29` → drain into reports 23, followup/01, followup/07, followup/08
-   - `fetched/issue-30` → drain into report 19
-   - `fetched/issue-31` → drain into followup/06 (Cloudflare partial-success likely; document gaps)
+2. ~~**Drain in-flight fetch-urls issues**~~ — **Done.** Rounds 6 (#29/#30/#31), 7 (#36), and 8 (#41/#42) all drained. **Housekeeping: close GitHub issues #41 and #42** (still showing OPEN on GitHub; drains landed in PR #44).
 
-3. **Curated human-review tasks (§3.2 above)**:
+3. **Decide on `research-plan.md` direction** — the structural pivot from research to build. Until this is decided, individual-report polish has diminishing return. Two coupled questions:
+   - Cut a single unified Round-1–5 synthesis (v3 of `00-synthesis.md` or new `research/24-final-synthesis.md`), or keep the current two-synthesis-plus-followups state?
+   - Collapse the four architectures to one chosen path (likely Atelier + Refinery layered-spec discipline) + "rejected alternatives" appendix, or keep all four?
+
+4. **Curated human-review tasks (§3.2 above)** — likely fold into step 3's v3 architecture work:
    - Update `architectures/00-comparison.md` §7 + §2.4
    - Update `spec-driven-ai-dev.md` with the 4-field extension
-   - Add Round 2 complete stanza
+   - Add Round 2 complete stanza (§11)
 
-4. **Retrospective decisions (§3.4 above)** — pick which of the 3 skill specs to build, which of the 15 AGENTS.md additions to adopt, which of the 7 ADRs to author.
+5. **Retrospective decisions (§3.4 above)** — pick scope across the cumulative 13 unbuilt skill specs / 45 AGENTS.md suggestions / 26 proposed ADRs over five retrospectives.
 
-5. **Optional fetches** — medium priority (YouTube transcripts §4.2) and low priority (§4.3) as motivated.
+6. **Cross-corpus propagation sweep (§6.1)** — ~30 min mechanical edit of Shapiro L4-vs-L5 framings across reports 01, 02, 07, and any "Kilroy as Shapiro's L5 reference implementation" mentions.
+
+7. **Optional fetches** — Cherny Lenny remainder (medium, §4.2) and Path-B URLs (low, §4.3) as motivated.
 
 ---
 
@@ -194,7 +206,7 @@ When picking this up cold:
 
 1. `git status` — confirm clean working tree.
 2. `git log origin/main..HEAD --oneline` — see what's ahead of main.
-3. Check open issues: `mcp__github__list_issues` for `lago-morph/software-factory` state=OPEN. Expect any new `[fetch-urls]` issues — drain any `fetched/issue-N` branches that have landed. (Issues #29/#30/#31/#36 are all drained and closed as of 2026-05-13.)
+3. Check open issues: `mcp__github__list_issues` for `lago-morph/software-factory` state=OPEN. Expect any new `[fetch-urls]` issues — drain any `fetched/issue-N` branches that have landed. (Issues #29/#30/#31/#36 closed 2026-05-13. Issues #41/#42 drained 2026-05-14 but still show OPEN on GitHub — housekeeping closure pending.)
 4. Read this PLAN.md §1 + §3 first. If §3.1 still shows the lost work as unresolved, that is the highest-leverage action.
 5. If new manual content is in `research/manual/` (anything other than `README.md`), activate the `research-pipeline` skill — Phase 0 will drain it.
 6. The `parallel-subagent-fanout` skill is the right tool when 4+ independent subtasks accumulate.
@@ -214,11 +226,14 @@ Suggested approach: a single `Grep` pass for the strings above, then a small sub
 
 ## 7. Fetch-loop tooling (canonical companion files)
 
-These four files in `research/` are the system of record for what URLs are reachable, what isn't, and how to recover the rest:
+These files in `research/` are the system of record for what URLs are reachable, what isn't, and how to recover the rest:
 
 - `research/blocked-urls.md` — cross-round canonical inventory of URLs that returned non-200 from the GitHub Actions runner. Versioned (currently v5).
 - `research/blocked-urls-round-2.md` — per-issue retrieval log for Round 2's fetch passes (issues #4 and #8).
-- `research/unfetched-sources.md` — URLs the action couldn't recover; categorized by which manual recovery path (A: curl with cookies; B: Save Page As; C: Reader View) will work. Includes a "Deferred fetch-action candidates" table (now 6 rows filed via #29/#30/#31 + 1 row retrospectively resolved via #23; 3 rows still deferred).
+- `research/blocked-urls-round-6.md` — per-URL log + lessons learned from the round-6 drains (issues #29/#30/#31).
+- `research/blocked-urls-round-7.md` — per-URL log + lessons learned from the round-7 drain (issue #36).
+- `research/blocked-urls-round-8.md` — per-URL log + lessons learned from the round-8 drains (issues #41/#42); contains the canonical "lesson R8.1: arXiv `/e-print/` is the gold-standard paper-body recovery route" and the up-to-date follow-up queue.
+- `research/unfetched-sources.md` — URLs the action couldn't recover; categorized by which manual recovery path (A: curl with cookies; B: Save Page As; C: Reader View) will work.
 - `research/fetch-from-browser.sh` — runnable bash script the user invokes locally with browser cookies. Outputs to `research/manual/`.
 
 External-synthesis artifacts (e.g., the ChatGPT deep-research output we use as Round-5 counterfactual) live under `/reference-only/<short-slug>-<date>/` with a `README.md` orientation file alongside the artifact.
@@ -241,10 +256,10 @@ The runner has full network egress and writes to a fresh `fetched/issue-N` branc
 - Rounds 3–6: catalogued in the parallel-fanout night run on 2026-05-11. Token-level detail per subtask lives in `harness/runs/20260511-054258/report.md` and `report-pt2.md`; no dollar total recorded.
 
 **Out of scope (deliberately):**
-- Replacing the four architectures with a single "winner". The comparison stays a comparison.
+- ~~Replacing the four architectures with a single "winner". The comparison stays a comparison.~~ **Reversed by `research-plan.md` (PR #46, 2026-05-14).** That doc proposes the opposite — for the lights-out-greenfield mandate specifically, v3 should likely collapse to one chosen architecture (Atelier + Refinery layered-spec discipline) with the other three demoted to "rejected alternatives" in an ADR. Decision pending; see §5 task 3.
 - Building harness code beyond the `fetch-blocked-urls` workflow primitive.
 - Adopting `harness` vocabulary across the architecture documents wholesale before the user has reviewed Round 2 synthesis report 13.
-- Crawling everything blocked from the sandbox — the Klaassen / Lenny / kaner / Replit / OpenAI clusters all have either lower priority or Path-B-only recovery routes. See §4.
+- Crawling everything blocked from the sandbox — the remaining ~7 outstanding URLs (5 Path-B-only, 2 retry-eligible) per §4.3 are documented gaps, not unknowns.
 
 ---
 
@@ -254,9 +269,12 @@ The runner has full network egress and writes to a fresh `fetched/issue-N` branc
 |---|---|---|---|
 | 1 | `research/01-07-*`, `research/00-synthesis.md` | ✅ Complete | 7-source initial reconstruction; F1–F20 failure modes |
 | 2 | `research/08-12-*`, `research/13-round-2-synthesis.md` | ✅ Complete | Jaymin book + Overstory + OpenHands substrate audits; F21–F33 |
-| 3 | `research/followup/01-12-*` | ✅ Complete | 12 threads; Thread 12 (Dark Factory archive.org) resolved into report 07 without a separate file. The post-Round-3 Brier drain at `followup/12-brier-pace-layers.md` was recovered onto main via the 2026-05-13 cherry-pick (see §3.1), along with primary-source upgrades to followup/05 and followup/07. |
-| 4 | `research/14-17-*` | ✅ Complete | El Kaim book: spec authorship, BMAD, council, codex+skills |
-| 5 | `research/18-23-*` | ✅ Complete | Counterfactual harvest: OpenAI Codex, GitHub Copilot, Replit, Tabnine, academic foundations, Anthropic engineering |
+| 3 | `research/followup/01-12-*` | ✅ Complete | 12 threads; Thread 12 (Dark Factory archive.org) resolved into report 07 without a separate file. The post-Round-3 Brier drain at `followup/12-brier-pace-layers.md` was recovered onto main via the 2026-05-13 cherry-pick (see §3.1), along with primary-source upgrades to followup/05 and followup/07. F34 (cross-layer drift) catalogued in followup/12. |
+| 4 | `research/14-17-*` + `research/24-el-kaim-book-product-line-variability.md` | ✅ Complete | El Kaim book: spec authorship, BMAD, council, codex+skills, plus Chapter 9 (product-line-variability, added 2026-05-13 from manual drain). F35 (Federation-as-Family Drift) promoted in report 24. |
+| 5 | `research/18-23-*` | Reports 19/20/21/23 ✅; 22 has 2 outstanding source rows (1 Wayback-eligible, 1 cross-cited Path-B-only); **18 still 🟡** due to 3 `openai.com/index/*` Cloudflare blocks | Counterfactual harvest: OpenAI Codex, GitHub Copilot, Replit, Tabnine, academic foundations, Anthropic engineering |
+| 6 | `harness/runs/20260511-054258/report.md` + `report-pt2.md`; merge `423940f` | ✅ Complete | 26-subtask parallel-fanout night run on 2026-05-11; pt-2 wave (Brier/Klaassen/evals) recovered via 2026-05-13 cherry-pick |
+| 7 | drain of issue #36 + 3 manual drops | ✅ Complete | Shapiro canonical Five Levels drained (L4 self-position; 8 El Kaim discrepancies → §6.1); El Kaim post-index Path B; El Kaim Chapter 9 manual drain → report 24, F35; `platform.claude.com/.../agent-skills/overview` Path B → report 23 §3 attribution audit closed. Per-URL log: `research/blocked-urls-round-7.md`. |
+| 8 | drain of issues #41 + #42 + Lenny full transcript | ✅ Complete | Reports 19, 20 flipped to ✅; followup/08 §3 paper-body-anchored via CaMeL arXiv `/e-print/` recovery; reports 05, 06 flipped to ✅ FULL via Willison transcript. Per-URL log: `research/blocked-urls-round-8.md`. |
 
 For each report, the source citations live in the report's §"Sources reviewed" or first-page status table.
 
@@ -293,9 +311,9 @@ Twelve threads catalogued from a former root-level `followup.md`. Threads 1–11
 | 3 | Boris Cherny "What happens after coding is solved" | `followup/03-cherny-interview.md` | ✅ best-effort; primary unlock needs YouTube transcript (§4.2) |
 | 4 | Steve Yegge's Gas Town + Beads orchestration | `followup/04-gastown-beads.md` | ✅ |
 | 5 | Klaassen's three sibling Every.to articles | `followup/05-klaassen-siblings.md` | ✅ primary-source-anchored (upgrade recovered onto main via the 2026-05-13 cherry-pick; see §3.1) |
-| 6 | Competitor factory landscape survey | `followup/06-competitor-landscape.md` | ✅ inferential; primary upgrade pending issue #31 drain |
-| 7 | Anthropic multi-agent + Husain/Shankar evals FAQ | `followup/07-evals-deepdive.md` | ✅ primary-source-anchored (upgrade recovered onto main via the 2026-05-13 cherry-pick; see §3.1). The remaining 4 anthropic.com engineering posts are pending issue #29 drain. |
-| 8 | Security primitives (CaMeL + Safe YOLO + Lethal Trifecta) | `followup/08-security-primitives.md` | ✅ inferential; primary upgrade pending issue #29 drain |
+| 6 | Competitor factory landscape survey | `followup/06-competitor-landscape.md` | ✅ primary-source-anchored via issues #31 (Devin/Factory/8090/Superpowers) + #36 (Superconductor.com) drains |
+| 7 | Anthropic multi-agent + Husain/Shankar evals FAQ | `followup/07-evals-deepdive.md` | ✅ primary-source-anchored (upgrade recovered onto main via the 2026-05-13 cherry-pick; see §3.1; 4 anthropic.com engineering posts landed via issue #29 drain). |
+| 8 | Security primitives (CaMeL + Safe YOLO + Lethal Trifecta) | `followup/08-security-primitives.md` | ✅ paper-body-anchored — issue #29 drain primary-anchored 5 sources; round-8 / issue #42 recovered CaMeL paper body via arXiv `/e-print/` LaTeX route (§3 expanded from 7 to ~15 subsections) |
 | 9 | Methodology ancestors (Kaner / Rumelt / Deming) | `followup/09-methodology-ancestors.md` | ✅ structural conclusions firm; primary verification optional per §4.4 |
 | 10 | Governance / liability angle | `followup/10-governance.md` | ✅ primary-source-anchored via drained issue #26 (Stanford CodeX / BCG Platinion / Pragmatic CTO) |
 | 11 | Compound Knowledge plugin deep-dive | `followup/11-compound-knowledge.md` | ✅ |
@@ -323,11 +341,13 @@ Source: paired ChatGPT deep-research artifact at `reference-only/chatgpt-deep-re
 Six clusters were dispatched against six source families that the original ChatGPT report under-cited:
 
 - **13.1.1 OpenAI Codex** → `research/18-openai-codex-substrate.md`
-- **13.1.2 GitHub Copilot cloud agent** → `research/19-github-copilot-cloud-agent.md`. Direct-doc primary citations pending issue #30 drain.
-- **13.1.3 Replit Agent** → `research/20-replit-agent.md`. Most cluster URLs Cloudflare-gated — see §4.3.
+- **13.1.2 GitHub Copilot cloud agent** → `research/19-github-copilot-cloud-agent.md`. **Primary-anchored** (issue #30 drain landed 3/9; round-8 issue #42 landed 6/6 canonical re-finds. Report flipped to ✅).
+- **13.1.3 Replit Agent** → `research/20-replit-agent.md`. **Primary-anchored** via round-8 issue #41 — all 13 R-* URLs ✅; multiple refutations of community-mirror reconstructions.
 - **13.1.4 Tabnine enterprise** → `research/21-tabnine-enterprise.md`. Primary citations landed via drained issue #27.
-- **13.1.5 Academic foundations** (AlphaCode / SWE-bench / SWE-agent / CodeGen) → `research/22-academic-foundations.md`. Primary citations landed via drained issue #28.
-- **13.1.6 Anthropic engineering trilogy** → `research/23-anthropic-engineering-trilogy.md`. Primary citations pending issue #29 drain.
+- **13.1.5 Academic foundations** (AlphaCode / SWE-bench / SWE-agent / CodeGen) → `research/22-academic-foundations.md`. Primary citations landed via drained issue #28; 2 SWE-bench announcement URLs remain Cloudflare-blocked per §4.3.
+- **13.1.6 Anthropic engineering trilogy** → `research/23-anthropic-engineering-trilogy.md`. **Primary-anchored** via issue #29 drain + round-7 Path-B drop of `platform.claude.com/.../agent-skills/overview`. Two remaining Skills SPA pages outstanding per §4.3 item 1a.
+
+**Round-5 substrate-audit status as of 2026-05-14:** Reports 19, 20, 21, 23 are all ✅. Report 22 has 2 outstanding source rows (Princeton SWE-bench blog — Wayback-eligible; `openai.com/index/introducing-swe-bench-verified` — cross-cited Path-B-only). **Report 18 (OpenAI Codex) is the sole 🟡 in the Round-5 cluster** — 5/7 `developers.openai.com/codex/*` URLs ✅, but 3 `openai.com/index/*` URLs remain Cloudflare-JS-challenged from the action.
 
 Round-5 also catalogued a "weak citations" QC checklist (in the cluster reports) and a counterfactual-comparison instruction for synthesis time.
 
@@ -356,6 +376,7 @@ Output: `research/01-07-*` plus initial synthesis `research/00-synthesis.md`. F1
 | v0.7 | 2026-05-11 | Adds §14 (Round-6 night-run record); routes future sessions to the deferred-fetch table |
 | **v0.8** | **2026-05-13** | **Cleanup pass.** Source files reorganized into `/reference-only/`. Stale §10.2/§10.4 references retired. Editorial collapse of 09 partial completed (Substack manifesto folded into §9 of unified report). 7 drained fetch-urls issues closed (#4, #8, #23, #24, #26, #27, #28). 3 new batched issues filed (#29, #30, #31). Live work moved to §§1–6; per-round detail compressed into §§11–17. **Discovered: pt-2 drain work on side branch never merged — see §3.1.** |
 | **v0.9** | **2026-05-13** | **Pt-2 cherry-pick recovery.** Brought sub-30 / sub-31 / sub-32 / recording commits onto main via `claude/recover-pt2-drain`. Adds `research/followup/12-brier-pace-layers.md` (Brier pace-layers report, ~2,571 words, F34 candidate); upgrades `research/followup/05-klaassen-siblings.md` and `research/followup/07-evals-deepdive.md` from inferential to primary-source-anchored. §3.1 changed from HIGHEST-priority bottleneck to RESOLVED. |
+| **v0.10** | **2026-05-14** | **Rounds 7–8 + Lenny full + retrospectives + research-plan recorded.** Round-7 captured: Shapiro canonical drain (8 El Kaim-vs-Shapiro discrepancies → §6.1 propagation flags); El Kaim post-index Path B; **El Kaim Chapter 9 manual drain → new report 24 (product-line-variability), F35 promoted**; `platform.claude.com/.../agent-skills/overview` Path B'd into report 23 §3. Round-8 captured: issues #41/#42 drained (reports 19/20 ✅, report 18 still 🟡 due to 3 `openai.com/index/*` Cloudflare-blocks); **CaMeL paper body recovered via arXiv `/e-print/` LaTeX route → followup/08 §3 paper-body-anchored**; Lenny × Willison full ~90-min transcript drained → reports 05/06 ✅ FULL. Three new retrospectives recorded (2026-05-13-02, 2026-05-14-01, 2026-05-14-02); 2026-05-13-01 (which had landed pre-v0.9 but was not enumerated in v0.9's §3.4) also folded into §3.4 so all five retrospectives are now tabulated. `research-plan.md` filed at repo root (PR #46) — proposes v3 architecture collapse; §9 "out of scope" line about keeping all four architectures explicitly reversed. §3.4 retrospective table expanded to five retrospectives / 13 unbuilt skills / 45 AGENTS / 26 ADRs. §4.3 Path-B list trimmed to actual remainder (~7 URLs). §5 work-remaining task 2 (drain in-flight issues) marked done; new task 3 added for the research-plan.md decision. §7 fetch-loop tooling list expanded to include `blocked-urls-round-6/7/8.md`. §10 lookup table extended with Rounds 7 and 8. §12 stale "pending issue drain" status cells in rows 6/7/8 corrected. §14 Round-5 substrate-audit status line added. |
 
 ---
 
@@ -389,21 +410,21 @@ Captured as the research-pipeline skill prescribes: name the cluster, list sourc
 **Sources:**
 - https://nraford7.github.io/road-runner-economy/
 
-**Justification.** Surfaced as a drafting-readers acknowledgement at the bottom of Shapiro's canonical "Five Levels — From Spicy Autocomplete to the Software Factory" post. Shapiro explicitly endorses the framing. None of our 24 reports + 13 followups references Radford or the "road runner economy" framing, yet Shapiro's L4–L5 narrative leans on it. If Radford's essay names a deflationary-economics dynamic our corpus currently treats as anonymous (e.g., the "code is becoming free; meaning is the moat" / "manual labor in a deflationary economy" framing that runs through the L0 description), we have a primary anchor we're missing. Could change the framing of `research/00-synthesis.md` §1 (why the methodology matters) or seed a new economics-of-the-software-factory section in `research/13-round-2-synthesis.md`.
+**Justification.** Surfaced as a drafting-readers acknowledgement at the bottom of Shapiro's canonical "Five Levels — From Spicy Autocomplete to the Software Factory" post. Shapiro explicitly endorses the framing. None of our 24 reports + 12 followups references Radford or the "road runner economy" framing, yet Shapiro's L4–L5 narrative leans on it. If Radford's essay names a deflationary-economics dynamic our corpus currently treats as anonymous (e.g., the "code is becoming free; meaning is the moat" / "manual labor in a deflationary economy" framing that runs through the L0 description), we have a primary anchor we're missing. Could change the framing of `research/00-synthesis.md` §1 (why the methodology matters) or seed a new economics-of-the-software-factory section in `research/13-round-2-synthesis.md`.
 
 **Effort.** Single GitHub Pages essay (`raw.githubusercontent.com`-style URL or its `nraford7.github.io` mirror). Expected reachable from action without issue; one-page WebFetch may be sufficient. ~½ hour wall time.
 
-### Future research: platform.claude.com Agent Skills docs (Path B-only)
+### Future research: platform.claude.com Agent Skills docs (Path B-only) — 2 of 3 pages remaining
 
 **Sources:**
-- https://platform.claude.com/docs/en/agent-skills/overview
-- https://platform.claude.com/docs/en/agent-skills/best-practices
-- https://platform.claude.com/docs/en/agent-skills/security
+- ~~https://platform.claude.com/docs/en/agent-skills/overview~~ — Path-B'd in round 7 and drained into report 23 §3.
+- https://platform.claude.com/docs/en/agent-skills/best-practices — outstanding.
+- https://platform.claude.com/docs/en/agent-skills/security — outstanding.
 
-**Justification.** Round 6 drain on `research/23-anthropic-engineering-trilogy.md` §3 surfaced that several quotes the report had attributed to Anthropic's S13 ("Equipping agents...") are not in S13 — they live in these platform docs pages instead. Current §3 retains the misattributed quotes flagged for re-anchoring. Without the actual platform-docs body, we cannot complete the re-anchoring cleanly. Affects: report 23 §3 (security guidance for Skills), and indirectly any future architecture decision that wants to cite Anthropic's *official* skill-security stance vs. the engineering-blog framing.
+**Justification.** Round-6 drain on `research/23-anthropic-engineering-trilogy.md` §3 surfaced that several quotes the report had attributed to Anthropic's S13 ("Equipping agents...") are not in S13 — they live in these platform docs pages instead. The overview drop in round 7 closed the attribution audit for that page. Without the best-practices and security pages, the rest of the re-anchoring stays open. Affects: report 23 §3 (security guidance for Skills), and indirectly any future architecture decision that wants to cite Anthropic's *official* skill-security stance vs. the engineering-blog framing.
 
-**Effort.** 3 pages, JS-rendered SPA so action-fetch returns content-free shells. **Path B only** (user does Save Page As after a logged-in Console session has rendered the JS). Then standard drain pass; ~30 min.
+**Effort.** 2 remaining pages, JS-rendered SPA so action-fetch returns content-free shells. **Path B only** (user does Save Page As after a logged-in Console session has rendered the JS). Then standard drain pass; ~20 min.
 
 ---
 
-*End of PLAN.md v0.9.*
+*End of PLAN.md v0.10.*

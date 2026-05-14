@@ -1,4 +1,4 @@
-# AGENTS.md suggestions — 2026-05-14-03
+# AGENTS.md suggestions — 2026-05-14-04
 
 These are proposed additions to the project's agents file (typically `AGENTS.md` at the repo root). Each section contains:
 

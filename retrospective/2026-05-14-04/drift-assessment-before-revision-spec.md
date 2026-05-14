@@ -116,7 +116,7 @@ User accepted with "Cleanup and then update plan. Iterate at least once."
 
 ### Example 2 — when to skip the skill
 
-User: "Add a note to PLAN.md §3.4 that retrospective 2026-05-14-03 has been authored."
+User: "Add a note to PLAN.md §3.4 that retrospective 2026-05-14-04 has been authored."
 
 This is single-section, no cross-references beyond the one row addition, and the user has explicitly time-boxed it. Skip the drift assessment, just make the edit. The skill is for revisions, not appendings.
 

@@ -69,19 +69,21 @@ Also include an end-of-file marker that re-states the provenance:
 *End of synthetic retrospective `YYYY-MM-DD-NN`. Authored YYYY-MM-DD from PR descriptions and surrounding retros; not contemporaneous with the work it covers.*
 ```
 
-### Invariant 2 — Date retros to coverage, not authorship.
+### Invariant 2 — Date retros to coverage, not authorship; anchor the suffix to the last PR.
 
 The synthetic retro's **filename date** and metadata **UTC date** field refer to the *work* the retro covers — specifically, the UTC date of the merge of the **last PR** in the coverage window. The authoring date appears only in the `Provenance` line.
 
-A synthetic retro authored on 2026-05-14 covering PRs that merged on 2026-05-11 is filed as `retrospective/2026-05-11-NN.md`, NOT `retrospective/2026-05-14-NN.md`. The metadata block records both dates so future audits can attribute correctly:
+The **filename suffix** is the number of the last PR in the coverage window — the same PR that anchors the coverage date. The two pieces of identity (date and last-PR) come from the same merge event, so the filename `retrospective/YYYY-MM-DD-PPP.md` reads as "the retro for the work that culminated in PR #PPP on YYYY-MM-DD".
+
+A synthetic retro authored on 2026-05-14 covering PRs `#11..#25` (last PR `#25`, merged on 2026-05-11) is filed as `retrospective/2026-05-11-25.md`, NOT `retrospective/2026-05-14-25.md` and NOT `retrospective/2026-05-11-02.md`. The metadata block records both dates so future audits can attribute correctly:
 
 ```markdown
 - **UTC date**: 2026-05-11 (dated to the merge time of the last PR covered: PR #25 merged 2026-05-11T12:48:03Z)
-- **Sequence**: NN (next available for that UTC date — see Step 4)
+- **Last PR**: #25 (highest PR number in the zone — used as the filename suffix)
 - **Provenance**: SYNTHETIC / BACK-FILLED. Authored 2026-05-14 from PR descriptions and surrounding retros.
 ```
 
-**Sequence numbers are append-only.** A back-fill for 2026-05-11 takes the next available `NN` for that date — even if a contemporaneous retro on the same date is back-filled later, do NOT renumber. Numbering stability is part of the audit trail.
+**Filenames are append-only.** The PR-anchored suffix is mechanically derived from the zone's last PR; two synthetics for the same coverage date with different zones will naturally land on different filenames (different last PRs). If a synthetic happens to collide with an existing retro at the same date and same last-PR, append a lowercase letter suffix (`-a`, `-b`, …) — never rename or renumber an existing file. See the Step 8 collision handling.
 
 ---
 
@@ -225,17 +227,32 @@ One call per PR in the zone, all in one message. PR descriptions are the primary
 
 ---
 
-## Step 8 — determine date and sequence for the synthetic retro
+## Step 8 — determine date and last-PR anchor for the synthetic retro
 
 ```
 COVERAGE_DATE = merged_at of the LAST PR in the zone, truncated to YYYY-MM-DD
-existing = count of files matching retrospective/COVERAGE_DATE-*.md
-SEQ = printf "%02d" $((existing + 1))
-REPORT = retrospective/COVERAGE_DATE-SEQ.md
-SIBLING_DIR = retrospective/COVERAGE_DATE-SEQ
+PR            = number of the LAST PR in the zone
+REPORT        = retrospective/${COVERAGE_DATE}-${PR}.md
+SIBLING_DIR   = retrospective/${COVERAGE_DATE}-${PR}
 ```
 
-Per Invariant 2, the **filename and metadata UTC-date both use `COVERAGE_DATE`**, NOT the authoring date. The authoring date appears only in the `Provenance` line.
+Per Invariant 2, the **filename and metadata UTC-date both use `COVERAGE_DATE`**, NOT the authoring date. The authoring date appears only in the `Provenance` line. The **filename suffix is the last PR number** in the zone, not a per-day sequence counter.
+
+### Collision handling
+
+If `${REPORT}` already exists (i.e., a contemporaneous retro on that date already covered PR `#${PR}` as its last PR), append a lowercase letter suffix:
+
+```bash
+suffix=""
+for letter in a b c d e f g h i j; do
+  if [ ! -e "retrospective/${COVERAGE_DATE}-${PR}${suffix:+-$suffix}.md" ]; then break; fi
+  suffix=$letter
+done
+REPORT="retrospective/${COVERAGE_DATE}-${PR}${suffix:+-$suffix}.md"
+SIBLING_DIR="retrospective/${COVERAGE_DATE}-${PR}${suffix:+-$suffix}"
+```
+
+A collision is rare but possible — e.g., a contemporaneous retro on 2026-05-11 covered up through PR #25 and you're now synthesizing a *different* slice of that same range. In practice this almost always means your zone definition is wrong: re-examine the dark-zone bounds before back-filling, because the contemporaneous retro probably already covered the work. The letter-suffix fallback exists for genuine cases where two retros legitimately end at the same last PR (e.g., one narrative on infra, one on docs).
 
 ---
 
@@ -267,8 +284,8 @@ End the file with the synthetic-flagged end-of-file marker (Invariant 1).
 ## Step 11 — commit
 
 ```bash
-git add retrospective/${COVERAGE_DATE}-${SEQ}.md retrospective/${COVERAGE_DATE}-${SEQ}/
-git commit -m "retrospective: synthetic ${COVERAGE_DATE}-${SEQ} back-fill for dark-zone-N (PRs #<first>-#<last>)"
+git add retrospective/${COVERAGE_DATE}-${PR}.md retrospective/${COVERAGE_DATE}-${PR}/
+git commit -m "retrospective: synthetic ${COVERAGE_DATE}-${PR} back-fill for dark-zone-N (PRs #<first>-#<last>)"
 ```
 
 Do NOT open a PR unless the user has explicitly authorized one. Synthetic retros are local-history additions; the user typically wants to review on disk before they become a PR.
@@ -295,7 +312,7 @@ Do not print the full retrospective inline — it's on disk; reference the path.
 
 - **Synthesizing without the SYNTHETIC / BACK-FILLED flag.** Violates Invariant 1. Readers cannot distinguish reconstruction from contemporaneous record.
 - **Dating the synthetic retro to the authoring date instead of the coverage date.** Violates Invariant 2. Breaks chronological browsing of `retrospective/*.md` against the PR stream.
-- **Renumbering sequence retroactively.** A 2026-05-11-02 back-fill stays `-02` even if a more-authentic `-01.5` is back-filled later. Sequence numbers are append-only.
+- **Renaming a retro to reflect a different last-PR after authoring.** Filenames are immutable once written. A `2026-05-11-25.md` back-fill stays `-25` even if the zone is later re-examined and you'd anchor differently today. If you need to add a parallel retro for the same date and last-PR, use the letter-suffix collision rule (`-25-a`, `-25-b`, …).
 - **Treating PR-number gaps as missing PRs.** GitHub PR and issue numbers share a namespace. Confirm absence from the PR list, then ignore.
 - **Re-running an oversized MCP call with finer filters.** Parse the saved file out-of-band via `python3 -c ...`. The saved file is canonical; don't accumulate partial pages.
 - **Over-relying on PR descriptions for self-reflection.** PR bodies describe what was done; they rarely confess what was botched. Self-reflection is *inferred* from gradients (PR-N+1 preventing what PR-N did) — mark inferences as such; do not present them as observations.

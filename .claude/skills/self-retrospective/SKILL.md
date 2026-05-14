@@ -1,6 +1,6 @@
 ---
 name: self-retrospective
-description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produces a structured retrospective on disk at `retrospective/YYYY-MM-DD-NN.md` plus a sibling directory with one self-contained spec per suggested skill and a consolidated `AGENTS-suggestions.md` whose sections each carry exact proposed agents-file text plus a persuasion argument. Also lists proposed ADRs (just titles — the user decides whether to author them) in both the report file and the inline chat summary. Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", or "anything to add to the agents file?", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
+description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produces a structured retrospective on disk at `retrospective/YYYY-MM-DD-PPP.md` (where `PPP` is the highest PR number covered by the retro) plus a sibling directory with one self-contained spec per suggested skill and a consolidated `AGENTS-suggestions.md` whose sections each carry exact proposed agents-file text plus a persuasion argument. Also lists proposed ADRs (just titles — the user decides whether to author them) in both the report file and the inline chat summary. Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", or "anything to add to the agents file?", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
 ---
 
 # Skill: self-retrospective
@@ -82,22 +82,61 @@ date** so a future reader can audit the provenance.
 
 ---
 
-## Step 1 — determine the sequence number
+## Step 1 — determine the last-PR number
 
-Multiple retrospectives may be produced in the same UTC day. Sequence them
-with a two-digit suffix.
+The retrospective's filename is anchored to the **highest PR number among
+the PRs the retro covers**. This makes the file directly searchable
+against the PR stream ("which retro covered PR #42?" → look for any
+retro whose name ends in `-42` or whose body lists `#42`).
+
+The PR set is collected in Step 2 below; this step depends on Step 2's
+output. The two steps are mutually ordered for narrative reasons (naming
+comes first conceptually), but operationally: **run Step 2 before
+finalizing the filename in this step**.
 
 ```bash
 mkdir -p retrospective
+# After Step 2 has produced the list of PRs covered by this retro:
+#   PRS="<space-separated list of PR numbers covered>"
+PR=$(printf '%s\n' $PRS | sort -n | tail -1)   # highest PR number covered
+REPORT="retrospective/${UTC_DATE}-${PR}.md"
+SIBLING_DIR="retrospective/${UTC_DATE}-${PR}"
+```
+
+### Fallback — no PR exists yet
+
+If the session produced only local commits and no PR has been opened
+(neither merged nor in-progress), fall back to the **legacy day-sequence
+scheme**:
+
+```bash
 existing=$(ls retrospective/"$UTC_DATE"-*.md 2>/dev/null | wc -l)
 SEQ=$(printf "%02d" $((existing + 1)))
 REPORT="retrospective/${UTC_DATE}-${SEQ}.md"
 SIBLING_DIR="retrospective/${UTC_DATE}-${SEQ}"
 ```
 
-The first retrospective of the day is `-01`, the second `-02`, and so on.
-Sequence numbers are never reused, even if a retrospective is later
-deleted — the historical numbering is preserved.
+The legacy scheme is a fallback only — open a PR if you can, so the
+retro can be anchored to it.
+
+### Collision — same date and same last-PR
+
+If `retrospective/${UTC_DATE}-${PR}.md` already exists, append a
+lowercase letter suffix (`-a`, `-b`, `-c`, …) to disambiguate:
+
+```bash
+suffix=""
+for letter in a b c d e f g h i j; do
+  if [ ! -e "retrospective/${UTC_DATE}-${PR}${suffix:+-$suffix}.md" ]; then break; fi
+  suffix=$letter
+done
+REPORT="retrospective/${UTC_DATE}-${PR}${suffix:+-$suffix}.md"
+SIBLING_DIR="retrospective/${UTC_DATE}-${PR}${suffix:+-$suffix}"
+```
+
+So the first collision on `2026-05-14-42` becomes `2026-05-14-42-a.md`,
+the second `…-42-b.md`, etc. Letter suffixes are append-only — never
+renumber an existing file.
 
 ---
 
@@ -213,7 +252,7 @@ Speculative proposals are fine to list; the user prunes.
 
 ## Step 4 — write the main report
 
-Path: `retrospective/${UTC_DATE}-${SEQ}.md`
+Path: `retrospective/${UTC_DATE}-${PR}.md` (or `retrospective/${UTC_DATE}-${SEQ}.md` under the no-PR fallback)
 
 Section structure:
 
@@ -221,9 +260,9 @@ Section structure:
 # Retrospective — <one-line description of the session's work>
 
 - **UTC date**: ${UTC_DATE} (verified via `<tool used>`)
-- **Sequence**: ${SEQ}
+- **Last PR**: #${PR} (highest PR number covered by this retro; or `Sequence: NN` if no PR exists yet — see Step 1 fallback)
 - **Branch at write time**: <git rev-parse --abbrev-ref HEAD>
-- **Sibling artifacts**: [./${UTC_DATE}-${SEQ}/](./${UTC_DATE}-${SEQ}/)
+- **Sibling artifacts**: [./${UTC_DATE}-${PR}/](./${UTC_DATE}-${PR}/)
 
 ## Commit hashes by PR
 
@@ -258,14 +297,14 @@ unplanned but mattered.)
 
 | Skill | Priority | Approx scope | Spec |
 |-------|----------|--------------|------|
-| `<id>` | high/med/low | <1–3 words> | [./${UTC_DATE}-${SEQ}/<id>-spec.md](./${UTC_DATE}-${SEQ}/<id>-spec.md) |
+| `<id>` | high/med/low | <1–3 words> | [./${UTC_DATE}-${PR}/<id>-spec.md](./${UTC_DATE}-${PR}/<id>-spec.md) |
 
 (One row per skill candidate. Detailed specs live in the sibling
 directory, not inline.)
 
 ## Part 3 — agents-file suggestions
 
-See [./${UTC_DATE}-${SEQ}/AGENTS-suggestions.md](./${UTC_DATE}-${SEQ}/AGENTS-suggestions.md)
+See [./${UTC_DATE}-${PR}/AGENTS-suggestions.md](./${UTC_DATE}-${PR}/AGENTS-suggestions.md)
 for proposed additions to the project's agents file (`AGENTS.md`), one
 section per rule, each with exact text to paste and a persuasion
 argument.
@@ -362,7 +401,7 @@ into their actual `AGENTS.md`, and moves on.
 Structure:
 
 ````markdown
-# AGENTS.md suggestions — ${UTC_DATE}-${SEQ}
+# AGENTS.md suggestions — ${UTC_DATE}-${PR}
 
 These are proposed additions to the project's agents file (typically
 `AGENTS.md` at the repo root). Each section contains:
@@ -428,7 +467,7 @@ After writing all artifacts:
 
    ```bash
    git add retrospective/
-   git commit -m "Retrospective ${UTC_DATE}-${SEQ}: <N> skills, <M> agents-file suggestions"
+   git commit -m "Retrospective ${UTC_DATE}-${PR}: <N> skills, <M> agents-file suggestions"
    ```
 
 3. If `--pr` was passed: push the branch and open a PR.
@@ -442,7 +481,8 @@ the path. The inline summary should fit in ~20 lines.
 
 - **Trusting the model's notion of today's date.** Always verify via a
   tool call (`date -u`, Python `datetime.UTC`, Node `new Date().toISOString()`).
-  Date drift in filenames silently breaks the day-sequence numbering.
+  Date drift in filenames silently breaks the date-grouping of retros
+  against the PR stream and obscures the chronological audit trail.
 - **Implementing while retrospecting.** If the user says "build it",
   that is a separate task. Wait for an explicit instruction.
 - **One giant unstructured document.** The on-disk structure (main
@@ -471,9 +511,9 @@ the path. The inline summary should fit in ~20 lines.
   The `adr` skill is the right tool when they do; this skill just
   surfaces the candidates.
 - **A nested `report/` subdirectory under `retrospective/`.** The
-  canonical path is `retrospective/YYYY-MM-DD-NN.md` directly under
-  `retrospective/`. The earlier `retrospective/report/` form was
-  redundant — drop it.
+  canonical path is `retrospective/YYYY-MM-DD-PPP.md` directly under
+  `retrospective/` (or `-NN.md` only via the no-PR fallback). The
+  earlier `retrospective/report/` form was redundant — drop it.
 - **Bulk-committing without verifying intra-package links.** If the
   project has a link checker (e.g., `.claude/skills/adr/scripts/check_adr_links.py`),
   run it on the new retrospective files before committing. Broken

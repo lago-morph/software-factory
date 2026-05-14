@@ -31,8 +31,8 @@ The retrospective produces a filesystem package under
 
 ```
 retrospective/
-├── YYYY-MM-DD-NN.md                  # main report
-└── YYYY-MM-DD-NN/                    # sibling dir (same base name, no .md)
+├── YYYY-MM-DD-PPP.md                 # main report
+└── YYYY-MM-DD-PPP/                   # sibling dir (same base name, no .md)
     ├── <skill-id-1>-spec.md          # one per suggested skill
     ├── <skill-id-2>-spec.md
     ├── ...
@@ -47,8 +47,19 @@ on-disk artifact.
 
 - `YYYY-MM-DD` is the **UTC date**, verified via a tool call before
   writing (see §3).
-- `NN` is a two-digit sequence number for the day, starting at `01`.
-- Numbers are never reused, even if a retrospective is later deleted.
+- `PPP` is the **highest PR number covered by the retro** (variable
+  width; no zero padding). E.g., if the session's covered PRs are
+  `#39, #41, #42`, the file is `retrospective/2026-05-14-42.md`.
+- **No-PR fallback**: if the session has no PRs (purely local commits,
+  no PR opened yet), fall back to the legacy two-digit day-sequence
+  scheme — `YYYY-MM-DD-NN.md`, where `NN` starts at `01` and counts the
+  retrospectives written that day. Prefer opening a PR over using this
+  fallback.
+- **Collision rule**: if a file at the computed path already exists,
+  append a lowercase letter suffix (`-a`, `-b`, `-c`, …) — e.g.,
+  `2026-05-14-42-a.md`. Letter suffixes are append-only; never renumber
+  an existing file.
+- Names are never reused, even if a retrospective is later deleted.
 - Sibling directory has the same name minus `.md` extension.
 
 ### 2.2 Main report contents
@@ -57,9 +68,9 @@ on-disk artifact.
 # Retrospective — <one-line description of the session's work>
 
 - **UTC date**: YYYY-MM-DD (verified via `<tool used>`)
-- **Sequence**: NN
+- **Last PR**: #PPP (highest PR number covered by this retro; or `Sequence: NN` under the no-PR fallback)
 - **Branch at write time**: <branch name>
-- **Sibling artifacts**: [./YYYY-MM-DD-NN/](./YYYY-MM-DD-NN/)
+- **Sibling artifacts**: [./YYYY-MM-DD-PPP/](./YYYY-MM-DD-PPP/)
 
 ## Commit hashes by PR
 
@@ -75,7 +86,7 @@ on-disk artifact.
 
 ## Part 3 — agents-file suggestions
 (Pointer only; the actual suggestions live in
-./YYYY-MM-DD-NN/AGENTS-suggestions.md.)
+./YYYY-MM-DD-PPP/AGENTS-suggestions.md.)
 
 ## Part 4 — proposed ADRs
 - **<Title>** — <one-line rationale, grounded in a session moment>.
@@ -113,7 +124,7 @@ One file, one section per proposed rule. Aim for 5–15 rules — more is
 noise.
 
 ```markdown
-# AGENTS.md suggestions — YYYY-MM-DD-NN
+# AGENTS.md suggestions — YYYY-MM-DD-PPP
 
 These are proposed additions to the project's agents file (typically
 `AGENTS.md` at the repo root). Each section contains:
@@ -171,7 +182,8 @@ node -e "console.log(new Date().toISOString().slice(0,10))"
 
 Prefer running two if available and confirming they agree. Record the
 tool used in the report header. Date drift in filenames silently breaks
-the day-sequence numbering.
+the date-grouping of retros against the PR stream and obscures the
+chronological audit trail.
 
 ---
 
@@ -276,17 +288,19 @@ Workflows that evolved during the session and had measurable benefit.
 ## 7. Workflow (full)
 
 1. **Verify UTC date** via tool call.
-2. **Determine sequence number** by listing
-   `retrospective/YYYY-MM-DD-*.md`.
-3. **Collect commit hashes by PR** (gh or git log).
+2. **Collect commit hashes by PR** (gh or git log).
+3. **Determine the last-PR number** = `max(PRs covered)`. The filename
+   is `retrospective/YYYY-MM-DD-${PR}.md`. If no PR exists, fall back
+   to the legacy `-NN` day-sequence scheme. If the path already exists,
+   append `-a`, `-b`, … (collision rule).
 4. **Scan the session** using the §5 checklist (including §5.9 below
    for proposed-ADR candidates).
-5. **Write the main report** at `retrospective/YYYY-MM-DD-NN.md`,
+5. **Write the main report** at `retrospective/YYYY-MM-DD-PPP.md`,
    including the Part 4 proposed-ADRs section.
 6. **Write per-skill specs** at
-   `retrospective/YYYY-MM-DD-NN/<id>-spec.md`.
+   `retrospective/YYYY-MM-DD-PPP/<id>-spec.md`.
 7. **Write AGENTS-suggestions.md** at
-   `retrospective/YYYY-MM-DD-NN/AGENTS-suggestions.md`.
+   `retrospective/YYYY-MM-DD-PPP/AGENTS-suggestions.md`.
 8. **Echo a short inline summary** with paths AND the proposed-ADRs
    title list.
 9. **Commit** on the current branch.
@@ -328,8 +342,9 @@ the user decides per ADR whether to author one via the `adr` skill.
   one-line rationale only. The user decides per ADR whether to invest;
   the `adr` skill is the right tool when they do.
 - **A nested `report/` subdirectory under `retrospective/`.** Canonical
-  path is `retrospective/YYYY-MM-DD-NN.md` directly. The earlier
-  `retrospective/report/` form was redundant — drop it.
+  path is `retrospective/YYYY-MM-DD-PPP.md` directly (or `-NN.md` only
+  under the no-PR fallback). The earlier `retrospective/report/` form
+  was redundant — drop it.
 - **Bulk-committing without verifying intra-package links.** If the
   project has a link checker (e.g.,
   `.claude/skills/adr/scripts/check_adr_links.py`), run it on the new
@@ -353,7 +368,7 @@ the user decides per ADR whether to author one via the `adr` skill.
 ## 11. Test plan
 
 - Run on a known session transcript.
-- Verify the report file is created at the correct UTC-dated, sequenced path.
+- Verify the report file is created at the correct UTC-dated, PR-anchored path (or `-NN`-sequenced path under the no-PR fallback).
 - Verify the sibling directory has one spec file per suggested skill.
 - Verify each per-skill spec contains all required sections (§2.3).
 - Verify `AGENTS-suggestions.md` has the section structure of §2.4 for

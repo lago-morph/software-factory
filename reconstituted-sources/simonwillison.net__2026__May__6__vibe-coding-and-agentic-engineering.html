@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://simonwillison.net/2026/May/6/vibe-coding-and-agentic-engineering/">
+<title>Vibe coding and agentic engineering are getting closer than I’d like</title>
+<script defer data-domain="simonwillison.net" src="https://plausible.io/js/plausible.js"></script>
+<link rel="alternate" type="application/atom+xml" title="Atom" href="/atom/everything/">
+<link rel="stylesheet" type="text/css" href="/static/css/all.css">
+<link rel="webmention" href="https://webmention.io/simonwillison.net/webmention">
+<link rel="pingback" href="https://webmention.io/simonwillison.net/xmlrpc">
+<meta name="author" content="Simon Willison">
+<meta property="og:site_name" content="Simon Willison’s Weblog">
+
+
+<meta name="twitter:card" content="summary"><meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@simonw">
+<meta property="og:url" content="https://simonwillison.net/2026/May/6/vibe-coding-and-agentic-engineering/">
+<meta property="og:title" content="Vibe coding and agentic engineering are getting closer than I’d like">
+<meta property="og:type" content="article">
+<meta property="og:description" content="I recently talked with Joseph Ruscio about AI coding tools for Heavybit’s High Leverage podcast: Ep. #9, The AI Coding Paradigm Shift with Simon Willison. Here are some of my …">
+<meta property="og:updated_time" content="1778077448">
+
+
+
+
+
+<script>
+(function() { // Apply theme immediately to prevent flash
+  const theme = localStorage.getItem('theme');
+  if (theme === 'light' || theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+})();
+</script>
+</head>
+<body class="smallhead">
+
+<div id="smallhead">
+  <div id="smallhead-inner">
+    <h1><a href="/">Simon Willison’s Weblog</a></h1>
+    <a id="smallhead-about" href="/about/#subscribe">Subscribe</a>
+  </div>
+</div><!-- #smallhead -->
+
+
+<div id="sponsored-banner" class="sponsor-scheme-sky">
+  <div id="sponsored-banner-inner">
+    <strong class="sponsored-label">Sponsored by:</strong> <a href="https://fandf.co/4daZLgh" rel="sponsored noopener" target="_blank">WorkOS</a> &mdash; Make your app Enterprise Ready with SSO, SCIM, RBAC, and more.
+  </div>
+</div>
+
+
+<div id="wrapper">
+<div id="primary">
+
+<div class="entry entryPage">
+
+
+<div data-permalink-context="/2026/May/6/vibe-coding-and-agentic-engineering/">
+<h2>Vibe coding and agentic engineering are getting closer than I’d like</h2>
+<p class="mobile-date">6th May 2026</p>
+
+
+
+<p>I recently talked with Joseph Ruscio about AI coding tools for Heavybit’s High Leverage podcast: <a href="https://www.heavybit.com/library/podcasts/high-leverage/ep-9-the-ai-coding-paradigm-shift-with-simon-willison">Ep. #9, The AI Coding Paradigm Shift with Simon Willison</a>. Here are some of my highlights, including my disturbing realization that vibe coding and agentic engineering have started to converge in my own work.</p>
+<p>One thing I really enjoy about podcasts is that they sometimes push me to think out loud in a way that exposes an idea I’ve not previously been able to put into words.</p>
+<h4 id="vibe-coding-and-agentic-engineering-are-starting-to-overlap">Vibe coding and agentic engineering are starting to overlap</h4>
+<p>A few weeks after vibe coding was first coined I published <a href="https://simonwillison.net/2025/Mar/19/vibe-coding/">Not all AI-assisted programming is vibe coding (but vibe coding rocks)</a>, where I firmly staked out my belief that “vibe coding” is a very different beast from responsible use of AI to write code, which I’ve since started to call <a href="https://simonwillison.net/guides/agentic-engineering-patterns/what-is-agentic-engineering/">agentic engineering</a>.</p>
+<p>When Joseph brought up the distinction between the two I had a sudden realization that they’re not nearly as distinct for me as they used to be:</p>
+<blockquote>
+<p>Weirdly though, those things have started to blur for me already, which is quite upsetting.</p>
+<p>I thought we had a very clear delineation where vibe coding is the thing where you’re not looking at the code at all. You might not even know how to program. You might be a non-programmer who asks for a thing, and gets a thing, and if the thing works, then great! And if it doesn’t, you tell it that it doesn’t work and cross your fingers.</p>
+<p>But at no point are you really caring about the code quality or any of those additional constraints. And my take on vibe coding was that it’s fantastic, provided you understand when it can be used and when it can’t.</p>
+<p>A personal tool for you, where if there’s a bug it hurts only you, go ahead!</p>
+<p>If you’re building software for other people, vibe coding is grossly irresponsible because it’s other people’s information. Other people get hurt by your stupid bugs. You need to have a higher level than that.</p>
+<p>This contrasts with agentic engineering where you are a professional software engineer. You understand security and maintainability and operations and performance and so forth. You’re using these tools to the highest of your own ability. I’m finding the scope of challenges I can take on has gone up by a significant amount because I’ve got the support of these tools.</p>
+<p>But I’m still leaning on my 25 years of experience as a software engineer.</p>
+<p>The goal is to build high quality production systems: if you’re building lower quality stuff faster, I think that’s bad. I want to build <em>higher</em> quality stuff faster. I want everything I’m building to be better in every way than it was before.</p>
+<p>The problem is that as the coding agents get more reliable, I’m not reviewing every line of code that they write anymore, even for my production level stuff.</p>
+<p>I know full well that if you ask Claude Code to build a JSON API endpoint that runs a SQL query and outputs the results as JSON, it’s just going to do it right. It’s not going to mess that up. You have it add automated tests, you have it add documentation, you know it’s going to be good.</p>
+<p>But I’m not reviewing that code. And now I’ve got that feeling of guilt: if I haven’t reviewed the code, is it really responsible for me to use this in production?</p>
+<p>The thing that really helps me is thinking back to when I’ve worked at larger organizations where I’ve been an engineering manager. Other teams are building software that my team depends on.</p>
+<p>If another team hands over something and says, “hey, this is the image resize service, here’s how to use it to resize your images”... I’m not going to go and read every line of code that they wrote.</p>
+<p>I’m going to look at their documentation and I’m going to use it to resize some images. And then I’m going to start shipping my own features. And if I start running into problems where the image resizer thing appears to have bugs or the performance isn’t good, that’s when I might dig into their Git repositories and see what’s going on. But for the most part I treat that as a semi-black box that I don’t look at until I need to.</p>
+<p>I’m starting to treat the agents in the same way. And it still feels uncomfortable, because human beings are accountable for what they do. A team can build a reputation. I can say “I trust that team over there. They built good software in the past. They’re not going to build something rubbish because that affects their professional reputations.”</p>
+<p>Claude Code does not have a professional reputation! It can’t take accountability for what it’s done. But it’s been proving itself anyway—time and time again it’s churning out straightforward things and doing them right in the style that I like.</p>
+</blockquote>
+<p>There’s an element of <a href="https://simonwillison.net/2025/Dec/10/normalization-of-deviance/">the normalization of deviance</a> here—every time a model turns out to have written the right code without me monitoring it closely there’s a risk that I’ll trust it at the wrong moment in the future and get burned.</p>
+<h4 id="the-new-challenge-of-evaluating-software">The new challenge of evaluating software</h4>
+<blockquote>
+<p>It used to be if you found a GitHub repository with a hundred commits and a good readme and automated tests and stuff, you could be pretty sure that the person writing that had put a lot of care and attention into that project.</p>
+<p>And now I can knock out a git repository with a hundred commits and a beautiful readme and comprehensive tests of every line of code in half an hour! It looks identical to those projects that have had a great deal of care and attention. Maybe it is as good as them. I don’t know. I can’t tell from looking at it. Even for my <em>own</em> projects, I can’t tell.</p>
+<p>So I realized what I value more than the quality of the tests and documentation is that I want somebody to have <em>used</em> the thing. If you’ve got a vibe coded thing which you have used every day for the past two weeks, that’s much more valuable to me than something that you’ve just spat out and hardly even exercised.</p>
+</blockquote>
+<h4 id="the-bottlenecks-have-shifted">The bottlenecks have shifted</h4>
+<blockquote>
+<p>If you can go from producing 200 lines of code a day to 2,000 lines of code a day, what else breaks? The entire software development lifecycle was, it turns out, designed around the idea that it takes a day to produce a few hundred lines of code. And now it doesn’t.</p>
+<p>It’s not just the downstream stuff, it’s the upstream stuff as well. I saw <a href="https://simonwillison.net/2026/Jan/24/dont-trust-the-process/">a great talk by Jenny Wen</a>, who’s the design leader at Anthropic, where she said we have all of these design processes that are based around the idea that you need to get the design <em>right</em>—because if you hand it off to the engineers and they spend three months building the wrong thing, that’s catastrophic.</p>
+<p>There’s this whole very extensive design process that you put in place because that design results in expensive work. But if it doesn’t take three months to build, maybe the design process can be a whole lot riskier because cost, if you get something wrong, has been reduced so much.</p>
+</blockquote>
+<h4 id="why-i-m-still-not-afraid-for-my-career">Why I’m still not afraid for my career</h4>
+<blockquote>
+<p>When I look at my conversations with the agents, it’s very clear to me that this is moon language for the vast majority of human beings.</p>
+<p>There are a whole bunch of reasons I’m not scared that my career as a software engineer is over now that computers can write their own code, partly because these things are amplifiers of existing experience. If you know what you’re doing, you can run so much faster with them. [...]</p>
+<p>I’m constantly reminded as I work with these tools how hard the thing that we do is. Producing software is a <em>ferociously</em> difficult thing to do. And you could give me all of the AI tools in the world and what we’re trying to achieve here is still really difficult. [...]</p>
+<p>Matthew Yglesias, who’s a political commentator, yesterday <a href="https://twitter.com/mattyglesias/status/2049105745132585161">tweeted</a>, “Five months in, I think I’ve decided that I don’t want to vibecode — I want professionally managed software companies to use AI coding assistance to make more/better/cheaper software products that they sell to me for money.” And that feels about right to me. I can plumb my house if I watch enough YouTube videos on plumbing. I would rather hire a plumber.</p>
+</blockquote>
+<p>On the threat to SaaS providers of companies rolling their own solutions instead:</p>
+<blockquote>
+<p>I just realized it’s the thing I said earlier about how I only want to use your side project if you’ve used it for a few weeks. The enterprise version of that is I don’t want a CRM unless at least two other giant enterprises have successfully used that CRM for six months. [...] You want solutions that are proven to work before you take a risk on them.</p>
+</blockquote>
+
+
+</div>
+<div class="entryFooter">Posted <a href="/2026/May/6/">6th May 2026</a> at 2:24 pm &middot; Follow me on <a href="https://fedi.simonwillison.net/@simon">Mastodon</a>, <a href="https://bsky.app/profile/simonwillison.net">Bluesky</a>, <a href="https://twitter.com/simonw">Twitter</a> or <a href="https://simonwillison.net/about/#subscribe">subscribe to my newsletter</a></div>
+<p class="edit-page-link" data-admin-url="/admin/blog/entry/9276/" style="display: none;"></p>
+
+</div>
+
+<div class="recent-articles">
+<h2>More recent articles</h2>
+<ul class="bullets">
+  
+    <li><a href="/2026/May/7/xai-anthropic/">Notes on the xAI/Anthropic data center deal</a> - 7th May 2026</li>
+  
+    <li><a href="/2026/May/6/code-w-claude-2026/">Live blog: Code w/ Claude 2026</a> - 6th May 2026</li>
+  
+</ul>
+</div>
+
+
+</div> <!-- #primary -->
+
+<div id="secondary">
+
+<div class="metabox">
+<p class="this-is">This is <strong>Vibe coding and agentic engineering are getting closer than I’d like</strong> by Simon Willison, posted on <a href="/2026/May/6/">6th May 2026</a>.</p>
+
+
+    
+        <a class="item-tag" href="/tags/ai/" rel="tag">
+            ai
+            <span>2009</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/generative-ai/" rel="tag">
+            generative-ai
+            <span>1780</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/llms/" rel="tag">
+            llms
+            <span>1746</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/podcast-appearances/" rel="tag">
+            podcast-appearances
+            <span>39</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/vibe-coding/" rel="tag">
+            vibe-coding
+            <span>90</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/coding-agents/" rel="tag">
+            coding-agents
+            <span>198</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/agentic-engineering/" rel="tag">
+            agentic-engineering
+            <span>48</span>
+        </a>
+    
+
+
+<p><strong>Next:</strong> <a href="/2026/May/6/code-w-claude-2026/">Live blog: Code w/ Claude 2026</a></p>
+
+
+<p><strong>Previous:</strong> <a href="/2026/Apr/29/llm/">LLM 0.32a0  is a major backwards-compatible refactor</a></p>
+
+
+<section style="
+    /* .promo */
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    /* .variant-a */
+    border: 2px solid #6c3eb9;
+  ">
+  <h3 style="
+      /* h3 */
+      margin: 0 0 0.5rem;
+      font-size: 1.25rem;
+    ">
+    Monthly briefing
+  </h3>
+  <p style="
+      /* p */
+      margin: 0 0 1rem;
+      line-height: 1.4;
+    ">
+    Sponsor me for <strong>$10/month</strong> and get a curated email digest of the month's most important LLM developments.
+  </p>
+  <p style="
+      /* p */
+      margin: 0 0 1rem;
+      line-height: 1.4;
+    ">
+    Pay me to send you less!
+  </p>
+  <a href="https://github.com/sponsors/simonw/" style="
+      /* a.button */
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: #6c3eb9;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 600;
+    ">
+    Sponsor &amp; subscribe
+  </a>
+</section>
+</div>
+
+
+
+</div> <!-- #secondary -->
+</div> <!-- #wrapper -->
+
+
+
+
+
+
+
+
+
+
+
+<div id="ft">
+    <ul>
+      <li><a href="/about/#disclosures">Disclosures</a></li>
+      <li><a href="/about/#about-site">Colophon</a></li>
+      <li>&copy;</li>
+      <li><a href="/2002/">2002</a></li>
+      <li><a href="/2003/">2003</a></li>
+      <li><a href="/2004/">2004</a></li>
+      <li><a href="/2005/">2005</a></li>
+      <li><a href="/2006/">2006</a></li>
+      <li><a href="/2007/">2007</a></li>
+      <li><a href="/2008/">2008</a></li>
+      <li><a href="/2009/">2009</a></li>
+      <li><a href="/2010/">2010</a></li>
+      <li><a href="/2011/">2011</a></li>
+      <li><a href="/2012/">2012</a></li>
+      <li><a href="/2013/">2013</a></li>
+      <li><a href="/2014/">2014</a></li>
+      <li><a href="/2015/">2015</a></li>
+      <li><a href="/2016/">2016</a></li>
+      <li><a href="/2017/">2017</a></li>
+      <li><a href="/2018/">2018</a></li>
+      <li><a href="/2019/">2019</a></li>
+      <li><a href="/2020/">2020</a></li>
+      <li><a href="/2021/">2021</a></li>
+      <li><a href="/2022/">2022</a></li>
+      <li><a href="/2023/">2023</a></li>
+      <li><a href="/2024/">2024</a></li>
+      <li><a href="/2025/">2025</a></li>
+      <li><a href="/2026/">2026</a></li>
+      <li>
+        <button id="theme-toggle" type="button" aria-label="Toggle theme">
+          <!-- Auto/System icon (default) -->
+          <svg id="icon-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2V4a8 8 0 1 0 0 16z"/></svg>
+          <!-- Light icon -->
+          <svg id="icon-light" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none"><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></svg>
+          <!-- Dark icon -->
+          <svg id="icon-dark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none"><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></svg>
+        </button>
+      </li>
+    </ul>
+</div>
+
+
+
+<style>image-gallery:not(:defined) img {max-height: 150px;} captioned-image-gallery:not(:defined) > figure {max-height: 240px; overflow: hidden;}</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('h2[id],h3[id],h4[id],h5[id],h6[id]').forEach(el => {
+    const id = el.getAttribute('id');
+    const permalinkContext = el.closest('[data-permalink-context]');
+    if (permalinkContext) {
+      const url = permalinkContext.getAttribute('data-permalink-context');
+      const hashLink = document.createElement('a');
+      hashLink.style.borderBottom = 'none';
+      hashLink.style.color = '#666';
+      hashLink.style.fontSize = '1em';
+      hashLink.style.opacity = 0.8;
+      hashLink.setAttribute('href', url + '#' + id);
+      hashLink.innerText = '#';
+      el.appendChild(document.createTextNode('\u00A0'));
+      el.appendChild(hashLink);
+    }
+  });
+});
+</script>
+<script type="module">
+const config = [
+  {"tag": "lite-youtube", "js": "/static/lite-yt-embed.js", "css": "/static/lite-yt-embed.css"},
+  {"tag": "image-gallery", "js": "/static/image-gallery.js", "css": null},
+  {"tag": "captioned-image-gallery", "js": "/static/captioned-image-gallery.js", "css": null}
+];
+for (const {tag, js, css} of config) {
+  if (document.querySelector(tag)) {
+    if (css) {
+      document.head.appendChild(
+        Object.assign(document.createElement('link'), {
+          rel: 'stylesheet',
+          href: css
+        })
+      );
+    }
+    if (js) {
+      await import(js);
+    }
+  }
+}
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.localStorage.getItem('ADMIN')) {
+      document.querySelectorAll('.edit-page-link').forEach(el => {
+        const url = el.getAttribute('data-admin-url');
+        if (url) {
+          const a = document.createElement('a');
+          a.href = url;
+          a.className = 'edit-link';
+          a.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit';
+          el.appendChild(a);
+          el.style.display = 'block';
+        }
+      });
+    }
+  });
+</script>
+<script>
+// Random tag navigation - shows button if recently came from tag random
+(function() {
+  const stored = localStorage.getItem('random_tag');
+  if (!stored) return;
+
+  try {
+    const data = JSON.parse(stored);
+    const elapsed = Date.now() - data.timestamp;
+
+    // Only show if within 5 seconds
+    if (elapsed > 5000) return;
+
+    const header = document.getElementById('smallhead-inner');
+    if (!header) return;
+
+    const btn = document.createElement('a');
+    btn.href = '/random/' + encodeURIComponent(data.tag) + '/';
+    btn.className = 'random-tag-nav';
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"></circle></svg> Random ' + data.tag;
+
+    btn.addEventListener('click', function(e) {
+      // Bump the timestamp before navigating
+      localStorage.setItem('random_tag', JSON.stringify({
+        tag: data.tag,
+        timestamp: Date.now()
+      }));
+    });
+
+    // Insert before the Subscribe link
+    const subscribeLink = document.getElementById('smallhead-about');
+    if (subscribeLink) {
+      header.insertBefore(btn, subscribeLink);
+    } else {
+      header.appendChild(btn);
+    }
+  } catch (e) {
+    // Invalid JSON, clear it
+    localStorage.removeItem('random_tag');
+  }
+})();
+</script>
+<script>
+// Theme toggle functionality
+(function() {
+  const toggle = document.getElementById('theme-toggle');
+  const iconAuto = document.getElementById('icon-auto');
+  const iconLight = document.getElementById('icon-light');
+  const iconDark = document.getElementById('icon-dark');
+
+  // Theme states: 'auto' (default), 'light', 'dark'
+  function getTheme() {
+    return localStorage.getItem('theme') || 'auto';
+  }
+
+  function setTheme(theme) {
+    if (theme === 'auto') {
+      localStorage.removeItem('theme');
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      localStorage.setItem('theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    updateIcon(theme);
+  }
+
+  function updateIcon(theme) {
+    iconAuto.style.display = theme === 'auto' ? 'block' : 'none';
+    iconLight.style.display = theme === 'light' ? 'block' : 'none';
+    iconDark.style.display = theme === 'dark' ? 'block' : 'none';
+
+    // Update aria-label for accessibility
+    const labels = {
+      'auto': 'Theme: Auto (system preference). Click to switch to light.',
+      'light': 'Theme: Light. Click to switch to dark.',
+      'dark': 'Theme: Dark. Click to switch to auto.'
+    };
+    toggle.setAttribute('aria-label', labels[theme]);
+  }
+
+  // Cycle through themes: auto -> light -> dark -> auto
+  function cycleTheme() {
+    const current = getTheme();
+    const next = current === 'auto' ? 'light' : current === 'light' ? 'dark' : 'auto';
+    setTheme(next);
+  }
+
+  // Initialize
+  updateIcon(getTheme());
+  toggle.addEventListener('click', cycleTheme);
+})();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"42c41055028944ee9764ce8039f69a82","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

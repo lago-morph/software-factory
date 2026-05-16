@@ -1,0 +1,123 @@
+TITLE: The one scarce resource AI can't replace - by Sam Schillace
+URL: https://sundaylettersfromsam.substack.com/p/laundry-lists-and-building-blocks
+
+Sunday Letters
+
+SubscribeSign in
+
+The one scarce resource AI can't replace
+
+Human attention is all you need
+
+Sam Schillace
+
+Feb 08, 2026
+
+7
+
+1
+
+1
+
+Share
+
+I have a team of people working on agentic coding - working with AI to build software, which, I hear, is all the rage now. One frustration I had with the team this week was that nothing ever seems to get ���done���. Lots of tools, lots of one-offs, but nothing I would consider ���shipping software���. Then I realized - that���s wrong. I���m mapping to the old paradigm, which is common with a shift like this. Let���s think in terms of the new one. 
+
+AI can create a lot of software now. If you think if this as an all or nothing ���it���s shipped and done, or its junk���, you���re missing the point. Complaining that a team is building a lot of software they don���t ship, is a bit like complaining they write a shopping list for themselves each week but never publish it as a book. That���s not the point of a shopping list, and it���s not the point of most software right now. 
+
+Software is fundamentally a mediation between intention and action. Until recently, that mediation was difficult to create - it involved programmers, complex tools, long cycles. There was scarcity because of this, so it made sense to ���aggregate��� that intention into roughly equivalent blocks (���games���, ���productivity���, ���financial��� etc), and then build once for as many people as possible. Software has a nice property of low marginal cost, so the game was really straightforward: invest to build something the largest number of people wanted, then ship the heck out of it. 
+
+That shifted a little when services replaced desktop apps, and has continued to shift as it���s been easier and easier to create and distribute software - we can focus on narrower and smaller pieces of intention, and the instant nature of services means we can iterate and focus in on our audience. 
+
+AI based software reduces that friction even further, but it also changes the cost dynamic. It doesn���t make as much sense to build for everyone - it���s very easy now to create something for your narrow intention, in the moment, and then discard it after. So the bundling that���s the first part of that makes less sense. It also costs to distribute software now (inference cost). So even if you can build something broad, it has to have direct economic benefit for anyone using it, for the costs to make sense - we have margin now. 
+
+Those two pressures and changes to the friction of software creation mean the model and paradigm have completely changed. There will still be software that ships, just like there are still books - there are mass audiences, and it can make sense to serve them. But there is also a vast new set of intentions and needs that can be served transiently - shopping lists, if you will. 
+
+So what do software professionals build? There aren���t any professional shopping list builders (well, probably a few, but not many). The real constraint now, the thing that is scarce, and that will always be scarce is human attention. Each of us only has a certain amount of time during the day to pay attention. You can optimize a bit but you can���t fundamentally change it much - you can get leverage from what you pay attention to (which is why people have staff) and you can be disciplined about not wasting time, but fundamentally, you still only have a human brain to pay attention with. 
+
+That means there���s a high premium on low-maintenance building blocks. If you build something for a broad audience, it���s not very helpful if it increases their attentional load. It has to be something that has a clear job to do, does it well, doesn���t need care and feeding, and gets along well with others. 
+
+I think you can see a bit of this emerging in what the beginnings of an operating system for agents might be. Humans need features and hand-holding - we build complex software for them. Agents don���t care - they need clarity and efficiency. So simple, well-defined building blocks like github, markdown, html, yaml, python, rust, go, etc seem to be getting used more successfully. I built a presentation site for agents out of just html and git - not as full featured as a presentation application but much easier for it to use. I have a tool on my desktop that someone on my team built, called ���Attention Firewall���. It just watches background notifications and does filtering - much easier for it than integration with the dozen apps feeding into those notifications - but that would never work for human software. 
+
+Our challenge as software builders now is to get our minds into the new paradigm. It���s common to pattern match to the old paradigm when there is a shift like this. That can be useful in some ways, but it���s also urgent to recognize what has changed, and to keep our eye on what is actually urgent and constant across the change. 
+
+Subscribe
+
+Share
+
+7 Likes���
+1 Restack
+
+7
+
+1
+
+1
+
+Share
+
+Discussion about this post
+
+CommentsRestacks
+
+Alex Tolley 
+
+Feb 8
+
+I'm not clear how you envisage the industry to go. Small tools are libraies or functions that can be composed. Sounds like UNIX? Throwaway small applications? I don't see Joe or Jane Sixpack wanting to spend any time building them rather than looking for apps to download. [Actually, a browser extension that can build a shopping list to print from a grocery store website would be very nice!] What sort of software would need AI as part of its functioning? Is your team building such software or tools? (examples?)
+
+Will "packaged" software have AI embedded by default, or an add-in (like Excel add-in software)? I don't see much future for software that requires paying for AI tokens to keep functioning. But I can see AI embedded that can run locally on your computer. What sort of "killer" application might that be? 
+
+Like
+
+Reply
+
+Share
+
+TopLatestDiscussions
+
+I have seen the compounding teams
+
+It's more than spec or vibe coding
+
+Sep 28, 2025 ��� Sam Schillace
+
+34
+
+7
+
+2
+
+Vibe coding considered harmful, Lego code instead
+
+How to build better code with AI
+
+Apr 13, 2025 ��� Sam Schillace
+
+20
+
+6
+
+1
+
+The agent-shaped world
+
+The race is on, even if you can't see it
+
+Feb 22 ��� Sam Schillace
+
+30
+
+1
+
+See all
+
+Ready for more?
+
+Subscribe
+
+�� 2026 Sam schillace �� Privacy ��� Terms ��� Collection notice
+
+ Start your SubstackGet the app
+
+Substack is the home for great culture

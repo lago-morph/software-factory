@@ -1,0 +1,2010 @@
+TITLE: 2389-research/coven: Rust platform for orchestrating AI agents with tool capabilities and gRPC streaming
+URL: https://github.com/2389-research/coven
+
+Skip to content
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+Open menu
+
+Homepage (g then d) gGthen dD
+
+2389-research
+
+coven
+
+Type / to search
+
+Search or jump to���(forward slash) forward slash/
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+Search code, repositories, users, issues, pull requests...
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Provide feedback
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+We read every piece of feedback, and take your input very seriously.
+
+ 
+ 
+ Include my email address so I can be contacted
+
+ 
+ 
+ Cancel
+
+ Submit feedback
+
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Saved searches
+ 
+
+ 
+Use saved searches to filter your results more quickly
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ Cancel
+
+ Create saved search
+
+ 
+ 
+
+Chat with Copilot
+
+Create new...
+All issuesAll pull requestsAll repositories
+
+You have unread notifications(g then n) gGthen nN
+
+Open user navigation menu
+
+Repository navigation
+
+Code
+
+Issues1 (1)
+
+Pull requests
+
+Agents
+
+Actions
+
+Projects
+
+Security and quality
+
+Insights
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+Search code, repositories, users, issues, pull requests...
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Provide feedback
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+We read every piece of feedback, and take your input very seriously.
+
+ 
+ 
+ Include my email address so I can be contacted
+
+ 
+ 
+ Cancel
+
+ Submit feedback
+
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Saved searches
+ 
+
+ 
+Use saved searches to filter your results more quickly
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ Cancel
+
+ Create saved search
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+{{ message }}
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ Open in github.dev
+ Open in a new github.dev tab
+ Open in codespace
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ coven
+ 
+
+ Public
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+Watch0 (0)
+
+ 
+
+ 
+
+ 
+
+ Fork
+ 0
+ Fork your own copy of 2389-research/coven
+
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ Loading
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+Unstar this repository?
+
+ 
+
+ 
+
+ 
+
+ This will remove {{ repoNameWithOwner }} from the {{ listsWithCount }} that it's been added to.
+ 
+
+ 
+
+ 
+ 
+ 
+ Unstar
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ Starred
+ 4
+ 
+ 
+ 
+ 
+Add this repository to a list
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Lists
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Create list
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+ 
+
+ 
+ 
+ 
+ Star
+ 4
+ 
+ 
+ 
+ 
+Add this repository to a list
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Lists
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Create list
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+Watch0 (0)
+
+ 
+
+ 
+Fork your own copy of 2389-research/coven
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+Unstar this repository
+
+ 
+ 
+ 
+ 
+Add this repository to a list
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Lists
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Create list
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+ 
+
+ 
+ 
+ 
+Star this repository
+
+ 
+ 
+ 
+ 
+Add this repository to a list
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Lists
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Create list
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ Rust platform for orchestrating AI agents with tool capabilities and gRPC streaming
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 4
+ stars
+ 
+ 
+ 0
+ forks
+ 
+ 
+ 0
+ watching
+ 
+ 
+ 
+ 
+ Branches
+
+ 
+ Tags
+
+ 
+ 
+ 
+ Activity
+
+ 
+ 
+ Custom properties
+
+ 
+
+ 
+ 
+
+ 
+ Public repository
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+2389-research/coven
+
+ main
+
+1 Branch11 Tags
+
+ tT
+
+Go to file
+
+Add file
+Add file
+
+Code
+Open more actions menu
+
+Folders and files
+
+NameName
+Last commit message
+
+Last commit date
+
+Latest commit
+
+ 
+
+harperreed
+and
+claude
+
+fix: resolve clippy warnings across workspace
+Open commit detailssuccess
+3 months agoFeb 16, 2026
+
+36edb5c �� 3 months agoFeb 16, 2026
+
+History
+137 Commits
+Open commit details
+
+137 Commits
+
+.coven
+
+.coven
+
+feat(mux): add soul.md support for agent identity/personality
+
+3 months agoJan 31, 2026
+
+.github/workflows
+
+.github/workflows
+
+fix(ci): correct rust-toolchain action name
+
+3 months agoFeb 16, 2026
+
+.scratch-archive
+
+.scratch-archive
+
+chore: archive scratch scenario tests from pre-consolidation repos
+
+4 months agoJan 25, 2026
+
+.workgraph
+
+.workgraph
+
+fix: resolve nested tokio runtime panic in coven-tui-v2
+
+4 months agoJan 29, 2026
+
+crates
+
+crates
+
+fix: resolve clippy warnings across workspace
+
+3 months agoFeb 16, 2026
+
+docker
+
+docker
+
+feat: add docker compose, landing page, TUI history loading, and test���
+
+3 months agoFeb 3, 2026
+
+docs
+
+docs
+
+docs: add coven-log implementation plan
+
+3 months agoFeb 15, 2026
+
+e2e
+
+e2e
+
+feat(e2e): add Docker-based end-to-end test suite
+
+3 months agoFeb 1, 2026
+
+scripts
+
+scripts
+
+feat(release): add Android FFI bindings to release workflow
+
+4 months agoJan 29, 2026
+
+.dockerignore
+
+.dockerignore
+
+feat(e2e): add Docker-based end-to-end test suite
+
+3 months agoFeb 1, 2026
+
+.gitignore
+
+.gitignore
+
+feat: add codex/amplifier backends, replace coven-tui with tui-v2, en���
+
+3 months agoFeb 6, 2026
+
+.pre-commit-config.yaml
+
+.pre-commit-config.yaml
+
+feat(serve): add local embedded gateway for super-trusted mode
+
+3 months agoFeb 1, 2026
+
+CLAUDE.md
+
+CLAUDE.md
+
+fix: replace remaining fold references with coven
+
+4 months agoJan 25, 2026
+
+Cargo.lock
+
+Cargo.lock
+
+refactor(human): rewrite TUI as always-active chat app
+
+3 months agoFeb 16, 2026
+
+Cargo.toml
+
+Cargo.toml
+
+feat: add coven-log crate for shared logging setup
+
+3 months agoFeb 15, 2026
+
+Makefile
+
+Makefile
+
+feat: add coven-link to Makefile targets
+
+4 months agoJan 26, 2026
+
+README.md
+
+README.md
+
+docs: comprehensive documentation for all components
+
+4 months agoJan 25, 2026
+
+scenarios.jsonl
+
+scenarios.jsonl
+
+refactor: rename fold_client to coven_client in bindings
+
+4 months agoJan 28, 2026
+
+View all files
+
+Repository files navigation
+
+README
+
+Edit file
+
+coven
+
+A Rust-based platform for orchestrating AI agents with tool capabilities.
+
+What is coven?
+
+coven is an agent orchestration platform that connects AI agents (powered by Claude) to a central gateway, enabling:
+
+Multi-agent coordination - Run multiple specialized agents across workspaces
+
+Tool packs - Extend agent capabilities with modular tool bundles
+
+Real-time streaming - Bidirectional gRPC for instant response streaming
+
+Multiple frontends - Terminal UI, HTTP API, Matrix chat integration
+
+Architecture
+
+���������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+��� Frontends ���
+��� ��������������������������������������������� ��������������������������������������������� ��������������������������������������������� ��������������������������������������������� ���
+��� ��� coven-tui ��� ��� HTTP API ��� ��� Matrix ��� ��� coven-cli ��� ���
+��� ��� (Rust TUI) ��� ��� (clients) ��� ��� Bridge ��� ��� (unified) ��� ���
+��� ��������������������������������������������� ��������������������������������������������� ��������������������������������������������� ��������������������������������������������� ���
+���������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+ ��� ��� ��� ���
+ ��� ��� ��� ���
+���������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+��� coven-gateway (Go) ���
+��� ������������������������������������������������������������ ������������������������������������������������������������ ������������������������������������������������������������ ���
+��� ��� HTTP Server ��� ��� gRPC Server ��� ��� Pack Service ��� ���
+��� ��� (SSE events) ��� ��� (agent streams) ��� ��� (tool registry) ��� ���
+��� ������������������������������������������������������������ ������������������������������������������������������������ ������������������������������������������������������������ ���
+��� ��� ��� ��� ���
+��� ��������������������������������������������������������������������������������������������������������������������������������������� ���
+��� ��� ���
+��� ������������������������������������������������ ���
+��� ��� SQLite ��� ���
+��� ��� (threads, ��� ���
+��� ��� messages) ��� ���
+��� ������������������������������������������������ ���
+���������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+ ��� ��� ���
+ ��� ��� ���
+���������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+��� ��� Agents ��� ��� ���
+��� ��������������������������������������������� ��������������������������������������������������������������������� ��������������������������������������������������������������������� ���
+��� ��� coven-agent ��� ��� coven-swarm ��� ��� Tool Packs ��� ���
+��� ��� (single) ��� ��� (multi-workspace) ��� ��� (mcp, productivity) ��� ���
+��� ��������������������������������������������� ��������������������������������������������������������������������� ��������������������������������������������������������������������� ���
+���������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������������
+
+ 
+ 
+ 
+ 
+ 
+
+Components
+
+Component
+Language
+Description
+
+coven
+Rust
+This monorepo - agents, CLI, TUI, packs
+
+coven-gateway
+Go
+Central server - routing, storage, pack registry
+
+coven-proto
+Protobuf
+Shared protocol definitions
+
+Quick Start
+
+Prerequisites
+
+Rust 1.75+
+
+Go 1.21+ (for gateway)
+
+protoc (for proto generation)
+
+An Anthropic API key
+
+Build
+
+# Clone and build
+git clone https://github.com/2389-research/coven.git
+cd coven
+make build
+
+# Or build specific components
+make coven # CLI
+make coven-agent # Agent binary
+make coven-swarm # Swarm orchestrator
+
+ 
+ 
+ 
+ 
+ 
+
+Run
+
+# Start the gateway (separate repo)
+cd ../coven-gateway
+make build && ./bin/coven-gateway serve
+
+# Run a single agent
+./target/debug/coven-agent run --name my-agent --working-dir ~/projects/myproject
+
+# Or use the swarm for multiple workspaces
+./target/debug/coven-swarm supervisor
+
+ 
+ 
+ 
+ 
+ 
+
+Crates
+
+Core
+
+Crate
+Description
+
+coven-proto
+Protocol buffer definitions for gRPC
+
+coven-core
+Agent runtime, backends, and storage
+
+coven-grpc
+gRPC client utilities
+
+Agents
+
+Crate
+Description
+
+coven-agent
+Single-workspace agent binary
+
+coven-swarm
+Multi-workspace supervisor
+
+coven-swarm-core
+Shared swarm types
+
+coven-swarm-backend
+Pluggable Claude backends
+
+Clients & UI
+
+Crate
+Description
+
+coven-cli
+Unified command-line interface
+
+coven-tui
+Terminal user interface
+
+coven-client
+High-level gateway client
+
+coven-ssh
+SSH key authentication
+
+Packs
+
+Crate
+Description
+
+coven-pack
+Pack SDK for building tools
+
+mcp-bridge-pack
+Bridge to MCP servers
+
+productivity-pack
+Todo and notes tools
+
+test-pack
+Echo tools for testing
+
+Documentation
+
+Architecture - System design and data flow
+
+Agent Guide - Running and configuring agents
+
+Swarm Guide - Multi-workspace orchestration
+
+Pack Development - Building tool packs
+
+CLI Reference - Command-line usage
+
+Client Library - Using coven-client
+
+Configuration
+
+Configuration files live in ~/.config/coven/:
+
+~/.config/coven/
+��������� config.toml # Main agent config
+��������� agents/
+��� ��������� <name>.toml # Per-agent configs
+��������� swarm/
+ ��������� config.toml # Swarm config
+
+ 
+ 
+ 
+ 
+ 
+
+Data is stored in ~/.local/share/coven/:
+
+~/.local/share/coven/
+��������� threads.db # SQLite conversation store
+��������� sessions/ # Session state
+
+ 
+ 
+ 
+ 
+ 
+
+Environment Variables
+
+Variable
+Description
+Default
+
+ANTHROPIC_API_KEY
+API key for Claude
+Required
+
+ANTHROPIC_MODEL
+Model to use
+claude-sonnet-4-20250514
+
+COVEN_GATEWAY
+Gateway gRPC address
+localhost:50051
+
+COVEN_BACKEND
+Backend type (mux/cli)
+mux
+
+RUST_LOG
+Log level
+info
+
+Development
+
+make # check + test + clippy
+make build # debug build
+make release # release build
+make test # run tests
+make clippy # lint
+make fmt # format code
+
+# Run directly
+make run ARGS="..."
+make run-agent ARGS="..."
+make run-swarm ARGS="..."
+
+ 
+ 
+ 
+ 
+ 
+
+See CLAUDE.md for detailed development guidelines.
+
+License
+
+MIT
+
+ 
+
+ 
+
+ 
+
+ 
+About
+
+ 
+
+ Rust platform for orchestrating AI agents with tool capabilities and gRPC streaming
+ 
+
+ 
+Resources
+
+ 
+
+ 
+ 
+ Readme
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ Activity 
+
+ 
+
+ 
+ Custom properties 
+
+ 
+Stars
+
+ 
+
+ 
+ 4
+ stars 
+
+ 
+Watchers
+
+ 
+
+ 
+ 0
+ watching 
+
+ 
+Forks
+
+ 
+
+ 
+ 0
+ forks 
+
+ 
+
+ 
+ Report repository
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ Releases
+ 8
+
+ 
+ 
+ 
+
+ 
+
+ v0.5.5
+ 
+ Latest
+ 
+
+ 
+on Feb 16Feb 16, 2026
+
+ 
+
+ 
+
+ + 7 releases
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Packages
+ 
+
+ 
+
+ No packages published 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ Contributors
+ 2
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ harperreed
+ Harper Reed
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ claude
+ Claude
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+Languages
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ Rust
+ 86.2%
+ 
+ 
+
+ 
+
+ 
+ 
+ Shell
+ 5.1%
+ 
+ 
+
+ 
+
+ 
+ 
+ Swift
+ 3.4%
+ 
+ 
+
+ 
+
+ 
+ 
+ C
+ 2.1%
+ 
+ 
+
+ 
+
+ 
+ 
+ Go
+ 2.1%
+ 
+ 
+
+ 
+
+ 
+ 
+ Python
+ 1.0%
+ 
+ 
+
+ 
+
+ 
+ 
+ Makefile
+ 0.1%
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+Footer
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ �� 2026 GitHub, Inc.
+ 
+ 
+
+ 
+ 
+Footer navigation
+
+ 
+
+ 
+
+ Terms
+ 
+
+ 
+
+ Privacy
+ 
+
+ 
+
+ Security
+ 
+
+ 
+
+ Status
+ 
+
+ 
+
+ Community
+ 
+
+ 
+
+ Docs
+ 
+
+ 
+
+ Contact
+ 
+
+ 
+
+ 
+ 
+ Manage cookies
+ 
+ 
+
+ 
+ 
+ Do not share my personal information

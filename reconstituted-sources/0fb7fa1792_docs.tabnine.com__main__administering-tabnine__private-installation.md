@@ -1,0 +1,128 @@
+bars[](/main)
+
+search
+
+circle-xmark
+
+`⌘Ctrl``k`
+
+[Tabnine websitechevron-down](https://www.tabnine.com/)[Contact Sales](https://www.tabnine.com/contact-us/?utm_source=docs&utm_medium=organic&utm_campaign=docs)
+
+Moreellipsischevron-down
+
+[](/main)
+
+  * Welcomechevron-right
+
+    * [Overviewchevron-right](/main)
+    * [Support & Feedback](/main/welcome/support-and-feedback)
+
+  * Getting startedchevron-right
+
+    * [Installchevron-right](/main/getting-started/install)
+    * [Quickstart Guidechevron-right](/main/getting-started/quickstart)
+    * [Context Enginechevron-right](/main/getting-started/context-engine)
+    * [Tabnine Agentchevron-right](/main/getting-started/tabnine-agent)
+    * [Tabnine Chatchevron-right](/main/getting-started/tabnine-chat)
+    * [Tabnine Testingchevron-right](/main/getting-started/tabnine-testing)
+    * [Tabnine CLIchevron-right](/main/getting-started/tabnine-cli)
+    * [Code Completionschevron-right](/main/getting-started/code-completion)
+    * [Inline Actions](/main/getting-started/inline-actions)
+
+  * Administering Tabninechevron-right
+
+    * [Private Installationchevron-right](/main/administering-tabnine/managing-your-team)
+
+      * [Start and Manage a Team](/main/administering-tabnine/managing-your-team/start-a-team)
+      * [Managing Tabnine Teams](/main/administering-tabnine/managing-your-team/tabnine-teams)
+      * [Roles in an Enterprise](/main/administering-tabnine/managing-your-team/roles-in-an-enterprise)
+      * [Inviting users to your team](/main/administering-tabnine/managing-your-team/inviting-users-to-your-team)
+      * [Deactivating and reactivating users](/main/administering-tabnine/managing-your-team/deactivating-and-reactivating-users)
+      * [Deleting PII data of a deactivated user](/main/administering-tabnine/managing-your-team/deleting-pii-data-of-a-deactivated-user)
+      * [Reset user's password](/main/administering-tabnine/managing-your-team/deactivating-and-reactivating-users-1)
+      * [webhookTabnine APIs](/main/administering-tabnine/managing-your-team/tabnine-apis)
+      * [Monitoring & Logs](/main/administering-tabnine/managing-your-team/monitoring-tabnine)
+      * [Usage Reportschevron-right](/main/administering-tabnine/managing-your-team/reporting)
+      * [Settingschevron-right](/main/administering-tabnine/managing-your-team/settings)
+      * [IdP Sync](/main/administering-tabnine/managing-your-team/idp-sync)
+
+    * [memo-padRelease Notes](/main/administering-tabnine/release-notes)
+
+
+
+
+chevron-upchevron-down
+
+[gitbookPowered by GitBook](https://www.gitbook.com/?utm_source=content&utm_medium=trademark&utm_campaign=Y2qxVf5VTm3fmwP4B4Gx&utm_content=site_AIYf2)[gitbook](https://www.gitbook.com/?utm_source=content&utm_medium=trademark&utm_campaign=Y2qxVf5VTm3fmwP4B4Gx&utm_content=site_AIYf2)
+
+xmark
+
+block-quote On this pagexmark
+
+xmark
+
+copyCopychevron-down
+
+block-quoteOn this pageblock-quote
+
+  1. [Administering Tabnine](/main/administering-tabnine)
+
+
+
+# Private Installation
+
+Tabnine Enterprise customers have the option of deploying **a private, self-hosted** version of the Tabnine cluster.
+
+### 
+
+hashtag
+
+Options
+
+  * Virtual private cloud (VPC) on AWS, GCP, or Azure
+
+  * On-premises on your own servers
+
+
+
+
+* Private installations can be deployed in a completely air-gapped environment.
+
+### 
+
+hashtag
+
+Setup and Updates
+
+In a private installation deployment, the Tabnine team has no access to your servers, but the Tabnine professional team works with your team to set up and frequently update your Tabnine installation.
+
+### 
+
+hashtag
+
+System Requirements
+
+Tabnine's private installation has [minimal and recommended server specs](/main/welcome/readme/system-requirements#tabnine-cluster) for each type of deployment, which is based on the expected number of users.
+
+Read [VPC on-premises cluster requirements](/main/welcome/readme/system-requirements#tabnine-cluster).
+
+### 
+
+hashtag
+
+Have additional questions?
+
+If you want to learn more about Tabnine's private installation options, please [contact Salesarrow-up-right](https://www.tabnine.com/contact-us/?utm_source=docs&utm_medium=organic&utm_campaign=docs).
+
+Last updated 2 months ago
+
+Was this helpful?
+
+  * Options
+  * Setup and Updates
+  * System Requirements
+  * Have additional questions?
+
+
+
+Was this helpful?

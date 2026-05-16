@@ -1,0 +1,162 @@
+TITLE: I have seen the compounding teams - by Sam Schillace
+URL: https://sundaylettersfromsam.substack.com/p/i-have-seen-the-compounding-teams
+
+Sunday Letters
+
+SubscribeSign in
+
+Discover more from Sunday Letters
+
+How to think like a programmer, letters to my younger self, and system thinking
+
+Over 4,000 subscribers
+
+Subscribe
+
+By subscribing, you agree Substack's Terms of Use, and acknowledge its Information Collection Notice and Privacy Policy.
+
+Already have an account? Sign in
+
+I have seen the compounding teams
+
+It's more than spec or vibe coding
+
+Sam Schillace
+
+Sep 28, 2025
+
+34
+
+7
+
+2
+
+Share
+
+Quick bonus note for the more technical readers���
+
+A while back I wrote something to the effect of ���if AI is getting better and more productive, where are the ���compounding teams��� who show exponentially increasing output?��� 
+
+I think I���ve now seen at least two or three teams that seem to be showing this behavior. They���re not just doing ���vibe coding��� or using something like Claude Code or Codex out of the box, or even GitHub copilot. The teams that use those tools do get a boost to productivity, but it���s short term and limited1. 
+
+The teams that are compounding aren���t writing code at all. The each have built a framework (like the Amplifier framework) around a model. They will have some plumbing akin to Claude Code or Codex - something that has callback hooks, tool calling, and flow control, but then the system they build will be much more proactive. It will have a series of strategies, tools, opinions and behaviors that let it run more independently. 
+
+Most importantly, all of the teams I���ve seen doing this so far are making extensive use of low-level programming tools to give the system access to itself. All are heavily filesystem based, use git, use markdown, kubernetes, xml and other common tools. I suspect that the next wave of software at scale will be built on these programmer tools, even for non-programmers, the same way models will sometimes privately write code now to solve a hard problem asked by a non-coder. It���s fairly clear that these are good infrastructure for model-based action, since the models are so successful using them.
+
+The compounding comes from a ���build a tool for making a tool��� recursive mindset. These teams will automate everything they can, and will often tell the coding system ���you���ll need a tool for that, go ahead and build and use it��� - and then the system will do just that, checking it in to git and making it a permanent improvement. 
+
+All of these teams are overwhelmed with ideas now - that���s a common hallmark, because they are so productive that the new bottleneck is human attention. It���s common to have 5-10 processes running in parallel, and API spend is routinely hundreds of dollars a day (one team has a goal of getting to a thousand). I know teams with shipping products that have not directly touched or looked at code in multiple months (one jokingly considers a code review a ���firing offense��� because it means you���re in the way of the tool). 
+
+New work patterns are emerging around this capability. Coordination is the new challenge, and modular boundaries matter a lot. It���s much better to have two or three engineers who can design at this high level, working on well-defined but isolated pieces of functionality, than it is to have a large, mixed team. It���s hard to have some team members coding like this and others coding by hand, and it���s impossible to mix that in one repo. The models aren���t trusted - code has to execute, and acceptance tests are meaningful and constant. Problems have to be broken down into solvable pieces, though it���s likely that will change as better strategies are built into these coding systems and the models improve. 
+
+I think this is coming for most if not all knowledge work, too (see ���Code goes first���). I know of teams using this technique and these tools to do all kinds of research and to create multiple kinds of artifacts. A common idea is to connect user feedback back into the system to do proactive product planning, marketing or bug fixing. Other workflows are easy to imagine. 
+
+There is a lot left to do to make this more approachable (we have a lot to build still), and there are mindset changes and new skills to learn. This feels very much to me like seeing a PC, or a browser, or the iPhone, for the first time. The new, better way to do things is now very clear. It will take time for folks to understand and get comfortable with it, and there will for sure be folks who resist, as there always are.
+
+I���ve suspected for a while that this style of working was possible, that we needed meta-cognition and memory to make the models more effective. I���ve now seen it twice this week and I suspect there are many more out there finding the same patterns. I���m a believer now. 
+
+1
+
+I actually think there���s a bit of a trap here. Building one of the more advanced coding systems I���m talking about here takes a while to show benefits. It���s been something like 6 months of working on Amplifier and it���s only just now starting to be useful. It���s much easier to get a small bit of short term, non-compounding work out of a hybrid coding model. I think what we are starting to see is that the ���pure AI code��� maximalists are finally getting to the point where their systems work well enough (and the models are also getting good enough to support these ideas). 
+
+Subscribe to Sunday Letters
+
+By Sam Schillace �� Launched 5 years ago
+
+How to think like a programmer, letters to my younger self, and system thinking
+
+Subscribe
+
+By subscribing, you agree Substack's Terms of Use, and acknowledge its Information Collection Notice and Privacy Policy.
+
+34 Likes���
+2 Restacks
+
+34
+
+7
+
+2
+
+Share
+
+Discussion about this post
+
+CommentsRestacks
+
+Ken Chau 
+Sep 28, 2025Edited
+
+The name of the game is "context refinement" - some call it context engineering. I like to think that the real AI-first engineers are now doing context refinement to "line up shots". When you have gotten enough confidence, that's when we take that shot. Frameworks like amplifier, speckit, and BMAD all guide engineers to do this refinement. Yet all AI coding agent framework so far are developed for single player productivity: they provide a framework surrounding Claude Code or Codex to help you supplement your own skillset with that of an army of AI. Our next task to figure out how to leverage real experts with the help of these AI agents to lift the confidence level. 
+
+Over time, the investment made to the context and knowledge persisted will become more and more valuable. That way, even non-experts will step into the project and be able to contribute at a much higher level. 
+
+One more fun thing that we should consider is that we will very much depend on having MANY model providers with these kinds of tools because we will rely on them reviewing each others' work.
+
+Like (7)
+
+Reply
+
+Share
+
+1 reply
+
+Alex Tolley 
+
+Sep 28, 2025
+
+I hope you will be able to expand on this in future posts, perhaps with wire diagrams to show components and flow.
+
+Like (4)
+
+Reply
+
+Share
+
+5 more comments...
+
+TopLatestDiscussions
+
+Vibe coding considered harmful, Lego code instead
+
+How to build better code with AI
+
+Apr 13, 2025 ��� Sam Schillace
+
+20
+
+6
+
+1
+
+The agent-shaped world
+
+The race is on, even if you can't see it
+
+Feb 22 ��� Sam Schillace
+
+30
+
+1
+
+Bad programmers are about to become very exposed
+
+The tide is going out - maybe for more than just programming
+
+Dec 7, 2025 ��� Sam Schillace
+
+24
+
+3
+
+See all
+
+Ready for more?
+
+Subscribe
+
+�� 2026 Sam schillace �� Privacy ��� Terms ��� Collection notice
+
+ Start your SubstackGet the app
+
+Substack is the home for great culture

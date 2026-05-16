@@ -1,0 +1,161 @@
+TITLE: Coven ��� 2389 Research, Inc
+URL: https://2389.ai/products/coven/
+
+Skip to content2389Products
+Blog
+Radio
+Work With Us
+About
+
+Platform
+Alpha
+Feb 26, 2026
+
+Coven
+
+Self-hosted AI agent orchestration. A Go gateway connects Claude Code, mux agents, native clients, and chat bridges over Tailscale.
+
+GitHub
+��� All Products
+
+We're actively building this ���
+
+Coven is an agent orchestration platform you run on your own infrastructure. It connects AI agents ��� Claude Code sessions, mux-based agents, or anything that speaks gRPC ��� to a central gateway that handles routing, identity, persistence, and tool access. Clients connect from a native iOS/macOS app, a terminal UI, or chat platforms like Matrix, Slack, and Telegram. Everything runs over Tailscale, so nothing touches the public internet.
+
+Install
+
+Build from source. The system has four components:
+
+# Gateway (Go)
+cd coven-gateway
+make
+
+# Agents and TUI (Rust)
+cd coven
+cargo build --workspace
+
+# iOS/macOS app
+cd coven-app/CovenApp
+xtool build
+
+# Link a device to your gateway
+coven-link <gateway-address>
+
+What it does
+
+Message routing. The gateway sits between agents and everything else. HTTP clients, gRPC clients, Matrix rooms, Slack channels, and Telegram chats all send messages through the gateway, which routes them to the right agent and streams responses back in real-time. Every message is persisted to SQLite.
+
+Agent backends. Coven ships its own Rust agent runtime built on mux for LLM interaction and tool execution. It also works with Claude Code as an agent backend. The swarm supervisor can manage multiple workspace agents simultaneously, dispatching messages across them.
+
+Identity and auth. Ed25519 keypairs for all principals (agents, clients, packs). JWT session tokens for ongoing connections. SSH fingerprint verification. Admin-managed capability grants control which agents can use which tools. Everything is audit-logged.
+
+Tool packs. Packs are plugin processes that register tools with the gateway over gRPC. The MCP bridge pack wraps any MCP server and exposes its tools to agents automatically. The productivity pack adds todo and notes with SQLite storage. Build your own with the Rust pack SDK: implement the ToolHandler trait and register a manifest.
+
+Native clients. The iOS/macOS SwiftUI app talks to the gateway through a Rust FFI layer (CovenKit, built with UniFFI). The TUI (Ratatui-based) connects over gRPC. Both support streaming responses, tool use display, and multi-agent switching.
+
+Chat bridges. Matrix (with E2EE), Slack (Socket Mode), and Telegram (long polling) bridges connect existing chat platforms to coven agents. Each bridge maps platform channels to gateway conversation keys. Messages are deduplicated at the gateway.
+
+How it works
+
+Three layers:
+
+Gateway (Go) ��� The control plane. Manages gRPC streams to agents, HTTP/SSE to web clients, and an MCP-compatible HTTP endpoint. Persists threads, messages, bindings, and audit logs in SQLite. Joins your tailnet via tsnet.
+
+Agents (Rust) ��� Stateful workers. Each agent connects to the gateway, receives messages, runs an LLM loop via mux, executes tool calls, and streams results back. The swarm supervisor manages multiple agents across workspaces.
+
+Clients and bridges ��� iOS app, TUI, web frontend, and platform bridges. Thin layers that send messages to the gateway and render streamed responses.
+
+Requirements
+
+Tailscale account and tailnet
+
+Go 1.22+ (gateway)
+
+Rust 2024 edition (agents, TUI, packs)
+
+Xcode 26+ or xtool (iOS/macOS app)
+
+At least one LLM API key (Anthropic, OpenAI, etc.)
+
+View on GitHub ���
+
+agents
+orchestration
+grpc
+rust
+go
+swift
+multi-agent
+tailscale
+mcp
+self-hosted
+claude-code
+collaboration
+infrastructure
+
+31 products
+��
+12 skills
+��
+16 tools
+��
+3 platforms
+��
+5 building
+��
+hugo 0.148.2
+��
+02a0377
+��
+built May 13 16:25
+
+2389
+2389 Research, Inc. pioneers AI integration for work and communication. Founded June 2024 by Harper Reed and Dylan Richard, we aim to redefine AI-driven collaboration. As an early-stage startup, we seek exceptional talent to help shape this future.
+
+Founded 2024
+���
+Chicago
+
+Products
+Skills Marketplace
+Mammoth
+BotBoard
+Smasher
+All Products ���
+
+Company
+About
+Blog
+Digest
+Shop
+Team
+
+Connect
+
+hello@2389.ai
++1 (814) 666-2389
+
+Newsletter
+
+Updates on our experiments and releases.
+
+Email address
+
+���
+
+�� 2026
+2389 Research, Inc
+Privacy
+��
+Terms
+��
+NDA
+��
+SecurityEN
+JA
+ES
+
+2389 Radio ���
+
+2389 RADIO
+Select a station

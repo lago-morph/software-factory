@@ -1,0 +1,852 @@
+TITLE: From Principles to Practice: The 48 Controls That Make Responsible AI Auditable, Defensible, and Real - CodeX - Stanford Law School
+URL: https://law.stanford.edu/2026/02/16/from-principles-to-practice-the-48-controls-that-make-responsible-ai-auditable-defensible-and-real/
+
+Skip to main content 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ Menu
+ 
+
+ 
+
+ 
+ 
+ 
+ SLS 
+ 
+
+ |SLS Blogs
+ 
+
+ 
+
+ 
+
+ SLS Blogs/CodeX 
+
+ 
+
+ 
+ 
+ Search
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ Hide
+ Stanford Law School
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ Explore
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ About
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Education
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Apply
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Areas of Interest
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Faculty & Research
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ News & Media
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Programs & Centers
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Community
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Careers
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+Event Calendar
+
+ 
+ 
+Archived Events
+
+ 
+ 
+Faculty Directory
+
+ 
+ 
+Full Directory
+
+ 
+ 
+Law Library
+
+ 
+ 
+ 
+SLS Login
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+ I am a 
+Future 
+Student
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am a 
+Current 
+Student
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am a Faculty 
+Member
+ 
+ 
+ 
+ 
+ 
+ 
+ I am a Staff 
+Member
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ I am an 
+Alum
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am an 
+Employer
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am a 
+Journalist
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am a 
+Visitor
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+From Principles to Practice: The 48 Controls That Make Responsible AI Auditable, Defensible, and Real
+
+ 
+
+ 
+
+ 
+ February 16, 2026 
+ 
+
+ 
+
+ By
+ 
+ 
+Eran Kahana
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+ Subscribe 
+ 
+
+ 
+
+ Share on Twitter 
+
+ 
+
+ Share on Facebook 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+What is the Controls Table?
+
+The Controls table is one of 13 tables that comprise the AI Life Cycle Core Principles (AILCCP) framework. (A public-facing version of the AILCCP is available here.)
+
+The Controls table (currently) contains 48 actionable controls ���specific mechanisms, policies, and technical safeguards that translate abstract AI principles into concrete, implementable measures. Each control is classified by domain, function, and principle alignment, enabling organizations to systematically operationalize responsible AI governance across the entire system lifecycle. It transforms the AILCCP from a conceptual framework into an operational toolkit.
+
+Note: The number of controls expands as my research advances and evolves.
+
+Structure at a Glance
+
+Attribute
+Coverage
+
+Total Controls
+48
+
+Control Domains
+Security, Technical, Governance, Monitoring, Testing & Assurance, Regulatory, Documentation, Safety, Process, Transparency, Maintenance
+
+Control Functions
+Preventive, Detective, Directive, Corrective, Compensating, External Benchmarking
+
+Principle Linkages
+Each control maps to relevant principles (e.g., Security, Accountability, Privacy, Safety)
+
+Five Practical Use Cases
+
+Use Case
+Description
+Example Controls
+
+Regulatory Compliance Readiness
+Filter controls by domain (e.g., ���Regulatory���, ���Governance���) to identify which mechanisms satisfy EU AI Act, ISO/IEC 42001, or sector-specific requirements. Use the principle alignment field to demonstrate coverage across transparency, accountability, and safety mandates.
+Government Issued Permit, Certification, OWASP AI Exchange Compliance
+
+Security Threat Mitigation
+Deploy preventive and detective controls from the Security domain to protect AI systems against adversarial attacks, prompt injection, data poisoning, and model extraction. Map controls to the Security and Privacy principles for audit evidence.
+OWASP AI Exchange Compliance, Supply Chain Vetting, Multi-Agent Protocol Security, Confidential Computing Environment
+
+AI Incident Response Planning
+Identify corrective controls (e.g., kill switches, rollback mechanisms) to build incident response runbooks. Link these to Safety and Accountability principles to ensure rapid containment and defensible audit trails.
+Agent Kill Switch, Rollback and Quarantine, Rate and Scope Limiter, Intervention Audit Trail
+
+Board-Level Risk Governance
+Use governance and monitoring controls to establish executive oversight cadences, acceptance thresholds, and KPI dashboards. Align with Governance, Accountability, and Metrics principles to support quarterly board reviews.
+Acceptance Threshold Governance, Culture & Capability Index, Adoption & Acceptance Forecasting
+
+Third-Party Vendor Assessment
+Apply supply chain and documentation controls when onboarding AI vendors or integrating third-party models. Demonstrate due diligence by linking to Accountability, Security, and Data Stewardship principles.
+Supply Chain Vetting, Context-to-Output Lineage, Continuous Validation, Certificatio
+
+An Operational Toolkit
+
+The Controls table transforms the AILCCP from a conceptual framework into an operational toolkit.
+
+Organizations can:
+
+Trace compliance from high-level principles down to specific controls and evidence artifacts
+
+Customize governance by selecting controls appropriate to their risk profile and regulatory environment
+
+Demonstrate accountability through documented control rationales and principle alignments
+
+Scale responsibly by applying proportionate controls as AI capabilities evolve
+
+This structured approach ensures that responsible AI is not just aspirational���it is auditable, defensible, and actionable.
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+Category: 
+Uncategorized
+ 
+
+ 
+Tags: 
+AI governance, 
+ 
+Eran Kahana
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ Subscribe 
+ 
+
+ 
+
+ Share on Twitter 
+
+ 
+
+ Share on Facebook 
+
+ 
+
+ 
+ 
+ 
+Post Pagination
+
+ 
+
+ 
+
+ 
+ Previous Article
+ CBC Project ��� February 12, 2026 Codex Group Meeting 
+ 
+
+ 
+ 
+
+ 
+ Next Article
+ The evolving role of the CLO in an era of climate and sustainability accountability and risk management  
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Crown Quadrangle
+
+ 559 Nathan Abbott Way
+
+ Stanford,
+ CA
+ 94305-8610
+ 
+
+ 
+ 
+Phone: 650.723.2465
+
+ 
+Fax: 650.725.0253
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ Follow Us on X
+ 
+
+ 
+
+ 
+ Follow Us on Facebook
+ 
+
+ 
+
+ 
+ Follow Us on YouTube
+ 
+
+ 
+
+ 
+ Follow Us on Instagram
+ 
+
+ 
+
+ 
+ Follow Us on LinkedIn
+ 
+
+ 
+
+ 
+ Subscribe to our RSS feeds
+ 
+
+ 
+
+ 
+
+ 
+Secondary Navigation
+
+ 
+ 
+I am ...
+
+ 
+ 
+Future Student
+
+Current Student
+
+I am a Staff Member
+
+I am a Faculty Member
+
+Alum
+
+Employer
+
+Journalist
+
+ 
+ 
+ 
+ 
+ 
+About
+
+ 
+ 
+About SLS
+
+ABA-Required Disclosures
+
+Visiting Campus
+
+Web Accessibility
+
+Website Feedback
+
+Giving at SLS
+
+ 
+ 
+ 
+ 
+ 
+Education
+
+ 
+ 
+Degrees
+
+Courses
+
+JD Graduation Information
+
+Executive Education
+
+ 
+ 
+ 
+ 
+ 
+Research
+
+ 
+ 
+Faculty Research
+
+Robert Crown Law Library
+
+Publications
+
+Student Journals
+
+ 
+ 
+ 
+ 
+
+ 
+Community
+
+ 
+ 
+Student Life
+
+Events
+
+Faculty Directory
+
+Organizations
+
+ 
+ 
+ 
+Careers
+
+ 
+ 
+Legal Careers
+
+Jobs at SLS
+
+ 
+ 
+ 
+ 
+ 
+ 
+News & Media
+
+ 
+ 
+News Center
+
+Media Coverage
+
+SLS Blogs
+
+Stanford Lawyer Magazine
+
+Video Center
+
+Social Media Hub
+
+SLS Newsletters
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+Stanford University Navigation
+
+ 
+ 
+Stanford Home
+
+Maps & Directions
+
+Search Stanford
+
+Emergency Info
+
+ 
+
+ 
+Legal Navigation
+
+ 
+ 
+Terms of Use
+
+Privacy
+
+Copyright
+
+Trademarks
+
+Non-Discrimination
+
+Accessibility
+
+ 
+ 
+��
+ Stanford University,
+ 
+ Stanford,
+ California
+ 94305.
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ Back to the Top 
+
+ 
+
+ 
+ 
+
+ 
+ �� Stanford University, Stanford, California, 94305-8610 | https://law.stanford.edu/2026/02/16/from-principles-to-practice-the-48-controls-that-make-responsible-ai-auditable-defensible-and-real/

@@ -104,3 +104,31 @@ Stratified PR descriptions ("Original plan: X; Update: actually Y; Update 2: …
 ### Why this earns its place in your agents file
 
 The plan's closing actions list "subscribe to PR activity" as a discrete step, which created ambiguity about whether to call `subscribe_pr_activity` even when a webhook had already announced subscription. The cleaner pattern is to treat auto-subscription as the *fulfilment* of the closing action, not as a redundant signal to ignore. Cost of the rule: zero (it just removes a step in some cases). Benefit: clarifies the contract between the closing-action checklist and the webhook stream, and saves one tool call per PR creation. Mark this rule as conditional ("if the webhook arrived") so plans that don't auto-subscribe still get the explicit subscribe call.
+
+---
+
+## Suggestion 8: Compute category count from the survey, not from the current-corpus shape
+
+### Proposed addition
+
+> **When designing a category taxonomy that will hold an *eventual* corpus (after restoration, after migration, after data arrives), compute the target category count from the survey-projected total — not from the currently-on-disk count.** Formula: `target_categories = ceil(estimated_total_sources / target_per_category)`. For an interim categorisation, also reserve empty categories for clusters the survey predicts but the current corpus does not yet contain — don't wait until restoration to discover that those clusters need a home. Empty categories are first-class; document them in the top-level inventory with a "(empty, reserved)" marker rather than creating placeholder directories.
+>
+> *Grounded in: PR #71 — survey projected ~180–220 sources at restoration; second pass produced 6 categories (33/cat avg = 2× the plan's ~5–15 ceiling); orchestrator caught the breach; third pass landed on 15 categories of which 6 are empty pending restoration.*
+
+### Why this earns its place in your agents file
+
+Categorisation done against the current corpus shape "feels right" because the categories all have content. It is also wrong by ~2× whenever the survey projects substantial future growth. The fix is mechanical — apply the formula at the start of category design and re-apply it whenever the survey count changes. The cost is one division. The cost of skipping is a full re-categorisation cycle (PR #71 had to redo `git mv` for 8 source units and update 3 sibling docs to absorb the missed sizing). Marginal cost of empty categories in the inventory: 6 table rows; marginal benefit: the taxonomy survives restoration without a third re-do. This is the rule that would have caught PR #71's pass 2 *during* pass 2, not after pass 3.
+
+---
+
+## Suggestion 9: `AskUserQuestion` option sets must include at least one option at or above the size-rule target
+
+### Proposed addition
+
+> **When using `AskUserQuestion` to confirm a sizing-sensitive decision** (taxonomy category count, batch size, retry count, chunk size, parallelism — any choice where the correct answer is bounded by a numeric target derived elsewhere), **the option set must include at least one option at or above the size-rule's target.** Otherwise the question presents the user with a choice between two-or-more equally-undersized answers, frames them as "fine-grained" vs "coarse" relative to each other, and gets a confident click — but the chosen answer is still below target. If you can't generate a target-meeting option, the question is premature; do the math first.
+>
+> *Grounded in: PR #71 — `AskUserQuestion` offered "fine-grained (6) vs coarser (4)" for a categorisation that should have been ~15. User picked fine-grained. The choice felt confirmed but was 2× under target. Caught only when the user manually checked the math one turn later.*
+
+### Why this earns its place in your agents file
+
+This is a recurring failure mode that masquerades as confirmation. The user sees two options, picks one, and the agent treats the choice as a green light — but if both options were under target, the green light is illusory. The rule forces the agent to do the sizing math *before* writing the question. Cost: one computation per `AskUserQuestion` of this kind. Benefit: prevents a third iteration on the same decision. The rule scopes cleanly ("sizing-sensitive decisions") so it doesn't impose overhead on yes/no questions or non-numeric choices.

@@ -8,6 +8,26 @@
 
 ---
 
+## Drain note (manual MHTML capture, Clusters E + F) — 2026-05-16
+
+**Status.** Four primary sources were drained from `research/manual/` on 2026-05-16 across two clusters (per the orchestrator's `research/manual/new-index.md` Cluster E and Cluster F blocks):
+
+**Cluster E (landed earlier on 2026-05-16):**
+
+1. **`developers.openai.com/codex/rules`** — the `.rules` Starlark DSL spec. Not previously anchored in this report (the term "rules" appeared only as the name of a `granular`-approval-policy *category* in §4). Drained as new §4.3 ("The `.rules` DSL — Starlark-anchored auditable auto-rejection").
+2. **`openai.com/index/running-codex-safely/`** — OpenAI security team blog (2026-05-08) on OpenAI-internal deployment posture. Previously in the "Cloudflare-blocked → Path B only" list (PLAN.md §3.3/§4.3); manual MHTML capture **demonstrates canonical fetch reachability via human-attended browser path** for the `openai.com/index/*` host class. Drained as new §4.4 ("Operational posture at OpenAI — the agent-native telemetry stack"). Directly addresses the still-🟡 "operational productivity numbers" gap flagged in §7.
+
+**Cluster F (this drain):**
+
+3. **`openai.com/index/harness-engineering/`** — Ryan Lopopolo's *"Harness engineering: leveraging Codex in an agent-first world"* (OpenAI, 2026-02-11). Previously anchored via the `celesteanders/harness` open-source mirror because the canonical URL Cloudflare-blocked the action runner. Manual MHTML capture re-verifies the §5 numbers, **refutes the prior author attribution** (Ryan Lopopolo, not Celia Chen — Chen wrote the App Server article a week earlier), **refines the headline 3.5 PRs/engineer/day figure** (canonical says the throughput was the small-team-of-three baseline and *increased* as the team grew to seven, contradicting the mirror-era framing that treated 3.5 as a flat average across the whole period), and adds net-new material — verbatim `docs/` tree layout, "Humans steer. Agents execute." line, six-hour single-agent runs, "20% of the week" pre-golden-principles cleanup overhead, end-to-end-feature autonomy ten-step list. §5 rewritten throughout.
+4. **`openai.com/index/unlocking-the-codex-harness/`** — Celia Chen's *"Unlocking the Codex harness: how we built the App Server"* (OpenAI, 2026-02-04). Previously anchored via the `newton20/harness-engineering-kb` open-source mirror. Manual capture re-verifies the §1 five-surface quote verbatim (Chen herself enumerates four interactive surfaces; the SDK as a fifth surface is the report's IA-based extrapolation, not Chen's own framing — and Chen describes Codex SDK as a *"TypeScript library"*, **refining** the report's "Python + TypeScript" surface-table cell which appears to reflect a later sdk-page state). Adds net-new material: the four-component App Server architecture (stdio reader / Codex message processor / thread manager / core threads), the "JSON-RPC lite" footnote (1) explicitly omitting the `"jsonrpc": "2.0"` header and framing as JSONL over stdio, the WebSocket-tunnelled-stdio footnote (2) for Codex Web, the MCP-was-insufficient origin story, the five-language client landscape (Go / Python / TypeScript / Swift / Kotlin), `codex app-server generate-ts` / `generate-json-schema` codegen primitives, and Chen's own pros/cons table for App Server vs. MCP vs. SDK vs. Exec.
+
+Provenance: drained from manual `research/manual/` capture on 2026-05-16 (the `openai.com/index/*` host was previously Cloudflare-blocked for the action runner; manual MHTML capture now anchors all four `openai.com/index/*` URLs in scope). All four new/upgraded sections carry `[2026-05-16 manual drain ✅]` (or `— NEW`) markers throughout.
+
+Cross-references: see followup/08-security-primitives.md §6 (operational-deployment companion to §4 threat-model framing) and followup/10-governance.md §5 (admin-enforced `requirements.toml` as concretization of the "automate policy so humans aren't in every loop" stance); followup/06-competitor-landscape.md gains a "compounding-team output rates" anchor pointing back to §5 (Cluster-F update, 2026-05-16).
+
+---
+
 ## Drain note (issue #41) — 2026-05-13
 
 **Status.** This report was originally built from WebSearch + open-source-mirror reconstruction because every `*.openai.com` URL 403s from this sandbox (consistent with `research/blocked-urls.md` v5). A GitHub-Actions-backed fetch run (issue #41) retrieved primary content for 5 of the 8 originally-🟡 rows in §0.
@@ -41,26 +61,36 @@ Status legend: ✅ primary URL reachable (or successfully primary-fetched 2026-0
 | ID | URL | Status | Reconstruction route |
 |---|---|---|---|
 | S8 — Codex overview | `https://developers.openai.com/codex` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch + App Server article's surface enumeration). |
-| S9 — Harness engineering (2026-02-11) | `https://openai.com/index/harness-engineering/` | 🟡 | Cloudflare JS challenge at action runner 2026-05-13; action route exhausted for `openai.com/index/*` host. Verbatim quotes still via `raw.githubusercontent.com/celesteanders/harness/main/docs/research/260211_openai_harness_engineering_codex.md`; cross-checked vs. latent.space and swequiz.com. |
+| S9 — Harness engineering (Ryan Lopopolo, 2026-02-11) | `https://openai.com/index/harness-engineering/` | ✅ FULL | ✅ Primary MHTML capture drained on 2026-05-16 (`research/manual/Harness engineering_ leveraging Codex in an agent-first world _ OpenAI.txt`). Prior route was `raw.githubusercontent.com/celesteanders/harness/...` open-source mirror; the manual capture verifies the mirror reproduced the numbers accurately but **refutes prior author attribution** (the article is by Ryan Lopopolo, not Celia Chen — Chen wrote the App Server article a week earlier). The `openai.com/index/*` host was previously Cloudflare-blocked at the action runner — manual capture is the first canonical anchor. |
 | S10 — AGENTS.md | `https://developers.openai.com/codex/guides/agents-md` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch detailed extract; cross-checked vs. open-source `openai/codex/docs/agents_md.md` and `agents.md/` spec site). |
 | S11 — Subagents | `https://developers.openai.com/codex/subagents` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch extracts). |
 | S23 — Agent approvals & security | `https://developers.openai.com/codex/agent-approvals-security` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch + sibling `concepts/sandboxing` and `security` snippets). |
-| App Server article — Celia Chen, 2026-02-04 | `https://openai.com/index/unlocking-the-codex-harness/` | 🟡 | Cloudflare JS challenge at action runner 2026-05-13; action route exhausted for `openai.com/index/*` host. Verbatim re-host still via `raw.githubusercontent.com/newton20/harness-engineering-kb/master/raw/openai-com-index-unlocking-the-codex-harness.md`; cross-checked vs. infoq.com and `codex-rs/app-server/README.md`. |
+| App Server article — Celia Chen, 2026-02-04 | `https://openai.com/index/unlocking-the-codex-harness/` | ✅ FULL | ✅ Primary MHTML capture drained on 2026-05-16 (`research/manual/Unlocking the Codex harness_ how we built the App Server _ OpenAI.txt`). Prior route was `raw.githubusercontent.com/newton20/harness-engineering-kb/...` open-source mirror; the manual capture verifies the mirror reproduced the five-surface enumeration and Thread/Turn/Item definitions accurately, plus adds the four App Server components (stdio reader / Codex message processor / thread manager / core threads) and the JSON-RPC-lite framing footnote. The `openai.com/index/*` host was previously Cloudflare-blocked at the action runner — manual capture is the first canonical anchor. |
 | Open-source `codex-rs/app-server/README.md` | `github.com/openai/codex/blob/main/codex-rs/app-server/README.md` | ✅ | JSON-RPC 2.0 transports, Thread/Turn/Item primitives, endpoint surface. |
 | Open-source `docs/agents_md.md` | `github.com/openai/codex/blob/main/docs/agents_md.md` | ✅ | Confirms `child_agents_md` config-toml feature flag. |
 | Cloud-env docs | `https://developers.openai.com/codex/cloud/environments` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch: isolated containers, network off by default, allowlist mechanism). |
+| Rules DSL (`.rules`) — Codex Developers | `https://developers.openai.com/codex/rules` | ✅ FULL | ✅ Manual MHTML capture drained on 2026-05-16 (`research/manual/Rules – Codex _ OpenAI Developers.txt`); not previously anchored in this report (the term "rules" appeared only as the name of a `granular`-approval-policy category). Drives §4.3. |
+| Running Codex safely at OpenAI — OpenAI security team blog (2026-05-08) | `https://openai.com/index/running-codex-safely/` | ✅ FULL | ✅ Manual MHTML capture drained on 2026-05-16 (`research/manual/Running Codex safely at OpenAI _ OpenAI.txt`). The `openai.com/index/*` host was previously Cloudflare-blocked for the action runner (see "Reachability note" below); manual capture is the first canonical anchor. Drives §4.4. |
 
-**Reachability note:** the five `developers.openai.com/codex/*` URLs are now primary-anchored (issue #41 action route). The three `openai.com/index/*` URLs returned Cloudflare JS challenges to the action runner (`"Just a moment..."` bodies under 6 KB) — same failure class as direct WebFetch from the sandbox; **the action route is exhausted for that host**. Wayback / browser-cookie-fetch (path B) is the only remaining recovery option. Recorded as open follow-up in §7.
+**Reachability note:** the five `developers.openai.com/codex/*` URLs are primary-anchored (issue #41 action route). All four `openai.com/index/*` URLs in scope for this report are now primary-anchored from manual MHTML capture: `running-codex-safely` (drained 2026-05-16 Cluster E, §4.4), `harness-engineering` (drained 2026-05-16 Cluster F, §5), `unlocking-the-codex-harness` (drained 2026-05-16 Cluster F, §1 + §3 supporting), plus the newly-indexed `developers.openai.com/codex/rules` (Cluster E, §4.3). **The `openai.com/index/*` host is therefore now FULLY primary-anchored for this report** — the action runner remains Cloudflare-blocked for that host class (`"Just a moment..."` bodies under 6 KB), but the human-attended browser path (Path B) has now successfully captured every `openai.com/index/*` URL this report cites. The corresponding open follow-up in §7 (Cloudflare-blocked `openai.com/index/*`) is **CLOSED**.
 
 ---
 
 ## 1. The five-surface deployment model
 
-The App Server article (Celia Chen, OpenAI, 2026-02-04 — "Unlocking the Codex harness") states (still on 🟡 mirror reconstruction; the canonical `openai.com/index/unlocking-the-codex-harness/` URL returned Cloudflare to the action runner on 2026-05-13):
+The App Server article (Celia Chen, OpenAI, 2026-02-04 — "Unlocking the Codex harness") states [2026-05-16 manual drain ✅ — verified verbatim against canonical capture]:
 
-> *"OpenAI's coding agent Codex exists across many different surfaces: the web app, the CLI, the IDE extension, and the new Codex macOS app. Under the hood, they're all powered by the same Codex harness — the agent loop and logic that underlies all Codex experiences."*
+> *"OpenAI's coding agent Codex exists across many different surfaces: the web app, the CLI, the IDE extension, and the new Codex macOS app. Under the hood, they're all powered by the same Codex harness — the agent loop and logic that underlies all Codex experiences. The critical link between them? The Codex App Server, a client-friendly, bidirectional JSON-RPC1 API."*
 
-That is four surfaces by Chen's enumeration; the fifth — the SDK (Python + TypeScript at `developers.openai.com/codex/sdk`) — is a programmatic client of the same App Server protocol, distinct because it is the only surface designed to be driven by other programs rather than humans.
+That is four interactive surfaces by Chen's own enumeration; the fifth — the SDK at `developers.openai.com/codex/sdk` — is a programmatic client of the same App Server protocol, distinct because it is the only surface designed to be driven by other programs rather than humans. **[2026-05-16 manual drain — refinement]** Chen's article itself describes Codex SDK as a *"TypeScript library for programmatically controlling local Codex agents from within your own application,"* explicitly noting it *"shipped earlier than the App Server, it currently supports fewer languages and a smaller surface area"* — the surface-table cell below ("Python + TypeScript") reflects a later state of `developers.openai.com/codex/sdk`, not Chen's Feb-2026 snapshot.
+
+**[2026-05-16 manual drain ✅ — NEW]** The App Server's *four-component process architecture*, verbatim from Chen: *"an App Server process has four main components: the stdio reader, the Codex message processor, the thread manager, and core threads. The thread manager spins up one core session for each thread, and the Codex message processor then communicates with each core session directly to submit client requests and receive updates."* The translation-layer responsibility is split between the stdio reader and the Codex message processor, which *"translate client JSON-RPC requests into Codex core operations, listen to Codex core's internal event stream, and then transform those low-level events into a small set of stable, UI-ready JSON-RPC notifications."*
+
+**[2026-05-16 manual drain ✅ — NEW]** The protocol is **JSON-RPC-lite**, not strict JSON-RPC 2.0. Footnote 1 of the canonical article (verbatim): *"We use a 'JSON-RPC lite' variant: it keeps the request/response/notification shape, but omits the `\"jsonrpc\": \"2.0\"` header and is framed as JSONL over stdio rather than strict JSON-RPC 2.0."* And footnote 2: *"'stdio' refers to the app-server's stdin/stdout inside the container. In hosted setups, those streams are often tunneled over a persistent network connection (e.g., WebSocket-like) to the container runtime — so it behaves like stdio even if it isn't a literal local pipe."* This refines the open-source `codex-rs/app-server/README.md`'s "JSON-RPC 2.0" framing — the *shape* matches, the *headers and transport* do not.
+
+**[2026-05-16 manual drain ✅ — NEW]** The MCP-was-insufficient origin story (verbatim): *"We first experimented with exposing Codex as an MCP server, but maintaining MCP semantics in a way that made sense for VS Code proved difficult. Instead, we introduced a JSON-RPC protocol that mirrored the TUI loop, which became the unofficial first version of the App Server."* This is the canonical statement that **MCP is insufficient as a coding-agent platform protocol** — the App Server's birth was specifically a response to that gap. Factory-relevance: any orchestrator that tries to use MCP as the agent-coordination substrate is reproducing a problem OpenAI explicitly walked away from.
+
+**[2026-05-16 manual drain ✅ — NEW]** Multi-language client landscape (verbatim): *"Codex surfaces and partner integrations have implemented App Server clients in languages including Go, Python, TypeScript, Swift, and Kotlin."* Code-generation primitives: `codex app-server generate-ts` produces TypeScript bindings directly from the Rust protocol; `codex app-server generate-json-schema` produces a schema bundle for any other-language codegen. This is the substrate-level mechanism that makes "factory orchestrator in language X" viable across the JVM / Go / Swift / Python ecosystems without re-implementing protocol semantics.
 
 **The primary `developers.openai.com/codex` overview page [2026-05-13 primary fetch ✅]** (`da15743d70_developers.openai.com__codex.md` lines 754-775) is a short marketing landing page that describes Codex as "OpenAI's coding agent for software development" available on "ChatGPT Plus, Pro, Business, Edu, and Enterprise plans," with five capability bullets (write code, understand unfamiliar codebases, review code, debug and fix problems, automate development tasks). It does **not** itself enumerate the five surfaces in body copy — but the page's documentation sidebar (`da15743d70` lines 272-310, 646-682) **organizes the entire docs corpus into exactly the surface groups: "App" (overview/features/settings/review/automations/worktrees/local-environments/in-app browser/Chrome extension/Computer Use/Commands/Windows/Troubleshooting), "IDE Extension" (overview/features/settings/IDE Commands/Slash commands), "CLI" (overview/features/Command Line Options/Slash commands), "Web" (overview/Environments/Internet Access), and a separate "Integrations" group (GitHub/Slack/Linear)** plus "Automation" containing "Codex SDK," "App Server," "MCP Server," and "GitHub Action." So the canonical IA recognizes four interactive surfaces (App, IDE, CLI, Web/Cloud) **plus** the SDK as a fifth "automation" surface (matching the report's count), with Integrations + GitHub Action as cross-cutting glue rather than surfaces in their own right. This is consistent with — and slightly tightens — the original five-surface taxonomy.
 
@@ -73,6 +103,16 @@ That is four surfaces by Chen's enumeration; the fifth — the SDK (Python + Typ
 | 5 | **SDK** (Python + TypeScript) | Programmatic embedding; controls a local App Server child over JSON-RPC. The orchestrator-target surface. | OpenHands four-package SDK (`sdk`/`tools`/`workspace`/`agent_server`). |
 
 **The App Server is not a sixth surface** — it is the protocol substrate underneath all five, described as "both the JSON-RPC protocol between the client and the server *and* a long-lived process that hosts the Codex core threads." Same architectural move as OpenHands V1: extract the agent loop, expose via stable interface, every surface becomes "just another client." App Server ≅ OpenHands `agent_server`.
+
+**[2026-05-16 manual drain ✅ — verbatim Thread/Turn/Item definitions]** Chen defines the three conversation primitives explicitly:
+
+> *"1. **Item:** An item is the atomic unit of input/output in Codex. Items are typed (e.g., user message, agent message, tool execution, approval request, diff) and each has an explicit lifecycle: `item/started` when the item begins, optional `item/*/delta` events as content streams in (for streaming item types), `item/completed` when the item finalizes with its terminal payload."*
+>
+> *"2. **Turn:** A turn is one unit of agent work initiated by user input. It begins when the client submits an input (for example, 'run tests and summarize failures') and ends when the agent finishes producing outputs for that input. A turn contains a sequence of items that represent the intermediate steps and outputs produced along the way."*
+>
+> *"3. **Thread:** A thread is the durable container for an ongoing Codex session between a user and an agent. It contains multiple turns. Threads can be created, resumed, forked, and archived. Thread history is persisted so clients can reconnect and render a consistent timeline."*
+
+The protocol is **fully bidirectional**: the server can initiate requests *back to the client* when the agent needs input — *"the server can initiate requests when the agent needs input, like an approval, and then pause the turn until the client responds."* This is the substrate-level mechanism that makes interactive approvals (§4) cleanly representable: an approval is just a server-initiated request that pauses the turn until the client replies allow / deny.
 
 **Factory fit:** SDK is load-bearing for orchestrators across Architectures 1–4. Cloud is load-bearing for parallel execution (Architecture 4 population members; Architecture 2 reviewer panels). CLI/IDE/App are human-in-loop surfaces. Protocol uniformity means a Symphony-style orchestrator written against the SDK can hand off to the IDE for human review without re-serializing state — App Server already exposes Thread/Turn/Item primitives.
 
@@ -255,6 +295,165 @@ Additionally, **named filesystem permission profiles** can deny **reads** for ex
 
 **Factory implication:** the `.git`-read-only default protects the implementer-agent's repo from mid-session mutation by the agent itself, and the `.codex`/`.agents` read-only defaults protect the configuration substrate from feedback loops where an agent rewrites its own AGENTS.md or subagent definitions mid-task. The factory should adopt the same convention: any "config-of-the-agent" surface lives at a read-only well-known path.
 
+### 4.3. The `.rules` DSL — Starlark-anchored auditable auto-rejection [2026-05-16 manual drain ✅ — NEW]
+
+The granular approval policy in §4 ("auto-reject everything except sandbox-escapes") needs a *declarative substrate* — otherwise V&V auto-rejection is just hand-written conditionals scattered through the codebase. Codex's answer is a separate file format: experimental `.rules` files written in **Starlark** (`developers.openai.com/codex/rules` — "Rules are experimental and may change"). This is the load-bearing primitive that makes V&V auto-rejection *auditable*. Provenance: manual MHTML capture drained on 2026-05-16; the URL was not previously anchored in this report (the term "rules" appeared only as the name of an approval-policy *category* — see §4 `granular = { rules = ... }`).
+
+**File location and discovery** (primary, **verbatim**): *"Create a .rules file under a rules/ folder next to an active config layer (for example, `~/.codex/rules/default.rules`).  ... Codex scans `rules/` under every active config layer at startup, including Team Config locations and the user layer at `~/.codex/rules/`. Project-local rules under `<repo>/.codex/rules/` load only when the project `.codex/` layer is trusted."*
+
+When the user adds a command to the TUI allow-list, Codex writes back to `~/.codex/rules/default.rules` — the rule file is therefore both an admin-authored static input *and* a session-mutated artifact (a substrate-level provenance gotcha: the same file is dual-sourced).
+
+**`prefix_rule(...)` shape** (verbatim from the primary example):
+
+```starlark
+prefix_rule(
+    pattern = ["gh", "pr", "view"],
+    decision = "prompt",
+    justification = "Viewing PRs is allowed with approval",
+    match = [
+        "gh pr view 7888",
+        "gh pr view --repo openai/codex",
+        "gh pr view 7888 --json title,body,comments",
+    ],
+    not_match = [
+        # Does not match because the `pattern` must be an exact prefix.
+        "gh pr --repo openai/codex view 7888",
+    ],
+)
+```
+
+Fields (verbatim from primary "Understand rule fields"):
+
+- **`pattern`** (required, non-empty list): each element is either a literal string (e.g. `"pr"`) **or** a union of literals (e.g. `["view", "list"]`) to match alternatives at that argument position. Codex compares the command's argument list to `pattern` "like what `execvp(3)` receives" — i.e. tokenised argv, not the shell-string.
+- **`decision`** (defaults to `"allow"`, three values): `allow` (run outside sandbox without prompting), `prompt` (prompt per matching invocation), `forbidden` (block without prompting). **"Most restrictive wins"** when multiple rules match: `forbidden > prompt > allow`.
+- **`justification`** (optional): human-readable rationale surfaced in approval prompts / rejection messages. Primary recommends including a *recommended alternative* in `forbidden` justifications.
+- **`match` / `not_match`** (defaults `[]`): inline unit tests validated when Codex *loads* the rules file — the rule file ships with its own conformance tests, catching errors before a rule takes effect rather than at policy-decision time.
+
+**Tree-sitter-based safe-splitting of `bash -lc`** (primary "Shell wrappers and compound commands"). Wrappers like `["bash", "-lc", "git add . && rm -rf /"]` could otherwise smuggle dangerous commands past prefix matching. Codex treats `bash -lc`, `bash -c`, and `zsh` / `sh` equivalents specially:
+
+- **Safe-split path** — if the script is a *linear chain of commands* made only of plain words (no variable expansion, no `VAR=...`, no `$FOO`, no `*`) joined by safe operators (`&&`, `||`, `;`, `|`), Codex **parses it with tree-sitter** and splits it into individual commands, evaluating each against the rules. Most-restrictive-wins still applies. The primary's example: `git add . && rm -rf /` becomes two argv lists `["git", "add", "."]` and `["rm", "-rf", "/"]`, and even with an `allow` for `["git", "add"]`, the whole invocation is blocked because the `rm -rf /` portion is evaluated separately.
+- **Conservative whole-string path** — if the script uses redirection (`>`, `>>`, `<`), substitution (`$(...)`, backticks), env-var assignments (`FOO=bar`), wildcards (`*`, `?`), or control flow (`if`, `for`, `&&` with assignments), Codex does not try to interpret it; the entire invocation is treated as a single `["bash", "-lc", "<full script>"]` argv and rules apply against that one string.
+
+The split is a security primitive, not a convenience: "you get the security of per-command evaluation when it's safe to do so, and conservative behavior when it isn't." This is the inverse of the failure mode that bites most prefix-allow-list implementations (which split on `&&` themselves and get fooled by quoting).
+
+**Smart approvals integration** (verbatim): *"When Smart approvals are enabled (the default), Codex may propose a `prefix_rule` for you during escalation requests. Review the suggested prefix carefully before accepting it."* The substrate generates candidate rules during escalation — but a human still reviews them. (For factory adoption this raises a "rule-proposal-poisoning" risk dual to scenario-corpus poisoning in followup/10 §6: an attacker who can shape an escalation prompt can shape the *suggested* `prefix_rule`.)
+
+**Test harness** (verbatim): *"Use `codex execpolicy check` to test how your rules apply to a command."* Example: `codex execpolicy check --pretty --rules ~/.codex/rules/default.rules -- gh pr view 7888 --json title,body,comments`. The command "emits JSON showing the strictest decision and any matching rules, including any justification values from matched rules. Use more than one `--rules` flag to combine files." This makes rules files first-class CI artifacts — the factory can run policy unit tests in PR checks before merging rule changes.
+
+**Admin enforcement** (verbatim): *"Admins can also enforce restrictive `prefix_rule` entries from `requirements.toml`."* `requirements.toml` is the admin-side configuration channel (cf. §4.4 below) that users cannot override — the precedence stack is admin-rules > user-rules > session-mutations, mirroring the same precedence as managed sandbox / network policy.
+
+**Language**: Starlark (the rules engine "can run it without side effects, e.g. touching the filesystem"). The sandboxed-DSL choice is exactly the same architectural move as CaMeL (followup/08 §3): use a side-effect-free interpreter as the policy substrate so the policy itself can't exfiltrate during evaluation.
+
+**Factory implication.** Architecture 3's V&V phase ("auto-reject everything except sandbox-escapes") needs `.rules` as the *declarative substrate* — otherwise the rejection logic is hand-coded in Python and is itself a defect risk. The combination of (a) inline `match`/`not_match` tests, (b) `codex execpolicy check` CI harness, (c) admin-`requirements.toml`-enforced precedence makes the V&V auto-rejection layer auditable in a way no other substrate currently surfaces. Adopt: rule files with inline unit tests, CI policy-check step, admin-enforced precedence stack, side-effect-free DSL.
+
+### 4.4. Operational posture at OpenAI — the agent-native telemetry stack [2026-05-16 manual drain ✅ — NEW]
+
+OpenAI's security team published *"Running Codex safely at OpenAI"* (2026-05-08, `openai.com/index/running-codex-safely/`) describing their internal deployment posture. This URL was previously in the "Cloudflare-blocked → Path B only" list (PLAN.md §3.3 / §4.3); the manual MHTML capture drained on 2026-05-16 is the first canonical anchor for this content. **It directly complements the §5 harness-engineering throughput numbers** by providing concrete operational-posture and telemetry primitives — the agent-native telemetry stack is the substrate that explains *why OpenAI dares run Codex at the throughput Lopopolo reports*.
+
+**Two-axis discipline, reaffirmed** (verbatim, slightly distinct framing from §4): *"Approvals and sandboxing work together. The sandbox defines the technical execution boundary, including where Codex can write, whether it can reach the network, and which paths remain protected. Approval policy determines when Codex must ask to perform an action, such as when it needs to do something outside of the sandbox. Users can approve the action once, or approve that type of action for that session."* — confirms the sandbox-defines-boundary / approval-defines-when-to-ask split as the architectural backbone of OpenAI's *own* deployment, not just public docs framing.
+
+**`Auto-review` mode — the routine-approval delegation primitive** (verbatim): *"For requests that cross the sandbox boundary, we are using `Auto-review` mode, which is a feature that, when turned on, auto-approves certain kinds of requests to reduce how often users have to stop and approve Codex actions. Codex sends the planned action and recent context to the auto-approval subagent, which can automatically approve low-risk actions — or high-risk actions with sufficient level of user authorization — instead of interrupting the user. That keeps Codex moving on routine work while still stopping on higher-risk or actions with unintended consequences."* This is the operational extension of the §4 `approvals_reviewer = "auto_review"` knob — and the canonical statement that **OpenAI internally delegates routine approvals to a subagent**, not to humans-in-loop.
+
+Sample baseline (verbatim TOML from primary):
+
+```toml
+# config.toml
+approvals_reviewer = "auto_review"
+sandbox_workspace_write.writable_roots = ["~/development"]
+
+# requirements.toml
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+```
+
+The `requirements.toml` line is the admin-enforcement primitive — the sandbox modes available to the user are *constrained at the admin layer*; users cannot opt into `danger-full-access` even by editing their own config.
+
+**Managed network policy** (verbatim TOML from primary):
+
+```toml
+# requirements.toml
+allowed_web_search_modes = ["cached"]
+
+[experimental_network]
+enabled = true
+allow_local_binding = true
+denied_domains = ["pastebin.com"]
+allowed_domains = ["login.microsoftonline.com", "*.openai.com"]
+```
+
+Five keys, all primary-anchored:
+
+- **`allowed_web_search_modes = ["cached"]`** — pins web search to the OpenAI-maintained cache, blocking the live-browse opt-out documented in §4 (the user cannot override into `"live"` mode under this admin policy). Closes the "untrusted input" leg of the trifecta at admin scope.
+- **`[experimental_network] enabled = true`** — turns on the managed network proxy.
+- **`allow_local_binding = true`** — agents can serve on localhost (necessary for dev-server workflows).
+- **`denied_domains`** — hard block list (the primary example uses `pastebin.com`, a canonical exfiltration target).
+- **`allowed_domains`** — auto-allow list (the primary example uses `login.microsoftonline.com` + `*.openai.com`). Anything not in `allowed_domains` and not in `denied_domains` requires approval per the running policy.
+
+This is the **most concrete public articulation** of an enterprise-grade managed network policy for a coding agent. The factory should adopt the same five-key shape verbatim.
+
+**Identity and credentials** (verbatim TOML from primary):
+
+```toml
+cli_auth_credentials_store = "keyring"
+mcp_oauth_credentials_store = "keyring"
+forced_login_method = "chatgpt"
+forced_chatgpt_workspace_id = "<workspace-uuid>"
+```
+
+OS-keyring credential storage (rather than file-on-disk); login forced through ChatGPT; pinned to a single ChatGPT enterprise workspace. The workspace-pin is what makes Codex activity appear in the **ChatGPT Compliance Logs Platform** — pinning is the workspace-level identity gate that connects per-agent activity to org-level audit.
+
+**Managed-config precedence** (verbatim): *"We apply this posture through a combination of cloud-managed requirements, macOS managed preferences, and local requirements files. **Requirements are admin-enforced controls that users cannot override.** The macOS managed preferences and local requirements files allow us to keep a consistent baseline while still testing different configurations by team, user group, or environment. These configurations apply across local Codex surfaces, including the desktop app, CLI, and IDE extension."* Three-layer admin stack: cloud-managed requirements (org-wide baseline) → macOS managed preferences (per-fleet test variants via MDM) → local requirements files (per-machine experimental tweaks). Users cannot override any of them.
+
+**Rules at OpenAI scale** — the primary's example `default.rules` snippet uses the union-of-literals form documented in §4.3 (verbatim):
+
+```starlark
+prefix_rule(
+    pattern = ["gh", "pr", ["view", "list"]],
+    decision = "allow",
+    justification = "Allows read-only GitHub PR inspection via gh CLI.",
+)
+prefix_rule(
+    pattern = ["kubectl", ["get", "describe", "logs"]],
+    decision = "allow",
+    justification = "Allows Kubernetes resource inspection for debugging.",
+)
+```
+
+— so the §4.3 DSL is not theoretical; OpenAI is using it operationally to allow-list `gh pr {view,list}` and `kubectl {get,describe,logs}` without prompting.
+
+**Agent-native telemetry — the OpenTelemetry export primitive** (verbatim): *"Traditional security logs are still useful when looking at actions taken by Codex, but they mostly answer **what** happened: a process started, a file changed, a network connection was attempted. Defenders are still left to figure out **why** Codex did something, or the user's intent. Codex can give security teams a more agent-aware view. **Codex supports OpenTelemetry log export for various Codex events such as user prompts, tool approval decisions, tool execution results, MCP server usage, and network proxy allow or deny events.**"*
+
+Five event categories, primary-anchored:
+
+1. **User prompts** — the original intent input (the "why")
+2. **Tool approval decisions** — every approval / rejection by user or `auto_review` subagent
+3. **Tool execution results** — what the tool actually did / returned
+4. **MCP server usage** — per-MCP-call accounting
+5. **Network-proxy allow/deny events** — egress decisions
+
+Sample exporter config (verbatim from primary):
+
+```toml
+[otel]
+log_user_prompt = true
+environment = "prod"
+
+[otel.exporter.otlp-http]
+endpoint = "http://localhost:14318/v1/logs"
+protocol = "binary"
+```
+
+OTLP-HTTP transport on localhost, binary protocol. Localhost-binding means the OTEL collector is itself a sandboxed sidecar — agent telemetry never traverses the network without the collector mediating.
+
+**AI-powered security triage agent** (verbatim): *"At OpenAI, we use Codex logs alongside our AI-powered security triage agent. When an endpoint alert says Codex did something unusual, the endpoint security tool tells us that a suspicious event occurred. Codex logs then help explain the surrounding intent by the user and agent. Our AI security triage agent uses Codex logs to inspect the original request, tool activity, approval decisions, tool results, and any relevant network policy decision or block. The AI security triage agent surfaces its analysis to our security team for review to distinguish between expected agent behavior, benign mistakes, and activity that truly warrants escalation."*
+
+So OpenAI's internal security review is itself a *two-stage agent pipeline*: endpoint-security tool says "something happened" (the "what"); a triage agent reconstructs intent from Codex's OTEL logs (the "why"); a human reviews the triage agent's classification. This is the operational refutation of Kahana's *"tracing difficult by design"* objection in followup/10 §6: tracing is not difficult by design *if* the agent emits structured intent-aware telemetry by default. The factory should adopt the same posture — every agent emits OTEL events for prompts, approvals, tool-results, MCP, network — and a triage-agent layer reconstructs intent before human review.
+
+**Operational reuse** (verbatim): *"We also use the same telemetry operationally. We use these logs to understand how internal adoption is changing, which tools and MCP servers are being used, how often the network sandbox is blocking or prompting, and where the rollout still needs tuning."* Same logs power security review *and* productivity analytics — the "agent-native telemetry" is the singular substrate that supports both. (The Lopopolo throughput numbers in §5 are what an OTEL-anchored productivity dashboard would surface, and the OTEL primitive is now the canonical way to get them.)
+
+**Factory implication.** Operational-posture adoption for the factory is concrete: (i) admin-enforced `requirements.toml` with the five-key managed network policy verbatim, (ii) OS-keyring credential storage, (iii) workspace pinning at the identity layer, (iv) OpenTelemetry export of the five event categories with a localhost-bound OTLP-HTTP collector, (v) an AI triage agent that reconstructs intent from OTEL events before security review escalates to humans. Architecturally these compose with §4.1–§4.3 — sandbox + approval + rules define the *boundary*; managed-config requirements define the *admin-enforced minimum*; OTEL + triage agent define the *observability and review surface*. The combined stack is the agent-native answer to "control + visibility + audit" — which is precisely what followup/08 §6 and followup/10 §1.3 demand from any factory operating outside the dark-factory unattended-mode.
+
+**Cross-reference — AILCCP controls vocabulary (2026-05-16 Cluster-J drain).** The substrate primitives in §4.3 (`.rules` Starlark DSL) and §4.4 (OpenTelemetry export of user prompts / tool approvals / tool results / MCP usage / network proxy decisions) are now the corpus' most concrete substrate-level implementations of three named controls in the AILCCP 48-controls catalogue (Kahana 2026-02-16; drained as followup/10 §6a.B): **Agent Kill Switch** (the `forbidden`-decision `prefix_rule` + admin-enforced `requirements.toml` precedence is the kill-switch primitive); **Intervention Audit Trail** (the five-event OTEL export *is* the intervention audit trail once piped to an append-only sink); **Rate and Scope Limiter** (the five-key managed network policy `allowed_domains`/`denied_domains`/`allow_local_binding`/`allowed_web_search_modes`/`[experimental_network] enabled` is the network-scope primitive). Report 31 §5 maps the same substrate onto the three AILCCP RSI controls (Human Approval Gate for Sensitive Actions / sandboxing / immutable logging) that Kahana names as the technical hinge of Caremark-line board-oversight exposure for deployments meeting his three-part RSI test; the OTEL stack is *partial* immutable-logging because it captures the events but does not by itself attest immutability (a downstream WORM sink with integrity attestation is required to close the gap).
+
 **Factory implications:**
 
 | Trifecta leg | Codex control | Factory adoption |
@@ -267,27 +466,81 @@ The two-axis split is more compositional than OpenHands V1's collapsed `Confirma
 
 ---
 
-## 5. Harness-engineering productivity numbers (verbatim)
+## 5. Harness-engineering productivity numbers (verbatim) [2026-05-16 manual drain ✅ — primary-anchored]
 
-From **"Harness engineering: leveraging Codex in an agent-first world"** (S9; Celia Chen et al., **2026-02-11**; quotations via the `celesteanders/harness` mirror):
+From **"Harness engineering: leveraging Codex in an agent-first world"** (S9; **Ryan Lopopolo**, OpenAI Member of Technical Staff, **2026-02-11**; primary MHTML capture drained 2026-05-16). Author attribution refutes the prior mirror-era citation of "Celia Chen et al." — Lopopolo is the sole bylined author; Chen wrote the App Server article (§1) a week earlier and is unrelated to this piece. Acknowledgements credit *"Victor Zhu and Zach Brock who contributed to the post, as well as to the entire team that built this new product."*
 
-> *"Over the past five months, our team has been running an experiment: building and shipping an internal beta of a software product with 0 lines of manually-written code."*
+**Headline experiment (verbatim):** *"Over the past five months, our team has been running an experiment: building and shipping an internal beta of a software product with 0 lines of manually-written code."*
 
-> *"Five months later, the repository contains on the order of a million lines of code across application logic, infrastructure, tooling, documentation, and internal developer utilities."*
+**Scale (verbatim):** *"Five months later, the repository contains on the order of a million lines of code across application logic, infrastructure, tooling, documentation, and internal developer utilities."* The first commit landed *"in late August 2025."*
 
-> *"Over that period, roughly 1,500 pull requests have been opened and merged"* — with *"an average throughput of **3.5 PRs per engineer per day**."*
+**Per-engineer throughput (verbatim — refined attribution):** *"Over that period, roughly 1,500 pull requests have been opened and merged with a small team of just three engineers driving Codex. This translates to an average throughput of **3.5 PRs per engineer per day**, and surprisingly the throughput has increased as the team has grown to now seven engineers."*
 
-> *"The team grew from three engineers to seven during development."*
+**[2026-05-16 manual drain — refinement of mirror-era claim]** The mirror-era quote attributed *"3.5 PRs per engineer per day"* to the whole 3-to-7 team across the whole five-month period. The canonical text is more specific: the 3.5 figure is the **three-engineer-baseline average**, and the throughput-per-engineer *increased* as the team grew to seven. The mirror's "team grew from three to seven during development" framing is a paraphrase of the canonical's "has grown to now seven engineers" — both are accurate, but the canonical implies the three-engineer figure is the **lower bound** for what the harness can support, not an average across all sizes. **Factory implication:** Lopopolo's text is the strongest published claim that per-engineer agent-driven throughput **scales superlinearly** with team size at this stage of the technology — a refutation of the standard Brooks's Law assumption that adding engineers reduces per-engineer throughput.
 
-> *"Every line of code — application logic, tests, CI configuration, documentation, observability, and internal tooling — was written by Codex. The team estimates that they built this in about 1/10th the time it would have taken to write the code by hand."*
+**Generation provenance (verbatim):** *"every line of code — application logic, tests, CI configuration, documentation, observability, and internal tooling — has been written by Codex. We estimate that we built this in about 1/10th the time it would have taken to write the code by hand."* The "1/10th the time" is a team self-estimate, not a controlled comparison. The team philosophy is captured in Lopopolo's three-word epigram: ***"Humans steer. Agents execute."***
 
-**Architectural context (verbatim):** *"a rigid architectural model organizing code into business domains with fixed dependency layers: Types → Config → Repo → Service → Runtime → UI"*, with cross-cutting concerns (auth, connectors, telemetry, feature flags) entering through a `Providers` interface. *"Repository knowledge is organized in a structured `docs/` directory containing design-docs, exec-plans, product-specs, and references, with a brief AGENTS.md serving as a 'table of contents.'"*
+**Internal user validation (verbatim):** *"the product has been used by hundreds of users internally, including daily internal power users"* — and the experiment *"has so far worked well up through internal launch and adoption at OpenAI."* Importantly, not just a research artifact — a real shipped product with real internal usage.
+
+**Initial scaffold provenance (verbatim — NEW):** *"The initial scaffold — repository structure, CI configuration, formatting rules, package manager setup, and application framework — was generated by Codex CLI using GPT-5, guided by a small set of existing templates. Even the initial AGENTS.md file that directs agents how to work in the repository was itself written by Codex."* The recursive observation matters: AGENTS.md (the harness contract) is itself an agent artifact, not a hand-written input.
+
+**Architectural model (canonical phrasing — NEW with verbatim layer list):** *"Each business domain is divided into a fixed set of layers, with strictly validated dependency directions and a limited set of permissible edges."* The verbatim layer list: *"within each business domain (e.g. App Settings), code can only depend 'forward' through a fixed set of layers (**Types → Config → Repo → Service → Runtime → UI**). Cross-cutting concerns (auth, connectors, telemetry, feature flags) enter through a single explicit interface: **Providers**."* Lopopolo's framing: *"This is the kind of architecture you usually postpone until you have hundreds of engineers. With coding agents, it's an early prerequisite: the constraints are what allows speed without decay or architectural drift."*
+
+**Repository-as-system-of-record (verbatim docs tree — NEW):** instead of a single AGENTS.md the team uses *"a structured `docs/` directory treated as the system of record. A short AGENTS.md (roughly **100 lines**) is injected into context and serves primarily as a map, with pointers to deeper sources of truth elsewhere."* The canonical tree (verbatim):
+
+```
+AGENTS.md
+ARCHITECTURE.md
+docs/
+├── design-docs/
+│   ├── index.md
+│   ├── core-beliefs.md
+│   └── ...
+├── exec-plans/
+│   ├── active/
+│   ├── completed/
+│   └── tech-debt-tracker.md
+├── generated/
+│   └── db-schema.md
+├── product-specs/
+│   ├── index.md
+│   ├── new-user-onboarding.md
+│   └── ...
+└── references/
+    ├── design-system-reference-llms.txt
+    ├── nixpacks-llms.txt
+    ├── uv-llms.txt
+    └── ...
+DESIGN.md
+FRONTEND.md
+PLANS.md
+PRODUCT_SENSE.md
+QUALITY_SCORE.md
+RELIABILITY.md
+SECURITY.md
+```
+
+The four canonical failure modes of the "one big AGENTS.md" anti-pattern (verbatim, with Lopopolo's framing): *"Context is a scarce resource… Too much guidance becomes non-guidance… It rots instantly… It's hard to verify."* The doc-gardening cleanup is itself automated: *"A recurring 'doc-gardening' agent scans for stale or obsolete documentation that does not reflect the real code behavior and opens fix-up pull requests."*
+
+**Application legibility for the agent (verbatim — NEW):** *"we made the app bootable per git worktree, so Codex could launch and drive one instance per change. We also wired the Chrome DevTools Protocol into the agent runtime and created skills for working with DOM snapshots, screenshots, and navigation."* Observability is similarly agent-facing: *"Logs, metrics, and traces are exposed to Codex via a local observability stack that's ephemeral for any given worktree… Agents can query logs with LogQL and metrics with PromQL."* With this surface available, prompts like *"ensure service startup completes in under 800ms"* or *"no span in these four critical user journeys exceeds two seconds"* are tractable.
+
+**Long-run autonomy (verbatim):** *"We regularly see single Codex runs work on a single task for upwards of **six hours** (often while the humans are sleeping)."* This is the canonical anchor for the "overnight agent" pattern Cherny references (followup/03 §"Overnight agent") and Willison sketches (`research/05-simon-willison.md`).
+
+**End-to-end feature autonomy threshold (verbatim ten-step list — NEW):** Lopopolo claims the team *"recently crossed a meaningful threshold where Codex can end-to-end drive a new feature."* Given a single prompt, the agent now: (1) validates the current state of the codebase, (2) reproduces a reported bug, (3) records a video demonstrating the failure, (4) implements a fix, (5) validates the fix by driving the application, (6) records a second video demonstrating the resolution, (7) opens a pull request, (8) responds to agent and human feedback, (9) detects and remediates build failures, (10) escalates to a human *"only when judgment is required,"* and finally merges the change. Lopopolo's own caveat: *"This behavior depends heavily on the specific structure and tooling of this repository and should not be assumed to generalize without similar investment — at least, not yet."*
+
+**Entropy / garbage-collection regime (verbatim — NEW):** *"Our team used to spend every Friday (**20% of the week**) cleaning up 'AI slop.' Unsurprisingly, that didn't scale."* The replacement: *"'golden principles' directly into the repository and built a recurring cleanup process… On a regular cadence, we have a set of background Codex tasks that scan for deviations, update quality grades, and open targeted refactoring pull requests. Most of these can be reviewed in under a minute and automerged."* The framing — *"Technical debt is like a high-interest loan: it's almost always better to pay it down continuously in small increments than to let it compound and tackle it in painful bursts"* — is the canonical statement of continuous, agent-driven technical-debt amortization.
+
+**Merge philosophy (verbatim — NEW):** *"The repository operates with **minimal blocking merge gates**. Pull requests are short-lived. Test flakes are often addressed with follow-up runs rather than blocking progress indefinitely. In a system where agent throughput far exceeds human attention, corrections are cheap, and waiting is expensive."* Lopopolo immediately flags this as a regime-specific posture: *"This would be irresponsible in a low-throughput environment. Here, it's often the right tradeoff."*
+
+**Review philosophy (verbatim — NEW):** *"Humans may review pull requests, but aren't required to. Over time, we've pushed almost all review effort towards being handled agent-to-agent."* This is the strongest published claim from inside OpenAI that **human PR review is no longer load-bearing at the per-PR level** in their internal agent-driven product — a non-obvious refutation of "human review is the trust anchor" doctrine.
+
+**The agent-legibility framing (verbatim):** *"From the agent's point of view, anything it can't access in-context while running effectively doesn't exist. Knowledge that lives in Google Docs, chat threads, or people's heads are not accessible to the system. Repository-local, versioned artifacts (e.g., code, markdown, schemas, executable plans) are all it can see."* And the rule: *"We learned that we needed to push more and more context into the repo over time. That Slack discussion that aligned the team on an architectural pattern? If it isn't discoverable to the agent, it's illegible in the same way it would be unknown to a new hire joining three months later."*
 
 **Time-stamp:** numbers are **as of 2026-02-11**, describing the five months ending February 2026 (~mid-Sep 2025 → mid-Feb 2026). Ongoing experiment, not terminal state — by consumption time, all numbers may have shifted.
 
 **Vs. OpenHands** (`11-openhands-substrate-audit.md` §1): OpenHands reports 61% reduction in system-attributable failures (78.0 → 30.0/1k conversations, 15-day rollout). Not commensurable — OpenHands measures *deployed-agent reliability*, Codex measures *single-team PR throughput*. Both are load-bearing for the factory thesis.
 
-**Caveat (Willison "looking-the-part hazard," May 6 2026):** 1,500 merged ≠ 1,500 correct. S9 reports no bug-rate, regression-rate, or post-merge defect density. The "1/10th time" claim is a team self-estimate, not a controlled comparison. Productivity is necessary but not sufficient evidence; defect-of-origin metrics needed alongside, especially for Architectures 3 and 4.
+**Caveat (Willison "looking-the-part hazard," May 6 2026):** 1,500 merged ≠ 1,500 correct. The canonical text reports **no** bug-rate, regression-rate, or post-merge defect density. The "1/10th time" claim is a team self-estimate, not a controlled comparison. Productivity is necessary but not sufficient evidence; defect-of-origin metrics needed alongside, especially for Architectures 3 and 4. Lopopolo's own concluding caveat (verbatim): *"What we don't yet know is how architectural coherence evolves over years in a fully agent-generated system."*
 
 ---
 
@@ -309,7 +562,7 @@ Mapping Codex's five surfaces + AGENTS.md + Subagents + sandbox×approval to eac
 
 ## 7. Open follow-ups
 
-- **Primary-URL re-fetch.** 5 of 8 primary URLs are now ✅ primary-fetched (2026-05-13 issue #41). The remaining 3 (`openai.com/index/harness-engineering/`, `openai.com/index/unlocking-the-codex-harness/`, swe-bench-verified) return Cloudflare JS challenges to the action runner — **action route is exhausted** for `openai.com/index/*`. Path B (Wayback or human-attended browser cookie-fetch) is the only remaining option; file a path-B issue only if a quotation REFUTATION emerges from those mirrors.
+- **~~Primary-URL re-fetch.~~ [2026-05-16 CLOSED — Cluster F manual drain]** All 8 originally-🟡 URLs in scope are now ✅ primary-anchored: 5 `developers.openai.com/codex/*` via issue #41 (2026-05-13); `running-codex-safely/` via Cluster E manual drain (2026-05-16, §4.4); `harness-engineering/` and `unlocking-the-codex-harness/` via Cluster F manual drain (2026-05-16, §5 and §1 respectively); plus the newly-indexed `developers.openai.com/codex/rules` (2026-05-16, §4.3). The `openai.com/index/*` host remains Cloudflare-blocked for the action runner but is fully primary-anchored via the human-attended browser path (Path B) for every URL this report cites. The corresponding entry in `research/blocked-urls.md` for the `openai.com/index/*` host class can now be down-prioritized for this report's scope.
 - **App Server transport surface.** `websocket`/`unix-socket` are "experimental" per `codex-rs/app-server/README.md`. Factory dashboards likely want websocket; experimental status is a tracked risk.
 - **~~`auto_review` model selection.~~ [2026-05-13 partially resolved]** S23 primary (line 882) places the default reviewer policy at `github.com/openai/codex/blob/main/codex-rs/core/src/guardian/policy.md` (open-source; fetchable) and confirms enterprises can override via `guardian_policy_config` in managed requirements; `allowed_approvals_reviewers` can constrain reviewer selection (line 886). **Remaining unknown:** the *identity* of the default reviewer model is still not surfaced on this page.
 - **~~Non-Cloud subagent workspace inheritance.~~ [2026-05-13 RESOLVED via §3.3]** Primary S11 (lines 805-815) confirms subagents inherit parent sandbox policy plus live runtime overrides; per-agent file-level overrides possible. Architecture 2 reviewer-panel isolation discipline must explicitly use Cloud dispatch if isolation from the implementer is required.
@@ -323,4 +576,4 @@ Mapping Codex's five surfaces + AGENTS.md + Subagents + sandbox×approval to eac
 
 ## 8. Verdict
 
-Codex is the most thoroughly factored coding-agent substrate currently documented: five surfaces over one stable JSON-RPC App Server, layered AGENTS.md spec-ingestion with explicit override and size-budget semantics (primary-anchored 2026-05-13), Subagents orchestration with three built-in agents (`default`/`worker`/`explorer`) plus per-project custom-agent TOML files (primary-anchored 2026-05-13) that composes natively with Cloud for true parallelism, and a two-axis sandbox×approval policy with `auto_review` defense-in-depth (four-tier risk lattice with fail-closed semantics, primary-anchored 2026-05-13) that severs the trifecta's exfiltration leg by default. Linux sandbox primitive is **`bwrap` + `seccomp`** (not Landlock as originally reconstructed) [2026-05-13 primary fetch REFUTES]; macOS is Seatbelt; Windows uses WSL2 (Linux sandbox) or a native Windows sandbox. The S9 harness-engineering experiment (2026-02-11) — 3-to-7 engineers, ~1M LOC, ~1,500 merged PRs in five months, ~3.5 PRs/engineer/day, ~1/10th the human-coded baseline — is the strongest single attestation that an agent-first factory works at team scale (still 🟡 mirror-anchored; Cloudflare blocks the action route); it is also a date-stamped snapshot of an ongoing experiment, and its defect-rate counterfactual is unreported. Adopt: App Server's "stable protocol around the agent loop" as organizing principle; AGENTS.md layering as spec-ingestion contract (complementary to our `.claude/skills/` registry, not replacing it); Subagents-on-Cloud as parallelism substrate for Architectures 2 and 4; two-axis sandbox×approval with default-off network and `granular` approval categories as the lethal-trifecta defense across all four.
+Codex is the most thoroughly factored coding-agent substrate currently documented: five surfaces over one stable JSON-RPC App Server, layered AGENTS.md spec-ingestion with explicit override and size-budget semantics (primary-anchored 2026-05-13), Subagents orchestration with three built-in agents (`default`/`worker`/`explorer`) plus per-project custom-agent TOML files (primary-anchored 2026-05-13) that composes natively with Cloud for true parallelism, and a two-axis sandbox×approval policy with `auto_review` defense-in-depth (four-tier risk lattice with fail-closed semantics, primary-anchored 2026-05-13) that severs the trifecta's exfiltration leg by default. Linux sandbox primitive is **`bwrap` + `seccomp`** (not Landlock as originally reconstructed) [2026-05-13 primary fetch REFUTES]; macOS is Seatbelt; Windows uses WSL2 (Linux sandbox) or a native Windows sandbox. The S9 harness-engineering experiment (Ryan Lopopolo, 2026-02-11; primary-anchored 2026-05-16) — three engineers ramping to seven, ~1M LOC, ~1,500 merged PRs in five months, **3.5 PRs/engineer/day as the small-team baseline with per-engineer throughput *increasing* as the team grew**, ~1/10th the human-coded baseline, six-hour single-agent runs, end-to-end feature autonomy from prompt to merge — is the strongest single attestation that an agent-first factory works at team scale; it is also a date-stamped snapshot of an ongoing experiment, and its defect-rate counterfactual is unreported. Adopt: App Server's "stable protocol around the agent loop" as organizing principle; AGENTS.md layering as spec-ingestion contract (complementary to our `.claude/skills/` registry, not replacing it); Subagents-on-Cloud as parallelism substrate for Architectures 2 and 4; two-axis sandbox×approval with default-off network and `granular` approval categories as the lethal-trifecta defense across all four.

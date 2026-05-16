@@ -151,7 +151,7 @@ The article highlights what was published: *"Here is the remarkable thing about 
 - **Kilroy** (Dan Shapiro): *"a local-first Go CLI that runs Attractor pipelines in isolated Git worktrees."*
 - **Mammoth** (2389 Research, Go): *"a full spec engine with a 21-rule DOT linter and configurable fan-in policies."*
 - **Smasher** (2389 Research, Rust): *"a lean five-crate system with an HTMX frontend and live graph visualization."*
-- **Tracker** (2389 Research, Go): *"a weekend-scale implementation with automatic checkpointing."*
+- **Tracker** (2389 Research, Go): El Kaim describes it (in Apr 2026) as *"a weekend-scale implementation with automatic checkpointing."* The 2026-05-16 README re-capture shows that framing is now badly stale — see "2389 ecosystem update (2026-05-16)" below for the current state.
 
 *"Nobody coordinated. Nobody shared code. They shared a spec."* El Kaim's claim:
 
@@ -183,6 +183,61 @@ Two pipeline styles, named:
 - **LLM-heavy style.** *"Model calls at every step: plan, scaffold, implement, review. Expensive, slow, nondeterministic. Useful for tasks that genuinely require reasoning. Catastrophic for tasks that do not."*
 
 The mature posture combines both, with deterministic nodes at the periphery (setup, validation, deployment) and LLM nodes only where reasoning is required. The Mammoth *"model stylesheet pattern"* is named as the mechanism that makes this composable. **Multi-model review** is named as a *"standard pattern for high-stakes decisions"* — multiple independent models critique the same output and a synthesis node resolves disagreements. *"Three models critiquing each other's code reviews catches errors that any single model passes."*
+
+---
+
+## 2389 ecosystem update (2026-05-16)
+
+El Kaim's "four independent implementations converge on the same three-layer architecture" framing is the Apr 8 2026 snapshot. A 2026-05-16 manual re-capture of the four 2389 Research GitHub READMEs + the five 2389 product pages + the `dotpowers.dot` blob (see `research/followup/02-attractor-implementations.md` §11) sharpens three of El Kaim's claims and refreshes one that has gone stale. Updates only — El Kaim's core thesis (engines commodity, pipelines IP) holds.
+
+### Tracker is no longer "weekend-scale" — it is the canonical 2389 engine
+
+El Kaim's Apr 8 capsule on Tracker ("a weekend-scale implementation with automatic checkpointing") is six weeks out of date. The 2026-05-16 README shows **v0.28.2** (May 14 2026), **52 releases**, 9 contributors, 12 stars, 2 forks, with a programmatic Go library API (`tracker.Run` / `tracker.Audit` / `tracker.Diagnose` / `tracker.DiagnoseMostRecent` / `tracker.Simulate` / `tracker.Doctor` / `tracker.NewNDJSONWriter` for NDJSON event streaming), declarative budget caps (`--max-tokens`, `--max-cost` cents, `--max-wall-time`; also via `defaults:` block inline in the workflow), four autopilot personas (`--autopilot lax|mid|hard|mentor` swap human gates for an LLM judge tuned to four risk thresholds; `--auto-approve` is the deterministic always-accept variant), webhook-driven human gates (`--webhook-url` + `--gate-callback-addr` + `--gate-timeout 10m` + `--gate-timeout-action fail|success`; payloads carry a per-gate `gate_token` validated via `X-Tracker-Gate-Token`, so Slack/email/mobile-push approvers integrate without bespoke auth), Cloudflare AI Gateway native routing (`--gateway-url` against `https://gateway.ai.cloudflare.com/v1/<acc>/<gw>`), and a portable `--export-bundle` git-bundle that packages every terminal-node commit and `checkpoint/<runID>/<nodeID>` tag into a single self-contained file (`tracker.ExportBundle(result.ArtifactRunDir, "/tmp/run.bundle")` from the library). The pipeline file format is now `.dip` (Dippin language) with native content-addressed `.dipx` bundles since v0.26.0; legacy `.dot` is deprecated and `--format dot` emits a deprecation warning. This directly answers two of El Kaim's open questions: **what are the pause-for-human semantics?** (a four-way toggle — default human / persona-judge / unconditional-accept / webhook-anywhere) and **what is the cost-cap mechanism?** (`OutcomeBudgetExceeded` with per-provider `CostSnapshot` streamed via `EventCostUpdated`).
+
+### Mammoth → Tracker library extraction — independent convergence is partly *deliberate*
+
+El Kaim writes *"Nobody coordinated. Nobody shared code. They shared a spec."* That holds for the **cross-team** convergence (Kilroy vs. 2389) but not for the **internal** 2389 convergence. As of Feb–Mar 2026, two of 2389's four runners (Mammoth and Tracker) share one engine: Mammoth's README states *"Pipeline execution powered by github.com/2389-research/tracker"* and *"Pipeline execution is handled by the tracker library. Mammoth provides the DOT parser/validator (dot/), web UI (web/), TUI (tui/), MCP server (mcp/), and CLI (cmd/mammoth/) that consume tracker's API."* Mammoth's commit log makes the migration explicit: `feat: extract runstate package from attractor with tracker-compatible…`, `docs: update project docs for tracker integration`, `feat(mcp): rewrite pipeline tools to use tracker library`. Mammoth is now a Bubble Tea TUI + web UI (port 2389) + 21-rule DOT linter + MCP server + event-sourced spec builder bolted onto Tracker. The four-implementation convergence story is therefore better stated as: **three engines (Kilroy, Tracker, Smasher) + one methodology DOT (dotpowers) + one shared frontend (Mammoth over Tracker)**, all cross-language. The fact that 2389 itself converged on Tracker as canonical strengthens — rather than weakens — El Kaim's attractor-pattern claim: the ecosystem is independently re-confirming that one Go engine is enough.
+
+### Smasher's DOT-shape → node-type map is the most explicit Attractor-spec invariant in the corpus
+
+Smasher (2389-ai/smasher, Rust) is described in its own README as *"Based on attractor by strongDM, reimplemented from scratch in Rust"* — the most direct affiliation statement of any 2389 runner. Its **nine node types are resolved from DOT *shape* attributes** at parse time and dispatched to layer-3 handlers via a winnow-based parser:
+
+| DOT shape | Smasher node-type | Role |
+|---|---|---|
+| `circle` / `point` | start | Entry node |
+| `doublecircle` | exit | Terminal node |
+| `box` / `rectangle` | codergen | Runs an LLM agent (with the six built-in tools `read`/`write`/`edit`/`shell`/`grep`/`glob`) |
+| `diamond` | conditional | Branches on context variables |
+| `oval` / `ellipse` | interviewer | Asks a human, captures structured response |
+| `house` | manager | **Human approval gate** (the StrongDM-spec `house` manager_loop shape) |
+| `parallelogram` | parallel fan-out | Spawns sibling branches that execute concurrently |
+| `hexagon` | tool | Deterministic shell command |
+| `component` | sub-pipeline | Nested DOT file (subgraph composition) |
+
+This is the most explicit shape→handler map in the surveyed corpus and validates El Kaim's three-layer architecture at the Layer-3 (Pipeline Engine) substrate: every Attractor port that uses DOT uses the same shapes for the same node kinds, *because the shape is the type tag*. Smasher exposes this map in its README, Forge enumerates the same set in its node-types table (§3 of `research/followup/02-attractor-implementations.md`), Kilroy points to its `internal/attractor/engine/` package for it, and Fabro markets its `Mdiamond`/`hexagon`/`box`/`Msquare` shapes verbatim. Smasher additionally ships an HTMX web dashboard on **port 21541** with SSE event streaming and in-browser human-gate Q&A — pushing the "Layer 3 knows when to pause for human input" boundary into the browser, in the spirit of Tracker's webhook gates but without the integration-point indirection.
+
+### dotpowers: an Attractor DOT file shipped as a portable methodology payload
+
+dotpowers (2389-research/dotpowers, Mar 11 2026) is the first concrete corpus instance of an Attractor DOT graph being shipped **as the product** rather than as an internal pipeline. The repository ships **one `dotpowers.dot` (114 KB, ~1300 lines) plus six pipeline variants** (`dotpowers-auto.dot`, `dotpowers-simple.dot`, `dotpowers-simple-auto.dot`, `kitchen-sink.dot`, `scenario-testing.dot`, `test-kitchen.dot`) — no engine code at all. The README's user-facing contract is *"You write `echo 'a dvd bouncing tui' > idea.md`, run the pipeline, and come back to a tested, reviewed project in a git branch"* — runnable on any Attractor-compliant runner (the README names tracker / mammoth / smasher as interchangeable). This makes dotpowers the explicit counter-example to El Kaim's "blueprints are mostly private" lament — the blueprint *is* the product.
+
+The methodology pipeline is six phases, each a worked example of multiple Round-3/4 dark-factory primitives:
+
+1. **Brainstorm** — reads `idea.md`, asks one question at a time (YAGNI enforced), proposes 2–3 architectural approaches with trade-offs, writes a design brief, **pauses at a human gate for approval**. (Batched human attention, gate #1.)
+2. **Plan** — GPT-5.2 drafts a TDD plan, a shell script rejects vague hand-wavy steps, Opus 4.6 audits every requirement against the brief, GPT-5.2 patches gaps. **Up to 5 iterations** before escalating to a human. (Hard loop cap.)
+3. **Setup** — creates a `feature/<slug>` branch (never implements on `main`), installs deps, runs the test suite to confirm green-before-start. (Deterministic node + git-worktree isolation.)
+4. **Implement** — per task: failing test → minimal code → Opus 4.6 spec-compliance review → GPT-5.4 quality review → both must pass → commit. **Every 3 completed tasks triggers a batch checkpoint** where the human reviews progress before continuing. (Batched human attention, gate #2; review-summary-discipline.)
+5. **Review** — three models review the finished project independently. Each model then critiques the other two reviews (**six pairwise cross-critiques**). Opus 4.6 reads everything and routes to ship / rework / fail. (Multi-model review — El Kaim's "standard pattern for high-stakes decisions" instantiated.)
+6. **Ship** — the human picks: merge locally / push a PR / keep the branch / discard it. (Batched human attention, gate #3.)
+
+**Model assignment** is CSS-stylesheet-driven (the same cascade pattern Forge, Fabro, and Kilroy ship): Opus 4.6 = spec audits / consensus / debugging; GPT-5.4 = code-writing TDD cycles; GPT-5.2 = plan drafting/patching; Gemini 3.5 Flash = third-opinion review.
+
+**Graduated failure handling**: retry node (up to 2×) → debug investigation (Opus root-cause) → replan task → escalate to a human gate. **Hard loop caps** are first-class spec content: plan validation 5 iterations, review→re-implement 5 per task, final-review rework 2 full cycles. The README is candid about why the caps exist: *"It is not cheap. A full run hits Opus 4.6, GPT-5.4, GPT-5.2, and Gemini 3.5 Flash across dozens of nodes. If loops iterate (and they will), costs add up. **We burned 3.5M OpenAI tokens on a single bad run before adding loop limits.**"* This is the corpus's first explicit dollars-on-the-floor figure for a runaway-loop incident — and a sharp counter-anchor to El Kaim's *"$1,000-per-engineer-per-day"* framing: $1,000/day is the steady-state cost-of-running-the-factory; 3.5M tokens-on-a-single-bad-run is the *unbounded-loop* cost without loop caps. Loop caps are the validation discipline applied to compute, not to code.
+
+A second runaway-loop war story landed independently in Tracker v0.28.2 (2026-05-14): three of four built-in workflows (`ask_and_execute`, `build_product`, `build_product_with_superspec`) had `Start`/`Done` defined as agent nodes with `prompt: Initialize pipeline.` — which caused `ensureStartExitNodes` to skip the passthrough handler and turn Start into a real codergen session with full default tool access and no `max_turns` cap. A real `build_product` run was observed *spending ~10 minutes and ~39k output tokens inside Start, implementing an entire separate Go project from a `SPEC.md` found on disk*, before getting context-canceled. Two independent runaway-loop war stories from the same ecosystem in three months underline the dotpowers loop-cap discipline.
+
+### State split and resume semantics
+
+dotpowers's state-split is worth quoting because it generalizes the El Kaim "Filesystem as Memory" technique into a project-level convention: **`docs/plans/` is committed** (LLM-read/write artifacts: `brainstorm.md`, `design-brief.md`, `plan.md` with `- [ ] task-NNN:` checkboxes, audit results) and **`.tracker/` is gitignored** (pipeline mechanics: loop counters, batch counters, checkpoint data). Counters reset on each new run but persist across resume, so a resumed run won't hit a stale limit from a previous run. The split makes the *plan* a first-class committed artifact and the *runtime state* an ephemeral substrate — the project repo carries the spec, the tracker directory carries the run.
 
 ---
 
@@ -547,5 +602,15 @@ The article ends with an explicit references list. Reproduced verbatim for downs
 | https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e | ✅ FULL | Manual browser-cookie fetch 2026-05-11; full 41 KB / 24-minute article exported to `reference-only/dark-factory-article.txt`. Canonical primary source for this report. |
 | https://medium.com/@welkaim/about | ✅ | Path B export 2026-05-13; bio metadata only (Technology Innovations, Platforms, Blockchain & API; Medium member since Aug 2020; 756 followers). Captured in this report's header. |
 | https://welkaim.medium.com/ | ✅ | Path B export 2026-05-13 (post-index page); surfaced 10+ unread El Kaim Medium posts logged as future-research cluster in `research/PLAN.md`. |
+| https://2389.ai/products/coven/ | ✅ FULL | Drained from manual `research/manual/` capture on 2026-05-16. Self-hosted Tailscale gateway + native client; not a DOT-pipeline runner. Feeds the "2389 ecosystem update (2026-05-16)" section indirectly (orthogonal axis to the runner family). |
+| https://2389.ai/products/mammoth/ | ✅ FULL | Drained from manual `research/manual/` capture on 2026-05-16. Feeds the Mammoth→Tracker library-extraction discussion. |
+| https://2389.ai/products/smasher/ | ✅ FULL | Drained from manual `research/manual/` capture on 2026-05-16. Feeds the DOT-shape→node-type mapping table. |
+| https://2389.ai/products/tracker/ | ✅ FULL | Drained from manual `research/manual/` capture on 2026-05-16. Feeds the "Tracker is no longer weekend-scale" update. |
+| https://2389.ai/products/dotpowers/ | ✅ FULL | Drained from manual `research/manual/` capture on 2026-05-16. Feeds the "dotpowers as a portable methodology payload" subsection. |
+| https://github.com/2389-research/coven | ✅ FULL | README drained from manual `research/manual/` capture on 2026-05-16; v0.5.5, 137 commits, 4 stars, MIT. |
+| https://github.com/2389-research/mammoth | ✅ FULL | README drained from manual `research/manual/` capture on 2026-05-16; v0.8.0, 5,200+ tests, Homebrew. Pipeline execution explicitly delegated to `github.com/2389-research/tracker`. |
+| https://github.com/2389-ai/smasher | ✅ FULL | README drained from manual `research/manual/` capture on 2026-05-16; org is `2389-ai`, **not** `2389-research` (the only 2389 runner under that org). Five-crate Rust workspace; ~2,700 tests; nine-shape node-type map. |
+| https://github.com/2389-research/tracker | ✅ FULL | README drained from manual `research/manual/` capture on 2026-05-16; **v0.28.2**, **52 releases**, 9 contributors. Programmatic Go API + autopilot personas + budget caps + webhook gates + Cloudflare AI Gateway + `--export-bundle` + `.dip`/`.dipx`. |
+| https://github.com/2389-research/dotpowers | ✅ FULL | README + `dotpowers.dot` (114 KB) drained from manual `research/manual/` capture on 2026-05-16; ~1300-line methodology payload, six-phase pipeline, four-model assignment, hard loop caps (5/5/2), 3.5M-OpenAI-tokens-on-a-bad-run anecdote. |
 
 Legend: ✅ full / 🟡 reconstructed / ⏳ pending / ❌ unavailable.

@@ -65,6 +65,59 @@ Each `###` block has:
 
 ---
 
+## Orchestrator decisions (2026-05-16, post-index, pre-drain)
+
+The indexing pass left several `fold into X` / `alternative scope` choices to the next agent. Decisions, with rationale:
+
+| # | Question | Decision | Rationale |
+|---|---|---|---|
+| 1 | New `27-dotfile-pipelines-as-product` vs separate `2389-dotpowers-portable-methodology` | **Single report 27** covering Dark Factory essay + `dotpowers.dot` blob + dotpowers methodology page. | One thesis ("blueprint, not engine"); fragmenting weakens it. |
+| 2 | `schillace-attention-economy` vs `schillace-sunday-letters` super-report | **Single super-report 28-schillace-sunday-letters** covering all 11 Schillace pieces. | Theme-1/6/7 framing recurs across all eleven; a single report supports cross-letter cross-references and avoids triple-counting. |
+| 3 | Schillace's *What is a harness* — report 28 or report 09? | **Both.** Primary anchor in report 28; the four-panel diagram and the "gene transfer" coinage also imported into report 09 as the non-OpenAI canonical harness visual. | The diagram is corpus-canonical; report 09 needs it independent of the Schillace super-report. |
+| 4 | `27-prompt-engineering-survey` vs fold into report 26 | **Separate new report 29-prompt-engineering-survey.** | Schulhoff's PRISMA taxonomy is a 76-page meta-anchor that overflows report 26's scope (prompt-underspecification). |
+| 5 | `cognitive-escrow-and-harness-as-design-site` vs fold into followup/10 | **Separate new report 30-cognitive-escrow.** | Bridges Theme 1 (attention) + Theme 3 (governance) + Theme 6 (harness as design site); the STIR-as-structural-trigger angle is directly actionable for harness design. |
+| 6 | `caremark-rsi-board-exposure` vs fold into followup/10 | **Separate new report 31-caremark-rsi-board-exposure.** Cross-cite from followup/10. | Case-law density (8 Delaware/SEC anchors) + RSI-specific scope justifies a dedicated home. |
+| 7 | `shapiro-completion-chat-agent-claw` new report? | **Yes — new report 32-shapiro-completion-chat-agent-claw.** | Distinct from existing Shapiro Five-Levels followup; "Claw" is a new top-level taxonomy step (memory + goals + autonomy) and the read/write asymmetry rules are immediately actionable. |
+| 8 | `language-choice-as-harness` standalone or fold into 23/followup/07 | **Separate new report 33-language-choice-as-harness.** | Opens a vertical (compiler-as-AI-reviewer + type-system tightness as harness primitive) that is orthogonal to current Anthropic and evals chapters. |
+| 9 | `lenny-howiai-personal-harnesses` (CJ Hess) | **Separate new report 34-lenny-howiai-personal-harnesses.** Folds in BOTH the "How I AI" txt (Tenex / Flowy / `kevin`/`carl`) AND the `lenny-build-your-own-ai-developer-tools-with-claude-code.txt` transcript (10X / Flowy / Skills / Ralph loop). | Same engineer, same workflow, two captures — single report cleanest. |
+| 10 | `lenny-howiai-spec-driven-and-team-ops` (Nystrom) vs `notion-spec-driven-boxy` | **Single new report 35-lenny-howiai-spec-driven-and-team-ops** covering `lenny-spec-driven-development.txt` AND `The AI engineering workflow at Noti.txt`. | Same engineer (Nystrom), same Boxy stack, two captures. Notion spec-driven detail is also cross-linked into existing report 25. |
+| 11 | `sendbird-quests-token-tiers` new report? | **Yes — new report 36-sendbird-quests-token-tiers.** | Quest-marketplace + per-employee token-tier leaderboard ("AI God > 100M/day") is a novel org-design primitive not present elsewhere in the corpus. |
+| 12 | `academic-llm-agent-collusion` new report? | **Yes — new report 37-academic-llm-agent-collusion.** | First academic-empirical anchor in the corpus for Theme-2 collusion in market settings (Neves & Bussmann SABM, CADE / Cerebro Project). |
+| 13 | LukePM "Software Factory" article | **Low-priority: one-paragraph attribution note into report 01 (footnote-1 chain).** | Definitional / speculative; only durable value is provenance. |
+
+**Report numbering plan (this drain creates reports 27–37, i.e. 11 new numbered reports):**
+
+| # | Slug | Anchor sources | Theme cluster |
+|---|---|---|---|
+| 27 | `dotfile-pipelines-as-product` | Dark Factory essay (mhtml) + `dotpowers.dot` blob + dotpowers methodology page | 4, 6, 2 |
+| 28 | `schillace-sunday-letters` | 11 Schillace pieces (incl. "What is a harness" w/ 4-panel diagram) | 1, 6, 7, 4 |
+| 29 | `prompt-engineering-survey` | Schulhoff et al. *The Prompt Report* (arXiv:2406.06608) | 6, 5, 3 |
+| 30 | `cognitive-escrow` | Kahana *Cognitive Escrow* (Stanford CodeX) | 3, 1, 6 |
+| 31 | `caremark-rsi-board-exposure` | Kahana *Ungovernable Machine* (Stanford CodeX) | 3, 2 |
+| 32 | `shapiro-completion-chat-agent-claw` | Shapiro *Completion, Chat, Agent, Claw* | 2, 3, 7 |
+| 33 | `language-choice-as-harness` | MacGregor *Does Language Choice Matter?* + Valim/Tencent benchmark | 6, 5, 3 |
+| 34 | `lenny-howiai-personal-harnesses` | CJ Hess (Tenex/10X) — Flowy + Skills + Ralph loop + `kevin`/`carl` | 6, 4, 1 |
+| 35 | `lenny-howiai-spec-driven-and-team-ops` | Ryan Nystrom (Notion) — Boxy + standup-pre-read + Whisper→spec→Codex | 7, 6, 1 |
+| 36 | `sendbird-quests-token-tiers` | John Kim (Sendbird) — Automators + AI-God leaderboard | 7, 1, 5 |
+| 37 | `academic-llm-agent-collusion` | Neves & Bussmann SABM (Stanford Computational Antitrust v.6) | 2, 5, 3 |
+
+**Existing-report upgrades during this drain (no new report):**
+
+- Report 01 — LukePM footnote-1 attribution paragraph.
+- Report 09 — Schillace "What is a harness" four-panel diagram + Schillace "Artisans and Factory Lines" recipe diagram (both kept as embedded canonical visuals).
+- Report 18 — primary-source upgrades for `harness-engineering`, `unlocking-the-codex-harness`, `running-codex-safely`, `developers.openai.com/codex/rules` (replace 🟡 / fill ❌).
+- Report 20 — Mastra confirmation from Agent-3 Playground screenshot + new "App Monitoring" substrate-extension subsection.
+- Report 22 — primary-source upgrades for `swe-bench-verified` and Princeton PLI SWE-bench blog (replace ❌); save the SWE-bench loop diagram into the report.
+- Report 25 — Notion spec-driven workflow as industrial AFIS strategy-3 instance (cross-link to report 35).
+- Report 07 (Dark Factory) — refresh 2389 ecosystem (Mammoth→Tracker library extraction, Tracker `Audit/Diagnose/Doctor` API, autopilot personas, budget caps, `.dip` files).
+- followup/02-attractor-implementations — add Coven, Mammoth, Smasher, Tracker, dotpowers, post-Feb-2026 Kilroy evolution.
+- followup/07-evals-deepdive — drain AttractorBench tier structure, conformance contract, cost-aware scoring, v13 Gemini=0.508 anchor.
+- followup/10-governance — incorporate AILCCP principle definitions + 48-controls catalog + AILCCP structural-overview (37 principles / 43 standards / 10 phases / 18 risks); cross-link from new report 30 and report 31.
+
+**Processing order:** clusters A → O. Skip D and G (all duplicates already deleted). One subagent per cluster (for context preservation, NOT for parallelism). After each cluster commit a checkpoint and update PLAN.md.
+
+---
+
 ## Per-source entries
 
 ## Roll-up summary

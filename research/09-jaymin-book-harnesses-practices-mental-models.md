@@ -393,4 +393,26 @@ To be carried into `architectures/` and the synthesis alongside §1's harness/sc
 
 ---
 
-*End of report 09 — `research/09-jaymin-book-harnesses-practices-mental-models.md` v1.1 (v1.0 + Substack manifesto folded in from the deleted partial, 2026-05-13)*
+---
+
+## 10. Two canonical harness-engineering diagrams (Schillace)
+
+*Added 2026-05-16 per orchestrator decision row 3 of `research/manual/new-index.md` (line 76, 107). Sam Schillace's eleven Sunday Letters are anchored as a super-report at [`research/28-schillace-sunday-letters.md`](28-schillace-sunday-letters.md); two of those letters carry the corpus' canonical non-OpenAI teaching diagrams for harness engineering, embedded below.*
+
+**Diagram 1 — "What Is an AI Harness?" (Schillace, 2026-05-03)**
+
+![Schillace's four-panel "What is an AI Harness?" architecture diagram](figures/28-schillace-sunday-letters/what-is-a-harness-four-panel.png)
+
+*Four panels — (1) Start with a model; (2) The harness orchestrates (with yaml "recipes" and Context Query inset); (3) It manages memory and context; (4) It compounds — over a "full picture" bottom strip enumerating Models → Tools → Data connectors → Memory systems → Harnesses. Caption: "AI is not one single thing: harnesses orchestrate the rest into a more effective system."* The diagram is corpus-canonical because it is the only non-OpenAI, non-academic teaching visual for the harness category, drawn from inside a shipping practitioner-operated harness (Microsoft Amplifier). See report 28 §4 for the panel-by-panel unpack including the Semantic Kernel lineage claim and Schillace's coinage of the "gene transfer" pattern.
+
+**Diagram 2 — "Recipe for Building in the Semantic Era" (Schillace, 2026-05-10)**
+
+![Schillace's hand-drawn syntactic-vs-semantic boundary diagram](figures/28-schillace-sunday-letters/artisans-recipe-for-semantic-era.png)
+
+*The Old World (Deterministic Factory) ↔ The Tempting Wrong Hybrid (LLM wrapped in too many patches: rule engines, validators, guard rails, schema enforcers) ↔ The New World (Semantic Foundry). Five ingredients (syntactic code; determinism; semantic reasoning; stochastic behaviour; meta-cognitive code) + four-step method (decide what belongs in model vs code; stay in the semantic world when the task depends on meaning; use code for meta-cognitive scaffolding only; invent native engineering patterns instead of recreating expert systems by hand).* This is the canonical visual for the syntactic↔semantic boundary that Jaymin's Ch 9 §3 (specs-as-source-code) and the Raschka harness-component decomposition (§1 above) both implicitly cross. The "Tempting Wrong Hybrid" — wrapping an LLM in deterministic code to escape its stochasticity — is named here as a senior-engineer failure mode and is corpus-novel as a *named* anti-pattern. See report 28 §6 for the full prose unpack.
+
+Both diagrams are referenced (not copied) from `research/figures/28-schillace-sunday-letters/`; the canonical home is report 28 and any future updates to the figures should go there.
+
+---
+
+*End of report 09 — `research/09-jaymin-book-harnesses-practices-mental-models.md` v1.2 (v1.0 + Substack manifesto §9 folded in 2026-05-13; v1.2 + Schillace harness diagrams §10 added 2026-05-16)*

@@ -1,0 +1,154 @@
+TITLE: Mammoth ��� 2389 Research, Inc
+URL: https://2389.ai/products/mammoth/
+
+Skip to content2389Products
+Blog
+Radio
+Work With Us
+About
+
+Tool
+Alpha
+Feb 26, 2026
+
+Mammoth
+
+DOT-based pipeline runner that turns directed graphs into multi-stage AI coding workflows with checkpointing, retry, and human-in-the-loop gates.
+
+GitHub
+��� All Products
+
+We're actively building this ���
+
+Mammoth reads a DOT file describing a pipeline graph and executes it node by node, dispatching each stage to an LLM coding agent. You define the workflow as a directed graph ��� nodes are tasks, edges are transitions, attributes configure behavior ��� and mammoth handles the execution, retries, checkpointing, and human approval gates.
+
+Install
+
+# From source
+go install github.com/2389-research/mammoth/cmd/mammoth@latest
+
+# Or grab a binary from GitHub releases
+# macOS (arm64/amd64), Linux (arm64/amd64)
+
+What it does
+
+Pipeline execution from DOT files. Write a .dot file with nodes for each stage of your build ��� setup, code generation, testing, verification, integration. Mammoth parses the graph, validates it against 21 lint rules, and walks the DAG from start to exit.
+
+Multi-provider LLM agents. Each codergen node spins up an agent session backed by OpenAI, Anthropic, or Gemini. Set an API key and mammoth picks the provider, or pin a specific model per node via attributes.
+
+Checkpoint and auto-resume. Every successful node saves a checkpoint. If a run fails or gets interrupted, mammoth pipeline.dot picks up where it left off. Use --fresh to force a clean start.
+
+Parallel branches with fan-in. Fork work across multiple branches that execute concurrently, then merge results at a fan-in node with configurable join policies (all-success, majority, first-success).
+
+Human gates. Nodes with shape=house pause execution and prompt for human input ��� approve, reject, or provide guidance. Configurable timeouts with default choices for unattended runs.
+
+Verification nodes. Octagon-shaped nodes run shell commands (like swift test or go vet) and gate progression on exit code. No LLM, no token cost, deterministic pass/fail.
+
+Terminal UI. Run with --tui for a Bubble Tea dashboard showing the live DAG, event log, and node details. Or use the web UI via mammoth serve.
+
+How it works
+
+Three layers, bottom up:
+
+llm/ ��� Unified client that normalizes OpenAI Responses API, Anthropic Messages API, and Gemini into a single interface with streaming, retry, and backoff.
+
+agent/ ��� Agentic loop that drives an LLM through tool calls (file read/write, shell exec, patch apply), with steering, loop detection, and subagent spawning.
+
+attractor/ ��� The pipeline engine. Parses DOT, validates the graph, walks nodes through a 5-phase lifecycle, manages checkpoints, and dispatches to the agent layer.
+
+Pipeline files use standard DOT syntax with node attributes for configuration:
+digraph build_app {
+ setup [shape=box, prompt="Set up the project structure"]
+ implement [shape=box, prompt="Implement the core logic"]
+ verify [shape=octagon, command="go test ./..."]
+ done [shape=doublecircle]
+
+ setup -> implement -> verify -> done
+ verify -> implement [condition="outcome=fail"]
+}
+
+Requirements
+
+Go 1.25+ (for building from source)
+
+At least one LLM API key: ANTHROPIC_API_KEY, OPENAI_API_KEY, or GEMINI_API_KEY
+
+Graphviz (optional, for SVG/PNG graph rendering)
+
+View on GitHub ���
+
+pipeline
+agents
+dot
+go
+cli
+orchestration
+multi-agent
+checkpointing
+
+31 products
+��
+12 skills
+��
+16 tools
+��
+3 platforms
+��
+5 building
+��
+hugo 0.148.2
+��
+b23a7c0
+��
+built May 13 16:26
+
+2389
+2389 Research, Inc. pioneers AI integration for work and communication. Founded June 2024 by Harper Reed and Dylan Richard, we aim to redefine AI-driven collaboration. As an early-stage startup, we seek exceptional talent to help shape this future.
+
+Founded 2024
+���
+Chicago
+
+Products
+Skills Marketplace
+Mammoth
+BotBoard
+Smasher
+All Products ���
+
+Company
+About
+Blog
+Digest
+Shop
+Team
+
+Connect
+
+hello@2389.ai
++1 (814) 666-2389
+
+Newsletter
+
+Updates on our experiments and releases.
+
+Email address
+
+���
+
+�� 2026
+2389 Research, Inc
+Privacy
+��
+Terms
+��
+NDA
+��
+SecurityEN
+JA
+ES
+
+2389 Radio ���
+
+2389 RADIO
+Select a station

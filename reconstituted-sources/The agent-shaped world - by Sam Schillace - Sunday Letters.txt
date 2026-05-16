@@ -1,0 +1,163 @@
+TITLE: The agent-shaped world - by Sam Schillace - Sunday Letters
+URL: https://sundaylettersfromsam.substack.com/p/the-agent-shaped-world
+
+Sunday Letters
+
+SubscribeSign in
+
+The agent-shaped world
+
+The race is on, even if you can't see it
+
+Sam Schillace
+
+Feb 22, 2026
+
+30
+
+1
+
+Share
+
+Ok, this one is about AI too, but you probably should read it. 
+
+As you know, I spend essentially all of my time these days thinking about this, and working with it. And I talk to a lot of people about it, too. I see the usual bifurcation - some folks are happy and embracing it, and some hate it and want nothing to do with it. We���d expect that - that���s the usual ���why not/what if��� dynamic from anything disruptive, and, since this is VERY disruptive, that effect is stronger. 
+
+What���s really interesting though, is that there are folks who are absolutely ���red pilled���: getting a ton done, super engaged, often super tired, but overall very effective. I had a meeting today with someone I turned onto agentic coding a few weeks ago - he excitedly told me about turning Claude code lose on his marketing and sales, rebuilt a much better site, kicked off a bunch of sales processes he wouldn���t have been able to start, and more.
+
+So, some people are getting it, and some aren���t. Why? Some of it is attitude, but not all, or even most. It���s something about the shape of their work. I suspect this is actually the key thing, and I want to try to explain what I mean.
+
+The people with the tailwind have found surfaces that agents can grab onto. They often have things they can iterate and experiment on. They have data that the model can get to easily. Their workflows decompose into discrete observable steps. Their documentation is structured well enough that a machine can navigate it. Their interfaces are clean enough that something other than a human can drive them. 
+
+And there���s an aspect of ���recursion��� to what successful folks are doing. They often stop and look at their own process and ask what is or isn���t working, and feed that back into the model. The folks getting traction are finding ways to shape the work so agents can help and are looking to increase leverage (as we discussed last week). The folks running into headwinds are doing their jobs the same way they always did, maybe with a chatbot open in another tab. Incremental, not compounding.
+
+One good analogy to this is shipping containers, believe it or not. When Malcom McLean standardized the metal box in the 1950s, it looked like a logistics story. A box is a box. But what the container actually did was standardize the interface between production and transport so completely that it restructured global trade. The revolution wasn���t the ship ��� it was what the ship could now assume about the cargo. That assumption, that everything was in standard boxes, meant that the work could be automated - instead of humans manually carrying cargo on and off ships, we could build automated shipyards, and cranes, and trucks and train cars that all handled that standard container. 
+
+Once the assumption was baked in everywhere, everything compounded. The leverage came from the assumption, not the container. 
+
+The interesting thing here is that, to some degree, we���ve tried to do that with software, but it���s much harder. Containers are easy - literally a physical shape. Software, intention, cognition - comes in many shapes. It���s been much harder to find standards - we do things like build database schemas or standards like HTML so that, in some domain, computers have a chance of doing standard, scaled work. 
+
+That���s starting to change with agents. Any time content is ���plumbed in��� so that the agent can see it, they can be effective. Having a system ���shaped��� for agents the way containers are ���shaped��� for shipping makes all of it more effective - models do well with small, composable, well-defined pieces, and they don���t mind doing ���toil��� to have them work. A model is perfectly happy with html and ftp to do a presentation, but a human wouldn���t be. 
+
+Once the idea of containers was in the world, there was a powerful motivation for everyone to adapt to that system - it was much more efficient, and it took over pretty quickly. The same is going to happen with software and all ���intellectual worker��� tasks. Having a program, data source, or process that models can���t access is going to be more or less like shipping something outside of a container - maybe possible, far more expensive, and hard to convince everyone to do. 
+
+So the folks that are ���getting it��� see this new world and are able to shift their work to it. They���re happy - the new tools make them more effective, and often help them do something that before wasn���t possible at all. 
+
+Here���s the part that makes me genuinely uneasy about this moment though: the people who don���t see this, don���t know they���re being left behind. That���s the thing that doesn���t show up anywhere. Their metrics look fine. They���re shipping their projects, hitting their numbers, doing their jobs. The gap is invisible because the scoreboard hasn���t changed yet.
+
+We���ve seen this movie before, though. Borders was succeeding by bookstore metrics right until it wasn���t. Newspapers were profitable deep into the era when they were structurally finished. The signal shows up not as failure, but as a quiet ceiling that keeps the good times from getting better. And the people who noticed the internet early didn���t look dramatically different from the ones who didn���t ��� until suddenly they did. Organizations today are going on as though nothing has changed - but trust me, once you���ve been able to work at higher speed with agentic tools, that form of work will seem as archaic as newspapers suddenly did when the internet arrived. 
+
+I don���t think this is about hustle or keeping up or being an early adopter. I think it���s a structural question about interfaces: what does it take so that your work is ���on agent��� the way we used to say ���online���? That answer is different for every person and role. But it���s the urgent question now, and most of us are not yet asking it.
+
+The race is on. It just doesn���t look like a race yet from where most people are standing. But it���s a race nevertheless. 
+
+Share
+
+Subscribe
+
+30 Likes
+
+30
+
+1
+
+Share
+
+Discussion about this post
+
+CommentsRestacks
+
+Daniel Parming 
+Mar 7
+
+From my observations, there is a number of factors (simplification, evidently), with one being the most prominent.
+
+Reasons for not trying new stuff:
+
+* High comfort threshold
+
+* Ignorance (wilful or forced)
+
+* Barred access (lack of time, lack of resources)
+
+* Strategic wait (let the stuff stabilise)
+
+* Strategic spite (let their bubble pop)
+
+Reasons to try new stuff:
+
+* Curiosity
+
+* Real needs or current incomfort
+
+Reasons for trying and succeeding
+
+* Overlap between tech and real needs
+
+* High grit
+
+* High intelligence and/or experience
+
+* Ability to circumvent existing limitations
+
+* Ability to detect and exploit value
+
+I'd say most software engineers went through an active vibecoding phase with subpar results, myself included. That laid the basis for a strategic wait in optimistic personalities, or strategic spite in pessimistic ones. At some point when things aren't going well or when curiosity wins these engineers try again, with new knowledge and better toolset.
+
+The ones that try again and are either sufficiently stubborn, sufficiently intelligent or sufficiently experienced strike the goldmine where most others fail. Handholding by someone with demonstratable results also works.
+
+And there are others that either can't simply put understand / reeducate themselves to fit in the new world or really cling to the strategic spite despite all evidence. In some cases it's so blunt that it's almost like a self-preservation instinct that is failing to fire.
+
+Like
+
+Reply
+
+Share
+
+TopLatestDiscussions
+
+I have seen the compounding teams
+
+It's more than spec or vibe coding
+
+Sep 28, 2025 ��� Sam Schillace
+
+34
+
+7
+
+2
+
+Vibe coding considered harmful, Lego code instead
+
+How to build better code with AI
+
+Apr 13, 2025 ��� Sam Schillace
+
+20
+
+6
+
+1
+
+Bad programmers are about to become very exposed
+
+The tide is going out - maybe for more than just programming
+
+Dec 7, 2025 ��� Sam Schillace
+
+24
+
+3
+
+See all
+
+Ready for more?
+
+Subscribe
+
+�� 2026 Sam schillace �� Privacy ��� Terms ��� Collection notice
+
+ Start your SubstackGet the app
+
+Substack is the home for great culture

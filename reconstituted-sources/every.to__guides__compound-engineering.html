@@ -1,0 +1,2461 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <title>Compound Engineering</title>
+
+
+    <meta name="description" content="The AI-native engineering philosophy">
+
+    <meta property="og:title" content="Compound Engineering">
+    <meta property="og:description" content="The AI-native engineering philosophy">
+    <meta property="og:image" content="https://d24ovhgu8s7341.cloudfront.net/uploads/publication/logo/107/Guides_cover.png">
+    <meta property="og:url" content="https://every.to/guides/compound-engineering">
+    <meta property="og:type" content="article">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@every">
+    <meta name="twitter:title" content="Compound Engineering">
+    <meta name="twitter:description" content="The AI-native engineering philosophy">
+    <meta name="twitter:image" content="https://d24ovhgu8s7341.cloudfront.net/uploads/publication/logo/107/Guides_cover.png">
+
+        <meta property="article:published_time" content="2026-01-17">
+        <meta property="article:modified_time" content="2026-05-07">
+        <meta property="article:author" content="Kieran Klaassen">
+
+
+    <link rel="canonical" href="https://every.to/guides/compound-engineering">
+
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Every","url":"https://every.to","description":"The only subscription you need to stay at the edge of AI. Ideas, apps, and training from practitioners who build with AI daily. Cited by The New York Times and The New Yorker.","publisher":{"@type":"Organization","name":"Every","url":"https://every.to","logo":{"@type":"ImageObject","url":"https://every.to/android-chrome-512x512.png"},"sameAs":["https://x.com/every","https://www.linkedin.com/company/every-media/","https://podcasts.apple.com/us/podcast/ai-i/id1719789201","https://open.spotify.com/show/5qX1nRTaFsfWdmdj5JWO1G"],"foundingDate":"2020","founder":{"@type":"Person","name":"Dan Shipper","url":"https://every.to/@danshipper"}}}</script>
+      <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Compound Engineering","description":"The AI-native engineering philosophy","datePublished":"2026-01-17T14:00:00-05:00","dateModified":"2026-05-07T10:30:31-04:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://every.to/guides/compound-engineering"},"publisher":{"@type":"Organization","name":"Every","url":"https://every.to","logo":{"@type":"ImageObject","url":"https://every.to/android-chrome-512x512.png"},"sameAs":["https://x.com/every","https://www.linkedin.com/company/every-media/","https://podcasts.apple.com/us/podcast/ai-i/id1719789201","https://open.spotify.com/show/5qX1nRTaFsfWdmdj5JWO1G"],"foundingDate":"2020","founder":{"@type":"Person","name":"Dan Shipper","url":"https://every.to/@danshipper"}},"inLanguage":"en","author":{"@type":"Person","name":"Kieran Klaassen","url":"https://every.to/@kieran_1355"}}</script>
+
+      <script src="https://www.google.com/recaptcha/api.js?render=6LdbLlgsAAAAAMOqUGdeHvdhnfd7oMyOvAmsFR0Q" defer></script>
+
+    <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="lsoU9Suke0b45e6NLgVOeCA58Bt8jQQcpgYaGJsVk6AIXBNfrPq3_lylXAfkDrcmrCNHk8L72oARo4ia3zsVuQ" />
+    
+
+    <meta name="facebook-domain-verification" content="2p4fqv7ioqja0m0csf0gcx6k1vajjl" />
+    <script>
+  window.EVERY_PRIVACY = {"effective":{"necessary":true,"analytics":true,"advertising_share":true},"gpc":false,"source":"default","update_path":"/privacy/preferences"};
+  window.EVERY_PRIVACY.gpc = window.EVERY_PRIVACY.gpc || (navigator.globalPrivacyControl === true);
+  if (window.EVERY_PRIVACY.gpc && window.EVERY_PRIVACY.effective) {
+    window.EVERY_PRIVACY.effective.advertising_share = false;
+  }
+</script>
+
+<!-- Posthog — always rendered so Cloudflare-cached pages include it.
+     Privacy opt-out is handled client-side via EVERY_PRIVACY. -->
+<script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId setPersonProperties".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_lFvO2Fyz14e8lIY6fs1ZYQnhYm4B93axCQPJwopb8ao',{api_host:'https://pha.every.to', person_profiles: 'always'
+    });
+
+    // Respect privacy preferences client-side so Cloudflare-cached pages
+    // still honour opt-out. Read the cookie directly since the server-rendered
+    // EVERY_PRIVACY object may reflect a different visitor's preferences.
+    ;(function() {
+      try {
+        var m = document.cookie.match(/(^| )every_privacy_preferences=([^;]+)/);
+        if (m) {
+          var prefs = JSON.parse(decodeURIComponent(m[2]));
+          if (prefs.analytics === false || prefs.analytics === "false") {
+            posthog.opt_out_capturing();
+          }
+        }
+      } catch(_e) {}
+    })();
+</script>
+<!-- End Posthog -->
+
+  <!-- Google Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-1108031-37', 'auto');
+    ga('send', 'pageview');
+    </script>
+  <!-- End Google Analytics -->
+
+  <!-- Google Tag Manager -->
+  <script>if (!window.EVERY_PRIVACY.gpc) {(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MF93TLQ');}</script>
+  <!-- End Google Tag Manager -->
+
+    <!-- Meta Pixel Code -->
+    <script>if (!window.EVERY_PRIVACY.gpc) {
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '675385303309041');
+    fbq('track', 'PageView');
+    fbq('track', 'CompleteRegistration');
+    }</script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=675385303309041&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <script>
+      if (!window.EVERY_PRIVACY.gpc) {
+        (function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');
+        var rewardfulScript = document.createElement("script");
+        rewardfulScript.async = true;
+        rewardfulScript.defer = true;
+        rewardfulScript.src = "https://r.wdfl.co/rw.js";
+        rewardfulScript.setAttribute("data-rewardful", "c435ad");
+        document.head.appendChild(rewardfulScript);
+      }
+    </script>
+
+      <link rel="stylesheet" href="/assets/tailwind-51a447ae1ddfebf092678b0c52aacecdb7b665eeb8ef31d2fab6f062a69352ef.css" data-turbo-track="reload" />
+<link rel="stylesheet" href="/assets/inter-font-8c3e82affb176f4bca9616b838d906343d1251adc8408efe02cf2b1e4fcf2bc4.css" data-turbo-track="reload" />
+      <link rel="preload" as="font" href="/assets/Every-Regular-238ce228fc861094451084538edfb13549d56204c65803d791ec2bc84932aaef.woff2" type="font/woff2" crossorigin>
+      <link rel="preconnect" href="https://d24ovhgu8s7341.cloudfront.net" crossorigin>
+
+    <link rel="stylesheet" href="/assets/application-d9b5fa37a248bde2f403b92626df02485a1916edc81c35d0e903450a6a9a753c.css" media="all" />
+    <script src="/assets/application-d0ce79d99e1ad3c06044c6cc1e6a831eaa450c4b32134b2f98277788ce89abf6.js" data-turbo-track="reload" defer="defer"></script>
+    <script>
+      // Globals readable by both deferred bundle and inline scripts further down the page.
+      var current_user = null;
+      var can_see_paid_posts = false;
+      var site_url = "https://every.to";
+      window.everyRecaptcha = {
+        enabled: true,
+        siteKey: "6LdbLlgsAAAAAMOqUGdeHvdhnfd7oMyOvAmsFR0Q"
+      };
+
+      // ConversionTracker is defined by the deferred application bundle, which finishes
+      // executing before DOMContentLoaded fires.
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof window.ConversionTracker === "function") {
+          var conversion_tracker = new window.ConversionTracker("posts", "show");
+          conversion_tracker.init();
+          window.conversion_tracker = conversion_tracker;
+        }
+
+        if (typeof window.posthog !== "undefined" && current_user) {
+          window.posthog.identify(current_user.id.toString(), {
+            account_status: current_user.status
+          });
+        }
+      });
+    </script>
+    <link rel="icon" href="/favicon-dark.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32-dark.png" media="(prefers-color-scheme: dark)">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16-dark.png" media="(prefers-color-scheme: dark)">
+    <link rel="shortcut icon" href="/favicon-dark.svg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+  </head>
+
+  <body class="public-container " data-intercom-visible="false" data-intercom-user-id=""><a href="https://every.to/cdn-cgi/content?id=hGx.ufe3eSyDg.CFqFe6eNAUcNEhh4F9E1ovd6gTh84-1778446769.6552858-1.0.1.1-rZGIAgjgqyL10fRdwQF_bsI8RHG3ZMyJr..Nb31Cw5I" aria-hidden="true" rel="nofollow noopener" style="display: none !important; visibility: hidden !important"></a>
+      <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MF93TLQ"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+    <div class="application-container posts-show ">
+
+        <header
+  id="main-header"
+  class="relative 976:sticky top-0 left-0 right-0 bg-black [.static-about_&]:bg-everyblue [.posts_&]:bg-postgray [.static-legal_&]:bg-postgray [.static-faq_&]:bg-postgray w-full z-[100000]"
+>
+  <nav
+    id="nav-bar"
+    class="px-4 py-6 pb-[35px] 976:pb-[50px] mb-4 976:mb-[74px] text-center flex justify-between items-center w-full shrink-0 grow-1 border-b border-[#505050]"
+  >
+    <div class="flex items-center gap-10">
+      <button id="open-drawer" class="py-2">
+        <img alt="Menu" class="[.static-about_&amp;]:invert [.posts_&amp;]:invert [.static-legal_&amp;]:invert [.static-faq_&amp;]:invert" src="https://every.to/assets/icons/burger-97f08033a4ff1182ccbd84f69d6a39e628414f91989de1042221cf6481df135d.svg" />
+      </button>
+      <a href="/search" class="py-2">
+        <img alt="Search" class="[.static-about_&amp;]:invert [.posts_&amp;]:invert [.static-legal_&amp;]:invert [.static-faq_&amp;]:invert" src="https://every.to/assets/icons/search-ca56d8c10c06492199d59a1c051f15cace9260a30311739f8289e86b9fbc92c6.svg" />
+      </a>
+    </div>
+      <div class="flex items-center gap-4 976:gap-6">
+        <!-- GitHub star - only on compound engineering guide -->
+        <a
+          href="https://github.com/EveryInc/compound-engineering-plugin"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hidden [.static-compound_engineering_guide_&]:flex items-center gap-1.5 text-sm text-[#f35f00] hover:text-[#ff7a2e] font-sans transition-colors"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          <img src="https://img.shields.io/github/stars/EveryInc/compound-engineering-plugin?style=flat&label=&color=f35f00" alt="stars" class="h-4" />
+        </a>
+        <a href="/login" class="text-md text-left text-[#BDBDBD] [.static-about_&]:text-black [.posts_&]:text-black [.static-legal_&]:text-black [.static-faq_&]:text-black font-sans">
+          Sign in
+        </a>
+        <a
+          href="/subscribe?source=top_nav"
+          class="flex flex-col px-2 py-[6px] justify-start items-start text-md font-bold font-normal 976:px-4 976:py-3 bg-everyblue text-black font-sans rounded-md [.static-about_&]:bg-black [.static-legal_&]:bg-black [.static-faq_&]:bg-black [.static-about_&]:text-white [.static-legal_&]:text-white [.static-faq_&]:text-white [.posts_&]:bg-black [.posts_&]:text-white"
+        >
+          Subscribe
+        </a>
+      </div>
+  </nav>
+  <a id="logo-item" href="/" class="bg-black [.posts_&]:bg-postgray [.static-legal_&]:bg-postgray [.static-faq_&]:bg-postgray [.static-about_&]:bg-everyblue text-white w-[150px] 976:w-[418px] h-auto
+  absolute top-[77px] 976:top-[80px] px-4 976:px-[31px]
+  left-1/2 -translate-x-1/2">
+    <img class="bg-black [.posts_&]:bg-transparent [.static-legal_&]:bg-transparent [.static-faq_&]:bg-transparent [.static-about_&]:bg-transparent [.posts_&]:invert [.static-legal_&]:invert [.static-faq_&]:invert [.static-about_&]:invert" src="https://every.to/assets/every-logo-white-d8b0c13c4b860174d4ac9717f446538ba8fa4f3b3736dde0de86e37bfc756789.svg"/>
+  </a>
+
+  <!-- Progress bar — post pages only, anchored to bottom edge of sticky header -->
+  <div
+    id="post-progress-bar"
+    style="position:absolute;bottom:0;left:0;height:3px;width:0%;pointer-events:none;opacity:0;transition:opacity 0.25s ease;z-index:10;background:#1a1a1a;"
+  ></div>
+</header>
+
+<div
+  id="drawer"
+  class="fixed overflow-auto transition-all z-[100001] top-0 left-[-100%] bottom-0 flex flex-col justify-between p-4 bg-zinc-900 max-w-[277px]"
+>
+  <div>
+    <button id="close-drawer">
+      <img alt="Close" src="https://every.to/assets/icons/close-ea0cf7ce5d509dfce6a6461ab8180873b75e5480ad338cb45f45f9e25ca75812.svg" />
+    </button>
+    <div
+      class="divide-y divide-dashed divide-homeborder text-md text-white [&>*]:block [&>*]:mt-2 [&>*]:pt-2 mt-4"
+    >
+      <a href="/">Home</a>
+      <a href="/newsletter">Newsletter</a>
+      <a href="/columnists">Columnists</a>
+      <a href="/columnists#columns">Columns</a>
+      <a href="/podcast">Podcast</a>
+      <a href="/studio">Products</a>
+      <a href="/events">Events</a>
+      <a href="/consulting">Consulting</a>
+			<a href="/store">Store</a>
+    </div>
+    <div class="content-[''] mt-[5dvh] 976:mt-[10dvh]"></div>
+    <div class="text-sm text-white [&>*]:block space-y-2">
+        <a href="/login">
+          <button class="flex items-center gap-2">
+            <img alt="" src="https://every.to/assets/icons/signin-83fa7c0681f947df7045aa4d1df051e3fe29f8b11b52df34b180c8ff7010a2cc.svg" />
+            Sign in
+          </button>
+        </a>
+    </div>
+    <div
+      class="text-sm text-white [&>*]:block space-y-2 py-2 my-2 border-y border-dashed border-homeborder"
+    >
+      <a href="/search">Search</a>
+      <a href="/about">About us</a>
+      <a href="/careers">Careers</a>
+      <a href="/cdn-cgi/l/email-protection#6a191a05041905181902031a192a0f1c0f1813441e05" target="_blank">Advertise with us</a>
+      <a href="/team">The team</a>
+      <a href="/faq">FAQ</a>
+      <a href="https://help.every.to">Help center</a>
+    </div>
+    <div class="flex gap-2 justify-center pr-20 mt-2">
+      <a href="https://x.com/every" target="_blank">
+        <img alt="X / Twitter" src="https://every.to/assets/icons/xtwitter-a66ae6dc5260bbbab32ecaf3eb723b411070cd7887f803e04ad04018ec25e85a.svg" />
+      </a>
+      <a href="https://www.linkedin.com/company/everyinc/" target="_blank">
+        <img alt="LinkedIn" src="https://every.to/assets/icons/linkedin-5b8ca87f46ed1b2118f4f5372ede5e2081ed43bf6456d634a655b0e1cce158ea.svg" />
+      </a>
+      <a href="https://open.spotify.com/show/5qX1nRTaFsfWdmdj5JWO1G" target="_blank">
+        <img alt="Spotify" src="https://every.to/assets/icons/spotify-39d4b64fbd367b9e1cb7710dfdd1d0cf09ad0ab1c460573903ab735b4b119c55.svg" />
+      </a>
+      <a href="https://youtube.com/@everyinc" target="_blank">
+        <img alt="YouTube" src="https://every.to/assets/icons/youtube-f3ac30c4399a2a63a250ac355812201edb78b66dd8d1fbaed334dc54cdddc1e5.svg" />
+      </a>
+      <a href="https://podcasts.apple.com/us/podcast/ai-and-i/id1719789201" target="_blank">
+        <img alt="Apple Podcasts" src="https://every.to/assets/icons/apple-podcasts-5e45ead34a488c8b35c571efa288f0966339c2aa846f8469fb8e32325da45624.svg" />
+      </a>
+    </div>
+  </div>
+  <img loading="lazy" src="https://every.to/assets/every-logo-white-d8b0c13c4b860174d4ac9717f446538ba8fa4f3b3736dde0de86e37bfc756789.svg"
+       class="mt-[5dvh] max-w-full aspect-[3.7] w-[125px]"/>
+</div>
+
+<!-- Add overlay div -->
+<div
+  id="drawer-overlay"
+  class="fixed inset-0 bg-black/50 z-[100000] hidden"
+></div>
+
+<style>
+  /* Thin, visible scrollbar for dark UI */
+  #drawer {
+    scrollbar-width: thin;               /* Firefox */
+    scrollbar-color: #9CA3AF transparent; /* thumb, track */
+  }
+  #drawer::-webkit-scrollbar {           /* Chrome/Safari */
+    width: 8px;
+  }
+  #drawer::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.8); /* gray-400 */
+    border-radius: 8px;
+  }
+  #drawer::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(209, 213, 219, 0.9); /* gray-300 */
+  }
+  #drawer::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  /* Ensure iOS overlay scrollbars remain visible against dark bg where supported */
+  #drawer {
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Avoid scrollbar covering content */
+  #drawer > div {
+    padding-right: 2px;
+  }
+</style>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    const openDrawer = document.getElementById("open-drawer");
+    const closeDrawer = document.getElementById("close-drawer");
+    const drawer = document.getElementById("drawer");
+    const drawerOverlay = document.getElementById("drawer-overlay");
+
+    const openDrawerHandler = () => {
+        drawer.style.left = "0%";
+        drawerOverlay.classList.remove("hidden");
+    };
+
+    const closeDrawerHandler = () => {
+        drawer.style.left = "-100%";
+        drawerOverlay.classList.add("hidden");
+    };
+
+    openDrawer.addEventListener("click", openDrawerHandler);
+    closeDrawer.addEventListener("click", closeDrawerHandler);
+    drawerOverlay.addEventListener("click", closeDrawerHandler);
+</script>
+
+
+
+
+<script>
+    const logoItem = document.getElementById("logo-item");
+    const navbar = document.getElementById("nav-bar");
+
+    const initialWidth = 418;
+    const finalWidth = 178;
+    const initialTop = 80;
+    const finalTop = 34;
+    const initialPaddingBottom = 50;
+    const finalPaddingBottom = 24;
+    const scrollDistanceForWidth = 100;
+    const scrollDistanceForTop = 150;
+
+    const updateHandler = () => {
+        const scrollTop = window.scrollY;
+
+        if (window.innerWidth < 976 || scrollTop < 0) {
+            return;
+        }
+
+        let widthRatio = Math.min(scrollTop / scrollDistanceForWidth, 1);
+        let topRatio = Math.min(
+            (scrollTop - scrollDistanceForWidth) / scrollDistanceForTop,
+            1
+        );
+        topRatio = Math.max(topRatio, 0);
+
+        const newWidth = initialWidth - (initialWidth - finalWidth) * widthRatio;
+        const newTop = initialTop - (initialTop - finalTop) * topRatio;
+        const newPaddingBottom =
+            initialPaddingBottom -
+            (initialPaddingBottom - finalPaddingBottom) * topRatio;
+
+        // Width animation with translateX(-50%) to maintain centering
+        logoItem.style.width = `${newWidth}px`;
+        logoItem.style.transform = `translateX(-50%)`;
+        logoItem.style.top = `${newTop}px`;
+        navbar.style.paddingBottom = `${newPaddingBottom}px`;
+    }
+
+    const resizeHandler = () => {
+        logoItem.style.width = null;
+        logoItem.style.transform = null;
+        logoItem.style.top = null;
+        navbar.style.paddingBottom = null;
+
+        updateHandler();
+    }
+
+    window.addEventListener("scroll", updateHandler, true);
+    window.addEventListener("resize", resizeHandler, true);
+</script>
+
+
+
+      <!-- Compound Engineering Guide -->
+<style>
+  .compound-engineering-guide pre {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  }
+
+  .compound-engineering-guide pre::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .compound-engineering-guide pre::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 9999px;
+  }
+
+  .compound-engineering-guide pre::-webkit-scrollbar-track {
+    background: transparent;
+  }
+</style>
+<div class="compound-engineering-guide w-full min-h-screen bg-black text-white">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Header Section -->
+<header class="pt-16 md:pt-16 md:pb-0">
+  <div class="max-w-[800px] space-y-4">
+    <!-- Title -->
+    <h1 class="text-5xl md:text-6xl lg:text-7xl font-serif text-white leading-[1.1]">
+      Compound <span class="font-every">E</span>ngineering
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="text-xl md:text-2xl font-light text-white/70 leading-[1.5] max-w-2xl">
+      The AI-native engineering philosophy
+    </p>
+  </div>
+</header>
+
+<!-- Author Chips -->
+<div class="flex items-center gap-4 pt-4">
+  <!-- Kieran Klaassen -->
+  <a href="/@kieran" class="group flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+    <img
+      src="https://avatars.githubusercontent.com/u/7985?v=4"
+      alt="Kieran Klaassen"
+      class="w-9 h-9 rounded-full object-cover"
+    />
+    <span class="text-sm font-medium text-white/90">Kieran Klaassen</span>
+  </a>
+
+  <!-- Claude -->
+  <div class="flex items-center gap-2.5">
+    <img
+      src="https://every.to/assets/authors/claude-513b4157392ae74ddf0bd8d8b2475e4a7d88286d2b1156c261063c33cfa1a21d.webp"
+      alt="Claude"
+      class="w-9 h-9 rounded-full object-cover"
+    />
+    <span class="text-sm font-medium text-white/90">Claude</span>
+  </div>
+</div>
+
+<!-- Attribution Note -->
+<div class="max-w-[800px] mb-8 mt-4">
+  <div class="bg-white/[0.03] border-l-2 border-[#dc2626]/50 rounded-r-lg p-6">
+    <p class="text-white/70 leading-relaxed">
+      Compound engineering emerged from building <a href="https://cora.computer/" target="_blank" rel="noopener noreferrer" class="text-[#dc2626] hover:underline"><strong>Cora</strong></a>, an AI chief of staff for your inbox, from scratch. As we battle-tested every pattern, agent, and workflow across many pull requests, we developed personal productivity hacks to make the work go faster. This, in turn, evolved into a systematic approach to AI-assisted development. We're sharing the details of this philosophy because we believe compound engineering will become the default way software is built.
+    </p>
+  </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="max-w-[900px] mt-4 mb-8">
+  <div class="flex flex-col md:flex-row md:inline-flex items-stretch md:items-center gap-2 md:gap-3">
+    <!-- Open in Claude -->
+    <a
+      href="https://claude.ai/new?q=Hey!%20Got%20something%20cool%20for%20you%E2%80%94curious%20what%20you%20make%20of%20this%3A%20https%3A%2F%2Fevery.to%2Fguides%2Fcompound-engineering%0AIt's%20a%20system%20for%20AI-assisted%20development%20where%20each%20unit%20of%20work%20makes%20subsequent%20work%20easier.%0AStart%20with%20a%20tight%20summary%3A%20one%20paragraph%2C%20bulleted.%20Then%20offer%20to%20go%20deeper."
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Open in Claude"
+      onclick="if(typeof posthog !== 'undefined') posthog.capture('compound_engineering_guide_button_clicked', {button: 'claude'})"
+      class="group w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md border border-[#D97757]/30 bg-white/[0.05] hover:bg-[#D97757]/20 hover:border-[#D97757]/50 text-white/80 hover:text-[#D97757] text-sm font-medium transition-all duration-200"
+    >
+      <svg height="1em" style="flex:none;line-height:1" viewbox="0 0 24 24" width="1em" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"><title>Claude</title>
+<path d="M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z" fill="#D97757" fill-rule="nonzero"></path></svg>
+      <span>Read with Claude</span>
+    </a>
+
+    <!-- Open in ChatGPT -->
+    <a
+      href="https://chatgpt.com/?q=Hey!%20Got%20something%20cool%20for%20you%E2%80%94curious%20what%20you%20make%20of%20this%3A%20https%3A%2F%2Fevery.to%2Fguides%2Fcompound-engineering%0AIt's%20a%20system%20for%20AI-assisted%20development%20where%20each%20unit%20of%20work%20makes%20subsequent%20work%20easier.%0AStart%20with%20a%20tight%20summary%3A%20one%20paragraph%2C%20bulleted.%20Then%20offer%20to%20go%20deeper."
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Open in ChatGPT"
+      onclick="if(typeof posthog !== 'undefined') posthog.capture('compound_engineering_guide_button_clicked', {button: 'chatgpt'})"
+      class="group w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md border border-[#10A37F]/30 bg-white/[0.05] hover:bg-[#10A37F]/20 hover:border-[#10A37F]/50 text-white/80 hover:text-[#10A37F] text-sm font-medium transition-all duration-200"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewbox="0 0 24 24" class="w-5 h-5">
+  <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"></path>
+</svg>
+      <span>Read with ChatGPT</span>
+    </a>
+
+    <!-- Copy for Coding Agent (hidden on mobile) -->
+    <button
+      id="copy-for-agent-btn"
+      onclick="copyCompoundForAgent()"
+      class="group hidden md:inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md border border-white/20 bg-white/[0.05] hover:bg-white/[0.1] hover:border-white/30 text-white/80 hover:text-white text-sm font-medium transition-all duration-200"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke="currentColor" class="w-5 h-5" id="copy-agent-icon">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+</svg>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" class="w-5 h-5 animate-spin hidden" id="copy-agent-spinner">
+  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+</svg>
+      <span id="copy-for-agent-text">Copy for agent</span>
+    </button>
+
+    <!-- GitHub Plugin -->
+    <a
+      href="https://github.com/EveryInc/compound-engineering-plugin"
+      target="_blank"
+      rel="noopener noreferrer"
+      onclick="if(typeof posthog !== 'undefined') posthog.capture('compound_engineering_guide_button_clicked', {button: 'github'})"
+      class="group w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md border border-[#dc2626]/30 bg-[#dc2626]/10 hover:bg-[#dc2626]/20 hover:border-[#dc2626]/50 text-[#dc2626] hover:text-[#ef4444] text-sm font-medium transition-all duration-200"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewbox="0 0 24 24" class="w-5 h-5">
+  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></path>
+</svg>
+      <span>Get the plugin</span>
+      <img src="https://img.shields.io/github/stars/EveryInc/compound-engineering-plugin?style=flat&label=&color=f35f00" alt="stars" class="h-4" />
+    </a>
+  </div>
+</div>
+
+<script>
+  async function copyCompoundForAgent() {
+    // Track button click
+    if (typeof posthog !== 'undefined') {
+      posthog.capture('compound_engineering_guide_button_clicked', {button: 'copy_for_agent'});
+    }
+
+    const btn = document.getElementById('copy-for-agent-btn');
+    const textSpan = document.getElementById('copy-for-agent-text');
+    const icon = document.getElementById('copy-agent-icon');
+    const spinner = document.getElementById('copy-agent-spinner');
+    const originalText = textSpan.textContent;
+
+    try {
+      // Show loading state
+      icon.classList.add('hidden');
+      spinner.classList.remove('hidden');
+      textSpan.textContent = 'Loading...';
+      btn.disabled = true;
+
+      // Fetch the markdown file
+      const response = await fetch('/resources/compound-engineering.md');
+      if (!response.ok) {
+        throw new Error('Failed to fetch markdown file');
+      }
+
+      const markdown = await response.text();
+      await navigator.clipboard.writeText(markdown);
+
+      // Show success state
+      spinner.classList.add('hidden');
+      icon.classList.remove('hidden');
+      textSpan.textContent = 'Copied!';
+
+      // Reset after 2 seconds
+      setTimeout(() => {
+        textSpan.textContent = originalText;
+        btn.disabled = false;
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error copying for agent:', error);
+      spinner.classList.add('hidden');
+      icon.classList.remove('hidden');
+      textSpan.textContent = 'Error';
+      btn.disabled = false;
+
+      setTimeout(() => {
+        textSpan.textContent = originalText;
+      }, 2000);
+    }
+  }
+</script>
+
+    
+<section
+  id="guide-compound-engineering-hero-capture"
+  class="guide-email-capture py-8 md:py-10"
+  data-guide-email-capture="true"
+  data-guide-slug="compound-engineering"
+  data-guide-path="/guides/compound-engineering"
+  data-guide-template="compound_engineering_static"
+  data-guide-capture-position="hero"
+  data-source="guide-edge-ai-guides-compound-hero"
+>
+  <div class="relative mx-auto max-w-[880px]">
+      <div class="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-[#f35f00] via-[#c0f0fb] to-[#f35f00] opacity-45"></div>
+    <div class="relative overflow-hidden rounded-2xl border border-white/15 bg-[#0a0a0a] p-6 text-center shadow-[0_0_80px_rgba(192,240,251,0.06)] md:p-8">
+      <div class="mx-auto max-w-[660px]">
+        <div>
+            <p class="text-[11px] font-medium uppercase tracking-[0.12em] text-white/45">SUBSCRIBE</p>
+          <h3 class="mt-3 font-serif text-3xl leading-tight text-white md:text-4xl">Get our essential AI guides</h3>
+          <p class="mx-auto mt-3 max-w-lg text-base leading-7 text-white/70">Every keeps you at the edge of AI. Start with our best agent-friendly guides right in your inbox.</p>
+        </div>
+
+        <div class="email-box guide-compound-engineering-hero-email-box mx-auto mt-7 max-w-xl">
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <div class="flex min-w-0 flex-1 items-center gap-3 rounded border border-white/20 bg-black/20 p-3">
+              <img alt="Email" class="opacity-60" src="https://every.to/assets/icons/email-10ff3ba37cc5acd6148e8d02a1968f35810765415fd1aef2ecdfe22c5fd25af3.svg" />
+              <input
+                id="guide-compound-engineering-hero-email-field"
+                class="w-full border-none bg-transparent p-0 text-sm font-medium text-white outline-none placeholder:text-white/35 focus:border-transparent focus:ring-0"
+                type="email"
+                placeholder="example@domain.com"
+              >
+            </div>
+            <button
+              id="guide-compound-engineering-hero-subscribe-button"
+              data-source="guide-edge-ai-guides-compound-hero"
+              data-guide-slug="compound-engineering"
+              data-guide-path="/guides/compound-engineering"
+              data-guide-template="compound_engineering_static"
+              data-guide-capture-position="hero"
+              type="button"
+              class="rounded-lg bg-everyblue px-6 py-3 text-sm font-semibold text-black transition hover:bg-everyblue/90"
+            >
+              Try now
+            </button>
+          </div>
+          <div class="cf-turnstile mt-4" data-sitekey="0x4AAAAAABClENDAmiQ6VAuD"></div>
+          <div id="guide-compound-engineering-hero-subscribe-button-error" class="mt-3 text-sm text-red-300"></div>
+          <input type="hidden" id="guide-compound-engineering-hero_ref_publication_slug" value="">
+          <input type="hidden" id="guide-compound-engineering-hero_ref" value="guide-edge-ai-guides-compound-hero">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const capture = document.getElementById("guide-compound-engineering-hero-capture");
+    const input = document.getElementById("guide-compound-engineering-hero-email-field");
+    const button = document.getElementById("guide-compound-engineering-hero-subscribe-button");
+    const error = document.getElementById("guide-compound-engineering-hero-subscribe-button-error");
+
+    if (typeof EmailBoxFactory !== "undefined" && input && button) {
+      EmailBoxFactory.createInstance("guide-compound-engineering-hero").init(input, button, error);
+    }
+
+    if (capture && typeof posthog !== "undefined") {
+      posthog.capture("guide_email_capture_viewed", {
+        guide_slug: capture.dataset.guideSlug,
+        guide_path: capture.dataset.guidePath,
+        guide_template: capture.dataset.guideTemplate,
+        guide_capture_position: capture.dataset.guideCapturePosition,
+        source: capture.dataset.source
+      });
+    }
+  });
+</script>
+
+
+    <!-- Main Content -->
+    <main class="pb-0">
+      <!-- 1. The Philosophy -->
+      <!-- What Compounding Means -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <h2 style="top: 112px;" class="text-3xl md:text-4xl font-serif text-white leading-tight md:sticky self-start">The philosophy</h2>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p>
+        The core philosophy of compound engineering is that each unit of engineering work should make subsequent units easier—not harder.
+      </p>
+      <p>
+        Most codebases get harder to work with over time because each feature you add injects more complexity. After 10 years, teams spend more time fighting their system than building on it because each new feature is a negotiation with the old ones. Over time, the codebase becomes harder to understand, harder to modify, and harder to trust.
+      </p>
+      <p>
+        Compound engineering flips this on its head. Instead of features adding complexity and fragility, they teach the system new capabilities. Bug fixes eliminate entire categories of future bugs. When they are codified, patterns become tools for future work. Over time, the codebase becomes easier to understand, easier to modify, and easier to trust.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+      <!-- 2. The Main Loop -->
+      <!-- The Main Loop -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <h2 style="top: 112px;" class="text-3xl md:text-4xl font-serif text-white leading-tight md:sticky self-start">The main loop</h2>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p>
+        Every runs five products—<a href="https://cora.computer/" target="_blank" rel="noopener noreferrer" class="text-[#dc2626] hover:underline"><strong>Cora</strong></a>, <a href="https://www.monologue.to/" target="_blank" rel="noopener noreferrer" class="text-[#dc2626] hover:underline"><strong>Monologue</strong></a>, <a href="https://makeitsparkle.co/" target="_blank" rel="noopener noreferrer" class="text-[#dc2626] hover:underline"><strong>Sparkle</strong></a>, <a href="https://writewithspiral.com/" target="_blank" rel="noopener noreferrer" class="text-[#dc2626] hover:underline"><strong>Spiral</strong></a>, and our website <a href="http://Every.to" target="_blank" rel="noopener noreferrer" class="text-[#dc2626] hover:underline"><strong>Every.to</strong></a>—with primarily single-person engineering teams. The system that makes this possible is a four-step loop that forms the basis of compound engineering:
+      </p>
+
+      <div class="bg-white/[0.03] border border-white/10 rounded-lg p-6 my-4 text-center">
+        <p class="text-2xl font-mono text-[#dc2626]">Plan &rarr; Work &rarr; Review &rarr; Compound &rarr; Repeat</p>
+      </div>
+
+      <p>
+        The first three steps—plan, work, and review—should be familiar to any developer. It's the fourth step that separates compound engineering from other engineering. This is where the gains accumulate. Skip it, and you've done traditional engineering with AI assistance.
+      </p>
+      <p>
+        The loop works the same whether you are fixing a bug in five minutes or building a feature over several days. You just spend more or less time on each step.
+      </p>
+      <p>
+        The plan and review steps should comprise 80 percent of an engineer's time, and work and compound the other 20 percent. In other words, most thinking happens before and after the code gets written.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">1. Plan</h3>
+      <p>Planning transforms an idea into a blueprint, and better plans produce better results. Here are the actions to take and questions to ask yourself at this step:</p>
+      <ul class="list-disc list-inside space-y-2 text-white/80">
+        <li><strong>Understand the requirement.</strong> What's being built? Why? What constraints exist?</li>
+        <li><strong>Research the codebase.</strong> How does similar functionality work? What patterns exist?</li>
+        <li><strong>Research externally.</strong> What do the framework docs say? What are the established best practices?</li>
+        <li><strong>Design the solution.</strong> What's the approach? Which files need changes?</li>
+        <li><strong>Validate the plan.</strong> Does this hold together? Is it complete?</li>
+      </ul>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">2. Work</h3>
+      <p>Execution follows the plan. The agent implements while the developer monitors. Within this step, there are a few smaller tasks:</p>
+      <ul class="list-disc list-inside space-y-2 text-white/80">
+        <li><strong>Set up isolation.</strong> Git worktrees (isolated copies of your repository) or branches keep work separate.</li>
+        <li><strong>Execute the plan.</strong> The agent implements step by step.</li>
+        <li><strong>Run validations.</strong> Run tests, linting (automated code checking), and type checking after each change.</li>
+        <li><strong>Track progress.</strong> Check what work has been done, and what remains.</li>
+        <li><strong>Handle issues.</strong> When something breaks, adapt the plan.</li>
+      </ul>
+      <p class="text-white/60">If you trust the plan, there's no need to watch every line of code.</p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">3. Review (assess)</h3>
+      <p>This step catches issues before they ship. More importantly, it captures learnings for the next cycle, which becomes the basis for compound engineering. Here are the actions that happen during review:</p>
+      <ul class="list-disc list-inside space-y-2 text-white/80">
+        <li><strong>Have multiple agents review the output.</strong> Multiple specialized reviewers examine the code in parallel.</li>
+        <li><strong>Prioritize findings.</strong> Mark findings as P1 (must fix), P2 (should fix), or P3 (nice to fix).</li>
+        <li><strong>Resolve findings.</strong> The agent fixes issues based on review feedback.</li>
+        <li><strong>Validate fixes.</strong> Confirm fixes are correct and complete.</li>
+        <li><strong>Capture patterns.</strong> Document what went wrong to prevent recurrence.</li>
+      </ul>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">4. Compound (the most important step)</h3>
+      <p>
+        Traditional development stops at step three, but the compound step is where the gains are to be made. The first three steps (plan, work, review) produce a feature. The fourth step produces a system that builds features better each time.
+      </p>
+      <p>In this final step, these are the actions you should take:</p>
+      <ul class="list-disc list-inside space-y-2 text-white/80">
+        <li><strong>Capture the solution.</strong> Ask yourself: What worked? What didn't? What's the reusable insight?</li>
+        <li><strong>Make it findable.</strong> Add YAML frontmatter to make sure it is tagged with the right metadata, tags, and categories for retrieval.</li>
+        <li><strong>Update the system.</strong> Add new patterns into CLAUDE.md, the file the agent reads at the start of every session. Create new agents when warranted.</li>
+        <li><strong>Verify the learning.</strong> Ask yourself: Would the system catch this automatically next time?</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+      <!-- 3. The Plugin -->
+      <!-- The Plugin -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <h2 style="top: 112px;" class="text-3xl md:text-4xl font-serif text-white leading-tight md:sticky self-start">The plugin</h2>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p>
+        The compound engineering workflow ships as a plugin. Install it, and the full system is ready to use.
+      </p>
+
+      <div class="bg-white/[0.03] border border-white/10 rounded-lg p-6 my-4">
+        <h4 class="text-lg font-semibold text-white mb-4">What's in the box</h4>
+        <ul class="list-disc list-inside space-y-2 text-white/80">
+          <li><strong><a href="https://github.com/EveryInc/compound-engineering-plugin/tree/main/agents" target="_blank" class="hover:text-[#dc2626] transition-colors">26 specialized agents.</a></strong> Each agent is trained for a specific job.</li>
+          <li><strong><a href="https://github.com/EveryInc/compound-engineering-plugin/tree/main/commands" target="_blank" class="hover:text-[#dc2626] transition-colors">23 workflow commands.</a></strong> These include the main loop plus utilities.</li>
+          <li><strong><a href="https://github.com/EveryInc/compound-engineering-plugin/tree/main/skills" target="_blank" class="hover:text-[#dc2626] transition-colors">13 skills.</a></strong> These provide domain expertise, such as our agent-native architecture skill and style guide skill, on tap.</li>
+        </ul>
+      </div>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Installation</h3>
+      <p>Below are instructions for adding the plugin to some of the most common AI coding tools. Zero configuration is required.</p>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Claude Code</h4>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">claude /plugin marketplace add https://github.com/EveryInc/every-marketplace
+
+claude /plugin install compound-engineering</code></pre>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">OpenCode (experimental)</h4>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">bunx @every-env/compound-plugin install compound-engineering --to opencode</code></pre>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Codex (experimental)</h4>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">bunx @every-env/compound-plugin install compound-engineering --to codex</code></pre>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Where things live</h3>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/70">your-project/
+├── CLAUDE.md              # Agent instructions, preferences, and patterns
+├── docs/
+│   ├── brainstorms/       # /workflows:brainstorm output
+│   ├── solutions/         # /workflows:compound output (categorized)
+│   └── plans/             # /workflows:plan output
+└── todos/                 # /triage and review findings
+    ├── 001-ready-p1-fix-auth.md
+    └── 002-pending-p2-add-tests.md</code></pre>
+
+      <p class="text-white/60"><strong class="text-white">CLAUDE.md</strong> is the most important file that the agent reads every session. Put your preferences, patterns, and project context here. When something goes wrong, add a note so the agent learns.</p>
+      <p class="text-white/60"><strong class="text-white">docs/solutions/</strong> builds your institutional knowledge because each solved problem becomes searchable documentation. Future sessions will find past solutions automatically.</p>
+      <p class="text-white/60"><strong class="text-white">todos/</strong> tracks work items with priority and status. When the review step turns up issues, use them to decide what's worth fixing, and then use resolution commands to work through them.</p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Plugin structure</h3>
+      <p>The plugin itself contains:</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/70">agents/
+├── review/      # 14 code review specialists
+├── research/    # Codebase and documents researchers
+├── design/      # User interface and Figma sync agents
+├── workflow/    # Automation agents
+└── docs/        # Documentation agents
+commands/
+├── workflows/   # Core loop commands
+└── *.md         # Utility commands
+skills/          # Domain expertise (14 skills)</code></pre>
+    </div>
+  </div>
+</section>
+
+      <!-- Core Commands -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <h2 style="top: 112px;" class="text-3xl md:text-4xl font-serif text-white leading-tight md:sticky self-start">Core commands</h2>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+
+      <h3 class="text-xl font-semibold text-white mt-4 mb-4"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/brainstorm.md" target="_blank" class="hover:text-[#dc2626] transition-colors">/workflows:brainstorm</a></h3>
+      <p>When you're not sure what to build, start here.</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">/workflows:brainstorm Add user notifications</code></pre>
+      <p class="text-white/60">
+        This command helps you brainstorm answers about what to build and plan answers for how to build them. Use this when requirements are fuzzy. The command runs lightweight repo research, then asks questions one at a time to clarify purpose, users, constraints, and edge cases. The AI then proposes approaches, and decisions are captured in <code class="text-[#dc2626]">docs/brainstorms/</code> for handoff to <code class="text-[#dc2626]">/workflows:plan</code>.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/plan.md" target="_blank" class="hover:text-[#dc2626] transition-colors">/workflows:plan</a></h3>
+      <p>Describe what you want and get back a plan for how to build it.</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">/workflows:plan Add email notifications when users receive new comments</code></pre>
+      <p class="text-white/60">
+        This command spawns three parallel research agents: repo-research-analyst (codebase patterns), framework-docs-researcher (documentation), and best-practices-researcher (industry standards). Then the spec-flow-analyzer agent analyzes user flows and edge cases. Results are merged into a structured plan with affected files and implementation steps.
+      </p>
+      <p class="text-white/60 mt-2">
+        Enable <code class="text-[#dc2626]">ultrathink</code> mode (extended reasoning with deeper research) to automatically run <a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/deepen-plan.md" target="_blank" class="text-[#dc2626] hover:underline">/deepen-plan</a> after plan creation—this spawns over 40 parallel research agents.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/work.md" target="_blank" class="hover:text-[#dc2626] transition-colors">/workflows:work</a></h3>
+      <p>This is where the agent actually writes the code.</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">/workflows:work</code></pre>
+      <p class="text-white/60">
+        Runs in four phases: quick start (creates a git worktree—an isolated copy of your repo for parallel work—and sets up branch), execute (implements each task with progress tracking), quality check (optionally spawns over five reviewer agents—Rails, TypeScript, security, performance), and ship it (runs linting, creates PR). Each phase has clear entry and exit criteria.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/review.md" target="_blank" class="hover:text-[#dc2626] transition-colors">/workflows:review</a></h3>
+      <p>Get your PR reviewed by a dozen specialized agents at once.</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">/workflows:review PR#123</code></pre>
+      <p class="text-white/60">
+        Spawns more than 14 specialized agents in parallel that run simultaneously: security-sentinel, performance-oracle, data-integrity-guardian, architecture-strategist, pattern-recognition-specialist, code-simplicity-reviewer, and framework-specific reviewers (DHH-rails, Kieran-rails, TypeScript, Python). Everything gets combined into a single, prioritized list.
+      </p>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Review agents</h4>
+      <p class="text-white/60">The /review command spawns 14 specialized agents that analyze code in parallel. Each agent focuses on a specific domain and returns prioritized findings.</p>
+      <p class="text-white font-semibold mt-4 mb-2">Security</p>
+      <ul class="list-disc list-inside space-y-1 text-white/80">
+        <li><strong>security-sentinel</strong> - Scans for top 10 vulnerabilities as defined by the Open Worldwide Application Security Project (OWASP), injection attacks, authentication flaws, and authorization bypasses</li>
+      </ul>
+      <p class="text-white font-semibold mt-4 mb-2">Performance</p>
+      <ul class="list-disc list-inside space-y-1 text-white/80">
+        <li><strong>performance-oracle</strong> - Detects N+1 queries, missing indexes, caching opportunities, and algorithmic bottlenecks</li>
+      </ul>
+      <p class="text-white font-semibold mt-4 mb-2">Architecture</p>
+      <ul class="list-disc list-inside space-y-1 text-white/80">
+        <li><strong>architecture-strategist</strong> - Evaluates system design decisions, component boundaries, and dependency directions</li>
+        <li><strong>pattern-recognition-specialist</strong> - Identifies design patterns, anti-patterns, and code smells across the changeset</li>
+      </ul>
+      <p class="text-white font-semibold mt-4 mb-2">Data</p>
+      <ul class="list-disc list-inside space-y-1 text-white/80">
+        <li><strong>data-integrity-guardian</strong> - Validates migrations, transaction boundaries, and referential integrity</li>
+        <li><strong>data-migration-expert</strong> - Checks ID mappings, rollback safety, and production data validation</li>
+      </ul>
+      <p class="text-white font-semibold mt-4 mb-2">Quality</p>
+      <ul class="list-disc list-inside space-y-1 text-white/80">
+        <li><strong>code-simplicity-reviewer</strong> - Enforces YAGNI, flags unnecessary complexity, and checks readability</li>
+        <li><strong>kieran-rails-reviewer</strong> - Rails conventions, Turbo Streams patterns, model/controller responsibilities</li>
+        <li><strong>kieran-python-reviewer</strong> - PEP 8 compliance, type hints, Pythonic idioms</li>
+        <li><strong>kieran-typescript-reviewer</strong> - Type safety, modern ES patterns, clean architecture</li>
+        <li><strong>dhh-rails-reviewer</strong> - 37signals conventions: simplicity over abstraction, Omakase stack</li>
+      </ul>
+      <p class="text-white font-semibold mt-4 mb-2">Deployment</p>
+      <ul class="list-disc list-inside space-y-1 text-white/80">
+        <li><strong>deployment-verification-agent</strong> - Generates pre-deploy checklists, post-deploy verification steps, and rollback plans</li>
+      </ul>
+      <p class="text-white font-semibold mt-4 mb-2">Frontend</p>
+      <ul class="list-disc list-inside space-y-1 text-white/80">
+        <li><strong>julik-frontend-races-reviewer</strong> - Detects race conditions in JavaScript and Stimulus controllers</li>
+      </ul>
+      <p class="text-white font-semibold mt-4 mb-2">Agent-native</p>
+      <ul class="list-disc list-inside space-y-1 text-white/80">
+        <li><strong>agent-native-reviewer</strong> - Ensures features are accessible to agents, not just humans</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Output format</h4>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/70">P1 - CRITICAL (must fix):
+[ ] SQL injection vulnerability in search query (security-sentinel)
+[ ] Missing transaction around user creation (data-integrity-guardian)
+
+P2 - IMPORTANT (should fix):
+[ ] N+1 query in comments loading (performance-oracle)
+[ ] Controller doing business logic (kieran-rails-reviewer)
+
+P3 - MINOR (nice to fix):
+[ ] Unused variable (code-simplicity-reviewer)
+[ ] Could use guard clause (pattern-recognition-specialist)</code></pre>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Automated resolution</h4>
+      <p class="text-white/60">
+        The <code class="text-[#dc2626]">/resolve_pr_parallel</code> command processes all findings automatically. P1 issues are fixed first, then P2s. Each fix runs in isolation so they don't step on each other, but you still manually review the generated fixes at the end.
+      </p>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/triage.md" target="_blank" class="hover:text-[#dc2626] transition-colors">/triage</a></h4>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">/triage</code></pre>
+      <p class="text-white/60">
+        This command presents each finding one by one for human decision: approve (add to to-do list), skip (delete), or customize (modify priority/details). Approved items get <code class="text-[#dc2626]">status: ready</code> and can be worked on with <code class="text-[#dc2626]">/resolve_todo_parallel</code>. Use this when you want to filter findings before committing to fixes.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/compound.md" target="_blank" class="hover:text-[#dc2626] transition-colors">/workflows:compound</a></h3>
+      <p>This command documents a solved problem for future reference.</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">/workflows:compound</code></pre>
+      <p class="text-white/60">
+        This command spawns six parallel subagents: context analyzer (understands the problem), solution extractor (captures what worked), related docs finder (links to existing knowledge), prevention strategist (documents how to avoid recurrence), category classifier (tags for discovery), and documentation writer (formats the final doc). It creates a searchable markdown with YAML frontmatter that future sessions can find.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/lfg.md" target="_blank" class="hover:text-[#dc2626] transition-colors">/lfg</a></h3>
+      <p>With this command, you describe the feature, and the agent does the rest—planning, building, reviewing, and handing you a PR ready to merge.</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">/lfg Add dark mode toggle to settings page</code></pre>
+      <p class="text-white/60">
+        This chains the full pipeline: plan → deepen-plan → work → review → resolve findings → browser tests → feature video → compound. It pauses for plan approval, then runs autonomously, and spawns more than 50 agents across all stages. With one command, you have a complete feature.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+      <!-- 4. Beliefs -->
+      <!-- Beliefs to Let Go -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <h2 style="top: 112px;" class="text-3xl md:text-4xl font-serif text-white leading-tight md:sticky self-start">Beliefs to let go</h2>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p>
+        We have all been trained to believe certain things about software development. With improvements in AI tools, some of those beliefs are now obstacles. Here are eight of them to unlearn:
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">'The code must be written by hand'</h3>
+      <p>
+        The actual requirement for you to do your job well as a software engineer is simply to write good code, which can be defined as maintainable code that solves the right problem. Who types—a human or an agent—doesn't matter.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">'Every line must be manually reviewed'</h3>
+      <p>
+        Again, a core requirement to be a good engineer is to write quality code. Manual line-by-line review is one method to get there, but so are automated systems that catch the same issues.
+      </p>
+      <p>
+        One reason that developers still find themselves relying on manual review is that they don't trust the results. If you don't trust the results, fix the system, instead of compensating by doing everything yourself.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">'Solutions must originate from the engineer'</h3>
+      <p>
+        When AI can research approaches, analyze tradeoffs, and recommend options, the engineer's job becomes to add taste—knowing which solution fits this codebase, this team, and this context.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">'Code is the primary artifact'</h3>
+      <p>
+        A system that produces code is more valuable than any individual piece of code. A single brilliant implementation matters less than a process that consistently produces good implementations.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">'Writing code is the core job function'</h3>
+      <p>
+        A developer's job is ship value. Code is just one input in that job—planning, reviewing, and teaching the system all count too. Effective compound engineers write less code than before and ship more.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">'First attempts should be good'</h3>
+      <p>
+        In our experience, first attempts have a 95 percent garbage rate. Second attempts are still 50 percent. This isn't failure—it's the process.
+      </p>
+      <p>
+        Expecting perfection on attempt one is like expecting a junior developer to nail a complex feature without context. So make it your goal to get it right the first time. Focus on iterating fast enough that your third attempt lands in less time than attempt one.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">'Code is self-expression'</h3>
+      <p>
+        Developers subconsciously see AI-assisted development as an attack on their identity. It feels like a blow to the ego.
+      </p>
+      <p>
+        But the code was never really yours. It belongs to the team, the product, and the users. Letting go of code as self-expression is liberating. No attachment means you take feedback better, refactor without flinching, and skip the arguments about whether the code is good enough.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">'More typing equals more learning'</h3>
+      <p>
+        Many developers fear that by not typing it, they are not learning it. However, the reality is that understanding matters more than muscle memory today.
+      </p>
+      <p>
+        You learn and build understanding by reviewing, by catching mistakes, and by knowing when the AI is wrong. The developer who reviews 10 AI implementations understands more patterns than the one who hand-typed two.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Transition challenges</h3>
+      <p><strong>Less typing feels like less work.</strong> It isn't. Directing an agent requires more thinking than implementation because you are spending less time on keystrokes and more time thinking about important decisions.</p>
+      <p><strong>Letting go feels risky.</strong> Autonomous execution—handing things over to agents—triggers anxiety in many developers. This fades once they recognize they're not ceding control. Instead, they're encoding it into constraints, conventions, and review processes that scale better than manual oversight.</p>
+      <p><strong>Who built this?</strong> Features shipping without directly writing the code can feel like cheating. But planning, reviewing, and ensuring quality standards is the work. You did the thinking. All the AI did was the writing.</p>
+      <p>
+        These reactions indicate a fundamental shift in how work gets done, and they're expected. By talking about them openly at Every, we hope to make it easier for others to speak about their experiences.
+      </p>
+    </div>
+  </div>
+</section>
+
+      <!-- Beliefs to Adopt -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <h2 style="top: 112px;" class="text-3xl md:text-4xl font-serif text-white leading-tight md:sticky self-start">Beliefs to adopt</h2>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+
+      <h3 class="text-xl font-semibold text-white mt-4 mb-4">Extract your taste into the system</h3>
+      <p>
+        Every codebase reflects the taste of the developers who built it, from naming conventions to error handling patterns and testing approaches. That taste usually isn't documented anywhere. It lives in senior engineers' heads and is transferred through code review. This neither scales nor lets others on the team learn.
+      </p>
+      <p>
+        The solution is to extract and document these choices. Write these preferences down in CLAUDE.md or AGENTS.md so the agent reads it every session. Build specialized agents for reviewing, testing, and deploying, as well as skills that reflect your taste. Add slash commands that encode your preferred approaches. Point the agent at your existing style guides, architecture docs, and decision records, which all include examples of the way that you like to build.
+      </p>
+      <p>
+        Once the AI understands how you like to write code, it'll produce code you actually approve instead of code you have to fix.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The 50/50 rule</h3>
+      <p>
+        Previously, I suggested an 80/20 rule for building features: 80 percent of time planning and review, 20 percent on working and compounding. When you look at your broader responsibilities as a developer, you should allocate 50 percent of engineering time to building features, and 50 percent to improving the system—in other words, any work that helps build institutional knowledge rather than shipping something specific.
+      </p>
+      <p>
+        In traditional engineering, teams put 90 percent of their time into features and 10 percent into everything else. Work that isn't a feature feels like a distraction—something you do when you have spare time, which you never do. But that \"everything else\" is what makes future features easier: things like creating review agents, documenting patterns, and building test generators. When you treat that work as overhead instead of an investment, the codebase accumulates debt.
+      </p>
+      <p>
+        An hour spent creating a review agent saves 10 hours of review over the next year. You can spend time building a test generator that saves weeks of manual test writing. System improvements make work progressively faster and easier, but feature work doesn't.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Trust the process, build safety nets</h3>
+      <p>
+        AI assistance doesn't scale if every line requires human review. You need to trust the AI.
+      </p>
+      <p>
+        Trust doesn't mean blind faith. It means setting up guardrails such as tests, automatic review, and monitoring that flag issues so you don't have to watch every step.
+      </p>
+      <p>
+        When you feel as if you can't trust the output, don't compensate by switching to manually reviewing the code. Add a system that makes that step trustworthy, such as creating a review agent that flags issues.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Make your environment agent-native</h3>
+      <p>
+        If a developer can see or do something, the agent should be allowed to see or do it too.
+      </p>
+      <ul class="list-disc list-inside space-y-1 text-white/70 mt-2">
+        <li>Running tests</li>
+        <li>Checking production logs</li>
+        <li>Debugging with screenshots</li>
+        <li>Creating pull requests</li>
+      </ul>
+      <p>
+        Anything that you don't let the agent handle, you have to do yourself manually. The goal should be full environmental parity between human and AI developers.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Parallelization is your friend</h3>
+      <p>
+        You used to be the bottleneck because human attention only allows one task at a time. The new bottleneck is compute—how many agents you can run at once.
+      </p>
+      <p>
+        Run multiple agents and multiple features at the same time. Perform review, testing, and documentation all at once. When you are stuck on one task, start another, and let agents work while planning the next step.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Plans are the new code</h3>
+      <p>
+        The plan document is now the most important thing you produce. Instead of coding first and documenting later, as you might have traditionally, start with a plan. This becomes the source of truth your agents use to generate, test, and validate code.
+      </p>
+      <p>
+        Having a plan helps capture decisions before they become bugs. Fixing ideas on paper is cheaper than fixing code later.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Core principles</h3>
+      <p>
+        In summary, the beliefs that underpin this new approach to software development are:
+      </p>
+      <ul class="list-disc list-inside space-y-2 text-white/80">
+        <li><strong>Every unit of work makes subsequent work easier.</strong> Code, documentation, and tooling should build on each other and make future work faster, not slower.</li>
+        <li><strong>Taste belongs in systems, not in review.</strong> Bake your judgment into configuration, schemas, and automated checks. If you don't you'll be spending time manually checking, which does not scale.</li>
+        <li><strong>Teach the system, don't do the work yourself.</strong> Time spent giving agents more context pays exponential dividends, but time spent typing code only solves the task in front of you.</li>
+        <li><strong>Build safety nets, not review processes.</strong> The way to build trust in building with AI is by building verification infrastructure, not by gatekeeping manually at every step.</li>
+        <li><strong>Make environments agent-native.</strong> Structure projects so AI agents can navigate and modify them autonomously.</li>
+        <li><strong>Apply compound thinking everywhere.</strong> Every artifact—code, docs, tests, prompts—should enable the next iteration to move faster.</li>
+        <li><strong>Embrace the discomfort of letting go.</strong> When you delegate to AI tools, you have to be okay with imperfect results that scale, rather than perfect results that don't.</li>
+        <li><strong>Ship more value. Type less code.</strong> Your output should be measured by the number of problems solved, not the number of keystrokes you logged.</li>
+      </ul>
+      <p>
+        The principles extend beyond engineering to design, research, or even writing—any discipline where codifying taste and context help make future work go faster and easier. The steps are the same: Plan, execute, review, compound.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+      
+<section
+  id="guide-compound-engineering-mid-article-capture"
+  class="guide-email-capture py-10 md:py-14"
+  data-guide-email-capture="true"
+  data-guide-slug="compound-engineering"
+  data-guide-path="/guides/compound-engineering"
+  data-guide-template="compound_engineering_static"
+  data-guide-capture-position="mid-article"
+  data-source="guide-edge-ai-guides-compound-mid-article"
+>
+  <div class="relative mx-auto max-w-[880px]">
+    <div class="relative overflow-hidden rounded-2xl border border-white/15 bg-[#0a0a0a] p-6 text-center shadow-[0_0_80px_rgba(192,240,251,0.06)] md:p-8">
+      <div class="mx-auto max-w-[660px]">
+        <div>
+          <h3 class="font-serif text-4xl leading-tight text-white md:text-5xl">The Only Subscription You Need to Stay at the Edge of AI</h3>
+          <p class="mx-auto mt-3 max-w-lg text-base leading-7 text-white/70">Start shipping agent-native products with Every.</p>
+        </div>
+
+        <div class="email-box guide-compound-engineering-mid-article-email-box mx-auto mt-7 max-w-xl">
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <div class="flex min-w-0 flex-1 items-center gap-3 rounded border border-white/20 bg-black/20 p-3">
+              <img alt="Email" class="opacity-60" src="https://every.to/assets/icons/email-10ff3ba37cc5acd6148e8d02a1968f35810765415fd1aef2ecdfe22c5fd25af3.svg" />
+              <input
+                id="guide-compound-engineering-mid-article-email-field"
+                class="w-full border-none bg-transparent p-0 text-sm font-medium text-white outline-none placeholder:text-white/35 focus:border-transparent focus:ring-0"
+                type="email"
+                placeholder="example@domain.com"
+              >
+            </div>
+            <button
+              id="guide-compound-engineering-mid-article-subscribe-button"
+              data-source="guide-edge-ai-guides-compound-mid-article"
+              data-guide-slug="compound-engineering"
+              data-guide-path="/guides/compound-engineering"
+              data-guide-template="compound_engineering_static"
+              data-guide-capture-position="mid-article"
+              type="button"
+              class="rounded-lg bg-everyblue px-6 py-3 text-sm font-semibold text-black transition hover:bg-everyblue/90"
+            >
+              Subscribe
+            </button>
+          </div>
+          <div class="cf-turnstile mt-4" data-sitekey="0x4AAAAAABClENDAmiQ6VAuD"></div>
+          <div id="guide-compound-engineering-mid-article-subscribe-button-error" class="mt-3 text-sm text-red-300"></div>
+          <input type="hidden" id="guide-compound-engineering-mid-article_ref_publication_slug" value="">
+          <input type="hidden" id="guide-compound-engineering-mid-article_ref" value="guide-edge-ai-guides-compound-mid-article">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const capture = document.getElementById("guide-compound-engineering-mid-article-capture");
+    const input = document.getElementById("guide-compound-engineering-mid-article-email-field");
+    const button = document.getElementById("guide-compound-engineering-mid-article-subscribe-button");
+    const error = document.getElementById("guide-compound-engineering-mid-article-subscribe-button-error");
+
+    if (typeof EmailBoxFactory !== "undefined" && input && button) {
+      EmailBoxFactory.createInstance("guide-compound-engineering-mid-article").init(input, button, error);
+    }
+
+    if (capture && typeof posthog !== "undefined") {
+      posthog.capture("guide_email_capture_viewed", {
+        guide_slug: capture.dataset.guideSlug,
+        guide_path: capture.dataset.guidePath,
+        guide_template: capture.dataset.guideTemplate,
+        guide_capture_position: capture.dataset.guideCapturePosition,
+        source: capture.dataset.source
+      });
+    }
+  });
+</script>
+
+
+
+      <!-- 5. Getting Started -->
+      <!-- The AI Development Ladder -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <h2 style="top: 112px;" class="text-3xl md:text-4xl font-serif text-white leading-tight md:sticky self-start">Getting started</h2>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p>
+        The compound engineering loop—plan, work, review, compound—is the process. But how much of that process you allow the AI to own depends on where you are in your familiarity and aptitude with AI. There are five stages against which developers can plot themselves to understand where they sit.
+      </p>
+      <p>
+        Most developers who struggle with AI-assisted development don't know where they are on this ladder. They hear about multi-agent review systems and parallel cloud execution, feel overwhelmed, and either give up or try to skip ahead. Skipping stages doesn't work because you will feel uncomfortable and distrustful of the tools. Each rung builds the mental models and habits required for the next. So slow down, figure out where you are, and focus on building from there.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The stages</h3>
+
+      <h4 class="text-lg font-semibold text-white mt-8 mb-4">Stage 0: Manual development</h4>
+      <p>
+        At this stage, you are writing code line by line without any AI. You perform research via documentation and Stack Overflow. Your debugging process happens through code reading and print statements. Manual development built great software for decades, but sadly it's not fast enough in 2025.
+      </p>
+
+      <h4 class="text-lg font-semibold text-white mt-8 mb-4">Stage 1: Chat-based assistance</h4>
+      <p>
+        At this stage, you are using AI as a smart reference tool, querying ChatGPT, Claude, or Cursor, receiving code snippets, and copy-pasting what's useful. The AI accelerates your research and boilerplate generation, but you are still fully in control, reviewing every line.
+      </p>
+
+      <h4 class="text-lg font-semibold text-white mt-8 mb-4">Stage 2: Agentic tools with line-by-line review</h4>
+      <p>
+        At this stage, agentic tools—AI assistants that can read files and make changes directly—enter the workflow: Claude Code, Cursor Composer, and Copilot Chat. You allow the AI to read files and make changes directly in the codebase based on the context you have provided. You are a gatekeeper, approving or rejecting everything that the agent proposes, which is still a painstaking process.
+      </p>
+      <p>
+        Most developers plateau here and don't get to enjoy the upside of handing more over to AI.
+      </p>
+
+      <h4 class="text-lg font-semibold text-white mt-8 mb-4">Stage 3: Plan-first, PR-only review</h4>
+      <p>
+        This is the stage where everything changes. You and AI collaborate on a detailed plan including requirements, approach, and edge cases. Then the developer steps away and allows the AI to implement the plan without supervision. The output is a pull request, which you then review. Finally, you are out of the line level of the code and can catch problems in the PR review instead of babysitting the AI while it builds.
+      </p>
+      <p class="text-white/60">Compound engineering begins here as each cycle of planning, building, and reviewing teaches the system something that makes the next cycle easier and faster.</p>
+
+      <h4 class="text-lg font-semibold text-white mt-8 mb-4">Stage 4: Idea to PR (single machine)</h4>
+      <p>
+        You provide an idea, and the agent handles everything: codebase research, planning, implementation, test execution, self-review, issue resolution, and PR creation. At this stage, your involvement shrinks to three steps: ideation, PR review, and merge. However, you are still running one thing at a time on your own computer.
+      </p>
+
+      <h4 class="text-lg font-semibold text-white mt-8 mb-4">Stage 5: Parallel cloud execution (multiple devices)</h4>
+      <p>
+        This is the final stage. You move execution to the cloud and run things in parallel. Because you're not tied to a laptop, you can direct your agents from anywhere—a coffee shop, a Panamanian beach, or your phone.
+      </p>
+      <p>
+        You kick off three features, three agents work independently, and you review PRs as they finish. If you push it further, you allow agents to start monitoring feedback and proposing fixes without being asked. No longer an individual contributor are you. You're commanding a fleet.
+      </p>
+    </div>
+  </div>
+</section>
+
+      <!-- How to Level Up -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <h2 style="top: 112px;" class="text-3xl md:text-4xl font-serif text-white leading-tight md:sticky self-start">How to level up</h2>
+    <div class="space-y-6 max-w-[640px] min-w-0">
+
+      <div class="relative bg-gradient-to-br from-white/[0.04] to-transparent border border-white/10 rounded-xl p-6 overflow-hidden">
+        <h3 class="text-lg font-semibold text-white mb-4">0 → 1: Start collaborating</h3>
+        <div class="space-y-3 text-white/80 text-sm">
+          <p>Here are some actions to take to move from level zero to level one:</p>
+          <p><strong class="text-white">Pick one tool.</strong> My current preference is for Cursor with Opus 4.5 or Claude Code. You will do better if you are comfortable with one tool that you use every day instead of being less comfortable with a few tools that you use occasionally.</p>
+          <p><strong class="text-white">Ask questions first.</strong> Before writing any code, ask the AI to explain the existing code, so you get to understand what it understands. Ask, "How do we send emails to customers?" and "What patterns do we use for data migrations, if any?"</p>
+          <p><strong class="text-white">Delegate boilerplate.</strong> Hand over the boring stuff to AI first, such as tests, config files, and repetitive functions. These are low-risk things that will save you time and give you a feel for what the AI handles well.</p>
+          <p><strong class="text-white">Review everything.</strong> The learning happens when you review every line.</p>
+          <p class="text-[#dc2626]"><strong>Compounding move:</strong> Keep a running note of prompts that worked well. Good prompts are reusable.</p>
+        </div>
+      </div>
+
+      <div class="relative bg-gradient-to-br from-white/[0.04] to-transparent border border-white/10 rounded-xl p-6 overflow-hidden">
+        <h3 class="text-lg font-semibold text-white mb-4">1 → 2: Let the agent in</h3>
+        <div class="space-y-3 text-white/80 text-sm">
+          <p><strong class="text-white">Switch to agentic mode.</strong> This can be done in Claude Code, Cursor Composer, or the equivalent. Give the agent file system access—in other words, the ability to read and write files on your device.</p>
+          <p><strong class="text-white">Start with targeted changes.</strong> Start with something narrow: "Add a test for this function." Stick to one file and one purpose until you trust it.</p>
+          <p><strong class="text-white">Approve each action.</strong> Go through each action and approve or reject it. You're building intuition about when you can trust the agent and when you can't.</p>
+          <p><strong class="text-white">Review diffs, not just code.</strong> Remember that what changes matters more than what exists.</p>
+          <p class="text-[#dc2626]"><strong>Compounding move:</strong> Create a CLAUDE.md file, and document your preferences. When the agent makes a mistake, add a note so that it improves with each correction.</p>
+        </div>
+      </div>
+
+      <div class="relative bg-gradient-to-br from-[#dc2626]/5 to-transparent border border-[#dc2626]/20 rounded-xl p-6 overflow-hidden">
+        <h3 class="text-lg font-semibold text-white mb-4">2 → 3: Trust the plan (key transition)</h3>
+        <div class="space-y-3 text-white/80 text-sm">
+          <p><strong class="text-white">Invest in planning.</strong> Spell out requirements, the approach, and edge cases.</p>
+          <p><strong class="text-white">Let the agent research.</strong> Allow the AI to read the codebase, find patterns, and suggest approaches.</p>
+          <p><strong class="text-white">Make the plan explicit.</strong> Write the plan down, and make it specific so it is reviewable later.</p>
+          <p><strong class="text-white">Execute and step away.</strong> Ask the agent to implement the plan and leave it running until it's complete.</p>
+          <p><strong class="text-white">Review at PR level.</strong> Check the final result instead of the individual steps or lines of code.</p>
+          <p class="text-[#dc2626]"><strong>Compounding move:</strong> After each implementation, document what the plan missed so you can build faster the next time.</p>
+        </div>
+      </div>
+
+      <div class="relative bg-gradient-to-br from-white/[0.04] to-transparent border border-white/10 rounded-xl p-6 overflow-hidden">
+        <h3 class="text-lg font-semibold text-white mb-4">3 → 4: Describe, don't plan</h3>
+        <div class="space-y-3 text-white/80 text-sm">
+          <p><strong class="text-white">Give outcomes, not instructions.</strong> Tell the agent to, "Add email notifications for new comments," for example, and let it determine how to implement.</p>
+          <p><strong class="text-white">Let the agent plan.</strong> Planning should become its responsibility, given that it knows the codebase and does the research.</p>
+          <p><strong class="text-white">Approve the approach.</strong> Review the plan before implementation, and reject bad directions early.</p>
+          <p><strong class="text-white">Review the PR.</strong> The agent reviews its own work along the way—you just check the final result.</p>
+          <p class="text-[#dc2626]"><strong>Compounding move:</strong> Build a library of outcome-focused instructions that worked so you can tell the agent to "Add X like we did Y."</p>
+        </div>
+      </div>
+
+      <div class="relative bg-gradient-to-br from-white/[0.04] to-transparent border border-white/10 rounded-xl p-6 overflow-hidden">
+        <h3 class="text-lg font-semibold text-white mb-4">4 → 5: Parallelize everything</h3>
+        <div class="space-y-3 text-white/80 text-sm">
+          <p><strong class="text-white">Move execution to the cloud.</strong> Agents run on remote infrastructure because local machines are a bottleneck.</p>
+          <p><strong class="text-white">Run parallel work streams.</strong> Give three agents three different features to work on simultaneously.</p>
+          <p><strong class="text-white">Build a queue.</strong> Put ideas, bugs, and improvements into the queue, and agents can work on them in order when they have capacity.</p>
+          <p><strong class="text-white">Enable proactive operation.</strong> Agents can monitor user feedback, spot opportunities, and propose features on their own—you don't have to triage every request yourself.</p>
+          <p class="text-[#dc2626]"><strong>Compounding move:</strong> Document which tasks can be done in parallel well. If you aren't careful, multiple agents can go do similar things, which can confuse them and make it hard to work. Some work is inherently serial, and knowing the difference will save you time on coordination.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+      <!-- Three Questions -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <h2 style="top: 112px;" class="text-3xl md:text-4xl font-serif text-white leading-tight md:sticky self-start">Three questions</h2>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p>
+        Even if you don't have a fancy multi-agent review system at your fingertips, you can still get the benefits by asking these three questions before approving any AI output:
+      </p>
+      <ol class="list-decimal list-inside space-y-3 text-white/80">
+        <li><strong>"What was the hardest decision you made here?"</strong> This forces the AI to reveal where the tricky parts are and where it had to make judgment calls.</li>
+        <li><strong>"What alternatives did you reject, and why?"</strong> This shows you the options it considered and helps catch if it made a bad choice.</li>
+        <li><strong>"What are you least confident about?"</strong> This gets the AI to admit where it might be wrong. LLMs know where their weaknesses are, but you have to ask.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+
+      <!-- 6. Guides -->
+      <!-- Best Practices Intro -->
+<section class="border-t border-[#dc2626]/30 pt-12 pb-6">
+  <div class="max-w-[640px] mx-auto lg:mx-0 lg:ml-[calc(280px+4rem)]">
+    <h2 class="text-4xl md:text-5xl font-serif text-white mb-4">Best practices</h2>
+  </div>
+</section>
+
+      <!-- Guide: Agent-Native Architecture -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <div class="md:sticky self-start" style="top: 112px;">
+      <p class="text-[#dc2626] text-xs font-medium uppercase tracking-wider mb-2">Best practice</p>
+      <h2 class="text-3xl md:text-4xl font-serif text-white leading-tight">Agent-native architecture</h2>
+    </div>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p class="text-lg text-white/80">
+        Agent-native architecture means giving the agent the same capabilities you have. If the agent can't run tests, you have to run them. If it can't see logs, you have to debug. Every capability you withhold from the AI becomes a task you have to do yourself.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The agent-native checklist</h3>
+      <p>To see if you are working in an agent-native way, check your agent's capabilities. Can your agent:</p>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Development environment</h4>
+      <ul class="list-disc list-inside space-y-1 text-white/70">
+        <li>Run your application locally</li>
+        <li>Run your test suite</li>
+        <li>Run linters and type checkers</li>
+        <li>Run database migrations</li>
+        <li>Seed development data</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Git operations</h4>
+      <ul class="list-disc list-inside space-y-1 text-white/70">
+        <li>Create branches</li>
+        <li>Make commits</li>
+        <li>Push to remote</li>
+        <li>Create pull requests</li>
+        <li>Read PR comments</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Debugging</h4>
+      <ul class="list-disc list-inside space-y-1 text-white/70">
+        <li>View local logs</li>
+        <li>View production logs (read-only)</li>
+        <li>Take screenshots of the UI</li>
+        <li>Inspect network requests</li>
+        <li>Access error tracking (Sentry, etc.)</li>
+      </ul>
+
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Progressive agent-native</h3>
+      <p>You don't need to be 100 percent agent-native immediately. Give your agent or agents gradual access to an increasing number of things:</p>
+
+      <div class="space-y-4 mt-4">
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Level 1: Basic development</p>
+          <p class="text-white/60 text-sm">The agents have file access and can run tests and git commits. This is the basis to unlock basic compound engineering.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Level 2: Full local</p>
+          <p class="text-white/60 text-sm">The agents have access to your browser and local logs and the ability to create pull requests. This enables stages three to four of the adoption scale I introduced above.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Level 3: Production visibility</p>
+          <p class="text-white/60 text-sm">The agents have access to production logs (read-only), error tracking, and monitoring dashboards. This enables the agent to proactively debug code.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Level 4: Full integration</p>
+          <p class="text-white/60 text-sm">At this stage, the agents have access to ticket systems, have deployment capabilities, and are integrated with external services. This enables stage five of the AI adoption ladder.</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The agent-native mindset</h3>
+      <p>Beyond technical setup, agent-native is also a mindset. Keep these questions in mind:</p>
+
+      <div class="space-y-3 mt-4">
+        <p><strong class="text-white">When building features:</strong> <span class="text-white/70">"How will the agent interact with this?"</span></p>
+        <p><strong class="text-white">When debugging:</strong> <span class="text-white/70">"What would the agent need to see?"</span></p>
+        <p><strong class="text-white">When documenting:</strong> <span class="text-white/70">"Will the agent understand this?"</span></p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+      <!-- Guide: Skip Permissions -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <div class="md:sticky self-start" style="top: 112px;">
+      <p class="text-[#dc2626] text-xs font-medium uppercase tracking-wider mb-2">Best practice</p>
+      <h2 class="text-3xl md:text-4xl font-serif text-white leading-tight">Skip permissions</h2>
+    </div>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p class="text-lg text-white/80">
+        By default Claude Code asks for permission before every action such as creating a file as a safety measure. The <code class="text-[#dc2626]">--dangerously-skip-permissions</code> flag turns those prompts off. The name is intentionally scary to make you think before using it. But for compound engineering at stage three or above, the constant requests for permission will kill your flow. Here are some guidelines for when to require the AI to ask for permission and when not:
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">When to use it</h3>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Use it when:</h4>
+      <ul class="list-disc list-inside space-y-2 text-white/70">
+        <li><strong class="text-white">You trust the process.</strong> You have a good plan and good review systems.</li>
+        <li><strong class="text-white">You're in a safe environment.</strong> You're working in a sandbox where nothing you do will hurt real users or a live product.</li>
+        <li><strong class="text-white">You want velocity.</strong> The asks for permission slow down the workflow. Skip them to move fast.</li>
+      </ul>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Don't use it when:</h4>
+      <ul class="list-disc list-inside space-y-2 text-white/70">
+        <li><strong class="text-white">You're learning.</strong> The requests for permission from the AI help you understand what's happening.</li>
+        <li><strong class="text-white">You're in production.</strong> Never run with skip permissions when you're touching production code because that touches real users.</li>
+        <li><strong class="text-white">You don't have good rollback.</strong> If you can't easily undo mistakes, keep the prompts.</li>
+      </ul>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">How I use it</h3>
+      <p>I always run with skip permissions:</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/80">alias cc='claude --dangerously-skip-permissions'</code></pre>
+
+      <p class="text-white/60 mt-4">
+        I do this in a specific setup that helps avoid risk. I'm on my laptop, not a production server. I'm working in a branch that's completely separate from the main codebase. I have tests. I can revert anything. Real users will never see this code until I'm ready. The "dangerous" flag isn't actually dangerous here—it just helps me go faster.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Safety without prompts</h3>
+      <p>If you're not using permission prompts, you need other safety mechanisms.</p>
+
+      <div class="space-y-4 mt-4">
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Git is your safety net</p>
+          <p class="text-white/60 text-sm">Everything the agent does is in git. <code class="text-[#dc2626]">git reset --hard HEAD~1</code> and you're back.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Tests catch mistakes</p>
+          <p class="text-white/60 text-sm">Before merging, run your tests. If the agent broke something, tests will catch it.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Review before merge</p>
+          <p class="text-white/60 text-sm">Skip permissions skips implementation prompts, not final review. Always review the PR.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Worktrees isolate risk</p>
+          <p class="text-white/60 text-sm">Use git worktrees for risky work. Experiments happen in an isolated directory.</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The productivity calculation</h3>
+      <p class="text-white/60">
+        Your decision to skip permissions or not also depends on how much faster you want to build. Without skip permissions, you may see a prompt every 30 seconds. Each time you have to type "y," and lose focus. Imagine this multiplied hundreds of times each session.
+      </p>
+      <p class="text-white/60 mt-2">
+        With skip permissions, you can maintain a flow state because you are not being interrupted by requests for permission. Watch the work happen (or do something else, like jumping in the Pacific Ocean for a swim). This will unlock five to 10 times faster iteration, and the time saved can dramatically exceed the risk of occasionally having to roll something back.
+      </p>
+
+      <blockquote class="border-l-2 border-[#dc2626]/30 pl-4 mt-6">
+        <p class="text-white/70 italic">
+          The flag is named <code class="text-[#dc2626]">--dangerously-skip-permissions</code> on purpose. It's meant to make you pause the first time. But once you are more experienced, you can make an informed decision about your risk tolerance and choose to skip it.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+      <!-- Guide: Design Workflow -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <div class="md:sticky self-start" style="top: 112px;">
+      <p class="text-[#dc2626] text-xs font-medium uppercase tracking-wider mb-2">Best practice</p>
+      <h2 class="text-3xl md:text-4xl font-serif text-white leading-tight">Design workflow</h2>
+    </div>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p class="text-lg text-white/80">
+        Design is easier to iterate on in code than in mockups—you can click through it and feel the interactions. But you don't want to experiment in your production codebase. This section covers how to prototype designs in throwaway projects, test them with users, and capture your design taste so the AI can replicate it.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The baby app approach</h3>
+      <p>
+        Create a throwaway project—a "baby app"—where you can iterate freely without worrying about tests, architecture, or breaking anything. Once the design feels right, extract the patterns and bring them back to the real project.
+      </p>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">The workflow</h4>
+      <ol class="list-decimal list-inside space-y-3 text-white/70">
+        <li><strong class="text-white">Create a prototype repo.</strong> <code class="text-[#dc2626]">mkdir baby-myapp && cd baby-myapp</code></li>
+        <li><strong class="text-white">Vibe code the design.</strong> "Create a settings page with dark mode toggle. Make it look modern."</li>
+        <li><strong class="text-white">Iterate until it looks right.</strong> "More spacing. Toggle more prominent. Inline, not stacked."</li>
+        <li><strong class="text-white">Capture the design system.</strong> Once you have something you are pleased with, extract colors, spacing, typography, and component patterns.</li>
+        <li><strong class="text-white">Transfer to main app.</strong> Use the prototype as reference when building the real feature.</li>
+      </ol>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">UX discovery loop</h3>
+      <p>When you don't know what to build, vibe coding is great for exploring:</p>
+      <ol class="list-decimal list-inside space-y-2 text-white/70 mt-4">
+        <li>Generate multiple versions. Tell the agent to come up with five different versions of the settings page and see what it comes up with.</li>
+        <li>Click through each one. Use them and see what feels right.</li>
+        <li>Share with users. Show them the prototype and ask: "Would this flow confuse you?"</li>
+        <li>Collect feedback on functional prototypes. Unlike a Figma mockup, they can actually click around.</li>
+        <li><strong class="text-white">Delete everything and start over with a proper plan.</strong> The prototype is for learning only, not shipping.</li>
+      </ol>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Working with designers</h3>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Traditional flow</h4>
+      <p class="text-white/60">Collaboration between designers and developers usually looks like this: The designer creates a mockup. The developer interprets it and builds something. The designer says, "That's not quite right." Back and forth until it eventually matches—maybe.</p>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Compound flow</h4>
+      <p>With compound engineering, the back-and-forth shrinks.</p>
+      <ol class="list-decimal list-inside space-y-2 text-white/70">
+        <li>The designer creates a mockup in Figma</li>
+        <li>You run <a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/plan.md" target="_blank" class="text-[#dc2626] hover:underline">/plan</a> with Figma link and tell the AI to implement it exactly.</li>
+        <li>The AI builds it.</li>
+        <li>The <a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/agents/design/figma-design-sync.md" target="_blank" class="text-[#dc2626] hover:underline">figma-design-sync</a> agent checks if the implementation matches the mockup.</li>
+        <li>The designer reviews the live version, not a screenshot.</li>
+        <li>Iterate until it's perfect.</li>
+      </ol>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Codifying design taste</h3>
+      <p>Once you've worked with a designer on a few features, you'll notice patterns such as their preferred colors and how they like forms laid out. Write those down in a skill file. Using this, the AI can now produce designs that match the designer's taste—even when the designer isn't involved.</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto mt-4"><code class="text-white/80"># skill: our-design-system
+
+## Colors
+- Primary: #4F46E5
+- Background: #F9FAFB
+
+## Spacing
+- Use 4px base unit
+- Sections: 32px gap
+
+## Patterns
+- Buttons: 12px horizontal padding
+- Cards: subtle shadows, not borders
+- Forms: single-column, max-width 400px</code></pre>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Design agents</h3>
+      <div class="space-y-4 mt-4">
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/agents/design/design-iterator.md" target="_blank" class="hover:text-[#dc2626] transition-colors">design-iterator</a></p>
+          <p class="text-white/60 text-sm">Takes a screenshot of the current design, analyzes what's not working, makes improvements, and repeats. Each pass refines the design further.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/agents/design/figma-design-sync.md" target="_blank" class="hover:text-[#dc2626] transition-colors">figma-design-sync</a></p>
+          <p class="text-white/60 text-sm">Pulls the design from Figma, compares to what's built, identifies differences, and fixes them automatically.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/agents/design/design-implementation-reviewer.md" target="_blank" class="hover:text-[#dc2626] transition-colors">design-implementation-reviewer</a></p>
+          <p class="text-white/60 text-sm">Checks that the implementations match the Figma specifications. It catches visual bugs before they reach users.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <!-- Guide: Vibe Coding -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <div class="md:sticky self-start" style="top: 112px;">
+      <p class="text-[#dc2626] text-xs font-medium uppercase tracking-wider mb-2">Best practice</p>
+      <h2 class="text-3xl md:text-4xl font-serif text-white leading-tight">Vibe coding</h2>
+    </div>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p class="text-lg text-white/80">
+        Vibe coding is for people who don't care about the code itself—they want results.
+      </p>
+      <p>
+        Maybe you're a product manager prototyping ideas. Maybe you're a designer testing how an interaction feels. Maybe you're building a personal project, and you'll never look at the code anyway. You just want to make sure the thing works—this is the vibe coder's philosophy.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The vibe coder's philosophy</h3>
+      <p class="text-white/60">
+        This section is about skipping the ladder and going straight to stage four, where you describe what you want and let the agents build it.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The fast path</h3>
+      <p>Skip the ladder. Go straight to Stage 4.</p>
+
+      <div class="bg-white/[0.03] border border-white/10 rounded-lg p-6 my-6">
+        <ol class="list-decimal list-inside space-y-4 text-white/80">
+          <li>
+            <strong class="text-white">Describe what you want</strong>
+            <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-3 text-sm mt-2 max-w-full overflow-x-auto"><code class="text-white/70 whitespace-pre-wrap break-words md:whitespace-pre"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/lfg.md" target="_blank" class="text-[#dc2626] hover:underline">/lfg</a> Create a web app that lets me track my daily habits with checkboxes</code></pre>
+          </li>
+          <li>
+            <strong class="text-white">Wait</strong>
+            <p class="text-white/60 text-sm mt-1">The agent figures out what to build, creates the code, runs tests, reviews itself, makes a PR.</p>
+          </li>
+          <li>
+            <strong class="text-white">Check if it works</strong>
+            <p class="text-white/60 text-sm mt-1">If yes, done. If no, say what's wrong. Let the agent fix it.</p>
+          </li>
+        </ol>
+      </div>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">What you don't need to care about</h3>
+      <ul class="list-disc list-inside space-y-2 text-white/70">
+        <li><strong class="text-white">Code quality</strong>—The review agents handle it</li>
+        <li><strong class="text-white">Architecture</strong>—The agent makes reasonable choices</li>
+        <li><strong class="text-white">Testing</strong>—Tests are written automatically</li>
+        <li><strong class="text-white">Best practices</strong>—Codified in the agents</li>
+      </ul>
+      <p class="text-white/60 mt-4">You focus on <em>what</em> you want. The system handles <em>how</em>.</p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">When to use vibe coding</h3>
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold mb-2">Perfect for</p>
+          <ul class="list-disc list-inside space-y-1 text-white/60 text-sm">
+            <li>Personal projects</li>
+            <li>Prototypes</li>
+            <li>Experiments</li>
+            <li>"Can this even work?" investigations</li>
+            <li>Internal tools</li>
+            <li>UX exploration</li>
+          </ul>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold mb-2">Not great for</p>
+          <ul class="list-disc list-inside space-y-1 text-white/60 text-sm">
+            <li>Production systems with users</li>
+            <li>Code others will maintain</li>
+            <li>Security-sensitive apps</li>
+            <li>Performance-critical systems</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The vibe coding paradox</h3>
+      <p>
+        Vibe coding can actually make your planning better. When you don't know what you want to build, generate prototypes. Share them with users, and collect feedback. Click through them.
+      </p>
+      <p class="text-white/60 mt-2">
+        Then delete everything and start over with a proper plan.
+      </p>
+      <p class="text-white/60 mt-2">
+        The optimal split: Vibe code to discover what you want, then spec to build it properly. The spec always wins for final implementation, but vibe coding accelerates discovery.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Example session</h3>
+      <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4 font-mono text-sm space-y-3">
+        <p class="text-white/60">You:</p>
+        <p class="text-white/80">/lfg I want a website where I can paste a YouTube link and it extracts the transcript</p>
+        <p class="text-white/40 italic">Agent works for five minutes...</p>
+        <p class="text-white/60">You: <span class="text-white/80">Works, but the text is hard to read. Make the font bigger.</span></p>
+        <p class="text-white/40 italic">Agent fixes it...</p>
+        <p class="text-white/60">You: <span class="text-white/80">Perfect. Ship it.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <!-- Guide: Team Collaboration -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <div class="md:sticky self-start" style="top: 112px;">
+      <p class="text-[#dc2626] text-xs font-medium uppercase tracking-wider mb-2">Best practice</p>
+      <h2 class="text-3xl md:text-4xl font-serif text-white leading-tight">Team collaboration</h2>
+    </div>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p class="text-lg text-white/80">
+        When the AI handles implementation, the team dynamics shift. You need new agreements: who approves plans, who owns PRs, and what humans should review when agents have done the first pass.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The new team dynamics</h3>
+      <p class="text-white/60">
+        <strong class="text-white">Traditional:</strong> In a traditional setting, developers collaborate in the following way: Person A writes code → Person B reviews → Discussion in PR comments → Merge after approval
+      </p>
+      <p class="text-white/60 mt-2">
+        <strong class="text-white">Compound:</strong> In a compound engineering setting, developers collaborate as follows: Person A creates plan → AI implements → AI agents review → Person B reviews the AI review → Merge after human approval
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Team standards</h3>
+
+      <div class="space-y-6 mt-4">
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-5">
+          <h4 class="text-lg font-semibold text-white mb-2">Plan approval</h4>
+          <p class="text-white/60 text-sm mb-3">
+            Reading a plan and agreeing with it is a decision. Silence is not approval—it's the absence of a decision.
+          </p>
+          <p class="text-white/60 text-sm">
+            <strong class="text-white">Standard:</strong> The standard should require explicit sign-off before implementation, whether that's a comment, a tag in the commit message, or some other approval marker.
+          </p>
+        </div>
+
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-5">
+          <h4 class="text-lg font-semibold text-white mb-2">PR ownership</h4>
+          <p class="text-white/60 text-sm mb-3">
+            The person who initiated the work owns the PR, regardless of who (or what) wrote the code.
+          </p>
+          <p class="text-white/60 text-sm">
+            You're responsible for the quality of the plan, reviewing the work, fixing any issues, and the impact after merge.
+          </p>
+        </div>
+
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-5">
+          <h4 class="text-lg font-semibold text-white mb-2">Human review focus</h4>
+          <p class="text-white/60 text-sm mb-3">
+            When AI review agents have already analyzed a PR, human reviewers focus on intent, not implementation.
+          </p>
+          <p class="text-white/60 text-sm">
+            Ask yourself: Does this match what we agreed to build? Does the approach make sense? Are there business logic issues? Don't bother checking for syntax errors, security vulnerabilities, performance issues, or style—that's what the review agents already did.
+          </p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Communication patterns</h3>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Async by default</h4>
+      <p class="text-white/60">
+        Compound engineering works well asynchronously. Plans can be created, reviewed, and approved without scheduling a meeting.
+      </p>
+      <p class="text-white/60 mt-2">
+        Instead of telling your colleague, "Let's meet to discuss the approach," try, "I've created a plan document—please comment by end of day."
+      </p>
+
+      <h4 class="text-lg font-semibold text-white mt-6 mb-3">Explicit handoffs</h4>
+      <p class="text-white/60">
+        When handing off work to someone else, include everything they need: status, what's done, what's left, context, and how to continue, as the below example shows:
+      </p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto mt-2"><code class="text-white/70">## Handoff: Email Notifications
+From: Kieran → To: Dan
+Status: Plan approved, implementation 50 percent
+What's left: User preference settings, unsubscribe flow
+How to continue: Run /work in the feature branch</code></pre>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Scaling patterns</h3>
+
+      <div class="space-y-4 mt-4">
+        <div>
+          <p class="text-white font-semibold">Clear ownership + async updates</p>
+          <p class="text-white/60 text-sm">Each major feature should have one owner. That person creates the plan, monitors the AI implementation, reviews the findings, merges when it's ready, and updates the team asynchronously.</p>
+        </div>
+        <div>
+          <p class="text-white font-semibold">Feature flags + small PRs</p>
+          <p class="text-white/60 text-sm">When everyone ships faster, merge conflicts increase. Ship small pieces, use feature flags, merge to main frequently, and resolve conflicts immediately.</p>
+        </div>
+        <div>
+          <p class="text-white font-semibold">Compound docs = tribal knowledge</p>
+          <p class="text-white/60 text-sm">You shouldn't need to ask a colleague for knowledge that could be baked into the system. Instead of saying, "Ask Sarah, she knows how auth works," Sarah runs <a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/compound.md" target="_blank" class="text-[#dc2626] hover:underline">/compound</a> after implementing the feature. Now the solution is documented, and anyone can find it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <!-- Guide: User Research -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <div class="md:sticky self-start" style="top: 112px;">
+      <p class="text-[#dc2626] text-xs font-medium uppercase tracking-wider mb-2">Best practice</p>
+      <h2 class="text-3xl md:text-4xl font-serif text-white leading-tight">User research</h2>
+    </div>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p class="text-lg text-white/80">
+        Structure research so AI can use it. Build persona documents, link insights to features, close the loop between research and implementation.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The research-development gap</h3>
+      <p class="text-white/60">
+        <strong class="text-white">Traditional:</strong> In traditional software development, user researchers and developer collaboration looks like this: Researcher conducts interviews → Writes report → Report sits in Google Drive → Developer builds feature → Developer never reads report → Feature doesn't match user needs
+      </p>
+      <p class="text-white/60 mt-4">
+        <strong class="text-white">Compound:</strong> In compound engineering, that collaboration looks like this: Research generates structured insights → Insights become planning context → AI references insights when planning → Features are informed by research → Usage data validates insights → Insights compound
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Structuring research</h3>
+      <p>Raw interview notes are hard for AI to use. Structure them:</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto mt-4"><code class="text-white/70"># research/interviews/user-123.md
+---
+participant: Marketing Manager, B2B SaaS
+date: 2025-01-15
+focus: Dashboard usage patterns
+---
+
+## Key Insights
+
+### Insight: Morning dashboard ritual
+**Quote**: "First thing every morning, I check for red flags."
+**Implication**: Dashboard needs to surface problems quickly.
+**Confidence** (4/5 participants)</code></pre>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Building persona documents</h3>
+      <p>Create persona documents that the AI can reference:</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto mt-4"><code class="text-white/70"># personas/marketing-manager.md
+
+## Goals
+1. Prove marketing ROI to leadership
+2. Identify underperforming campaigns quickly
+
+## Frustrations
+1. Too much data, hard to find what matters
+2. Exporting for reports is tedious
+
+## Quotes
+- "I need to see problems, not everything."
+- "My boss wants a PDF, not a link."</code></pre>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Research-informed planning</h3>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-white/70"><a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/plan.md" target="_blank" class="text-[#dc2626] hover:underline">/workflows:plan</a> Add export scheduling
+
+Research context:
+- 3/5 interviewed users mentioned exporting weekly
+- The marketing-manager persona exports every Friday
+- Current pain: manual export process
+
+Design for: Automated weekly exports to email</code></pre>
+
+      <!-- TODO: Add more detail on the research compound loop, AI-assisted research analysis, and research documentation standards -->
+      <div class="bg-[#dc2626]/10 border border-[#dc2626]/30 rounded-lg p-4 mt-8">
+        <p class="text-[#dc2626] text-sm font-medium">More coming soon</p>
+        <p class="text-white/60 text-sm mt-1">Research compound loop, AI-assisted analysis, documentation standards.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <!-- Guide: Data Patterns -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <div class="md:sticky self-start" style="top: 112px;">
+      <p class="text-[#dc2626] text-xs font-medium uppercase tracking-wider mb-2">Best practice</p>
+      <h2 class="text-3xl md:text-4xl font-serif text-white leading-tight">Data pattern extraction</h2>
+    </div>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p class="text-lg text-white/80">
+        Your users are already telling you what to build through how they use your product. Each click is a clue. You just have to pay attention.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Pattern types to look for</h3>
+      <div class="space-y-4 mt-4">
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Heavy usage patterns</p>
+          <p class="text-white/60 text-sm">These are features that are used way more than expected. Another signal could be users returning to the same page repeatedly.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Struggle patterns</p>
+          <p class="text-white/60 text-sm">Look for high dwell time on simple pages or repeated attempts at the same action. Error → retry → error loops.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Workaround patterns</p>
+          <p class="text-white/60 text-sm">This is where users invent their own solutions because your product doesn't do what they need. Look for users who export data from one place and reimport it somewhere else. Users might be copying and pasting between screens, or keeping multiple tabs open to compare things side by side.</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4">
+          <p class="text-white font-semibold">Abandonment patterns</p>
+          <p class="text-white/60 text-sm">This is where users drop off in flows. Features have been started but not completed.</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">From patterns to features</h3>
+      <p class="text-white/60 mb-4">Here is how those user patterns that you noticed turn into product decisions:</p>
+      <p class="text-white/60">
+        You notice users copying data from one table and pasting it into another 50 times a week.<br>
+        <strong class="text-white">The insight:</strong> They need automation between tables.<br>
+        <strong class="text-white">The feature:</strong> a "sync to table B" button.
+      </p>
+      <p class="text-white/60 mt-4">
+        You notice users creating "template" projects and duplicating them for new work.<br>
+        <strong class="text-white">The insight:</strong> They want project templates but don't have them.<br>
+        <strong class="text-white">The feature:</strong> first-class template support.
+      </p>
+
+      <!-- TODO: Add more detail on agent-native data exploration, MCP servers for analytics, productizing emergent behavior -->
+      <div class="bg-[#dc2626]/10 border border-[#dc2626]/30 rounded-lg p-4 mt-8">
+        <p class="text-[#dc2626] text-sm font-medium">More coming soon</p>
+        <p class="text-white/60 text-sm mt-1">Agent-native data exploration, analytics MCP servers, productizing emergent behavior.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <!-- Guide: Copywriting -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <div class="md:sticky self-start" style="top: 112px;">
+      <p class="text-[#dc2626] text-xs font-medium uppercase tracking-wider mb-2">Best practice</p>
+      <h2 class="text-3xl md:text-4xl font-serif text-white leading-tight">Copywriting</h2>
+    </div>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p class="text-lg text-white/80">
+        Most teams treat copy as an afterthought—something to fill in after the feature is built. But copy is part of the user experience. It deserves the same attention as the code.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Copy is part of the plan</h3>
+      <p>Include copy in your plans from the start, codify your voice so the AI can follow it, and review it like you'd review any other output:</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto mt-4"><code class="text-white/70">## Feature: Password Reset Flow
+
+### User-Facing Copy
+- Email subject: "Reset your password"
+- Success message: "Check your email. We sent a reset link."
+- Error (not found): "We couldn't find an account with that email.
+  Want to create one instead?"</code></pre>
+      <p class="text-white/60 mt-4">Now when the AI implements, the copy is already there.</p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Codify your voice</h3>
+      <p>Create a skill that defines your copy voice, such as the following:</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto mt-4"><code class="text-white/70"># skill: our-copy-voice
+
+## Principles
+1. Talk to users like humans, not robots
+2. Error messages should help, not blame
+3. Short sentences. Clear words.
+
+## Words to avoid
+- "Invalid" → "didn't work"
+- "Error" → describe what happened
+- "Successfully" → just say what happened
+- "Please" → just ask directly
+
+## Examples
+Bad: "Invalid credentials. Please try again."
+Good: "That password isn't right. Try again or reset it."</code></pre>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Review copy like code</h3>
+      <p>Add copy review to your <a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/workflows/review.md" target="_blank" class="text-[#dc2626] hover:underline">/workflows:review</a> process:</p>
+      <div class="bg-white/[0.03] border border-white/10 rounded-lg p-4 mt-4">
+        <p class="text-white font-semibold mb-2">copy-reviewer agent</p>
+        <ul class="list-disc list-inside space-y-1 text-white/60 text-sm">
+          <li><strong class="text-white">Clarity:</strong> Can a non-technical user understand this?</li>
+          <li><strong class="text-white">Helpfulness:</strong> Does this help the user succeed?</li>
+          <li><strong class="text-white">Tone:</strong> Does this match our voice guide?</li>
+          <li><strong class="text-white">Consistency:</strong> Does this match similar text elsewhere?</li>
+        </ul>
+      </div>
+
+      <!-- TODO: Add more detail on working with ghost writers, building copy libraries, copy compound loop -->
+      <div class="bg-[#dc2626]/10 border border-[#dc2626]/30 rounded-lg p-4 mt-8">
+        <p class="text-[#dc2626] text-sm font-medium">More coming soon</p>
+        <p class="text-white/60 text-sm mt-1">Working with ghost writers, building copy libraries, and the copy compound loop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <!-- Guide: Product Marketing -->
+<section class="border-t border-white/10 py-12">
+  <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-16">
+    <div class="md:sticky self-start" style="top: 112px;">
+      <p class="text-[#dc2626] text-xs font-medium uppercase tracking-wider mb-2">Best practice</p>
+      <h2 class="text-3xl md:text-4xl font-serif text-white leading-tight">Product marketing</h2>
+    </div>
+    <div class="prose-guide max-w-[640px] min-w-0 space-y-4">
+      <p class="text-lg text-white/80">
+        Congratulations, you've shipped something. Now it's time to tell the world. The same system that builds features can announce them. Generate release notes from plans, create social posts, and capture screenshots automatically.
+      </p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">The compound flow</h3>
+      <ol class="list-decimal list-inside space-y-2 text-white/70">
+        <li>An engineer creates a plan that includes the product value proposition.</li>
+        <li>The AI implements a feature.</li>
+        <li>The AI generates release notes from the plan.</li>
+        <li>The AI generates social posts from the release notes.</li>
+        <li>The AI generates screenshots using Playwright.</li>
+        <li>The engineer reviews and ships everything together.</li>
+      </ol>
+      <p class="text-white/60 mt-4">It all flows from one place. No one has to hand anything off, and nothing slips through the cracks.</p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Generating release notes</h3>
+      <p>After implementing a feature:</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto mt-4"><code class="text-white/70">Based on the plan and implementation for [feature], write release notes:
+1. Lead with the user benefit (what can they do now?)
+2. Include one concrete example
+3. Mention any breaking changes
+4. Keep it under 200 words</code></pre>
+      <p class="text-white/60 mt-4">The AI has the plan, the code changes, and the tests. It knows exactly what was built.</p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Generating changelogs</h3>
+      <p>For multiple features, use <a href="https://github.com/EveryInc/compound-engineering-plugin/blob/main/commands/changelog.md" target="_blank" class="text-[#dc2626] hover:underline">/changelog</a>:</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto mt-4"><code class="text-white/70">/changelog</code></pre>
+      <p class="text-white/60 mt-4">Looks at recent merges to main, reads the plans/PRs for each, generates an engaging changelog.</p>
+
+      <h3 class="text-xl font-semibold text-white mt-8 mb-4">Automated screenshots</h3>
+      <p>Use Playwright to capture screenshots for marketing:</p>
+      <pre class="bg-white/[0.03] border border-white/10 rounded-lg p-4 text-sm overflow-x-auto mt-4"><code class="text-white/70">Take screenshots showing the new notification settings:
+1. The settings page with notifications section
+2. An example notification email
+3. The in-app notification badge</code></pre>
+      <p class="text-white/60 mt-4">No more asking engineering for screenshots, and no more out-of-date screenshots.</p>
+
+      <!-- TODO: Add more detail on marketing voice skill, feature announcement flow, metrics that compound -->
+      <div class="bg-[#dc2626]/10 border border-[#dc2626]/30 rounded-lg p-4 mt-8">
+        <p class="text-[#dc2626] text-sm font-medium">More coming soon</p>
+        <p class="text-white/60 text-sm mt-1">Marketing voice skill, feature announcement flow, and metrics that compound.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      <section class="border-t border-white/10 py-8">
+  
+<section
+  id="guide-compound-engineering-footer-capture"
+  class="guide-email-capture py-10 md:py-14"
+  data-guide-email-capture="true"
+  data-guide-slug="compound-engineering"
+  data-guide-path="/guides/compound-engineering"
+  data-guide-template="compound_engineering_static"
+  data-guide-capture-position="footer"
+  data-source="guide-edge-ai-guides-compound-footer"
+>
+  <div class="relative mx-auto max-w-[880px]">
+    <div class="relative overflow-hidden rounded-2xl border border-white/15 bg-[#0a0a0a] p-6 text-center shadow-[0_0_80px_rgba(192,240,251,0.06)] md:p-8">
+      <div class="mx-auto max-w-[660px]">
+        <div>
+          <h3 class="font-serif text-4xl leading-tight text-white md:text-5xl">The Only Subscription You Need to Stay at the Edge of AI</h3>
+          <p class="mx-auto mt-3 max-w-lg text-base leading-7 text-white/70">Start shipping agent-native products with Every.</p>
+        </div>
+
+        <div class="email-box guide-compound-engineering-footer-email-box mx-auto mt-7 max-w-xl">
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <div class="flex min-w-0 flex-1 items-center gap-3 rounded border border-white/20 bg-black/20 p-3">
+              <img alt="Email" class="opacity-60" src="https://every.to/assets/icons/email-10ff3ba37cc5acd6148e8d02a1968f35810765415fd1aef2ecdfe22c5fd25af3.svg" />
+              <input
+                id="guide-compound-engineering-footer-email-field"
+                class="w-full border-none bg-transparent p-0 text-sm font-medium text-white outline-none placeholder:text-white/35 focus:border-transparent focus:ring-0"
+                type="email"
+                placeholder="example@domain.com"
+              >
+            </div>
+            <button
+              id="guide-compound-engineering-footer-subscribe-button"
+              data-source="guide-edge-ai-guides-compound-footer"
+              data-guide-slug="compound-engineering"
+              data-guide-path="/guides/compound-engineering"
+              data-guide-template="compound_engineering_static"
+              data-guide-capture-position="footer"
+              type="button"
+              class="rounded-lg bg-everyblue px-6 py-3 text-sm font-semibold text-black transition hover:bg-everyblue/90"
+            >
+              Subscribe
+            </button>
+          </div>
+          <div class="cf-turnstile mt-4" data-sitekey="0x4AAAAAABClENDAmiQ6VAuD"></div>
+          <div id="guide-compound-engineering-footer-subscribe-button-error" class="mt-3 text-sm text-red-300"></div>
+          <input type="hidden" id="guide-compound-engineering-footer_ref_publication_slug" value="">
+          <input type="hidden" id="guide-compound-engineering-footer_ref" value="guide-edge-ai-guides-compound-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const capture = document.getElementById("guide-compound-engineering-footer-capture");
+    const input = document.getElementById("guide-compound-engineering-footer-email-field");
+    const button = document.getElementById("guide-compound-engineering-footer-subscribe-button");
+    const error = document.getElementById("guide-compound-engineering-footer-subscribe-button-error");
+
+    if (typeof EmailBoxFactory !== "undefined" && input && button) {
+      EmailBoxFactory.createInstance("guide-compound-engineering-footer").init(input, button, error);
+    }
+
+    if (capture && typeof posthog !== "undefined") {
+      posthog.capture("guide_email_capture_viewed", {
+        guide_slug: capture.dataset.guideSlug,
+        guide_path: capture.dataset.guidePath,
+        guide_template: capture.dataset.guideTemplate,
+        guide_capture_position: capture.dataset.guideCapturePosition,
+        source: capture.dataset.source
+      });
+    }
+  });
+</script>
+
+</section>
+
+    </main>
+  </div>
+</div>
+
+
+
+        <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    try {
+      if (typeof window.posthog !== "undefined" && typeof window.posthog.capture === "function") {
+        window.posthog.capture("article_viewed", {
+          post_id: "4008",
+          type: "web_view"
+        });
+      }
+    } catch (_e) {}
+
+    if (typeof EVERY !== "undefined" && EVERY.track) {
+      EVERY.track("Post viewed", { post_id: 4008 });
+    }
+  });
+</script>
+
+
+          <footer
+  class="w-full bg-black border-t border-homeborder"
+>
+  <div class="flex items-start 1099:justify-between flex-col 1099:flex-row 1099:items-start 1099:justify-start gap-12 px-3 py-[80px] w-full 1099:px-4 1280:max-w-1280 max-w-full mx-auto text-white">
+    <div class="text-left">
+      <a class="/">
+        <img class="max-h-[52px] max-w-[178px] 976:max-h-[49px] mb-5" src="https://every.to/assets/every-logo-white-d8b0c13c4b860174d4ac9717f446538ba8fa4f3b3736dde0de86e37bfc756789.svg" alt="Every"/>
+      </a>
+      <h2 class="text-4xl font-serif leading-[normal]">
+       What Comes <span class="font-every">N</span>ext
+      </h2>
+      <p class="text-base font-serif text-white mt-2">
+        New ideas to help you build the future—in your inbox, every day.
+      </p>
+      <div class="email-box footer-email-box ">
+        <label class="font-medium text-sm mb-2 mt-5 block">Email address</label>
+        <div class="bottom">
+          <div class="w-full rounded border border-[#FCFCFC] p-3 mb-4 flex items-center gap-4">
+            <img alt="Arrow Right" src="https://every.to/assets/icons/email-10ff3ba37cc5acd6148e8d02a1968f35810765415fd1aef2ecdfe22c5fd25af3.svg" />
+            <input id="footer-email-field" class="w-full bg-transparent font-medium text-white border-none p-0 outline-none placeholder:text-[#BCBCBC] border-transparent focus:border-transparent focus:ring-0" type="email" placeholder="example@domain.com">
+          </div>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAABClENDAmiQ6VAuD"></div>
+          <button id="footer-subscribe-button" data-source="footer" type="button" class=" w-full flex justify-center items-center p-3 rounded bg-[#c0f0fb] text-sm font-medium text-black">
+            Subscribe
+          </button>
+        </div>
+        <div id="footer-subscribe-button-error"></div>
+        <input type="hidden" id="footer_ref_publication_slug" value="">
+        <input type="hidden" id="footer_ref" value="">
+        <p class="mt-3 text-xs text-[#BCBCBC]">
+          <a
+            href="#"
+            class="text-[#BCBCBC] underline underline-offset-2 hover:text-white"
+            data-do-not-sell
+          >
+            Do Not Sell or Share My Personal Information
+          </a>
+        </p>
+      </div>
+      <p class="text-xxs text-[#BCBCBC] opacity-20 mt-4">
+        This site is protected by reCAPTCHA and the Google
+        <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+        <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+      </p>
+      <span class="hidden 976:block mt-5 text-sm text-[#BCBCBC]">©2026 Every Media, Inc.</span>
+    </div>
+    <div
+      class="flex flex-row items-start justify-end gap–8 text-md font-medium font-sans text-white"
+    >
+      <div class="flex flex-col gap-4 items-start mr-8 text-white">
+        <a href="/about" class="text-white">About</a>
+        <a href="/careers" class="text-white">Careers</a>
+        <a href="https://help.every.to" class="text-white">Help center</a>
+        <a href="#" class="text-white" data-privacy-open>Privacy Preferences</a>
+        <a href="/cdn-cgi/l/email-protection#4a393a25243925383922233a390a2f3c2f3833643e25" class="text-white" target="_blank">Advertise with us</a>
+        <a href="/team" class="text-white">The team</a>
+        <a href="/faq" class="text-white">FAQ</a>
+        <a href="/legal" class="text-white">Terms</a>
+        <a href="/sitemap" class="text-white">Site map</a>
+      </div>
+      <div class="flex flex-col gap-4 items-start text-white">
+        <a class="flex gap-2 text-white" href="https://x.com/every" target="_blank">
+          X<img alt="Arrow Out" src="https://every.to/assets/icons/arrow-out-24683ffaeddd57d11c9d17e922b83e89ad166f57b7bfc5eb2d917fc788c214ed.svg" />
+        </a>
+        <a class="flex gap-2 text-white" href="https://www.linkedin.com/company/everyinc" target="_blank"
+        >LinkedIn<img alt="Arrow
+          Out" src="https://every.to/assets/icons/arrow-out-24683ffaeddd57d11c9d17e922b83e89ad166f57b7bfc5eb2d917fc788c214ed.svg" /></a
+        >
+        <a class="flex gap-2 text-white" href="https://youtube.com/@everyinc" target="_blank"
+        >YouTube<img alt="Arrow Out" src="https://every.to/assets/icons/arrow-out-24683ffaeddd57d11c9d17e922b83e89ad166f57b7bfc5eb2d917fc788c214ed.svg" /></a
+        >
+      </div>
+    </div>
+    <span class="block 976:hidden -mt-5 text-sm text-[#BCBCBC]">©2026 Every Media, Inc.</span>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var footerEmailBox = EmailBoxFactory.createInstance("footer");
+    footerEmailBox.init(
+      document.getElementById('footer-email-field'),
+      document.getElementById('footer-subscribe-button'),
+      document.getElementById('footer-subscribe-button-error')
+    );
+  });
+</script>
+
+    </div>
+
+    <script>
+    </script>
+    <style>
+  .privacy-side-popup {
+    position: fixed;
+    left: 16px;
+    bottom: 20px;
+    top: auto;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    padding: 14px;
+    background: #111;
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
+    z-index: 1200;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .privacy-side-popup p {
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 0 0 10px 0;
+  }
+
+  .privacy-side-popup .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .privacy-side-popup.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .privacy-side-popup.fading {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
+
+  .privacy-side-popup .actions .privacy-popup-btn {
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 8px 10px;
+    cursor: pointer;
+  }
+
+  .privacy-side-popup .actions .privacy-popup-btn.primary {
+    background: #ffffff;
+    color: #111111;
+    border: 1px solid #ffffff;
+  }
+
+  .privacy-side-popup .actions .privacy-popup-btn.secondary {
+    background: transparent;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+  }
+
+  @media (max-width: 900px) {
+    .privacy-side-popup {
+      left: 16px;
+      bottom: 20px;
+      transform: translateY(16px);
+    }
+
+    .privacy-side-popup.active {
+      transform: translateY(0);
+    }
+
+    .privacy-side-popup.fading {
+      transform: translateY(8px);
+    }
+  }
+
+  .privacy-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1250;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .privacy-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .privacy-modal {
+    position: fixed;
+    left: 16px;
+    right: auto;
+    bottom: 16px;
+    width: 420px;
+    max-width: calc(100vw - 32px);
+    background: #fff;
+    color: #111;
+    border-radius: 12px;
+    border: 1px solid #d8d8d8;
+    padding: 16px;
+    z-index: 1300;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .privacy-modal.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .privacy-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .privacy-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #111;
+  }
+
+  .privacy-close {
+    border: none;
+    background: transparent;
+    color: #111;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .privacy-modal-copy {
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: #111;
+  }
+
+  .privacy-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+
+  .privacy-toggle-row span {
+    color: #111;
+  }
+
+  .privacy-gpc-copy {
+    font-size: 13px;
+    margin-bottom: 12px;
+    color: #444;
+  }
+
+  .privacy-gpc-copy.hidden {
+    display: none;
+  }
+
+  .privacy-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .privacy-modal-btn {
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .privacy-modal-btn.secondary {
+    background: #fff;
+    color: #111;
+    border: 1px solid #cfcfcf;
+  }
+
+  .privacy-modal-btn.primary {
+    background: #111;
+    color: #fff;
+    border: 1px solid #111;
+  }
+</style>
+
+<div class="privacy-side-popup" data-privacy-popup>
+  <p>
+    We use analytics and advertising tools by default. You can update this anytime.
+  </p>
+  <div class="actions">
+    <button class="privacy-popup-btn primary" data-privacy-open>Privacy Preferences</button>
+    <button class="privacy-popup-btn secondary" data-do-not-sell>Do Not Sell or Share</button>
+  </div>
+</div>
+
+<div class="privacy-backdrop" data-privacy-backdrop></div>
+<div class="privacy-modal" data-privacy-modal aria-hidden="true">
+  <div class="privacy-modal-header">
+    <h3>Privacy Preferences</h3>
+    <button class="privacy-close" data-privacy-close aria-label="Close privacy preferences">x</button>
+  </div>
+
+  <p class="privacy-modal-copy">
+    Manage optional tracking categories. Necessary cookies stay on so the site can function.
+  </p>
+
+  <label class="privacy-toggle-row">
+    <span>Analytics</span>
+    <input type="checkbox" data-privacy-toggle="analytics">
+  </label>
+
+  <label class="privacy-toggle-row">
+    <span>Advertising and sharing</span>
+    <input type="checkbox" data-privacy-toggle="advertising_share">
+  </label>
+
+  <p class="privacy-gpc-copy hidden" data-privacy-gpc-copy>
+    Global Privacy Control is active, so advertising and sharing is turned off.
+  </p>
+
+  <div class="privacy-modal-actions">
+    <button class="privacy-modal-btn secondary" data-privacy-close>Cancel</button>
+    <button class="privacy-modal-btn primary" data-privacy-save>Save Preferences</button>
+  </div>
+</div>
+
+  <script id="IntercomSettingsScriptTag">
+//<![CDATA[
+window.intercomSettings = {"app_id":"znrwopxl","api_base":"https://api-iam.intercom.io","installation_type":"rails"};(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/znrwopxl';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(document.readyState==='complete'){l();}else if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}};})()
+//]]>
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f9bde365bbf89c5',t:'MTc3ODQ0Njc2OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"c40a365d368540c9ae4e15b02c8b976a","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+  window.DECORATION_ASSETS = {"desktop":{"image":{"big":["/assets/decorations/desktop-big-image-0-79213d4798eacbbdfe37d2877af9b769ea156bad5a40a90b3ea8afd13ea6adf2.png","/assets/decorations/desktop-big-image-1-79213d4798eacbbdfe37d2877af9b769ea156bad5a40a90b3ea8afd13ea6adf2.png","/assets/decorations/desktop-big-image-2-035c12d4c2cfc2f54a3d4f547ed0d8cf4388e586070bb269274ef12eda8cae56.png","/assets/decorations/desktop-big-image-3-035c12d4c2cfc2f54a3d4f547ed0d8cf4388e586070bb269274ef12eda8cae56.png","/assets/decorations/desktop-big-image-4-a3430ecc1c15afb0415d2a590b4e0326a353a4fe14ca7bff81bf739b7a85fb9f.png","/assets/decorations/desktop-big-image-5-a3430ecc1c15afb0415d2a590b4e0326a353a4fe14ca7bff81bf739b7a85fb9f.png","/assets/decorations/desktop-big-image-6-e06dc4968c49c8454e46ce89c63cad0dc3dbeeb3a463c01d3dad4ef83ab6dd58.png","/assets/decorations/desktop-big-image-7-3db625bd59ff272c81217b5fa65f2dd4d927b11fab2b2a4d3f43f3e1eab9f5cc.png","/assets/decorations/desktop-big-image-8-f3d9f47cfec03a63fae803555033292723f356afd7073eab393b7ba5b3324f75.png","/assets/decorations/desktop-big-image-9-23b7db5f0bba7dc296683ea4d3beb91ccb3e1384114cc6485608612bbc0c0a8c.png","/assets/decorations/desktop-big-image-10-e06dc4968c49c8454e46ce89c63cad0dc3dbeeb3a463c01d3dad4ef83ab6dd58.png","/assets/decorations/desktop-big-image-11-23b7db5f0bba7dc296683ea4d3beb91ccb3e1384114cc6485608612bbc0c0a8c.png"],"medium":["/assets/decorations/desktop-medium-image-0-1898fda034d31c36775a9a8c91bdff140f21616e671ea6ded9b21d1c68a4f1eb.png","/assets/decorations/desktop-medium-image-1-c8a11f92f81a5c1d0403c5334f94edb04cac2967c80963bba6f187b22ed459b3.png","/assets/decorations/desktop-medium-image-2-c8a11f92f81a5c1d0403c5334f94edb04cac2967c80963bba6f187b22ed459b3.png","/assets/decorations/desktop-medium-image-3-c8a11f92f81a5c1d0403c5334f94edb04cac2967c80963bba6f187b22ed459b3.png","/assets/decorations/desktop-medium-image-4-65063f0db099656bb4eab1b4becf33c1223734ef03d96a63ed50e655df666afd.png","/assets/decorations/desktop-medium-image-5-9a7c3a251998ff377bbbd4c0527d4c2aa0a3d9b0d7dfae076177604814c015c3.png","/assets/decorations/desktop-medium-image-6-9a7c3a251998ff377bbbd4c0527d4c2aa0a3d9b0d7dfae076177604814c015c3.png","/assets/decorations/desktop-medium-image-7-9a7c3a251998ff377bbbd4c0527d4c2aa0a3d9b0d7dfae076177604814c015c3.png","/assets/decorations/desktop-medium-image-8-9a7c3a251998ff377bbbd4c0527d4c2aa0a3d9b0d7dfae076177604814c015c3.png","/assets/decorations/desktop-medium-image-9-65063f0db099656bb4eab1b4becf33c1223734ef03d96a63ed50e655df666afd.png","/assets/decorations/desktop-medium-image-10-65063f0db099656bb4eab1b4becf33c1223734ef03d96a63ed50e655df666afd.png","/assets/decorations/desktop-medium-image-11-65063f0db099656bb4eab1b4becf33c1223734ef03d96a63ed50e655df666afd.png"],"small":["/assets/decorations/desktop-small-image-0-f68807448518a68fbafa7373e43daefa2424b39c7a8f5a3ff834ad3e8cb88908.png","/assets/decorations/desktop-small-image-1-c8a11f92f81a5c1d0403c5334f94edb04cac2967c80963bba6f187b22ed459b3.png","/assets/decorations/desktop-small-image-2-c8a11f92f81a5c1d0403c5334f94edb04cac2967c80963bba6f187b22ed459b3.png","/assets/decorations/desktop-small-image-3-c8a11f92f81a5c1d0403c5334f94edb04cac2967c80963bba6f187b22ed459b3.png","/assets/decorations/desktop-small-image-4-7e186dee7eb2e8672a996086143f4c30fb5093619136b119590064cfa2b05968.png","/assets/decorations/desktop-small-image-5-7802471b61a935e2c4f778f1eb3e60ec23e083e7b83691cec33f38c4ccb0031d.png","/assets/decorations/desktop-small-image-6-7802471b61a935e2c4f778f1eb3e60ec23e083e7b83691cec33f38c4ccb0031d.png","/assets/decorations/desktop-small-image-7-96e61a84e5079695dd23521749ec2f991a2da1c364d7b987f21ae112374d6bb5.png","/assets/decorations/desktop-small-image-8-7802471b61a935e2c4f778f1eb3e60ec23e083e7b83691cec33f38c4ccb0031d.png","/assets/decorations/desktop-small-image-9-7802471b61a935e2c4f778f1eb3e60ec23e083e7b83691cec33f38c4ccb0031d.png","/assets/decorations/desktop-small-image-10-7802471b61a935e2c4f778f1eb3e60ec23e083e7b83691cec33f38c4ccb0031d.png","/assets/decorations/desktop-small-image-11-96e61a84e5079695dd23521749ec2f991a2da1c364d7b987f21ae112374d6bb5.png"]},"noimage":{"big":["/assets/decorations/desktop-noimage-big-0-b43af93791fb0ab2f304db18f106759dc36162eb1c91e6eba051631397cd5aed.png","/assets/decorations/desktop-noimage-big-1-b43af93791fb0ab2f304db18f106759dc36162eb1c91e6eba051631397cd5aed.png","/assets/decorations/desktop-noimage-big-2-b9e7b89bff2b1cf1ee13ca0279a9b3060644999a2367640f55258dbabc4e4197.png","/assets/decorations/desktop-noimage-big-3-10516ce722739249c3dd1cfc4223ecf193852b51e518c41687346544937be342.png","/assets/decorations/desktop-noimage-big-4-1748d331ac9917681a97780d92a774146e080bc0b54fcdc60ed8dbd772110e8f.png","/assets/decorations/desktop-noimage-big-5-7006f2b22d05ed7f873a70f1958b61e69c38a004ad1f942a3290a4a56c2f429d.png","/assets/decorations/desktop-noimage-big-6-7006f2b22d05ed7f873a70f1958b61e69c38a004ad1f942a3290a4a56c2f429d.png","/assets/decorations/desktop-noimage-big-7-c5d2f0cea8f5f1f07b783127c3c76c2d763e284aef14fc82e2c6b4d2851864ab.png","/assets/decorations/desktop-noimage-big-8-c5d2f0cea8f5f1f07b783127c3c76c2d763e284aef14fc82e2c6b4d2851864ab.png","/assets/decorations/desktop-noimage-big-9-c5d2f0cea8f5f1f07b783127c3c76c2d763e284aef14fc82e2c6b4d2851864ab.png","/assets/decorations/desktop-noimage-big-10-c5d2f0cea8f5f1f07b783127c3c76c2d763e284aef14fc82e2c6b4d2851864ab.png","/assets/decorations/desktop-noimage-big-11-c5d2f0cea8f5f1f07b783127c3c76c2d763e284aef14fc82e2c6b4d2851864ab.png"],"medium":["/assets/decorations/desktop-noimage-medium-0-f22ad09ed5917044bd715b45f550f0d20aa2033af8c4e6fa73b6b2123f7783a0.png","/assets/decorations/desktop-noimage-medium-1-f22ad09ed5917044bd715b45f550f0d20aa2033af8c4e6fa73b6b2123f7783a0.png","/assets/decorations/desktop-noimage-medium-2-d5c9e2651251e231e18d23340898f0534344104d0a6378d08d33f38aadf07e5d.png","/assets/decorations/desktop-noimage-medium-3-d5c9e2651251e231e18d23340898f0534344104d0a6378d08d33f38aadf07e5d.png","/assets/decorations/desktop-noimage-medium-4-f22ad09ed5917044bd715b45f550f0d20aa2033af8c4e6fa73b6b2123f7783a0.png","/assets/decorations/desktop-noimage-medium-5-d5c9e2651251e231e18d23340898f0534344104d0a6378d08d33f38aadf07e5d.png","/assets/decorations/desktop-noimage-medium-6-d5c9e2651251e231e18d23340898f0534344104d0a6378d08d33f38aadf07e5d.png","/assets/decorations/desktop-noimage-medium-7-d5c9e2651251e231e18d23340898f0534344104d0a6378d08d33f38aadf07e5d.png","/assets/decorations/desktop-noimage-medium-8-d5c9e2651251e231e18d23340898f0534344104d0a6378d08d33f38aadf07e5d.png","/assets/decorations/desktop-noimage-medium-9-d5c9e2651251e231e18d23340898f0534344104d0a6378d08d33f38aadf07e5d.png","/assets/decorations/desktop-noimage-medium-10-d5c9e2651251e231e18d23340898f0534344104d0a6378d08d33f38aadf07e5d.png","/assets/decorations/desktop-noimage-medium-11-d5c9e2651251e231e18d23340898f0534344104d0a6378d08d33f38aadf07e5d.png"],"small":["/assets/decorations/desktop-noimage-small-0-be1e0d188db2b9415cc9e58c6e7b61f040293b315b72236195d958d767658312.png","/assets/decorations/desktop-noimage-small-1-be1e0d188db2b9415cc9e58c6e7b61f040293b315b72236195d958d767658312.png","/assets/decorations/desktop-noimage-small-2-3ebded99e5fc47dd2a243f99046a00f741764eb81fcea9948e7da31200a33ed2.png","/assets/decorations/desktop-noimage-small-3-3ebded99e5fc47dd2a243f99046a00f741764eb81fcea9948e7da31200a33ed2.png","/assets/decorations/desktop-noimage-small-4-be1e0d188db2b9415cc9e58c6e7b61f040293b315b72236195d958d767658312.png","/assets/decorations/desktop-noimage-small-5-3ebded99e5fc47dd2a243f99046a00f741764eb81fcea9948e7da31200a33ed2.png","/assets/decorations/desktop-noimage-small-6-3ebded99e5fc47dd2a243f99046a00f741764eb81fcea9948e7da31200a33ed2.png","/assets/decorations/desktop-noimage-small-7-3ebded99e5fc47dd2a243f99046a00f741764eb81fcea9948e7da31200a33ed2.png","/assets/decorations/desktop-noimage-small-8-3ebded99e5fc47dd2a243f99046a00f741764eb81fcea9948e7da31200a33ed2.png","/assets/decorations/desktop-noimage-small-9-a04349143e2ba3faf6e25b83b9191afccaa60d6515b4b375fef8c629ee306743.png","/assets/decorations/desktop-noimage-small-10-a04349143e2ba3faf6e25b83b9191afccaa60d6515b4b375fef8c629ee306743.png","/assets/decorations/desktop-noimage-small-11-a04349143e2ba3faf6e25b83b9191afccaa60d6515b4b375fef8c629ee306743.png"]}},"mobile":{"image":{"big":["/assets/decorations/mobile-big-image-0-918008a4546d65587b8bed6231cedaf464175f87d2b13c66f3cd9b084f2553c6.png","/assets/decorations/mobile-big-image-1-d6eb6f6d80401a6b8c7f53a1f08e187d29d9ca8514bece9909d5ef522aa0055c.png","/assets/decorations/mobile-big-image-2-0310ec219dffc31b6acfe478a94be7302bab9ccdb505d73325de1164eedc2997.png","/assets/decorations/mobile-big-image-3-d6eb6f6d80401a6b8c7f53a1f08e187d29d9ca8514bece9909d5ef522aa0055c.png","/assets/decorations/mobile-big-image-4-78840894c42db4d581caa5d7ffffcb9d8f8e6fa247fc05789eecb203b6945b6d.png","/assets/decorations/mobile-big-image-5-deb30f4f4bda71d813d4c47178a9a2da0a7c2a628589e4b76c3d538a6b0f489c.png","/assets/decorations/mobile-big-image-6-deb30f4f4bda71d813d4c47178a9a2da0a7c2a628589e4b76c3d538a6b0f489c.png","/assets/decorations/mobile-big-image-7-977a48ece48ed547eb233f9ab4d0e19f9aa08cbf4974fe28b465d144938f1f17.png","/assets/decorations/mobile-big-image-8-deb30f4f4bda71d813d4c47178a9a2da0a7c2a628589e4b76c3d538a6b0f489c.png","/assets/decorations/mobile-big-image-9-615583bb488d8acdd6c7cd7251ee1f22921be4e91644f590a207c3fee7012f11.png","/assets/decorations/mobile-big-image-10-615583bb488d8acdd6c7cd7251ee1f22921be4e91644f590a207c3fee7012f11.png","/assets/decorations/mobile-big-image-11-78840894c42db4d581caa5d7ffffcb9d8f8e6fa247fc05789eecb203b6945b6d.png"],"medium":["/assets/decorations/mobile-medium-image-0-0ede7ab1c0d19a8a0f54ce98dcc5320f8e336b18440b5783513490b179ee518d.png","/assets/decorations/mobile-medium-image-1-0ede7ab1c0d19a8a0f54ce98dcc5320f8e336b18440b5783513490b179ee518d.png","/assets/decorations/mobile-medium-image-2-1e81198244be0eee319b3d7c5f90c5af9211a17c657de2378231c2737c1cc833.png","/assets/decorations/mobile-medium-image-3-0ede7ab1c0d19a8a0f54ce98dcc5320f8e336b18440b5783513490b179ee518d.png","/assets/decorations/mobile-medium-image-4-d4fa3518281c84247f16c93527e7b6f51231961ea6051b415b59e662553e8b9a.png","/assets/decorations/mobile-medium-image-5-6acbbdb9abb6832c55e682d0e55cccc4dcdbb5e658877e68ef5f51a07f49985f.png","/assets/decorations/mobile-medium-image-6-6acbbdb9abb6832c55e682d0e55cccc4dcdbb5e658877e68ef5f51a07f49985f.png","/assets/decorations/mobile-medium-image-7-d4fa3518281c84247f16c93527e7b6f51231961ea6051b415b59e662553e8b9a.png","/assets/decorations/mobile-medium-image-8-6acbbdb9abb6832c55e682d0e55cccc4dcdbb5e658877e68ef5f51a07f49985f.png","/assets/decorations/mobile-medium-image-9-6acbbdb9abb6832c55e682d0e55cccc4dcdbb5e658877e68ef5f51a07f49985f.png","/assets/decorations/mobile-medium-image-10-6acbbdb9abb6832c55e682d0e55cccc4dcdbb5e658877e68ef5f51a07f49985f.png","/assets/decorations/mobile-medium-image-11-d4fa3518281c84247f16c93527e7b6f51231961ea6051b415b59e662553e8b9a.png"],"small":["/assets/decorations/mobile-small-image-0-cdb97a659c89659405cc2c07397e6557aea784d8eac79a20e5df8f7ef96a6518.png","/assets/decorations/mobile-small-image-1-cdb97a659c89659405cc2c07397e6557aea784d8eac79a20e5df8f7ef96a6518.png","/assets/decorations/mobile-small-image-2-cdb97a659c89659405cc2c07397e6557aea784d8eac79a20e5df8f7ef96a6518.png","/assets/decorations/mobile-small-image-3-cdb97a659c89659405cc2c07397e6557aea784d8eac79a20e5df8f7ef96a6518.png","/assets/decorations/mobile-small-image-4-c4ad08ecc96c7b8163f8fc244282e6e4240cd2d5accf31ef7d72d49bf2ae6b07.png","/assets/decorations/mobile-small-image-5-58978b8d6eea6edb732dec3d73c87fdbdbd49257ac6dd4fba0e5f9c9aecfaea9.png","/assets/decorations/mobile-small-image-6-58978b8d6eea6edb732dec3d73c87fdbdbd49257ac6dd4fba0e5f9c9aecfaea9.png","/assets/decorations/mobile-small-image-7-e3dc76108a4dc692055923ff361ed7d880c18ad0e6ee3e67e787ccbec6374ebd.png","/assets/decorations/mobile-small-image-8-58978b8d6eea6edb732dec3d73c87fdbdbd49257ac6dd4fba0e5f9c9aecfaea9.png","/assets/decorations/mobile-small-image-9-ab525bbd99d1ee56d69722b2554a115f86a311f7a6aab8fa90d868d01cc0c624.png","/assets/decorations/mobile-small-image-10-ab525bbd99d1ee56d69722b2554a115f86a311f7a6aab8fa90d868d01cc0c624.png","/assets/decorations/mobile-small-image-11-c4ad08ecc96c7b8163f8fc244282e6e4240cd2d5accf31ef7d72d49bf2ae6b07.png"]},"noimage":{"big":["/assets/decorations/mobile-noimage-big-0-470c358434a4e15217b4f95b8465778a4ea184cb382150f12796d4106570c62a.png","/assets/decorations/mobile-noimage-big-1-43c7927da240ee6510af4785eb64f240a4efc020d7391d5e6a5d1502c7883252.png","/assets/decorations/mobile-noimage-big-2-17a6a1c781e263789ec61740cbe2332d87f660544b1f02f1020e5569f3d58cf4.png","/assets/decorations/mobile-noimage-big-3-43c7927da240ee6510af4785eb64f240a4efc020d7391d5e6a5d1502c7883252.png","/assets/decorations/mobile-noimage-big-4-61f4bc4744d8c36a63f0843d35b203dc9ebba7c71b608b37ab5c502fd729d71a.png","/assets/decorations/mobile-noimage-big-5-72dd6363adb83b533a3b803b3737ec9d1a1d5ef0728f0122f98b51e00bd42627.png","/assets/decorations/mobile-noimage-big-6-72dd6363adb83b533a3b803b3737ec9d1a1d5ef0728f0122f98b51e00bd42627.png","/assets/decorations/mobile-noimage-big-7-61f4bc4744d8c36a63f0843d35b203dc9ebba7c71b608b37ab5c502fd729d71a.png","/assets/decorations/mobile-noimage-big-8-72dd6363adb83b533a3b803b3737ec9d1a1d5ef0728f0122f98b51e00bd42627.png","/assets/decorations/mobile-noimage-big-9-f0998c83d69aba31513f9f97883b3db19039e4b477cec8581383f78e8fcf01f7.png","/assets/decorations/mobile-noimage-big-10-f0998c83d69aba31513f9f97883b3db19039e4b477cec8581383f78e8fcf01f7.png","/assets/decorations/mobile-noimage-big-11-10f61c5b9b4f31c2988483f1a8d12d63408f62124563e8cea87be00925e6332a.png"],"medium":["/assets/decorations/mobile-noimage-medium-0-6f18cc29d81c875b550553cc0b868f564e07671110902c5daee63cf50f50ecfa.png","/assets/decorations/mobile-noimage-medium-1-6f18cc29d81c875b550553cc0b868f564e07671110902c5daee63cf50f50ecfa.png","/assets/decorations/mobile-noimage-medium-2-4c3fd92814335e5ab2b1ec1a93f9ad180d31962559d982fe66a2d89a4539d1c8.png","/assets/decorations/mobile-noimage-medium-3-6f18cc29d81c875b550553cc0b868f564e07671110902c5daee63cf50f50ecfa.png","/assets/decorations/mobile-noimage-medium-4-4c3fd92814335e5ab2b1ec1a93f9ad180d31962559d982fe66a2d89a4539d1c8.png","/assets/decorations/mobile-noimage-medium-5-6f18cc29d81c875b550553cc0b868f564e07671110902c5daee63cf50f50ecfa.png","/assets/decorations/mobile-noimage-medium-6-6f18cc29d81c875b550553cc0b868f564e07671110902c5daee63cf50f50ecfa.png","/assets/decorations/mobile-noimage-medium-7-4c3fd92814335e5ab2b1ec1a93f9ad180d31962559d982fe66a2d89a4539d1c8.png","/assets/decorations/mobile-noimage-medium-8-6f18cc29d81c875b550553cc0b868f564e07671110902c5daee63cf50f50ecfa.png","/assets/decorations/mobile-noimage-medium-9-69659c5911d72d73ca8c7dbcbe2c5bf0d35a743ed323ad03e748059f1923b8a6.png","/assets/decorations/mobile-noimage-medium-10-69659c5911d72d73ca8c7dbcbe2c5bf0d35a743ed323ad03e748059f1923b8a6.png","/assets/decorations/mobile-noimage-medium-11-69659c5911d72d73ca8c7dbcbe2c5bf0d35a743ed323ad03e748059f1923b8a6.png"],"small":["/assets/decorations/mobile-noimage-small-0-40ba3af9ac223f391ffbee4063982b48d6f0bc131def85eecfdf3f4bb45d526f.png","/assets/decorations/mobile-noimage-small-1-39b32e9674753d69871408d6cc1d817966ca857320282c3c27f2be2134200cf6.png","/assets/decorations/mobile-noimage-small-2-4c29de95682e813213d5970d5bde7eaf9de8dd328a263e02a92b294425bbfb1a.png","/assets/decorations/mobile-noimage-small-3-40ba3af9ac223f391ffbee4063982b48d6f0bc131def85eecfdf3f4bb45d526f.png","/assets/decorations/mobile-noimage-small-4-39b32e9674753d69871408d6cc1d817966ca857320282c3c27f2be2134200cf6.png","/assets/decorations/mobile-noimage-small-5-94a5d48bba25f9f4013075e48a7dca88da57d0827c766f986f6646bfb87476d3.png","/assets/decorations/mobile-noimage-small-6-4c29de95682e813213d5970d5bde7eaf9de8dd328a263e02a92b294425bbfb1a.png","/assets/decorations/mobile-noimage-small-7-39b32e9674753d69871408d6cc1d817966ca857320282c3c27f2be2134200cf6.png","/assets/decorations/mobile-noimage-small-8-39b32e9674753d69871408d6cc1d817966ca857320282c3c27f2be2134200cf6.png","/assets/decorations/mobile-noimage-small-9-514072f7acc060b3134a93be0480cffe5bf5c2619058b65b048a7f41f33c437b.png","/assets/decorations/mobile-noimage-small-10-514072f7acc060b3134a93be0480cffe5bf5c2619058b65b048a7f41f33c437b.png","/assets/decorations/mobile-noimage-small-11-514072f7acc060b3134a93be0480cffe5bf5c2619058b65b048a7f41f33c437b.png"]}}};
+</script> 

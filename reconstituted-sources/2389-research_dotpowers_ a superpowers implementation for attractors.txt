@@ -1,0 +1,1648 @@
+TITLE: 2389-research/dotpowers: a superpowers implementation for attractors
+URL: https://github.com/2389-research/dotpowers/tree/main
+
+Skip to content
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+Open menu
+
+Homepage (g then d) gGthen dD
+
+2389-research
+
+dotpowers
+
+Type / to search
+
+Search or jump to���(forward slash) forward slash/
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+Search code, repositories, users, issues, pull requests...
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Provide feedback
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+We read every piece of feedback, and take your input very seriously.
+
+ 
+ 
+ Include my email address so I can be contacted
+
+ 
+ 
+ Cancel
+
+ Submit feedback
+
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Saved searches
+ 
+
+ 
+Use saved searches to filter your results more quickly
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ Cancel
+
+ Create saved search
+
+ 
+ 
+
+Chat with Copilot
+
+Create new...
+All issuesAll pull requestsAll repositories
+
+You have unread notifications(g then n) gGthen nN
+
+Open user navigation menu
+
+Repository navigation
+
+Code
+
+Issues
+
+Pull requests
+
+Agents
+
+Actions
+
+Projects
+
+Security and quality
+
+Insights
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+Search code, repositories, users, issues, pull requests...
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Provide feedback
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+We read every piece of feedback, and take your input very seriously.
+
+ 
+ 
+ Include my email address so I can be contacted
+
+ 
+ 
+ Cancel
+
+ Submit feedback
+
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Saved searches
+ 
+
+ 
+Use saved searches to filter your results more quickly
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ Cancel
+
+ Create saved search
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+{{ message }}
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ Open in github.dev
+ Open in a new github.dev tab
+ Open in codespace
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ dotpowers
+ 
+
+ Public
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+Watch0 (0)
+
+ 
+
+ 
+
+ 
+
+ Fork
+ 1
+ Fork your own copy of 2389-research/dotpowers
+
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ Loading
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+Unstar this repository?
+
+ 
+
+ 
+
+ 
+
+ This will remove {{ repoNameWithOwner }} from the {{ listsWithCount }} that it's been added to.
+ 
+
+ 
+
+ 
+ 
+ 
+ Unstar
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ Starred
+ 7
+ 
+ 
+ 
+ 
+Add this repository to a list
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Lists
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Create list
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+ 
+
+ 
+ 
+ 
+ Star
+ 7
+ 
+ 
+ 
+ 
+Add this repository to a list
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Lists
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Create list
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+Watch0 (0)
+
+ 
+
+ 
+Fork your own copy of 2389-research/dotpowers
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+Unstar this repository
+
+ 
+ 
+ 
+ 
+Add this repository to a list
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Lists
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Create list
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+ 
+
+ 
+ 
+ 
+Star this repository
+
+ 
+ 
+ 
+ 
+Add this repository to a list
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ Lists
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ Create list
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ a superpowers implementation for attractors
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 7
+ stars
+ 
+ 
+ 1
+ fork
+ 
+ 
+ 0
+ watching
+ 
+ 
+ 
+ 
+ Branches
+
+ 
+ Tags
+
+ 
+ 
+ 
+ Activity
+
+ 
+ 
+ Custom properties
+
+ 
+
+ 
+ 
+
+ 
+ Public repository
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+Create list
+
+ 
+
+ 
+ 
+Create a list to organize your starred repositories.
+
+ 
+
+ 
+
+ 
+
+ Name
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Description
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ Private
+ 
+ Enabling this makes the list visible only to you.
+ 
+
+ 
+
+ 
+ Create
+ 
+
+ 
+
+ Tip: type : to add emoji to the name or description.
+ 
+
+2389-research/dotpowers
+
+ main
+
+1 Branch1 Tag
+
+ tT
+
+Go to file
+
+Add file
+Add file
+
+Code
+Open more actions menu
+
+Folders and files
+
+NameName
+Last commit message
+
+Last commit date
+
+Latest commit
+
+ 
+
+harperreed
+and
+claude
+
+docs: add related projects section with dot-files link
+Open commit details
+2 months agoMar 13, 2026
+
+3a800d4 �� 2 months agoMar 13, 2026
+
+History
+48 Commits
+Open commit details
+
+48 Commits
+
+docs
+
+docs
+
+feat(dotpowers): add 7 pipeline variant DOT files and 20q game
+
+2 months agoMar 12, 2026
+
+.gitignore
+
+.gitignore
+
+chore: add .gitignore for tracker, scratch, and game state
+
+2 months agoMar 12, 2026
+
+README.md
+
+README.md
+
+docs: add related projects section with dot-files link
+
+2 months agoMar 13, 2026
+
+dotpowers-auto.dot
+
+dotpowers-auto.dot
+
+fix(dotpowers): replace comma-separated conditions with && operator
+
+2 months agoMar 13, 2026
+
+dotpowers-simple-auto.dot
+
+dotpowers-simple-auto.dot
+
+feat(dotpowers): add dotpowers-simple-auto lightweight headless pipeline
+
+2 months agoMar 13, 2026
+
+dotpowers-simple.dot
+
+dotpowers-simple.dot
+
+fix(dotpowers): replace comma-separated conditions with && operator
+
+2 months agoMar 13, 2026
+
+dotpowers.dot
+
+dotpowers.dot
+
+fix(dotpowers): replace comma-separated conditions with && operator
+
+2 months agoMar 13, 2026
+
+kitchen-sink.dot
+
+kitchen-sink.dot
+
+feat: add superpowers pipelines from dot-files repo
+
+2 months agoMar 13, 2026
+
+scenario-testing.dot
+
+scenario-testing.dot
+
+feat: add superpowers pipelines from dot-files repo
+
+2 months agoMar 13, 2026
+
+test-kitchen.dot
+
+test-kitchen.dot
+
+feat: add superpowers pipelines from dot-files repo
+
+2 months agoMar 13, 2026
+
+View all files
+
+Repository files navigation
+
+README
+
+Edit file
+
+dotpowers
+
+You write echo "a dvd bouncing tui" > idea.md, run the pipeline, and come back to a tested, reviewed Rust project. One DOT file, ~1300 lines.
+
+dotpowers is the superpowers dev methodology encoded as a pipeline graph. It talks through the design with you, writes a plan, builds the thing with TDD, has three models argue about whether it's any good, and then asks you how to ship it. Runs on any attractor-compliant DOT runner (tracker, mammoth, smasher, etc.) that executes LLM nodes, tool nodes, and human gates from Graphviz DOT files.
+
+What happens when you run it
+
+Brainstorm -- reads your idea, asks you questions one at a time (YAGNI enforced), proposes 2-3 approaches with trade-offs, writes a design brief, waits for you to say "looks good"
+
+Plan -- GPT-5.2 drafts a TDD plan, a shell script rejects vague hand-wavy steps, Opus audits every requirement against the brief, GPT-5.2 patches gaps. Up to 5 iterations before it gives up and asks you.
+
+Setup -- create a feature/<project-name-slug> branch (never implements on main), install deps, run the test suite to confirm nothing is broken before we start
+
+Implement -- for each task: write a failing test, watch it fail, write minimal code, watch it pass, commit. If the implementer has questions, it pauses at a human gate before proceeding. Opus checks spec compliance, GPT-5.4 checks code quality. Both have to pass before the task is marked done. Every 3rd completed task triggers a batch checkpoint where you review progress before the pipeline continues.
+
+Review -- three models review the finished project independently. Then each model critiques the other two reviews. Opus reads everything and decides: ship, rework, or give up.
+
+Ship -- you pick: merge locally, push a PR, keep the branch, or throw it away
+
+What it won't do
+
+It builds new projects from scratch. That's it. You can't point it at an existing codebase and say "fix this bug" or "add a feature." It expects a directory with an idea.md and nothing else.
+
+It does not deploy anything. No CI/CD, no cloud, no Docker. Output is code in a git repo.
+
+It will not run unattended start to finish. You approve the design. You review batch checkpoints every 3 tasks during implementation. You choose how to ship. If the implementer has questions or gets stuck, it asks you.
+
+It is not cheap. A full run hits Opus 4.6, GPT-5.4, GPT-5.2, and Gemini 3.5 Flash across dozens of nodes. If loops iterate (and they will), costs add up. We burned 3.5M OpenAI tokens on a single bad run before adding loop limits.
+
+It does not guarantee the code works. Three models reviewing each other catches a lot, but LLMs still make mistakes.
+
+Requirements
+
+An attractor-compliant DOT runner (tracker, mammoth, smasher, etc.)
+
+API keys for OpenAI, Anthropic, and Google (in .env or environment)
+
+git
+
+Whatever language toolchain your project needs (Rust, Python/uv, Node, Go -- the plan specifies the stack and the pipeline sets it up)
+
+Usage
+
+mkdir my-project && cd my-project
+echo "a terminal dashboard that shows system metrics" > idea.md
+git init
+# using tracker:
+tracker /path/to/dotpowers.dot --tui
+
+# or mammoth, smasher, etc. -- any attractor-compliant runner
+mammoth /path/to/dotpowers.dot
+
+ 
+ 
+ 
+ 
+ 
+
+How it's wired
+
+Brainstorm --> Plan --> Setup --> Implement --> Final Review --> Finish
+ | | | |
+ v v v v
+ Human Draft/Audit/ TDD loop: 3 reviews +
+ approval Patch loop write test -> 6 cross-critiques ->
+ (max 5) spec review -> consensus
+ quality review ->
+ mark complete
+
+ 
+ 
+ 
+ 
+ 
+
+Who does what
+
+Job
+Model
+Reasoning
+
+Spec audits, consensus, debugging
+Opus 4.6
+Best at careful line-by-line work
+
+Writing code (TDD cycles)
+GPT-5.4
+Fast, good with tools
+
+Drafting and patching plans
+GPT-5.2
+Structured output, cheaper
+
+Third opinion on reviews
+Gemini 3.5 Flash
+Different perspective, cheap
+
+When things go wrong
+
+The pipeline tries four things before bothering you:
+
+Retry the node (up to 2 times)
+
+Debug investigation -- Opus does root cause analysis
+
+Replan the task -- rethink the approach
+
+Ask you
+
+Loop limits
+
+Early runs burned millions of tokens in infinite loops. Every cycle now has a hard cap:
+
+Loop
+Cap
+Then what
+
+Plan validation
+5 iterations
+Asks you for help
+
+Review -> re-implement
+5 per task
+Asks you for help
+
+Final review rework
+2 full cycles
+Writes a failure summary and stops
+
+Counters reset on each new run but persist across resume, so you won't hit a stale limit from a previous run.
+
+What it writes
+
+All artifacts go in docs/plans/ inside your project:
+
+brainstorm.md -- notes and decisions from the brainstorm
+
+design-brief.md -- the approved spec
+
+plan.md -- TDD plan with - [ ] task-NNN: checkboxes
+
+plan-audit.txt -- Opus audit (APPROVED or a list of gaps)
+
+current_task_id.txt -- which task is running right now
+
+Pipeline state (checkpoints, loop counters) lives in .tracker/. Gitignored.
+
+The repo
+
+dotpowers.dot -- the pipeline (~1300 lines of DOT)
+docs/plans/ -- design docs and iteration history
+
+ 
+ 
+ 
+ 
+ 
+
+Validate syntax: dot -Tsvg dotpowers.dot > /dev/null
+
+Generate a graph image: dot -Tpng -Gdpi=300 dotpowers.dot -o dotpowers.png
+
+Related
+
+dot-files ��� Standalone pipelines (speedrun, bug-hunter, refactor-express, doc-writer) and interactive games (20q, story-engine, model-debate) that don't use the superpowers framework
+
+tracker ��� The DOT pipeline runner we use most
+
+mammoth ��� The DOT pipeline format and ecosystem
+
+superpowers ��� The dev methodology this encodes
+
+License
+
+[TBD]
+
+ 
+
+ 
+
+ 
+
+ 
+About
+
+ 
+
+ a superpowers implementation for attractors
+ 
+
+ 
+Resources
+
+ 
+
+ 
+ 
+ Readme
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ Activity 
+
+ 
+
+ 
+ Custom properties 
+
+ 
+Stars
+
+ 
+
+ 
+ 7
+ stars 
+
+ 
+Watchers
+
+ 
+
+ 
+ 0
+ watching 
+
+ 
+Forks
+
+ 
+
+ 
+ 1
+ fork 
+
+ 
+
+ 
+ Report repository
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ Releases
+
+ 
+ 
+ 1
+ tags
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ Packages
+ 
+
+ 
+
+ No packages published 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ Contributors
+ 2
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ harperreed
+ Harper Reed
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ claude
+ Claude

@@ -1,0 +1,40 @@
+Spec-driven development: The AI engineering workflow at Notion | Ryan Nystrom
+
+Listen now on YouTube • Spotify • Apple Podcasts
+
+
+Brought to you by:
+
+WorkOS—Make your app enterprise-ready today
+
+Orkes—The enterprise platform for reliable applications and agentic workflows
+
+Ryan Nystrom is a software engineer and engineering manager at Notion, where he works on Notion AI, Custom Agents, and internal systems that help engineers move faster with less busywork. He joined Notion after the company acquired Campsite, the team communication platform he co-founded. In this episode, Ryan shares how his team automates standup prep, ships PRs from a single Notion comment, uses specs as the new source of truth, and why fast CI is becoming essential for AI coding agents. He explains why engineering managers should still write code, how AI is changing meetings, and why great developer experience matters more than ever.
+
+Biggest takeaways:
+Never prep for standups again by auto-generating meeting notes from all your workstreams. Ryan’s Notion AI agent pulls from Slack conversations, closed tasks, merged PRs, telemetry metrics, and yesterday’s meeting transcript to create a comprehensive pre-read every morning at 9 a.m. This transforms standups from rote status updates into high-bandwidth problem-solving sessions where the team spends 100% of their time on decisions, blockers, and next steps instead of “I did this thing yesterday.”
+
+Fast CI is the mathematical limit on your AI coding velocity. If your CI takes an hour to run, your agents sit idle for an hour waiting for test results. If it takes three minutes, you can run 20x more iterations in the same time frame. Ryan’s team is aggressively cutting Notion’s CI to 25% of current time specifically to unlock agent productivity—because agents don’t get tired, don’t sleep, and can work in parallel across VMs if your infrastructure supports it.
+
+Background agents that ship PRs from Slack mentions eliminate context switching. Ryan’s “Boxy” system lets him @mention Codex from a Notion task, and 20 minutes later he gets back a PR with implementation, screenshots of UI verification, and a preview URL. This morning a friend texted him a feature request; Ryan wrote four sentences and dropped a screenshot in a Notion task, mentioned Codex, and had a shipped PR before lunch. No IDE, no local environment, no context switch.
+
+Specs as source of truth beats code as source of truth for AI-powered development. Notion engineers now maintain Markdown spec files in their repo that describe features in plain English with code pointers and verification steps. When they need to update a feature, they update the spec and point Codex at it—the agent implements everything, runs verification, and ships. The spec’s version history becomes the changelog, and non-technical stakeholders can actually read it.
+
+“Yap your spec” is a legitimate development workflow now. Ryan opens Whisper, talks through how a feature should work, gives that transcript to Codex with examples of other specs, and gets back a comprehensive technical document. This is faster than writing and more thorough than typing because you naturally explain edge cases and context when speaking that you’d skip when writing bullet points.
+
+Make AI defend its technical decisions. When Codex suggests a change Ryan doesn’t understand, he doesn’t ask, “Are you sure?” He says, “You’re wrong; defend your argument with evidence.” This forces the model to provide cited reasoning instead of just agreeing with whatever the human says. This is especially critical when working on infrastructure you don’t fully understand—you need the AI to teach you, not just comply.
+
+The era of the hard skill means engineering leaders should write code again. Ryan manages six people and writes code daily. He works until the minute standup starts without prep because AI handles meeting notes. He ships features from his phone on the subway. The AI tools have eliminated so much meeting prep and information synthesis work that managers can be hands-on again—and in Ryan’s opinion, line managers should be writing code, fixing bugs, and staying close to the work.
+
+Changing your tools constantly is energizing, not exhausting, when you’re learning. Ryan changed IDEs, terminals, and workflows more than 10 times in the past year. Instead of feeling chaotic, it feels fresh and joyful. He’s working faster and harder than ever, but in a good way—because he’s experimenting, learning, and building instead of maintaining the same workflow he’s used for over 12 years. The pace of change is the point.
+
+Good developer experience for humans creates good developer experience for agents. Ryan’s team built comprehensive CLI tools, clear documentation, and fast CI long before AI agents. Now those same investments make agents more successful—they can verify their own work, follow blessed paths, and iterate quickly. This creates a virtuous cycle: DX investments help agents, and agent infrastructure (like cloud dev environments) helps humans too.
+
+Blog & detailed workflow walkthroughs from this episode:
+How I AI: Ryan Nystrom’s 3 Notion Workflows for Engineering Velocity: https://www.chatprd.ai/how-i-ai/ryan-nystrom-notion-workflows-for-engineering-velocity
+
+↳ Implement Features Using Spec-First Development and an AI Coding Agent: https://www.chatprd.ai/how-i-ai/workflows/implement-features-using-spec-first-development-and-an-ai-coding-agent
+
+↳ From Notion Task to GitHub Pull Request in 20 Minutes with a Coding Agent: https://www.chatprd.ai/how-i-ai/workflows/from-notion-task-to-github-pull-request-in-20-minutes-with-a-coding-agent
+
+↳ Automate Daily Standup Preparation with a Custom Notion AI Agent: https://www.chatprd.ai/how-i-ai/workflows/automate-daily-standup-preparation-with-a-custom-notion-ai-agent

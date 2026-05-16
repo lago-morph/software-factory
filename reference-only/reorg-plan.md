@@ -13,6 +13,8 @@ Each step updates this section in its final action so a fresh agent session can 
 
 ## How a fresh agent should use this file
 
+**Before doing any git or PR work, read `.claude/skills/always-commit-skill-to-repo/SKILL.md`.** That skill is the canonical source for git/PR discipline in this repo: feature-branch + commit + push + ready-for-review PR (NOT draft) + immediate subscribe via `mcp__github__subscribe_pr_activity`. It is mandatorily triggered before every git operation and every GitHub MCP PR call. The closing actions below are a specialization of that skill for this plan; if the two ever conflict, the skill wins.
+
 1. Read the **Status** section above to find the next step.
 2. Read the corresponding `## Step N` section in full.
 3. Execute the step. Every step ends with the same closing actions:
@@ -20,7 +22,7 @@ Each step updates this section in its final action so a fresh agent session can 
    - (b) fill in the `### Lessons learned` subsection at the end of the step (see "Why lessons learned" below),
    - (c) commit,
    - (d) push to a new branch off `main` (one branch per step),
-   - (e) open a **draft** PR (include the lessons-learned bullets verbatim in the PR description),
+   - (e) open a **ready-for-review** PR (NOT draft) with the lessons-learned bullets included verbatim in the description,
    - (f) subscribe to PR activity via `mcp__github__subscribe_pr_activity`.
 4. Do NOT skip ahead. Do NOT combine steps into one PR.
 
@@ -135,7 +137,7 @@ No prose discussion — table cells only.
 In order:
 1. Update the **Status** section: `Completed steps: 1`, `Next step: 2`.
 2. Fill in **Lessons learned (Step 1)** below (see "Why lessons learned" at the top of this file — these feed the eventual skill).
-3. Commit. Push to `claude/reference-only-step-1-categorize`. Open **draft** PR. Include in the PR description: the Step 1.0 survey summary, the chosen category table, before/after file lists, and the lessons-learned bullets verbatim.
+3. Commit. Push to `claude/reference-only-step-1-categorize`. Open **ready-for-review** PR (NOT draft, per `.claude/skills/always-commit-skill-to-repo/SKILL.md`). Include in the PR description: the Step 1.0 survey summary, the chosen category table, before/after file lists, and the lessons-learned bullets verbatim.
 4. Subscribe to PR activity (`mcp__github__subscribe_pr_activity`).
 
 ### Lessons learned (Step 1)
@@ -183,7 +185,7 @@ Remove the per-source inventory table entirely from the README.
 In order:
 1. Update **Status**: `Completed steps: 1, 2`, `Next step: (see "Additional steps" section below; if empty, skip to Final step)`.
 2. Fill in **Lessons learned (Step 2)** below.
-3. Commit. Push to `claude/reference-only-step-2-split-readme`. Open **draft** PR with lessons-learned bullets verbatim in the description. Subscribe.
+3. Commit. Push to `claude/reference-only-step-2-split-readme`. Open **ready-for-review** PR (NOT draft) with lessons-learned bullets verbatim in the description. Subscribe.
 
 ### Lessons learned (Step 2)
 
@@ -193,7 +195,7 @@ In order:
 
 ## Additional steps (to be added by user)
 
-> **Fresh-agent note:** If this section is empty or contains only this note, skip directly to the **Final step** below. New steps added by the user appear between this heading and the Final step heading. They follow the same closing-action convention (update Status, fill in their own `### Lessons learned` subsection, branch + push + draft PR + subscribe).
+> **Fresh-agent note:** If this section is empty or contains only this note, skip directly to the **Final step** below. New steps added by the user appear between this heading and the Final step heading. They follow the same closing-action convention (update Status, fill in their own `### Lessons learned` subsection, branch + push + ready-for-review PR + subscribe).
 
 *(no additional steps yet)*
 
@@ -248,7 +250,7 @@ These were established by user direction during the planning session. Lessons-le
 - **Two-table separation:** top-level README is for **quick-jump navigation only** (compact category table with short-name links). Rich per-source detail lives in per-category INDEX files. Never duplicate.
 - **Fresh-agent handoff:** a single Status section in the plan file is the source of truth for what's done and what's next. Update it as the *last* action of each step.
 - **Lessons-learned-as-skill-feedstock:** the explicit purpose of the per-step Lessons learned subsections is to capture process knowledge for the skill being authored in the final step. Without these, the skill is just a recipe; with them, it carries hard-won judgement.
-- **Branch-per-step + draft PR + subscribe pattern:** never combine steps into one PR. Each step is independently reviewable and revertible.
+- **Branch-per-step + ready-for-review PR + subscribe pattern:** never combine steps into one PR. Each step is independently reviewable and revertible. PRs are ready-for-review by default, not draft (per `.claude/skills/always-commit-skill-to-repo/SKILL.md`).
 - **Terminal-step rule for skill instantiation:** the skill-creation step is always last. New steps added later slot in *before* it. Skill instantiation depends on accumulated lessons-learned from all prior steps.
 
 #### Anti-patterns to bake in
@@ -276,7 +278,7 @@ Preserve *specific, surprising, hard-won learnings* from the lessons-learned blo
 
 1. Update **Status** in this plan file: `Completed steps: 1, 2, …, Final`. Mark the plan as complete.
 2. (No further lessons-learned additions to this plan — this step's reflections go in the PR description.)
-3. Commit. Push to `claude/reference-only-final-create-skill`. Open **draft** PR with: the path of the new skill, a summary of the principles and anti-patterns baked in, and a brief note on which lessons-learned bullets were dropped and why. Subscribe.
+3. Commit. Push to `claude/reference-only-final-create-skill`. Open **ready-for-review** PR (NOT draft) with: the path of the new skill, a summary of the principles and anti-patterns baked in, and a brief note on which lessons-learned bullets were dropped and why. Subscribe.
 
 ---
 

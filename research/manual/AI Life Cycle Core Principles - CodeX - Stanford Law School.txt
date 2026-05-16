@@ -1,0 +1,1151 @@
+TITLE: AI Life Cycle Core Principles - CodeX - Stanford Law School
+URL: https://law.stanford.edu/2023/03/17/ai-life-cycle-core-principles/
+
+Skip to main content 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ Menu
+ 
+
+ 
+
+ 
+ 
+ 
+ SLS 
+ 
+
+ |SLS Blogs
+ 
+
+ 
+
+ 
+
+ SLS Blogs/CodeX 
+
+ 
+
+ 
+ 
+ Search
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ Hide
+ Stanford Law School
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ Explore
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ About
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Education
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Apply
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Areas of Interest
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Faculty & Research
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ News & Media
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Programs & Centers
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Community
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Careers
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+ 
+Event Calendar
+
+ 
+ 
+Archived Events
+
+ 
+ 
+Faculty Directory
+
+ 
+ 
+Full Directory
+
+ 
+ 
+Law Library
+
+ 
+ 
+ 
+SLS Login
+
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+ I am a 
+Future 
+Student
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am a 
+Current 
+Student
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am a Faculty 
+Member
+ 
+ 
+ 
+ 
+ 
+ 
+ I am a Staff 
+Member
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ I am an 
+Alum
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am an 
+Employer
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am a 
+Journalist
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+ I am a 
+Visitor
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+AI Life Cycle Core Principles
+
+ 
+
+ 
+
+ 
+ March 17, 2023 
+ 
+
+ 
+
+ By
+ 
+ 
+Eran Kahana
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+ Subscribe 
+ 
+
+ 
+
+ Share on Twitter 
+
+ 
+
+ Share on Facebook 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+You can also navigate the AI Life Cycle Core Principles by clicking here for an interactive app experience.
+
+Core Principle
+What it means and aims to promote
+
+1
+Accessibility
+Affordable; embraces user friendly interface and experience (UI/UX) methods; facilitates end user understanding of the algorithm and outcomes; maps to Explainability (XAI).
+
+2
+Accountability
+Examines output (decision-making or prediction); identifies gaps between predicted and achieved outcomes; reveals degree of compliance with the Data Stewardship Framework; subject to periodic audit to identify vulnerabilities; output traceable to the appropriate responsible party; responsive to legal demands; respectful of intellectual property rights; zero-gap between application behavior and deployer���s liability; development, provision, or use follow ISO/IEC 23053:2022, ISO 42001:2023, ISO/IEC AWI 42005 or similar standard; implementation has leadership approval; maps to Governance.
+
+3
+Accuracy
+Uses credible data (timely, non-repudiated, protected from unauthorized modification); data set is derived by following reasonable selection criteria to minimize harm; data is determined to be valid for the purpose for which it is intended and used; input and output can be measured; data input and output practice is consistent with the Data Stewardship Framework; application performance aligns with marketing claims; references ISO/IEC TR 29119-11:2020 and ISO/IEC AWI TS 29119-11.
+
+4
+Bias
+Protects against disparate impact, the increase of discrimination against protected classes, unjust outcome; protects against inaccurate results; maps to Ethics; development and use reference ISO/IEC TR 24027:2021 and ISO/IEC CD TS 12791.
+
+5
+Big Data
+Uses data compliant with the Data Stewardship Framework; respectful of intellectual property rights; compliant with decreasing dependence on labeled data architectures; maintains contextual relevance throughout application life cycle; promotes data accessibility; references ISO/IEC 20546:2019, 20547, and 24668.
+
+6
+Consent
+Application functionality continuously maintains alignment with the end user���s consent; consent is obtained in a legally valid manner.
+
+7
+Cooperation
+Facilitates global development; compatible with governance framework interoperability; facilitates internal and external information sharing (see discussion below on ISAOs) which maps also to Transparency.
+
+8
+Efficiency
+Supports a cost-effective training:time ratio; makes optimal decisions with respect to achieving objective and resource utilization.
+
+9
+Enabling
+Compliant with government sponsored controlled environments for testing and scaling AI (sandboxing).
+
+10
+Equity
+Protects against widening gender and protected class gaps; maps to Bias.
+
+11
+Ethics
+Encompasses a broad range of values that aim to eliminate or reduce risk to human life; promotes privacy; implements safeguards against AI-washing; protects property; respectful of intellectual property rights; enhances and maintains stakeholder trust; manifests emphasis on socially-beneficial development and use; compatible with Right to be Forgotten laws; compatible with Do No Harm initiatives; incorporates data deletion methodologies such as machine unlearning (MU); responsive to legal demands; makes available an AI system card; makes reference to relevant procurement frameworks; strongly related to Accountability, XAI, Reliability, Privacy, Fairness, Human-Centered, Security, and Transparency; references ISO/IEC TR 24368:2022.
+
+12
+Explainability (XAI)
+Enables understanding of algorithmic outcomes and operation; enhances the principles of Accountability, Reliability, Fairness, Ethics, Trustworthy, and Transparency; reduces black-box challenges; enables app recalibration; output report is designed to be useful for relevant stakeholders; output is not deceptive; output is interpretable; aligns with ISO/IEC CD TS 6254.
+
+13
+Fairness
+Supports policies, and procedures to manage against unintended disparate treatment; reduces unexpected outcomes; uses anonymized or pseudonymized data; application aligns with marketing claims; respectful of intellectual property rights; maps to Trustworthy, Consent, Transparency, XAI, Accountability, Bias, and Metrics.
+
+14
+Fidelity
+Supports measuring of the application���s performance relative to its code and across the deployment population; supports measure of ongoing compliance with the Core Principles; supports assessment of degree of compliance with the AI Data Stewardship Framework; references ISO 9001; maps to Transparency and XAI.
+
+15
+Fundamental Rights
+Open data access compliant, in contrast to use of closed (proprietary) models that inhibit access; maps to Accessibility, Transparency, and Consent.
+
+16
+Governance
+Developed and used within an environment that follows documented policies, processes, and procedures that are compatible with the Data Stewardship Framework; developed and used within an environment where policies, processes, procedures, and practices are implemented to regularly monitor the organization���s regulatory, legal, risk, environmental, and operational requirements and compliance and serve to inform senior leadership accordingly; senior leadership takes documented responsibility for ensuring ongoing compliance with all relevant policies, processes, procedures, and agreements; system development complies with relevant contractual agreements; manifests a commitment to continuous learning and improvement; policies, procedures, and processes reference/align with ISO/IEC 31000:2018 and 38507:2022, ISO/IEC CD 42006, ISO/IEC AWI TR 42106, and ISO/IEC CD TR 17903.
+
+17
+Human-Centered
+
+ 
+
+Compatible with law, privacy, human rights, democratic values, and diversity; contains safeguards to ensure a fair and just society; protects against augmenting and perpetuating social disparity, promotes equality, social justice and consumer rights; prevents toxicity; aligns with best practices in user interface and experience (UI/UX); human-collaborative and human-intervention (control) compatible; compatible with experiential AI (human-in-the-loop); development cycle takes into account human-like dexterity and operational adaptability to the operator of the robotic application; responsive to legal demands; maps to Consent and Fairness; measures application benefits across multiple dimensions in reference to ISO/IEC AWI TR 21221.
+
+18
+Inclusive
+
+ 
+
+Widespread contribution to society; does not exclude certain parts of society; maps to Ethics.
+
+19
+Interpretability
+Complementary to XAI; the meaning of the system���s output corresponds with its design; enables app recalibration; reduces black-box challenges; mechanistic interpretability is used; maps to Trust.
+
+20
+Metrics
+Capable of measuring degree of compliance and effectiveness with the Core Principles; promotes alignment with relevant standards; enables alignment with Governance and Trustworthy principles.
+
+21
+Permit
+The application development and end user use of the application are subject to and compliant with a government issued permit; developer maintains applicable certification from a recognized body (e.g., ISO, IEEE); respectful of intellectual property rights; AI application training employs data that is subject to the AI Data Stewardship Framework; Consideration should be given to requiring developer and/or end user possess a bond (financial guarantee to ensure the fulfillment of specific obligations).
+
+22
+Predictable
+Maintains compatibility with select Core Principles throughout its lifecycle; the potential for deviation from relevant Core Principles is measurable; application performance aligns with marketing claims; Minimizes the capability of jumps ���in the wild;��� maps to Consent and Fairness.
+
+23
+Privacy
+The application���s development and use are compatible with the AI Data Stewardship Framework; The application���s design and use are compatible with FIPs; The application uses and is compatible with methods that create and maintain the state of unidentifiable data (anonymized, pseudonymized, or encrypted); The application employs a differential privacy framework; Manifests alignment with a commitment to continuous improvement; The design is based on processes that ensure compliance with laws, regulations, and standards such as state privacy laws, HIPAA, GLBA, COPPA, GDPR, the NIST Privacy Framework, and NIST AI Risk Management Framework.
+
+24
+R&D
+Promotes on going research and development in alignment with current best practices; demonstrates a continuous improvement mindset; regularly employs information sharing and other collaboration best practices; maps to Human-Centered principle.
+
+25
+Relevant
+Application lifecycle management adheres to policies and procedures that promote intended outcomes; application conforms with applicable laws; application development conforms with the AI Data Stewardship Framework.
+
+26
+Reliability
+Design, development, and deployment follow best practices and promote compliance with relevant Core Principles; deployment takes a lifecycle perspective and includes patching AI; application is subject to continuous validation using proven risk assessment methodology (red teaming); maintains data credibility; follows a compliance by design methodology; application performance aligns with marketing claims; does not materially deviate from coded objective; algorithmic recidivism is accounted for, monitored, and corrected; undergoes routine and periodic guardrail testing; protects from toxic output; references life cycle processes ISO/IEC FDIS 42001, ISO/IEC DIS 5259, 5338, 8183, and ISO/IEC AWI 42005; maps to Fidelity and Predictability.
+
+27
+Resilience
+Failure recovery capable; integrates best in class redundancy; the greater the capability to autonomously recover (i.e., without manual patching) the more resilient the application; the model is resistant to attack vectors that pollute learning sets; resistant to misinformation prompts; application remains aligned with human values; Manifests alignment with a commitment to continuous improvement; maps to Reliability and Wherewithal; references 
+
+ISO/IEC CD TS 8200.; references ISO/IEC CD TS 8200.
+
+28
+Robust
+Operates with minimum downtime; resistant to adversarial, prompt injection attacks; maintains operational integrity throughout its lifecycle; able to identify and handle input/output unreliability; resistant to unintended behavior from the end user; exhibits high degree of problem flexibility; autonomous behavior maintains line of sight with human developer and end user; accommodates information sharing best practices; uses sophisticated learning techniques to minimize bias; references ISO/IEC 24029, ISO/IEC 24029-2, and ISO/IEC TS 4213:2022.
+
+29
+Safety
+Minimizes unintended behavior; aligns with Permit-related policies and procedures; incorporates Robust principles; subjected to RSP (Responsible Scaling Policy) through all appropriate ASL (AI Safety Level), namely levels 1 through 4 and higher; compatible with real-time monitoring to prevent harm; designed with a Do No Harm approach; development gating incorporates methods for measuring application risk on an ongoing basis; implements application hardening methods; application default settings are set to highest safety; Manifests alignment with a commitment to continuous improvement; references ISO/IEC CD TR 5469.
+
+30
+Security
+Resistant to adversarial, inference, and prompt injection attacks; compatible with information sharing best practices; timely detection and response of threats and incidents of compromise; supply chain vetting and monitoring policies and procedures are used to continuously manage and minimize the model���s risk profile; Manifests alignment with a commitment to continuous improvement; references ISO 31000: 2018;  ISO 31000:2023, IEC 31010:2019 and ISO/IEC 23894:2023; data security principles follow the AI Data Stewardship Framework.
+
+31
+Sustainable
+
+ 
+
+Promotes long-term growth capabilities for the developer; compatible with information sharing best practices; model development aligns with and enables execution of broader organizational commitments (e.g., data privacy); respectful of intellectual property rights; application performance aligns with marketing claims; maps to Wherewithal.
+
+32
+Track Record
+Application is the product of a developer known for designing AI compatible with the Core Principles; developer demonstrates adherence to risk assessment standards and best practices mapping to IEC 31010:2019; Manifests alignment with a commitment to continuous improvement; maps to Permit and Wherewithal.
+
+33
+Transparency
+Development and deployment remains consistent with disclosure (e.g., reporting and publication), discovery, and non-discriminatory methodology and output; compliant with disclosure of dataset provenance and legal status; enables end user understanding of the what, how, and why of the output; application performance aligns with marketing claims; information used in model creation is accurate, sufficient, and useful; promotes stakeholder consensus; facilitates audit by third parties; compatible with experiential AI; contains controls to protect against use of opaque and complex neural networks for language models; complies with the AI Data Stewardship Framework; development adheres to coding documentation and annotation best practices; employs effective notice and explanation (e.g. AI Fact Label); Manifests alignment with a commitment to continuous improvement; developer takes part in an information sharing organization (see Note 6); public interaction with AI must be disclosed; maps to XAI and Accountability.
+
+34
+Trustworthy
+A catchall for multiple Core Principles, such as Accountability, Accuracy, Ethics, XAI, Fairness, Privacy, Metrics, Safety, and Security; development practices comply with the AI Data Stewardship Framework; a principle promoted through engagement with regulatory and non-regulatory frameworks, technical standards and assurance techniques such as auditing and certification schemes; application performance aligns with marketing claims; Manifests alignment with a commitment to continuous improvement.
+
+35
+Truth
+Does not cause unfair or deceptive outcomes; application performance aligns with marketing claims; facilitates audit; maps to Accuracy.
+
+36
+Wherewithal
+Developer is financially sound, exhibits multi-year operational resilience; developer has sufficient financial resources and/or insurance (as determined by end user and other stakeholders such as investors) to sustain operations and contractual obligations; developer demonstrates use of policies and procedures to fully support AI development in compliance with relevant Core Principles; Manifests alignment with a commitment to continuous improvement; references ISO/IEC 25059 and ISO/IEC WD TS 25058.
+
+37
+Workforce Compatible
+Considerate of issues relative to worker displacement; promotes effective worker use, interaction, and training with AI.
+
+Purpose
+
+Many of the Core Principles (second column) are compiled from work done by the G7, OECD, UNESCO, IEEE, ISO, NIST, FTC, G20, and APEC. Other Core Principles, such as Big Data, Consent, Fidelity, Metrics, Permit, Track Record, and Wherewithal are my additions.  The third column (What it means and aims to promote) is comprised of mostly of my analysis. My objective in this third column is to diminish the inherent ambiguity in these Core Principles.
+
+While ambiguity may initially seem like (to borrow from software parlance) ���a feature, not a bug��� in that it accommodates more latitude for interpretation, it is not; it is a bug. Ambiguity around the Core Principles fuels a persistent and stubborn lack of precision, a definitional vacuum. It destabilizes stakeholder ability to develop and maintain a cohesive and rational discussion around the core principles. This, in turn, hampers outcome predictability in the sense that laws, regulations, standards, and best practices that refer to the Core Principles become more vulnerable to ambiguity which then renders them less, or entirely, ineffective. Wiping away the distortive effects of ambiguity allows for more efficient, universal use of the Core Principles. They can serve as practical attributes that all stakeholders can hone-in on and leverage for virtually all aspects in which they engage with AI. For example: Developers can select Core Principles that apply to their application and measure where their work is aligned and where it isn���t; end users can reference the Core Principles in their application licensing efforts, in their due diligence, and maintenance of the application; regulators can use the Core Principles to better guide their enforcement activities; and law makers can use them in drafting laws that are more relevant, clear and practical.
+
+Finally, the term ���life cycle��� here is intended to emphasize the continual assessment and management character of these principles. The OECD���s Framework for the Classification of AI Systems defines the ���life cycle��� as ���planning and design; collecting and processing data; building and using the model; verifying and validating; deployment; and operating and monitoring.��� (The NIST AI Risk Management Framework also closely follows this definition.) My approach here is a bit broader and includes the all activities related to model decommissioning. A life cycle approach to the application of the Core Principles is essential for their efficient application. Applications, after all, are not static. They typically undergo numerous updates and upgrades, not all of which are always beneficial. Similarly, end user environments are not static. The scope of acceptable use can change as can its leadership team. (For more on this, take a look at the Governance principle.)
+
+Standards identified in green are published and those identified in orange are in development.
+
+���AI actors��� refers to as ���those who play an active role in the AI system life cycle, including organizations and individuals that deploy or operate AI.��� For more see the OECD���s Artificial Intelligence & Responsible Business Conduct.
+
+Notes
+
+This section is devoted to an on-going discussion that aims to promote substantive understanding of the Core Principles.
+
+Governance is the single most important core principle. Effective AI deployment is likely hampered by a misunderstanding of what Governance is and just how critical it is. Governance is not merely an ingredient or an attribute. Governance is what drives deployment. If organizations are concerned about security and privacy in their AI deployment, they need to understand that aligning their efforts with the Security and Privacy core principles are dependent on effective implementation of Governance. It drives everything.
+
+GPTZero (https://gptzero.me) and similar tools enhance understanding of AI outcomes, operation, accountability, and transparency. As such, it belongs to the XAI Core Principle.
+
+Incorporating durable life cycle features to protect against bad actors is likely going to be a feature that the FTC will scrutinize. This is particularly important for OpenAI given their findings in the GPT-4 System Card.
+
+The Permit principle (also) considers and influences how LLM training occurs. From a legal perspective, some of the key training issues to consider are copyright and contract law. The Permit principle promotes adherence with the Data Stewardship Framework in that it helps ensure that training occurs only with data that complies with the Permit principle.
+
+The Permit principle is as a key feature of the AI regulatory framework. It helps mitigate harm by rendering more efficient the assignment of liability and compensation mechanisms.
+
+The Cooperation principle includes information sharing. This activity is formalized through, for example, participation in Information Sharing and Analysis Organizations (ISAOs) which were set up under the Cybersecurity Information Sharing Act (2015). Participation in these types of organizations is a cybersecurity best practice and is mentioned in the NIST Cybersecurity Framework. ISAOs are an effective way for members to collaborate on identification and dissemination of information about cybersecurity threats. And a similar set up can be adopted for mitigating risk in AI. This organization could take a name such as ���AI Information Sharing and Analysis Organization��� (AI-ISAO) and provide a forum for members to share risk information and risk mitigation practices.
+
+The Permit principle relates to policies and procedures that center on formal certification frameworks. These frameworks allow the development and use of high risk AI applications only to those that have successfully passed formal requirements and continuously maintain such certification. The ���formal��� attribute reflects the identity of the permit issuer: a government agency. For example, regulatory agencies such as the Office of the Comptroller of the Currency (OCC), Food and Drug Administration (FDA) and Federal Communications Commission (FCC) issue various operational permits based on applicant disclosures and the agency���s independent assessment. So long as the applicant meets the agency���s operational criteria, the permit is granted and remains valid subject to continued compliance with that agency���s rules. The same approach can be used for AI, but the regulatory framework would also be applicable to end users. For this group, a permit would be issued only to end users that demonstrate the required operational proficiency and are legally obligated to maintain it. This also brings us to the question of whether it is necessary or desirable to have a new AI-centered regulatory agency? Or do we already have sufficient regulatory capabilities for AI within the OCC, FDA, FCC, etc?
+
+Among the requirements for Transparency is that algorithm documentation and annotation (e.g., a README file) follow established best practices. This is important for compliance with other Core Principles, such Audit and Reliability. Documentation and annotation best practices may also differ based on the coding language that was used. In Python, for example, the documentation and annotation methodology is set in the Python Enhancement Proposal (PEP), which is periodically updated. It remains to be seen how PEP (and other documentation) requirements will evolve to accommodate the regulatory and lawmaking needs.
+
+The Trustworthy principle can be further understood through the May 4, 2023 announcement by National Science Foundation (NSF) regarding the funding of seven new National Artificial Intelligence Research Institutes. The Trustworthy AI in Law and Society Institute (TRAILS) is led by the University of Maryland in partnership with George Washington University, Morgan State University, and Cornell University. TRAILS examines four key ���thrusts��� in the AI development lifecycle. The following is my brief interpretation of each of these thrusts: (A) Social Values: System output syncs with community and other stakeholder values; (B) Technical Design: Transparency, trust, robustness and (what I see as) XAI are key development principles in algorithm design;  (C) Socio-Technical Perceptions: Again, an emphasis on developing XAI; and (D) Governance: Development of documentation and analysis of the performance of governance regimes. Another vector for understanding Trustworthy is the NIST U.S. LEADERSHIP IN AI: A Plan for Federal Engagement in Developing Technical Standards and Related Tools: ���Trustworthiness standards include guidance and requirements for accuracy, explainability, resiliency, safety, reliability, objectivity, and security.���
+
+The human-in-the-loop aspect of the Human-Centered AI principle needs to be considered in context of the application; not all AI applications need to equally have it and not all applications need it. This brings us to the question of which applications need it the most? Applications that are categorized as having a high potential of societal/ethical impact should have (in varying degrees) humans making final decisions. For example, AI applications used in employment, credit scoring, law enforcement, surveillance, military defense, immigration, asylum, and border control should have the highest. Applications that do not share this impact profile need less of or no human involvement. For example, personal assistants such as Siri or Alexa, image and voice recognition, fraud detection, and predictive analytics. The human-in-the-loop requirement can also be evaluated through the AI Utility Levels Schema. For example, Level 4 applications are more likely to have the potential for high societal/ethical impact than Level 1 applications and, therefore, should have greater human involvement. Within the context of the EU���s taxonomy, Critical AI is more likely to require more attention to enabling human-in-the-loop than applications belonging to the Non-critical category. This analysis is important for a variety of reasons, for example, guiding an AI audit and assigning liability.
+
+One of building blocks of the Ethics principle calls for AI development to be focused on applications that are deemed ���socially beneficial.��� This means that the AI application development goes through gate reviews that test for: (i) discrimination; (ii) exclusion; (iii) misinformation; (iv) malicious use (e.g., hate speech, deep fakes, other psychological harm); and (v) UX/UI harm (e.g, UI that is intentionally or reasonably likely to be deceptive). As we consider these elements, it is also important to keep in mind their dynamic nature. This is to say that each of these is susceptible to augmentation based on the power/capability of the underlying AI. For example, the likelihood of misinformation from an LLM trained on 100 million parameters is likely lower than one trained on 100 billion parameters. Stated differently, the augmentation power of the latter to produce output that looks credible (in terms of sentence structure, tone, key words, and content)���but isn���t���is likely higher than that of the former.
+
+International Organization for Standardization (ISO) AI standards set is provided under ISO/IEC JTC 1/SC 42. Currently, the Trustworthy ISO family contains seven sections (one administrative and six substantive). What makes for Trustworthy AI under ISO can be understood from how it maps to the Core Principles. Some of this is straightforward as we can see a 1:1 relationship to the Core Principles, meaning that they use the same name. They are: Bias (24027) and Explainability (6254). The others are: Ethics and Social Concerns (24368); Controllability (8200); Beneficial AI Systems (21221), and Treatment of Bias (12791). (The parenthetical is the section number.)
+
+User consent to the application���s objectives requires providing a legally-valid user consent interface. Due to the potential operational complexities involved with AI, part of this task needs to feature an appropriate notice. Without carefully executing this, the likelihood of obtaining legally-valid user consent significantly fades. Signs of this clarity requirement can already be seen, for example, in the White House Blueprint for AI Bill of Rights, specifically the Notice and Explanation function. It calls for the provision of ���clear, timely, and accessible��� documentation that���s provided in ���plain language,��� with ���clear descriptions��� of how the AI system functions, what it���s intended for, who is responsible for it, and that is periodically updated so that it remains current. One method for achieving this is through the AI Fact Label which I described in the December 10, 2019 update to the Artificial Intelligence and Computational Law: Democratizing Cybersecurity post. The AI Fact Label can be delivered to the end user in a number of ways, for example via a pop-up notice (which aligns with the ���timely��� and ���accessible��� requirements).
+
+Safety considerations should be analyzed throughout the development cycle in a formal manner. This can be accomplished, for example, through adopting the AI Risk Ratio (ARR). Originally, the ARR was proposed as a risk scoring method for IoT devices based on looking at the relationship between the IoT device���s AI power (application type), its proliferation (user base/threat surface, use frequency and/or duration of use) and the risk it poses. But any type of risk can be evaluated this way (the original version looked at privacy) and where the application���s score breaches the organization���s risk tolerance, its development is ended.
+
+Ethics ranks as one of the top issues in AI development and use. Because it is intrinsically a broad topic, it is prone to various interpretations that can result in diverse approaches to execution. Contributing to this diverse treatment are, for example, geographical and cultural variances. The variables can have a destabilizing effect on the universal applicability of this Core Principle, in terms of the weight it is given.
+
+Part of the Wherewithal core principal refers to the developer���s policies and procedures that fully support the design of Core Principle compliant AI. An essential component here includes an examination of the developer���s application warranty. All too often, there is a dissonance between the marketing side of the business and the details provided in the terms and conditions. The former offers all kinds of benefits, including, for example, reduced cost and enhanced productivity. The terms and conditions often present a very different picture. Here we see broad stroke disclaimers used in an attempt to help shield the developer from any liability. Knowing this, a developer can be assigned a higher degree of compliance with the Wherewithal core principal where the application warranty language it provides is more in sync with the promises it makes on the marketing side. An end user engaged in a due diligence analysis of the application should, therefore, make sure to also examine the warranty language and grade the developer���s compliance with the Wherewithal according to its findings. Of course, other factors in the Wherewithal core principal should be evaluated and graded as well so that a higher quality assessment can be completed.
+
+Within the Accountability core principle we see the role that a periodic audit function can take. One of the functions undertakes identifying LLM vulnerabilities throughout the model���s lifecycle. This is important because, for example, possible model integrity degradation (e.g., data poisoning) can occur as more models are added. As audit frequency tends to positively impact the reduction of error or failures of the AI system, the organization���s alignment with the Accountability core principle grows.
+
+Compliance with the Privacy principle is a multi-dimensional undertaking. In addition to federal and foreign jurisdiction frameworks (e.g., HIPAA, GLBA, COPPA, and GDPR) we currently have in the U.S. eight state-level privacy laws and 12 more working their way through the legislative process. All this activity makes the task of maintaining compliance with privacy law more complicated because the legal requirements around the protection of  personal information are not uniform. That said, there are things developers and end users (each from their own vantage point) can do. For developers, focus can be placed throughout the development gating process on key privacy themes centered around data subject rights, namely the right to: access, correct, delete, receive notice, and consent (opt-out/opt-in). And for end users, focus on effective contracting practices with developers can ensure that these data subject rights areas were formally part of the model/application development and deployment cycle.
+
+One of the components in the Privacy principle calls for conducting a privacy impact assessment (PIA). The privacy impact assessment (PIA) is a process for assessing and ensuring compliance with applicable legal, regulatory, and internal policy privacy requirements. The law does not prescribe how to conduct this assessment, leaving companies free to use whichever method is reasonably designed to yield the proper results. Companies that have a track record of doing business in the European Economic Area, Switzerland, or the United Kingdom are already familiar with the PIA, as this is a requirement under the General Data Protection Regulation (GDPR) and similar laws. In the United States, however, this is a relatively newer requirement. Currently, some U.S. state privacy laws (California, Colorado, Virginia, and Connecticut) have begun embracing the PIA, but others (such as Utah) have not. Making the PIA part of the organization���s ongoing privacy-bolstering processes makes sense even when it is not legally required. Some of the benefits in doing so include increasing operational efficiency, lowering the company���s risk profile, and generally enhancing public trust in your company���s handling of PII likely outweigh the costs.
+
+An application that is compliant with the Consent principle continuously maintains alignment with the end user���s consent. This continuous feature helps ensure the developer/licensor���s liability profile remains stable and that the application���s functionality remains steady with the end user���s expectations. Though consent is sometimes regarded as a single, check-the-box act given by an end user before commencement of certain activities, this is not always the case. In applications that operate in highly regulated domains such as healthcare, end user consent should be sought on multiple occasions depending on, for example, the changing nature of the activity. Continuously maintaining alignment with the end user���s consent, therefore, means that the application is designed to prompt the end user for new consent anytime there is an expected functional deviation from the parameters that governed the previous transaction.
+
+The Explainability (XAI) principle is malleable. To be meaningful, the approach used to implement XAI depends on the identity of the audience. When directed to end users, the method will need to be simple, doing the best to avoid undesirable situations such as a TLDR scenario. It should be different when directed to enterprise end users or similar sophisticated audiences where a more detailed approach is desirable and may even be contractually required.
+
+A useful example of the Transparency principle in action is available in the Washington State Bill 5152. In relevant part, it provides: ���An electioneering communication which contains synthetic media may not be distributed without a disclosure. The disclosure must state that the media has been manipulated and: (i) for visual media, be printed in at least the largest font size of other text in the media or a size easily readable for the average viewer; (ii) for video media, appear for the duration of the video; and (iii) for audio media, be read in a clearly spoken manner and a pitch easily heard by the average listener at the beginning and end of the audio, and at least every two minutes during the audio, if applicable.��� Note that SB 5152 is focused solely on the notice elements of the Transparency core principle. There are additional important elements that should be considered to render this law more effective. For example, requiring that developers and deployers of these systems demonstrate that they align with: the Do No Harm variable found in the Safety core principle, and the compatibility with democratic values variable in the Human Centered core principle. Requiring a license (part of the Permit core principle) should also be considered as it helps mitigate the risk of bad actors using synthetic media in sensitive applications such as elections campaigning.
+
+The Transparency principle has 11 variables, which is more than any of the other Core Principles. Among the variables found in this Core Principle is the use of techniques that deliver effective notice and explanation. Their primary aim is simple: preventing end user harm caused by unfair or deceptive actions. Considering the significant amount of regulatory chatter that broke out after the unveiling of OpenAI���s ChatGPT, one question that frequently arises is whether the regulatory gap is as big as it is made out to be or maybe not so much? The answer is that it depends on what the focus is on. When it comes to regulating unfair or deceptive practices, there are already laws that deal with that. Most notably on this stage we find Section 5 of the Federal Trade Commission Act, a section that has been extensively and broadly used by the FTC to curb these practices. Looking back at the FTC���s pretty successful track record in tackling cross sector incidents under Section 5, it is likely that it will also do well when it comes to AI. That said, it is likely that over time AI-specific refinements will be made by the FTC so that companies are more in tune with what it is focused on when regulating unfair or deceptive actions.
+
+Among the variables that make up the Ethics principle are development policies and procedures that create, enhance, and maintain stakeholder trust in the application and those that demonstrate commitment to develop socially-beneficial AI applications. When it comes to the use of synthetic media, holding true to these ethics variables can become challenging. This is partially due to the relative ease in which this type of media can be created and also the relatively high degree of potential damage (e.g., deepfakes). Ultimately, media is comprise of data and this is where the Data Inventory Controls in the AI Data Stewardship Framework come into play as these controls help ensure that the creation and use of synthetic media is consistent with promoting the trust and social-beneficial application variables.
+
+The model���s risk profile is a variable that is managed under the Security principle. This task includes evaluating the code and model for the degree of vulnerability to a prompt injection attack, misinformation, and misalignment with the Human Centered principle. The evaluation should be conducted periodically. Its frequency will mostly depend on which party has the leverage to require it. Parties should also consider formalizing the requirement in a service level agreement (SLA) or similar contract. The SLA is also a good place for detailing the type of analysis and format of findings.
+
+Information sharing is one of the key characteristics of the Cooperation, Robust, Security, Sustainable, and Transparency core principles. This is particularly important in protecting against the Business Identity Compromise threat vector, which has been the subject of repeated warnings from the FBI. In a BIC, fraudsters imitating legitimate employees can cause ���very significant financial and reputational impacts to victim businesses and organizations.��� And as deepfakes become more complex, they get more difficult to identify. Information sharing is one way to counter this threat and it can be augmented through effective practices that focus on build a deepfake ontology of all known���how should I put it������fakers.��� Using this approach, AI deepfake detectors will be able to reference this ontology to identify the likelihood any given media has been altered before it is viewed. Whether the deepfake is flagged or deleted becomes a user-based setting that can also become part of the AI Risk Ratio (discussed here).
+
+Machine unlearning (MU) is part of the Ethics core principle. It is a promising technique aimed at addressing disparate impact, discrimination, copyright infringement, removing harmful responses and toxic content, and preserving privacy. The primary objective of ���unlearning��� is to identify and eliminate specific data from the training model while erasing its influence and ensuring it doesn���t negatively affect the model���s performance. However, this endeavor is not without its challenges. For the removal process to hold legal significance, it needs to address potential vulnerabilities like membership inference attacks. Despite the data removal, this attack method involves querying the model to predict whether the removed data was originally present in the training model. A successful attack determines that a specific individual���s data was present, undermining the MU process. If addressing potential vulnerabilities was not part of removal effort, it opens the door to a claim the removal process was not diligent, and potentially negligent.
+
+Transparency practices that align with the Ethics core principle involve providing information that is accurate, sufficient, and useful. Note that the ���accurate��� element within the Transparency core principle is heavily dependent on the degree of compliance with the AI Data Stewardship Framework. The degree to which there are no (or insufficient) controls around data accuracy, the relevant entity���s credible ability to claim that it complies with Transparency is compromised. As to the ���useful��� element, this is not merely a question of whether the information is relevant. It is also important to make sure the information can be acted upon in a meaningful way and without negative consequences. For example, providing a disclosure by a company that AI is being used along with an opt-out option that does not penalize the end user. Deficiency in any of these three elements works to deteriorate alignment with both core principles and this can damage an organization���s contractual and other obligations, such as those created by its terms of use and privacy policy.
+
+The Permit core principle can apply domestically or internationally. Achieving the latter is relatively more complex to implement as it requires a higher degree of agreement and ongoing coordination among member countries.
+
+The Security core principle maps to the Privacy principle in a number of ways. For example, the degree to which a model is vulnerable to a model inversion attack, property inference attack, or a membership inference attack creates a risk of misalignment with the Privacy principle. The degree of vulnerability to these attacks is also a question that will be assessed in the Data Incident Response Plan (see the AI Data Stewardship Framework). One of the incident response tasks calls for identifying the attack vector. Here, the analysis will include, for example, a review of whether the incident was the result of a white-box attack (where the adversary has full access to the model) or whether it was a black-box attack (where the adversary has limited access to the model).
+
+An AI system���s Reliability profile is composed of multiple elements. Continuous validation and the use of proven risk assessment methodologies are some of the key features that build this profile. Red teaming is an example of a well-known and accepted risk assessment methodology. It has existed well before AI made its grand entry to the world���s stage in the Fall of 2022 and searches for system vulnerabilities and weaknesses in the same way a malicious adversary would. The use of red teaming helps make the AI system more operationally reliable and can also serve an important legal function. It can be useful, for example, in demonstrating to a regulator that the developer used reasonable procedures to identify flaws in its AI system. In a contractual setting, the existence of red teaming can help support the type of warranties that a licensor provides, potentially allowing for more robust offerings that help distinguish it from those of its competitors that don���t use this methodology.
+
+Accountability is a model for identifying and assigning liability. It���s an interdependent AI life cycle core principle in that it enables other core principles such as Bias, Equity, Ethics, Human Centered, and Reliability. However, Accountability can be vulnerable to inefficiency where the amount of resources required to achieve it are not used in an optimal manner. We can see this come into play when we look at how responsive an AI system is to legal demands. Suppose an AI system causes harm. The current method of dealing with it is manual, through human intermediaries. It usually involves identifying the harm, communicating it to a lawyer who then communicates it to the AI operator who then, if responsive, takes steps to remedy the harm. This process can be automated; perhaps not for all types of harm, but in some. For example, a demand that an LLM developer remove and unlearn certain content (a takedown demand) is amenable to automation. This does not mean that the results will always be 100% accurate, but it can be a way of efficiently providing appropriate remedies to individuals/entities that claim their content was unfairly or illegally used. This process could be dealt with internally by an LLM developer, offering it as a feature of their service. But more compelling is the idea of a centralized process, a clearinghouse-like model that LLM developers voluntarily participate in and in return enjoy a safe harbor from content-use claims of liability. One of the key features of this clearinghouse is that it would be an AI system, which leaves open the question of management. Ultimately, it would be fully autonomous, but in the early versions it would be managed through an organization setup by an international treaty. In terms of protecting the system from sham demands, one way to accomplish this could be to require a takedown applicant to make a deposit that signals that their demand is made in good faith.
+
+The Permit core principle drives many of the key aspects for meeting the Safety core principle. This relationship makes high-risk applications and high-powered AI systems (in terms of computational power) the prime candidates for a development and use permit. There are two things I want to highlight here: First, this double-permit approach, which requires that the developer and end user both have a permit for their respective uses helps maximize AI application and AI system compatibility with other life cycle core principles such as Reliability and Security, which in turn help maintain alignment with the Ethics core principle. (This also serves to show just how permeable the core principles are with each other.) Second, consider the relationship of the Permit and Safety principles to the AI Risk Ratio (ARR). This ratio models the relationship between computational power and output: the greater the computing power of an AI application is, the greater the probability the application is capable of producing highly beneficial and highly harmful output. (For additional discussion on this capability, take a look here.) The ARR is another way to think about the permit requirement, especially as it relates to high risk applications and high-powered AI systems.
+
+Timely detection of and response to cybersecurity threats and incidents of compromise (especially, but not limited to data) is a key characteristic that makes up the Security core principle. What constitutes as ���timely��� is driven by a variety of factors and it is important to choose the right one(s) in order to stay within the Security swim lane. One way to determine how to set a timely response is to identify relevant regulations and work backwards to identify what���s required to enable that. Take for example a publicly traded company that suffers a cybersecurity breach. The company is subject to the regulations of the Securities and Exchange Commission (SEC) and it needs to take into account the relevant reporting requirements that are set by the SEC. As it stands, the SEC���s cybersecurity rules require disclosure of breaches that are considered ���material��� within four business days from when that determination was made. Four days can be a daunting timeframe, but knowing this requirement enables the consideration, planning and execution of putting in place personnel, policies and procedures that enable compliance. This, in turn, enables alignment with the Security core principle.
+
+Unpredictability is not necessarily bad; it can be a bug and it can also be a feature. This duality creates some tension with maintaining system alignment with the Predictability core principle as the default thinking around it is to see deviation (any deviation) as bad. In certain settings, unpredictable system behavior is beneficial, however. In the context of scientific research, for instance, an AI system���s capability of quickly identifying unconventional patterns or relationships in complex datasets can lead to highly valuable advancements that would otherwise would be impossible. The same is true for AI systems used in game development, creative art and design. Additionally, it is important to be mindful of the degree of deviation from the Predictability principle. A minor deviation that results in minor harm does not deserve the same amount of attention as one that causes significant harm. It���s also relevant to consider whether the overall benefit of the system���s potential for unpredictable behavior outweighs the potential harm. This assessment, however, gets more complicated as it raises potential tensions with maintaining system alignment with the Ethics core principle.
+
+AI certification serves an important component of the Permit core principle. A development and operation license (read: the permit) can, for example, be conditioned on maintaining certification by a well-known, proven organization such as ISO. In this context, the certification becomes mandatory, whereas in other settings it is obtained by the developer/end user as a way to gain a market advantage. Whether it is obtained under a voluntary or mandatory setting, certification can be seen as an additional security layer that promotes the catchall Trustworthy core principle. But not every AI application requires a permit and not every AI application should be the subject of certification. Level A applications, for example, are unlikely candidates for a permit, but the developer may still want to get certified as a way to gain a competitive edge.
+
+Explainable AI (XAI) is an AI life cycle core principle that enhances other life cycle core principles, such as Accountability, Reliability, Fairness, Ethics, and Transparency. XAI can be viewed as a key compliance feature for AI applications that require output explainability. For example, for organizations that extend credit based on algorithmic decisions, the Consumer Financial Protection Bureau requires that they be able to explain instances in which credit was denied.
+
+Ongoing analysis of all aspects of design, development, and deployment is a key requirement in the Govern function of NIST���s AI Risk Management Framework (AI-RMF). We see this requirement in wording such as ���mapping, measuring, and managing AI risks��� (Govern 1 and 2) and in ���collect, consider, prioritize, and integrate feedback��� (Govern 5). In order to align with the requirements of the AI-RMF, organizations need to ensure they also align with life cycle core principles such as Accountability, Accuracy, Fidelity, Metrics, Relevant, Reliability, and Transparency.
+
+Making available an AI system card serves to align with the Ethics life cycle core principle. The system card also plays an important part in promoting the Transparency core principle (a subset of Ethics). Given the important role a system card plays in informing the end user about the inner workings of the AI being used, it can be seen, more broadly, as a must-have feature, one that end users should demand of developers prior to signing up for the service. Now let���s shift gears and consider the role of the system card in the context of foundation model-based applications used by lawyers. And this brings us to an interesting question: Should lawyers be required to be familiar with the system card their application uses? There���s a good argument in the affirmative. Let���s take a look at how this works. The ABA Model Rule of Professional Conduct 1.1: Competence provides that: ���A lawyer shall provide competent representation to a client. Competent representation requires the legal knowledge, skill, thoroughness, and preparation reasonably necessary for the representation.��� Furthermore, Comment [8] to the Rule provides: ���To maintain the requisite knowledge and skill, a lawyer should keep abreast of changes in the law and its practice, including the benefits and risks associated with relevant technology, engage in continuing study and education and comply with all continuing legal education requirements to which the lawyer is subject.��� [Emphasis added.] The system card contains information that help the lawyer align with the requirements under the Rule and Comment [8]. The system card provides information that is not available elsewhere in the application. Not referencing the system card prior to use of the application could be seen as falling short of the Rule requirements.
+
+Transparency is one of the most complex core principles in that it contains numerous characteristics. Among these is disclosing the model���s dataset���s provenance and its legal status (with regard to its licensed or unlicensed content). This presents a conundrum for GenAI developers because their foundation models use massive amounts of data that, for the most part, no license was ever sought or granted. This presents a bigger challenge than initially meets the eye. Since most of the core principles are interdependent (there is hardly a principle that stands alone) non-compliance with Transparency has a repercussive effect; one failure breeds many more. The challenge, therefore, is not merely whether the GenAI developer infringes on copyright (they most likely do in the U.S.) but that they also derail with respect to their compliance with, for instance, the Accountability and Fairness core principles. And there���s more. GenAI developers are not the only ones facing difficulty because of this. It also negatively affects end users. The reason this unfolds this way has to do with how GenAI developers mitigate their risk. Many of them dilute their contractual obligations to the end user to the point where the terms and conditions are nearly (if not entirely) diametrically opposed to the marketing materials. The latter make grand promises about the application���s capabilities, the terms and conditions all but wipe them out. Under these conditions, a GenAI developer���s compliance with the Transparency core principle is largely left to market forces. But in an environment where GenAI is pretty much dominated by a few mega corporations (Meta, Google, OpenAI/Microsoft), this doesn���t leave much hope for end user���s getting a better deal anytime soon.
+
+Effective XAI enhances compliance with the principles of Accountability, Reliability, Fairness, Ethics, and Transparency. XAI facilitates stakeholder trust. But XAI is not a principle that independently drives trust. It can deliver for the user the ���why��� and ���how��� of the output, but not necessarily that that the output is accurate. This is where the AI Data Stewardship Framework (AI-DSF) kicks in. Because it helps ensure the input is accurate it increases the likelihood that the output is as well and this helps augment XAI.
+
+The AI, Algorithmic, and Automation Incidents and Controversies (AIAAIC) collects data about ���incidents and controversies��� caused by AI. According to the AIAAIC, incidents in the ���privacy��� category represent the highest risk in AI. This suggests that developers and end users carefully consider how their operations align with the Privacy life cycle core principle. Within this core principle is the requirement that organizations use methods that are compatible with and maintain the state of anonymized, pseudonymized, and encrypted data. Checking the box on this requires putting together a robust cybersecurity regime. There are many sources to reference for attaining that. A few notable examples: NIST Cybersecurity Framework (CSF), ISO/IEC 27001 and the CIS Critical Security Controls (formerly, the ���SANS 20���) which is a subset of the NIST SP 800-53, which also informs the NIST CSF. Another source to consider is the California Consumer Privacy Protection Agency (CPPA) as it provides instructive (though at this point non-final) cybersecurity guidance relevant to organizations that use ���automated decision-making��� technology, which essentially means AI. Though the CPPA is tasked with implementing the California Privacy Rights Act (CPRA), which amends/extends the California Consumer Privacy Act of 2018 (CCPA), what it has to say about cybersecurity holds true even for organizations that are not subject to the CPRA. Furthermore, taking into account multiple cybersecurity references in the design of one���s own cybersecurity regime can be thought of as a mapping exercise which typically includes standards, guidelines, and frameworks within its scope. At the end of the day, mapping is an exercise of finding concepts that relate to each other. As most of the cybersecurity sources mentioned earlier contain similar concepts, mapping them can enable a better understanding of how they interrelate. This ultimately promotes attaining a robust cybersecurity regime and, in turn, better alignment with the Privacy principle.
+
+Trustworthy is a catch-all life cycle core principle; one that is frequently used but often remains unexplained. The table above provides a view of the elements that comprise the Trustworthy core principle, some of which are themselves standalone principles. ISO 22989-2022 (Information technology ��� Artificial intelligence ��� Artificial intelligence concepts and terminology) takes a view similar to what is provided in the table above. It maps Trustworthy to the core principles of Bias, Fairness, XAI, Robust, Reliability, Resilience, Predictable and adds ���controllability,��� which is not a standalone core principle above but is part of the Human Centered core principle. ISO 22989-2022 is also a bit different than the AI standards set in ISO/IEC JTC 1/SC 42 in that it does not call out the Ethics core principles as being part of Trustworthy.
+
+Maintaining a robust cybersecurity regime is relevant to measuring the extent to which an AI developer���s work aligns with the Security life cycle core principle. One method of generating a useful measurement of this is through the use of a thorough cybersecurity due diligence checklist. The organization looking to integrate the AI application (the end user) should spearhead this task. In doing so, it should ensure that any gaps (risks) are satisfactorily dealt with prior to signing the agreement. One method to follow in this process involves the use of a comprehensive cybersecurity checklist. Experienced cybersecurity attorneys will likely be familiar with and use a robust questionnaire that examines the relevant aspects of the developer���s operations. These aspects can be grouped as follows: (i) Policy, Certification and Best Practices; (ii) Asset Management; (iii) Access Control; (iv) Network Security; (v) Endpoint Protection; (vi) Vulnerability and Patch Management; and (vii) Incident Response. Each of these sections contains detailed questions and tasks that need to be reviewed with the developer. For example, the Policy, Certification, and Best Practices section directs inquiry into whether the developer���s organization has an information security officer, whether it has a current information security policy, and whether employees and subcontractors are required to read and sign it on an annual basis. Once completed, the results of the due diligence should be reviewed by appropriate management representatives and by the organization���s legal counsel. The latter will use the results to negotiate and draft appropriate terms and conditions into the service agreement that will help the organization reduce its risk.
+
+Governance contains a duality character in that the principles it is comprised of apply equally to the developer and the end user. Since the proper maintenance of the Core Principles requires effective on-going governance efforts by both parties, any failure in doing so has the potential to undermine alignment with other Core Principles. For example, an AI developer���s failure to sync its organizational policies, processes, and procedures with the product���s design and functionality tends to weakens its product���s alignment with Accountability, Accuracy, Equity, Fairness, Predictable, Privacy, and other Core Principles.
+
+Executive Order (EO) 14110 on the Safe, Secure, Trustworthy Development and Use of Artificial Intelligence aims to formalize responsible use and governance of AI. A review of the EO���s contents and structure sheds light on the weight attributed to the Core Principles. Safe appears 58 times and Security and ���secure��� appear 144 times, respectively. (���Secure,��� and ���security��� are not separate Core Principles.) Privacy scores 37 times and its corollary ���private��� 12. Bias scores 12 mentions. On the lower end of the spectrum, Trustworthy appears 7 times, which is really just 6 times considering that it also appears in the EO title. In terms of requirements, according to a Stanford University Human-Centered Artificial Intelligence review of the EO, Safe carries 30 requirements and Privacy 9. All said, Trustworthy ekes out the least amount of emphasis in 14110, which leaves the impression that the EO is mostly concerned with the Safe, Security, and Privacy Core Principles.
+
+The risk of proliferation of fake content creates additional pressure of compliance with a number of Core Principles. Take, for example, the Accountability Core Principle. It is one of the most important principles to align to in the battle against fake content. It instructs, among other things, that the application���s output needs to be traceable to the appropriate responsible party and that the application is responsive to legal demands. These capabilities are also important for creating and maintaining end user trust. For a deeper dive on how the Accountability Core Principle ties in with trust, consider the January 4, 2024 update to the Captology post.
+
+New York���s ���Acceptable Use of Artificial Intelligence Technologies��� (NYS-P24-001) highlights the role of an ���Information Owner.��� (Sections 4.1 and 4.2.) The policy does not define what this title means, so it is unclear, for example, what type of qualifications this person must have. The policy does provide that this person is tasked with ���periodically assessing the outputs of their in-production AI systems to validate continuing reliability, safety, and fairness.��� These two sections reflect  Accountability and Governance requirements.
+
+The Ethics principle can be thought of as the basis for building an organization���s ���ethics brand��� as it relates to the development and/or usage of AI. Pretty much any organization that develops and/or uses AI can benefit from committing to creating and maintaining an AI ethics brand. The brand identifies and broadcasts the organization���s alignment with the Ethics principle. It does this for internal-facing stakeholders, such as employees, shareholders, and board members. It also has an external-facing character. In this regard, the AI ethics brand is (primarily) aimed at customers and competitors; but it does not necessarily need to stop there. It and can also be leveraged to project onto other potentially relevant diverse audiences, including, for example, regulators and lawmakers. The AI ethics brand is embodied in the organization���s policies and procedures. From there it propagates into all relevant operations. And in addition to signaling the organization���s alignment with Ethics, the AI ethics brand demonstrates the organization has a culture that embraces continuous learning and improvement. This ideally results in differentiating it from competitors and strengthens its defensive stance, staving off potential litigants.
+
+The AI ethics brand (see note 48) should reference, as necessary, relevant elements of well-established procurement frameworks. For example: The U.S. Government Accountability Office (GAO) ���Artificial Intelligence: An Accountability Framework for Federal Agencies and Other Entities��� GAO-21-519SP and IEEE P3119 ���Standard for the Procurement of AI and Automated Decision Systems.��� Referencing these frameworks in the organization���s alignment efforts with the Ethics principle imbues the resulting policies and procedures with authority. This helps the organization present a solid, defensible posture to its stakeholders and in public settings, such as litigation.
+
+Algorithmic bias presents a variety of challenges. One of these is its degrading effect on the Transparency principle. Algorithmic bias is a bug; it is vulnerable to being poorly understood by developers and end users alike. This vacuum in understanding distorts alignment with the Transparency principle. This situation is like developing a drug where the side effects are not known, perhaps only partially known, and the side effects are not entirely or appropriately disclosed. It communicates an attitude of: ���Go ahead and use this, but we and you don���t know exactly what we���re getting ourselves into and neither of us may like what happens next.
+
+As AI-powered legal applications get better and have a firmer, deeper integration in the practice of law, lawyers will increasingly find themselves in the role of AI operators and supervisors. Our focus as lawyers will be ensuring that there is optimal input and carefully examining the output before it is delivered to the client or court. (Note: The ���input��� ties to the AI-DSF.) So, rather than replacing lawyers, AI can be seen as changing/redefining some of the tasks we do. And all this gets us closer to the concept of requiring licensed AI operators and supervisors. Two primary drivers for this are the rules of professional conduct and the terms and conditions that govern the use of these applications. In California, for example (and this holds the same for other states as well), lawyers are required to continuously learn about AI, its abilities and limitations and review all output. Doing so is particularly important in light of the fact that the developers/licensors of these applications usually accept no responsibility for their application; it���s something that becomes quickly apparent from the terms and conditions.The concept of a licensed AI operator and supervisor is aligned with the Permit life cycle core principle. Think of it as operationalizing the requirements under the rules of professional conduct. As licensed AI operators and supervisors, the lawyers are better aligned with meaningful compliance.
+
+In a move reminiscent of the Future of Life Institute���s AI ���pause letter,��� TechCrunch reports on yet another AI ���open letter.��� This one, like the letter issued in March 2023 (which called for a six-month pause in the development of AI models more powerful than GPT-4), was signed by hundreds of well-known AI community leaders. Their focus is on deepfakes and they call for its ���strict regulation��� and controlling the ���deepfake supply chain.��� The letter identifies eight ���reasons��� why action should be taken: ���Nonconsensual pornography; fraud; elections; practicality; urgency; inadequate laws; mass confusion; and performers.��� Some of the reasoning in the letter makes sense, but others like ���practicality, inadequate laws, and performers��� are, to say the least, a poor fit and it seems like they were shoe-horned in. Another ill-fitting feature in this letter is an acknowledgement that ���not all signers have the same reasons for supporting��� the letter ���and they may not all agree on its content.��� In any event, like the March 2023 letter, this initiative is also doomed; it will not yield any new laws nor will it energize enforcement beyond that which already exists and would have been applied anyway. Of course, none of this is to suggest that clamping down on the proliferation of deepfakes is not important as it certainly is. The point is that these types of letters are fundamentally a waste of time. The signatories��� effort on this topic would be much more effective if it aimed at highlighting and promoting less obvious but nonetheless important and practical initiatives such as, for example, strengthening information sharing policies and procedures. Note also that information sharing helps organizations align with the Cooperation, Robust, Security, Sustainable, and Transparency core principles, all of which help in the fight against deepfakes.
+
+AI developer vetting is an important process that should be completed by the end user prior to deploying the application. This task is especially vital for applications that have a high-risk latency characteristic, such as those targeted for use in health care, legal services, etc. Part of this effort should examine the AI developer���s alignment with the Governance principle. For example, questions should be directed at the vendor���s use of a formal data management framework such as the AI Data Stewardship Framework. Presuming that the vendor follows such a framework, the next step is to set formal commitments that are based on it. This part is done in the agreement that is entered into between the parties. Here, the end user can introduce a provision where the vendor warrants that its data licensing practices are routinely and regularly reviewed, updated, and enforced and that there will be no deviation from this. There should also be a provision that if there is such a deviation, it will amount to a material breach and grounds for immediate termination plus appropriate damages, including, but not limited, liquidated damages.
+
+XAI needs to be aligned with the Accountability, Reliability, Fairness, Ethics, Trustworthy, and Transparency principles. This is important keep in mind because XAI on its own can be misleading. Why? Because an explanation is only good if it meets the criteria espoused in these principles. If it doesn���t, the explanation becomes a method to drive the end user towards a specific outcome that is beneficial to the developer and not aligned with the end user. Stated differently, the explanation is rendered hollow if it doesn���t meet those principles.
+
+Adobe���s Content Credentials enables creators using the company���s AI features to add metadata to their content. It���s a mechanism similar in concept to the AI Fact Label and aligns with the Transparency principle. Content Credentials is part of other Adobe Transparency-related initiatives: The Content Authenticity Initiative (CAI) and the Coalition for Content Provenance and Authenticity (C2PA). This is all good, but CAI and C2PA are useful standards only where the creators are good actors. They fall apart when the actors are not. Bad actors will either not use these standards or hack them into manipulative ends. So long as AI-generated content is hosted on a relatively small platform, like Adobe���s Creative Cloud, it is easier to enforce compliance with CAI and C2PA. But how other online platforms, such as Facebook, Instagram, TikTok, etc., can (or are willing to) enforce the use of these and/or similar standards, remains to be seen. At the end of the day, for such metadata labeling to be effective, a certification-like mechanism needs to be used across (at least) all major online platforms; something similar to SSL/TSL website certificate. This effort will require preventing the upload of content that doesn���t have the CAI/C2PA or similar standard certification. An online platform provider that refuses to participate in this framework should be deemed non-compliant with the Transparency principle. Legislators and courts should then take a dim view of such non-compliance and ensure appropriate legal remedies against such actors are swiftly dispensed.
+
+Anthropic claims that its latest GenAI app, Opus, ���exhibits near-human level of comprehension and fluency on complex tasks������ Really? So, let���s take a closer look at what Anthropic really says about its app. We start by looking at their terms and conditions of service. In relevant part we find the following:YOUR USE OF THE SERVICES AND MATERIALS IS SOLELY AT YOUR OWN RISK. THE SERVICES AND OUTPUTS ARE PROVIDED ON AN ���AS IS��� AND ���AS AVAILABLE��� BASIS AND, TO THE FULLEST EXTENT PERMISSIBLE UNDER APPLICABLE LAW, ARE PROVIDED WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, OR STATUTORY.Forget all the claims you read earlier. Those were just meant to get your attention and subscribe to the service. What really matters and what Anthropic is really saying is that your use of Opus is at your own risk, it doesn���t stand behind Opus and there���s no legal theory that you will be able to avail yourself of if something happens.This type of disclaimer has been around for a very long time and is commonly used. But when it comes to AI apps (and robotics), a different approach is necessary. AI is vastly different than any other technology development in (at least) the last 100 years. There is wide consensus that AI represents a technological leap that is, on the one hand, dramatic as the introduction of electricity and, on the other hand, challenging to deal with as nuclear weapons. Securing broad social agreement on what constitutes responsible development and use of AI and making sure all stakeholders work with this framework is, therefore, essential. AI developers should not be allowed to use such disclaimers.
+
+The European Parliament overwhelmingly approved today (March 13, 2024) the EU AI Act ��� 523 in favor, 46 against, and 49 abstentions. With its emphasis on a ���human-approach��� to regulation of AI, the AI Act takes the view that proper regulation of AI means that it must be aligned with fundamental human rights and places significant emphasis on humans-in-the-loop. As such, the AI Act is poised to challenge and test many operational aspects of companies that come within its scope. And here it is likely that we will see significant attention placed on the Governance core principle. Thus, companies subject to the AI Act will need to ensure they maintain alignment with this principle. Pretty straightforward? Maybe not; doing so may ultimately prove more difficult than initially anticipated. Why? Because as a matter of default, AI development is aligned with the developer, not the end user. Absent appropriate controls this can complicate efforts to comply with this new law. Therefore, companies will need to quickly figure out how to remain laser focused on the Governance core principle not only in their AI development efforts, but also for the entire AI product���s life cycle.
+
+Utah���s Artificial Intelligence Policy Act (AIPA) was signed into law on March 13, 2024 and goes into effect May 1, 2024. Among the provisions is a requirement to disclose that  generative AI is being used if asked. The disclosure must be verbal ���at the start of an oral exchange or conversation; and through electronic messaging before a written exchange.��� The timing of the disclosure is suspect. It���s unclear what would prompt someone to inquire about the use of generative AI before the start of the oral exchange or conversation and before a written exchange occurs. In any event, enabling this type of disclosure requires that the organization maintain alignment with the Ethics, Transparency and Governance core principles.
+
+A newly proposed law, the AI Consumer Opt-In, Notification Standards and Ethical Norms for Training (AI CONSENT) Act, will require a consumer���s express opt-in consent before the consumer���s data may be used for training an AI system. The AI CONSENT Act calls on the FTC to be charged with specifying the disclosure standards and how consent needs to obtained in order to be valid. (If this law passes, it is likely there will be disputes on whether valid consent was obtained.) Similar to the approach used in privacy laws across the country, to be valid the disclosure will need to be easy to understand, easily granted and/or revoked, and a consumer���s election cannot be used to affect the services provided. Aside from the obvious alignment with the Ethics core principle, the AI CONSENT Act also aligns with Accountability, Consent, Fairness, Fundamental Rights, Governance, Human-Centered, Privacy, Reliability, Sustainable, Transparency, and Trustworthy core principles.
+
+Terms and conditions that disclaim all liability for the system���s operation are incompatible with most of the Core Principles. Consider the following common disclaimer, copied from a developer of a popular AI chatbot: ���CUSTOMER���S USE OF THE SERVICES ARE AT ITS OWN RISK. DEVELOPER DOES NOT MAKE, AND HEREBY DISCLAIMS, ANY AND ALL OTHER EXPRESS, STATUTORY AND IMPLIED REPRESENTATIONS AND WARRANTIES, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT AND TITLE, QUALITY, SUITABILITY, OPERABILITY, CONDITION, SYSTEM INTEGRATION, NON-INTERFERENCE, WORKMANSHIP, TRUTH, ACCURACY (OF DATA OR ANY OTHER INFORMATION OR CONTENT), ABSENCE OF DEFECTS, WHETHER LATENT OR PATENT, AND ANY WARRANTIES ARISING FROM A COURSE OF DEALING, USAGE, OR TRADE PRACTICE.��� This language fails the Trustworthy core principle (among others) in that it erodes public trust and confidence in the AI system.
+
+The NIST AI Risk Management Framework (RMF) places a healthy degree of emphasis on the Human in the Loop core principle. So does California���s Office of Information Security Generative Artificial Intelligence Risk Assessment SIMM 5305-F (5305-F). Among the quality and safety controls found in the 5305-F Part III Generative Artificial Intelligence Risk Assessment is the requirement that ���The GenAI system will have human verification to ensure accuracy and factuality of the output.��� The RMF provides additional clarity on this. It recommends that ���a human operator or user is notified when a potential or actual adverse outcome caused by an AI system is detected.��� It also suggests that governance (another core principle) is an essential driver for enhancing the performance and quality of human oversight. There is a glaring question that is currently not dealt with, however: To what extent does the human oversight requirement offset the benefits of using a generative AI system? Since the RMF and 5305-F demonstrate strong alignment the Human in the Loop principle, the amount of resources that will need to be directed to human oversight are likely to be significant. And in this setting lurks a risk that I refer to as ���operational fatigue.��� In the beginning, when the AI system is new, there is a great deal of energy and devotion to building a Human in the Loop mindset. But as time goes on the amount of human oversight required to maintain it can create a drag effect. This is where the processes and procedures that support the human oversight actions begin to fray. The solution to this is careful monitoring, which also aligns with the Metrics core principle. Ultimately, it is better to stop using a generative AI system that is operationally burdensome than using it in a manner that is misaligned with the Human in the Loop and likely other principles, such as Accountability.
+
+GenAI applications do not ���understand��� the input/prompt nor the output. The application has no idea if it���s lying, hallucinating, or providing relevant/satisfactory output. It doesn���t ���know��� anything. Its output is based on complex statistical probability calculations of language syntax. Even where reinforcement learning with human feedback (RLHF) is used to fine tune the application, the application still does not ���understand.��� This is important for attorneys to understand and internalize. Why? Because this is an essential ethical requirement, part of fulfilling the Competence requirement under the ABA Model Rule of Professional Conduct (RPC) Rule 1.1 and Comment [8]. Knowing that GenAI applications do not ���understand��� also demonstrates alignment with the Ethics core principle. And yet, even now, even after cases such as Mata v. Avianca, some attorneys remain under the impression that GenAI applications can ���understand.��� This is not a trivial oversight. It can easily lead to a lax attitude to the due diligence requirement under the RPC and derail alignment with the Ethics core principle.
+
+���AI-washing��� occurs where companies exaggerate their AI capabilities. They do so mostly with the aim of attracting investor attention, which by some accounts increases the likelihood of investment between 15% and 50%. This practice is problematic. A number of divisions within the SEC have warned that such statements could be viewed as false and misleading, which would trigger federal liability. Such statements are also misaligned with the Life Cycle Core Principles, which, it is important to keep in mind, apply to all AI actors and to development as well as use of AI throughout the application���s life cycle. Take the Governance principle, for example. Here we see a requirement that the AI actors follow policies that regularly monitor the organization���s regulatory requirements and report relevant activity to senior leadership. Thus, if the company is engaging in AI washing, this should be seen as a Governance failure. This is also significant because Governance is increasingly getting more attention from influential voices such as ISO (e.g., ISO/IEC 38507:2022 and counting) and NIST���s AI Risk Management Framework. That trend magnifies the risk for companies that do this since it creates an environment where they should know better; claiming ignorance is simply implausible. See Note 81 for more on AI-washing.
+
+The Stanford University Human-Centered Artificial Intelligence 2024 Index Report contains interesting findings that shed light on the degree to which developers align with the Core Principles. Among these is that: ���New research���reveals a significant lack of standardization in responsible AI reporting. Leading developers, including OpenAI, Google, and Anthropic, primarily test their models against different responsible AI benchmarks. This practice complicates efforts to systematically compare the risks and limitations of top AI models.��� What we have here is a misalignment with the Accountability, Cooperation, and Sustainable principles. And since these companies represent a significant portion of the current lineup of major LLM players, the severity of this problem is magnified. So much so that it would not be surprising to find that there is a similar misalignment among smaller AI developers. But this doesn���t stop there. These findings could also be seen as hinting at a potential bigger problem: that despite the significant amount of attention that the AI actors (see above for the definition) has poured into hammering the importance of the Core Principles for AI development and use, the big and not-so-big players may not be taking them seriously.
+
+NIST���s guidance is voluntary as it relates to the private sector. That said, organizations are well advised to pay close attention to what NIST has to say; ignoring, or not taking it seriously could provide a fertile environment for finding that the organization negligently conducted itself, usually (but not limited to) in a litigation or audit setting. This note takes a look at the NIST AI Risk Management Framework (RMF) and its relationship to the ABA Model Rule of Professional Conduct (Model Rule), specifically as it relates to lawyers using generative AI (GenAI) legal applications in the practice of law. The RMF is widely considered as an authoritative and influential resource as it relates to the development and use of AI. The Model Rule, as its name implies, provides the rules for lawyers��� ethical obligations in the practice of law. As we look at the RMF���s MAP Section 3.4 we can see that it provides that: ���Processes for operator and practitioner proficiency with AI system performance and trustworthiness ��� and relevant technical standards and certifications ��� are defined, assessed, and documented.��� Now, keeping that in mind, let���s turn to see what its effect is on the ���Competence��� requirement under the Model Rule (Rule 1.1). It doesn���t take much to quickly see that a reasonable interpretation of Rule 1.1 (and its accompanying Comment 8) is that a lawyer should (even arguably must) undergo formal training with the GenAI application prior to using it. The training needs to be sufficiently thorough so that at its conclusion the lawyer can be reasonably deemed to have achieved proficiency in the application���s performance and trustworthiness. We can also look at this and conclude that this is how we get to the point of certification, the point where lawyers who choose to use GenAI need to have a license to do so, which, by the way, aligns with the Permit core principle.
+
+Nearly without exception, terms and conditions provided with AI applications contain sweeping disclaimers. They essentially tell the end user that the developer has very little, if any, confidence in the application they���re offering. Now, consider this practice in the context of the guidance provided by the NIST AI Risk Management Framework (RMF), specifically, under the Measure function Section 2.5. It provides: ���The AI system to deployed is demonstrated to be valid and reliable������ (I added the emphasis. Also, the remainder of the section was omitted as it is not relevant here.) The use of ���reliable��� here is critical to note. An AI application that is not deemed reliable, which is precisely what the developer is telling the end user in the terms and conditions, is not aligned with the RMF. If it���s not aligned with the RMF, it raises an entire host of issues that an end-user needs to carefully consider before deploying the application. And if the decision is to deploy anyway, the end-user should pay attention to the guidelines provided under RMF Section 6 of the Govern function.
+
+The NIST AI Risk Management Framework (RMF) has 90 categories and subcategories spread among four functions: Govern, Map, Measure, and Manage. But Govern is not the only place where we can find ���govern-type��� tasks. In examining each and every one of the 90 categories and subcategories we can see that more than half (48, to be precise) of them depend on/map to the Governance life cycle core principle. As such, Governance represents the single most important core principle in the RMF. One takeaway is that properly implementing the RMF requires that the organization have well-thought out policies, processes, procedures, and practices that enable delivering on the 48 tasks.
+
+Maintaining certification under the Permit principle means the developer and/or the end user need to periodically pass proficiency requirements. There are currently no such requirements established and no regulatory body or standards setting organization have yet taken the lead or tasked with doing so. This opens the door for such entities to take the initiative and propose a framework that aligns with the Permit principle. This periodic assessment is important for adhering to the Core Principles in that it helps ensure the development and use of AI applications are consistent with multiple Core Principles, not just Permit. One of the most significantly impacted (in a positive way) principles by this effort is Governance because the certification/re-certification under Permit strengthens the organization���s ongoing monitoring efforts of its risk profile. The certification/re-certification also heeds the NIST AI Risk Management Framework���s guidelines, which are heavily dependent on effective management of the Governance principle.
+
+When open foundation model developers release their model weights, they knowingly relinquish control over how the models are used downstream. For malicious actors, these models are a powerful tool with which they can carry out their malfeasance. With this magnified likelihood of harm, the risk mitigation practices required of these developers should be amplified. As such it is reasonable to consider imposing a higher level of mitigation duty on such developers. The question then becomes how to accomplish this? One possible framework to consider for this task is the NIST AI Risk Management Framework (RMF). With 38 RMF tasks tied directly to the Accountability principle, the RMF seems well-suited for gauging an open foundation model developer���s adherence to practices that could help mitigate downstream risks.
+
+In a best case scenario, XAI can deliver the ���why��� and ���how��� of the output. But the challenge remains that the output may not be accurate and/or it might even be deceptive. This is a big problem as there is currently no way to effectively remedy this veracity gap. And to make things even more complex, the situation is augmented by the computational complexity of the AI system. As it becomes more complex, the need for explainability and interpretability tends to increase. But that doesn���t happen, it actually tends to decrease. So, while XAI is a life cycle core principle, it should not be excessively relied on. Viewed in a contractual setting, XAI should be evaluated as an ok-to-have feature, but it should not be accepted as any substitute to provisions that explicitly align with core principles such as Governance, Accountability, and Metrics; these are by far the most important core principles for any organization looking to follow the NIST AI Risk Management Framework.
+
+The human-in-the-loop has two dimensions. The most frequently talked about one is the operational side, which consists of the provider. The provider oversees the system���s function and intervenes when necessary. The other is administrative and here we find its close relationship to the Governance principle. The administrative function encompasses the board of directors and the c-suite along with the policies, processes, procedures, and practices that the provider uses. As such, the administrative function can be thought of as the backbone of HITL. This highlights the importance of fully grasping how the Governance principle and the HITL element in the Human-Centric principle work together.
+
+Identifying risks in AI development and deployment is a never ending task, one that tests how companies adhere to the core principles. An interesting paper, published by Australia���s Commonwealth Scientific and Industrial Research Organization, can serve as a useful reference tool. According to the authors of the Responsible AI Question Bank: A Comprehensive Tool for AI Risk Assessment the tool can help ensure compliance with standards and risk mitigation by ���preventing siloed assessments and ensuring a cohesive evaluation process.���  My read of it is that could be helpful. It can guide ongoing alignment with core principles such as Governance, Ethics, Fairness, Transparency, and Accountability and the fact that it takes a ���systemic approach��� means to me that it is a formal process, in contrast to a one-off (which is rarely a good thing). The AI Question Bank should be viewed as a tool that is part of a larger collection that companies routinely employ in their core principle adherence efforts.
+
+There is an interesting common denominator to be observed between state laws related to AI and the legal profession���s rules of professional conduct. What we can see here that there is a trend that emphasizes the requirement for end users to properly understand the AI systems they utilize, specifically their capabilities and limitations. We see it surface in, for example, the ABA���s Formal Opinion 512 and also in the upcoming amendment to the Illinois Human Rights Act. Doing so also aligns with the Governance and Accountability core principles.
+
+OpenAI���s Influence and cyber operations: an update report is a good example of the Accountability and Transparency core principles at work. Another highlight here is how the Security principle comes into play. These three coalesce and amplify the Cooperation core principle, which includes activity directed at facilitating internal and external information sharing. Another takeaway from their update is that the hackers��� attempts are, in a sense, backfiring. The more they try to use ChatGPT (in this case 4o) the more intel is collected about their tactics, which can be used to more effectively thwart their attacks.
+
+The more domains agentic AI systems operate in, the more complex their behavior tends to be. With that, there���s a greater potential for drift from the Governance, Safety, and Security core principles, for both the developer and the end user. This is not good. Given developers routinely and thoroughly work to extinguish all possible warranties from their apps, end users are staring into a potentially wild liability vortex where they���re the one���s holding the proverbial you-know-what bag. So when the organization makes the decision to use these type of systems anyway, it better have thoroughly thought out what its liability compensating measures are. How does it plan on mitigating the risks? What methodology does it use for analyzing and implementing all of this? Failure to articulate this is inexcusable and could set the stage for shareholder and other litigation.
+
+ISO 42001 highlights the importance of not only establishing, implementing, and maintaining an AI management system, but also continuously improving them. Blend this approach with Anthropic���s RSP (Responsible Scaling Policy) and ASL (AI Safety Levels) protocols. We can see how that aligns with the Safety, Ethics, and Governance core principles. I explain how RSP and ASL fit with the Safety principle in the table above and in this note I want to focus how they sync with Governance. It all boils down to the developer���s acknowledgment that their models will go through various stages of maturing. From ASL-1, which Dario Amodei (Anthropic���s CEO) says is akin to a chess playing AI app, all the way to the most capable, and potentially dangerous, ASL-4 and higher. Within this acknowledgment there is also a tacit understanding that with great power comes great responsibility. As models mature into ASL-3 and higher capabilities, they pose more risk, especially in the context of enabling CBNR (chemical, biological, nuclear, and radiological) hazards. That is to say that malicious actors could be using these apps to cause potentially catastrophic harm. Alignment with the Governance principle here aims to reduce the risk that these types of models could be used to execute CBNR attacks. We can also see here that RSP and ASL steer the company towards alignment with the Ethics core principle.
+
+Perplexity���s Comet browser is reported to have ethical AI metadata tags, which signals whether content is AI-generated or verified. The feature aligns with the Transparency core principle and that is usually something to be applauded. But what���s troubling here is the presumption that labeling AI-generated or verified data is really is as important as it���s presented to be. Do people really care? I get it that many academics and politicians think so, but do others? I personally, as an academic and end user, simply don���t care. Look, most professional photographers use a software-based editing tool of some kind to polish up their photos. Take Adobe���s Photoshop, for example, which is largely regarded as the most popular photo editing tool. There are so many things an experienced user can do with Photoshop it could fill and Encyclopedia Britannica-like volume series. From color-balancing, sharpening, removing distracting objects, enhancing facial and body features, to adding scenery (not through Firefly), the ability to alter photos in Photoshop is, I���ll say it again, virtually limitless. Prior to Adobe���s introduction of generative AI capabilities in Photoshop (called ���Firefly���) there was never any tagging requirement. Zero. You never saw a ���Altered with Photoshop��� tag or anything remotely similar on any of these photos. And not just for Photoshop, but any photo editing software for that matter. It���s a good thing too. If there were to be such a requirement, it would lead to a labeling bloat of epic proportions that would likely just be eventually disregarded. People wouldn���t see the label anymore. So, given all the powerful image altering capabilities that have existed for decades that never necessitated labeling, what���s the big deal about labeling AI-generated images? As I see it, the issue with AI is its power of augmentation which plays out in four dimensions: speed, scale, scope, and sophistication. The speed in which AI-generated images can be made has no equivalent. A mere seconds on apps like MidJourney. The scale in which these images can be generated is also without precedent. The scope of what can be generated is limitless and requires very little technical expertise. Anyone who has ever used Photoshop knows first hand how daunting it is. The sophistication dimension that is manifested in the ability to mislead and manipulate with AI-generated images is also without equal. So maybe that���s why it makes sense to tag AI-generated images. But then maybe this is just temporary. Maybe as time goes on, the fact that an image was an AI-generated image just leads to a big yawn. We take it for granted. We simply know that every image we see online is AI-generated. Maybe the exceptions are the ones that get tagged. Now there���s a thought! ���Not Generated with AI��� labels become the thing to look for. Right now, we���re still in an AI hype-fueled cycle and there���s a great degree of sensitivity to AI-generated things, a deep-held mistrust and fear. But that���s temporary. Future generations won���t have the same hangups we do. AI labeling will be a passing fad. Guaranteed. And with that, it will also disappear from the Transparency core principle.
+
+As noted above, the Governance principle references ISO 31000:2018 ���Risk Management Guidelines.��� In this note we take a closer look at what that means and how it gets implemented. ISO 31000 contains eight key principles: (i) Integration ��� Risk management should be embedded across all organizational processes and decision-making; (ii) Structure and Comprehensiveness ��� The process must be consistent and systematic to ensure reliability; (iii) Customization ���  Risk management practices should align with the organization���s specific objectives, context, and needs; (iv) Inclusiveness ��� Stakeholder input and perspectives are essential for informed decision-making; (v) Dynamism ��� Risk management must adapt to changes in internal and external environments over time; (vi) Best Available Information ��� Decisions should be based on accurate, timely, and relevant data; (vii) Humans and Cultural Factors ��� The framework considers how people and organizational culture influence risk management; and (viii) Continuous Improvement ��� The process should evolve through ongoing monitoring, review, and learning. A key takeaway here is that some of the hallmarks of an effective risk management regime exhibit a culture that has an adaptive and evolving mindset. (You can map this also to the Wherewithal principle.) We can further distill this to observe that this can only be achieved with a formal managerial mindset, which involves a systemic, repeatable approach driven by appropriate policies, procedures, and processes. The final point here is that ISO 31000 calls for an active top management team. This is immediately evident from the first of the six principles the framework lays out: (i) Leadership and Commitment ��� Top management must support and promote risk management. This means that their effort is ongoing and systemic, as opposed to a one-off which will invariably fail the task at hand.The other principles in the framework are: (ii) Integration ��� Risk management is embedded into governance, strategy, and operations; (iii) Design ��� Establishing policies, objectives, roles, and resources for managing risks; (iv) Implementation ��� Applying the framework through clear processes and communication; (v) Evaluation ��� Monitoring performance to ensure effectiveness; and (vi) Improvement ��� Adjusting the framework as needed for better outcomes. But even without specifically calling out top management in the remaining five principles, it is clear that without its active involvement the framework will collapse.
+
+Virginia���s High-Risk Artificial Intelligence Developer and Deployer Act emphasizes developer alignment with the Transparency core principle. We see this in the Act���s emphasis in requiring developers to provide documentation, disclose evaluation methods, facilitate deployer impact assessment, and implement synthetic content detection. With its requirement that deployers implement a risk management policy and program, the Act steers towards ISO 31000:2018. As discussed in Note 78 above, this directly implicates the Governance core principle.
+
+Reasoning models ���think out loud��� before responding. The explanation they provide helps break down complex problems into simpler steps, improving accuracy and clarity. To the extent it works, this feature, also referred to as chain of thought (CoT), theoretically offers a higher degree of output accuracy. And if it works, it aligns the model with the Transparency, Accuracy, and Reliability core principles. I keep saying ���if it works��� because the CoT is also susceptible, as Anthropic���s study shows to hallucination, or as they call it ���bullshitting.��� (I���m glad they said it, not me.) I���ve wondered for some time now who reads these CoT? And though the ABA���s Formal Opinion 512 doesn���t address this, my take is that it would frown really deeply on lawyers not doing so. So, in theory, CoT sounds like a good idea. But only in theory. We already live in a society neck deep (or deeper) in a TL;DR mentality. Blend this with the growing list of cases like Mata v. Avianca, and it really doesn���t look that good. It���s just a matter of time where we see a case where the lawyer tells the court they weren���t aware their model was capable of���er, bullshitting.
+
+Resorting to overstating the company���s AI capabilities (AI-washing) is especially likely when investors are pressing for results. The pressure to integrate and implement AI systems can frequently be high. As companies spend more on this, the higher their need to show results. When leadership sees the writing on the wall telling them their AI effort isn���t panning out, the AI-washing temptation tends to grow. To the extent it actually happens, the company���s liability increases due to the potential for shareholder litigation and, more broadly, the fact that this practice manifests a derailment from the Governance and Ethics core principles. All AI aspects of the company���s operations are now implicated. Effective alignment with the Governance principle has full visibility to this issue and will put in place controls that aim to immediately stamp out such behavior.
+
+Auditing AI maps to Accountability, Governance and other principles. At a high level, it entails monitoring and evaluating AI system performance, tracking compliance and nonconformities, developing key performance indicators (KPIs), maintaining records of decisions and updates, and implementing corrective actions.
+
+Colorado���s Artificial Intelligence Act explicitly mentions the NIST AI RMF (RMF) as well as ISO/IEC 42001 in the context of an affirmative defense in an enforcement action. Texas��� Responsible Artificial Intelligence Governance Act (TRAIGA) explicitly mentions the RMF, but not ISO/IEC 42001. Why not? After all, adding ISO/IEC 42001 would make sense. Unlike the RMF, ISO/IEC 42001 is certifiable and obligates compliance (by using ���shall���) whereas RMF takes a voluntary compliance approach. Maybe therein lies the reason. Texas��� preferred a more tempered regulatory approach and Colorado went for a stricter track. But even without explicit mention of ISO/IEC 42001, it���s reasonable to conclude that if a developer showed their ISO/IEC 42001 certification, that would be enough to satisfy as an affirmative defense under TRAIGA. All this comes down to the importance of maintaining firm alignment with the Governance core principle. Without it, there���s no way an organization can align with the RMF, let alone the much stricter 42001.
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+Category: 
+Uncategorized
+ 
+
+ 
+Tags: 
+AI, 
+ 
+artificial intelligence, 
+ 
+core principles, 
+ 
+Data Privacy, 
+ 
+Eran Kahana, 
+ 
+ethics, 
+ 
+generative AI, 
+ 
+Governance, 
+ 
+legal ethics, 
+ 
+trustworthy
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ Subscribe 
+ 
+
+ 
+
+ Share on Twitter 
+
+ 
+
+ Share on Facebook 
+
+ 
+
+ 
+ 
+ 
+Post Pagination
+
+ 
+
+ 
+
+ 
+ Previous Article
+ Why a Logic Programming Approach Works for Automating Insurance Contracts 
+ 
+
+ 
+ 
+
+ 
+ Next Article
+ You���re Invited: CodeX Meeting on April 6, 2023 
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ Crown Quadrangle
+
+ 559 Nathan Abbott Way
+
+ Stanford,
+ CA
+ 94305-8610
+ 
+
+ 
+ 
+Phone: 650.723.2465
+
+ 
+Fax: 650.725.0253
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+ Follow Us on X
+ 
+
+ 
+
+ 
+ Follow Us on Facebook
+ 
+
+ 
+
+ 
+ Follow Us on YouTube
+ 
+
+ 
+
+ 
+ Follow Us on Instagram
+ 
+
+ 
+
+ 
+ Follow Us on LinkedIn
+ 
+
+ 
+
+ 
+ Subscribe to our RSS feeds
+ 
+
+ 
+
+ 
+
+ 
+Secondary Navigation
+
+ 
+ 
+I am ...
+
+ 
+ 
+Future Student
+
+Current Student
+
+I am a Staff Member
+
+I am a Faculty Member
+
+Alum
+
+Employer
+
+Journalist
+
+ 
+ 
+ 
+ 
+ 
+About
+
+ 
+ 
+About SLS
+
+ABA-Required Disclosures
+
+Visiting Campus
+
+Web Accessibility
+
+Website Feedback
+
+Giving at SLS
+
+ 
+ 
+ 
+ 
+ 
+Education
+
+ 
+ 
+Degrees
+
+Courses
+
+JD Graduation Information
+
+Executive Education
+
+ 
+ 
+ 
+ 
+ 
+Research
+
+ 
+ 
+Faculty Research
+
+Robert Crown Law Library
+
+Publications
+
+Student Journals
+
+ 
+ 
+ 
+ 
+
+ 
+Community
+
+ 
+ 
+Student Life
+
+Events
+
+Faculty Directory
+
+Organizations
+
+ 
+ 
+ 
+Careers
+
+ 
+ 
+Legal Careers
+
+Jobs at SLS
+
+ 
+ 
+ 
+ 
+ 
+ 
+News & Media
+
+ 
+ 
+News Center
+
+Media Coverage
+
+SLS Blogs
+
+Stanford Lawyer Magazine
+
+Video Center
+
+Social Media Hub
+
+SLS Newsletters
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+Stanford University Navigation
+
+ 
+ 
+Stanford Home
+
+Maps & Directions
+
+Search Stanford
+
+Emergency Info
+
+ 
+
+ 
+Legal Navigation
+
+ 
+ 
+Terms of Use
+
+Privacy
+
+Copyright
+
+Trademarks
+
+Non-Discrimination
+
+Accessibility
+
+ 
+ 
+��
+ Stanford University,
+ 
+ Stanford,
+ California
+ 94305.
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ Back to the Top 
+
+ 
+
+ 
+ 
+
+ 
+ �� Stanford University, Stanford, California, 94305-8610 | https://law.stanford.edu/2023/03/17/ai-life-cycle-core-principles/

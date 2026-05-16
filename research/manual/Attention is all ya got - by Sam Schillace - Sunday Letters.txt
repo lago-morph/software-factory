@@ -1,0 +1,101 @@
+TITLE: Attention is all ya got - by Sam Schillace - Sunday Letters
+URL: https://sundaylettersfromsam.substack.com/p/attention-is-all-ya-got
+
+Sunday Letters
+
+SubscribeSign in
+
+Attention is all ya got
+
+Are you Warren Buffet, a working stiff, or someone who wins the lottery and ruins their life? 
+
+Sam Schillace
+
+Feb 15, 2026
+
+22
+
+2
+
+Share
+
+Like almost everyone right now, I am noticing that heavy AI use is exhausting (if you haven���t seen it, there���s a Harvard study out right now about how it can actually increase workload). I can attest to this personally - I���ve been spending the past few weeks writing code agentically, and it���s really tiring. So what���s going on? 
+
+I think there are a few things here to explore. First of all, the internet raised the expectation of ���always on��� - since servers were always connected and you always had a phone, work started to bleed out of the office and into life. It���s hard now to draw those boundaries - that expectation has been set. In a similar way, AI is now setting the expectation of ���always smart/productive���. If you can always be reached, why aren���t you reachable? If you can always be smart and do 100x the work with AI, why aren���t you doing 100x the work, at high speed? 
+
+Even a bit more perniciously, I think folks who have been around tech for a while understand the value of rapid skill acquisition, and everyone is trying to do that with agentic coding. This, of course, is compounding in a bad way: you can use the agentic tools to give yourself more work to do with learning the tools, and your peers are doing that ��� so that expectation of ���always smart��� is even stronger at the frontier. 
+
+There���s an even deeper thing going on here, too, with attention. It used to be the case that we only had humans to do cognitive work. Each human only can do so much in a day, so there���s an impedance match - it���s hard for one human to exhaust another (humans with staff are a different matter). AI attention scales, though - all you have to do is ask for more, and you get it. So it���s very easy for the AI to overwhelm the human - now there���s an impedance mismatch. 
+
+Which means that the core challenge as you use these tools is how well you optimize for ���output per unit of human attention���. You can think of this almost in economic terms: compounding. If you use an AI tool to get more leverage out of your attention, you are compounding. If you use it to make more work for yourself, or to just do a task in roughly the same amount of time, you aren���t getting ahead on your ���attention investment���. 
+
+You can look at the financial world for models of this, almost perfectly. Someone like Warren Buffet not only invests his capital (think: attention), he invests it in things like insurance where he gets even more leverage from the investment (think: building AI tools that help build tools to help with attention). A normal person just spends money (attention) when they get it on a need or desire (using AI to do a task without much leverage or repeatability). The really bad case is the lottery winner with poor financial hygiene who gets a windfall that winds up ruining their life (using AI to exhaust yourself without building leverage along the way). 
+
+If we put these together, I get worried: we are raising the expectation that we are ���always smart��� and working, and then many people aren���t really capable of building leverage and compounding: and that���s where the exhaustion is coming from. It���s a bad, anti-human pattern, just like the social media pattern of ���let���s put a billion people in a giant, loud room and selectively have them get angry at each other for dollars��� is an anti-human pattern. We need to do better than that - we can���t allow this tooling to drive us into these dark patterns where we have expectations but not good mechanisms for handling them. 
+
+Generally speaking, I am incredibly optimistic and excited. But I���ve also been watching myself, and wondering why I am working so hard, and what to do about it. The age of truly useful AI is arriving - it���s really kind of amazing what you can build now, quickly. Let���s pay attention and make sure it keeps serving us, and not driving us into (attentional) bankrupcy. 
+
+Share
+
+Subscribe
+
+22 Likes���
+2 Restacks
+
+22
+
+2
+
+Share
+
+Discussion about this post
+
+CommentsRestacks
+
+TopLatestDiscussions
+
+I have seen the compounding teams
+
+It's more than spec or vibe coding
+
+Sep 28, 2025 ��� Sam Schillace
+
+34
+
+7
+
+2
+
+Vibe coding considered harmful, Lego code instead
+
+How to build better code with AI
+
+Apr 13, 2025 ��� Sam Schillace
+
+20
+
+6
+
+1
+
+The agent-shaped world
+
+The race is on, even if you can't see it
+
+Feb 22 ��� Sam Schillace
+
+30
+
+1
+
+See all
+
+Ready for more?
+
+Subscribe
+
+�� 2026 Sam schillace �� Privacy ��� Terms ��� Collection notice
+
+ Start your SubstackGet the app
+
+Substack is the home for great culture

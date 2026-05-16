@@ -1,0 +1,66 @@
+TITLE: When AI Agents Write Your Code, Does Language Choice Matter?
+URL: https://www.thepragmaticcto.com/p/when-ai-agents-write-your-code-does
+
+SubscribeSign in
+
+When AI Agents Write Your Code, Does Language Choice Matter?
+
+Programming languages in the AI era
+
+Allan MacGregor ��������
+
+Feb 17, 2026
+
+��� Paid
+
+2
+
+1
+
+Share
+
+On February 5th, Jose Valim published a blog post titled "Why Elixir is the best language for AI." His argument wasn't hand-waving. He pointed to a Tencent benchmark where Elixir achieved a 97.5% completion rate across twenty programming languages; Claude Opus 4 scored 80.3% on Elixir versus 74.9% for C# and 72.5% for Kotlin. He walked through Elixir's immutability, its ecosystem stability -- version 1.0 shipped in 2014 and the language is still on v1.x twelve years later -- and its executable documentation verified in test suites. Structural claims backed by data. Not marketing.
+
+This poses an interesting question, is there truly a "best language for AI"? and what does it mean to be the best language for AI? Every language community right has some AI related claim. Rust advocates point to inference speed. Python advocates point to everything. Now Elixir. This is the "best language for web development" wars replayed for the agentic coding era; the actors change but the plot stays the same.
+
+But there's a question underneath the tribalism that's worth pulling apart. Claude Code, Cursor, Copilot, Devin -- these tools are writing 30-80% of new code at many companies right now. If an AI agent is generating most of your codebase, does the target language affect the quality of what comes out?
+
+That question has a more interesting answer than "Elixir wins."
+
+The Compiler as AI Code Reviewer
+
+The strongest version of the argument for typed and functional languages has nothing to do with Elixir specifically. It's about what happens when AI-generated code meets a compiler that can say no.
+
+In languages like Scala, Haskell, or Rust, the feedback loop is tight: AI generates code, the compiler rejects what's invalid, the AI iterates, and eventually produces something correct. The type system catches errors before runtime -- without needing a human in the loop. Think about what that means for your review process. An entire category of bugs gets caught before a pull request ever reaches a human reviewer; your engineers spend time on logic and architecture instead of hunting for type mismatches and null reference errors that a compiler would have caught instantly.
+
+In Python or JavaScript, the feedback loop is looser. AI generates code, it runs, it might work, you find the bugs later. Or you don't.
+
+Alexandru Nedelcu made this case convincingly for Scala. AI agents successfully generate working Scala 3 macro code despite limited training data, because the compiler provides real-time validation via LSP. Expressive type systems don't just make AI code better; they make AI code correctable. The compiler becomes an automated code reviewer that never gets tired, never rubber-stamps a pull request, and catches entire categories of bugs that would sail through a dynamically typed language undetected.
+
+This maps to how LLMs operate. They have limited context windows; they work best generating small, self-described functions with clear inputs and outputs. Stateless functional approaches match the LLM's own operational model -- no memory persistence between generations, no hidden state to track. Immutable data means all transformations are explicit. Pure functions have no side effects. The AI doesn't need to reason about what changed somewhere else in the program.
+
+Contrast this with mutable object-oriented code. Object state can change anywhere. An AI agent generating a method on a class needs to understand what every other method might have done to that object's state before this method runs. That's a lot of context to track; context that fits poorly in a window measured in tokens. The AI doesn't just need to understand the function it's writing -- it needs to understand the entire object graph that function touches. In a large OOP codebase, that graph sprawls across files, modules, and inheritance hierarchies that no context window can fully capture.
+
+Jonathan de Montalembert's framing cuts to the point: "The more flexible and forgiving the target language, the more dangerous the AI partner becomes." Deterministic languages with sound type systems constrain AI mistakes at compile time. Flexible languages let those mistakes ship.
+
+Valim's Elixir-specific arguments are the sharpest example of these principles in practice. Immutability is built in, not optional. The ecosystem hasn't churned -- everything written about Elixir in the last decade still works, which means no training data confusion for models navigating deprecated APIs. Executable documentation with `iex>` snippets, verified in test suites, means the training examples are more likely to be correct.
+
+These are real structural advantages, that make Elixir the powerhouse that it is today. The compiler-as-AI-reviewer argument is genuinely compelling; the functional programming fit with LLM architecture is sound; the stability argument removes an entire class of training data problems that plague fast-moving ecosystems. Anyone dismissing this wholesale isn't paying attention.
+
+The Training Data Problem
+
+In theory, theory and practice are the same. In practice, they are not. -- Yogi Berra
+
+The structural argument is sound in theory. In practice, it runs into a wall.
+
+Continue reading this post for free, courtesy of Allan MacGregor ��������.
+
+Claim my free post
+
+Or purchase a paid subscription.
+
+�� 2026 Allan MacGregor �������� �� Privacy ��� Terms ��� Collection notice
+
+ Start your SubstackGet the app
+
+Substack is the home for great culture

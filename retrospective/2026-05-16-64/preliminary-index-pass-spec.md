@@ -1,5 +1,7 @@
 # Spec: `preliminary-index-pass`
 
+> **Status: PROMOTED** — this spec has been promoted to a live skill at `.claude/skills/preliminary-index-pass/SKILL.md` (PR opened against `main`, 2026-05-16). Future readers should treat the live SKILL.md as canonical and consult this file only for the original-session evidence base.
+
 ## Intent
 
 When a research drop into `research/manual/` is unusually large (>20 sources, especially mixed media — `.mhtml` + `.txt` + `.pdf`), the natural reflex of `research-pipeline`'s Phase 0 is to immediately fan out subagents that drain each file into the relevant report. For a 71-file batch this collapses: the drain agent has to simultaneously decide which existing report each file belongs to, whether it's already covered, whether it warrants a new report, whether the images carry information, and how to phrase the incorporation — all while writing prose. The cognitive surface is too wide; recommendations get inconsistent across batches, and the orchestrator has no way to plan or chunk the work.

@@ -4,6 +4,8 @@
 **Author:** Subagent A (manual-drain dispatch)
 **Status:** ✅ complete
 
+**Update note (2026-05-16, Cluster N drain).** Report 35 (Ryan Nystrom / Notion) adds the corpus' first industrial primary-source anchor for **AFIS strategy-3 at non-aerospace scale**. The Notion pattern — Markdown spec files checked into the repo's `agent specs` subfolder, Codex implementing/verifying/shipping against them, *the spec's git version history as the changelog* — is an alternative path to AFIS §6.3 strategy-3 that bypasses the tool-locked-model machinery (Cameo, Rhapsody, El Kaim Chapter 8 typed objects). Both paths achieve "model is source of truth"; they differ on substrate. The Notion path is *across*, not *up*: plain Markdown + Git + agent-as-reader/writer. The framing pinned in §6.3 ("Strategy 3 is the El Kaim Chapter 8 endpoint") should be refined: strategy-3 can be reached *up* (El Kaim typed objects) **or** *across* (Notion Markdown + agent). See report 35 §2 for the full Notion anchor.
+
 ## Lead question
 
 What does the requirements engineering and systems engineering tradition contribute to spec authorship discipline in AI-augmented software development — specifically, which primary-source mechanics (EARS syntax, INCOSE SE definitions, INCOSE Guide-to-Writing-Requirements rules, systems-engineering complexity framings, the requirements-vs-architecture distinction in modelling) should be reflected in the methodology layer of the software factory?

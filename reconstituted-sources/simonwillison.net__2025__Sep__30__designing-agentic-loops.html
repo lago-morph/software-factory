@@ -1,498 +1,527 @@
-# plan-sync.md — consolidated digest for PLAN.md update
-
-**Date created:** 2026-05-16
-**Purpose:** Single file that captures the still-load-bearing content of nine files that were cleaned up from the repo root and `research/` so PLAN.md can be brought up to date without losing audit-trail or operational tooling. **Do not treat this file as authoritative once PLAN.md has been synced — at that point it is itself disposable.**
-
-**Files consolidated here (all now deleted from the working tree; recoverable via git history):**
-
-1. `user-next-steps.md` (root)
-2. `research/blocked-urls.md` (v5, 2026-05-11)
-3. `research/blocked-urls-round-2.md` (2026-05-10 / 2026-05-11)
-4. `research/blocked-urls-round-6.md` (2026-05-13)
-5. `research/blocked-urls-round-7.md` (2026-05-13)
-6. `research/blocked-urls-round-8.md` (2026-05-13)
-7. `research/fetch-from-browser.sh` (executable bash script)
-8. `research/next-fetch-batch.md` (round-8 issue draft, now executed)
-9. `research/unfetched-sources.md` (2026-05-11 revision, with 2026-05-13 deferred-candidate annotations)
-
-**Cross-check against PLAN.md v0.12 (2026-05-16):** approximately 70% of what these files contained is already reflected in PLAN.md §§1–10. This document flags the remaining 30% that may need to be folded in, and preserves operational detail (the bash script body; the per-URL outcome tables; the deferred-fetch-candidate categorization) that PLAN.md only references rather than reproduces.
-
----
-
-## 1. What is missing from PLAN.md and probably should be added
-
-These are the items in the consolidated files that I could **not** locate in PLAN.md v0.12. They are candidates for the next PLAN.md edit. Listed roughly in priority order.
-
-### 1.1 An explicit "Definition of research phase complete" checklist
-
-`user-next-steps.md` carried an 8-point completion checklist that PLAN.md does not have in this form. As of 2026-05-16 (folding in the Cherny drain that PLAN.md §3.5 records as done, plus the Round-9 drain), items 1–5 are now ✅ and items 6–8 remain ⏳:
-
-1. ✅ All numbered reports + followup reports exist with a "Sources reviewed" table at the bottom.
-2. ✅ `research/INDEX.md` reflects current per-report status.
-3. ✅ `research/PLAN.md` shows no in-flight fetch issues unaccounted for.
-4. ✅ Every Priority-1 source is primary-anchored or has an "accepted gap" decision on record. The ~7 remaining outstanding URLs are documented gaps, not unknowns.
-5. ✅ Both Lenny transcripts fully drained (Willison 2026-05-13, Cherny 2026-05-14).
-6. ⏳ Cross-corpus propagation sweep complete — see PLAN.md §6.1.
-7. ⏳ The §3.2 curated-human-review backlog + the cumulative five-retrospective decision backlog resolved one way or the other (Update or "won't fix").
-8. ⏳ Either a unified Round-1–5 synthesis exists, or the user has explicitly decided not to write one (per `research-plan.md`).
-
-**Recommendation:** insert this checklist into PLAN.md §1 or §5 so the exit criteria for "research phase done" are stated once, in one place.
-
-### 1.2 An explicit "In-flight tracking" / next-session-resume table
-
-`user-next-steps.md` ended with an In-flight tracking table — distinct from PLAN.md §6 (Resumption checklist) in that it pins **per-item** "what triggers the next action." Refreshed for 2026-05-16:
-
-| Item | State | What triggers next action |
-|---|---|---|
-| **Issues #41 / #42** | Drains complete in PR #44; still shown OPEN on GitHub | Agent posts a one-line closure comment linking to PR #44 (`a082310`) |
-| **`research-plan.md` direction** | User decision pending | User picks: unified synthesis (yes / no); v3 single architecture (yes / no) |
-| **Retrospective backlog** | Five retrospectives → 13 unbuilt skills / 45 AGENTS items / 26 ADR titles | User picks scope |
-| **PLAN §3.2 curated tasks** | User decision; likely folded into the v3 architecture step | Decision on §1.1 above |
-| **PLAN §6.1 cross-corpus sweep** | Mechanical, ~30 min via single `Grep` pass + small subagent dispatch | User says "do the sweep" |
-| **F36/F37 numbering collision** | PLAN.md §3.6 documents the collision; not yet resolved | Lead agent triage decision (see §3.6 in PLAN.md) |
-| **5 × Path-B-only URLs** | Action route exhausted | User Save-Page-As → `research/manual/` → `drain` |
-| **Wayback-eligible Princeton URL** | Never tried via Wayback | Single-URL fetch attempt against `web.archive.org/web/*/pli.princeton.edu/...` |
-| **`docs.github.com/.../cloud-agent/risks-and-mitigations`** | Never tried via action | File a single-URL `[fetch-urls]` issue if pursued |
-
-**Recommendation:** add to PLAN.md §6 as §6.2 or merge into the existing §6 resumption checklist.
-
-### 1.3 An explicit categorization of the remaining gaps as "Path B only" vs "retry-eligible"
-
-PLAN.md §4.3 prose-style lists the remaining URLs but conflates two failure classes. Cleaner table:
-
-| Gap | URLs | Recovery route | Affects report |
-|---|---|---|---|
-| **Path-B only — JS-rendered SPA** | `platform.claude.com/docs/en/agent-skills/{best-practices,security}` (2) | Browser Save Page As after JS renders, drop into `research/manual/` | `research/23-anthropic-engineering-trilogy.md` §3 (security-quote attribution open) |
-| **Path-B only — Cloudflare JS challenge from action** | `openai.com/index/{harness-engineering,unlocking-the-codex-harness,introducing-swe-bench-verified}` (3) | Browser Save Page As after JS solves | `research/18-openai-codex-substrate.md` (sole reason it remains 🟡) |
-| **Retry-eligible — Wayback fallback may work** | `pli.princeton.edu/.../swe-bench` (1) | Try `web.archive.org/web/*/pli.princeton.edu/blog/2023/swe-bench-can-language-models-resolve-real-world-...` | `research/22-academic-foundations.md` |
-| **Retry-eligible — action never attempted** | `docs.github.com/.../cloud-agent/risks-and-mitigations` (1) | Single-URL `[fetch-urls]` issue | `research/19-github-copilot-cloud-agent.md` (would re-anchor one REFUTES; low priority since report already ✅) |
-
-That's **5 Path-B-only + 2 retry-eligible = 7 outstanding URLs total**, matching PLAN.md's prose count.
-
-### 1.4 Reference to the deleted `next-fetch-batch.md` issue body
-
-PLAN.md §3.3 reports issues #41/#42 as drained but does not preserve the issue-body template that was used (rounds 6/7/8 each had a draft body before filing). If future fetch-urls issues are filed, the prior templates are useful starting points. **Appendix C below preserves the round-8 issue body verbatim.** Recommendation: add a short note in PLAN.md §3.3 or §8 pointing readers to the appendix in this file (until this file is deleted post-sync), or fold the template into a permanent `fetch-blocked-urls/issue-template.md` if more rounds are anticipated.
-
-### 1.5 Reference to the deleted `fetch-from-browser.sh` operational tooling
-
-PLAN.md §7 lists the script as part of the fetch-loop tooling. The script body is preserved verbatim in **Appendix B** below; if a future Path-A pass is needed, restore the script from this file or from git history. **Recommendation:** if Path-A retrieval is now genuinely obsolete (the action runner has been able to reach every host we cared about except the 5 Path-B-only ones), remove the §7 reference from PLAN.md and document the obsolescence; otherwise, restore the script.
-
-### 1.6 The retained-on-disk evidence trail for past fetch rounds
-
-The five `blocked-urls*.md` files served as evidence directories of what was attempted per round. PLAN.md §7 still lists them. Now that they are deleted, PLAN.md §7's bullet list of these files should either:
-
-(a) be replaced with a single "fetch round outcomes were folded into `plan-sync.md` Appendix A and removed 2026-05-16; restore from git if a per-URL re-trace is needed," **or**
-(b) be deleted outright on the grounds that the per-URL outcomes are already cross-referenced from the affected reports (each report's "Sources reviewed" table flags ✅ / 🟡 / ❌ per URL).
-
-**Appendix A below preserves the per-URL outcomes in compressed form** so option (a) is workable.
-
-### 1.7 Cross-corpus lessons that were stated only in `blocked-urls-round-*.md`
-
-PLAN.md captures the most important cross-corpus lessons (e.g., R8.1 arXiv `/e-print/`, the "Cloudflare-blocks did NOT propagate to action runner" finding). One lesson that I could not find an explicit citation for in PLAN.md:
-
-- **Lesson R7.3 — sibling-URL cross-link heuristic.** When a target URL 404s but a sibling URL on the same domain returns 200, ALWAYS read the sibling for cross-links to the missing target. Issue #29's `the-five-levels-of-agentic-coding` 404 was a slug-guess miss; the correct slug `the-five-levels-from-spicy-autocomplete-to-the-software-factory` was discovered by reading the sidebar of the sibling companion post that DID fetch successfully. Recommendation: fold into PLAN.md §8 or into the `research-pipeline` skill's documented heuristics.
-
-- **Lesson R7.1 nuance — `platform.claude.com` ≠ `code.claude.com`.** PLAN.md mentions the platform.claude.com SPA issue, but the contrast with `code.claude.com/docs/...` (server-rendered, fetchable) is useful for predicting outcomes on future Anthropic docs URLs. Worth a line in PLAN.md §4.3 or §7.
-
-- **Lesson R8.4 — Connectors ≠ MCP.** The Replit drain refuted a corpus-wide reconstruction. The orchestrator suggested grepping for "Connectors are powered by MCP" or similar phrasings across reports to make sure the conflation didn't propagate elsewhere. PLAN.md does not appear to have queued this grep. Recommendation: add to §6.1's cross-corpus propagation flags.
-
-- **Lesson R8.5 — third-party mirrors as fallback.** Three load-bearing Replit reconstructions (Mastra-as-implementation, ~100-line replit.md auto-condensation, "$0.06 floor / multi-dollar ceiling" billing) survived the original cross-check across ≥2 sources, then turned out to be unverified by primaries. Implication for the research-pipeline skill: when only third-party mirrors agree but the primary is absent, mark the claim 🟡 pending-primary-fetch rather than ✅. Recommendation: this is a skill update, not a PLAN.md update, but worth flagging.
-
-### 1.8 The "Recommended future fetches" list from `blocked-urls.md` v5
-
-`blocked-urls.md` v5 carried a "Sources surfaced by primary access" list of references to chase. Most are now resolved; the residuals worth keeping on a wishlist are:
-
-- **From StrongDM Factory homepage footnote 1:** Luke PM "The Software Factory"; Sam Schillace "I Have Seen the Compounding Teams". (Status: not in corpus; mid-priority for any future strongdm-attribution audit.)
-- **YouTube videos referenced by jaymin-book** — three K7nY3MUzDuk / njRAmppPvFk / 95TEFWdo6Mw URLs. Would need a transcript-extraction service.
-- **El Kaim's broader Medium corpus** — 10+ unread posts logged in the round-7 future-research cluster. PLAN.md's "Future research" section at the bottom (not in the file segment I read) should already reference this.
-
-These are below the bar for active follow-up but should not be silently dropped. Recommendation: gather them as a single "Future research wishlist" appendix in PLAN.md.
-
----
-
-## 2. What is in those files that is ALREADY in PLAN.md
-
-For traceability: these items appear in both the deleted files and in PLAN.md, so PLAN.md does not need editing to capture them.
-
-- ✅ All round-6 / round-7 / round-8 per-issue summary stats (PLAN.md §3.3 + §10).
-- ✅ Cherny full transcript drain status (PLAN.md §3.5).
-- ✅ Willison full transcript drain status (PLAN.md §3.5 archive + §10 row "Round 8").
-- ✅ Issues #41/#42 still showing OPEN; closure pending (PLAN.md §5 task 2, §6 step 3).
-- ✅ The CaMeL arXiv `/e-print/` recovery (PLAN.md §3.3 round-8 row + §10).
-- ✅ Replit / Codex / Copilot reports flipped status (PLAN.md §1 done-list + §10).
-- ✅ El Kaim Dark Factory article unlocked (PLAN.md §1 + §10 row Round 4).
-- ✅ `platform.claude.com/.../agent-skills/overview` Path-B'd → report 23 §3 attribution closed (PLAN.md §10 row 7).
-- ✅ The 5 retrospectives + 13 / 45 / 26 cumulative backlog (PLAN.md §3.4).
-- ✅ `research-plan.md` direction-pending status (PLAN.md §5 task 3).
-- ✅ Cross-corpus propagation flags from round-7 Shapiro drain (PLAN.md §6.1).
-- ✅ The "before invoking Path B, file a `[fetch-urls]` issue first" lesson (PLAN.md §3.3).
-- ✅ Round-9 manual drain → reports 25 + 26 + report 12 §2.5 extension (PLAN.md §1 + §3.6 + §10 row 9).
-- ✅ F36/F37 numbering collision (PLAN.md §3.6).
-
----
-
-## 3. Per-file disposition (what was preserved here, what was already redundant)
-
-### 3.1 `user-next-steps.md`
-
-**Date:** 2026-05-14. Superseded section by section by PLAN.md v0.10–v0.12. Status of each section:
-
-- "What changed since 2026-05-13 audit" — historical; fully absorbed by PLAN.md v0.10's §1 done-list.
-- "Current state of pending drains" — fully resolved (Cherny drain landed 2026-05-14).
-- "Audit: what valuable sources remain partial/blocked" — replaced by PLAN.md §4.3. **Slight gap:** the explicit Priority-1 / Priority-2 / Priority-3 tiering is not in PLAN.md; if useful, fold into §4.3 as a recommended ordering for future Path-B work. (My §1.3 above is the cleaner version.)
-- "The synthesis-collapse decisions" — captured in PLAN.md §5 task 3.
-- "Retrospective backlog" — captured in PLAN.md §3.4.
-- "Cross-corpus propagation flags" — captured in PLAN.md §6.1.
-- "Definition of research phase complete" — **NOT in PLAN.md.** See §1.1 above.
-- "Recommended order of operations" — overlaps with PLAN.md §5 (work remaining); the prose-style ordering in the file is a different framing but the contents are the same.
-- "In-flight tracking" — **NOT in PLAN.md in this tabular form.** See §1.2 above.
-
-### 3.2 `research/blocked-urls.md` v5
-
-**Date:** 2026-05-11. The cross-round canonical URL inventory.
-
-- "What is now accessible" table — historical; the URLs listed are all ✅ in their target reports' Sources-reviewed tables.
-- "What remains BLOCKED" table — was 3 URLs at v5 time; 2 (medium.com/@welkaim/about, welkaim.medium.com) since RESOLVED 2026-05-13 per PLAN.md §4.3 item 1; el-kaim Dark Factory article since RESOLVED.
-- "Recommended future fetches" — see §1.8 above for residuals.
-- "Effect on the architectures" — historical corrections, all now propagated into the architecture docs and into the synthesis revision notes. Specific items already captured:
-  - DTU = Digital Twin Universe (corrected in all four architecture specs)
-  - The "Willison 4 agents → 11 AM" reversal-of-reversal (now in synthesis §"Revision notes", §"Parallelism", §"Quick anchor data" and the round-1 HN-row table)
-  - Self-improving prompts pattern added to Architecture 2
-  - Scenarios partially agent-generated added to synthesis §5.1 and Architecture 1
-  - Attractor "graph-structured generically; DOT community convention" correction in synthesis §3.2 / §3.8
-  - Compound engineering canonical loop is 4-step not 5 (corrected in Architecture 2)
-  - Looking-the-part hazard added to F7 in synthesis §4
-
-### 3.3 `research/blocked-urls-round-2.md`
-
-**Date:** 2026-05-10 / 2026-05-11. Per-issue retrieval log for fetch issues #4 and #8.
-
-Compressed outcomes:
-- Issue #4: 13 of 14 URLs returned HTTP 200; 1 deferred (YouTube transcripts).
-- Issue #8 (Wayback supplements): Substack manifesto and arXiv HTML render recovered; Boris Cherny Lenny interview paywall persisted in Wayback (since RESOLVED via 2026-05-14 transcript drop).
-- The full per-URL table is preserved verbatim in **Appendix A** below.
-
-### 3.4 `research/blocked-urls-round-6.md`
-
-**Date:** 2026-05-13. Issues #29 / #30 / #31 per-URL outcomes.
-
-Compressed in **Appendix A**. Key lesson (now in PLAN.md §3.3): "Cloudflare-blocked" classifications on most hosts were stale — the runner reaches them fine.
-
-### 3.5 `research/blocked-urls-round-7.md`
-
-**Date:** 2026-05-13. Issue #36 per-URL outcomes (7 URLs; 5 HTTP 200 but only 2 usable).
-
-Compressed in **Appendix A**. Three corpus-wide lessons R7.1 / R7.2 / R7.3 — R7.1 and R7.2 are in PLAN.md; R7.3 (sibling-URL cross-link heuristic) flagged in §1.7 above as missing.
-
-### 3.6 `research/blocked-urls-round-8.md`
-
-**Date:** 2026-05-13. Issues #41 + #42 per-URL outcomes.
-
-Compressed in **Appendix A**. Five corpus-wide lessons R8.1–R8.5 — R8.1 (arXiv `/e-print/`) is in PLAN.md; R8.2 (openai.com/index/* JS-challenged-body) is partially in PLAN.md §4.3; R8.3 (canonical-re-find > slug-pattern-guessing) is implicit but not stated; R8.4 (Connectors ≠ MCP) is **not** in PLAN.md per §1.7 above; R8.5 (third-party-mirrors-fallback flag) is **not** in PLAN.md (skill-level recommendation per §1.7).
-
-### 3.7 `research/fetch-from-browser.sh`
-
-Bash script invoked locally with browser cookies to do Path-A retrieval. The script body is preserved verbatim in **Appendix B**. PLAN.md §7 references the script; if Path-A is genuinely obsolete, that reference should be removed from PLAN.md (see §1.5 above).
-
-### 3.8 `research/next-fetch-batch.md`
-
-Draft body for the round-8 `[fetch-urls]` issues #41 + #42. Both issues filed and drained per PLAN.md §3.3. The draft body is preserved verbatim in **Appendix C** as a template for future fetch-urls issues. If no further fetch-urls issues are expected, this is disposable; otherwise, fold the template into a permanent `fetch-blocked-urls/issue-template.md` and reference from PLAN.md §8 (which already documents the workflow).
-
-### 3.9 `research/unfetched-sources.md`
-
-**Date:** 2026-05-11 (with 2026-05-13 deferred-candidate annotations).
-
-- "Currently unfetched" table — at the time it listed 4 URLs (medium.com/@welkaim/about, welkaim.medium.com, two Lenny URLs). As of 2026-05-16, the welkaim pair is RESOLVED 2026-05-13 (Path B drop, see PLAN.md §4.3 item 1); both Lenny URLs are confirmed-video-only with full YouTube transcripts dropped and drained. **Effectively the entire table is now empty.**
-- "How to recover" — Path A / Path B / Path C operational instructions. Preserved verbatim in **Appendix D** as a reference for any future Path-B work.
-- "Deferred fetch-action candidates" — the 9-row table cataloging URLs to file as `[fetch-urls]` issues. Status as of 2026-05-13 / 2026-05-16:
-  - Row 1 (Shapiro): ✅ Filed in #29
-  - Row 2 (Anthropic engineering × 4): ✅ Filed in #29
-  - Row 3 (Hamel + Simon evals): ✅ Filed in #29
-  - Row 4 (Simon + arXiv security): ✅ Filed in #29
-  - Row 5 (Kaner/PDCA/PDSA): ⏸ Optional, not filed
-  - Row 6 (Devin/Factory/8090/Superconductor/Superpowers): ✅ Filed as #31 + #36 round-7 supplement
-  - Row 7 (docs.replit.com/* + blog.replit.com/*): ✅ Filed as #41 (after the file's "defer until v6 catalog updates" guidance was over-ridden 2026-05-13)
-  - Row 8 (developers.openai.com/codex/* + openai.com/index/*): ✅ Filed as #41 (Codex docs all 200'd from action; openai.com/index/* still Path B)
-  - Row 9 (docs.github.com/en/copilot/*): ✅ Filed as #30 + canonical re-finds in #42
-  - Row 10 (every.to/chain-of-thought × 3): ✅ Resolved via earlier issue #23
-
-**All rows except row 5 are now resolved.** Row 5 is the only outstanding deferred candidate; structural conclusions firm without it. Recommendation: if PLAN.md ever explicitly references "deferred fetch-action candidates," update the reference to point at this file (until this file is deleted post-sync) or fold the row-5 status into PLAN.md §4.4 ("Not worth fetching anymore") on the grounds it has been explicitly classified optional.
-
----
-
-## Appendix A — per-round per-URL outcomes (compressed)
-
-Preserved here so the corpus' fetch-history audit trail is not lost when the five `blocked-urls*.md` files are deleted. For each round, only the URL + final status + drain target. Long explanations cut; consult git history for the full files.
-
-### Round 2 — issues #4 and #8
-
-| # | URL | Final status | Drain target |
-|---|---|---|---|
-| 1 | jayminwest.com/agentic-engineering-book | ✅ via #4 | report 08 / 09 |
-| 2 | jayminwest.com/.../6-harnesses | ✅ via #4 | report 09 |
-| 3 | jayminwest.substack.com/p/a-manifesto-for-agentic-development | ✅ via #8 Wayback | report 09 §9 |
-| 4 | docs.all-hands.dev/usage/how-to/headless-mode | ✅ via #4 | report 11 |
-| 5 | docs.all-hands.dev/ | ✅ via #4 | report 11 |
-| 6 | arxiv.org/abs/2511.03690 | ✅ via #4 | report 11 |
-| 7 | arxiv.org/html/2511.03690v2 (via Wayback) | ✅ via #8 Wayback | report 11 v0.2 |
-| 8 | github.com/marketplace/actions/openhands-ai-action | ✅ via #4 | report 11 |
-| 13 | deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes | ✅ via #4 | report 11 |
-| 14 | langchain.com/blog/agentic-engineering-redefining-software-engineering | ✅ via #4 | report 12 §2.2 |
-| 16 | ibm.com/think/topics/agentic-engineering | ✅ via #4 | report 12 §2.4 |
-| 17 | addyosmani.com/blog/agentic-engineering/ | ✅ via #4 | report 12 §2.1 |
-| 19 | kiro.dev/ | ✅ via #4 | report 12 §2.5 |
-| 20 | cloud.google.com/discover/what-is-agentic-coding | ✅ via #4 | report 12 §2.3 |
-| 15 | mindstudio.ai/blog/what-is-agentic-engineering | skipped (saturation) | — |
-| 18 | agenticengineer.com/tactical-agentic-coding | not yet attempted | — |
-| 9–12 | YouTube transcripts (×3) + skillsllm.com/skill/overstory | deferred (transcript service needed) | — |
-
-### Round 6 — issue #29 (Anthropic / Hamel / Simon / arXiv / Shapiro × 18)
-
-| URL pattern | Outcome | Drained into |
-|---|---|---|
-| anthropic.com/engineering/effective-harnesses-for-long-running-agents | ✅ 200 | report 23 §2 |
-| anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills | ✅ 200 | report 23 §3 |
-| anthropic.com/engineering/building-c-compiler | ✅ 200 | report 23 §4 |
-| anthropic.com/engineering/harness-design-long-running-apps | ✅ 200 | report 23 §5 |
-| anthropic.com/engineering/claude-code-sandboxing | ✅ 200 | report 23 §8 (NEW) |
-| hamel.dev/blog/posts/evals-faq/ | ✅ 200 | followup/07 §3 |
-| hamel.dev/blog/posts/llm-judge/ | ✅ 200 | followup/07 §3.9 |
-| hamel.dev/blog/posts/field-guide/ | ✅ 200 | followup/07 §4.5 |
-| hamel.dev/blog/posts/evals/ | ✅ 200 | followup/07 §0 |
-| simonwillison.net/2025/Jul/3/faqs-about-ai-evals/ | ✅ 200 | followup/07 |
-| simonwillison.net/2025/Jun/14/multi-agent-research-system/ | ✅ 200 | followup/07 §2.6 |
-| simonwillison.net/2025/Apr/11/camel/ | ✅ 200 | followup/08 §3 |
-| simonwillison.net/2025/Jun/16/the-lethal-trifecta/ | ✅ 200 | followup/08 §1 |
-| simonwillison.net/2023/Apr/25/dual-llm-pattern/ | ✅ 200 | followup/08 §2 |
-| arxiv.org/abs/2503.18813 | ✅ 200 | followup/08 §3a |
-| arxiv.org/html/2503.18813v2 | ❌ 404 | (recovered via /e-print/ in round 8) |
-| danshapiro.com/blog/2026/01/the-five-levels-of-agentic-coding | ❌ 404 slug-guess miss | (recovered via correct slug in round 7) |
-| danshapiro.com/blog/2026/02/you-dont-write-the-code | ✅ 200 | followup/01 §"companion post" |
-
-Major refutations from #29 drain: report 23 Opus version 4.5 not 4.6; testing tool Puppeteer MCP not Playwright; companion repo `claude-quickstarts/autonomous-coding` not `cwc-long-running-agents`; several security quotes attributed to S13 actually from platform.claude.com Skills overview. followup/08 trifecta-leg quotes 3 confabulated; CaMeL attribution corrected to Google DeepMind + ETH Zürich. followup/07 ">90% expert agreement" attribution corrected to Hamel's llm-judge (Honeycomb/Phillip Carter) not the FAQ.
-
-### Round 6 — issue #30 (GitHub Copilot docs × 9)
-
-3 of 9 returned HTTP 200; 6 returned HTTP 404 (GitHub docs reorgs, not blocks). The 6 URLs needed canonical re-finds, all resolved in round 8 #42. All 6 round-8 re-finds returned ✅ 200.
-
-### Round 6 — issue #31 (Devin / Factory / 8090 / Superconductor / Superpowers × 9)
-
-6 of 9 returned HTTP 200. **Cloudflare blocks did NOT propagate to action runner.** Major refutations: Devin pricing (Free/Pro $20/Max $200/Teams $80/Enterprise — no public ACU); Factory adds Droid Computers primitive; superconductor.io was wrong domain (live product at .com). 3 upstream 404s (cognition.ai/blog/devin, factory.ai/product, 8090.inc/blog).
-
-### Round 7 — issue #36 (7 URLs)
-
-- danshapiro.com/.../the-five-levels-from-spicy-autocomplete-to-the-software-factory → ✅ → followup/01
-- arxiv.org/pdf/2503.18813 → 🟡 metadata-only (PDF binary; html2text can't extract; recovered as /e-print/ in round 8)
-- arxiv.org/html/2503.18813v1 → ❌ 404 (same as v2)
-- superconductor.com → ✅ → followup/06 §4 (replaces wrong-domain hit)
-- platform.claude.com/docs/en/agent-skills/{overview, best-practices, security} × 3 → ❌ JS-SPA shells (overview later Path-B'd in round 7; the other two still pending Path B)
-
-### Round 8 — issue #41 (Replit / Codex / SWE-bench × 24)
-
-20 of 24 ✅. Replit (13/13 ✅) and developers.openai.com/codex/* (5/5 ✅) all drained into reports 20 and 18. 4 Cloudflare failures: openai.com/index/{harness-engineering, unlocking-the-codex-harness, introducing-swe-bench-verified}, pli.princeton.edu/.../swe-bench. Major Replit refutations: ~100-line replit.md auto-condensation not in primary; "$0.06/multi-dollar" billing not in primary; Mastra-as-implementation not in primary; Connectors are not all "powered by MCP" (Connectors derive from OpenInt acquisition; MCP-Servers is a separate scanner-gated catalog).
-
-### Round 8 — issue #42 (GH Copilot canonical re-finds + arXiv CaMeL × 10)
-
-6/6 Copilot canonical URLs ✅, all drained into report 19 (flipped to ✅; new §3.1 on Copilot Spaces). Major refutations: "Copilot agent can only push to copilot/* branches" no longer in canonical concept page; "Agent PRs require human approval before CI/CD" also dropped from canonical concept page. Copilot Workspace docs (2 URLs) confirmed sunset (no docs successor). **arXiv 2503.18813 paper body recovered via `arxiv.org/e-print/2503.18813` LaTeX-tarball route** (manual gunzip | tar -xf; saved to `reference-only/camel-paper/`); followup/08 §3 expanded from 7 to ~15 subsections.
-
----
-
-## Appendix B — `research/fetch-from-browser.sh` (verbatim)
-
-```bash
-#!/usr/bin/env bash
-# fetch-from-browser.sh — pull URLs that automated fetchers can't reach
-#
-# Use this when sources are behind:
-#   - a paywall (Lenny, Every.to, Substack-paid posts)
-#   - a Cloudflare interactive challenge that GitHub Actions runners can't solve (el-kaim)
-#   - any login-required page
-#
-# It uses your browser's cookies (you provide a Netscape-format cookies.txt)
-# plus a recent realistic User-Agent. Output goes to research/manual/, where
-# the next research-pipeline-skill activation will pick it up.
-#
-# Usage:
-#   bash research/fetch-from-browser.sh <path-to-cookies.txt> [url-list-file]
-#
-# Default url-list-file is research/unfetched-sources.md (the script extracts
-# URLs from the markdown table). Pass any file with one URL per line to
-# override.
-#
-# Notes:
-#   - For Cloudflare interactive challenges (e.g. el-kaim), even cookies+UA
-#     won't help — JavaScript challenge can't be solved by curl. For those,
-#     use the browser's File → Save Page As → Web Page Complete and drop
-#     the resulting .html into research/manual/ directly.
-#   - For SPA / heavily JS-rendered pages, the saved HTML may be skeletal.
-#     Reader View → copy text → paste into research/manual/<slug>.txt is a
-#     reliable fallback.
-#
-# After files land in research/manual/, commit and push them. A subsequent
-# research-pipeline activation will scan for new content and dispatch
-# subagents to incorporate them, then delete the raw files.
-
-set -euo pipefail
-
-COOKIES="${1:?Usage: $0 <cookies.txt> [url-list-file]}"
-URL_LIST="${2:-research/unfetched-sources.md}"
-OUT_DIR="research/manual"
-UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
-
-if [ ! -f "$COOKIES" ]; then
-  echo "ERROR: cookies file not found: $COOKIES" >&2
-  echo "Export from your browser via a 'Get cookies.txt' extension first." >&2
-  exit 1
-fi
-
-mkdir -p "$OUT_DIR"
-
-# Extract https://... URLs from the source file (works for plain lists or
-# markdown tables — we just grep for URLs and dedupe).
-mapfile -t URLS < <(grep -oE 'https?://[^[:space:]<>")|]+' "$URL_LIST" \
-  | sed 's/[[:punct:]]*$//' \
-  | sort -u)
-
-if [ "${#URLS[@]}" -eq 0 ]; then
-  echo "No URLs found in $URL_LIST" >&2
-  exit 0
-fi
-
-slug_for() {
-  local url="$1"
-  local sha tail
-  sha=$(printf '%s' "$url" | sha1sum | cut -c1-10)
-  tail=$(printf '%s' "$url" \
-    | sed -E 's|^https?://||; s|[^A-Za-z0-9._/-]|_|g; s|/+|__|g' \
-    | cut -c1-80)
-  printf '%s_%s' "$sha" "$tail"
+<!DOCTYPE html>
+<html lang="en-gb">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://simonwillison.net/2025/Sep/30/designing-agentic-loops/">
+<title>Designing agentic loops</title>
+<script defer data-domain="simonwillison.net" src="https://plausible.io/js/plausible.js"></script>
+<link rel="alternate" type="application/atom+xml" title="Atom" href="/atom/everything/">
+<link rel="stylesheet" type="text/css" href="/static/css/all.css">
+<link rel="webmention" href="https://webmention.io/simonwillison.net/webmention">
+<link rel="pingback" href="https://webmention.io/simonwillison.net/xmlrpc">
+<meta name="author" content="Simon Willison">
+<meta property="og:site_name" content="Simon Willison’s Weblog">
+
+
+<meta name="twitter:card" content="summary"><meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@simonw">
+<meta property="og:url" content="https://simonwillison.net/2025/Sep/30/designing-agentic-loops/">
+<meta property="og:title" content="Designing agentic loops">
+<meta property="og:type" content="article">
+<meta property="og:description" content="Coding agents like Anthropic’s Claude Code and OpenAI’s Codex CLI represent a genuine step change in how useful LLMs can be for producing working code. These agents can now directly …">
+<meta property="og:updated_time" content="1759245646">
+
+
+
+
+
+<script>
+(function() { // Apply theme immediately to prevent flash
+  const theme = localStorage.getItem('theme');
+  if (theme === 'light' || theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+})();
+</script>
+</head>
+<body class="smallhead">
+
+<div id="smallhead">
+  <div id="smallhead-inner">
+    <h1><a href="/">Simon Willison’s Weblog</a></h1>
+    <a id="smallhead-about" href="/about/#subscribe">Subscribe</a>
+  </div>
+</div><!-- #smallhead -->
+
+
+<div id="sponsored-banner" class="sponsor-scheme-sky">
+  <div id="sponsored-banner-inner">
+    <strong class="sponsored-label">Sponsored by:</strong> <a href="https://fandf.co/4daZLgh" rel="sponsored noopener" target="_blank">WorkOS</a> &mdash; Make your app Enterprise Ready with SSO, SCIM, RBAC, and more.
+  </div>
+</div>
+
+
+<div id="wrapper">
+<div id="primary">
+
+<div class="entry entryPage">
+
+
+<div data-permalink-context="/2025/Sep/30/designing-agentic-loops/">
+<h2>Designing agentic loops</h2>
+<p class="mobile-date">30th September 2025</p>
+
+
+
+<p>Coding agents like Anthropic’s <a href="https://claude.com/product/claude-code">Claude Code</a> and OpenAI’s <a href="https://github.com/openai/codex">Codex CLI</a> represent a genuine step change in how useful LLMs can be for producing working code. These agents can now directly exercise the code they are writing, correct errors, dig through existing implementation details, and even run experiments to find effective code solutions to problems.</p>
+<p>As is so often the case with modern AI, there is a great deal of depth involved in unlocking the full potential of these new tools.</p>
+<p>A critical new skill to develop is <strong>designing agentic loops</strong>.</p>
+<p>One way to think about coding agents is that they are brute force tools for finding solutions to coding problems. If you can reduce your problem to a clear goal and a set of tools that can iterate towards that goal a coding agent can often brute force its way to an effective solution.</p>
+<p>My preferred definition of an LLM agent is something that <a href="https://simonwillison.net/2025/Sep/18/agents/">runs tools in a loop to achieve a goal</a>. The art of using them well is to carefully design the tools and loop for them to use.</p>
+<ul>
+  <li><a href="https://simonwillison.net/2025/Sep/30/designing-agentic-loops/#the-joy-of-yolo-mode">The joy of YOLO mode</a></li>
+  <li><a href="https://simonwillison.net/2025/Sep/30/designing-agentic-loops/#picking-the-right-tools-for-the-loop">Picking the right tools for the loop</a></li>
+  <li><a href="https://simonwillison.net/2025/Sep/30/designing-agentic-loops/#issuing-tightly-scoped-credentials">Issuing tightly scoped credentials</a></li>
+  <li><a href="https://simonwillison.net/2025/Sep/30/designing-agentic-loops/#when-to-design-an-agentic-loop">When to design an agentic loop</a></li>
+  <li><a href="https://simonwillison.net/2025/Sep/30/designing-agentic-loops/#this-is-still-a-very-fresh-area">This is still a very fresh area</a></li>
+</ul>
+<h4 id="the-joy-of-yolo-mode">The joy of YOLO mode</h4>
+<p>Agents are inherently dangerous—they can make poor decisions or fall victim to malicious <a href="https://simonwillison.net/tags/prompt-injection/">prompt injection attacks</a>, either of which can result in harmful results from tool calls. Since the most powerful coding agent tool is “run this command in the shell” a rogue agent can do anything that you could do by running a command yourself.</p>
+<p>To <a href="https://simonwillison.net/2025/Jun/5/wrecking-its-environment-in-a-loop/">quote Solomon Hykes</a>:</p>
+<blockquote>
+<p><strong>An AI agent is an LLM wrecking its environment in a loop.</strong></p>
+</blockquote>
+<p>Coding agents like Claude Code counter this by defaulting to asking you for approval of almost every command that they run.</p>
+<p>This is kind of tedious, but more importantly, it dramatically reduces their effectiveness at solving problems through brute force.</p>
+<p>Each of these tools provides its own version of what I like to call YOLO mode, where everything gets approved by default.</p>
+<p>This is <em>so dangerous</em>, but it’s also key to getting the most productive results!</p>
+<p>Here are three key risks to consider from unattended YOLO mode.</p>
+<ol>
+<li>Bad shell commands deleting or mangling things you care about.</li>
+<li>Exfiltration attacks where something steals files or data visible to the agent—source code or secrets held in environment variables are particularly vulnerable here.</li>
+<li>Attacks that use your machine as a proxy to attack another target—for DDoS or to disguise the source of other hacking attacks.</li>
+</ol>
+<p>If you want to run YOLO mode anyway, you have a few options:</p>
+<ol>
+<li>Run your agent in a secure sandbox that restricts the files and secrets it can access and the network connections it can make.</li>
+<li>Use someone else’s computer. That way if your agent goes rogue, there’s only so much damage they can do, including wasting someone else’s CPU cycles.</li>
+<li>Take a risk! Try to avoid exposing it to potential sources of malicious instructions and hope you catch any mistakes before they cause any damage.</li>
+</ol>
+<p>Most people choose option 3.</p>
+<p>Despite the existence of <a href="https://attack.mitre.org/techniques/T1611/">container escapes</a> I think option 1 using Docker or the new Apple <a href="https://github.com/apple/container">container tool</a> is a reasonable risk to accept for most people.</p>
+<p>Option 2 is my favorite. I like to use <a href="https://github.com/features/codespaces">GitHub Codespaces</a> for this—it provides a full container environment on-demand that’s accessible through your browser and has a generous free tier too. If anything goes wrong it’s a Microsoft Azure machine somewhere that’s burning CPU and the worst that can happen is code you checked out into the environment might be exfiltrated by an attacker, or bad code might be pushed to the attached GitHub repository.</p>
+<p>There are plenty of other agent-like tools that run code on other people’s computers. <a href="https://simonwillison.net/tags/code-interpreter/">Code Interpreter</a> mode in both ChatGPT and <a href="https://simonwillison.net/2025/Sep/9/claude-code-interpreter/">Claude</a> can go a surprisingly long way here. I’ve also had a lot of success (ab)using OpenAI’s <a href="https://chatgpt.com/features/codex">Codex Cloud</a>.</p>
+<p>Coding agents themselves implement various levels of sandboxing, but so far I’ve not seen convincing enough documentation of these to trust them.</p>
+<p><strong>Update</strong>: It turns out Anthropic have their own documentation on <a href="https://www.anthropic.com/engineering/claude-code-best-practices#d-safe-yolo-mode">Safe YOLO mode</a> for Claude Code which says:</p>
+<blockquote>
+<p>Letting Claude run arbitrary commands is risky and can result in data loss, system corruption, or even data exfiltration (e.g., via prompt injection attacks). To minimize these risks, use <code>--dangerously-skip-permissions</code> in a container without internet access. You can follow this <a href="https://github.com/anthropics/claude-code/tree/main/.devcontainer">reference implementation</a> using Docker Dev Containers.</p>
+</blockquote>
+<p>Locking internet access down to a <a href="https://github.com/anthropics/claude-code/blob/5062ed93fc67f9322f807ecbf391ae4376cf8e83/.devcontainer/init-firewall.sh#L66-L75">list of trusted hosts</a> is a great way to prevent exfiltration attacks from stealing your private source code.</p>
+<h4 id="picking-the-right-tools-for-the-loop">Picking the right tools for the loop</h4>
+<p>Now that we’ve found a safe (enough) way to run in YOLO mode, the next step is to decide which tools we need to make available to the coding agent.</p>
+<p>You can bring <a href="https://modelcontextprotocol.io/">MCP</a> into the mix at this point, but I find it’s usually more productive to think in terms of shell commands instead. Coding agents are <em>really good</em> at running shell commands!</p>
+<p>If your environment allows them the necessary network access, they can also pull down additional packages from NPM and PyPI and similar. Ensuring your agent runs in an environment where random package installs don’t break things on your main computer is an important consideration as well!</p>
+<p>Rather than leaning on MCP, I like to create an <a href="https://agents.md/">AGENTS.md</a> (or equivalent) file with details of packages I think they may need to use.</p>
+<p>For a project that involved taking screenshots of various websites I installed my own <a href="https://shot-scraper.datasette.io/">shot-scraper</a> CLI tool and dropped the following in <code>AGENTS.md</code>:</p>
+<pre><code>To take a screenshot, run:
+
+shot-scraper http://www.example.com/ -w 800 -o example.jpg
+</code></pre>
+<p>Just that one example is enough for the agent to guess how to swap out the URL and filename for other screenshots.</p>
+<p>Good LLMs already know how to use a bewildering array of existing tools. If you say "use <a href="https://playwright.dev/python/">playwright python</a>" or "use ffmpeg" most models will use those effectively—and since they’re running in a loop they can usually recover from mistakes they make at first and figure out the right incantations without extra guidance.</p>
+<h4 id="issuing-tightly-scoped-credentials">Issuing tightly scoped credentials</h4>
+<p>In addition to exposing the right commands, we also need to consider what credentials we should expose to those commands.</p>
+<p>Ideally we wouldn’t need any credentials at all—plenty of work can be done without signing into anything or providing an API key—but certain problems will require authenticated access.</p>
+<p>This is a deep topic in itself, but I have two key recommendations here:</p>
+<ol>
+<li>Try to provide credentials to test or staging environments where any damage can be well contained.</li>
+<li>If a credential can spend money, set a tight budget limit.</li>
+</ol>
+<p>I’ll use an example to illustrate. A while ago I was investigating slow cold start times for a scale-to-zero application I was running on <a href="https://fly.io/">Fly.io</a>.</p>
+<p>I realized I could work a lot faster if I gave Claude Code the ability to directly edit Dockerfiles, deploy them to a Fly account and measure how long they took to launch.</p>
+<p>Fly allows you to create organizations, and you can set a budget limit for those organizations and issue a Fly API key that can only create or modify apps within that organization...</p>
+<p>So I created a dedicated organization for just this one investigation, set a $5 budget, issued an API key and set Claude Code loose on it!</p>
+<p>In that particular case the results weren’t useful enough to describe in more detail, but this was the project where I first realized that “designing an agentic loop” was an important skill to develop.</p>
+<h4 id="when-to-design-an-agentic-loop">When to design an agentic loop</h4>
+<p>Not every problem responds well to this pattern of working. The thing to look out for here are problems with <strong>clear success criteria</strong> where finding a good solution is likely to involve (potentially slightly tedious) <strong>trial and error</strong>.</p>
+<p>Any time you find yourself thinking “ugh, I’m going to have to try a lot of variations here” is a strong signal that an agentic loop might be worth trying!</p>
+<p>A few examples:</p>
+<ul>
+<li>
+<strong>Debugging</strong>: a test is failing and you need to investigate the root cause. Coding agents that can already run your tests can likely do this without any extra setup.</li>
+<li>
+<strong>Performance optimization</strong>: this SQL query is too slow, would adding an index help? Have your agent benchmark the query and then add and drop indexes (in an isolated development environment!) to measure their impact.</li>
+<li>
+<strong>Upgrading dependencies</strong>: you’ve fallen behind on a bunch of dependency upgrades? If your test suite is solid an agentic loop can upgrade them all for you and make any minor updates needed to reflect breaking changes. Make sure a copy of the relevant  release notes is available, or that the agent knows where to find them itself.</li>
+<li>
+<strong>Optimizing container sizes</strong>: Docker container feeling uncomfortably large? Have your agent try different base images and iterate on the Dockerfile to try to shrink it, while keeping the tests passing.</li>
+</ul>
+<p>A common theme in all of these is <strong>automated tests</strong>. The value you can get from coding agents and other LLM coding tools is massively amplified by a good, cleanly passing test suite. Thankfully LLMs are great for accelerating the process of putting one of those together, if you don’t have one yet.</p>
+<h4 id="this-is-still-a-very-fresh-area">This is still a very fresh area</h4>
+<p><strong>Designing agentic loops</strong> is a very new skill—Claude Code was <a href="https://www.anthropic.com/news/claude-3-7-sonnet">first released</a> in just February 2025!</p>
+<p>I’m hoping that giving it a clear name can help us have productive conversations about it. There’s <em>so much more</em> to figure out about how to use these tools as effectively as possible.</p>
+
+
+</div>
+<div class="entryFooter">Posted <a href="/2025/Sep/30/">30th September 2025</a> at 3:20 pm &middot; Follow me on <a href="https://fedi.simonwillison.net/@simon">Mastodon</a>, <a href="https://bsky.app/profile/simonwillison.net">Bluesky</a>, <a href="https://twitter.com/simonw">Twitter</a> or <a href="https://simonwillison.net/about/#subscribe">subscribe to my newsletter</a></div>
+<p class="edit-page-link" data-admin-url="/admin/blog/entry/9012/" style="display: none;"></p>
+
+</div>
+
+<div class="recent-articles">
+<h2>More recent articles</h2>
+<ul class="bullets">
+  
+    <li><a href="/2026/May/7/xai-anthropic/">Notes on the xAI/Anthropic data center deal</a> - 7th May 2026</li>
+  
+    <li><a href="/2026/May/6/code-w-claude-2026/">Live blog: Code w/ Claude 2026</a> - 6th May 2026</li>
+  
+    <li><a href="/2026/May/6/vibe-coding-and-agentic-engineering/">Vibe coding and agentic engineering are getting closer than I&#x27;d like</a> - 6th May 2026</li>
+  
+</ul>
+</div>
+
+
+</div> <!-- #primary -->
+
+<div id="secondary">
+
+<div class="metabox">
+<p class="this-is">This is <strong>Designing agentic loops</strong> by Simon Willison, posted on <a href="/2025/Sep/30/">30th September 2025</a>.</p>
+
+<div class="series-info">
+  <p>Part of series <strong><a href="/series/using-llms/">How I use LLMs and ChatGPT</a></strong></p>
+  <ol start="27">
+    
+      
+        <li><a href="/2025/Apr/21/ai-assisted-search/">AI assisted search-based research actually works now</a> - April 21, 2025, 12:57 p.m. </li>
+      
+    
+      
+        <li><a href="/2025/May/21/chatgpt-new-memory/">I really don&#x27;t like ChatGPT&#x27;s new memory dossier</a> - May 21, 2025, 2:38 p.m. </li>
+      
+    
+      
+        <li><a href="/2025/Jun/3/tips-for-peter-kyle/">Tips on prompting ChatGPT for UK technology secretary Peter Kyle</a> - June 3, 2025, 7:08 p.m. </li>
+      
+    
+      
+        <li><strong>Designing agentic loops</strong></a> - Sept. 30, 2025, 3:20 p.m. </li>
+      
+    
+      
+        <li><a href="/2025/Oct/5/parallel-coding-agents/">Embracing the parallel coding agent lifestyle</a> - Oct. 5, 2025, 12:06 p.m. </li>
+      
+    
+      
+        <li><a href="/2025/Oct/7/vibe-engineering/">Vibe engineering</a> - Oct. 7, 2025, 2:32 p.m. </li>
+      
+    
+      
+        <li><a href="/2025/Oct/8/claude-datasette-plugins/">Claude can write complete Datasette plugins now</a> - Oct. 8, 2025, 11:43 p.m. </li>
+      
+    
+    <li style="list-style-type: none;"><a href="/series/using-llms/">&#8230; more</a></li>
+  </ol>
+</div>
+
+
+    
+        <a class="item-tag" href="/tags/definitions/" rel="tag">
+            definitions
+            <span>52</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/ai/" rel="tag">
+            ai
+            <span>2009</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/generative-ai/" rel="tag">
+            generative-ai
+            <span>1780</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/llms/" rel="tag">
+            llms
+            <span>1746</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/ai-assisted-programming/" rel="tag">
+            ai-assisted-programming
+            <span>379</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/ai-agents/" rel="tag">
+            ai-agents
+            <span>110</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/coding-agents/" rel="tag">
+            coding-agents
+            <span>198</span>
+        </a>
+    
+        <a class="item-tag" href="/tags/async-coding-agents/" rel="tag">
+            async-coding-agents
+            <span>17</span>
+        </a>
+    
+
+
+<p><strong>Next:</strong> <a href="/2025/Oct/5/parallel-coding-agents/">Embracing the parallel coding agent lifestyle</a></p>
+
+
+<p><strong>Previous:</strong> <a href="/2025/Sep/29/claude-sonnet-4-5/">Claude Sonnet 4.5 is probably the &quot;best coding model in the world&quot; (at least for now)</a></p>
+
+
+<section style="
+    /* .promo */
+    border-radius: 8px;
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    /* .variant-a */
+    border: 2px solid #6c3eb9;
+  ">
+  <h3 style="
+      /* h3 */
+      margin: 0 0 0.5rem;
+      font-size: 1.25rem;
+    ">
+    Monthly briefing
+  </h3>
+  <p style="
+      /* p */
+      margin: 0 0 1rem;
+      line-height: 1.4;
+    ">
+    Sponsor me for <strong>$10/month</strong> and get a curated email digest of the month's most important LLM developments.
+  </p>
+  <p style="
+      /* p */
+      margin: 0 0 1rem;
+      line-height: 1.4;
+    ">
+    Pay me to send you less!
+  </p>
+  <a href="https://github.com/sponsors/simonw/" style="
+      /* a.button */
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: #6c3eb9;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 600;
+    ">
+    Sponsor &amp; subscribe
+  </a>
+</section>
+</div>
+
+
+
+</div> <!-- #secondary -->
+</div> <!-- #wrapper -->
+
+
+
+
+
+
+
+
+
+
+
+<div id="ft">
+    <ul>
+      <li><a href="/about/#disclosures">Disclosures</a></li>
+      <li><a href="/about/#about-site">Colophon</a></li>
+      <li>&copy;</li>
+      <li><a href="/2002/">2002</a></li>
+      <li><a href="/2003/">2003</a></li>
+      <li><a href="/2004/">2004</a></li>
+      <li><a href="/2005/">2005</a></li>
+      <li><a href="/2006/">2006</a></li>
+      <li><a href="/2007/">2007</a></li>
+      <li><a href="/2008/">2008</a></li>
+      <li><a href="/2009/">2009</a></li>
+      <li><a href="/2010/">2010</a></li>
+      <li><a href="/2011/">2011</a></li>
+      <li><a href="/2012/">2012</a></li>
+      <li><a href="/2013/">2013</a></li>
+      <li><a href="/2014/">2014</a></li>
+      <li><a href="/2015/">2015</a></li>
+      <li><a href="/2016/">2016</a></li>
+      <li><a href="/2017/">2017</a></li>
+      <li><a href="/2018/">2018</a></li>
+      <li><a href="/2019/">2019</a></li>
+      <li><a href="/2020/">2020</a></li>
+      <li><a href="/2021/">2021</a></li>
+      <li><a href="/2022/">2022</a></li>
+      <li><a href="/2023/">2023</a></li>
+      <li><a href="/2024/">2024</a></li>
+      <li><a href="/2025/">2025</a></li>
+      <li><a href="/2026/">2026</a></li>
+      <li>
+        <button id="theme-toggle" type="button" aria-label="Toggle theme">
+          <!-- Auto/System icon (default) -->
+          <svg id="icon-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2V4a8 8 0 1 0 0 16z"/></svg>
+          <!-- Light icon -->
+          <svg id="icon-light" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none"><path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"/></svg>
+          <!-- Dark icon -->
+          <svg id="icon-dark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none"><path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z"/></svg>
+        </button>
+      </li>
+    </ul>
+</div>
+
+
+
+<style>image-gallery:not(:defined) img {max-height: 150px;} captioned-image-gallery:not(:defined) > figure {max-height: 240px; overflow: hidden;}</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('h2[id],h3[id],h4[id],h5[id],h6[id]').forEach(el => {
+    const id = el.getAttribute('id');
+    const permalinkContext = el.closest('[data-permalink-context]');
+    if (permalinkContext) {
+      const url = permalinkContext.getAttribute('data-permalink-context');
+      const hashLink = document.createElement('a');
+      hashLink.style.borderBottom = 'none';
+      hashLink.style.color = '#666';
+      hashLink.style.fontSize = '1em';
+      hashLink.style.opacity = 0.8;
+      hashLink.setAttribute('href', url + '#' + id);
+      hashLink.innerText = '#';
+      el.appendChild(document.createTextNode('\u00A0'));
+      el.appendChild(hashLink);
+    }
+  });
+});
+</script>
+<script type="module">
+const config = [
+  {"tag": "lite-youtube", "js": "/static/lite-yt-embed.js", "css": "/static/lite-yt-embed.css"},
+  {"tag": "image-gallery", "js": "/static/image-gallery.js", "css": null},
+  {"tag": "captioned-image-gallery", "js": "/static/captioned-image-gallery.js", "css": null}
+];
+for (const {tag, js, css} of config) {
+  if (document.querySelector(tag)) {
+    if (css) {
+      document.head.appendChild(
+        Object.assign(document.createElement('link'), {
+          rel: 'stylesheet',
+          href: css
+        })
+      );
+    }
+    if (js) {
+      await import(js);
+    }
+  }
 }
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.localStorage.getItem('ADMIN')) {
+      document.querySelectorAll('.edit-page-link').forEach(el => {
+        const url = el.getAttribute('data-admin-url');
+        if (url) {
+          const a = document.createElement('a');
+          a.href = url;
+          a.className = 'edit-link';
+          a.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit';
+          el.appendChild(a);
+          el.style.display = 'block';
+        }
+      });
+    }
+  });
+</script>
+<script>
+// Random tag navigation - shows button if recently came from tag random
+(function() {
+  const stored = localStorage.getItem('random_tag');
+  if (!stored) return;
 
-echo "Fetching ${#URLS[@]} URL(s) into $OUT_DIR using cookies from $COOKIES"
-echo
+  try {
+    const data = JSON.parse(stored);
+    const elapsed = Date.now() - data.timestamp;
 
-i=0
-for url in "${URLS[@]}"; do
-  i=$((i + 1))
-  slug=$(slug_for "$url")
-  out="$OUT_DIR/${slug}.html"
+    // Only show if within 5 seconds
+    if (elapsed > 5000) return;
 
-  echo "[$i/${#URLS[@]}] $url"
-  http_code=$(curl --silent --show-error --location \
-    --max-time 30 \
-    --user-agent "$UA" \
-    --cookie "$COOKIES" \
-    --output "$out" \
-    --write-out '%{http_code}' \
-    "$url" || true)
+    const header = document.getElementById('smallhead-inner');
+    if (!header) return;
 
-  bytes=0
-  [ -f "$out" ] && bytes=$(wc -c < "$out" | tr -d ' ')
+    const btn = document.createElement('a');
+    btn.href = '/random/' + encodeURIComponent(data.tag) + '/';
+    btn.className = 'random-tag-nav';
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="8.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"></circle></svg> Random ' + data.tag;
 
-  if [ "${http_code:-000}" = "200" ] && [ "$bytes" -gt 5000 ]; then
-    # Quick sanity check — Cloudflare stubs are tiny and contain "Just a moment"
-    if grep -q "Just a moment\|Attention Required\|cf-mitigated" "$out" 2>/dev/null; then
-      echo "  -> got Cloudflare challenge ($bytes bytes); curl can't solve it. Use browser Save Page As." >&2
-      mv "$out" "$out.cloudflare-stub"
-    else
-      echo "  -> saved $out ($bytes bytes)"
-    fi
-  else
-    echo "  -> FAILED (HTTP ${http_code:-000}, $bytes bytes)" >&2
-  fi
-done
+    btn.addEventListener('click', function(e) {
+      // Bump the timestamp before navigating
+      localStorage.setItem('random_tag', JSON.stringify({
+        tag: data.tag,
+        timestamp: Date.now()
+      }));
+    });
 
-echo
-echo "Done. Files in $OUT_DIR — commit, push, then ask Claude to drain new content."
-```
+    // Insert before the Subscribe link
+    const subscribeLink = document.getElementById('smallhead-about');
+    if (subscribeLink) {
+      header.insertBefore(btn, subscribeLink);
+    } else {
+      header.appendChild(btn);
+    }
+  } catch (e) {
+    // Invalid JSON, clear it
+    localStorage.removeItem('random_tag');
+  }
+})();
+</script>
+<script>
+// Theme toggle functionality
+(function() {
+  const toggle = document.getElementById('theme-toggle');
+  const iconAuto = document.getElementById('icon-auto');
+  const iconLight = document.getElementById('icon-light');
+  const iconDark = document.getElementById('icon-dark');
 
----
+  // Theme states: 'auto' (default), 'light', 'dark'
+  function getTheme() {
+    return localStorage.getItem('theme') || 'auto';
+  }
 
-## Appendix C — `research/next-fetch-batch.md` (round-8 issue-body template, verbatim)
+  function setTheme(theme) {
+    if (theme === 'auto') {
+      localStorage.removeItem('theme');
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      localStorage.setItem('theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    updateIcon(theme);
+  }
 
-```
-Round-8 follow-up batch. 22 URLs across Replit Agent docs/blog, OpenAI Codex docs, OpenAI SWE-bench announcement, and Princeton PLI SWE-bench post. All currently 🟡 reconstructed in the corpus via WebSearch / mirror sites; never tried via the action. Round-6 lesson: older "blocked" tags on these hosts may be stale. Try the action first; escalate to Path B only on real failures.
+  function updateIcon(theme) {
+    iconAuto.style.display = theme === 'auto' ? 'block' : 'none';
+    iconLight.style.display = theme === 'light' ? 'block' : 'none';
+    iconDark.style.display = theme === 'dark' ? 'block' : 'none';
 
-### Replit Agent (13 URLs → research/20-replit-agent.md)
+    // Update aria-label for accessibility
+    const labels = {
+      'auto': 'Theme: Auto (system preference). Click to switch to light.',
+      'light': 'Theme: Light. Click to switch to dark.',
+      'dark': 'Theme: Dark. Click to switch to auto.'
+    };
+    toggle.setAttribute('aria-label', labels[theme]);
+  }
 
-https://docs.replit.com/core-concepts/agent
-https://docs.replit.com/replitai/replit-dot-md
-https://docs.replit.com/core-concepts/agent/plan-mode
-https://blog.replit.com/connectors
-https://docs.replit.com/replitai/warehouse-connectors
-https://docs.replit.com/replitai/mcp/overview
-https://docs.replit.com/replitai/agents-and-automations
-https://docs.replit.com/replitai/canvas
-https://docs.replit.com/replitai/app-testing
-https://docs.replit.com/cloud-services/deployments/autoscale-deployments
-https://docs.replit.com/billing/ai-billing
-https://blog.replit.com/introducing-agent-3-our-most-autonomous-agent-yet
-https://blog.replit.com/introducing-agent-4-built-for-creativity
+  // Cycle through themes: auto -> light -> dark -> auto
+  function cycleTheme() {
+    const current = getTheme();
+    const next = current === 'auto' ? 'light' : current === 'light' ? 'dark' : 'auto';
+    setTheme(next);
+  }
 
-### OpenAI Codex (7 URLs → research/18-openai-codex-substrate.md)
-
-https://developers.openai.com/codex
-https://developers.openai.com/codex/guides/agents-md
-https://developers.openai.com/codex/subagents
-https://developers.openai.com/codex/agent-approvals-security
-https://developers.openai.com/codex/cloud/environments
-https://openai.com/index/harness-engineering/
-https://openai.com/index/unlocking-the-codex-harness/
-
-### SWE-bench (2 URLs → research/22-academic-foundations.md)
-
-https://openai.com/index/introducing-swe-bench-verified/
-https://pli.princeton.edu/blog/2023/swe-bench-can-language-models-resolve-real-world-github-issues/
-```
-
-**Workflow for any future fetch-urls issue:**
-
-1. Open a GitHub issue titled `[fetch-urls] <round> — <hosts>` with the URL block above and label `fetch-urls` (Triage-role human applies the label).
-2. The `fetch-blocked-urls` action commits `fetched/issue-<N>` branch and posts a per-URL HTTP-status comment.
-3. Activate the `research-pipeline` skill (`/drain`) in a fresh session.
-4. The drain dispatches ~3 subagents (one per target report) in parallel, anchors verbatim quotes, refutes reconstructions where they contradict primary, flips 🟡 → ✅ rows.
-5. Update the relevant `research/blocked-urls-round-N.md` (or, going forward, append to the consolidated PLAN.md §3.3 round table) with per-URL outcomes — especially: which hosts were action-reachable after all.
-6. Open follow-up PR.
-
----
-
-## Appendix D — Manual fetch operational procedures (Path A / B / C)
-
-Preserved from `research/unfetched-sources.md`. Reference for any future Path-B work, especially the 5 Path-B-only URLs in §1.3.
-
-### Path A — `curl` with browser cookies (fastest if you already have a cookies file)
-
-1. Export cookies from your browser to a Netscape-format file:
-   - **Firefox:** the `cookies.txt` extension (or read directly from `~/.mozilla/firefox/<profile>/cookies.sqlite`).
-   - **Chrome / Brave / Edge:** the `Get cookies.txt LOCALLY` extension.
-2. Save as `~/cookies.txt` (or any path).
-3. Run the bash script in Appendix B above (`bash research/fetch-from-browser.sh ~/cookies.txt`).
-4. Output lands in `research/manual/`. Commit and push; a future Claude session will see the new files and incorporate them via the `research-pipeline` skill's Phase 0 drain.
-
-**Caveat:** for Cloudflare interactive challenges (e.g. the el-kaim case, before the article was Path-B'd) even cookies+UA won't help — the JavaScript challenge can't be solved by curl. Use Path B instead.
-
-### Path B — browser "Save Page As → Web Page, Complete"
-
-For pages where cookies-with-curl still fails (Cloudflare interactive JS challenge; SPA-rendered docs like platform.claude.com), no headless tool will get past it. Open the page in your browser, use **File → Save Page As → Web Page, Complete**, and drop the resulting `.html` (and the companion `_files/` folder if you want assets) into `research/manual/`. Commit and push.
-
-### Path C — Reader View → text export
-
-For paywalled articles where you've already read the body, the browser's Reader View typically exposes the full text (paywalls are usually CSS overlays that Reader View bypasses). Copy the rendered article text and paste into `research/manual/<short-slug>.txt`. Less faithful than HTML but enough for verbatim quoting.
-
-### Disposition after retrieval
-
-Once new files appear under `research/manual/` (or any subdirectory of `research/`), the next research-pipeline-skill activation will scan and dispatch subagents to incorporate them into the relevant reports, then delete the raw files. To trigger that drain explicitly, prompt: *"check `research/` for new content and incorporate it"*.
-
----
-
-## 4. Suggested next-step prompt for the user (when they want to sync PLAN.md)
-
-When ready to update PLAN.md from this file, something like:
-
-> "Update `research/PLAN.md` to fold in the items flagged in `research/plan-sync.md` §1.1–§1.8. Adjust §7 to reflect the removal of the five `blocked-urls*.md` files and `fetch-from-browser.sh`; the per-URL audit trail is in `plan-sync.md` Appendix A. After PLAN.md is current, delete `research/plan-sync.md`."
-
-Or, scoped: "just §1.1 and §1.2" if the rest is too much to absorb in one pass.
-
----
-
-*End — `research/plan-sync.md` v0.1*
+  // Initialize
+  updateIcon(getTheme());
+  toggle.addEventListener('click', cycleTheme);
+})();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"42c41055028944ee9764ce8039f69a82","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

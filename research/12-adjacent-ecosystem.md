@@ -4,6 +4,10 @@
 **Author:** Lead agent (lead-agent pass; the original subagent prompt in `research/PLAN.md` §3.5 covered more — specifically gastown / kotadb / pi-mono / Jaymin's Ch 10 toolkit — which still need a deeper read.)
 **Status:** Capsule-quality on the six Tier-2 perspective pieces we fetched; the gastown / kotadb / pi-mono / Ch 10 reads are deferred.
 
+**Revision notes:**
+- **2026-05-16 (Kiro drain):** §2.5 extended with a primary-source sub-block drawing on two Kiro blog posts — the AAAI-2026 "Copilots to Coworkers" panel report and the "deep-spec-analysis" requirements-analysis announcement. New material adds Kiro's named research/production-gap framing and the neuro-symbolic refinement → auto-formalization → logical-analysis pipeline. Sources-reviewed table updated accordingly.
+- **2026-05-16 (Kiro image-drain follow-up):** §2.5 further extended with a final "Image-anchored details" sub-block drawing on the six figures embedded in the deep-spec-analysis post (the html2text conversion stripped them). Adds: bug-class → detection-mechanism mapping; per-stage toolchain attribution (LLM+Abductive / LLM+SMT Clustering / Z3); the BEFORE→AFTER 5→8 (2U/3A/3A) refinement-count; the semantic-entropy three-bucket decision (TRUST/CLARIFY/ABSTAIN over N=10 samples → 2 clusters) and the semantic-diff/clarification-question template; the three SMT finding types (direct contradiction / case-split contradiction / completeness gap); and the Tier-1 abductive-refinement classification (Test Blocker / State Definition / Precision Gap).
+
 ## Sources reviewed
 
 Status legend: ✅ full review (read end-to-end) · 🟡 reconstructed from search snippets / partial extraction · ⏳ retrieval pending · ❌ could not obtain.
@@ -15,6 +19,8 @@ Status legend: ✅ full review (read end-to-end) · 🟡 reconstructed from sear
 | https://cloud.google.com/discover/what-is-agentic-coding | ✅ | Fetched via issue #4 (2.2 MB). Read the article body including the "Best practices for secure agentic coding workflows" checklist; primary source for §2.3. |
 | https://www.ibm.com/think/topics/agentic-engineering | 🟡 | Fetched via issue #4 (253 KB) but the article body did not cleanly separate from the page navigation chrome in the html2text output. §2.4's findings are based on the navigation tree and the visible introductory framing only. A re-fetch with a different HTML extractor, or a manual read of the rendered page, would deepen this capsule. |
 | https://kiro.dev/ | ✅ | Fetched via issue #4 (232 KB). Landing page only — subpages (`/docs/specs/`, `/docs/chat/autopilot/`, `/docs/steering/`) were NOT fetched. §2.5 explicitly flags that a focused audit of Kiro is still warranted. |
+| https://kiro.dev/blog/from-copilots-to-coworkers/ | ✅ | Manual fetch drained 2026-05-16. Primary source for §2.5 "Update 2026-05-16" sub-block (Part A — AAAI panel, research/production gap framing). Read full article body. |
+| https://kiro.dev/blog/deep-spec-analysis/ | ✅ | Manual fetch drained 2026-05-16. Primary source for §2.5 "Update 2026-05-16" sub-block (Part B — requirements-analysis pipeline, semantic-entropy primitive, Delete-Property + Order-System worked examples). Read full article body. **Image-drain follow-up 2026-05-16:** restored the MHTML, extracted the six embedded figures (bug taxonomy, refinement before/after, pipeline overview, SMT logical analysis, semantic entropy, abductive refinement tree), viewed each one, and folded the load-bearing details (bug-class → detection-mechanism map, per-stage toolchain attribution, named SMT finding types, semantic-entropy decision shape, Tier-1 abductive classifications) into §2.5's final "Image-anchored details" sub-block. |
 | https://deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes | ✅ | Fetched via issue #4 (2.1 MB). Mostly consumed by report 11; §2.6 covers the residual that didn't fit there. |
 | https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/gastown | ❌ | Not read in this session. Original subagent prompt covered this — see §4 "What's left unanswered." Reachable via raw.githubusercontent.com; no fetch action needed. |
 | https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/kotadb | ❌ | Same as above. |
@@ -111,6 +117,86 @@ A potential substrate candidate we missed in Round 1. Kiro is **a spec-driven ag
 
 1. Does Kiro's spec → design → tasks → execution loop satisfy the layered-spec discipline of our Architecture 1, or does it conflate layers?
 2. Is Kiro's CLI invocable from CI in a headless-like mode? (Their landing page emphasizes terminal/IDE; CI-friendliness is not stated.)
+
+**Update 2026-05-16 — two Kiro blog posts (primary-source drain):**
+
+Two posts from the Kiro Applied Science team fill in what the §2.5 landing-page audit could not see — the *positioning* (what Kiro thinks is missing from the coding-agent category) and the *new technical primitive* (its "deep spec analysis" / requirements-analysis feature). Both remain Amazon-backed vendor material; the framing below attributes claims rather than endorsing them.
+
+*A. "From copilots to coworkers" — Kiro at AAAI 2026 ([source](https://kiro.dev/blog/from-copilots-to-coworkers/), 2026-03-24, Garg/Omidvar-Tehrani/Ray).* A report on a Singapore panel with Microsoft, NUS, Mistral, LinkedIn, and AWS. The post is structured around an explicit research–production gap thesis: *"Current research primarily optimizes for capability while production optimizes for reliability, cost, latency, trust, and organizational fit."* Three levels of gap are named:
+
+1. **Architecture.** "The challenges shifted from prompt engineering to orchestration, system design, and evaluation. Teams that didn't recognize this early paid in rework later." User expectations also flipped: "In 2025, speed was the proxy for quality. By 2026, users were willing to wait longer in exchange for more autonomy on complex prompts and more comprehensive solutions. The bar moved from 'respond quickly' to 'handle more so I don't have to.'"
+2. **Learning + evaluation.** Two infrastructure walls, both engineering rather than algorithmic: (i) *scalable RL environments* — LinkedIn ran "~800 problems, each executed multiple times, generating trajectories online"; naive reward signals invited reward hacking ("agents learned to remove tests to appear successful"); Mistral and Microsoft confirmed the same CPU/GPU imbalance. (ii) *Benchmark saturation* — SWE-Bench "became structurally misaligned with how developers actually use agents" because benchmarks are single-repo, measure writing not reading, and ignore instruction-following.
+3. **Humans + agent-to-agent.** A distinction worth lifting: "Autocomplete latency … is tolerable within reasonable limits because it fits within an existing flow. Delegation latency is fundamentally different: when you hand an agent a whole task and it works autonomously across multiple steps, you're no longer typing alongside it, you're just waiting. That wait immediately couples with auditability." Quality is reframed along two under-appreciated dimensions: signal-to-noise (an agent producing ten suggestions where one is useful "imposes a hidden cost") and explainability ("Surprising behavior is acceptable if the reasoning is legible"). Verification "lands in a practical middle ground" — formal verification out of reach for most, so the convergence is on **spec-driven development, property-based testing, and AI-assisted code review** as three complementary pragmatics.
+
+The piece names six open directions: scalable RL environments, meta-evaluation (judging the judges), spec extraction from generated code, regeneration-replacing-repair as a provocation, shared evaluation standards, and customizable judges.
+
+*B. "Requirements analysis: catching requirement bugs before they become code" — Kiro deep-spec-analysis ([source](https://kiro.dev/blog/deep-spec-analysis/), 2026-05-12, Dobe/Arora/Zetzsche/Labai/Delmas).* The technical post announcing a new optional Kiro workflow step. Kiro's named taxonomy of **four classes of requirement bug** (verbatim): *wrong level of detail, ambiguity, inconsistency, incompleteness* — closely tracking the same primitives EARS and INCOSE's GtWR teach (cited explicitly in the post's notes). The post cites two empirical underpinnings — "Pass@1 drops of 20–40%, with 60–90% of the syntactically valid code being semantically wrong" (Larbi et al. 2025) and "underspecified prompts are about twice as likely to regress across model or prompt changes, sometimes with accuracy drops exceeding 20%" (Yang et al. 2025) — to argue that *"the prompt you give to the agent **is** the de-facto requirement now."*
+
+Kiro's spec workflow is restated as **Prompt → Requirements → Design → Tasks → Code**, with EARS notation at the requirements step. Five generic specification properties are named: *testable, solution-free, unambiguous, consistent, complete* — explicitly attributed to "decades of systems engineering practice" and cross-referenced to INCOSE GtWR.
+
+The new mechanic is a three-stage neuro-symbolic pipeline:
+
+1. **Refinement** — an LLM with *abductive* reasoning over the user story turns thesis-level criteria into testable, solution-free EARS criteria. Includes EARS pattern-fix passes (e.g., WHEN-vs-IF for error conditions). The worked "Delete Property" example shows refinement (a) catching a contradiction between hard-delete and soft-delete acceptance criteria, (b) flagging implementation language ("implement soft deletion"), (c) correcting EARS pattern misuse, and (d) adding three error-path criteria (active leases, not-found, cancel).
+2. **Auto-formalization** — an LLM translates each EARS clause into SMT-LIB assertions of the form `antecedent => consequent`, plus a schema (entities/attributes/events/inputs/outputs) and a set of background assertions encoding domain knowledge. The key trick: **semantic entropy** as an ambiguity detector — sample multiple formalizations, cluster them by *logical* equivalence via the reasoning engine, and use two thresholds: below `low_entropy` "trust the formalization"; above `high_entropy` "abstain … the EARS statement needs to be reformulated"; between thresholds, generate a *semantic diff* between top candidates and surface it as a two-option clarification question.
+3. **Logical analysis** — an SMT solver enumerates contradictions (returning a minimal contradicting subset of rules), completeness gaps (reachable states with no rule firing), and accepted/rejected scenarios. An LLM-judge filters scenarios down to those "surprising, considering what we are trying to achieve in the user story" to avoid flooding the user.
+
+All findings are surfaced uniformly as *"a simple two-option question. You pick an answer (or you let an LLM-based critic select an answer for you); the requirement gets updated; the pipeline continues."* Answer A always means keep as-is, B always means change.
+
+Kiro is candid about the boundary: *"What needs more work in the future is extracting implicit domain knowledge from the user and from LLMs. Implicit domain knowledge is the 'dark matter' of requirements that makes them hold together, that we as humans do not typically write down."* The current product samples background-knowledge assertions repeatedly and retains those above a frequency threshold — an explicit acknowledgement that the formal-domain-model problem is unsolved.
+
+**Cross-corpus alignment.** Where these two posts sit relative to our existing pillars:
+
+- **Agreement with the spec-driven baseline.** Kiro's five properties (testable / solution-free / unambiguous / consistent / complete) are a strict subset of the discipline encoded in EARS, INCOSE GtWR, and El Kaim's nine-field spec template covered in `research/15-el-kaim-book-bmad-attractor-dark-factory.md`. Kiro extends those by claiming SMT-backed *automated* enforcement of consistency and completeness — a capability El Kaim's discipline names but does not mechanize.
+- **Agreement with the underspecification literature.** The Larbi et al. and Yang et al. citations are also drained into `research/manual/` and appear in the spec-discipline reports. Kiro is the first vendor in our corpus to cite that work and tie a product feature to it.
+- **Extension over our Architecture 1 (Refinery).** Refinery's layered-spec discipline is *methodological*; Kiro's refinement → auto-formalization → logical-analysis pipeline is one possible *implementation* of the lowest layer (acceptance-criteria refinement) with a neuro-symbolic mechanism we have not seen elsewhere. The semantic-entropy-as-ambiguity-detector idea is portable to any spec-driven harness and is the single most copyable primitive in these two posts.
+- **Disagreement with the "AI judge is enough" stance.** Kiro is explicit that LLM judges are non-deterministic and must be cross-checked by an automated reasoning engine. This is a sharper position than the AI-assisted-code-review framing in our Round-1 corpus and a useful corrective to over-trust in single-judge architectures (relevant to `research/13-round-2-synthesis.md`'s notes on the LangChain/Cisco eval-agent pattern).
+- **Tangential to the lethal-trifecta security framing.** Kiro's posts do not engage prompt-injection or capability-scoping; the security posture in §2.3 (Google Cloud) and elsewhere remains where this report's security framing lives. Adopt Kiro's primitives without inheriting any safety claim.
+
+**Caveats.** Both posts are vendor authorship; the AAAI piece is a panel report so the framing is multi-source but the curation is Kiro's; the deep-spec-analysis post is product-launch material. The empirical hooks (Larbi 2025, Yang 2025, Norheim 2024) are independent third-party studies that we have separately drained into the manual corpus. Kiro reports no quantitative evaluation of its own deep-spec-analysis feature in the post — the worked Delete-Property example is illustrative, not benchmarked.
+
+**Verdict update.** The §2.5 verdict ("worth a focused substrate audit") stands and is *strengthened*: Kiro is now the only product in our corpus that ships an SMT-backed requirements-analysis layer wired into a coding-agent workflow. It remains an adjacent-ecosystem datum — not promoted to a pillar — but the semantic-entropy primitive and the two-option-question UX pattern are concrete borrows worth a follow-up read for any future "spec layer for our factory" decision.
+
+**Image-anchored details (drained 2026-05-16 from the deep-spec-analysis post's six figures).** The text drain above missed several load-bearing operational details that live only in the post's diagrams. They are tabulated here because the *mechanics* of Kiro's pipeline are what's portable, not the prose framing.
+
+- **Bug-class → detection-mechanism mapping** (figure: *The Four Classes of Requirement Bugs*). The four bug classes are each explicitly bound to one detection mechanism — not "the pipeline catches all four" generically:
+
+  | Bug class | Hard-to-spot-on-first-read example shown | Detection mechanism |
+  |---|---|---|
+  | Wrong Level of Detail | *"The system shall support authentication"* — can't name an output or condition. | **LLM Rewriting** (Refinement stage) |
+  | Ambiguity | *"Remove the record"* — one reader hears hard delete, another hears soft delete. | **Semantic Entropy** (Auto-formalization stage) |
+  | Inconsistency | R2 *"place on backorder"* vs R3 *"never backorder"* — both can't be true. | **SMT Solver** (Logical Analysis stage) |
+  | Incompleteness | Order not submitted, not canceled — no rule says what the system should do. | **SMT Solver** (Logical Analysis stage) |
+
+- **Per-stage toolchain attribution** (figure: *Requirements Analysis Pipeline*). The three stages name a *specific* tool composition under each LLM step:
+  - **Refinement** — `LLM + Abductive` — finding type emitted: **Ambiguity**.
+  - **Auto-formalization** — `LLM + SMT Clustering` — finding types emitted: **Conflict** and **Gap**.
+  - **Logical Analysis** — `Z3 SMT Solver` — outcomes emitted: **Accepted** or **Rejected**.
+
+  The named solver is **Z3** (not a generic SMT engine); the clustering is *over LLM samples*, not over criteria.
+
+- **Refinement worked example: "Delete Property"** (figure: *Refinement — "Delete Property" Requirement*). The BEFORE→AFTER count is **5 acceptance criteria → 8 refined criteria**, broken down as **2 UNCHANGED, 3 AMENDED, 3 ADDED**. The BEFORE state carries three machine-emitted flags on the offending criteria: `conflict` (AC2 — hard-delete vs soft-delete contradiction), `impl` (AC4 — implementation-language tell: *"implement soft deletion"*), `EARS` (AC5 — wrong EARS pattern). Two of the three added criteria are explicit error paths (active-leases reject; not-found error); the third is a user-cancel-abort.
+
+- **Semantic-entropy decision shape** (figure: *Semantic Entropy — Detecting Ambiguity*). The decision is a *three-bucket* classifier (not a two-threshold scalar) over **N = 10 LLM samples**: TRUST / CLARIFY / ABSTAIN. The worked example clusters 10 samples into **2 semantic clusters**, gets `H = medium`, and produces a **CLARIFY** action with an explicit A/B disambiguation question template:
+
+  > *"'Remove the record' could mean the record is gone entirely, or marked as deleted and retained for audit. Which did you mean?*
+  > *A) Keep as-is: the record is gone.*
+  > *B) Change: retained but hidden from user views."*
+
+  The figure also shows the **semantic-diff table** Kiro surfaces between the two clusters: rows for "Admin queries after deletion" (NULL vs visible=false) and "Audit log requested" (no data vs full record). This is the concrete artifact a "clarification dialog" subsystem would have to produce.
+
+- **SMT solver finding types** (figure: *SMT Solver — Logical Analysis of Acceptance Criteria*). The solver emits three named finding types, each with a minimal scope:
+  - **Direct contradiction** — UNSAT on a single path; scope is the offending rule pair (e.g., `{R2, R3}`) with the witness scenario.
+  - **Case-split contradiction** — UNSAT in both branches of a case split; scope is the rule set whose interaction creates the contradiction (e.g., `{R1, R2, R3, R5}`) under a constrained scenario like *cancelled order with resubmission*.
+  - **Completeness gap** — no rule fires for some reachable state; scope is *empty* (the point: no rule fires). The figure's example: `¬order_submitted ∧ ¬order_cancelled` — *"No rule defines system behaviour — order remains in limbo."*
+
+- **Abductive-refinement reasoning tree** (figure: *Abductive Refinement — Rental Lease Req 8: "Delete Property"*). The refinement step organizes findings into a **backward-reasoning tree** from a SUCCESS STATE through L1 success-conditions to L2 failure-or-clarification questions, with each L2 leaf carrying a **Tier-1 classification**. Three classifications named in the figure:
+  - **Test Blocker** — a missing antecedent that prevents the success criterion from being exercised (e.g., "what if the property does not exist?"). Produces a NEW criterion.
+  - **State Definition** — a domain term used without definition (e.g., "what is an 'active lease'?"). Produces an AMENDED criterion or a new definition.
+  - **Precision Gap** — an under-specified detail in an existing criterion (e.g., "who can access deleted records? how?"). Produces an AMENDED criterion.
+
+  The figure additionally identifies, on the same Delete-Property example, three machine-flagged ISSUES IN ORIGINAL CRITERIA: `C2 vs C4 CONTRADICTION` ("remove" vs "soft delete"), `C4 IMPLEMENTATION LANGUAGE` ("describes HOW not WHAT"), `C5 WRONG EARS PATTERN` ("use of event (IF not WHEN)"). These three labels are the named outputs of the Refinement stage's lint pass — the closest thing in the corpus to a concrete "spec lint" rule set, and directly relevant to report 25's F36 *vocabulary lint debt* proposal.
+
+**Why this matters for the corpus.** The image-anchored details are what make Kiro's primitives *mechanizable* in our methodology layer. Specifically: (i) Z3-as-the-named-solver fixes a build dependency; (ii) the N=10-samples / 3-bucket / semantic-diff shape gives a concrete API surface for an "ambiguity detector" subsystem in any spec-driven harness; (iii) the Tier-1 classification vocabulary (Test Blocker / State Definition / Precision Gap) is a portable taxonomy for any abductive-refinement step regardless of whether the rest of Kiro's pipeline is adopted; (iv) the three SMT finding types (direct contradiction / case-split contradiction / completeness gap) define the minimum diagnostic output a spec-conformance checker should produce. Each of these is a copyable mechanic; none is novel research, but the *integration* shown in the figures is.
 
 ### 2.6 DeepWiki — *OpenHands CLI & Deployment Modes*
 

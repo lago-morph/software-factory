@@ -185,7 +185,11 @@ The danshapiro/kilroy landing-page re-capture at main@b55fb0f shows substantial 
 
 These are *converging* moves: Kilroy and Tracker, the two most active runners in the corpus, are independently arriving at the same engineering decisions (NDJSON event stream, declarative predecessor-context injection, provider-aligned skill layout). The §1 cross-language-convergence story now extends into the engineering-detail layer, not just the orchestration-primitive layer.
 
-### 11.8 Updates to open follow-ups (§8)
+### 11.8 Cross-reference — pipeline-as-product framing now lives in report 27
+
+The Round-4 addendum above and this followup as a whole are the canonical **runner-implementation roster**: who built what runner in what language, with which sandbox, persistence, and provider story. The complementary framing — *that the durable artifact is the **pipeline file** (the DOT / `.dip` blob) rather than the runner* — is now anchored separately in `research/27-dotfile-pipelines-as-product.md`. Report 27 drains the Harper Reed *"Dark Factory Is a .dot file"* essay (Mar 9, 2026) as the load-bearing primary source for the convergence-on-pipeline-substrate claim, the `dotpowers.dot` blob as the worked methodology-payload example, the Kilroy `b55fb0f` recapture for the post-Feb-2026 Platform reframe / `KILROY_PREDECESSOR_NODE/OUTCOME` / `progress.ndjson` / triple-skill substrate evolution signals (which §11.7 above also covers from the runner-implementation angle — the two reports are complementary, not duplicative), and `strongdm/attractorbench` (Apache-2.0, v13, Gemini-best = 0.508) as the conformance surface that lets pipelines become first-class shippable artifacts. When this followup's reader needs the runner roster, stay here; when they need the methodology-layer framing or the `.dot` → `.dip` → `.dipx` migration thesis, go to report 27.
+
+### 11.9 Updates to open follow-ups (§8)
 
 - **CXDB the database.** Still open — neither Tracker nor the 2389 family vendor CXDB; both maintain their own activity log (`activity.jsonl` for Tracker, NDJSON for Kilroy via `progress.ndjson`). The "CXDB is the expected persistence substrate" claim from Forge's vendoring (§5) does **not** generalize to the 2389 ecosystem. Worth a CXDB-specific follow-up to characterize the API surface and the divergence.
 - **AttractorBench.** The corpus's only behavioral NLSpec benchmark; v13 Gemini=0.508 anchor. Now scheduled into `followup/07-evals-deepdive` per orchestrator decisions (table row #14 in `research/manual/new-index.md`); not drained here.

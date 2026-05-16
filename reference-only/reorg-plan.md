@@ -3,9 +3,9 @@
 ## Status
 
 - **Last updated:** 2026-05-16
-- **Current step:** not started
-- **Completed steps:** (none)
-- **Next step:** Step 1
+- **Current step:** Step 1 in PR review
+- **Completed steps:** 1
+- **Next step:** Step 2
 
 Each step updates this section in its final action so a fresh agent session can pick up cleanly.
 
@@ -142,7 +142,16 @@ In order:
 
 ### Lessons learned (Step 1)
 
-*(populate at end of step, before the PR is opened — disorganized bullets welcome; this feeds the skill in the final step)*
+- **The Step 1.0 survey needed a subagent.** Surveying 50 reports' source/reference tables in the main agent context would have blown out the budget — fanned out to an Explore subagent with a tight "under 600 words, no full inventory" cap. The cluster counts came back close enough to ground-truth to inform categorization. Future skill should make subagent-delegation explicit when the citing corpus exceeds ~15-20 reports.
+- **Counting-rule ambiguity bit immediately.** The plan says "a vendor doc set or multi-chapter book counts as one source", but `anthropic-agent-skills/` contains *both* (2 vendor-doc pages + 3 cookbook notebooks). Decided to treat the whole subdirectory as one source on grounds that it's one *unit of curated material* drained to one report. The skill should explicitly cover the "mixed-medium subdirectory" case: the cohesion of the subdir wins over the medium-purity of its individual files.
+- **Discovered the README was stale beyond just missing rows.** The El Kaim book README claimed 7 chapters but disk now has 9 (chapters 8 and 9 had been added later). Fixed inline during the row-update. The skill should explicitly tell users to **read each source's local `README.md` AND `ls` the actual directory** when backfilling — never trust the parent README's chapter count.
+- **Cherny "full" transcript already on disk.** The lenny-podcast-transcripts/README.md flagged the full Cherny transcript as outstanding, but `cherny-head-of-claude-code-full.txt` was already present alongside the first-30-min file. Didn't update the local README this round (out of scope for Step 1; the lenny-transcript README's "what's outstanding" claim is now stale). Future skill: when backfilling, also flag stale claims in the source's *own* README, even if fixing them is out of scope.
+- **`git mv` of a directory works as expected** even with intermediate target dirs that already exist. Used a single chained shell with `&&` to do all 8 moves; no breakage. The before/after `find` diff was the fast verification — every "before" path appeared with a renamed prefix in "after" and no new paths showed up. Recommend skill bake this exact verification pattern as a hard requirement.
+- **Categorization iteration count: 1 (not the 2-3 the plan predicted).** The medium-based 6-category proposal landed cleanly because the current corpus is *small* (8 source units) — the iteration pressure the plan anticipated comes from a larger restored corpus. So the "expect 2-3 iterations" rule is a future-state warning, not a current-state observation. Skill should make this temporal distinction: iteration count scales with corpus size, not with category count.
+- **"Why this category" column degenerates to mostly `obvious`** when the corpus is small and the categories are medium-based. Only the cross-cutters (`dark-factory-article` essay-vs-book, `chatgpt-deep-research` external-synthesis-vs-vendor-doc) needed real prose. Skill should call out that the column earns its keep at restoration-time when cross-cutters multiply — and warn against the temptation to write verbose "why" cells just because the column is there.
+- **Branch-name mismatch caught early.** The session bootstrap branch (`claude/execute-reference-step-one-FZ07O`) and the plan's specified branch (`claude/reference-only-step-1-categorize`) were different. Followed the plan's name on grounds that the plan-specified branch is the durable identifier across resumed sessions, while the bootstrap branch is session-ephemeral. Skill should note: **trust the plan's branch names, not the session's**.
+- **No `reference-only/INDEX.md` was created in Step 1.** The plan reserves INDEX creation for Step 2's mechanical split. Resisted the urge to make per-category INDEX stubs in passing. The discipline of "Step 1 moves and categorizes; Step 2 indexes" held cleanly — but the temptation to one-shot is real and the skill should name it.
+- **Survey doc (`category-survey.md`) usefulness was more about anticipating size than about choosing names.** The cluster names that came back from the subagent (vendor docs, academic papers, books, blogs, github repos, transcripts, governance, specs) closely matched the final category list — but the *counts* (40-50 papers, 25-35 essays) were the real input: they told me which categories will need a future split. The skill should frame the survey output that way: the counts matter more than the cluster-naming, because the categorisation step will be redone anyway after restoration.
 
 ---
 
@@ -284,11 +293,16 @@ Preserve *specific, surprising, hard-won learnings* from the lessons-learned blo
 
 ## Categories chosen in Step 1
 
-*(filled during Step 1.2; structure below is a template)*
+Six interim categories, split primarily by medium / artifact-kind (the survey in `category-survey.md` argued this maps cleanest to how sources arrive on disk). Sizing is currently small in most categories; the eventual restoration step will refill these and a future iteration of categorization will refine — likely splitting `essays` and `academic-papers` once they cross the ~15-source threshold.
 
 | Short-name | Definition | Current sources | Notes (cross-cutting / alternatives considered) |
 |---|---|---|---|
-| *(tbd)* | | | |
+| `books` | Multi-chapter book-length works preserved as primary citation corpus. | `el-kaim-book` (9 chapters) | — |
+| `vendor-docs` | Official platform documentation + first-party cookbooks / notebooks from substrate vendors (Anthropic, OpenAI, GitHub, etc.). | `anthropic-agent-skills` (docs pages + 3 cookbook notebooks) | — |
+| `academic-papers` | arXiv / conference papers preserved in source form (LaTeX, PDF, or extracted markdown). | `camel-paper` (LaTeX source) | — |
+| `essays` | Single-essay primary sources from author-driven blogs / publications (every.to, el-kaim.com, etc.). | `dark-factory-article`, `brier-culture-of-ai-engineering`, `every-my-ai-had-already-fixed` | `dark-factory-article` is by El Kaim — bundling with `books/el-kaim-book/` was considered but rejected to keep medium-based categorisation clean. |
+| `podcast-transcripts` | Verbatim transcripts of podcast / video interviews (Lenny, Heavybit, etc.). | `lenny-podcast-transcripts` (Cherny + Willison) | — |
+| `external-syntheses` | Counterfactual / QC syntheses produced by *other* AI systems over the same seed inputs as our research rounds. Distinct from primary sources because they are derived, but preserved because reports cite them. | `chatgpt-deep-research-2026-05-11` | Considered classifying as `vendor-docs` (it is a ChatGPT product output) but rejected — its role here is as a *secondary* synthesis we cite, not as an Anthropic-style substrate documentation. |
 
 ---
 

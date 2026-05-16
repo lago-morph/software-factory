@@ -42,6 +42,18 @@ Six URLs in the sources table flipped to ✅; the residual ⏳/⚠️ marks on t
 
 ---
 
+## Drain note (Cluster M cross-reference) — 2026-05-16
+
+The new **report 33 — Language Choice as Harness** (`research/33-language-choice-as-harness.md`, drained 2026-05-16 from MacGregor's *"When AI Agents Write Your Code, Does Language Choice Matter?"* — thepragmaticcto.com, Feb 17 2026, free portion drained primary, paid tail paywalled) opens a **language-aware coding-benchmarks sub-thread** for this followup. The Tencent multi-language benchmark cited via Valim → MacGregor reports a **7.8 pp Claude-Opus-4 spread across the same task slate**: Elixir 80.3% / C# 74.9% / Kotlin 72.5%, with Elixir hitting 97.5% as the all-models composite across 20 languages. Methodologically this is the same pattern report 29 §6 (DSPy) and report 26 (Yang et al. 98.7%→85.0% Pass@1) document at the *prompt* layer — same model, different harness primitive, materially different result — but at the *target-language* layer.
+
+For this followup the load-bearing implication is that **eval suites should be multi-language by default** when measuring the productivity / blast-radius / pass-rate of a coding harness. A single-language benchmark (the dominant pattern — SWE-Bench is Python-only, see report 22) cannot distinguish a model's *language-fluency* from its *task-competence*; a multi-language slate can. The Tencent benchmark is one such; the corpus does not yet have a primary drain of it (the Tencent paper URL is not in this drain — flagged for primary-source pull in report 33 §9). The §7.1 candidate failure mode **F45 — Language-as-Harness Mismatch** is the Theme-3 governance pair of this evals concern.
+
+Two operational follow-ups for this thread: (a) add a **multi-language slate** to the drain inventory alongside AttractorBench (§5); (b) for any judge prompt evaluating *generated code*, surface the *target language* as an explicit feature of the alignment-set composition — a judge calibrated on Python output may not generalize to Elixir or Rust output because the typical error classes are different (type mismatches dominate in TypeScript-strict outputs; null-deref absence is structurally guaranteed in Rust outputs; pure-function-shape compliance is the relevant metric for Elixir outputs). Critique-Shadowing (§3.9) should be re-run per-target-language, not once-per-product.
+
+Report 33 cross-references this followup (§7.2) as the host for the language-aware coding-benchmarks sub-thread; this paragraph is the reciprocal anchor.
+
+---
+
 ## Drain note (Cluster L cross-reference) — 2026-05-16
 
 The new **report 29 — Prompt Engineering Survey** (`research/29-prompt-engineering-survey.md`, drained 2026-05-16 from Schulhoff et al.'s *The Prompt Report*, arXiv:2406.06608v6) is the **academic taxonomy anchor for this thread's LLM-as-judge discussion**. Report 29 §5 (*LLM-as-judge — the §4.2 evaluation-prompting catalogue*) summarizes Schulhoff et al.'s five-pattern catalogue: **single-output judging**, **pairwise judging**, **reference-based judging**, **self-judging**, and **multi-criterion judging**. Each maps onto a pattern already discussed here:

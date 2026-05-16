@@ -43,6 +43,8 @@ This revision replaces a reconstruction (built from secondary coverage when the 
 - The catalyst model is "the second revision of Claude 3.5" (more specific than "Claude 3.5 v2").
 - The prior report named "Hallucination loops via shared blind spots" as a canonical pitfall; the canonical pages do not directly admit this — it came from secondary commentary and is now flagged as an open question rather than a documented lesson.
 
+**Footnote-1 attribution chain — LukePM source recovered (2026-05-16, Cluster-M manual drain).** The StrongDM homepage's footnote 1 has historically pointed at a `lukepm.com/blog/the-software-factory/` post (2024-12-24). The article itself was previously flagged as "not in corpus" (`plan-sync.md`). With this Cluster-M manual drain it is now anchored: a definitional, speculative post by "luke" (Luke Moynihan) sketching specialized AI agents (Business Analyst, DevOps, QA) coordinated by an "AI compiler" that auto-optimizes generated code, arguing speed/agility will displace code quality and correctness as primary engineering concerns. No benchmarks, no architecture detail, no governance discussion. Durable value: **closes the StrongDM footnote-1 attribution chain**; **not a substrate-claim anchor** and should not be cited as a methodology source. The corresponding row in the Sources table below reflects status ✅ FULL drained from the manual capture at `research/manual/The Software Factory _ LukePM.com.txt`, marked low-priority.
+
 **New external references surfaced by the primary sources (for future research):**
 - Luke PM, "The Software Factory"; Sam Schillace, "I Have Seen the Compounding Teams"; Dan Shapiro, "Five Levels from Spicy Autocomplete to the Software Factory" (all cited in homepage footnote 1).
 - Competitor factories (homepage footnote 2): Devin, 8090, Factory, Superconductor, Jesse Vincent's Superpowers.
@@ -166,7 +168,7 @@ Defined upstream on the homepage rather than as techniques: **Scenarios** (out-o
 
 - The Attractor spec on GitHub (`strongdm/attractor` — referenced as "View on GitHub" from `/products/attractor`). Sibling research stream.
 - The CXDB source on GitHub (`strongdm/cxdb` — Apache 2.0). Concrete reference for any factory's context-store layer.
-- Luke PM, "The Software Factory" (cited in homepage footnote 1).
+- Luke PM, "The Software Factory" (cited in homepage footnote 1). **Drained ✅ FULL 2026-05-16 (Cluster-M manual drain)** from `research/manual/The Software Factory _ LukePM.com.txt` — short 2024-12-24 blog by Luke Moynihan; definitional / speculative; "AI Business Analyst + AI DevOps + AI QA + AI compiler" sketch; no benchmarks or architecture detail. Closes the homepage footnote-1 attribution chain. **Not a substrate-claim anchor.**
 - Sam Schillace, "I Have Seen the Compounding Teams" (cited in homepage footnote 1).
 - Dan Shapiro, "Five Levels from Spicy Autocomplete to the Software Factory" (cited in homepage footnote 1; Shapiro also authored the **Kilroy** Attractor port).
 - Competitor factories named in homepage footnote 2: Devin, 8090, Factory (factory.ai), Superconductor, Jesse Vincent's Superpowers.

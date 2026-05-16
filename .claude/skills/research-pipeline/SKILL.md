@@ -39,7 +39,8 @@ All artifacts produced by this skill follow a small, deliberately rigid set of n
 | Unfetched-source inventory | `research/unfetched-sources.md` | URLs that survived all automated retrieval (action + Wayback). User-facing list of what they need to fetch in their browser. Created by the [fetch-blocked-urls](../fetch-blocked-urls/SKILL.md) skill once URLs are confirmed unrecoverable. |
 | Browser-fetch script | `research/fetch-from-browser.sh` | Runnable curl script the user invokes locally with their browser cookies. Outputs to `research/manual/`. Created alongside `unfetched-sources.md`. |
 | Fetched raw content (CI) | `research/fetched/issue-<N>/` | One subdir per fetch issue; the workflow commits here directly. |
-| Manual raw content | `research/manual/` | Where `fetch-from-browser.sh` and "Save Page As" deposit user-retrieved content. Phase 0 scans this on every activation. |
+| Manual raw content | `research/manual/` | Where `fetch-from-browser.sh` and "Save Page As" deposit user-retrieved content (often `.mhtml` from Chrome/Edge "Save as MHTML", `.html` from "Webpage, Complete", `.pdf`, or `.txt`). Phase 0 scans this on every activation. |
+| MHTML extractor | `.claude/skills/research-pipeline/scripts/mhtml_extract.py` | Helper for the multi-part MIME archives Chrome/Edge produce. Commands: `info <file>` (JSON metadata + image inventory + text head), `text <file>` (plain body to stdout), `save-image <file> <idx> <out>` (extract Nth embedded image — useful for triaging whether a source has informative diagrams), `to-txt <file> <out>` (write a clean `.txt` with TITLE/URL header). Use during Phase 0 instead of dumping mhtml into `Read` (multi-MB binary). |
 | Fetch workflow definition | `.github/workflows/fetch-blocked-urls.yml` | See the [fetch-blocked-urls](../fetch-blocked-urls/SKILL.md) skill for the canonical version. |
 | Fetch trigger label | `fetch-urls` | Repo label. Auto-created on first `mcp__github__issue_write` that references it. |
 | Branch for fetched content | `fetched/issue-<N>` | Created by the workflow. Merged into your working branch. |
@@ -161,7 +162,7 @@ Recipe:
 ```bash
 # 1. Inventory candidate source files (ignore the canonical text artifacts)
 find research/ -type f \
-  \( -name '*.html' -o -name '*.md' -o -name '*.txt' -o -name '*.pdf' \) \
+  \( -name '*.html' -o -name '*.mhtml' -o -name '*.md' -o -name '*.txt' -o -name '*.pdf' \) \
   ! -path 'research/*.md' \
   ! -path 'research/INDEX.md' \
   ! -path 'research/PLAN.md' \
@@ -248,7 +249,27 @@ For each ✅ source: `Read` it directly. For 🟡 sources: be explicit in the re
 
 When a source is too large to read in full (e.g. a 1 MB+ html2text dump), read the first ~200 lines, search/grep for the key terms you care about, and read those sections. Note in the report that the read was targeted, not exhaustive.
 
-**PDFs caveat:** `html2text` does NOT extract PDF text. If you fetch a PDF and the result looks like `%PDF-1.7` + binary streams, fall back to the HTML render (arXiv has `/html/<id>v<version>`) or skip that source.
+**PDFs caveat:** `html2text` does NOT extract PDF text. If you fetch a PDF and the result looks like `%PDF-1.7` + binary streams, fall back to the HTML render (arXiv has `/html/<id>v<version>`) or skip that source. The `Read` tool *does* support PDFs natively — use `pages: "1-10"` for large docs.
+
+**MHTML caveat:** files from Chrome/Edge "Save Page As → Webpage Single File" are multi-part MIME archives (HTML + every embedded image base64-encoded inline), often multi-MB. Do NOT `Read` them directly. Use `.claude/skills/research-pipeline/scripts/mhtml_extract.py`:
+
+```bash
+# Metadata + image inventory (fast triage)
+python3 .claude/skills/research-pipeline/scripts/mhtml_extract.py info <file.mhtml>
+
+# Convert to plain .txt with TITLE / URL header (then delete the .mhtml)
+python3 .claude/skills/research-pipeline/scripts/mhtml_extract.py to-txt <file.mhtml> <out.txt>
+
+# Extract the Nth embedded image (for diagram/screenshot triage — Read the .png afterward)
+python3 .claude/skills/research-pipeline/scripts/mhtml_extract.py save-image <file.mhtml> <N> /tmp/img.png
+```
+
+Image-triage rule of thumb when deciding whether to keep the `.mhtml` vs. convert to `.txt`:
+- **Skip** images <30 KB, or URL/path containing `avatar`/`profile`/`logo`/`icon`/`favicon`/`emoji`/`sprite`/`og-image`/`gravatar`/`social`, or SVG <100 KB (decorative).
+- Among the remainder, inspect the top 3 by size — `save-image` then `Read` the PNG/JPG.
+- **Useful**: diagrams, architecture, flowcharts, data tables, eval graphs, dot-graph renders, code-on-screen with substantive content.
+- **Not useful**: headshots, generic stock photos, UI screenshots that just show product chrome, decorative illustrations.
+- If at least one image is useful, keep the `.mhtml` as-is so the next drain sees the visuals. Otherwise `to-txt` and `rm` the original.
 
 ### Phase 8 — Write the report
 

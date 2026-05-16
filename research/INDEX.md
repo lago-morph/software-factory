@@ -1,6 +1,6 @@
 # Research Index
 
-**Last updated:** 2026-05-14 (after Lenny × Cherny full-transcript drain — the last outstanding primary-source gap from rounds 1–8 is now closed).
+**Last updated:** 2026-05-16 (after Round-9 manual drain — requirements-engineering / prompt-underspecification thread incorporated as reports 25–26 plus a Kiro extension to report 12).
 
 Single-glance index of every numbered report and followup in `research/`. For per-source provenance see each report's "Sources reviewed" table; for round-level reachability status see `research/blocked-urls.md` (canonical, v5) and `research/blocked-urls-round-6.md` (most recent batch). The resumable plan is `research/PLAN.md`.
 
@@ -37,6 +37,8 @@ Single-glance index of every numbered report and followup in `research/`. For pe
 | 22 | academic-foundations | ✅ | Academic foundations across software-engineering research. |
 | 23 | anthropic-engineering-trilogy | ✅ | Anthropic engineering posts S12–S15 + Claude Code sandboxing post + Agent Skills primary docs + 3 cookbook notebooks. **Updated 2026-05-13** with issue-#29 drain (full primary anchoring, 6 refutations, new §8 sandboxing) + issue-#36-extras drain (round-6 attribution-gap closed, 5 cookbook findings change methodology recommendation, concrete schema constraints: name max 64 chars, Level-1 budget ~100 tokens not 30–50, API-surface Skills have ZERO network access by runtime fiat). |
 | 24 | el-kaim-book-product-line-variability | ✅ | El Kaim EA book — Chapter 9: software product lines, variability, family-based architecture. **New 2026-05-13** from manual fetch. Introduces ProductLineDefinition / ProductLineSpec Codex object; anchors on Linux Kconfig + Azure Landing Zones + AUTOSAR; proposes candidate failure mode **F35 — Federation-as-Family Drift**. |
+| 25 | requirements-engineering-foundations | ✅ | **New 2026-05-16** from manual drain. RE/SE primary methodology counterpart to report 14: EARS canonical guide (5 patterns); INCOSE TP-2020-002-06 *Systems Engineering Definitions*; INCOSE GtWR v4 (15 characteristics + 42 rules + 49 attributes); INCOSE *Complexity Primer* (Sillitto subjective/objective axis; 15 principles incl. region-of-outcome); AFIS/INCOSE-FR *Requirements and Architecture within Modelling Context* (three modelling strategies, strategy-3 models-as-spec). Proposes candidate failure modes **F36–F39** (vocabulary-lint debt; point-spec/region-mismatch; architecture/specification confusion; Ashby-deficient probabilistic guard). Surfaces strong El Kaim ↔ GtWR C1–C15 one-to-one mapping (corpus has been treating El Kaim as novel — best read as domain instantiation of GtWR). |
+| 26 | prompt-underspecification-academic | ✅ | **New 2026-05-16** from manual drain. Academic LLM+RE empirical anchor for the corpus' "spec → code gap" intuition. Drains Norheim et al. (Cambridge / *Design Science* 2024, DOI 10.1017/dsj.2024.8 — LLM+RE five-task taxonomy + three challenges); Yang et al. (arXiv:2505.13360v3, CMU + Google DeepMind — "What Prompts Don't Say": Pass@1 98.7%→85.0% as specs scale 1→19, 41.1% guess-correctly baseline, 65.2% redundancy finding); Larbi et al. (arXiv:2507.20439v1, U. Luxembourg + UCL — "When Prompts Go Wrong": GPT-4 Pass@1 73.8%→6.7% on contradictory HumanEval, RIR 89%, MCC ≤0.55 detection). Proposes candidate failure modes **F36 (instruction-following ceiling)** and **F37 (silent contradictory-prompt collapse)** — N.B. number-collision with report 25 proposals; lead-agent triage required. |
 
 ## Follow-up reports (round 3 threads + post-round-3 additions)
 
@@ -60,6 +62,6 @@ Single-glance index of every numbered report and followup in `research/`. For pe
 ## How to use this index
 
 - **Looking for a specific source?** Grep the URL across `research/*.md research/followup/*.md`; the citation will be at the point of claim, not just in the sources table.
-- **Looking for a failure mode (F1–F34)?** See `research/00-synthesis.md` §4 for F1–F20, `research/13-round-2-synthesis.md` §3 for F21–F33, `research/followup/12-brier-pace-layers.md` for the F34 proposal.
+- **Looking for a failure mode (F1–F35, plus F36+ proposals)?** See `research/00-synthesis.md` §4 for F1–F20, `research/13-round-2-synthesis.md` §3 for F21–F33, `research/followup/12-brier-pace-layers.md` for the F34 proposal, `research/24-el-kaim-book-product-line-variability.md` for F35, and reports 25 §7.3 + 26 §5 for F36+ proposals (the two reports each propose F36/F37; numbering needs lead-agent reconciliation).
 - **Looking for what's blocked / pending?** `research/blocked-urls.md` (canonical v5), `research/blocked-urls-round-6.md` (most recent), `research/unfetched-sources.md` (manual fetch routes).
 - **Looking for the next action?** `research/PLAN.md` §1 (TL;DR) → §3 (Bottlenecks) → §5 (Work remaining).

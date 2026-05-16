@@ -8,6 +8,19 @@
 
 ---
 
+## Drain note (manual MHTML capture, Cluster E) — 2026-05-16
+
+**Status.** Two new primary sources were drained from `research/manual/` on 2026-05-16 (per the orchestrator's `research/manual/new-index.md` Cluster E block):
+
+1. **`developers.openai.com/codex/rules`** — the `.rules` Starlark DSL spec. Not previously anchored in this report (the term "rules" appeared only as the name of a `granular`-approval-policy *category* in §4). Drained as new §4.3 ("The `.rules` DSL — Starlark-anchored auditable auto-rejection").
+2. **`openai.com/index/running-codex-safely/`** — OpenAI security team blog (2026-05-08) on OpenAI-internal deployment posture. Previously in the "Cloudflare-blocked → Path B only" list (PLAN.md §3.3/§4.3); manual MHTML capture **demonstrates canonical fetch reachability via human-attended browser path** for the `openai.com/index/*` host class. Drained as new §4.4 ("Operational posture at OpenAI — the agent-native telemetry stack"). Directly addresses the still-🟡 "operational productivity numbers" gap flagged in §7.
+
+Provenance: drained from manual `research/manual/` capture on 2026-05-16 (the `openai.com/index/*` host was previously Cloudflare-blocked for the action runner; manual MHTML capture now anchors). Both new sections carry `[2026-05-16 manual drain ✅ — NEW]` markers throughout.
+
+Cross-references: see followup/08-security-primitives.md §6 (operational-deployment companion to §4 threat-model framing) and followup/10-governance.md §5 (admin-enforced `requirements.toml` as concretization of the "automate policy so humans aren't in every loop" stance).
+
+---
+
 ## Drain note (issue #41) — 2026-05-13
 
 **Status.** This report was originally built from WebSearch + open-source-mirror reconstruction because every `*.openai.com` URL 403s from this sandbox (consistent with `research/blocked-urls.md` v5). A GitHub-Actions-backed fetch run (issue #41) retrieved primary content for 5 of the 8 originally-🟡 rows in §0.
@@ -49,8 +62,10 @@ Status legend: ✅ primary URL reachable (or successfully primary-fetched 2026-0
 | Open-source `codex-rs/app-server/README.md` | `github.com/openai/codex/blob/main/codex-rs/app-server/README.md` | ✅ | JSON-RPC 2.0 transports, Thread/Turn/Item primitives, endpoint surface. |
 | Open-source `docs/agents_md.md` | `github.com/openai/codex/blob/main/docs/agents_md.md` | ✅ | Confirms `child_agents_md` config-toml feature flag. |
 | Cloud-env docs | `https://developers.openai.com/codex/cloud/environments` | ✅ | ✅ Primary fetch 2026-05-13 via issue #41 (prior route: WebSearch: isolated containers, network off by default, allowlist mechanism). |
+| Rules DSL (`.rules`) — Codex Developers | `https://developers.openai.com/codex/rules` | ✅ FULL | ✅ Manual MHTML capture drained on 2026-05-16 (`research/manual/Rules – Codex _ OpenAI Developers.txt`); not previously anchored in this report (the term "rules" appeared only as the name of a `granular`-approval-policy category). Drives §4.3. |
+| Running Codex safely at OpenAI — OpenAI security team blog (2026-05-08) | `https://openai.com/index/running-codex-safely/` | ✅ FULL | ✅ Manual MHTML capture drained on 2026-05-16 (`research/manual/Running Codex safely at OpenAI _ OpenAI.txt`). The `openai.com/index/*` host was previously Cloudflare-blocked for the action runner (see "Reachability note" below); manual capture is the first canonical anchor. Drives §4.4. |
 
-**Reachability note:** the five `developers.openai.com/codex/*` URLs are now primary-anchored (issue #41 action route). The three `openai.com/index/*` URLs returned Cloudflare JS challenges to the action runner (`"Just a moment..."` bodies under 6 KB) — same failure class as direct WebFetch from the sandbox; **the action route is exhausted for that host**. Wayback / browser-cookie-fetch (path B) is the only remaining recovery option. Recorded as open follow-up in §7.
+**Reachability note:** the five `developers.openai.com/codex/*` URLs are now primary-anchored (issue #41 action route). Two additional URLs are now primary-anchored from manual MHTML capture (drained 2026-05-16): `developers.openai.com/codex/rules` (newly indexed — `.rules` Starlark DSL, §4.3) and `openai.com/index/running-codex-safely/` (the `openai.com/index/*` host was previously Cloudflare-blocked at the action runner — this manual capture **demonstrates canonical fetch reachability for that host class** via human-attended browser path, and is the first canonical anchor for the running-codex-safely article — §4.4). The remaining two `openai.com/index/*` URLs (`harness-engineering`, `unlocking-the-codex-harness`) still return Cloudflare JS challenges to the action runner (`"Just a moment..."` bodies under 6 KB); manual capture remains the recovery path for them too (manual drains pending). Recorded as open follow-up in §7.
 
 ---
 
@@ -255,6 +270,163 @@ Additionally, **named filesystem permission profiles** can deny **reads** for ex
 
 **Factory implication:** the `.git`-read-only default protects the implementer-agent's repo from mid-session mutation by the agent itself, and the `.codex`/`.agents` read-only defaults protect the configuration substrate from feedback loops where an agent rewrites its own AGENTS.md or subagent definitions mid-task. The factory should adopt the same convention: any "config-of-the-agent" surface lives at a read-only well-known path.
 
+### 4.3. The `.rules` DSL — Starlark-anchored auditable auto-rejection [2026-05-16 manual drain ✅ — NEW]
+
+The granular approval policy in §4 ("auto-reject everything except sandbox-escapes") needs a *declarative substrate* — otherwise V&V auto-rejection is just hand-written conditionals scattered through the codebase. Codex's answer is a separate file format: experimental `.rules` files written in **Starlark** (`developers.openai.com/codex/rules` — "Rules are experimental and may change"). This is the load-bearing primitive that makes V&V auto-rejection *auditable*. Provenance: manual MHTML capture drained on 2026-05-16; the URL was not previously anchored in this report (the term "rules" appeared only as the name of an approval-policy *category* — see §4 `granular = { rules = ... }`).
+
+**File location and discovery** (primary, **verbatim**): *"Create a .rules file under a rules/ folder next to an active config layer (for example, `~/.codex/rules/default.rules`).  ... Codex scans `rules/` under every active config layer at startup, including Team Config locations and the user layer at `~/.codex/rules/`. Project-local rules under `<repo>/.codex/rules/` load only when the project `.codex/` layer is trusted."*
+
+When the user adds a command to the TUI allow-list, Codex writes back to `~/.codex/rules/default.rules` — the rule file is therefore both an admin-authored static input *and* a session-mutated artifact (a substrate-level provenance gotcha: the same file is dual-sourced).
+
+**`prefix_rule(...)` shape** (verbatim from the primary example):
+
+```starlark
+prefix_rule(
+    pattern = ["gh", "pr", "view"],
+    decision = "prompt",
+    justification = "Viewing PRs is allowed with approval",
+    match = [
+        "gh pr view 7888",
+        "gh pr view --repo openai/codex",
+        "gh pr view 7888 --json title,body,comments",
+    ],
+    not_match = [
+        # Does not match because the `pattern` must be an exact prefix.
+        "gh pr --repo openai/codex view 7888",
+    ],
+)
+```
+
+Fields (verbatim from primary "Understand rule fields"):
+
+- **`pattern`** (required, non-empty list): each element is either a literal string (e.g. `"pr"`) **or** a union of literals (e.g. `["view", "list"]`) to match alternatives at that argument position. Codex compares the command's argument list to `pattern` "like what `execvp(3)` receives" — i.e. tokenised argv, not the shell-string.
+- **`decision`** (defaults to `"allow"`, three values): `allow` (run outside sandbox without prompting), `prompt` (prompt per matching invocation), `forbidden` (block without prompting). **"Most restrictive wins"** when multiple rules match: `forbidden > prompt > allow`.
+- **`justification`** (optional): human-readable rationale surfaced in approval prompts / rejection messages. Primary recommends including a *recommended alternative* in `forbidden` justifications.
+- **`match` / `not_match`** (defaults `[]`): inline unit tests validated when Codex *loads* the rules file — the rule file ships with its own conformance tests, catching errors before a rule takes effect rather than at policy-decision time.
+
+**Tree-sitter-based safe-splitting of `bash -lc`** (primary "Shell wrappers and compound commands"). Wrappers like `["bash", "-lc", "git add . && rm -rf /"]` could otherwise smuggle dangerous commands past prefix matching. Codex treats `bash -lc`, `bash -c`, and `zsh` / `sh` equivalents specially:
+
+- **Safe-split path** — if the script is a *linear chain of commands* made only of plain words (no variable expansion, no `VAR=...`, no `$FOO`, no `*`) joined by safe operators (`&&`, `||`, `;`, `|`), Codex **parses it with tree-sitter** and splits it into individual commands, evaluating each against the rules. Most-restrictive-wins still applies. The primary's example: `git add . && rm -rf /` becomes two argv lists `["git", "add", "."]` and `["rm", "-rf", "/"]`, and even with an `allow` for `["git", "add"]`, the whole invocation is blocked because the `rm -rf /` portion is evaluated separately.
+- **Conservative whole-string path** — if the script uses redirection (`>`, `>>`, `<`), substitution (`$(...)`, backticks), env-var assignments (`FOO=bar`), wildcards (`*`, `?`), or control flow (`if`, `for`, `&&` with assignments), Codex does not try to interpret it; the entire invocation is treated as a single `["bash", "-lc", "<full script>"]` argv and rules apply against that one string.
+
+The split is a security primitive, not a convenience: "you get the security of per-command evaluation when it's safe to do so, and conservative behavior when it isn't." This is the inverse of the failure mode that bites most prefix-allow-list implementations (which split on `&&` themselves and get fooled by quoting).
+
+**Smart approvals integration** (verbatim): *"When Smart approvals are enabled (the default), Codex may propose a `prefix_rule` for you during escalation requests. Review the suggested prefix carefully before accepting it."* The substrate generates candidate rules during escalation — but a human still reviews them. (For factory adoption this raises a "rule-proposal-poisoning" risk dual to scenario-corpus poisoning in followup/10 §6: an attacker who can shape an escalation prompt can shape the *suggested* `prefix_rule`.)
+
+**Test harness** (verbatim): *"Use `codex execpolicy check` to test how your rules apply to a command."* Example: `codex execpolicy check --pretty --rules ~/.codex/rules/default.rules -- gh pr view 7888 --json title,body,comments`. The command "emits JSON showing the strictest decision and any matching rules, including any justification values from matched rules. Use more than one `--rules` flag to combine files." This makes rules files first-class CI artifacts — the factory can run policy unit tests in PR checks before merging rule changes.
+
+**Admin enforcement** (verbatim): *"Admins can also enforce restrictive `prefix_rule` entries from `requirements.toml`."* `requirements.toml` is the admin-side configuration channel (cf. §4.4 below) that users cannot override — the precedence stack is admin-rules > user-rules > session-mutations, mirroring the same precedence as managed sandbox / network policy.
+
+**Language**: Starlark (the rules engine "can run it without side effects, e.g. touching the filesystem"). The sandboxed-DSL choice is exactly the same architectural move as CaMeL (followup/08 §3): use a side-effect-free interpreter as the policy substrate so the policy itself can't exfiltrate during evaluation.
+
+**Factory implication.** Architecture 3's V&V phase ("auto-reject everything except sandbox-escapes") needs `.rules` as the *declarative substrate* — otherwise the rejection logic is hand-coded in Python and is itself a defect risk. The combination of (a) inline `match`/`not_match` tests, (b) `codex execpolicy check` CI harness, (c) admin-`requirements.toml`-enforced precedence makes the V&V auto-rejection layer auditable in a way no other substrate currently surfaces. Adopt: rule files with inline unit tests, CI policy-check step, admin-enforced precedence stack, side-effect-free DSL.
+
+### 4.4. Operational posture at OpenAI — the agent-native telemetry stack [2026-05-16 manual drain ✅ — NEW]
+
+OpenAI's security team published *"Running Codex safely at OpenAI"* (2026-05-08, `openai.com/index/running-codex-safely/`) describing their internal deployment posture. This URL was previously in the "Cloudflare-blocked → Path B only" list (PLAN.md §3.3 / §4.3); the manual MHTML capture drained on 2026-05-16 is the first canonical anchor for this content. **It directly addresses the still-🟡 "operational productivity numbers" gap** flagged in §7 by complementing harness-engineering's throughput numbers with concrete operational-posture and telemetry primitives — the agent-native telemetry stack is the substrate that explains *why OpenAI dares run Codex at the throughput Chen et al. report*.
+
+**Two-axis discipline, reaffirmed** (verbatim, slightly distinct framing from §4): *"Approvals and sandboxing work together. The sandbox defines the technical execution boundary, including where Codex can write, whether it can reach the network, and which paths remain protected. Approval policy determines when Codex must ask to perform an action, such as when it needs to do something outside of the sandbox. Users can approve the action once, or approve that type of action for that session."* — confirms the sandbox-defines-boundary / approval-defines-when-to-ask split as the architectural backbone of OpenAI's *own* deployment, not just public docs framing.
+
+**`Auto-review` mode — the routine-approval delegation primitive** (verbatim): *"For requests that cross the sandbox boundary, we are using `Auto-review` mode, which is a feature that, when turned on, auto-approves certain kinds of requests to reduce how often users have to stop and approve Codex actions. Codex sends the planned action and recent context to the auto-approval subagent, which can automatically approve low-risk actions — or high-risk actions with sufficient level of user authorization — instead of interrupting the user. That keeps Codex moving on routine work while still stopping on higher-risk or actions with unintended consequences."* This is the operational extension of the §4 `approvals_reviewer = "auto_review"` knob — and the canonical statement that **OpenAI internally delegates routine approvals to a subagent**, not to humans-in-loop.
+
+Sample baseline (verbatim TOML from primary):
+
+```toml
+# config.toml
+approvals_reviewer = "auto_review"
+sandbox_workspace_write.writable_roots = ["~/development"]
+
+# requirements.toml
+allowed_sandbox_modes = ["read-only", "workspace-write"]
+```
+
+The `requirements.toml` line is the admin-enforcement primitive — the sandbox modes available to the user are *constrained at the admin layer*; users cannot opt into `danger-full-access` even by editing their own config.
+
+**Managed network policy** (verbatim TOML from primary):
+
+```toml
+# requirements.toml
+allowed_web_search_modes = ["cached"]
+
+[experimental_network]
+enabled = true
+allow_local_binding = true
+denied_domains = ["pastebin.com"]
+allowed_domains = ["login.microsoftonline.com", "*.openai.com"]
+```
+
+Five keys, all primary-anchored:
+
+- **`allowed_web_search_modes = ["cached"]`** — pins web search to the OpenAI-maintained cache, blocking the live-browse opt-out documented in §4 (the user cannot override into `"live"` mode under this admin policy). Closes the "untrusted input" leg of the trifecta at admin scope.
+- **`[experimental_network] enabled = true`** — turns on the managed network proxy.
+- **`allow_local_binding = true`** — agents can serve on localhost (necessary for dev-server workflows).
+- **`denied_domains`** — hard block list (the primary example uses `pastebin.com`, a canonical exfiltration target).
+- **`allowed_domains`** — auto-allow list (the primary example uses `login.microsoftonline.com` + `*.openai.com`). Anything not in `allowed_domains` and not in `denied_domains` requires approval per the running policy.
+
+This is the **most concrete public articulation** of an enterprise-grade managed network policy for a coding agent. The factory should adopt the same five-key shape verbatim.
+
+**Identity and credentials** (verbatim TOML from primary):
+
+```toml
+cli_auth_credentials_store = "keyring"
+mcp_oauth_credentials_store = "keyring"
+forced_login_method = "chatgpt"
+forced_chatgpt_workspace_id = "<workspace-uuid>"
+```
+
+OS-keyring credential storage (rather than file-on-disk); login forced through ChatGPT; pinned to a single ChatGPT enterprise workspace. The workspace-pin is what makes Codex activity appear in the **ChatGPT Compliance Logs Platform** — pinning is the workspace-level identity gate that connects per-agent activity to org-level audit.
+
+**Managed-config precedence** (verbatim): *"We apply this posture through a combination of cloud-managed requirements, macOS managed preferences, and local requirements files. **Requirements are admin-enforced controls that users cannot override.** The macOS managed preferences and local requirements files allow us to keep a consistent baseline while still testing different configurations by team, user group, or environment. These configurations apply across local Codex surfaces, including the desktop app, CLI, and IDE extension."* Three-layer admin stack: cloud-managed requirements (org-wide baseline) → macOS managed preferences (per-fleet test variants via MDM) → local requirements files (per-machine experimental tweaks). Users cannot override any of them.
+
+**Rules at OpenAI scale** — the primary's example `default.rules` snippet uses the union-of-literals form documented in §4.3 (verbatim):
+
+```starlark
+prefix_rule(
+    pattern = ["gh", "pr", ["view", "list"]],
+    decision = "allow",
+    justification = "Allows read-only GitHub PR inspection via gh CLI.",
+)
+prefix_rule(
+    pattern = ["kubectl", ["get", "describe", "logs"]],
+    decision = "allow",
+    justification = "Allows Kubernetes resource inspection for debugging.",
+)
+```
+
+— so the §4.3 DSL is not theoretical; OpenAI is using it operationally to allow-list `gh pr {view,list}` and `kubectl {get,describe,logs}` without prompting.
+
+**Agent-native telemetry — the OpenTelemetry export primitive** (verbatim): *"Traditional security logs are still useful when looking at actions taken by Codex, but they mostly answer **what** happened: a process started, a file changed, a network connection was attempted. Defenders are still left to figure out **why** Codex did something, or the user's intent. Codex can give security teams a more agent-aware view. **Codex supports OpenTelemetry log export for various Codex events such as user prompts, tool approval decisions, tool execution results, MCP server usage, and network proxy allow or deny events.**"*
+
+Five event categories, primary-anchored:
+
+1. **User prompts** — the original intent input (the "why")
+2. **Tool approval decisions** — every approval / rejection by user or `auto_review` subagent
+3. **Tool execution results** — what the tool actually did / returned
+4. **MCP server usage** — per-MCP-call accounting
+5. **Network-proxy allow/deny events** — egress decisions
+
+Sample exporter config (verbatim from primary):
+
+```toml
+[otel]
+log_user_prompt = true
+environment = "prod"
+
+[otel.exporter.otlp-http]
+endpoint = "http://localhost:14318/v1/logs"
+protocol = "binary"
+```
+
+OTLP-HTTP transport on localhost, binary protocol. Localhost-binding means the OTEL collector is itself a sandboxed sidecar — agent telemetry never traverses the network without the collector mediating.
+
+**AI-powered security triage agent** (verbatim): *"At OpenAI, we use Codex logs alongside our AI-powered security triage agent. When an endpoint alert says Codex did something unusual, the endpoint security tool tells us that a suspicious event occurred. Codex logs then help explain the surrounding intent by the user and agent. Our AI security triage agent uses Codex logs to inspect the original request, tool activity, approval decisions, tool results, and any relevant network policy decision or block. The AI security triage agent surfaces its analysis to our security team for review to distinguish between expected agent behavior, benign mistakes, and activity that truly warrants escalation."*
+
+So OpenAI's internal security review is itself a *two-stage agent pipeline*: endpoint-security tool says "something happened" (the "what"); a triage agent reconstructs intent from Codex's OTEL logs (the "why"); a human reviews the triage agent's classification. This is the operational refutation of Kahana's *"tracing difficult by design"* objection in followup/10 §6: tracing is not difficult by design *if* the agent emits structured intent-aware telemetry by default. The factory should adopt the same posture — every agent emits OTEL events for prompts, approvals, tool-results, MCP, network — and a triage-agent layer reconstructs intent before human review.
+
+**Operational reuse** (verbatim): *"We also use the same telemetry operationally. We use these logs to understand how internal adoption is changing, which tools and MCP servers are being used, how often the network sandbox is blocking or prompting, and where the rollout still needs tuning."* Same logs power security review *and* productivity analytics — the "agent-native telemetry" is the singular substrate that supports both. (This partially closes the §7 gap on "operational productivity numbers": the Chen et al. throughput numbers in §5 are what an OTEL-anchored productivity dashboard would surface, and the OTEL primitive is now the canonical way to get them.)
+
+**Factory implication.** Operational-posture adoption for the factory is concrete: (i) admin-enforced `requirements.toml` with the five-key managed network policy verbatim, (ii) OS-keyring credential storage, (iii) workspace pinning at the identity layer, (iv) OpenTelemetry export of the five event categories with a localhost-bound OTLP-HTTP collector, (v) an AI triage agent that reconstructs intent from OTEL events before security review escalates to humans. Architecturally these compose with §4.1–§4.3 — sandbox + approval + rules define the *boundary*; managed-config requirements define the *admin-enforced minimum*; OTEL + triage agent define the *observability and review surface*. The combined stack is the agent-native answer to "control + visibility + audit" — which is precisely what followup/08 §6 and followup/10 §1.3 demand from any factory operating outside the dark-factory unattended-mode.
+
 **Factory implications:**
 
 | Trifecta leg | Codex control | Factory adoption |
@@ -309,7 +481,7 @@ Mapping Codex's five surfaces + AGENTS.md + Subagents + sandbox×approval to eac
 
 ## 7. Open follow-ups
 
-- **Primary-URL re-fetch.** 5 of 8 primary URLs are now ✅ primary-fetched (2026-05-13 issue #41). The remaining 3 (`openai.com/index/harness-engineering/`, `openai.com/index/unlocking-the-codex-harness/`, swe-bench-verified) return Cloudflare JS challenges to the action runner — **action route is exhausted** for `openai.com/index/*`. Path B (Wayback or human-attended browser cookie-fetch) is the only remaining option; file a path-B issue only if a quotation REFUTATION emerges from those mirrors.
+- **Primary-URL re-fetch.** 5 of 8 primary URLs are now ✅ primary-fetched (2026-05-13 issue #41); 1 additional `openai.com/index/*` URL is now ✅ primary-anchored from manual MHTML capture drained 2026-05-16 (`running-codex-safely/`, drives §4.4), plus 1 newly-indexed primary (`developers.openai.com/codex/rules`, drives §4.3). The remaining 2 (`openai.com/index/harness-engineering/`, `openai.com/index/unlocking-the-codex-harness/`, plus the swe-bench-verified URL) still return Cloudflare JS challenges to the action runner — **action route is still exhausted** for those `openai.com/index/*` URLs. The manual MHTML capture for `running-codex-safely/` **demonstrates the human-attended browser path (Path B) works for this host class**; the same path is the recovery option for the remaining two.
 - **App Server transport surface.** `websocket`/`unix-socket` are "experimental" per `codex-rs/app-server/README.md`. Factory dashboards likely want websocket; experimental status is a tracked risk.
 - **~~`auto_review` model selection.~~ [2026-05-13 partially resolved]** S23 primary (line 882) places the default reviewer policy at `github.com/openai/codex/blob/main/codex-rs/core/src/guardian/policy.md` (open-source; fetchable) and confirms enterprises can override via `guardian_policy_config` in managed requirements; `allowed_approvals_reviewers` can constrain reviewer selection (line 886). **Remaining unknown:** the *identity* of the default reviewer model is still not surfaced on this page.
 - **~~Non-Cloud subagent workspace inheritance.~~ [2026-05-13 RESOLVED via §3.3]** Primary S11 (lines 805-815) confirms subagents inherit parent sandbox policy plus live runtime overrides; per-agent file-level overrides possible. Architecture 2 reviewer-panel isolation discipline must explicitly use Cloud dispatch if isolation from the implementer is required.

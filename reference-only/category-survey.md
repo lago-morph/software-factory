@@ -52,20 +52,43 @@ These straddle multiple clusters; the eventual categorization will need to pick 
 
 ## 4. Implication for categorization
 
+### Axis choice: subject-matter
+
 Two viable axes emerge from the cluster table:
 
 - **Medium / artifact-kind axis** — book vs paper vs blog vs vendor doc vs repo vs transcript. Maps cleanly to how the sources arrive on disk; trivial to assign.
-- **Subject-matter axis** — what topic the source primarily speaks to (e.g. dark-factory methodology, practitioner harnesses, substrate-and-skills, security primitives, AI-engineering culture, evals, governance).
+- **Subject-matter axis** — what topic the source primarily speaks to.
 
-**Step 1.2 chose subject-matter** after a first-pass attempt at medium-based categorisation was rejected by the orchestrator. Rationale: a reader of `/reference-only/` is hunting for primary-source backing for a *claim about a topic*, not for "all essays" or "all transcripts" — the medium is irrelevant to the navigation cue. The subject axis also surfaces cross-cutter tension (e.g. the lenny-podcast-transcripts dir straddles `practitioner-harnesses` and `substrate-and-skills`) that the medium axis hides, and that surfaced tension is useful because it forces explicit "what is this source actually *for*" decisions.
+**Step 1.2 chose subject-matter** after a first-pass attempt at medium-based categorisation was rejected by the orchestrator. Rationale: a reader of `/reference-only/` is hunting for primary-source backing for a *claim about a topic*, not for "all essays" or "all transcripts" — the medium is irrelevant to the navigation cue. The subject axis also surfaces cross-cutter tension (e.g. the lenny-podcast-transcripts dir straddles `practitioner-harnesses` and `anthropic-substrate`) that the medium axis hides, and that surfaced tension is useful because it forces explicit "what is this source actually *for*" decisions.
 
-Sizing expectations under the subject axis (with anticipated restoration corpus):
+### Sizing: ~15 categories, not 6
 
-- `dark-factory-methodology` — likely 6–12 sources (El Kaim book + dark-factory article + Shapiro Five Levels + StrongDM factory + adjacent Schillace / spec-authorship pieces).
-- `practitioner-harnesses` — likely 15–25 sources at full size (Willison's collected writings, Klaassen / Reed / Hess / Vincent / Steinberger, How I AI podcast, blog-tier compound-engineering essays). **At risk of breaching the ~15 ceiling — likely to be split further at restoration.**
-- `substrate-and-skills` — likely 15–25 sources (Anthropic, OpenAI Codex, GitHub Copilot, Replit, Google Gemini, Notion, Every.to, StrongDM substrate + cookbook notebooks + agent-skills.io spec). **Also at risk of breaching the ceiling.**
-- `security-primitives` — likely 5–10 sources (CaMeL, AgentDojo, threat-model academic papers, governance overlap).
-- `ai-engineering-culture` — likely 5–10 sources (Brier + Schillace Sunday Letters + Lenny *How I AI* episodes on team ops + organizational research).
-- `meta-synthesis` — likely small (1–5), the home for counterfactual deep-research outputs and external syntheses.
+The first pass under subject-matter used 6 categories. With ~200 sources projected, 6 categories averages 33 sources/category — 2× the plan's ~5–15 ceiling. The plan's hard rule ("split a category if it would balloon past ~15") must drive category count from the start.
 
-Future-iteration warning: `practitioner-harnesses` and `substrate-and-skills` are the two categories most likely to need splitting after restoration — both are projected to grow past the 15-source target. Likely splits: by author for harnesses; by vendor for substrate.
+**Math:** `target_category_count = ceil(estimated_total_sources / target_per_category)` → for 180–220 sources at 5–15 each, target is ~13–40 categories. The third-pass taxonomy lands on 15.
+
+### Projected sizing per category (~180–220 total)
+
+| Category | Projected sources at restoration | Rationale |
+|---|---|---|
+| `dark-factory` | 5–10 | Shapiro Five Levels, El Kaim Dark Factory canon + derivatives, StrongDM factory site, related framing essays. |
+| `intent-driven-architecture` | 5–10 | El Kaim book (1 unit), TOGAF / Kconfig / Azure refs, Sillitto complexity, architectural-viewpoint papers. |
+| `spec-authorship` | 5–10 | BMAD, INCOSE primer, requirements-engineering survey, Kaner scenario testing, spec-as-prompt practitioner essays. |
+| `willison-canon` | 10–15 | ~23 Willison essays (some count as one collected source, some as separate), SOTU transcript, lethal-trifecta canon, Heavybit interview. |
+| `compound-engineering` | 10–15 | Klaassen, Reed, Vincent, Hess, Steinberger essays + *How I AI* podcast episodes + blog-tier compound-engineering pieces. |
+| `anthropic-substrate` | 8–12 | Claude Code platform docs, Anthropic engineering posts, Cherny interview, sandbox/agent-platform docs. |
+| `openai-substrate` | 5–10 | Codex docs, running-codex-safely, OpenAI cookbook, Codex CLI repo. |
+| `other-vendor-substrate` | 10–15 | Copilot cloud-agent, Replit Agent, Gemini CLI, Notion, Every.to, StrongDM substrate. **May need split by vendor.** |
+| `skills-composition` | 5–10 | agentskills.io, Anthropic Agent Skills (1 unit), MCP protocol, El Kaim codex/skill chapter, composition primitive papers. |
+| `evals-and-benchmarks` | 10–15 | SWE-bench, SWE-agent, AlphaCode, CodeGen, MTPB, evals primers. |
+| `academic-foundations` | 10–15 | Underspecification studies, multi-agent collusion, prompt-engineering survey, theoretical foundations. |
+| `security-primitives` | 5–10 | CaMeL, AgentDojo, threat-model papers, lethal-trifecta-as-defense pieces. |
+| `governance-and-legal` | 5–10 | SOX/GDPR, Caremark / RSI board exposure, NHTSA levels, AUTOSAR feature models, ISO 42010. |
+| `ai-engineering-culture` | 5–10 | Brier, Schillace Sunday Letters, Lenny *How I AI* on team-ops, organisational research, pace-layer essays. |
+| `meta-synthesis` | 1–5 | ChatGPT deep-research one-shots, future counterfactual syntheses. Naturally small. |
+
+**Most likely to need further splitting at restoration**: `other-vendor-substrate` (split by vendor); possibly `willison-canon` if it grows past 15 (split by topic — performance / lethal-trifecta / skills / etc.).
+
+### Empty categories are first-class
+
+6 of the 15 categories have no current on-disk source. These are not created as empty directories; they are listed in the top-level inventory README's "Categories" table with a "(empty, restored later)" marker. They encode the *anticipated* shape, which is the point of sizing for the restored corpus.

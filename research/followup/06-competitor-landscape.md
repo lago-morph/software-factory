@@ -245,6 +245,12 @@ Reading across the five competitors:
 
 ---
 
+## Compounding-team output rates — the OpenAI internal benchmark
+
+**Note added 2026-05-16 (Cluster F manual drain).** None of the five named competitors above publishes per-engineer agent-driven throughput numbers comparable to a 1P operator benchmark. The closest such anchor in the corpus is OpenAI's own internal-product experiment, drained from primary on 2026-05-16: Ryan Lopopolo, *"Harness engineering: leveraging Codex in an agent-first world"* (OpenAI, 2026-02-11; `openai.com/index/harness-engineering/`). The numbers — three engineers ramping to seven; on the order of **1 million LOC** across application logic, infrastructure, tooling, docs, and tests; **~1,500 merged PRs** in five months; **3.5 PRs/engineer/day as the small-team baseline with per-engineer throughput *increasing* as the team grew**; an estimated **~1/10th the time** of the human-coded counterfactual; and routine **six-hour single-agent runs** — set a quantitative reference point that the named competitors here either do not publish or do not match in granularity. See `research/18-openai-codex-substrate.md` §5 (primary-anchored 2026-05-16) for the full quotation set and the canonical caveats (no defect-rate counterfactual; team self-estimated baseline; ongoing experiment, not terminal state). When the named competitors publish comparable per-engineer numbers — Devin's "Managed Devins," Factory's role-scoped droids, Superconductor's multi-agent-on-the-same-ticket — they should be read against this benchmark, not against a human-coded baseline. The "compounding teams" framing (per Schillace, `research/manual/I have seen the compounding teams - by Sam Schillace.txt`) is the conceptual umbrella; Lopopolo's piece is the first quantitative attestation from inside a large vendor.
+
+---
+
 ## Open follow-ups
 
 - **Devin pricing reconciliation.** The published pricing page now shows Free / Pro $20 / Max $200 / Teams $80 / Enterprise — *without* surfacing ACUs. Open question: does the ACU primitive still exist behind the Pro/Max/Teams "usage quota" wording, or has Cognition abstracted it away publicly? Worth checking the in-app billing UI or the most recent Cognition blog post for clarification.

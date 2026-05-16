@@ -52,6 +52,20 @@ These straddle multiple clusters; the eventual categorization will need to pick 
 
 ## 4. Implication for categorization
 
-The distribution suggests interim categories should split primarily along **medium / artifact-kind** (book vs paper vs blog vs vendor doc vs repo vs transcript), since those map cleanly to how the sources arrive on disk (a book is a multi-file directory; a blog post is a single `.txt`; a paper is usually a PDF + notes). The user's eventual restoration step will refill each medium-bucket from git history, and a later step will refine to functional-purpose buckets once the full corpus is back.
+Two viable axes emerge from the cluster table:
 
-That said, the dominant clusters are large enough that a single "blogs / essays" category would balloon past the ~5–15 sizing target. Expect to split practitioner blogs by author or by topic.
+- **Medium / artifact-kind axis** — book vs paper vs blog vs vendor doc vs repo vs transcript. Maps cleanly to how the sources arrive on disk; trivial to assign.
+- **Subject-matter axis** — what topic the source primarily speaks to (e.g. dark-factory methodology, practitioner harnesses, substrate-and-skills, security primitives, AI-engineering culture, evals, governance).
+
+**Step 1.2 chose subject-matter** after a first-pass attempt at medium-based categorisation was rejected by the orchestrator. Rationale: a reader of `/reference-only/` is hunting for primary-source backing for a *claim about a topic*, not for "all essays" or "all transcripts" — the medium is irrelevant to the navigation cue. The subject axis also surfaces cross-cutter tension (e.g. the lenny-podcast-transcripts dir straddles `practitioner-harnesses` and `substrate-and-skills`) that the medium axis hides, and that surfaced tension is useful because it forces explicit "what is this source actually *for*" decisions.
+
+Sizing expectations under the subject axis (with anticipated restoration corpus):
+
+- `dark-factory-methodology` — likely 6–12 sources (El Kaim book + dark-factory article + Shapiro Five Levels + StrongDM factory + adjacent Schillace / spec-authorship pieces).
+- `practitioner-harnesses` — likely 15–25 sources at full size (Willison's collected writings, Klaassen / Reed / Hess / Vincent / Steinberger, How I AI podcast, blog-tier compound-engineering essays). **At risk of breaching the ~15 ceiling — likely to be split further at restoration.**
+- `substrate-and-skills` — likely 15–25 sources (Anthropic, OpenAI Codex, GitHub Copilot, Replit, Google Gemini, Notion, Every.to, StrongDM substrate + cookbook notebooks + agent-skills.io spec). **Also at risk of breaching the ceiling.**
+- `security-primitives` — likely 5–10 sources (CaMeL, AgentDojo, threat-model academic papers, governance overlap).
+- `ai-engineering-culture` — likely 5–10 sources (Brier + Schillace Sunday Letters + Lenny *How I AI* episodes on team ops + organizational research).
+- `meta-synthesis` — likely small (1–5), the home for counterfactual deep-research outputs and external syntheses.
+
+Future-iteration warning: `practitioner-harnesses` and `substrate-and-skills` are the two categories most likely to need splitting after restoration — both are projected to grow past the 15-source target. Likely splits: by author for harnesses; by vendor for substrate.

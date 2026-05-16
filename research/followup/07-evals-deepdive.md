@@ -42,6 +42,19 @@ Six URLs in the sources table flipped to ✅; the residual ⏳/⚠️ marks on t
 
 ---
 
+## Drain note (Cluster L cross-reference) — 2026-05-16
+
+The new **report 29 — Prompt Engineering Survey** (`research/29-prompt-engineering-survey.md`, drained 2026-05-16 from Schulhoff et al.'s *The Prompt Report*, arXiv:2406.06608v6) is the **academic taxonomy anchor for this thread's LLM-as-judge discussion**. Report 29 §5 (*LLM-as-judge — the §4.2 evaluation-prompting catalogue*) summarizes Schulhoff et al.'s five-pattern catalogue: **single-output judging**, **pairwise judging**, **reference-based judging**, **self-judging**, and **multi-criterion judging**. Each maps onto a pattern already discussed here:
+
+- *Single-output / multi-criterion* ↔ this report's §3 (Husain & Shankar's binary-per-AC pattern) and the Anthropic single-judge finding (verbatim from §2: *"a single LLM call with a single prompt outputting scores from 0.0-1.0 and a pass-fail grade was the most consistent and aligned with human judgements"*).
+- *Reference-based* ↔ this report's §3.9 (Hamel's Critique-Shadowing process).
+- *Self-judging* ↔ Schulhoff's Self-Criticism family (§2.5 of report 29) and the corpus' "Crusty Old Engineer" critic role in Amplifier (report 28).
+- *Pairwise* ↔ the LLM-arena pattern (referenced in §3 but not the canonical pattern this thread endorses).
+
+A non-obvious detail report 29 surfaces that is directly applicable to this thread: Schulhoff et al.'s own PRISMA *LLM-screen prompt* was validated against 100 ground-truth annotations at **89% precision / 75% recall / 81% F1** before being used to triage 3,985 papers (report 29 §1). This is the methodological recommendation they implicitly make for every judge prompt — calibrate against a small held-out human-labelled set before deploying. It corroborates the Hamel field-guide claim (this report §4.6) that few-shot critique examples in judge prompts *"often yields 15-20% higher agreement rates between human and LLM evaluations"* — both arrive at the same operational rule from independent directions. Report 29 §5 is therefore the canonical citation to use whenever the corpus needs to anchor the LLM-as-judge discipline in academic literature; this thread is the practitioner-grade companion.
+
+---
+
 ## 1. Why this thread exists
 
 Every architecture in `architectures/` depends on evaluation whose quality is taken for granted: Architecture 1 (Refinery) uses an LLM judge against ACs; Architecture 3 (Foundry) uses independent V&V agents at phase gates; Architecture 4 (Tournament) uses a fitness vector to drive selection; Architecture 2 (Atelier) uses a multi-persona review panel where reviewers act as judges. All four assume the judge / fitness / V&V is good enough to discriminate. Several primary sources push back on that assumption and supply concrete guidance. This report extracts the load-bearing ones and maps them onto our four architectures.

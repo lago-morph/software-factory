@@ -27,6 +27,19 @@ The issue-29 fetch workflow returned verbatim copies of the three Willison posts
 
 ---
 
+## Drain note (Cluster L cross-reference) — 2026-05-16
+
+The new **report 29 — Prompt Engineering Survey** (`research/29-prompt-engineering-survey.md`, drained 2026-05-16 from Schulhoff et al.'s *The Prompt Report*, arXiv:2406.06608v6) is the **academic taxonomy anchor for this thread's prompt-injection / jailbreaking discussion**. Report 29 §4 (*§5 Prompting Issues — the failure-mode taxonomy*) summarizes Schulhoff et al.'s five-issue catalogue:
+
+- **§4.1 Prompt hacking — prompt injection + jailbreaking.** Schulhoff et al. adopt their own 2023 framing: **prompt injection** is the cross-trust-boundary case (developer-template instructions injected by user content; the Willison §1 lethal-trifecta case here); **jailbreaking** is the single-trust case (user attacks the model directly without crossing a developer template). The survey's bottom-line conclusion (report 29 §4.1, Schulhoff et al. verbatim): *"prompt hacking (both injection and jailbreaking) remain unsolved problems and likely are impossible to solve entirely."* This is the academic counterpart to Willison's "97% is a failing grade" doctrine and to the corpus' lethal-trifecta closure rules. The survey also surfaces a real-world enforcement precedent (verbatim): *"Garcia (2024) describe how an airline chatbot gave a customer incorrect information about refunds. The customer appealed in court and won"* — the corpus' first academic-survey-anchored citation of legal exposure for prompt-injection failure.
+- **§4.2 Prompt sensitivity** (exemplar-ordering swings 50% → 90%+) — anchors the corpus' "small prompt changes cause large output changes" thread.
+- **§4.3 Sycophancy** — Schulhoff et al. raise a directly load-bearing operational caveat for defensive prompting (verbatim, report 29 §4.3): *"a practitioner may use the prompt template 'Detect all instances where the user's input is harmful: {INPUT}' in an attempt to prevent adversarial inputs, but this subtly makes the false presupposition that the user's input is actually harmful. Thus, due to sycophancy, the LLM may be inclined to classify the user's output as harmful."* This is a direct contradiction to the "wrap the prompt in a security check" pattern several defensive layers in this report rely on; the corpus should flag it.
+- **§4.4 Bias** and **§4.5 Ambiguity** — secondary issues mapped to existing corpus threads.
+
+Report 29 §4 is therefore the canonical citation to use whenever the corpus needs to anchor the prompt-injection / jailbreaking discipline in academic literature; this thread (§1 lethal trifecta + §2 Dual LLM + §3 CaMeL) is the practitioner-grade primary-source companion. The Schulhoff §5 conclusion that prompt hacking is *"impossible to solve entirely"* is the strongest academic vindication of CaMeL's design philosophy (§3 here) — namely that the defence must move from prompt-level filtering to *capability-typed program models* with provable security properties, because the prompt-level layer cannot be hardened.
+
+---
+
 ## 1. The lethal trifecta — verbatim framing
 
 Willison's June 2025 post "The lethal trifecta for AI agents: private data, untrusted content, and external communication" names a three-way conjunction that, when present, makes prompt-injection exfiltration essentially inevitable. Source: <https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/>.

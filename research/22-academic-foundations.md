@@ -36,6 +36,14 @@ The OpenAI *"Introducing SWE-bench Verified"* blog has been **flipped ❌ → �
 
 This drain replaces the swebench.com/verified-as-proxy framing in §4 below; the proxy framing is retained as a corroborating secondary source. Updates per-claim status markers `[2026-05-16 SWE-bench-Verified primary ✅]` where canonical text now anchors a claim.
 
+## Drain note (Cluster L manual MHTML capture) — 2026-05-16
+
+The Princeton PLI blog *"SWE-bench: Can Language Models Resolve Real-World GitHub Issues?"* has been **flipped ❌ → ✅** via manual MHTML capture drained on 2026-05-16 (`research/manual/SWE-bench_ Can Language Models Resolve Real-World GitHub Issues_ _ Princeton Language and Intelligence.mhtml`). The canonical text adds the authors' own framing — distinct from the swebench.com project pages — for:
+
+- **The 3-stage construction pipeline** (verbatim): *Stage I — Repo Selection and Data Scraping* (12 popular Python repos chosen for maintenance quality, clear contributor guidelines, and extensive test coverage); *Stage II — Attribute-Based Filtering* (merged PRs that resolve an issue **and** touch test files, indicating user-contributed verification tests); *Stage III — Execution-Based Filtering* (apply the PR, log before/after test results, drop unless ≥1 test transitions fail→pass and the install + runtime succeeds). swebench.com describes the end state; the PLI blog describes the funnel that produces it.
+- **The canonical "nutshell-bench" diagram**: a one-glance summary (Issue + Codebase → Language Model → Generated PR over real sklearn files → Unit Tests scoring 2/5 → 5/5 Fail-to-Pass) — saved to `research/figures/22-academic-foundations/swe-bench-nutshell.png` and embedded in §4 below. This is the authors' own framing of the benchmark's four primitives and is the visual most often reproduced in citing work.
+- **SWE-Llama release language** (verbatim): the blog confirms *"a training dataset and finetuned version of CodeLlama (SWE-Llama)"* in 7b and 13b variants released *"to promote open research in this domain"* — the academic predecessor of the OpenHands + mini-SWE-agent open-model thread.
+
 ## Sources reviewed
 
 Status legend: ✅ full primary text read · 🟡 abstract / project-page only · ❌ unobtainable.
@@ -50,7 +58,7 @@ Status legend: ✅ full primary text read · 🟡 abstract / project-page only �
 | S7 | SWE-agent docs (`swe-agent.com/latest/`, `/latest/background/aci/`) | https://swe-agent.com/latest/ | ✅ | Both pages fetched 2026-05-11. ACI doc lists four engineered features verbatim. Project banner now reads: "📣 We now recommend mini-swe-agent instead of SWE-agent: Same performance, much more simple & flexible". |
 | — (CodeGen) | Nijkamp et al. *CodeGen: An Open Large Language Model for Code with Multi-Turn Program Synthesis* (arXiv:2203.13474v5, last revised 27 Feb 2023; ICLR 2023 notable top 25%) | https://arxiv.org/abs/2203.13474 | ✅ (abstract + OpenReview) | Abstract + OpenReview record (forum_id=iaYcJKpY2B_) fetched. arXiv-HTML v5 render is nav-chrome only. |
 | — | OpenAI *Introducing SWE-bench Verified* (Aug 13, 2024; updated Feb 24, 2025) | https://openai.com/index/introducing-swe-bench-verified/ | ✅ | ✅ Primary MHTML capture drained 2026-05-16 (`research/manual/Introducing SWE-bench Verified _ OpenAI.txt`). The `openai.com/index/*` host was previously Cloudflare-blocked at the action runner; manual capture is the first canonical anchor. Provides the Preparedness Framework framing, the 1,699-sample → 500-instance filter mechanics, the 93-developer annotation campaign, and the re-measured GPT-4o lift (16% → 33.2%). Drives the upgraded §4 SWE-bench Verified subsection. |
-| — | Princeton PLI blog *SWE-bench: Can Language Models...* | https://pli.princeton.edu/blog/2023/swe-bench-... | ❌ | Fetched HTML is Cloudflare challenge — no body. swebench.com used instead. |
+| — | Princeton PLI blog *SWE-bench: Can Language Models Resolve Real-World GitHub Issues?* (Jimenez, Yang, Wettig, Yao, Pei, Press, Narasimhan) | https://pli.princeton.edu/blog/2023/swe-bench-can-language-models-resolve-real-world-github-issues | ✅ | ✅ Primary MHTML capture drained from manual `research/manual/` capture on 2026-05-16 (`research/manual/SWE-bench_ Can Language Models Resolve Real-World GitHub Issues_ _ Princeton Language and Intelligence.mhtml`). The `pli.princeton.edu` host was previously Cloudflare-blocked at the action runner; manual capture is the first canonical anchor for the authors' own blog framing. Provides the **3-stage construction pipeline** (Repo Selection + Data Scraping → Attribute-Based Filtering → Execution-Based Filtering) verbatim and the canonical *"nutshell-bench"* diagram (Issue + Codebase → Language Model → Generated PR over real sklearn files → Unit Tests scoring 2/5 → 5/5 Fail-to-Pass), embedded in §4 below. Also confirms the SWE-Llama 7b/13b fine-tunes and training dataset release. |
 
 **Date stamp on all benchmark numbers:** unless otherwise noted, every benchmark number in this report is the snapshot as of 2026-05-11. Benchmark numbers are time-sensitive; the SWE-bench leaderboard moves week-over-week.
 
@@ -132,6 +140,26 @@ The OpenReview TL;DR (verbatim) compresses it: "We open-source a large language 
 ## 4. SWE-bench (S5) — realistic-issue benchmarking, and its blind spots
 
 SWE-bench is the benchmark that finally made "can the model do my job" a falsifiable question.
+
+**The canonical "nutshell-bench" diagram (Princeton PLI blog, 2023 — primary capture 2026-05-16).**
+
+![SWE-bench in a nutshell — Issue + Codebase (sklearn) flow into a Language Model, which emits a Generated PR touching `gradient_boosting.py` / `helper.py`; the Unit Tests panel shows 2/5 → 5/5 Fail-to-Pass checks passing.](figures/22-academic-foundations/swe-bench-nutshell.png)
+
+*Caption: The authors' own one-glance summary of SWE-bench: the LM is handed the issue text and the codebase, must produce a PR over the real repo files, and is scored by Fail-to-Pass tests transitioning from a failing baseline (here 2/5) to passing all unit tests (5/5). The four boxes — Issue, Codebase, Language Model, Unit Tests — are the four load-bearing primitives of the benchmark and of every architecture that descends from it.*
+
+**The 3-stage construction pipeline (Princeton PLI blog, verbatim).** The Princeton PLI blog is the source where the authors describe the construction pipeline in their own framing:
+
+> "While the idea of constructing tests of issue-PR pairs is relatively simple, we find that real cases are noisy and require substantial filtering to ensure that … the pairs are actually solvable and useful cases. Considering the necessary filtering, SWE-bench is thus constructed through a 3-stage pipeline:
+>
+> **Stage I — Repo Selection and Data Scraping:** The process begins by gathering pull requests (PRs) from 12 popular open-source Python repositories on GitHub. These repositories were chosen for their maintenance quality, clear contributor guidelines, and extensive test coverage.
+>
+> **Stage II — Attribute-Based Filtering:** This stage involves selecting merged PRs that resolve a GitHub issue and include changes to the repository's test files, indicating the user likely contributed tests to verify the issue resolution.
+>
+> **Stage III — Execution-Based Filtering:** Here, PRs are applied, and the associated test results are logged before and after the application. PRs are filtered out if they don't have at least one test changing status from fail to pass or if they result in installation or runtime errors."
+
+The blog concludes: *"The resulting set consists of 2,294 issues with tests spanning the 12 repositories."* This is the authors' own corroboration of the 2,294-instance figure that the abstract reports, and the 3-stage funnel is the design discipline that makes Fail-to-Pass tractable as a scoring criterion — Stage II's "must touch tests" filter is what guarantees Stage III has a non-trivial test set to gate on. The pipeline maps directly onto AlphaCode's filter chain (§2 of this report: §4.5 example-test filter "removes approximately 99%") and is the academic prior for the Foundry phase-gate architecture and the StrongDM "scenarios as holdout set" methodology — every architecture in `architectures/` reproduces some flavor of this attribute-then-execution funnel for its own work product.
+
+**SWE-Llama (Princeton PLI blog, verbatim).** Alongside the benchmark, the authors release *"SWE-Llama 7b"* and *"SWE-Llama 13b"* finetuned models *"to promote open research in this domain"*, plus the SWE-bench training dataset. These are the first openly released fine-tunes targeting the real-issue-resolution task and are the academic predecessors of the OpenHands + mini-SWE-agent open-model lineage covered in `research/11-openhands-substrate-audit.md`.
 
 **The dataset (S5, abstract verbatim).** "an evaluation framework consisting of **2,294 software engineering problems** drawn from real GitHub issues and corresponding pull requests across **12 popular Python repositories**." The swebench.com home page elaborates: "Each instance is based on a pull request that (1) is associated with an issue, and (2) modified 1+ testing related files. Per instance, we construct an execution environment (Docker Image) with the repository successfully installed at the commit that the Pull Request is based on. Without the Pull Request's changes, a number of test(s) fail. After the Pull Request is merged, the same set of test(s) pass. These 'Fail-to-Pass' tests are the primary signal for evaluation."
 
@@ -247,11 +275,12 @@ This is the more important list. The four architectures all need to handle work 
 - **`research/11-openhands-substrate-audit.md`** — OpenHands' V1 SDK design principles (sandboxing opt-in; event-sourced linear history; LLM-centric tool interfaces) are direct lineal descendants of SWE-agent's ACI principles. The OpenHands paper's §4.4 "tool system" is the engineering-grade version of SWE-agent §3 / swe-agent.com/latest/background/aci/.
 - **§11.7 evals deep-dive** — `research/followup/07-evals-deepdive.md` is referenced in the brief but not yet merged on this branch as of 2026-05-11 (the followup directory contains no `07-evals-deepdive.md`). When merged, the natural cross-reference is from this report's §8(2) (test authoring under model uncertainty) and §8(7) (long-running maintenance) into the evals thread.
 - **`reference-only/chatgpt-deep-research-2026-05-11/sources.md`** §"Weak or missing citations" — flagged CodeGen, LangGraph, OpenHands, and Simon Willison as named-but-uncited in the original report. This report adopts arXiv:2203.13474v5 as the canonical CodeGen citation (ICLR 2023 notable top 25%).
+- **`research/29-prompt-engineering-survey.md`** — Schulhoff et al.'s *Prompt Report* (arXiv:2406.06608v6) catalogues the prompt-engineering techniques implicit in the SWE-agent ACI design (Tool-Use + Code-Generation + Observation-based agent sub-families in §4 of that report). The 58-technique taxonomy is the academic counterpart to the SWE-bench-and-descendants engineering thread covered here; report 29 §7 maps the techniques onto SWE-agent and Codex explicitly.
 
 ## 10. Open follow-ups
 
 1. **~~OpenAI "Introducing SWE-bench Verified" full text.~~ [2026-05-16 CLOSED — Cluster F manual MHTML capture]** Primary text now anchored; see §4 "SWE-bench Verified" subsection and the Cluster-F drain note above. The canonical text adds the Preparedness-Framework framing, the three concrete pre-Verified failure modes, the 93-developer / 1,699-sample / 4-level-severity / ensemble-3 annotation methodology, the 68.3% filter rate, and the 16% → 33.2% GPT-4o lift that the swebench.com/verified proxy did not surface.
-2. **Princeton PLI blog full text.** Same as above — Cloudflare-blocked. swebench.com is the substitute source.
+2. **~~Princeton PLI blog full text.~~ [2026-05-16 CLOSED — Cluster L manual MHTML capture]** Primary text now anchored; see §4 above for the canonical *"nutshell-bench"* diagram (saved to `figures/22-academic-foundations/swe-bench-nutshell.png`) and the verbatim 3-stage construction pipeline (Repo Selection + Data Scraping → Attribute-Based Filtering → Execution-Based Filtering), plus the SWE-Llama 7b/13b release language. Princeton PLI sources-row flipped ❌ → ✅; the swebench.com framing is retained as corroborating secondary.
 3. **arXiv full PDF body for SWE-bench v3 and SWE-agent v3.** The fetched HTML renderings returned only nav-chrome; abstracts are anchored, but §3 (ACI design principles) of the SWE-agent paper would be valuable to lock down beyond what the swe-agent.com docs page already provides verbatim.
 4. **Cross-reference with the merged evals deep-dive** when it lands on main.
 5. **Track the SWE-bench Verified leaderboard delta.** Today's >74% mini-SWE-agent number is the snapshot as of 2026-05-11; the next Round-N pass should re-date it. The 65% → >74% step (Jul 2025 → May 2026) is one 10-month interval; the cadence is visible.
@@ -266,4 +295,4 @@ This is the more important list. The four architectures all need to handle work 
 - ✅ direct full read: AlphaCode paper (ar5iv mirror full text), DeepMind AlphaCode blog, swebench.com home + /verified + /lite + /original, swe-agent.com/latest + ACI doc, mini-SWE-agent README, Salesforce CodeGen README.
 - ✅ abstract-anchored: SWE-bench (arXiv:2310.06770v3), SWE-agent (arXiv:2405.15793v3), CodeGen (arXiv:2203.13474v5), CodeGen ICLR 2023 OpenReview, SWE-agent NeurIPS 2024 OpenReview.
 - ✅ Cluster F manual drain (2026-05-16): OpenAI "Introducing SWE-bench Verified" blog primary-anchored.
-- ❌ still unobtainable (Cloudflare): Princeton PLI blog. Substituted by swebench.com primary pages.
+- ✅ Cluster L manual drain (2026-05-16): Princeton PLI blog primary-anchored. Provides the canonical *"nutshell-bench"* diagram embedded in §4 and the authors' own 3-stage construction pipeline (Repo Selection + Data Scraping → Attribute-Based Filtering → Execution-Based Filtering), plus the SWE-Llama 7b/13b + training dataset release. All five originally-Cloudflare-blocked URLs flagged in the 2026-05-11 drain note are now primary-anchored.

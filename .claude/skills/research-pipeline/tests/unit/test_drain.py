@@ -17,11 +17,12 @@ from tests.conftest import (
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
 SCRIPT_FILES = [
-    "_config.py", "url_canonicalize.py", "extract_url.py", "classify_text.py",
+    "_config.py", "url_canonicalize.py", "extract_url.py", "extract_title.py",
+    "classify_text.py",
     "validate-sources.py", "validate-config.py",
     "check-source-refs.py", "check-source-dirs.py",
     "check-fetch-provenance.py", "sanity-check-record.py",
-    "lint-sources.sh", "drain.py",
+    "audit-records.py", "lint-sources.sh", "drain.py",
 ]
 
 
@@ -198,3 +199,88 @@ class TestDrainImageInDrop:
         # Image stays in drop dir, gets flagged
         assert f.exists()
         assert "image in drop dir" in result.stdout.lower() or "image" in result.stdout.lower()
+
+
+class TestDrainExtractsTitle:
+    def test_html_title_lands_on_new_record(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        f = repo / "research" / "manual" / "post.html"
+        f.write_text(
+            '<html><head><link rel="canonical" href="https://example.com/post">'
+            '<title>My Real Title</title></head><body>x</body></html>'
+        )
+        subprocess.run(["git", "add", str(f)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--audit-mode", "never")
+        assert result.returncode == 0, result.stderr
+        data = json.loads((repo / "reference-only" / "sources.json").read_text())
+        record = next(iter(data.values()))
+        assert record["title"] == "My Real Title"
+
+    def test_url_list_records_keep_unknown_title(self, tmp_path):
+        # URL lists create wanted records with no file content yet, so the
+        # title stays "(unknown)" — audit will flag them, by design.
+        repo = _setup_repo(tmp_path)
+        url_file = repo / "research" / "manual" / "urls.txt"
+        url_file.write_text("https://example.com/x\n")
+        subprocess.run(["git", "add", str(url_file)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--audit-mode", "never")
+        assert result.returncode == 0
+        data = json.loads((repo / "reference-only" / "sources.json").read_text())
+        record = next(iter(data.values()))
+        assert record["title"] == "(unknown)"
+
+
+class TestDrainAuditIntegration:
+    def test_always_mode_invokes_audit(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        f = repo / "research" / "manual" / "post.html"
+        f.write_text(
+            '<html><head><link rel="canonical" href="https://example.com/post">'
+            '<title>T</title></head><body>x</body></html>'
+        )
+        subprocess.run(["git", "add", str(f)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--audit-mode", "always")
+        assert result.returncode == 0
+        # Audit section appears in summary
+        assert "## Audit" in result.stdout
+        assert "audit_after_ingestion" in result.stdout
+        # Drain stderr shows the audit ran
+        assert "Stage 4b" in result.stderr
+
+    def test_never_mode_skips_audit(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        f = repo / "research" / "manual" / "post.html"
+        f.write_text(
+            '<html><head><link rel="canonical" href="https://example.com/post">'
+            '<title>T</title></head><body>x</body></html>'
+        )
+        subprocess.run(["git", "add", str(f)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--audit-mode", "never")
+        assert result.returncode == 0
+        assert "Audit skipped" in result.stdout
+        # The "always-mode footer" should NOT appear, but the "skipped" note
+        # legitimately mentions the config key — check for the footer text instead.
+        assert "Configure in" not in result.stdout
+
+    def test_sometimes_mode_skips_url_list_only(self, tmp_path):
+        # Only a URL list, no actual file ingestion → "sometimes" skips audit
+        repo = _setup_repo(tmp_path)
+        url_file = repo / "research" / "manual" / "urls.txt"
+        url_file.write_text("https://example.com/x\n")
+        subprocess.run(["git", "add", str(url_file)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--audit-mode", "sometimes")
+        assert result.returncode == 0
+        # Audit didn't run (no material file changes)
+        assert "## Audit" not in result.stdout
+
+    def test_no_audit_flag_overrides(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        f = repo / "research" / "manual" / "post.html"
+        f.write_text(
+            '<html><head><link rel="canonical" href="https://example.com/post">'
+            '<title>T</title></head><body>x</body></html>'
+        )
+        subprocess.run(["git", "add", str(f)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--no-audit")
+        assert result.returncode == 0
+        assert "## Audit" not in result.stdout

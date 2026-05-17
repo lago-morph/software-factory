@@ -31,6 +31,21 @@ github:
   fetch_branch_prefix: fetched/issue-
   fetch_issue_label:   fetch-urls
 
+# When to run scripts/audit-records.py against records the drain pipeline
+# touched. The audit is a record-scoped mechanical checklist (file existence,
+# sha256, title-not-placeholder, category tag presence, format-ext match,
+# canonical URL round-trip, pointer chain integrity, fetch_provenance hygiene).
+#
+#   always    — audit after every drain run on every touched record. Default.
+#   sometimes — audit only when a touched record changed status (e.g., wanted
+#               → have). Cheaper for large bulk drains.
+#   never     — skip the audit. Use only if you accept the risk of latent
+#               record defects. The user can re-enable any time.
+#
+# When mode is `always`, the drain output includes a one-line reminder telling
+# the user where this knob lives so they can flip it without grepping.
+audit_after_ingestion: always
+
 # URLs matching these regex patterns are "casual mentions" — `check-source-refs.py`
 # skips them when verifying that every cited URL has a catalog record. Use for
 # things like social-media profiles, video links, app store entries, and tool
@@ -86,6 +101,7 @@ This same `--check` runs as a hard gate in CI for skill modifications (see `test
 | Bootstrap a fresh catalog (`sources.json` doesn't exist or is `{}`) | `resources/_catalog/bootstrap.md` |
 | Add multiple files to an existing record's directory | `resources/_catalog/manual-additions.md` |
 | Tag a record with one of the 15 canonical categories | `resources/_catalog/category-taxonomy.md` |
+| Run the post-ingestion audit on specific records | `resources/_catalog/audit.md` |
 | Run the drain pipeline (process `research/manual/` or `research/fetched/`) | `resources/_drain/workflow-overview.md` |
 | Write a new research report or extend one | `resources/_drain/stage-5-content-processing.md` |
 | Modify any script under `scripts/` | `resources/testing.md` |
@@ -105,6 +121,7 @@ Each resource doc is self-contained for its task. Loading two or three is normal
 6. **Files belong in `reference-only/<id>/`.** The directory IS the source identity. A file dropped into a record's directory is reconciled by id, not by content. Exceptions go in `files[].location` overrides.
 7. **A file with no extractable URL is fine IF it's in a known `<id>/` directory.** Directory placement substitutes for URL extraction. Files in ingestion drop directories WITHOUT a URL ARE flagged.
 8. **The `.regen-trigger` file is for debugging.** Normal operation uses the auto-regen workflow that fires on `sources.json` changes on `main`. The trigger file is the manual escape hatch when something goes wrong.
+9. **Audit findings are a forward-thinking signal.** When `scripts/audit-records.py` flags an issue on a record drain just touched, either fix the record OR extend `drain.py` so the next ingestion produces records that satisfy the check. Don't bypass the audit; that defeats the loop. See `resources/_catalog/audit.md`.
 
 ## Phase 0 — inventory pending work (run on every invocation)
 

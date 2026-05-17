@@ -35,7 +35,8 @@ SCRIPTS_SRC = REPO_ROOT / ".claude" / "skills" / "research-pipeline" / "scripts"
 
 LINT = "lint-sources.sh"
 SCRIPT_FILES = [
-    "_config.py", "url_canonicalize.py", "extract_url.py", "classify_text.py",
+    "_config.py", "url_canonicalize.py", "extract_url.py", "extract_title.py",
+    "classify_text.py",
     "validate-config.py", "validate-sources.py",
     "check-source-refs.py", "check-source-dirs.py",
     "check-fetch-provenance.py", "sanity-check-record.py",

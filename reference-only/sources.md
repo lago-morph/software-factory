@@ -7,9 +7,28 @@ To edit a source, use `jq` on `sources.json` and let the GitHub Action regenerat
 To find the full record for any source, search this file for the 10-char id, then
 `jq '.["<id>"]' reference-only/sources.json`.
 
-## § 1 — Complete *(135 records)*
+## § 1 — Complete *(141 records)*
 
 *Every registered file is present and complete.*
+
+### 366927b32e — (unknown) <a id="366927b32e"></a>
+<https://eugeneyan.com/404.html>
+- **Files:** html ✓
+
+### 6bea7182f9 — (unknown) <a id="6bea7182f9"></a>
+<https://arxiv.org/html/2505.13360v3>
+- **Files:** html ✓ · md ✓
+- **Cited in:** `research/26-prompt-underspecification-academic.md` *(1)*
+
+### 7beb3bc828 — (unknown) <a id="7beb3bc828"></a>
+<https://arxiv.org/html/2507.20439v1>
+- **Files:** html ✓ · md ✓
+- **Cited in:** `research/26-prompt-underspecification-academic.md` *(1)*
+
+### a3afc1e8c7 — (unknown) <a id="a3afc1e8c7"></a>
+<https://www.anthropic.com/engineering/multi-agent-research-system>
+- **Files:** html ✓ · md ✓
+- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
 
 ### 43e68409a4 — 2389-research/coven: Rust platform for orchestrating AI agents with tool capabilities and gRPC streaming <a id="43e68409a4"></a>
 <https://github.com/2389-research/coven>
@@ -154,6 +173,12 @@ To find the full record for any source, search this file for the 10-char id, the
 - **Files:** txt ✓
 - **Cited in:** `research/34-lenny-howiai-personal-harnesses.md` *(1)*
 
+### ffc229d838 — Building Effective Agents <a id="ffc229d838"></a>
+<https://www.anthropic.com/engineering/building-effective-agents>
+*Anthropic engineering — orchestrator-worker, evaluator-optimizer, augmented LLM patterns*
+- **Files:** html ✓ · md ✓
+- **Tags:** `agent-architecture` · `anthropic`
+
 ### a4a2c507c6 — Built by Agents, Tested by Agents, Trusted by Whom? - CodeX - Stanford Law School <a id="a4a2c507c6"></a>
 <https://law.stanford.edu/2026/02/08/built-by-agents-tested-by-agents-trusted-by-whom>
 - **Files:** html ✓ · md ✓
@@ -205,6 +230,12 @@ To find the full record for any source, search this file for the 10-char id, the
 <https://2389.ai/products/coven>
 - **Files:** txt ✓
 - **Cited in:** `research/07-dark-factory.md` · `research/followup/02-attractor-implementations.md` *(2)*
+
+### 0c4bb49f75 — Creating an LLM-as-a-Judge <a id="0c4bb49f75"></a>
+<https://hamel.dev/blog/posts/llm-judge>
+*Hamel Husain — operational manual for LLM judges (Critique Shadowing pattern)*
+- **Files:** html ✓ · md ✓
+- **Tags:** `evals`
 
 ### 3af462fa75 — danshapiro/kilroy <a id="3af462fa75"></a>
 <https://github.com/danshapiro/kilroy>
@@ -654,9 +685,49 @@ To find the full record for any source, search this file for the 10-char id, the
 *Hamel Husain — the philosophical root of LLM eval discipline*
 - **Files:** html ✓
 - **Tags:** `evals`
-## § 2 — Partial *(9 records)*
+## § 2 — Partial *(20 records)*
 
 *Has some content, but also files that are wanted, partial, or had fetch errors.*
+
+### 175cba9347 — (unknown) <a id="175cba9347"></a>
+<https://developers.openai.com/codex/guides/agents-md>
+- **Files:** html (want) · html ✓ · md ✓
+- **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
+
+### 24ca29ee98 — (unknown) <a id="24ca29ee98"></a>
+<https://arxiv.org/abs/2503.18813>
+- **Files:** html (want) · html ✓ · md ✓
+- **Cited in:** `research/followup/08-security-primitives.md` *(1)*
+
+### 3703e782c0 — (unknown) <a id="3703e782c0"></a>
+<https://www.danshapiro.com/blog/2026/02/you-dont-write-the-code>
+- **Files:** html (want) · html ✓ · md ✓
+- **Cited in:** `research/07-dark-factory.md` · `research/followup/01-shapiro-five-levels.md` *(2)*
+
+### 5cc5a296b6 — (unknown) <a id="5cc5a296b6"></a>
+<https://blog.replit.com/introducing-agent-3-our-most-autonomous-agent-yet>
+- **Files:** html (want) · html ✓ · md ✓
+- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
+
+### 73dc7199ce — (unknown) <a id="73dc7199ce"></a>
+<https://blog.replit.com/introducing-agent-4-built-for-creativity>
+- **Files:** html (want) · html ✓ · md ✓
+- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
+
+### 8334be0240 — (unknown) <a id="8334be0240"></a>
+<https://developers.openai.com/codex/subagents>
+- **Files:** html (want) · html ✓ · md ✓
+- **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
+
+### 9c9554d27e — (unknown) <a id="9c9554d27e"></a>
+<https://simonwillison.net/2025/Jun/16/the-lethal-trifecta>
+- **Files:** html (want) · html ✓ · md ✓
+- **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/08-security-primitives.md` *(2)*
+
+### dccefbfc62 — (unknown) <a id="dccefbfc62"></a>
+<https://developers.openai.com/codex/agent-approvals-security>
+- **Files:** html (want) · html ✓ · md ✓
+- **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
 
 ### 5c785e88b3 — 404 - GitHub Docs <a id="5c785e88b3"></a>
 <https://docs.github.com/en/copilot/concepts/agents/about-coding-agent>
@@ -665,6 +736,12 @@ To find the full record for any source, search this file for the 10-char id, the
 ### 85cdf07ac2 — 8090 Inc Blog <a id="85cdf07ac2"></a>
 <https://www.8090.inc/blog>
 - **Files:** html ✓
+
+### 71d2de09c6 — A Field Guide to Rapidly Improving AI Products <a id="71d2de09c6"></a>
+<https://hamel.dev/blog/posts/field-guide>
+*Hamel Husain — experiments-not-features roadmap reframe + NurtureBoss case study*
+- **Files:** html (want) · html ✓ · md ✓
+- **Tags:** `evals`
 
 ### e6f77b9e81 — A Manifesto for Agentic Development <a id="e6f77b9e81"></a>
 <https://jayminwest.substack.com/p/a-manifesto-for-agentic-development>
@@ -677,12 +754,24 @@ To find the full record for any source, search this file for the 10-char id, the
 
 ### f8007cc630 — An AI State of the Union | Simon Willison (Lenny's Newsletter) <a id="f8007cc630"></a>
 <https://www.lennysnewsletter.com/p/an-ai-state-of-the-union>
-- **Files:** html ✓ · html ✓ · txt ✓ · txt ✓ · html (want)
+- **Files:** html ✓ · html ✓ · txt ✓ · txt ✓ · html (want) · md ✓
 - **Cited in:** `research/06-hn-and-lenny.md` *(1)*
 
 ### 3274cc670c — Devin (Cognition AI) <a id="3274cc670c"></a>
 <https://www.cognition.ai/blog/devin>
 - **Files:** html ✓
+
+### 18856eb4cf — FAQs About AI Evals <a id="18856eb4cf"></a>
+<https://hamel.dev/blog/posts/evals-faq>
+*Husain & Shankar — 60-80% of dev time on error analysis*
+- **Files:** html (want) · html ✓ · md ✓
+- **Tags:** `evals`
+
+### 53ed6e363d — Simon Willison — CaMeL paper writeup <a id="53ed6e363d"></a>
+<https://simonwillison.net/2025/Apr/11/camel>
+*Willison summary of the CaMeL prompt-injection defense paper*
+- **Files:** html (want) · html ✓ · md ✓
+- **Tags:** `security` · `prompt-injection`
 
 ### 5492497a11 — Tabnine Docs (Server Setup Guide) <a id="5492497a11"></a>
 <https://docs.tabnine.com/main/administering-tabnine/private-installation/server-setup-guide>
@@ -696,117 +785,31 @@ To find the full record for any source, search this file for the 10-char id, the
 <https://medium.com/@welkaim/about>
 - **Files:** txt ✓ · html ✓ · html ✓
 - **Cited in:** `research/07-dark-factory.md` *(1)*
-## § 3a — Wanted (URL known) *(18 records)*
+## § 3a — Wanted (URL known) *(2 records)*
 
 *URL is known but no content acquired yet.*
 
-### 175cba9347 — (unknown) <a id="175cba9347"></a>
-<https://developers.openai.com/codex/guides/agents-md>
-- **Files:** html (want)
-- **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
-
-### 24ca29ee98 — (unknown) <a id="24ca29ee98"></a>
-<https://arxiv.org/abs/2503.18813>
-- **Files:** html (want)
-- **Cited in:** `research/followup/08-security-primitives.md` *(1)*
-
-### 3703e782c0 — (unknown) <a id="3703e782c0"></a>
-<https://www.danshapiro.com/blog/2026/02/you-dont-write-the-code>
-- **Files:** html (want)
-- **Cited in:** `research/07-dark-factory.md` · `research/followup/01-shapiro-five-levels.md` *(2)*
-
-### 5cc5a296b6 — (unknown) <a id="5cc5a296b6"></a>
-<https://blog.replit.com/introducing-agent-3-our-most-autonomous-agent-yet>
-- **Files:** html (want)
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 6bea7182f9 — (unknown) <a id="6bea7182f9"></a>
-<https://arxiv.org/html/2505.13360v3>
-- **Files:** html (want)
-- **Cited in:** `research/26-prompt-underspecification-academic.md` *(1)*
-
-### 73dc7199ce — (unknown) <a id="73dc7199ce"></a>
-<https://blog.replit.com/introducing-agent-4-built-for-creativity>
-- **Files:** html (want)
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 7beb3bc828 — (unknown) <a id="7beb3bc828"></a>
-<https://arxiv.org/html/2507.20439v1>
-- **Files:** html (want)
-- **Cited in:** `research/26-prompt-underspecification-academic.md` *(1)*
-
-### 8334be0240 — (unknown) <a id="8334be0240"></a>
-<https://developers.openai.com/codex/subagents>
-- **Files:** html (want)
-- **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
-
-### 9c9554d27e — (unknown) <a id="9c9554d27e"></a>
-<https://simonwillison.net/2025/Jun/16/the-lethal-trifecta>
-- **Files:** html (want)
-- **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/08-security-primitives.md` *(2)*
-
-### a3afc1e8c7 — (unknown) <a id="a3afc1e8c7"></a>
-<https://www.anthropic.com/engineering/multi-agent-research-system>
-- **Files:** html (want)
-- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
-
-### dccefbfc62 — (unknown) <a id="dccefbfc62"></a>
-<https://developers.openai.com/codex/agent-approvals-security>
-- **Files:** html (want)
-- **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
-
-### 71d2de09c6 — A Field Guide to Rapidly Improving AI Products <a id="71d2de09c6"></a>
-<https://hamel.dev/blog/posts/field-guide>
-*Hamel Husain — experiments-not-features roadmap reframe + NurtureBoss case study*
-- **Files:** html (want)
-- **Tags:** `evals`
-
 ### 991f3bf0f6 — About Copilot Workspace (GitHub Docs) <a id="991f3bf0f6"></a>
 <https://docs.github.com/en/copilot/copilot-workspace/about-copilot-workspace>
-- **Files:** html (want)
+- **Files:** html (skip)
 - **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
 
-### ffc229d838 — Building Effective Agents <a id="ffc229d838"></a>
-<https://www.anthropic.com/engineering/building-effective-agents>
-*Anthropic engineering — orchestrator-worker, evaluator-optimizer, augmented LLM patterns*
-- **Files:** html (want)
-- **Tags:** `agent-architecture` · `anthropic`
-
-### 0c4bb49f75 — Creating an LLM-as-a-Judge <a id="0c4bb49f75"></a>
-<https://hamel.dev/blog/posts/llm-judge>
-*Hamel Husain — operational manual for LLM judges (Critique Shadowing pattern)*
-- **Files:** html (want)
-- **Tags:** `evals`
-
-### caad3c1702 — Eugene Yan — LLM Evaluator <a id="caad3c1702"></a>
-<https://eugeneyan.com/writing/llm-evaluator>
+### ade5ef8d76 — Eugene Yan — LLM Evaluators <a id="ade5ef8d76"></a>
+<https://eugeneyan.com/writing/llm-evaluators>
 *Third core eval source (with Husain and Anthropic multi-agent)*
 - **Files:** html (want)
 - **Tags:** `evals`
-
-### 18856eb4cf — FAQs About AI Evals <a id="18856eb4cf"></a>
-<https://hamel.dev/blog/posts/evals-faq>
-*Husain & Shankar — 60-80% of dev time on error analysis*
-- **Files:** html (want)
-- **Tags:** `evals`
-
-### 53ed6e363d — Simon Willison — CaMeL paper writeup <a id="53ed6e363d"></a>
-<https://simonwillison.net/2025/Apr/11/camel>
-*Willison summary of the CaMeL prompt-injection defense paper*
-- **Files:** html (want)
-- **Tags:** `security` · `prompt-injection`
 ## § 3b — Wanted (title only) *(0 records)*
 
 *Title + search hints only; no URL yet.*
 
 *(none)*
 
-## § 4 — Superseded *(0 records)*
+## § 4 — Superseded *(1 records)*
 
 *Records replaced by another; pointer_to is set.*
 
-*(none)*
-
+### caad3c1702 ~~Eugene Yan — LLM Evaluator~~ → see [ade5ef8d76](#ade5ef8d76)
 ---
 
-*Generated 2026-05-17 17:15:47 UTC*
+*Generated 2026-05-17 17:26:16 UTC*

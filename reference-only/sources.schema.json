@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lago-morph/software-factory/blob/main/reference-only/sources.schema.json",
+  "title": "Research source catalog",
+  "description": "Authoritative catalog of every source referenced by research reports. Top-level object is a map of {id -> record}. Each record's id is sha256(canonical_url)[:10]. Files for a record physically live at reference-only/<id>/<filename> unless files[].location overrides.",
+  "type": "object",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^[0-9a-f]{10}$": { "$ref": "#/$defs/record" }
+  },
+  "$defs": {
+    "record": {
+      "type": "object",
+      "required": ["id", "title"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{10}$",
+          "description": "First 10 hex chars of sha256(canonical_url). Must match the parent map key."
+        },
+        "pointer_to": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{10}$",
+          "description": "If non-null, this record is superseded; canonical content lives at the pointed-to record. Use when we discover an earlier record had the wrong URL or when an upstream URL was renamed."
+        },
+        "canonical_url": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "description": "The URL whose sha256 prefix is this record's id. Required unless the record was created title-only (search hints set)."
+        },
+        "original_url": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "description": "The pre-canonicalization URL if it differed from canonical_url. Useful for back-references from old links."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The source's own title, not the URL or filename. Use '(unknown)' if not yet determined."
+        },
+        "short_summary": {
+          "type": ["string", "null"],
+          "maxLength": 120,
+          "description": "8-10 word summary suitable for the markdown browse view."
+        },
+        "long_summary": {
+          "type": ["string", "null"],
+          "description": "Paragraph-length summary of the source's content and relevance."
+        },
+        "comments": {
+          "type": ["string", "null"],
+          "description": "Unstructured notes about the record itself (not file-specific; file-specific notes live in files[].comment)."
+        },
+        "search_hints": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "object",
+            "required": ["hint"],
+            "additionalProperties": false,
+            "properties": {
+              "hint":  { "type": "string" },
+              "tried": { "type": "boolean", "default": false },
+              "found": { "type": "boolean", "default": false }
+            }
+          },
+          "description": "Free-form hints for locating the source. Each hint gets marked tried/found as it's exhausted."
+        },
+        "has_useful_diagrams": {
+          "enum": ["yes", "no", "unknown"],
+          "default": "unknown"
+        },
+        "references_from": {
+          "type": "array",
+          "default": [],
+          "items": { "type": "string" },
+          "description": "Repo-relative paths of research reports that cite this source's canonical_url. Auto-derived by check-source-refs."
+        },
+        "tags": {
+          "type": "array",
+          "default": [],
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "uniqueItems": true,
+          "description": "Lowercase kebab-case category tags."
+        },
+        "bibliographic": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "authors":    { "type": "array", "items": { "type": "string" } },
+            "year":       { "type": ["integer", "null"], "minimum": 1900, "maximum": 2100 },
+            "title":      { "type": ["string", "null"] },
+            "venue":      { "type": ["string", "null"] },
+            "doi":        { "type": ["string", "null"] },
+            "raw_bibtex": { "type": ["string", "null"], "description": "Escape hatch when structured fields don't fit (transcripts, blog posts, etc.)." }
+          }
+        },
+        "files": {
+          "type": "array",
+          "default": [],
+          "items": { "$ref": "#/$defs/file" },
+          "description": "Every physical file representing this source, OR file entries with ingestion_status=want representing desired formats not yet acquired."
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "required": ["format", "ingestion_status"],
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "enum": [
+            "html", "mhtml", "md", "txt", "pdf", "ipynb", "bibtex",
+            "image/png", "image/jpeg", "image/svg+xml", "image/gif", "image/webp",
+            "video/mp4", "audio/mp3",
+            "json", "yaml", "csv", "zip", "other"
+          ],
+          "description": "MIME-style format identifier. 'other' for anything not in the enum."
+        },
+        "filename": {
+          "type": ["string", "null"],
+          "description": "Basename only (no path). Default location is reference-only/<id>/<filename>. Null when ingestion_status=want and no specific filename is desired yet."
+        },
+        "location": {
+          "type": ["string", "null"],
+          "description": "Override the default reference-only/<id>/<filename> path. Use for legacy files that live under reference-only/<topic>/ or for shared assets in research/figures/."
+        },
+        "sha256": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 of the file content. Computed and stored when ingestion_status=have."
+        },
+        "ingestion_status": {
+          "enum": ["have", "want", "skip-not-necessary", "skip-unknown"],
+          "description": "have=file present on disk; want=we want this format/file but don't have it; skip-not-necessary=we have what we need in other formats; skip-unknown=we don't know if we want it."
+        },
+        "completeness": {
+          "enum": ["complete", "partial", "error", "unknown"],
+          "default": "unknown",
+          "description": "complete=full content captured; partial=truncated/missing sections; error=fetch produced an error page (404, paywall, JS shell); unknown=not yet verified."
+        },
+        "comment": {
+          "type": ["string", "null"],
+          "description": "File-specific notes. For images, this is where the image's auto-generated summary lives."
+        },
+        "fetch_provenance": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "issue_number": { "type": ["integer", "null"], "minimum": 1 },
+            "pr_number":    { "type": ["integer", "null"], "minimum": 1 },
+            "branch":       { "type": ["string", "null"] },
+            "status":       { "enum": ["open", "merged", "closed", "abandoned", null] }
+          },
+          "description": "When this file was acquired via the fetch-blocked-urls workflow, track the issue/PR/branch so linters can flag stale open work once the file is complete."
+        }
+      }
+    }
+  }
+}

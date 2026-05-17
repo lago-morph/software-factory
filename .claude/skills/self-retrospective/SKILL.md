@@ -1,6 +1,6 @@
 ---
 name: self-retrospective
-description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produces a structured retrospective on disk at `retrospective/YYYY-MM-DD-PPP.md` (where `PPP` is the highest PR number covered by the retro) plus a sibling directory with one self-contained spec per suggested skill and a consolidated `AGENTS-suggestions.md` whose sections each carry exact proposed agents-file text plus a persuasion argument. Also lists proposed ADRs (just titles — the user decides whether to author them) in both the report file and the inline chat summary. Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", or "anything to add to the agents file?", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
+description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produces a structured retrospective on disk at `retrospective/YYYY-MM-DD-PPP.md` (where `PPP` is the highest PR number covered by the retro) plus a sibling directory with one self-contained spec per suggested skill (each carrying a durable `SKILL-SPEC-<hash>` ID), one full ADR draft per proposed architectural decision (each carrying a durable `ADR-<hash>` ID), and a consolidated `AGENTS-suggestions.md` whose sections each carry exact proposed agents-file text plus a persuasion argument. Session-aware: if a previous retrospective was already committed during the current session, the new retro is scoped to material after that commit. Has a secondary **reprocess** mode (`/retrospective reprocess <retro>`) that walks one or more old retros, renames their skill specs to carry `SKILL-SPEC-<hash>` IDs, and tries to back-fill the deferred ADRs from the retro report + skill specs + PR diffs — stopping (and writing an `ADR-DRAFT-<title>.md` with a pre-computed UID hash) when there is not enough context to author a complete ADR. Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", "anything to add to the agents file?", "reprocess the retro", "back-fill the ADRs", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
 ---
 
 # Skill: self-retrospective
@@ -8,12 +8,24 @@ description: Harvest the knowledge accumulated in a session before it's lost to 
 Harvest session knowledge before context truncation. Default output is a
 **filesystem package** at `retrospective/` plus a short inline summary.
 The package is structured so each suggested skill has a self-contained
-spec a fresh-context agent can implement from that one file, and the
-proposed agents-file additions live in one consolidated, persuasive
-document. Proposed ADRs — architectural decisions made in the session
-that the user *might* want to record formally — are listed in both the
-report file and the chat summary, but **without specs**: the user
-decides per ADR whether to author it.
+spec a fresh-context agent can implement from that one file, each
+proposed architectural decision has a full ADR draft (same level of
+detail as a skill spec), and the proposed agents-file additions live in
+one consolidated, persuasive document.
+
+The skill has two modes:
+
+- **Forward mode** (default) — generate a retrospective for the current
+  session. Steps 0 through 7 below.
+- **Reprocess mode** (`/retrospective reprocess <retro-name-or-path>`)
+  — walk one or more existing retros, back-fill durable IDs onto their
+  skill specs, and try to author the deferred ADRs from the retro
+  report + specs + PR information. Documented in the "Reprocess mode"
+  section near the end of this file. The hard rule for reprocess mode:
+  if a proposed ADR can't be authored confidently from the available
+  evidence, **STOP** and write an `ADR-DRAFT-<title>.md` placeholder
+  instead of guessing — the user can return to the source session to
+  fill it in.
 
 ---
 
@@ -48,10 +60,100 @@ Offer when **any** of these apply:
 
 | Invocation | Behavior |
 |------------|----------|
-| `/retrospective` | Default — full on-disk package + inline summary. |
-| `/retrospective --no-skills` | Skip per-skill specs; only narrative, commit log, and `AGENTS-suggestions.md`. |
+| `/retrospective` | Default forward mode — full on-disk package + inline summary. |
+| `/retrospective --no-skills` | Skip per-skill specs; only narrative, commit log, AGENTS-suggestions, and ADR drafts. |
+| `/retrospective --no-adrs` | Skip ADR drafts; emit only Part 4 title list (legacy behaviour). |
 | `/retrospective --pr` | After writing the package, push the branch and open a PR. |
-| `/retrospective --since "YYYY-MM-DD"` | Scope material to after this point. |
+| `/retrospective --since "YYYY-MM-DD"` | Force a specific lower bound, overriding session-scope detection. |
+| `/retrospective --full-session` | Disable session-scope auto-narrowing — cover the entire session even if a prior retro was committed during it. |
+| `/retrospective reprocess <retro>` | Switch to reprocess mode. `<retro>` is a retro basename (e.g. `2026-05-14-42`) or a glob. See "Reprocess mode" below. |
+| `/retrospective reprocess --all` | Reprocess every retro under `retrospective/` that predates the durable-ID convention. |
+
+---
+
+## Durable identifiers (mandatory)
+
+Every per-skill spec and every proposed ADR (full or draft) carries a
+durable, hash-based identifier. The identifier exists so an artifact
+can be referenced across sessions, file renames, and history rewrites
+without ambiguity.
+
+### Format
+
+- `SKILL-SPEC-<hash>` for a per-skill spec.
+- `ADR-<hash>` for a proposed ADR (full draft or `ADR-DRAFT-…`).
+
+`<hash>` is the **first 10 hex characters of the SHA256 of a stable
+canonical form** of the artifact's content at the moment the identifier
+is first assigned.
+
+### Canonical form
+
+```
+<TITLE>\n\n<INTENT_OR_DECISION_PARAGRAPH>\n
+```
+
+- `<TITLE>` — the proposed title verbatim (no number, no prefix).
+- `<INTENT_OR_DECISION_PARAGRAPH>` — for skill specs, the one-paragraph
+  intent. For ADRs, the one-sentence decision (or, for ADR-DRAFTs where
+  the decision is still vague, the one-sentence problem statement from
+  the retro's Part 4 rationale).
+
+### Compute
+
+```bash
+printf '%s\n\n%s\n' "$TITLE" "$INTENT_OR_DECISION" \
+  | sha256sum | head -c 10
+```
+
+Or, equivalently in Python:
+
+```bash
+python3 -c '
+import hashlib, sys
+title = sys.argv[1]
+body  = sys.argv[2]
+print(hashlib.sha256(f"{title}\n\n{body}\n".encode()).hexdigest()[:10])
+' "$TITLE" "$INTENT_OR_DECISION"
+```
+
+### Immutability rule (critical)
+
+Once the ID is assigned and written into the file, it is **frozen**.
+Never recompute the hash on subsequent edits — not when the title is
+copy-edited, not when the body is rewritten, not when status flips
+Proposed → Accepted, not when references are added. The hash exists
+purely for uniqueness and durable cross-reference; it is not a content
+checksum.
+
+If an editor accidentally regenerates an ID, restore the original from
+git history. The link from a retrospective to its ADRs and specs depends
+on the IDs not drifting.
+
+### Location of the ID inside the file
+
+The ID lives on a metadata bullet right under the H1:
+
+```markdown
+# Spec: `<skill-id>`
+
+- **ID**: SKILL-SPEC-<hash>
+- **Source retrospective**: ../<retro-basename>.md
+```
+
+```markdown
+# ADR: <Title in Sentence Case>
+
+- **ID**: ADR-<hash>
+- **Status**: Draft (not yet adopted to docs/adr/)
+- **Date**: YYYY-MM-DD
+- **Source retrospective**: ../<retro-basename>.md
+```
+
+When such an ADR draft is later promoted into `docs/adr/NNNN-kebab.md`
+via the `adr` skill, the **ID line is preserved verbatim**. The
+`NNNN` number is a separate human-friendly sequence; the hash is the
+durable identifier.
 
 ---
 
@@ -79,6 +181,58 @@ Use whichever is available. If the agent's environment supports more than
 one, prefer running two and confirming they agree. Save the result as
 `UTC_DATE`. **The retrospective text must report which tool produced the
 date** so a future reader can audit the provenance.
+
+---
+
+## Step 0.5 — session-scope check (forward mode only)
+
+If a retrospective was already committed earlier in the **current
+session**, the new retro should cover only material produced since that
+prior retro — not re-cover everything from session start. Without this
+narrowing, two retros from the same session redundantly analyze the
+same commits.
+
+The heuristic is purely git-driven so it works without any session-id
+plumbing:
+
+```bash
+# Most-recent commit on the current branch (not yet merged to main) that
+# touched retrospective/. If empty, no prior retro exists in this session.
+LAST_RETRO_COMMIT=$(git log origin/main..HEAD --format='%H' \
+  -- retrospective/ | head -1)
+```
+
+If `$LAST_RETRO_COMMIT` is non-empty, set the harvest's lower bound to
+that commit:
+
+```bash
+SCOPE_FROM="$LAST_RETRO_COMMIT"
+SCOPE_LABEL="since ${LAST_RETRO_COMMIT:0:7} (previous retrospective in this session)"
+```
+
+Otherwise:
+
+```bash
+SCOPE_FROM="$(git merge-base origin/main HEAD)"
+SCOPE_LABEL="full session (from branch divergence)"
+```
+
+The `--since "YYYY-MM-DD"` flag overrides this with a wall-clock lower
+bound. The `--full-session` flag disables the auto-narrowing.
+
+Record the chosen scope in the report header:
+
+```markdown
+- **Scope**: <SCOPE_LABEL>
+```
+
+This makes the audit trail explicit: a future reader can see exactly
+which commit range each retro covered, and they tile without overlap.
+
+When the narrowed scope yields fewer than two non-retrospective commits,
+**warn the user inline** and ask whether to proceed — a near-empty
+retrospective is usually a sign the user invoked it too soon. Do not
+abort; just confirm.
 
 ---
 
@@ -243,10 +397,22 @@ outlives the session — a default tool / library / pattern, a structural
 convention, a security gate, a workflow contract. Each becomes a
 **proposed-ADR candidate**.
 
-Do **NOT** write specs for these — the report lists only their titles
-plus a one-line rationale. After the retrospective lands, the user
-decides per ADR whether to author it (using the `adr` skill).
-Speculative proposals are fine to list; the user prunes.
+**Write a full ADR draft for each candidate** in the sibling directory
+(see Step 5.5 below). Same level of detail as a skill spec — Context,
+Decision, Alternatives considered, Consequences, References. The draft
+carries a frozen `ADR-<hash>` ID. The user can later promote any draft
+to `docs/adr/NNNN-kebab-title.md` via the `adr` skill, and the ID
+follows the file into its permanent home.
+
+Rationale: the title-only convention used to be enough, but on
+context-truncated session restarts a one-line rationale doesn't recover
+the decision; the full draft does. The user still decides whether to
+*adopt* each ADR into `docs/adr/` — but the rich content is captured at
+the moment the decision was fresh, not extrapolated months later.
+
+Skip writing a draft only if the "decision" was tactical (single file,
+not architectural). The bar for inclusion in the proposed-ADR list is
+the same as before; only the artifact format changed.
 
 ---
 
@@ -295,12 +461,13 @@ unplanned but mattered.)
 
 ## Part 2 — skills summary
 
-| Skill | Priority | Approx scope | Spec |
-|-------|----------|--------------|------|
-| `<id>` | high/med/low | <1–3 words> | [./${UTC_DATE}-${PR}/<id>-spec.md](./${UTC_DATE}-${PR}/<id>-spec.md) |
+| Skill | ID | Priority | Approx scope | Spec |
+|-------|----|----------|--------------|------|
+| `<id>` | SKILL-SPEC-<hash> | high/med/low | <1–3 words> | [./${UTC_DATE}-${PR}/<id>-SKILL-SPEC-<hash>.md](./${UTC_DATE}-${PR}/<id>-SKILL-SPEC-<hash>.md) |
 
 (One row per skill candidate. Detailed specs live in the sibling
-directory, not inline.)
+directory, not inline. The ID is the durable hash-based identifier
+described in the "Durable identifiers" section above.)
 
 ## Part 3 — agents-file suggestions
 
@@ -312,12 +479,18 @@ argument.
 ## Part 4 — proposed ADRs
 
 Architectural decisions made in this session that the user may want to
-record as ADRs. **Titles only — no specs.** Use the `adr` skill to
-author any of these if you decide they're worth recording.
+record as ADRs. Each candidate has a **full draft** in the sibling
+directory, carrying a frozen `ADR-<hash>` ID. The user can adopt any
+draft by invoking the `adr` skill, which moves it to
+`docs/adr/NNNN-kebab-title.md` while preserving the ID.
 
-- **<Proposed ADR title>** — <one-line rationale grounded in a session moment>.
-- **<Proposed ADR title>** — <one-line rationale>.
-- ...
+| ID | Title | Draft |
+|----|-------|-------|
+| ADR-<hash> | <Proposed ADR title> | [./${UTC_DATE}-${PR}/<kebab-title>-ADR-<hash>.md](./${UTC_DATE}-${PR}/<kebab-title>-ADR-<hash>.md) |
+
+One-line rationale per draft (the same one-liner the legacy format
+used) appears in the draft's `## Context` opening sentence; no need to
+duplicate it here.
 ````
 
 **Hard cap**: keep the main report under ~3500 words. Detail lives in the
@@ -327,7 +500,13 @@ sibling directory.
 
 ## Step 5 — write per-skill specs
 
-For each skill candidate, write `${SIBLING_DIR}/<skill-id>-spec.md`.
+For each skill candidate:
+
+1. Compute `HASH = sha256(TITLE\n\nINTENT_PARAGRAPH\n)[:10]` (see the
+   "Durable identifiers" section above).
+2. Write the spec to
+   `${SIBLING_DIR}/<skill-id>-SKILL-SPEC-${HASH}.md`.
+3. Put `**ID**: SKILL-SPEC-${HASH}` on the metadata bullet under the H1.
 
 **Each spec must be self-contained.** A fresh-context agent given only
 this file as a brief should be able to build the skill without seeing
@@ -337,6 +516,9 @@ Required sections per skill spec:
 
 ```markdown
 # Spec: `<skill-id>`
+
+- **ID**: SKILL-SPEC-<hash>
+- **Source retrospective**: ../<retro-basename>.md
 
 ## Intent
 
@@ -387,6 +569,72 @@ session, it has failed.
 
 Word count target per spec: 400–1200 words. The skill's complexity sets
 the actual length.
+
+---
+
+## Step 5.5 — write per-ADR draft files
+
+For each proposed-ADR candidate identified in §3.9, write
+`${SIBLING_DIR}/<kebab-title>-ADR-<hash>.md`.
+
+Compute the hash from the canonical form (see the "Durable identifiers"
+section): `TITLE\n\nONE_SENTENCE_DECISION\n`. Freeze it the moment it's
+assigned.
+
+Each draft follows the same section structure as a real ADR (so
+adoption via the `adr` skill is a straight file-move + number
+assignment, not a rewrite):
+
+```markdown
+# ADR: <Title in Sentence Case>
+
+- **ID**: ADR-<hash>
+- **Status**: Draft (not yet adopted to docs/adr/)
+- **Date**: ${UTC_DATE}
+- **Source retrospective**: ../<retro-basename>.md
+- **PRs covered**: #<N>, #<M>, ...
+
+## Context
+
+What is the issue that motivated this decision? Be evidence-driven. Cite
+the session moment, the bug, the workaround, the spec contradiction —
+whatever made this a binding architectural call rather than a tactical
+implementation choice. One or two short paragraphs.
+
+## Decision
+
+The chosen option in one sentence at the top. Expand below if needed.
+
+## Alternatives considered
+
+For each meaningfully-considered alternative: what it is, why it was
+rejected. At least one alternative — if none, justify briefly.
+
+## Consequences
+
+What becomes easier, what becomes harder, what trade-off we accept.
+
+## References
+
+Relative links to the source retrospective and the relevant skill specs
+in the sibling directory. Absolute URLs only for external sources.
+
+- [`../<retro-basename>.md`](../<retro-basename>.md) — the source retrospective.
+- [`./<skill-id>-SKILL-SPEC-<hash>.md`](./<skill-id>-SKILL-SPEC-<hash>.md) — related skill spec(s).
+- PRs the decision was made in: #N, #M, …
+```
+
+**Quality bar**: a fresh-context agent reading only this draft should be
+able to either (a) adopt it into `docs/adr/` via the `adr` skill or (b)
+challenge / supersede it. If the draft defers to the session ("see the
+discussion for details"), it has failed.
+
+Word count target per draft: 400–1000 words. ADRs are decision records,
+not design documents — keep each section short.
+
+**Do NOT** write to `docs/adr/` from this skill. The draft lives in the
+sibling directory until the user explicitly adopts it. This preserves
+the user's editorial control over the numbered ADR log.
 
 ---
 
@@ -457,11 +705,14 @@ After writing all artifacts:
 
 1. **Print a short inline summary** in chat (not the full retrospective):
    - Path to the main report.
-   - Skill count + names + paths to specs.
+   - Skill count + names + IDs + paths to specs.
    - AGENTS-suggestions count + path.
-   - **Proposed ADRs** — bulleted list of titles only (no specs, no
-     detail). One line per proposed ADR. Tell the user they can author
-     any of them via the `adr` skill.
+   - **Proposed ADR drafts** — one line each: `ADR-<hash> — <title> — <path>`.
+     Tell the user they can adopt any draft into `docs/adr/` via the
+     `adr` skill (which preserves the ID).
+   - The chosen **scope label** from Step 0.5 — so the user can see at
+     a glance whether the retro covered the full session or only the
+     tail since the previous retrospective.
 
 2. **Commit the artifacts** on the current branch:
 
@@ -505,11 +756,25 @@ the path. The inline summary should fit in ~20 lines.
   name.
 - **Per-skill specs that defer to the session.** A spec that says "see
   the session for details" has failed its job. Specs must stand alone.
-- **Writing specs for proposed ADRs.** Proposed ADRs are titles +
-  one-line rationale only. **Do not** produce a draft body or a spec
-  file per proposed ADR — the user decides per ADR whether to invest.
-  The `adr` skill is the right tool when they do; this skill just
-  surfaces the candidates.
+- **Regenerating an immutable ID hash.** Once `SKILL-SPEC-<hash>` or
+  `ADR-<hash>` is written into a file, it never changes — not on title
+  copy-edits, not on body rewrites, not on status flips. If you
+  accidentally regenerate one, restore it from `git log -p`. The hash
+  is the durable identifier; if it drifts, every cross-reference rots.
+- **Title-only proposed ADRs (the old format).** Proposed ADRs must now
+  carry a full draft body — Context, Decision, Alternatives, Consequences,
+  References. The user still decides whether to *adopt* each draft into
+  `docs/adr/`, but the content gets captured at the moment the decision
+  was fresh. Single-line rationale alone does not survive a session
+  restart.
+- **Writing ADR drafts directly to `docs/adr/`.** Drafts live in the
+  retrospective sibling directory until the user explicitly adopts
+  them. The numbered ADR log is the user's curated record, not an
+  auto-emission.
+- **Ignoring the session-scope check.** When `git log origin/main..HEAD
+  -- retrospective/` is non-empty, the new retro must scope to that
+  commit forward by default. Re-covering the same commit range across
+  two retros produces stale, redundant output.
 - **A nested `report/` subdirectory under `retrospective/`.** The
   canonical path is `retrospective/YYYY-MM-DD-PPP.md` directly under
   `retrospective/` (or `-NN.md` only via the no-PR fallback). The
@@ -518,6 +783,229 @@ the path. The inline summary should fit in ~20 lines.
   project has a link checker (e.g., `.claude/skills/adr/scripts/check_adr_links.py`),
   run it on the new retrospective files before committing. Broken
   intra-package links erode the artifact's value.
+
+---
+
+## Reprocess mode
+
+Invocation:
+
+- `/retrospective reprocess <retro-basename>` — e.g.
+  `/retrospective reprocess 2026-05-14-42`. Accepts a path
+  (`retrospective/2026-05-14-42.md`) or a basename (`2026-05-14-42`).
+- `/retrospective reprocess --all` — walk every retro under
+  `retrospective/` that predates the durable-ID convention (i.e., whose
+  per-skill specs lack `SKILL-SPEC-<hash>` IDs).
+- `/retrospective reprocess --since YYYY-MM-DD` — only retros on or
+  after this date.
+
+### What reprocess does
+
+For each targeted retrospective, in order:
+
+1. **Add `SKILL-SPEC-<hash>` IDs to existing per-skill specs.** The old
+   specs predate the durable-ID convention. For each
+   `${SIBLING_DIR}/<skill-id>-spec.md`:
+   - Read the file. If it already contains `**ID**: SKILL-SPEC-…`, skip.
+   - Extract the title (the H1 text after `Spec:` or equivalent) and the
+     Intent paragraph.
+   - Compute the hash per the "Durable identifiers" canonical form.
+   - Rename the file to `${SIBLING_DIR}/<skill-id>-SKILL-SPEC-<hash>.md`
+     (drop the redundant `-spec` suffix; the `SKILL-SPEC-` token already
+     says it).
+   - Insert the `**ID**: SKILL-SPEC-<hash>` and `**Source retrospective**:
+     ../<retro-basename>.md` metadata bullets directly under the H1.
+   - In the retrospective's main report file, rewrite the links in the
+     Part 2 "skills summary" table to point at the renamed files.
+2. **Back-fill ADRs.** Read the retrospective's `## Part 4 — proposed
+   ADRs` section. For each title:
+   - Compute the candidate hash from `TITLE\n\n<Part-4 one-liner>\n` —
+     this is the **pre-computed UID** that follows the artifact through
+     its lifecycle regardless of whether it ends as a full draft or an
+     `ADR-DRAFT-<title>` placeholder.
+   - Gather the evidence pool (see "Evidence pool" below).
+   - Run the **sufficiency check** (see below).
+   - If sufficient → write the full ADR draft at
+     `${SIBLING_DIR}/<kebab-title>-ADR-<hash>.md` using the Step 5.5
+     template, populated from the evidence.
+   - If insufficient → **STOP for this ADR** and write
+     `${SIBLING_DIR}/ADR-DRAFT-<kebab-title>.md` (the placeholder
+     format below). Do NOT guess; do NOT extrapolate.
+3. **Update the retrospective's Part 4 table** to point at whichever
+   file got produced (full draft or placeholder). Do not edit Part 4's
+   prose; only update the link target.
+4. **Print an inline summary** at the end of the reprocess run:
+   - Number of retros processed.
+   - Number of skill specs renamed/ID'd.
+   - For each ADR: one line — full draft path OR placeholder path,
+   - The list of `ADR-DRAFT-…` placeholders that the user needs to
+     return to original sessions for. **Surface this list prominently**
+     — it is the primary actionable output for the user.
+
+### Evidence pool
+
+When trying to author or back-fill an ADR, gather:
+
+- The retrospective's main report (especially Part 1 narrative + Part 4
+  proposed-ADR section).
+- All per-skill specs in the sibling dir (they often contain the
+  technical detail that motivated an architectural call).
+- The PRs the retrospective covered. Use the commit-hashes table in the
+  report. For each PR:
+  - PR title + description (via `gh pr view <N> --json title,body` or
+    `mcp__github__pull_request_read`).
+  - Commit subjects + bodies (`gh pr view <N> --json commits` or `git log`).
+  - Diff at a high level (`git show <merge-commit> --stat`).
+- Any ADRs already in `docs/adr/` that this candidate might supersede,
+  reference, or duplicate.
+
+### Sufficiency check (the STOP rule)
+
+An ADR can be authored confidently if **all five** of these are
+recoverable from the evidence pool:
+
+1. **Decision** — a one-sentence statement of the chosen option, in
+   declarative form ("Use X for Y"), with no remaining ambiguity.
+2. **Context** — the specific problem that motivated the decision,
+   grounded in evidence from at least one PR or skill spec (not just
+   the retro's one-liner).
+3. **At least one Alternative considered** — something that was
+   meaningfully evaluated and rejected, with the reason for rejection.
+   "We didn't consider any alternatives" is acceptable only when
+   explicitly stated in the source material.
+4. **Consequences** — at least one concrete trade-off that was
+   knowingly accepted, traceable to the evidence.
+5. **Two References** — relative-link-able artifacts (the source retro
+   plus at least one other: a spec, a PR, a code path, a research
+   report).
+
+If **any** of these can't be filled confidently from the evidence,
+**STOP** and write the placeholder. **Do not guess. Do not paraphrase.
+Do not extrapolate from "what the decision must have been".** The user
+retains the original session context and can finish the draft from
+there.
+
+### The `ADR-DRAFT-<kebab-title>.md` placeholder format
+
+Path: `${SIBLING_DIR}/ADR-DRAFT-<kebab-title>.md`.
+
+```markdown
+# ADR-DRAFT: <Title in Sentence Case>
+
+> **This is an incomplete ADR draft.** The reprocess pass did not find
+> enough evidence in the retrospective + skill specs + PR information to
+> author a complete ADR. The user is expected to return to the source
+> session (or another session with full context) to finish it.
+
+## Pre-computed UID hash (DO NOT REGENERATE)
+
+- **Reserved ID**: `ADR-<hash>`
+
+This hash was computed from the proposed title and the retrospective's
+one-line rationale at reprocess time. **It is the durable identifier
+for this ADR.** When this draft is filled out, the completing agent
+MUST:
+
+1. Keep this hash on the `**ID**` metadata line. Do not recompute.
+2. Rename the file from `ADR-DRAFT-<kebab-title>.md` to
+   `<kebab-title>-ADR-<hash>.md` (sibling-dir form) — OR adopt it
+   directly into `docs/adr/NNNN-<kebab-title>.md` via the `adr` skill,
+   keeping `**ID**: ADR-<hash>` in the metadata.
+3. Update the retrospective's Part 4 link to point at the new filename.
+
+## Source retrospective
+
+- [`../<retro-basename>.md`](../<retro-basename>.md)
+- **PRs covered by the source retro**: #N, #M, …
+
+## Proposed title (verbatim from retro Part 4)
+
+<title>
+
+## One-line rationale (verbatim from retro Part 4)
+
+<one-liner>
+
+## What I know (from the evidence pool)
+
+(Bullets. Each bullet is a verifiable fact pulled from the retro, a
+skill spec, or a PR. Cite the source inline. Do not paraphrase; quote
+where possible. If a bullet is empty, leave it as `- (nothing
+recovered)` rather than fabricating.)
+
+- Context fragments recovered:
+  - …
+- Decision sentence (if recoverable; otherwise leave blank):
+  - …
+- Alternatives mentioned anywhere in the evidence:
+  - …
+- Consequences mentioned:
+  - …
+
+## What I need to know (specific questions for the original session)
+
+(Bullets. Each is a concrete question the completing agent should be
+able to answer from their session context. Phrase as questions, not
+gaps. Be specific enough that the answer is one or two sentences.)
+
+- What was the actual decision sentence? (The retro's one-liner is too
+  vague to convert to a binding statement.)
+- Which alternatives were genuinely on the table vs. dismissed offhand?
+- What concrete trade-off was knowingly accepted?
+- Are there code paths, files, or PRs that should be referenced?
+- Does this decision supersede or relate to any existing ADR?
+
+## Evidence pool consulted (provenance)
+
+- Retrospective: `../<retro-basename>.md`
+- Skill specs in sibling dir: <list>
+- PRs read: #N (title), #M (title), …
+- Existing ADRs cross-checked: <list>
+
+## Completion checklist (for the future agent)
+
+- [ ] Replace this preamble with the standard ADR section structure
+      (`Context`, `Decision`, `Alternatives considered`, `Consequences`,
+      `References`).
+- [ ] Keep the `**ID**: ADR-<hash>` metadata line unchanged.
+- [ ] Set `**Status**` to `Proposed` or `Accepted`.
+- [ ] Rename the file per the "Pre-computed UID hash" section above.
+- [ ] Update the source retrospective's Part 4 link.
+- [ ] Run `python3 .claude/skills/adr/scripts/check_adr_links.py docs/adr/`
+      if the ADR has been adopted into `docs/adr/`.
+```
+
+### Reprocess anti-patterns
+
+- **Guessing missing fields.** If the Decision sentence can't be
+  recovered confidently, do not invent one. Write the placeholder.
+- **Regenerating the hash later.** The hash computed at reprocess time
+  is the ID for the rest of the ADR's life. The completing agent must
+  preserve it byte-for-byte.
+- **Skipping retros that were already partially processed.** Always
+  re-check whether specs have `SKILL-SPEC-<hash>` IDs before assuming a
+  retro needs reprocess work. Idempotency is required — a second
+  reprocess run on an already-reprocessed retro must be a no-op.
+- **Editing the retrospective's narrative prose.** Reprocess only
+  touches the Part 4 link targets in the report and the spec metadata
+  in the sibling files. Part 1 narrative, Part 2 table contents, Part 3
+  pointer, and AGENTS-suggestions are left exactly as they were.
+- **Bulk-committing reprocessed retros without a final summary.** The
+  user's main action item from a reprocess run is the
+  `ADR-DRAFT-…` placeholder list. Surface it prominently.
+
+### Commit and surface
+
+Commit the reprocessed retros on the current branch:
+
+```bash
+git add retrospective/
+git commit -m "Reprocess retros: <N> ADRs back-filled, <M> placeholders"
+```
+
+In the chat reply, **list every `ADR-DRAFT-…` placeholder** with its
+path and the one-line "what I need to know" summary. The user uses this
+list to decide which original session to revisit.
 
 ---
 

@@ -15,6 +15,9 @@
       "research/05-simon-willison.md",
       "research/06-hn-and-lenny.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Agentic Engineering Patterns - Simon Willison's Weblog"
   },
   "0c4bb49f75": {
@@ -38,7 +41,7 @@
     "id": "0c4bb49f75",
     "short_summary": "Hamel Husain — operational manual for LLM judges (Critique Shadowing pattern)",
     "tags": [
-      "evals"
+      "evals-and-benchmarks"
     ],
     "title": "Creating an LLM-as-a-Judge"
   },
@@ -54,6 +57,9 @@
       }
     ],
     "id": "0d2f8d5810",
+    "tags": [
+      "governance-and-legal"
+    ],
     "title": "AI Life Cycle Core Principles - CodeX - Stanford Law School"
   },
   "0d8acce129": {
@@ -68,6 +74,9 @@
       }
     ],
     "id": "0d8acce129",
+    "tags": [
+      "governance-and-legal"
+    ],
     "title": "From Principles to Practice: The 48 Controls That Make Responsible AI Auditable, Defensible, and Real - CodeX - Stanford Law School"
   },
   "0ee794b3a3": {
@@ -92,6 +101,9 @@
     "references_from": [
       "research/03-every-compound-engineering.md"
     ],
+    "tags": [
+      "compound-engineering"
+    ],
     "title": "The Agent That Saved My Brain"
   },
   "1069d4d757": {
@@ -113,6 +125,9 @@
       }
     ],
     "id": "1069d4d757",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Guidelines | Tabnine Docs"
   },
   "109582ff1a": {
@@ -127,6 +142,9 @@
       }
     ],
     "id": "109582ff1a",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Factory AI – Product"
   },
   "10b59b402b": {
@@ -144,6 +162,10 @@
     "references_from": [
       "research/22-academic-foundations.md",
       "research/plan-sync.md"
+    ],
+    "tags": [
+      "evals-and-benchmarks",
+      "openai-substrate"
     ],
     "title": "Introducing SWE-bench Verified"
   },
@@ -169,6 +191,9 @@
     "references_from": [
       "research/11-openhands-substrate-audit.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "The OpenHands Software Agent SDK: A Composable and Extensible Foundation for Production Agents (arXiv 2511.03690 PDF)"
   },
   "11ae110ddb": {
@@ -185,6 +210,9 @@
     "id": "11ae110ddb",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "Simon Willison on agentic-engineering"
   },
@@ -203,7 +231,26 @@
     "references_from": [
       "research/20-replit-agent.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Replit — Introducing Replit App Monitoring"
+  },
+  "12ddb278e4": {
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "Chapter 2 Continuous Enterprise Arc.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "3a00ef9c099704c11436767d148f5c18df9278475ab5217d7ddf8d21654e6efa"
+      }
+    ],
+    "id": "12ddb278e4",
+    "tags": [
+      "intent-driven-architecture"
+    ],
+    "title": "El Kaim Book — Chapter 2: Continuous Enterprise Architecture"
   },
   "16aabc3cfe": {
     "canonical_url": "https://sundaylettersfromsam.substack.com/p/the-hard-part-isnt-doing-the-work",
@@ -219,6 +266,9 @@
     "id": "16aabc3cfe",
     "references_from": [
       "research/28-schillace-sunday-letters.md"
+    ],
+    "tags": [
+      "ai-engineering-culture"
     ],
     "title": "The hard part isn't doing the work now; it's choosing the work."
   },
@@ -241,6 +291,9 @@
       }
     ],
     "id": "16ed58023e",
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "SWE-bench Lite"
   },
   "175cba9347": {
@@ -271,6 +324,9 @@
       "research/18-openai-codex-substrate.md",
       "research/plan-sync.md"
     ],
+    "tags": [
+      "openai-substrate"
+    ],
     "title": "(unknown)"
   },
   "18856eb4cf": {
@@ -299,7 +355,7 @@
     "id": "18856eb4cf",
     "short_summary": "Husain & Shankar — 60-80% of dev time on error analysis",
     "tags": [
-      "evals"
+      "evals-and-benchmarks"
     ],
     "title": "FAQs About AI Evals"
   },
@@ -317,6 +373,9 @@
     "id": "19fba72517",
     "references_from": [
       "research/28-schillace-sunday-letters.md"
+    ],
+    "tags": [
+      "ai-engineering-culture"
     ],
     "title": "The one scarce resource AI can't replace - by Sam Schillace"
   },
@@ -339,6 +398,9 @@
       }
     ],
     "id": "1b03040a1b",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Agent Guidelines | Tabnine Docs"
   },
   "1b74bb31e3": {
@@ -356,7 +418,44 @@
     "references_from": [
       "research/05-simon-willison.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Embracing the parallel coding agent lifestyle"
+  },
+  "1c3b30521c": {
+    "canonical_url": "https://github.com/anthropics/anthropic-cookbook/blob/main/skills/01_skills_introduction.ipynb",
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "01_skills_introduction.ipynb",
+        "format": "ipynb",
+        "ingestion_status": "have",
+        "sha256": "2b1611ed643ec2cc481d3f2cecdfd7150dede0ea0685e46ba79a09a42875a1d4"
+      }
+    ],
+    "id": "1c3b30521c",
+    "tags": [
+      "skills-composition"
+    ],
+    "title": "Agent Skills Cookbook 01 — Introduction"
+  },
+  "1e18da4d24": {
+    "files": [
+      {
+        "comment": "Internal artifact, not external source — counterfactual+QC synthesis over the same seed inputs",
+        "completeness": "complete",
+        "filename": "report.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "9409d9c7d3650294eb494a8229e1b6d7b3c832824e129e5040d3c5c92d0a4d71"
+      }
+    ],
+    "id": "1e18da4d24",
+    "tags": [
+      "meta-synthesis"
+    ],
+    "title": "ChatGPT Deep Research synthesis (2026-05-11) — report"
   },
   "1e8169decc": {
     "canonical_url": "https://simonwillison.net/guides/agentic-engineering-patterns/prompts",
@@ -373,7 +472,27 @@
     "references_from": [
       "research/05-simon-willison.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Prompts I use - Agentic Engineering Patterns - Simon Willison's Weblog"
+  },
+  "1f7e1ebaf3": {
+    "canonical_url": "https://github.com/anthropics/anthropic-cookbook/blob/main/skills/02_skills_financial_applications.ipynb",
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "02_skills_financial_applications.ipynb",
+        "format": "ipynb",
+        "ingestion_status": "have",
+        "sha256": "ca70ca7fd1d815a00dbab5e5124970708ccd1642aa7672dfe790186eac1d0965"
+      }
+    ],
+    "id": "1f7e1ebaf3",
+    "tags": [
+      "skills-composition"
+    ],
+    "title": "Agent Skills Cookbook 02 — Financial Applications"
   },
   "1f8e6329d5": {
     "canonical_url": "https://factory.strongdm.ai/techniques/gene-transfusion",
@@ -389,6 +508,10 @@
     "id": "1f8e6329d5",
     "references_from": [
       "research/01-strongdm-factory.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "Factory (StrongDM) — Gene Transfusion"
   },
@@ -414,6 +537,9 @@
     "references_from": [
       "research/22-academic-foundations.md"
     ],
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "[2203.07814] Competition-Level Code Generation with AlphaCode"
   },
   "2263d13b18": {
@@ -431,6 +557,9 @@
     "references_from": [
       "research/05-simon-willison.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Agentic manual testing - Agentic Engineering Patterns"
   },
   "226e141838": {
@@ -447,6 +576,9 @@
     "id": "226e141838",
     "references_from": [
       "research/28-schillace-sunday-letters.md"
+    ],
+    "tags": [
+      "ai-engineering-culture"
     ],
     "title": "How it will happen - by Sam Schillace - Sunday Letters"
   },
@@ -472,6 +604,9 @@
     "references_from": [
       "research/11-openhands-substrate-audit.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "[2511.03690] The OpenHands Software Agent SDK: A Composable and Extensible Foundation for Production Agents"
   },
   "23efb53da9": {
@@ -488,6 +623,9 @@
     "id": "23efb53da9",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "Agents are models using tools in a loop"
   },
@@ -527,6 +665,9 @@
     "references_from": [
       "research/03-every-compound-engineering.md"
     ],
+    "tags": [
+      "compound-engineering"
+    ],
     "title": "My AI Had Already Fixed the Code Before I Saw It"
   },
   "24ca29ee98": {
@@ -550,11 +691,39 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "eef124edf4f39da25658ca8ad38b9139708bbb81caba88d9aa265652a8ba55a7"
+      },
+      {
+        "comment": "LaTeX source files for CaMeL paper, retrieved from arxiv.org/e-print/2503.18813",
+        "completeness": "complete",
+        "filename": "main.tex",
+        "format": "other",
+        "ingestion_status": "have",
+        "sha256": "c5d20a200a1be0c5bc767c1266c77a7de46f0b50872c8c116fba4cf3e37dd227"
+      },
+      {
+        "comment": "LaTeX macros file for CaMeL paper",
+        "completeness": "complete",
+        "filename": "defns.tex",
+        "format": "other",
+        "ingestion_status": "have",
+        "sha256": "dae030d886539ee3c1efdbb9eb911519750f7d07d11cf8a912c2a79335346b5e"
+      },
+      {
+        "comment": "BibTeX bibliography file for CaMeL paper",
+        "completeness": "complete",
+        "filename": "main.bbl",
+        "format": "other",
+        "ingestion_status": "have",
+        "sha256": "d47e51d4a23a749707b49cb72397abce89f2ca1a5893cfe3e152ba67bae74dc9"
       }
     ],
     "id": "24ca29ee98",
     "references_from": [
       "research/followup/08-security-primitives.md"
+    ],
+    "tags": [
+      "academic-foundations",
+      "security-primitives"
     ],
     "title": "(unknown)"
   },
@@ -577,6 +746,9 @@
       }
     ],
     "id": "265e444ae9",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Deployment Options | Tabnine Docs"
   },
   "271feb61a7": {
@@ -598,6 +770,9 @@
       }
     ],
     "id": "271feb61a7",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Private Installation | Tabnine Docs"
   },
   "2e46f64134": {
@@ -615,6 +790,10 @@
     "references_from": [
       "research/01-strongdm-factory.md"
     ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "Factory (StrongDM) — Pyramid Summaries"
   },
   "2e49bcd671": {
@@ -629,6 +808,10 @@
       }
     ],
     "id": "2e49bcd671",
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "About assigning tasks to Copilot (file contains saved 2389-research/dotpowers GitHub page instead)"
   },
   "2ffe813975": {
@@ -650,6 +833,10 @@
       }
     ],
     "id": "2ffe813975",
+    "tags": [
+      "academic-foundations",
+      "evals-and-benchmarks"
+    ],
     "title": "SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering (OpenReview, NeurIPS 2024)"
   },
   "303c8ff4e8": {
@@ -669,6 +856,9 @@
       "research/06-hn-and-lenny.md",
       "research/07-dark-factory.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "How StrongDM's AI team build serious software without even looking at the code"
   },
   "325d8c1018": {
@@ -683,6 +873,9 @@
       }
     ],
     "id": "325d8c1018",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "About extensions for Copilot (capture is a PNG image, not the docs page)"
   },
   "3262892c6c": {
@@ -700,6 +893,9 @@
     "references_from": [
       "research/05-simon-willison.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Subagents - Agentic Engineering Patterns - Simon Willison's Weblog"
   },
   "3274cc670c": {
@@ -714,6 +910,9 @@
       }
     ],
     "id": "3274cc670c",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Devin (Cognition AI)"
   },
   "35b057067e": {
@@ -735,7 +934,28 @@
       }
     ],
     "id": "35b057067e",
+    "tags": [
+      "ai-engineering-culture"
+    ],
     "title": "Agentic Engineering Book – Chapter 6: Harnesses (Jaymin West)"
+  },
+  "3643d46af4": {
+    "canonical_url": "https://support.claude.com/en/articles/what-are-skills",
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "support-claude-com-what-are-skills.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "430c4f4f8b61ecf6348eff411259ebe684ae89a6120abc0349811dc17c820a70"
+      }
+    ],
+    "id": "3643d46af4",
+    "tags": [
+      "anthropic-substrate",
+      "skills-composition"
+    ],
+    "title": "What are Skills? (Anthropic support)"
   },
   "366927b32e": {
     "canonical_url": "https://eugeneyan.com/404.html",
@@ -749,6 +969,9 @@
       }
     ],
     "id": "366927b32e",
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "(unknown)"
   },
   "3703e782c0": {
@@ -779,6 +1002,9 @@
       "research/07-dark-factory.md",
       "research/followup/01-shapiro-five-levels.md"
     ],
+    "tags": [
+      "dark-factory"
+    ],
     "title": "(unknown)"
   },
   "375a9386eb": {
@@ -796,6 +1022,9 @@
     "references_from": [
       "research/28-schillace-sunday-letters.md"
     ],
+    "tags": [
+      "ai-engineering-culture"
+    ],
     "title": "What is a harness and why do I care? - by Sam Schillace"
   },
   "384a19285c": {
@@ -812,6 +1041,9 @@
     "id": "384a19285c",
     "references_from": [
       "research/28-schillace-sunday-letters.md"
+    ],
+    "tags": [
+      "ai-engineering-culture"
     ],
     "title": "Attention and collaboration in the AI world"
   },
@@ -837,6 +1069,9 @@
     "references_from": [
       "research/12-adjacent-ecosystem.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Agentic Engineering: Redefining Software Engineering (LangChain)"
   },
   "39c9037a8c": {
@@ -854,6 +1089,10 @@
     "references_from": [
       "research/01-strongdm-factory.md",
       "research/07-dark-factory.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "Factory (StrongDM) — Techniques"
   },
@@ -876,6 +1115,9 @@
       }
     ],
     "id": "3a16af6be1",
+    "tags": [
+      "dark-factory"
+    ],
     "title": "The Dark Software Factory (BCG Platinion)"
   },
   "3af462fa75": {
@@ -896,6 +1138,9 @@
       "research/27-dotfile-pipelines-as-product.md",
       "research/followup/01-shapiro-five-levels.md",
       "research/followup/02-attractor-implementations.md"
+    ],
+    "tags": [
+      "dark-factory"
     ],
     "title": "danshapiro/kilroy"
   },
@@ -921,6 +1166,9 @@
     "references_from": [
       "research/22-academic-foundations.md"
     ],
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "[2310.06770] SWE-bench: Can Language Models Resolve Real-World GitHub Issues?"
   },
   "400f0c3c0a": {
@@ -942,6 +1190,9 @@
       }
     ],
     "id": "400f0c3c0a",
+    "tags": [
+      "dark-factory"
+    ],
     "title": "The Software Factory: When No Human Writes or Reviews the Code"
   },
   "42500eb134": {
@@ -960,6 +1211,10 @@
       "research/07-dark-factory.md",
       "research/27-dotfile-pipelines-as-product.md",
       "research/followup/02-attractor-implementations.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "2389-research/dotpowers: a superpowers implementation for attractors"
   },
@@ -985,6 +1240,9 @@
     "references_from": [
       "research/22-academic-foundations.md"
     ],
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "SWE-bench"
   },
   "43e68409a4": {
@@ -1003,6 +1261,10 @@
       "research/07-dark-factory.md",
       "research/followup/02-attractor-implementations.md"
     ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "2389-research/coven: Rust platform for orchestrating AI agents with tool capabilities and gRPC streaming"
   },
   "44d4c1be80": {
@@ -1017,6 +1279,9 @@
       }
     ],
     "id": "44d4c1be80",
+    "tags": [
+      "dark-factory"
+    ],
     "title": "The Software Factory"
   },
   "470703acd9": {
@@ -1034,7 +1299,26 @@
     "references_from": [
       "research/05-simon-willison.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Writing code is cheap now - Agentic Engineering Patterns - Simon Willison's Weblog"
+  },
+  "49a055f96d": {
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "Chapter 6 The Enterprise Architectu.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "2b2acb92acc1720ed4b0b4caaccdcc74e79e8e7d4a236bc6d4b6317fd3c4b6ba"
+      }
+    ],
+    "id": "49a055f96d",
+    "tags": [
+      "intent-driven-architecture"
+    ],
+    "title": "El Kaim Book — Chapter 6: The Enterprise Architecture Function"
   },
   "49a54313c7": {
     "canonical_url": "https://deepmind.google/discover/blog/competitive-programming-with-alphacode",
@@ -1057,6 +1341,9 @@
     "id": "49a54313c7",
     "references_from": [
       "research/22-academic-foundations.md"
+    ],
+    "tags": [
+      "evals-and-benchmarks"
     ],
     "title": "Competitive programming with AlphaCode — Google DeepMind"
   },
@@ -1083,6 +1370,9 @@
       "research/03-every-compound-engineering.md",
       "research/followup/05-klaassen-siblings.md"
     ],
+    "tags": [
+      "compound-engineering"
+    ],
     "title": "Compound Engineering"
   },
   "4c98a39ea9": {
@@ -1100,6 +1390,9 @@
     "references_from": [
       "research/05-simon-willison.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Hoard things you know how to do - Agentic Engineering Patterns - Simon Willison's Weblog"
   },
   "4ccc7d8083": {
@@ -1116,6 +1409,9 @@
     "id": "4ccc7d8083",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "What is agentic engineering? - Agentic Engineering Patterns - Simon Willison's Weblog"
   },
@@ -1135,6 +1431,10 @@
       "research/07-dark-factory.md",
       "research/followup/02-attractor-implementations.md"
     ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "Tracker — 2389 Research, Inc."
   },
   "4d44956ef1": {
@@ -1151,6 +1451,9 @@
     "id": "4d44956ef1",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "Writing about Agentic Engineering Patterns"
   },
@@ -1169,6 +1472,9 @@
     "references_from": [
       "research/28-schillace-sunday-letters.md"
     ],
+    "tags": [
+      "ai-engineering-culture"
+    ],
     "title": "Artisans and Factory Lines - by Sam Schillace"
   },
   "516e66f9f7": {
@@ -1186,6 +1492,10 @@
     "references_from": [
       "research/36-sendbird-quests-token-tiers.md"
     ],
+    "tags": [
+      "compound-engineering",
+      "skills-composition"
+    ],
     "title": "Quests, token leaderboards, and a skills marketplace: The elite AI adoption playbook | John Kim (Sendbird)"
   },
   "53b4490fe8": {
@@ -1202,6 +1512,9 @@
     "id": "53b4490fe8",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "How coding agents work - Agentic Engineering Patterns - Simon Willison's Weblog"
   },
@@ -1231,8 +1544,8 @@
     "id": "53ed6e363d",
     "short_summary": "Willison summary of the CaMeL prompt-injection defense paper",
     "tags": [
-      "security",
-      "prompt-injection"
+      "security-primitives",
+      "willison-canon"
     ],
     "title": "Simon Willison — CaMeL paper writeup"
   },
@@ -1255,6 +1568,9 @@
       }
     ],
     "id": "54629e12fe",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Context Engine | Tabnine Docs"
   },
   "5492497a11": {
@@ -1269,6 +1585,9 @@
       }
     ],
     "id": "5492497a11",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Tabnine Docs (Server Setup Guide)"
   },
   "54b1ddaabf": {
@@ -1293,6 +1612,9 @@
     "references_from": [
       "research/22-academic-foundations.md"
     ],
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "[2405.15793] SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering"
   },
   "586cb02137": {
@@ -1311,12 +1633,31 @@
         "format": "txt",
         "ingestion_status": "have",
         "sha256": "05e642ae930d1bd3d5c3c2b74bc9ed4cfb00c17361cb3fe028b7e73a1a607ce9"
+      },
+      {
+        "comment": "Full transcript from Lenny x Cherny episode (legacy location)",
+        "completeness": "complete",
+        "filename": "cherny-head-of-claude-code-full.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "af1af4cc3910eca1557494ed5bbb484b88d0cfeab30b4ed2eefe39f3d140aee3"
+      },
+      {
+        "comment": "First-30-min partial of Lenny x Cherny (drained 2026-05-13)",
+        "completeness": "partial",
+        "filename": "cherny-head-of-claude-code-2026-02-19-first30min.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "ad619c8f28de66c2036271fb894e14355d7e3fd25b2a80e67e93bd5cd45ca43a"
       }
     ],
     "id": "586cb02137",
     "references_from": [
       "research/06-hn-and-lenny.md",
       "research/followup/03-cherny-interview.md"
+    ],
+    "tags": [
+      "anthropic-substrate"
     ],
     "title": "Head of Claude Code: What happens when AI does 90% of the coding"
   },
@@ -1335,6 +1676,10 @@
     "references_from": [
       "research/07-dark-factory.md",
       "research/followup/02-attractor-implementations.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "Smasher — 2389 Research, Inc."
   },
@@ -1366,6 +1711,9 @@
     "references_from": [
       "research/PLAN.md"
     ],
+    "tags": [
+      "skills-composition"
+    ],
     "title": "Agent Skills: Security"
   },
   "5b2ed8c57e": {
@@ -1382,6 +1730,9 @@
     "id": "5b2ed8c57e",
     "references_from": [
       "research/35-lenny-howiai-spec-driven-and-team-ops.md"
+    ],
+    "tags": [
+      "compound-engineering"
     ],
     "title": "Spec-driven development: The AI engineering workflow at Notion | Ryan Nystrom"
   },
@@ -1407,6 +1758,9 @@
     "references_from": [
       "research/22-academic-foundations.md"
     ],
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "[2203.13474] CodeGen: An Open Large Language Model for Code with Multi-Turn Program Synthesis"
   },
   "5c785e88b3": {
@@ -1421,6 +1775,9 @@
       }
     ],
     "id": "5c785e88b3",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "404 - GitHub Docs"
   },
   "5cc5a296b6": {
@@ -1451,6 +1808,9 @@
       "research/20-replit-agent.md",
       "research/plan-sync.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "(unknown)"
   },
   "5f4b04494f": {
@@ -1475,6 +1835,9 @@
     "references_from": [
       "research/11-openhands-substrate-audit.md",
       "research/12-adjacent-ecosystem.md"
+    ],
+    "tags": [
+      "other-vendor-substrate"
     ],
     "title": "GitHub Actions CI/CD Pipeline | All-Hands-AI/OpenHands | DeepWiki"
   },
@@ -1507,6 +1870,9 @@
     "references_from": [
       "research/07-dark-factory.md"
     ],
+    "tags": [
+      "dark-factory"
+    ],
     "title": "William El Kaim — About (Medium)"
   },
   "66be122077": {
@@ -1524,7 +1890,29 @@
     "references_from": [
       "research/18-openai-codex-substrate.md"
     ],
+    "tags": [
+      "openai-substrate"
+    ],
     "title": "Running Codex safely at OpenAI"
+  },
+  "67b1f7d3a3": {
+    "canonical_url": "https://every.to/source-code/the-culture-of-ai-engineering",
+    "files": [
+      {
+        "comment": "Noah Brier on Every.to — pace-layers model for AI engineering teams (legacy location)",
+        "completeness": "complete",
+        "filename": "brier-culture-of-ai-engineering.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "0d9adbd1e43a330ed18ce4a2348e5fcd62d6840326b9c03354915a640d58d71a"
+      }
+    ],
+    "id": "67b1f7d3a3",
+    "tags": [
+      "ai-engineering-culture",
+      "compound-engineering"
+    ],
+    "title": "Culture of AI Engineering"
   },
   "67dfba1ed6": {
     "canonical_url": "https://simonwillison.net/tags/evals",
@@ -1540,6 +1928,10 @@
     "id": "67dfba1ed6",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "evals-and-benchmarks",
+      "willison-canon"
     ],
     "title": "Simon Willison on evals"
   },
@@ -1565,6 +1957,9 @@
     "references_from": [
       "research/26-prompt-underspecification-academic.md"
     ],
+    "tags": [
+      "academic-foundations"
+    ],
     "title": "(unknown)"
   },
   "6e7fbc4124": {
@@ -1587,6 +1982,10 @@
       "research/07-dark-factory.md",
       "research/followup/01-shapiro-five-levels.md"
     ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "Factory (StrongDM) — Home"
   },
   "708f29cb35": {
@@ -1604,6 +2003,10 @@
     "references_from": [
       "research/07-dark-factory.md",
       "research/followup/02-attractor-implementations.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "Coven — 2389 Research, Inc."
   },
@@ -1633,7 +2036,7 @@
     "id": "71d2de09c6",
     "short_summary": "Hamel Husain — experiments-not-features roadmap reframe + NurtureBoss case study",
     "tags": [
-      "evals"
+      "evals-and-benchmarks"
     ],
     "title": "A Field Guide to Rapidly Improving AI Products"
   },
@@ -1649,6 +2052,9 @@
       }
     ],
     "id": "71e8193f07",
+    "tags": [
+      "governance-and-legal"
+    ],
     "title": "Turning AI Governance Into Operational Infrastructure"
   },
   "73dc7199ce": {
@@ -1679,6 +2085,9 @@
       "research/20-replit-agent.md",
       "research/plan-sync.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "(unknown)"
   },
   "76447f23b5": {
@@ -1696,6 +2105,10 @@
     "references_from": [
       "research/01-strongdm-factory.md"
     ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "Factory (StrongDM) — Semport"
   },
   "7839068ee6": {
@@ -1712,6 +2125,9 @@
     "id": "7839068ee6",
     "references_from": [
       "research/28-schillace-sunday-letters.md"
+    ],
+    "tags": [
+      "ai-engineering-culture"
     ],
     "title": "The agent-shaped world - by Sam Schillace - Sunday Letters"
   },
@@ -1737,6 +2153,9 @@
     "references_from": [
       "research/11-openhands-substrate-audit.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Headless Mode - OpenHands Docs"
   },
   "7beb3bc828": {
@@ -1761,6 +2180,9 @@
     "references_from": [
       "research/26-prompt-underspecification-academic.md"
     ],
+    "tags": [
+      "academic-foundations"
+    ],
     "title": "(unknown)"
   },
   "7c5da8e730": {
@@ -1779,6 +2201,10 @@
       "research/07-dark-factory.md",
       "research/27-dotfile-pipelines-as-product.md",
       "research/followup/04-gastown-beads.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "The Dark Factory Is a .dot file — 2389 Research, Inc."
   },
@@ -1811,6 +2237,9 @@
     "references_from": [
       "research/07-dark-factory.md"
     ],
+    "tags": [
+      "dark-factory"
+    ],
     "title": "William El Kaim — Medium"
   },
   "7ff9a0b608": {
@@ -1834,6 +2263,9 @@
     "id": "7ff9a0b608",
     "references_from": [
       "research/22-academic-foundations.md"
+    ],
+    "tags": [
+      "academic-foundations"
     ],
     "title": "CodeGen: An Open Large Language Model for Code with Multi-Turn Program Synthesis (OpenReview, ICLR 2023)"
   },
@@ -1859,6 +2291,9 @@
     "references_from": [
       "research/12-adjacent-ecosystem.md"
     ],
+    "tags": [
+      "ai-engineering-culture"
+    ],
     "title": "AddyOsmani.com - Agentic Engineering"
   },
   "8282baf1e4": {
@@ -1875,6 +2310,9 @@
     "id": "8282baf1e4",
     "references_from": [
       "research/06-hn-and-lenny.md"
+    ],
+    "tags": [
+      "dark-factory"
     ],
     "title": "Software factories and the agentic moment (Hacker News)"
   },
@@ -1906,6 +2344,9 @@
       "research/18-openai-codex-substrate.md",
       "research/plan-sync.md"
     ],
+    "tags": [
+      "openai-substrate"
+    ],
     "title": "(unknown)"
   },
   "83fdf58ee6": {
@@ -1922,6 +2363,9 @@
     "id": "83fdf58ee6",
     "references_from": [
       "research/28-schillace-sunday-letters.md"
+    ],
+    "tags": [
+      "ai-engineering-culture"
     ],
     "title": "I have seen the compounding teams - by Sam Schillace"
   },
@@ -1940,6 +2384,9 @@
     "references_from": [
       "research/28-schillace-sunday-letters.md"
     ],
+    "tags": [
+      "ai-engineering-culture"
+    ],
     "title": "AI and the marshmallow test - by Sam Schillace"
   },
   "85cdf07ac2": {
@@ -1954,6 +2401,9 @@
       }
     ],
     "id": "85cdf07ac2",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "8090 Inc Blog"
   },
   "86f58b89a9": {
@@ -1971,6 +2421,9 @@
     "references_from": [
       "research/05-simon-willison.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Anti-patterns: things to avoid - Agentic Engineering Patterns"
   },
   "875b882ad1": {
@@ -1987,6 +2440,9 @@
     "id": "875b882ad1",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "Designing agentic loops"
   },
@@ -2012,6 +2468,9 @@
     "references_from": [
       "research/11-openhands-substrate-audit.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Introduction - OpenHands Docs"
   },
   "890af05bff": {
@@ -2028,6 +2487,9 @@
     "id": "890af05bff",
     "references_from": [
       "research/28-schillace-sunday-letters.md"
+    ],
+    "tags": [
+      "ai-engineering-culture"
     ],
     "title": "Attention is all ya got - by Sam Schillace - Sunday Letters"
   },
@@ -2053,7 +2515,26 @@
     "references_from": [
       "research/12-adjacent-ecosystem.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Agentic Engineering (IBM Think Topics)"
+  },
+  "8c295c7ecf": {
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "Chapter 1 The Limits of Traditional.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "9c0acb650c12f9c33d43dc0196d9a22cfa4f3b6772b690482d9a77e81a155381"
+      }
+    ],
+    "id": "8c295c7ecf",
+    "tags": [
+      "intent-driven-architecture"
+    ],
+    "title": "El Kaim Book — Chapter 1: The Limits of Traditional Enterprise Architecture"
   },
   "8e651f5fda": {
     "canonical_url": "https://docs.tabnine.com/main/getting-started/context-engine/admin-console/coaching",
@@ -2074,6 +2555,9 @@
       }
     ],
     "id": "8e651f5fda",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Coaching Guidelines | Tabnine Docs"
   },
   "8f251bd57a": {
@@ -2091,6 +2575,10 @@
     "references_from": [
       "research/07-dark-factory.md",
       "research/followup/02-attractor-implementations.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "2389-research/smasher: A builder"
   },
@@ -2117,6 +2605,9 @@
       "research/03-every-compound-engineering.md",
       "research/followup/05-klaassen-siblings.md"
     ],
+    "tags": [
+      "compound-engineering"
+    ],
     "title": "Compound Engineering: How Every Codes With Agents"
   },
   "95265c651d": {
@@ -2134,6 +2625,10 @@
     "references_from": [
       "research/35-lenny-howiai-spec-driven-and-team-ops.md"
     ],
+    "tags": [
+      "compound-engineering",
+      "spec-authorship"
+    ],
     "title": "Spec-driven development: The AI engineering workflow (Lenny's Newsletter)"
   },
   "95ba3accbc": {
@@ -2150,6 +2645,9 @@
     "id": "95ba3accbc",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "I think \"agent\" may finally have a widely enough agreed upon definition to be useful jargon now"
   },
@@ -2172,6 +2670,9 @@
       }
     ],
     "id": "97f2036966",
+    "tags": [
+      "dark-factory"
+    ],
     "title": "Untitled Webflow-hosted PDF (no /Title metadata)"
   },
   "991f3bf0f6": {
@@ -2187,6 +2688,9 @@
     "id": "991f3bf0f6",
     "references_from": [
       "research/19-github-copilot-cloud-agent.md"
+    ],
+    "tags": [
+      "other-vendor-substrate"
     ],
     "title": "About Copilot Workspace (GitHub Docs)"
   },
@@ -2209,6 +2713,9 @@
       }
     ],
     "id": "992e4f88b6",
+    "tags": [
+      "ai-engineering-culture"
+    ],
     "title": "Agentic Engineering Book (Jaymin West)"
   },
   "99b58be420": {
@@ -2234,6 +2741,9 @@
       "research/05-simon-willison.md",
       "research/07-dark-factory.md",
       "research/followup/01-shapiro-five-levels.md"
+    ],
+    "tags": [
+      "dark-factory"
     ],
     "title": "The Five Levels: From Spicy Autocomplete to the Software Factory (Dan Shapiro)"
   },
@@ -2265,7 +2775,45 @@
       "research/06-hn-and-lenny.md",
       "research/followup/08-security-primitives.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "(unknown)"
+  },
+  "9d696416cb": {
+    "canonical_url": "https://platform.claude.com/docs/en/agent-skills/overview",
+    "files": [
+      {
+        "comment": "Path B export 2026-05-13 of the JS-rendered SPA",
+        "completeness": "complete",
+        "filename": "platform-claude-com-agent-skills-overview.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "86a0540a24cb0de74a97b667ab9463c045f725067f4aef80e61f4bdf5c4bfcf0"
+      }
+    ],
+    "id": "9d696416cb",
+    "tags": [
+      "anthropic-substrate",
+      "skills-composition"
+    ],
+    "title": "Anthropic Agent Skills — Overview (Platform docs)"
+  },
+  "9e3537481f": {
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "Chapter 5 Automating RISE with SAP.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "139b4d21ec80bcf7900b25f2b2b4cb71e39d5a6c276cab21240d1bd6fbd0bbd3"
+      }
+    ],
+    "id": "9e3537481f",
+    "tags": [
+      "intent-driven-architecture"
+    ],
+    "title": "El Kaim Book — Chapter 5: Automating RISE with SAP"
   },
   "a1032841ba": {
     "canonical_url": "https://factory.strongdm.ai/principles",
@@ -2282,6 +2830,10 @@
     "references_from": [
       "research/01-strongdm-factory.md",
       "research/07-dark-factory.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "Factory (StrongDM) — Principles"
   },
@@ -2307,7 +2859,26 @@
     "references_from": [
       "research/12-adjacent-ecosystem.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "What is agentic coding? How it works and use cases | Google Cloud"
+  },
+  "a37637a130": {
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "Chapter 4 Why AI and Automation Cha.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "4d628ea02a067cdace423f6aebdc677be94e6c2d9c9815ee31db532fcdb1babe"
+      }
+    ],
+    "id": "a37637a130",
+    "tags": [
+      "intent-driven-architecture"
+    ],
+    "title": "El Kaim Book — Chapter 4: Why AI and Automation Change Everything"
   },
   "a3afc1e8c7": {
     "canonical_url": "https://www.anthropic.com/engineering/multi-agent-research-system",
@@ -2331,6 +2902,9 @@
     "references_from": [
       "research/followup/07-evals-deepdive.md"
     ],
+    "tags": [
+      "anthropic-substrate"
+    ],
     "title": "(unknown)"
   },
   "a4a2c507c6": {
@@ -2352,6 +2926,9 @@
       }
     ],
     "id": "a4a2c507c6",
+    "tags": [
+      "governance-and-legal"
+    ],
     "title": "Built by Agents, Tested by Agents, Trusted by Whom? - CodeX - Stanford Law School"
   },
   "a5209cf735": {
@@ -2376,6 +2953,9 @@
     "references_from": [
       "research/11-openhands-substrate-audit.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "OpenHands AI Action · Actions · GitHub Marketplace"
   },
   "a747576e0f": {
@@ -2390,6 +2970,9 @@
       }
     ],
     "id": "a747576e0f",
+    "tags": [
+      "compound-engineering"
+    ],
     "title": "How I AI: CJ Hess on Building Custom AI Tools (Lenny's Newsletter)"
   },
   "a811ab37e6": {
@@ -2406,6 +2989,9 @@
     "id": "a811ab37e6",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "Vibe coding and agentic engineering are getting closer than I'd like"
   },
@@ -2424,6 +3010,10 @@
     "references_from": [
       "research/34-lenny-howiai-personal-harnesses.md"
     ],
+    "tags": [
+      "anthropic-substrate",
+      "compound-engineering"
+    ],
     "title": "Build your own AI developer tools with Claude Code (How I AI, Lenny's Newsletter)"
   },
   "accca79ad1": {
@@ -2441,6 +3031,9 @@
     "references_from": [
       "research/28-schillace-sunday-letters.md"
     ],
+    "tags": [
+      "ai-engineering-culture"
+    ],
     "title": "Machine with Concrete - by Sam Schillace - Sunday Letters"
   },
   "ade5ef8d76": {
@@ -2456,7 +3049,7 @@
     "id": "ade5ef8d76",
     "short_summary": "Third core eval source (with Husain and Anthropic multi-agent)",
     "tags": [
-      "evals"
+      "evals-and-benchmarks"
     ],
     "title": "Eugene Yan — LLM Evaluators"
   },
@@ -2482,6 +3075,9 @@
     "references_from": [
       "research/12-adjacent-ecosystem.md"
     ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Kiro"
   },
   "af47372f0f": {
@@ -2503,7 +3099,27 @@
       }
     ],
     "id": "af47372f0f",
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "SWE-bench Verified"
+  },
+  "b1b49c4c3d": {
+    "canonical_url": "https://github.com/anthropics/anthropic-cookbook/blob/main/skills/03_skills_custom_development.ipynb",
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "03_skills_custom_development.ipynb",
+        "format": "ipynb",
+        "ingestion_status": "have",
+        "sha256": "caa02b71bfa86a08f6369f69ce7c06dc37f1f4a103d378c7cdaa56897b2168c6"
+      }
+    ],
+    "id": "b1b49c4c3d",
+    "tags": [
+      "skills-composition"
+    ],
+    "title": "Agent Skills Cookbook 03 — Custom Development"
   },
   "b2e8ea6df7": {
     "canonical_url": "https://factory.strongdm.ai/products/attractor",
@@ -2522,6 +3138,10 @@
       "research/07-dark-factory.md",
       "research/27-dotfile-pipelines-as-product.md"
     ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "Factory (StrongDM) — Attractor"
   },
   "b366ba8741": {
@@ -2539,6 +3159,9 @@
     "references_from": [
       "research/31-caremark-rsi-board-exposure.md"
     ],
+    "tags": [
+      "governance-and-legal"
+    ],
     "title": "The Ungovernable Machine"
   },
   "b4907c87f4": {
@@ -2555,6 +3178,9 @@
     "id": "b4907c87f4",
     "references_from": [
       "research/29-prompt-engineering-survey.md"
+    ],
+    "tags": [
+      "academic-foundations"
     ],
     "title": "The Prompt Report: A Systematic Survey of Prompt Engineering Techniques"
   },
@@ -2574,7 +3200,26 @@
       "research/05-simon-willison.md",
       "research/06-hn-and-lenny.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Red/green TDD - Agentic Engineering Patterns - Simon Willison's Weblog"
+  },
+  "b59dfbed79": {
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "Chapter 8 From Intent to Specificat.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "1ec369b47e46180e658c1904a6d7ecbfe0bd6c0959492f8152718acff5e0b78a"
+      }
+    ],
+    "id": "b59dfbed79",
+    "tags": [
+      "intent-driven-architecture"
+    ],
+    "title": "El Kaim Book — Chapter 8: From Intent to Specification"
   },
   "b5fc7f9df9": {
     "canonical_url": "https://www.superconductor.com/",
@@ -2595,6 +3240,9 @@
       }
     ],
     "id": "b5fc7f9df9",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Superconductor"
   },
   "b7e946fa1b": {
@@ -2612,6 +3260,10 @@
     "references_from": [
       "research/01-strongdm-factory.md"
     ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "Factory (StrongDM) — Products"
   },
   "b973e0e535": {
@@ -2626,6 +3278,9 @@
       }
     ],
     "id": "b973e0e535",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Managing code scanning alerts (capture is a PNG image, not the docs page)"
   },
   "bdb0d1357f": {
@@ -2647,6 +3302,9 @@
       }
     ],
     "id": "bdb0d1357f",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Provenance and Attribution | Tabnine Docs"
   },
   "bdba59d7ee": {
@@ -2670,6 +3328,10 @@
     "id": "bdba59d7ee",
     "references_from": [
       "research/PLAN.md"
+    ],
+    "tags": [
+      "anthropic-substrate",
+      "skills-composition"
     ],
     "title": "Agent Skills — Best Practices (Claude docs)"
   },
@@ -2695,6 +3357,10 @@
     "references_from": [
       "research/22-academic-foundations.md"
     ],
+    "tags": [
+      "evals-and-benchmarks",
+      "other-vendor-substrate"
+    ],
     "title": "SWE-agent documentation"
   },
   "bee5963dd8": {
@@ -2716,7 +3382,28 @@
       }
     ],
     "id": "bee5963dd8",
+    "tags": [
+      "academic-foundations",
+      "evals-and-benchmarks"
+    ],
     "title": "[2203.07814] Competition-Level Code Generation with AlphaCode (ar5iv HTML)"
+  },
+  "c2cdaebb34": {
+    "files": [
+      {
+        "comment": "Internal artifact",
+        "completeness": "complete",
+        "filename": "sources.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "fad32c754b671706af6a2c8ce6faa43b16d5e7e9f439f5a86f69f5e4e0a22170"
+      }
+    ],
+    "id": "c2cdaebb34",
+    "tags": [
+      "meta-synthesis"
+    ],
+    "title": "ChatGPT Deep Research synthesis (2026-05-11) — sources list"
   },
   "c317a03b84": {
     "canonical_url": "https://github.com/2389-research/mammoth",
@@ -2733,6 +3420,10 @@
     "references_from": [
       "research/07-dark-factory.md",
       "research/followup/02-attractor-implementations.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "2389-research/mammoth"
   },
@@ -2751,6 +3442,9 @@
     "references_from": [
       "research/18-openai-codex-substrate.md"
     ],
+    "tags": [
+      "openai-substrate"
+    ],
     "title": "Rules – Codex | OpenAI Developers"
   },
   "c6074ee6d6": {
@@ -2768,7 +3462,27 @@
     "references_from": [
       "research/05-simon-willison.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "First run the tests - Agentic Engineering Patterns - Simon Willison's Weblog"
+  },
+  "c94a94f2d3": {
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "Chapter 3 Intent-Driven Architectur.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "5e412ed303131881bda3b2e45dfb1d28543cf189eae486efb1eb9e7235c98507"
+      }
+    ],
+    "id": "c94a94f2d3",
+    "tags": [
+      "dark-factory",
+      "intent-driven-architecture"
+    ],
+    "title": "El Kaim Book — Chapter 3: Intent-Driven Architecture"
   },
   "caad3c1702": {
     "canonical_url": "https://eugeneyan.com/writing/llm-evaluator",
@@ -2777,7 +3491,7 @@
     "pointer_to": "ade5ef8d76",
     "short_summary": "Third core eval source (with Husain and Anthropic multi-agent)",
     "tags": [
-      "evals"
+      "evals-and-benchmarks"
     ],
     "title": "Eugene Yan — LLM Evaluator"
   },
@@ -2795,6 +3509,10 @@
     "id": "cad3fa5db1",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "anthropic-substrate",
+      "willison-canon"
     ],
     "title": "Claude Code: Best practices for agentic coding"
   },
@@ -2817,6 +3535,10 @@
       }
     ],
     "id": "cd9714d14e",
+    "tags": [
+      "evals-and-benchmarks",
+      "other-vendor-substrate"
+    ],
     "title": "SWE-agent: Agent-Computer Interfaces (ACI)"
   },
   "d01c58d1d5": {
@@ -2833,6 +3555,9 @@
     "id": "d01c58d1d5",
     "references_from": [
       "research/30-cognitive-escrow.md"
+    ],
+    "tags": [
+      "governance-and-legal"
     ],
     "title": "Cognitive Escrow: The Human-Centered Principle Has a Blind Spot - CodeX - Stanford Law School"
   },
@@ -2855,6 +3580,9 @@
       }
     ],
     "id": "d30b9fbd12",
+    "tags": [
+      "security-primitives"
+    ],
     "title": "Defeating Prompt Injections by Design (arXiv 2503.18813 PDF)"
   },
   "d6bf9e3a7e": {
@@ -2872,6 +3600,9 @@
     "references_from": [
       "research/32-shapiro-completion-chat-agent-claw.md",
       "research/followup/01-shapiro-five-levels.md"
+    ],
+    "tags": [
+      "dark-factory"
     ],
     "title": "Completion, Chat, Agent, Claw – Dan Shapiro's Blog"
   },
@@ -2894,6 +3625,9 @@
       }
     ],
     "id": "d77d04c052",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Privacy | Tabnine Docs"
   },
   "d93e59de67": {
@@ -2910,6 +3644,10 @@
     "id": "d93e59de67",
     "references_from": [
       "research/01-strongdm-factory.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "Factory (StrongDM) — CXDB"
   },
@@ -2928,6 +3666,9 @@
     "references_from": [
       "research/05-simon-willison.md"
     ],
+    "tags": [
+      "willison-canon"
+    ],
     "title": "Linear walkthroughs - Agentic Engineering Patterns - Simon Willison's Weblog"
   },
   "d9e1bd997d": {
@@ -2945,6 +3686,9 @@
     "references_from": [
       "research/33-language-choice-as-harness.md"
     ],
+    "tags": [
+      "dark-factory"
+    ],
     "title": "When AI Agents Write Your Code, Does Language Choice Matter?"
   },
   "dafe463e94": {
@@ -2959,6 +3703,9 @@
       }
     ],
     "id": "dafe463e94",
+    "tags": [
+      "other-vendor-substrate"
+    ],
     "title": "Tabnine Docs (Tabnine's Private and Protect)"
   },
   "dbc37326e4": {
@@ -2975,6 +3722,9 @@
     "id": "dbc37326e4",
     "references_from": [
       "research/05-simon-willison.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "Interactive explanations - Agentic Engineering Patterns - Simon Willison's Weblog"
   },
@@ -3006,6 +3756,9 @@
       "research/18-openai-codex-substrate.md",
       "research/plan-sync.md"
     ],
+    "tags": [
+      "openai-substrate"
+    ],
     "title": "(unknown)"
   },
   "e205ffac9d": {
@@ -3024,6 +3777,10 @@
       "research/18-openai-codex-substrate.md",
       "research/plan-sync.md"
     ],
+    "tags": [
+      "ai-engineering-culture",
+      "openai-substrate"
+    ],
     "title": "Unlocking the Codex harness: how we built the App Server"
   },
   "e6f77b9e81": {
@@ -3038,7 +3795,26 @@
       }
     ],
     "id": "e6f77b9e81",
+    "tags": [
+      "ai-engineering-culture"
+    ],
     "title": "A Manifesto for Agentic Development"
+  },
+  "e78ab8b5d2": {
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "Chapter 7 Automating Enterprise Arc.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "44cf28507fb57e4c5eda7c8f26b423686423998ce4d44f1e8c012340e783f6e8"
+      }
+    ],
+    "id": "e78ab8b5d2",
+    "tags": [
+      "intent-driven-architecture"
+    ],
+    "title": "El Kaim Book — Chapter 7: Automating Enterprise Architecture"
   },
   "e7eab5a353": {
     "canonical_url": "https://2389.ai/products/mammoth",
@@ -3055,6 +3831,10 @@
     "references_from": [
       "research/07-dark-factory.md",
       "research/followup/02-attractor-implementations.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "Mammoth — 2389 Research, Inc."
   },
@@ -3074,6 +3854,11 @@
       "research/07-dark-factory.md",
       "research/27-dotfile-pipelines-as-product.md",
       "research/followup/07-evals-deepdive.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "evals-and-benchmarks",
+      "other-vendor-substrate"
     ],
     "title": "strongdm/attractorbench: NLSpec instruction following benchmark"
   },
@@ -3096,6 +3881,9 @@
       }
     ],
     "id": "ec39dd30f2",
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "SWE-bench (original)"
   },
   "f2abe271f9": {
@@ -3113,7 +3901,45 @@
     "references_from": [
       "research/01-strongdm-factory.md"
     ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "Factory (StrongDM) — DTU"
+  },
+  "f52a2d4098": {
+    "files": [
+      {
+        "completeness": "complete",
+        "filename": "Chapter 9 Software Product Line and.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "91aa2967c584d3a765f8f59a1331bb772a87b6c21fc4a3220dc63ea2fb434a5e"
+      }
+    ],
+    "id": "f52a2d4098",
+    "tags": [
+      "intent-driven-architecture"
+    ],
+    "title": "El Kaim Book — Chapter 9: Software Product Line and Variability"
+  },
+  "f675af7d98": {
+    "canonical_url": "https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e",
+    "files": [
+      {
+        "comment": "El Kaim's canonical Dark Factory essay (legacy reference-only/dark-factory/ location)",
+        "completeness": "complete",
+        "filename": "dark-factory-article.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "d8532fd9858a29b6a3fe6fde93fac8a2cf6757eb4ab0281be0b05d2169107a35"
+      }
+    ],
+    "id": "f675af7d98",
+    "tags": [
+      "dark-factory"
+    ],
+    "title": "The Dark Factory: How Software Is Learning to Build Itself"
   },
   "f6b9330226": {
     "canonical_url": "https://openai.com/index/harness-engineering",
@@ -3130,6 +3956,10 @@
     "references_from": [
       "research/18-openai-codex-substrate.md",
       "research/plan-sync.md"
+    ],
+    "tags": [
+      "ai-engineering-culture",
+      "openai-substrate"
     ],
     "title": "Harness engineering: leveraging Codex in an agent-first world"
   },
@@ -3148,6 +3978,10 @@
     "references_from": [
       "research/07-dark-factory.md",
       "research/followup/02-attractor-implementations.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "2389-research/tracker"
   },
@@ -3194,11 +4028,22 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "4e1afc031f28afbfcfa9546fd55e508a9ba48c364c764d14a8f69538be56edb8"
+      },
+      {
+        "comment": "Full ~90-min Lenny x Willison transcript (legacy reference-only/willison-canon/ location)",
+        "completeness": "complete",
+        "filename": "willison-ai-state-of-the-union-full.txt",
+        "format": "txt",
+        "ingestion_status": "have",
+        "sha256": "9dbfa80697c9301371d8c558cbdcd1a3f0153511f3aacd04c9682b30434da29b"
       }
     ],
     "id": "f8007cc630",
     "references_from": [
       "research/06-hn-and-lenny.md"
+    ],
+    "tags": [
+      "willison-canon"
     ],
     "title": "An AI State of the Union | Simon Willison (Lenny's Newsletter)"
   },
@@ -3218,6 +4063,10 @@
       "research/07-dark-factory.md",
       "research/followup/02-attractor-implementations.md"
     ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
+    ],
     "title": "dotpowers — 2389 Research, Inc."
   },
   "f9d207b032": {
@@ -3236,6 +4085,9 @@
       "research/22-academic-foundations.md",
       "research/plan-sync.md"
     ],
+    "tags": [
+      "evals-and-benchmarks"
+    ],
     "title": "SWE-bench: Can Language Models Resolve Real-World GitHub Issues? | Princeton Language and Intelligence"
   },
   "fa20be05d7": {
@@ -3250,6 +4102,10 @@
       }
     ],
     "id": "fa20be05d7",
+    "tags": [
+      "academic-foundations",
+      "governance-and-legal"
+    ],
     "title": "Neves-Bussmann (Stanford Computational Antitrust, Vol. 6, 2026)"
   },
   "faa604dace": {
@@ -3267,7 +4123,7 @@
     "id": "faa604dace",
     "short_summary": "Hamel Husain — the philosophical root of LLM eval discipline",
     "tags": [
-      "evals"
+      "evals-and-benchmarks"
     ],
     "title": "Your AI Product Needs Evals"
   },
@@ -3285,6 +4141,10 @@
     "id": "fe423b2a50",
     "references_from": [
       "research/27-dotfile-pipelines-as-product.md"
+    ],
+    "tags": [
+      "dark-factory",
+      "other-vendor-substrate"
     ],
     "title": "dotpowers/dotpowers.dot at main · 2389-research/dotpowers"
   },
@@ -3309,8 +4169,7 @@
     "id": "ffc229d838",
     "short_summary": "Anthropic engineering — orchestrator-worker, evaluator-optimizer, augmented LLM patterns",
     "tags": [
-      "agent-architecture",
-      "anthropic"
+      "anthropic-substrate"
     ],
     "title": "Building Effective Agents"
   }

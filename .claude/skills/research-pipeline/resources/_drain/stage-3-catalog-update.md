@@ -150,6 +150,18 @@ If the file is being added to record X but its extracted URL doesn't quite match
 
 The user decides whether to keep both, retire one with `pointer_to`, or split.
 
+## Assigning category tags
+
+Every new or updated record SHOULD have at least one `tags` entry from the 15 canonical categories (`dark-factory`, `intent-driven-architecture`, `spec-authorship`, `willison-canon`, `compound-engineering`, `anthropic-substrate`, `openai-substrate`, `other-vendor-substrate`, `skills-composition`, `evals-and-benchmarks`, `academic-foundations`, `security-primitives`, `governance-and-legal`, `ai-engineering-culture`, `meta-synthesis`).
+
+See `resources/_catalog/category-taxonomy.md` for the full URL/title heuristic table. In short:
+
+1. Match the URL host against the heuristic table → primary tag.
+2. Add secondary tags for title cues (`skill`, `eval`, `harness`, `dark factory`, etc.).
+3. Cross-cutting sources can have 2-3 tags; that's expected.
+
+Records without any category tag end up in the renderer's "(no category)" bucket. That's a signal for follow-up review, not a permanent home.
+
 ## After stage 3
 
 Run stage 4 (validation). Don't skip.

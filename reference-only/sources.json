@@ -22,8 +22,17 @@
     "files": [
       {
         "completeness": "unknown",
+        "filename": "b979c76d0b_hamel.dev__blog__posts__llm-judge.html",
         "format": "html",
-        "ingestion_status": "want"
+        "ingestion_status": "have",
+        "sha256": "f0f10e4fc7908bfee6e4452e1f64d6b711c9c962db00fbe51d7b36f7a3c43f8a"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "b979c76d0b_hamel.dev__blog__posts__llm-judge.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "ca27a8b070c0921e5a2912f55628d105497408b4ef6c76c8fb83c21ace5ff3e3"
       }
     ],
     "id": "0c4bb49f75",
@@ -241,6 +250,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "77457a7169_developers.openai.com__codex__guides__agents-md.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "2724d5174745314861e9fa22818c168858001890a96d919627ad361c9a5439f7"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "77457a7169_developers.openai.com__codex__guides__agents-md.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "70f316e401504701389c4d62fde0369ccccdb694054d5ca64186d7df96334461"
       }
     ],
     "id": "175cba9347",
@@ -257,6 +280,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "b8fcb74562_hamel.dev__blog__posts__evals-faq.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "b5d5398f91d39542cc52d6c11bc38dfb86e4da2d06fcb73e69add860602d8e02"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "b8fcb74562_hamel.dev__blog__posts__evals-faq.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "bac1a852625f1135625455604f48cb7893dfd7144068ed6f922523546ac9febe"
       }
     ],
     "id": "18856eb4cf",
@@ -499,6 +536,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "91a944142c_arxiv.org__abs__2503.18813.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "cfffce6b1f23371d6c485fbcc35fd180004724472403adccdb68eec7f46d9c79"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "91a944142c_arxiv.org__abs__2503.18813.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "eef124edf4f39da25658ca8ad38b9139708bbb81caba88d9aa265652a8ba55a7"
       }
     ],
     "id": "24ca29ee98",
@@ -686,6 +737,20 @@
     "id": "35b057067e",
     "title": "Agentic Engineering Book – Chapter 6: Harnesses (Jaymin West)"
   },
+  "366927b32e": {
+    "canonical_url": "https://eugeneyan.com/404.html",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "975ebfc0d7_eugeneyan.com__writing__llm-evaluator.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "0e409b0a3c6fa22928831211f189b3dab9c26f6e8cfa17af65b281d3c97d01d5"
+      }
+    ],
+    "id": "366927b32e",
+    "title": "(unknown)"
+  },
   "3703e782c0": {
     "canonical_url": "https://www.danshapiro.com/blog/2026/02/you-dont-write-the-code",
     "files": [
@@ -693,6 +758,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "171372634d_www.danshapiro.com__blog__2026__02__you-dont-write-the-code.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "4900075139a35c8186b1c73010e1f26d3eefdad4dbb52286c38e915928aca4a7"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "171372634d_www.danshapiro.com__blog__2026__02__you-dont-write-the-code.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "6243e13ba8a762a0138e20143d8239b34d67f3fdc04f283f660e8cb3e858be96"
       }
     ],
     "id": "3703e782c0",
@@ -1133,6 +1212,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "2ab9a1ab38_simonwillison.net__2025__Apr__11__camel.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "853b88d18af55e051be5d5d860d3260032eab37d23cc48a63f3619907b94b8f7"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "2ab9a1ab38_simonwillison.net__2025__Apr__11__camel.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "6b538d925045f8e7b141015d43a38dfeb181c942cf27615f7f59377b69ba1997"
       }
     ],
     "id": "53ed6e363d",
@@ -1337,6 +1430,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "e1dffb38b4_blog.replit.com__introducing-agent-3-our-most-autonomous-agent-yet.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "ea85bfd1d21ebdf735e6284aad8255cde1dc79a58bd08b00882a57039a7a9b3b"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "e1dffb38b4_blog.replit.com__introducing-agent-3-our-most-autonomous-agent-yet.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "e11fdcbe3e145aebe4aac28add2fe14d4f51f6097a4d21a8a5f63e4324ca2188"
       }
     ],
     "id": "5cc5a296b6",
@@ -1441,8 +1548,17 @@
     "files": [
       {
         "completeness": "unknown",
+        "filename": "2662e841a3_arxiv.org__html__2505.13360v3.html",
         "format": "html",
-        "ingestion_status": "want"
+        "ingestion_status": "have",
+        "sha256": "9bad09dcabd0470dc175bd563cacb3b4fd2d1d99fd89600d801ea09a4781a8e4"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "2662e841a3_arxiv.org__html__2505.13360v3.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "4831dc4190d3e7bc6342ad2b7c881115f0b1f8948bcfb647293db58bdd7e2fa8"
       }
     ],
     "id": "6bea7182f9",
@@ -1498,6 +1614,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "307762ff25_hamel.dev__blog__posts__field-guide.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "7ce00cfbe0dea2e01003ed2f138b7d48c317796161c58f030b6020db255f4c3b"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "307762ff25_hamel.dev__blog__posts__field-guide.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "eb8b13926dade09372ee521e655e1600a88ea04f3d83cd4d311b4a99eb1c7780"
       }
     ],
     "id": "71d2de09c6",
@@ -1528,6 +1658,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "ff906146e8_blog.replit.com__introducing-agent-4-built-for-creativity.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "d1b22825bfc910241e6305cd0e1e00a865667b655a476e57f4634b64ea425e6b"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "ff906146e8_blog.replit.com__introducing-agent-4-built-for-creativity.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "ad1704101d99bfa5e70cabfce4cd8e430cab33cc058c620dac70230b748be70c"
       }
     ],
     "id": "73dc7199ce",
@@ -1600,8 +1744,17 @@
     "files": [
       {
         "completeness": "unknown",
+        "filename": "4d499d46a4_arxiv.org__html__2507.20439v1.html",
         "format": "html",
-        "ingestion_status": "want"
+        "ingestion_status": "have",
+        "sha256": "444bbb6177622c815ba53fabea8d694cc9a838e0486ce5eadf52130f0e55f279"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "4d499d46a4_arxiv.org__html__2507.20439v1.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "936f65513732fcb903b1ea1aafd63afe4b2b47e35d4852e67820e08eff5c2ae4"
       }
     ],
     "id": "7beb3bc828",
@@ -1732,6 +1885,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "d179e7b09d_developers.openai.com__codex__subagents.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "4a930ecb9293b5690b7b01d2369f55daabdbe241872a5babb66ac5cd51d085cf"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "d179e7b09d_developers.openai.com__codex__subagents.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "31f9819b004f4612123206b885dbd54590c869a3129d95ff564383459aff6b1e"
       }
     ],
     "id": "8334be0240",
@@ -2011,9 +2178,10 @@
     "canonical_url": "https://docs.github.com/en/copilot/copilot-workspace/about-copilot-workspace",
     "files": [
       {
-        "completeness": "unknown",
+        "comment": "URL sunset 2026-05-13 round-8; folded into about-cloud-agent. See research/19-github-copilot-cloud-agent.md",
+        "completeness": "error",
         "format": "html",
-        "ingestion_status": "want"
+        "ingestion_status": "skip-not-necessary"
       }
     ],
     "id": "991f3bf0f6",
@@ -2076,6 +2244,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "65eac5afb6_simonwillison.net__2025__Jun__16__the-lethal-trifecta.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "0d43c2bf66ee3d933184dcf68b19d33361d9763fbdf6b662bf2689474a80ca62"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "65eac5afb6_simonwillison.net__2025__Jun__16__the-lethal-trifecta.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "03b97ea208eb10e8a1049d85afd2cccf3429b9c22474c807709f0ddfc89f7099"
       }
     ],
     "id": "9c9554d27e",
@@ -2132,8 +2314,17 @@
     "files": [
       {
         "completeness": "unknown",
+        "filename": "37ed91c908_www.anthropic.com__engineering__multi-agent-research-system.html",
         "format": "html",
-        "ingestion_status": "want"
+        "ingestion_status": "have",
+        "sha256": "a94aa4fd50e5a3c6c6de28dc53023a6ff4443b56ef6d0adda7206ce48cec413a"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "37ed91c908_www.anthropic.com__engineering__multi-agent-research-system.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "030e712f8c9f9c1383830e5807ca15f5de2323ff12019dda127784c5a63ce46a"
       }
     ],
     "id": "a3afc1e8c7",
@@ -2251,6 +2442,23 @@
       "research/28-schillace-sunday-letters.md"
     ],
     "title": "Machine with Concrete - by Sam Schillace - Sunday Letters"
+  },
+  "ade5ef8d76": {
+    "canonical_url": "https://eugeneyan.com/writing/llm-evaluators",
+    "files": [
+      {
+        "comment": "Correct URL is plural 'evaluators'; original record had singular which 404'd",
+        "completeness": "unknown",
+        "format": "html",
+        "ingestion_status": "want"
+      }
+    ],
+    "id": "ade5ef8d76",
+    "short_summary": "Third core eval source (with Husain and Anthropic multi-agent)",
+    "tags": [
+      "evals"
+    ],
+    "title": "Eugene Yan — LLM Evaluators"
   },
   "af38d390c2": {
     "canonical_url": "https://kiro.dev/",
@@ -2564,14 +2772,9 @@
   },
   "caad3c1702": {
     "canonical_url": "https://eugeneyan.com/writing/llm-evaluator",
-    "files": [
-      {
-        "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      }
-    ],
+    "files": [],
     "id": "caad3c1702",
+    "pointer_to": "ade5ef8d76",
     "short_summary": "Third core eval source (with Husain and Anthropic multi-agent)",
     "tags": [
       "evals"
@@ -2782,6 +2985,20 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "ed3b262d33_developers.openai.com__codex__agent-approvals-security.html",
+        "format": "html",
+        "ingestion_status": "have",
+        "sha256": "47527c2ba33fd0bf6a28df1ee3ce89b27ae63bef53c427b16adcae16b3873b89"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "ed3b262d33_developers.openai.com__codex__agent-approvals-security.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "486266dccb3715fd0b3fb5c04ba0850ac796b30ef02c62e2629320e663661e21"
       }
     ],
     "id": "dccefbfc62",
@@ -2970,6 +3187,13 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "a8b5c20ba9_www.lennysnewsletter.com__p__an-ai-state-of-the-union.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "4e1afc031f28afbfcfa9546fd55e508a9ba48c364c764d14a8f69538be56edb8"
       }
     ],
     "id": "f8007cc630",
@@ -3069,8 +3293,17 @@
     "files": [
       {
         "completeness": "unknown",
+        "filename": "7d24e5faa2_www.anthropic.com__engineering__building-effective-agents.html",
         "format": "html",
-        "ingestion_status": "want"
+        "ingestion_status": "have",
+        "sha256": "1e050a46697fb7d545bcca3180dd53f3c5d49264a2100fe8f3cb4ab8ce79cd1a"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "7d24e5faa2_www.anthropic.com__engineering__building-effective-agents.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "b82816f7b1400e0e73f90fc453ff43b3ac0b5692de18b10033a2d8e986ddd171"
       }
     ],
     "id": "ffc229d838",

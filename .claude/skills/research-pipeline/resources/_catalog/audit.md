@@ -47,7 +47,7 @@ python scripts/audit-records.py --all --json
 
 Exit codes: `0` clean, `1` findings, `2` could not load catalog.
 
-## The 12 checks (today)
+## The 15 checks (today)
 
 | # | Check | Drain hook that produces passing records |
 |---|---|---|
@@ -58,11 +58,14 @@ Exit codes: `0` clean, `1` findings, `2` could not load catalog.
 | 5 | `has-files` | drain attaches a file entry for every ingested file |
 | 6 | `file-on-disk` | drain `git mv`s files into `reference-only/<id>/` |
 | 7 | `file-sha256-matches` | drain computes sha256 from file content during ingestion |
-| 8 | `format-matches-extension` | drain maps extension → format via `EXT_TO_FORMAT` |
+| 8 | `format-matches-extension` | drain maps extension → format via `EXT_TO_FORMAT` (incl. `youtube-transcript` → `.txt`) |
 | 9 | `has-category-tag` | **not yet automated** — agent assigns tags from `category-taxonomy.md` |
 | 10 | `pointer-chain-ok` | only created manually when retiring a record |
 | 11 | `fetch-provenance-ok` | drain doesn't set fetch_provenance directly — that's the fetch-blocked-urls skill |
 | 12 | `image-has-summary` | **not yet automated** — agent populates `files[].comment` post-drain |
+| 13 | `youtube-url-required-when-transcript` | drain canonicalizes and stores `youtube_url` whenever it creates/promotes a `youtube-transcript` entry |
+| 14 | `youtube-url-only-on-transcript` | drain only sets `youtube_url` on `youtube-transcript` entries (schema forbids it elsewhere) |
+| 15 | `youtube-transcript-content-matches` | drain detects a transcript by its first-line YouTube URL, so any `have` transcript drain produced satisfies this by construction |
 
 The "not yet automated" rows are the open audit-driven gaps. When you next
 work on drain, those are the next planned upgrades. If you find a NEW check

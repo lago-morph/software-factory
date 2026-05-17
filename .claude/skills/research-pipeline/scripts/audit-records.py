@@ -22,6 +22,15 @@ Checks (per record):
  10. pointer-chain-ok           — pointer_to (if set) points to a non-pointer record.
  11. fetch-provenance-ok        — if fetch_provenance is set, status is non-null.
  12. image-has-summary          — image files have a non-empty comment field.
+ 13. youtube-url-required-when-transcript
+                                — format=youtube-transcript ⇒ youtube_url set
+                                  to a canonical YouTube URL.
+ 14. youtube-url-only-on-transcript
+                                — youtube_url must not appear on non-transcript
+                                  file entries.
+ 15. youtube-transcript-content-matches
+                                — for have transcripts, the file's first line
+                                  is the same URL recorded in youtube_url.
 
 Usage:
     python audit-records.py <id> [<id>...]   # audit specific record IDs
@@ -48,6 +57,9 @@ from _config import (  # noqa: E402
     data_path, library_path, repo_root, skill_md_path, ConfigError,
 )
 from url_canonicalize import canonicalize_url, compute_id  # noqa: E402
+from youtube_urls import (  # noqa: E402
+    canonicalize_youtube_url, first_line_youtube_url, is_youtube_url,
+)
 
 
 # Keep in sync with render-sources-md.py CATEGORY_ORDER. When categories.json
@@ -89,6 +101,7 @@ FORMAT_EXT = {
     "csv": {".csv"},
     "zip": {".zip"},
     "bibtex": {".bib"},
+    "youtube-transcript": {".txt"},
 }
 
 IMAGE_FORMATS = {
@@ -193,7 +206,7 @@ def audit_record(record_id: str, record: dict, data: dict, lib: Path,
         findings.append(Finding(record_id, "has-files",
             "files[] is empty; add 'want' or 'have' entries"))
 
-    # 6 + 7 + 8 + 12: per-file checks
+    # 6 + 7 + 8 + 12 + 13/14/15: per-file checks
     for i, f in enumerate(files):
         if not isinstance(f, dict):
             continue
@@ -208,6 +221,34 @@ def audit_record(record_id: str, record: dict, data: dict, lib: Path,
                 findings.append(Finding(record_id, "format-matches-extension",
                     f"files[{i}] format={fmt!r} but filename={filename!r} "
                     f"(expected extension in {sorted(FORMAT_EXT[fmt])})"))
+
+        # 13. youtube-url-required-when-transcript
+        #     The schema enforces this too, but auditing every drained
+        #     record gives us a friendlier message and catches the case
+        #     where someone hand-edited the JSON.
+        yt_url = f.get("youtube_url")
+        if fmt == "youtube-transcript":
+            if not yt_url:
+                findings.append(Finding(record_id, "youtube-url-required-when-transcript",
+                    f"files[{i}] format=youtube-transcript but youtube_url is unset"))
+            elif not is_youtube_url(yt_url):
+                findings.append(Finding(record_id, "youtube-url-required-when-transcript",
+                    f"files[{i}] youtube_url={yt_url!r} is not a YouTube URL"))
+            else:
+                try:
+                    canon = canonicalize_youtube_url(yt_url)
+                except ValueError as e:
+                    findings.append(Finding(record_id, "youtube-url-required-when-transcript",
+                        f"files[{i}] youtube_url={yt_url!r} not canonicalizable: {e}"))
+                else:
+                    if canon != yt_url:
+                        findings.append(Finding(record_id, "youtube-url-required-when-transcript",
+                            f"files[{i}] youtube_url={yt_url!r} is not in canonical "
+                            f"form (expected {canon!r})"))
+        elif yt_url is not None:
+            # youtube_url must only appear on youtube-transcript entries.
+            findings.append(Finding(record_id, "youtube-url-only-on-transcript",
+                f"files[{i}] has youtube_url but format={fmt!r} (must be 'youtube-transcript')"))
 
         if status != "have":
             continue
@@ -247,6 +288,26 @@ def audit_record(record_id: str, record: dict, data: dict, lib: Path,
                 findings.append(Finding(record_id, "image-has-summary",
                     f"files[{i}] {filename or '<no-name>'} is an image but "
                     "comment is empty; populate with auto-summary"))
+
+        # 15. youtube-transcript-content-matches
+        #     For have transcripts, the file's first line must be the same
+        #     YouTube URL recorded in youtube_url (after canonicalization).
+        if fmt == "youtube-transcript" and yt_url:
+            first_url = first_line_youtube_url(abs_path)
+            if first_url is None:
+                findings.append(Finding(record_id, "youtube-transcript-content-matches",
+                    f"files[{i}] {filename or '<no-name>'} first line is not a "
+                    f"YouTube URL (transcripts must begin with the video URL)"))
+            else:
+                try:
+                    expected = canonicalize_youtube_url(yt_url)
+                except ValueError:
+                    expected = yt_url
+                if first_url != expected:
+                    findings.append(Finding(record_id, "youtube-transcript-content-matches",
+                        f"files[{i}] {filename or '<no-name>'} first-line URL "
+                        f"{first_url!r} does not match recorded youtube_url "
+                        f"{expected!r}"))
 
         # 11. fetch-provenance-ok
         fp = f.get("fetch_provenance")

@@ -57,6 +57,12 @@ See `image-summarization.md` for the full procedure. In short:
 3. Replace the pending-summary marker with the real comment
 4. Set `has_useful_diagrams` on the record if the diagrams add information
 
+## YouTube embed candidates
+
+If the drain run summary lists any YouTube URLs under "YouTube embed candidates", read the surrounding-text snippet and decide whether the video is worth a transcript. For each useful one, add a `youtube-transcript` file entry with `ingestion_status: want` to the embedding record. The user then fetches the transcript and drops a `.txt` file (first line = video URL) for drain/reconcile to promote.
+
+Full procedure: `youtube-transcripts.md`.
+
 ## Multi-source synthesis
 
 When multiple records contribute to the same section of a report, the drain agent's job is to synthesize — not just append. Read all relevant sources, identify overlapping claims, surface contradictions, note where one source is the primary anchor and others are corroborating.

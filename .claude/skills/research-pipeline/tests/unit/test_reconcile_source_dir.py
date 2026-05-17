@@ -12,7 +12,7 @@ from tests.conftest import write_skill_md, default_config_yaml, write_sources_js
 
 def _run(repo: Path, *args) -> subprocess.CompletedProcess:
     src_dir = Path(__file__).resolve().parents[2] / "scripts"
-    for name in ("reconcile-source-dir.py", "_config.py", "url_canonicalize.py", "extract_url.py"):
+    for name in ("reconcile-source-dir.py", "_config.py", "url_canonicalize.py", "extract_url.py", "youtube_urls.py"):
         (repo / ".claude" / "skills" / "research-pipeline" / "scripts" / name).write_text(
             (src_dir / name).read_text()
         )
@@ -113,3 +113,59 @@ class TestReconcile:
         data = json.loads((tmp_repo / "reference-only" / "sources.json").read_text())
         assert len(data[r1]["files"]) == 1
         assert len(data[r2]["files"]) == 1
+
+
+    def test_youtube_transcript_promotes_wanted_entry(self, tmp_repo):
+        from url_canonicalize import canonicalize_and_id
+        VID = "dQw4w9WgXcQ"
+        YT = f"https://www.youtube.com/watch?v={VID}"
+        canon, rid = canonicalize_and_id("https://example.com/post")
+        write_skill_md(tmp_repo, default_config_yaml())
+        write_sources_json(tmp_repo, {
+            rid: {
+                "id": rid, "canonical_url": canon, "title": "Doc",
+                "files": [{
+                    "format": "youtube-transcript", "filename": None,
+                    "ingestion_status": "want", "youtube_url": YT,
+                }]
+            }
+        })
+        d = tmp_repo / "reference-only" / rid
+        d.mkdir()
+        (d / "transcript.txt").write_text(YT + "\nbody\n", encoding="utf-8")
+        result = _run(tmp_repo, rid)
+        assert result.returncode == 0, result.stderr
+        data = json.loads((tmp_repo / "reference-only" / "sources.json").read_text())
+        files = data[rid]["files"]
+        # Still exactly one entry — it was promoted, not appended.
+        assert len(files) == 1
+        e = files[0]
+        assert e["format"] == "youtube-transcript"
+        assert e["ingestion_status"] == "have"
+        assert e["filename"] == "transcript.txt"
+        assert e["youtube_url"] == YT
+        assert "sha256" in e
+
+    def test_youtube_transcript_without_wanted_added_as_have(self, tmp_repo):
+        from url_canonicalize import canonicalize_and_id
+        VID = "dQw4w9WgXcQ"
+        YT = f"https://www.youtube.com/watch?v={VID}"
+        canon, rid = canonicalize_and_id("https://example.com/post")
+        write_skill_md(tmp_repo, default_config_yaml())
+        write_sources_json(tmp_repo, {
+            rid: {
+                "id": rid, "canonical_url": canon, "title": "Doc", "files": [],
+            }
+        })
+        d = tmp_repo / "reference-only" / rid
+        d.mkdir()
+        (d / "transcript.txt").write_text(YT + "\nbody\n", encoding="utf-8")
+        result = _run(tmp_repo, rid)
+        assert result.returncode == 0
+        data = json.loads((tmp_repo / "reference-only" / "sources.json").read_text())
+        files = data[rid]["files"]
+        assert len(files) == 1
+        e = files[0]
+        assert e["format"] == "youtube-transcript"
+        assert e["ingestion_status"] == "have"
+        assert e["youtube_url"] == YT

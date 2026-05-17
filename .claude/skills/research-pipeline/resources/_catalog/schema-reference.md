@@ -94,7 +94,9 @@ Each file entry represents one physical file OR one *desired* file. See "File en
 ## File entries
 
 ### `format` (required)
-MIME-style identifier. Common values: `html`, `mhtml`, `md`, `txt`, `pdf`, `ipynb`, `image/png`, `image/jpeg`, `image/svg+xml`. See the schema for the full enum. Use `"other"` for anything not listed.
+MIME-style identifier. Common values: `html`, `mhtml`, `md`, `txt`, `pdf`, `ipynb`, `image/png`, `image/jpeg`, `image/svg+xml`, `youtube-transcript`. See the schema for the full enum. Use `"other"` for anything not listed.
+
+`youtube-transcript` is a special plain-text format whose file's **first line is the canonical YouTube URL** and whose body is the transcript. It pairs with the `youtube_url` field below. Full lifecycle and audit rules: `resources/_drain/youtube-transcripts.md`.
 
 ### `filename` (optional)
 **Basename only** — no path components. The physical location is computed as `reference-only/<id>/<filename>`. Use `null` when `ingestion_status=want` and you don't have a specific desired filename yet.
@@ -128,6 +130,11 @@ SHA-256 of the file content as hex. The linter computes the actual file's sha256
 
 ### `comment`
 File-specific notes. **For images, this is where the auto-generated visual summary lives.**
+
+### `youtube_url` (conditional)
+**Required when** `format=youtube-transcript`. **Forbidden on any other format** (schema-enforced). The canonical `https://www.youtube.com/watch?v=<ID>` URL of the video the transcript is for. Use `python scripts/youtube_urls.py <file>` to inspect or `youtube_urls.canonicalize_youtube_url()` to normalize.
+
+When `ingestion_status=have`, the audit also requires that the same URL appears as the first line of the transcript file (check 15: `youtube-transcript-content-matches`).
 
 ### `fetch_provenance` (optional)
 For files acquired via the `fetch-blocked-urls` GitHub Actions workflow:

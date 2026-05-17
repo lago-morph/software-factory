@@ -20,7 +20,7 @@ from tests.conftest import (
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
 SCRIPT_FILES = [
-    "_config.py", "url_canonicalize.py", "audit-records.py",
+    "_config.py", "url_canonicalize.py", "audit-records.py", "youtube_urls.py",
 ]
 
 
@@ -324,3 +324,174 @@ class TestInvalidIdInput:
         repo = _setup_repo(tmp_path, {})
         result = _run(repo)
         assert result.returncode == 2
+
+
+# ---------------- YouTube transcript checks ----------------
+
+VIDEO_ID = "dQw4w9WgXcQ"
+VIDEO_URL = f"https://www.youtube.com/watch?v={VIDEO_ID}"
+
+
+def _record_with_transcript(rid: str, url: str, *, transcript_file_entry: dict,
+                            transcript_content: str | None,
+                            repo: Path | None) -> dict:
+    """Build a record with a transcript file entry. If transcript_content is
+    given, write the file to disk so file-on-disk + sha256 checks pass."""
+    rec = {
+        "id": rid,
+        "canonical_url": url,
+        "title": "An Embedding Document",
+        "tags": ["dark-factory"],
+        "files": [transcript_file_entry],
+    }
+    if transcript_content is not None and repo is not None:
+        d = repo / "reference-only" / rid
+        d.mkdir(parents=True, exist_ok=True)
+        fname = transcript_file_entry["filename"]
+        (d / fname).write_text(transcript_content, encoding="utf-8")
+        transcript_file_entry["sha256"] = hashlib.sha256(
+            transcript_content.encode("utf-8")
+        ).hexdigest()
+    return rec
+
+
+class TestYoutubeTranscript:
+    def test_wanted_transcript_with_url_passes(self, tmp_path):
+        entry = {
+            "format": "youtube-transcript",
+            "filename": None,
+            "ingestion_status": "want",
+            "youtube_url": VIDEO_URL,
+        }
+        rec = {
+            "id": ID_A, "canonical_url": URL_A, "title": "Doc",
+            "tags": ["dark-factory"], "files": [entry],
+        }
+        repo = _setup_repo(tmp_path, {ID_A: rec})
+        result = _run(repo, ID_A)
+        assert result.returncode == 0, result.stdout
+
+    def test_transcript_without_youtube_url_is_flagged(self, tmp_path):
+        entry = {
+            "format": "youtube-transcript",
+            "filename": "t.txt",
+            "sha256": "0" * 64,
+            "ingestion_status": "have",
+        }
+        rec = {
+            "id": ID_A, "canonical_url": URL_A, "title": "Doc",
+            "tags": ["dark-factory"], "files": [entry],
+        }
+        repo = _setup_repo(tmp_path, {ID_A: rec})
+        result = _run(repo, ID_A)
+        assert result.returncode == 1
+        assert "youtube-url-required-when-transcript" in result.stdout
+
+    def test_non_canonical_youtube_url_is_flagged(self, tmp_path):
+        entry = {
+            "format": "youtube-transcript",
+            "filename": None,
+            "ingestion_status": "want",
+            "youtube_url": f"https://youtu.be/{VIDEO_ID}",
+        }
+        rec = {
+            "id": ID_A, "canonical_url": URL_A, "title": "Doc",
+            "tags": ["dark-factory"], "files": [entry],
+        }
+        repo = _setup_repo(tmp_path, {ID_A: rec})
+        result = _run(repo, ID_A)
+        assert result.returncode == 1
+        assert "youtube-url-required-when-transcript" in result.stdout
+
+    def test_youtube_url_on_non_transcript_is_flagged(self, tmp_path):
+        # We have to write this directly via dict — the schema would reject
+        # it at validate-sources time, but audit must catch it too.
+        entry = {
+            "format": "html",
+            "filename": "page.html",
+            "sha256": "0" * 64,
+            "ingestion_status": "want",
+            "youtube_url": VIDEO_URL,
+        }
+        rec = {
+            "id": ID_A, "canonical_url": URL_A, "title": "Doc",
+            "tags": ["dark-factory"], "files": [entry],
+        }
+        repo = _setup_repo(tmp_path, {ID_A: rec})
+        result = _run(repo, ID_A)
+        assert result.returncode == 1
+        assert "youtube-url-only-on-transcript" in result.stdout
+
+    def test_have_transcript_content_matches_passes(self, tmp_path):
+        entry = {
+            "format": "youtube-transcript",
+            "filename": "transcript.txt",
+            "ingestion_status": "have",
+            "completeness": "unknown",
+            "youtube_url": VIDEO_URL,
+        }
+        content = VIDEO_URL + "\n\n[0:00] hello world\n"
+        repo_root = _setup_repo(tmp_path, {})
+        rec = _record_with_transcript(
+            ID_A, URL_A, transcript_file_entry=entry,
+            transcript_content=content, repo=repo_root,
+        )
+        write_sources_json(repo_root, {ID_A: rec})
+        result = _run(repo_root, ID_A)
+        assert result.returncode == 0, result.stdout
+
+    def test_have_transcript_wrong_first_line_is_flagged(self, tmp_path):
+        entry = {
+            "format": "youtube-transcript",
+            "filename": "transcript.txt",
+            "ingestion_status": "have",
+            "completeness": "unknown",
+            "youtube_url": VIDEO_URL,
+        }
+        # First line is a different URL
+        content = f"https://www.youtube.com/watch?v=other_video1\nbody\n"
+        repo_root = _setup_repo(tmp_path, {})
+        rec = _record_with_transcript(
+            ID_A, URL_A, transcript_file_entry=entry,
+            transcript_content=content, repo=repo_root,
+        )
+        write_sources_json(repo_root, {ID_A: rec})
+        result = _run(repo_root, ID_A)
+        assert result.returncode == 1
+        assert "youtube-transcript-content-matches" in result.stdout
+
+    def test_have_transcript_no_first_line_url_is_flagged(self, tmp_path):
+        entry = {
+            "format": "youtube-transcript",
+            "filename": "transcript.txt",
+            "ingestion_status": "have",
+            "completeness": "unknown",
+            "youtube_url": VIDEO_URL,
+        }
+        content = "TITLE: A talk\nbody only, no url\n"
+        repo_root = _setup_repo(tmp_path, {})
+        rec = _record_with_transcript(
+            ID_A, URL_A, transcript_file_entry=entry,
+            transcript_content=content, repo=repo_root,
+        )
+        write_sources_json(repo_root, {ID_A: rec})
+        result = _run(repo_root, ID_A)
+        assert result.returncode == 1
+        assert "youtube-transcript-content-matches" in result.stdout
+
+    def test_transcript_format_matches_txt_extension(self, tmp_path):
+        # format-matches-extension must accept .txt for youtube-transcript.
+        entry = {
+            "format": "youtube-transcript",
+            "filename": "t.txt",
+            "ingestion_status": "want",
+            "youtube_url": VIDEO_URL,
+        }
+        rec = {
+            "id": ID_A, "canonical_url": URL_A, "title": "Doc",
+            "tags": ["dark-factory"], "files": [entry],
+        }
+        repo = _setup_repo(tmp_path, {ID_A: rec})
+        result = _run(repo, ID_A)
+        # Want entry without on-disk file → no file-on-disk check fires.
+        assert "format-matches-extension" not in result.stdout

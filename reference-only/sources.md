@@ -3,7 +3,7 @@
 Auto-generated from `reference-only/sources.json` by `scripts/render-sources-md.py`.
 Do not edit by hand — your changes will be overwritten on next push to `main`.
 
-**Records:** 182 · **Generated:** 2026-05-17 17:51 UTC
+**Records:** 204 · **Generated:** 2026-05-17 20:22 UTC
 
 ## 🔴 Manual fetch needed
 
@@ -274,6 +274,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 - **Files:** txt ✓
 - **Tags:** `dark-factory`
+- **Cited in:** `research/07-dark-factory.md` *(1)*
 
 ### 3a16af6be1 — The Dark Software Factory (BCG Platinion) <a id="3a16af6be1"></a>
 
@@ -412,9 +413,16 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `intent-driven-architecture`
 
 
-### spec-authorship *(1 record)*
+### spec-authorship *(3 records)*
 
 *Requirements engineering, BMAD, scenario testing, INCOSE primer, spec-as-prompt practice.*
+
+### 34b7fdd99d — Requirements Writing Guide | Docs | 8090 <a id="34b7fdd99d"></a>
+
+<https://www.8090.ai/docs/opinions/requirements-writing-guide>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate` · `spec-authorship`
 
 ### 95265c651d — Spec-driven development: The AI engineering workflow (Lenny's Newsletter) <a id="95265c651d"></a>
 
@@ -423,6 +431,13 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Files:** txt ✓
 - **Tags:** `compound-engineering` · `spec-authorship`
 - **Cited in:** `research/35-lenny-howiai-spec-driven-and-team-ops.md` *(1)*
+
+### 292ea05299 — Work Order Writing Guide | Docs | 8090 <a id="292ea05299"></a>
+
+<https://www.8090.ai/docs/opinions/work-order-writing-guide>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate` · `spec-authorship`
 
 
 ### willison-canon *(26 records)*
@@ -597,6 +612,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 - **Files:** html (want) · html ✓ · md ✓
 - **Tags:** `security-primitives` · `willison-canon`
+- **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/08-security-primitives.md` *(2)*
 
 ### 3262892c6c — Subagents - Agentic Engineering Patterns - Simon Willison's Weblog <a id="3262892c6c"></a>
 
@@ -722,7 +738,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Cited in:** `research/03-every-compound-engineering.md` *(1)*
 
 
-### anthropic-substrate *(8 records)*
+### anthropic-substrate *(9 records)*
 
 *Claude Code substrate, Anthropic engineering posts, Cherny interviews.*
 
@@ -781,6 +797,13 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Files:** html ✓ · txt ✓ · txt ✓ · txt ✓
 - **Tags:** `anthropic-substrate`
 - **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/03-cherny-interview.md` *(2)*
+
+### ee885bfc4c — Skill authoring best practices - Claude API Docs <a id="ee885bfc4c"></a>
+
+<https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices>
+
+- **Files:** mhtml ✓
+- **Tags:** `anthropic-substrate` · `skills-composition`
 
 ### 3643d46af4 — What are Skills? (Anthropic support) <a id="3643d46af4"></a>
 
@@ -859,7 +882,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
 
 
-### other-vendor-substrate *(57 records)*
+### other-vendor-substrate *(72 records)*
 
 *GitHub Copilot, Replit Agent, Devin, Factory.ai, Tabnine, OpenHands, etc.*
 
@@ -963,6 +986,14 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Files:** html ✓
 - **Tags:** `other-vendor-substrate`
 
+### ebc17186b3 — About GitHub Copilot cloud agent - GitHub Docs <a id="ebc17186b3"></a>
+
+<https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
+
 ### 1b03040a1b — Agent Guidelines | Tabnine Docs <a id="1b03040a1b"></a>
 
 <https://docs.tabnine.com/main/administering-tabnine/managing-your-team/settings/agent-guidelines>
@@ -986,11 +1017,46 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `other-vendor-substrate`
 - **Cited in:** `research/12-adjacent-ecosystem.md` *(1)*
 
+### f313f7845c — Artifacts | Docs | 8090 <a id="f313f7845c"></a>
+
+<https://www.8090.ai/docs/raw-materials/artifacts>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+
+### 83fcd19c73 — Blueprint Writing Guide | Docs | 8090 <a id="83fcd19c73"></a>
+
+<https://www.8090.ai/docs/opinions/blueprint-writing-guide>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+
+### e36b18df01 — Blueprints | Docs | 8090 <a id="e36b18df01"></a>
+
+<https://www.8090.ai/docs/modules/blueprints>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+
+### dcc5c900a1 — Changelog | Docs | 8090 <a id="dcc5c900a1"></a>
+
+<https://www.8090.ai/docs/resources/changelog>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+
 ### 8e651f5fda — Coaching Guidelines | Tabnine Docs <a id="8e651f5fda"></a>
 
 <https://docs.tabnine.com/main/getting-started/context-engine/admin-console/coaching>
 
 - **Files:** html ✓ · md ✓
+- **Tags:** `other-vendor-substrate`
+
+### d9aa0e7ad5 — Codebase Connection | Docs | 8090 <a id="d9aa0e7ad5"></a>
+
+<https://www.8090.ai/docs/raw-materials/codebase>
+
+- **Files:** mhtml ✓
 - **Tags:** `other-vendor-substrate`
 
 ### 54629e12fe — Context Engine | Tabnine Docs <a id="54629e12fe"></a>
@@ -1156,6 +1222,13 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `other-vendor-substrate`
 - **Cited in:** `research/11-openhands-substrate-audit.md` *(1)*
 
+### 9ad71cb019 — Introduction | Docs | 8090 <a id="9ad71cb019"></a>
+
+<https://www.8090.ai/docs/general/introduction>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+
 ### af38d390c2 — Kiro <a id="af38d390c2"></a>
 
 <https://kiro.dev/>
@@ -1177,6 +1250,13 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 <https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts>
 
 - **Files:** html ✓
+- **Tags:** `other-vendor-substrate`
+
+### 8e89b0d8e5 — Migrating from Jira | Docs | 8090 <a id="8e89b0d8e5"></a>
+
+<https://www.8090.ai/docs/opinions/jira-migration>
+
+- **Files:** mhtml ✓
 - **Tags:** `other-vendor-substrate`
 
 ### a5209cf735 — OpenHands AI Action · Actions · GitHub Marketplace <a id="a5209cf735"></a>
@@ -1208,6 +1288,13 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Files:** html ✓ · md ✓
 - **Tags:** `other-vendor-substrate`
 
+### 607f6af312 — Quickstart | Docs | 8090 <a id="607f6af312"></a>
+
+<https://www.8090.ai/docs/general/quickstart>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+
 ### 12d3cc73b8 — Replit — Introducing Replit App Monitoring <a id="12d3cc73b8"></a>
 
 <https://blog.replit.com/app-monitoring>
@@ -1216,6 +1303,20 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `other-vendor-substrate`
 - **Cited in:** `research/20-replit-agent.md` *(1)*
 
+### 34b7fdd99d — Requirements Writing Guide | Docs | 8090 <a id="34b7fdd99d"></a>
+
+<https://www.8090.ai/docs/opinions/requirements-writing-guide>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate` · `spec-authorship`
+
+### f3e4b69e8c — Requirements | Docs | 8090 <a id="f3e4b69e8c"></a>
+
+<https://www.8090.ai/docs/modules/requirements>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+
 ### 59d633b2c6 — Smasher — 2389 Research, Inc. <a id="59d633b2c6"></a>
 
 <https://2389.ai/products/smasher>
@@ -1223,6 +1324,13 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Files:** txt ✓
 - **Tags:** `dark-factory` · `other-vendor-substrate`
 - **Cited in:** `research/07-dark-factory.md` · `research/followup/02-attractor-implementations.md` *(2)*
+
+### a03c2b3502 — Software Factory Roadmap 2026 — 8090 <a id="a03c2b3502"></a>
+
+<https://www.8090.ai/docs/resources/roadmap>
+
+- **Files:** other ✓
+- **Tags:** `other-vendor-substrate`
 
 ### e951bbc27e — strongdm/attractorbench: NLSpec instruction following benchmark <a id="e951bbc27e"></a>
 
@@ -1292,6 +1400,13 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `dark-factory` · `other-vendor-substrate`
 - **Cited in:** `research/07-dark-factory.md` · `research/followup/02-attractor-implementations.md` *(2)*
 
+### 8508964c2a — Validator | Docs | 8090 <a id="8508964c2a"></a>
+
+<https://www.8090.ai/docs/modules/validator>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+
 ### a112fe3b90 — What is agentic coding? How it works and use cases | Google Cloud <a id="a112fe3b90"></a>
 
 <https://cloud.google.com/discover/what-is-agentic-coding>
@@ -1300,8 +1415,22 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `other-vendor-substrate`
 - **Cited in:** `research/12-adjacent-ecosystem.md` *(1)*
 
+### 292ea05299 — Work Order Writing Guide | Docs | 8090 <a id="292ea05299"></a>
 
-### skills-composition *(8 records)*
+<https://www.8090.ai/docs/opinions/work-order-writing-guide>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate` · `spec-authorship`
+
+### 2f73d1a742 — Work Orders | Docs | 8090 <a id="2f73d1a742"></a>
+
+<https://www.8090.ai/docs/modules/work-orders>
+
+- **Files:** mhtml ✓
+- **Tags:** `other-vendor-substrate`
+
+
+### skills-composition *(9 records)*
 
 *Skills as a composition primitive — agentskills.io, Anthropic Agent Skills, MCP.*
 
@@ -1357,6 +1486,13 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `compound-engineering` · `skills-composition`
 - **Cited in:** `research/36-sendbird-quests-token-tiers.md` *(1)*
 
+### ee885bfc4c — Skill authoring best practices - Claude API Docs <a id="ee885bfc4c"></a>
+
+<https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices>
+
+- **Files:** mhtml ✓
+- **Tags:** `anthropic-substrate` · `skills-composition`
+
 ### 3643d46af4 — What are Skills? (Anthropic support) <a id="3643d46af4"></a>
 
 <https://support.claude.com/en/articles/what-are-skills>
@@ -1365,7 +1501,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `anthropic-substrate` · `skills-composition`
 
 
-### evals-and-benchmarks *(24 records)*
+### evals-and-benchmarks *(26 records)*
 
 *SWE-bench, SWE-agent, AlphaCode, CodeGen, evals primers (Husain, Yan, Shankar).*
 
@@ -1423,6 +1559,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 - **Files:** html (want) · html ✓ · md ✓
 - **Tags:** `evals-and-benchmarks`
+- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
 
 ### 49a54313c7 — Competitive programming with AlphaCode — Google DeepMind <a id="49a54313c7"></a>
 
@@ -1440,6 +1577,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 - **Files:** html ✓ · md ✓
 - **Tags:** `evals-and-benchmarks`
+- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
 
 ### caad3c1702 ~~Eugene Yan — LLM Evaluator~~ → see [ade5ef8d76](#ade5ef8d76)
 
@@ -1460,6 +1598,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 - **Files:** html (want) · html ✓ · md ✓
 - **Tags:** `evals-and-benchmarks`
+- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
 
 ### 10b59b402b — Introducing SWE-bench Verified <a id="10b59b402b"></a>
 
@@ -1468,6 +1607,20 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Files:** txt ✓
 - **Tags:** `evals-and-benchmarks` · `openai-substrate`
 - **Cited in:** `research/22-academic-foundations.md` · `research/plan-sync.md` *(2)*
+
+### 6ea6e28334 — Langfuse Blog (index of posts) <a id="6ea6e28334"></a>
+
+<https://langfuse.com/blog>
+
+- **Files:** mhtml ✓
+- **Tags:** `evals-and-benchmarks`
+
+### da116da1a4 — Quality, Not Speed: Building a Production Evaluation Framework for AI-Assisted Medical Document Authoring — 8090 Blog <a id="da116da1a4"></a>
+
+<https://www.8090.ai/blog/quality-not-speed-building-a-production-evaluation-framework-for-ai-assisted-medical-document-authoring>
+
+- **Files:** mhtml ✓
+- **Tags:** `ai-engineering-culture` · `evals-and-benchmarks`
 
 ### 67dfba1ed6 — Simon Willison on evals <a id="67dfba1ed6"></a>
 
@@ -1552,6 +1705,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 - **Files:** html ✓
 - **Tags:** `evals-and-benchmarks`
+- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
 
 
 ### academic-foundations *(8 records)*
@@ -1647,6 +1801,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 - **Files:** html (want) · html ✓ · md ✓
 - **Tags:** `security-primitives` · `willison-canon`
+- **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/08-security-primitives.md` *(2)*
 
 
 ### governance-and-legal *(7 records)*
@@ -1705,7 +1860,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `governance-and-legal`
 
 
-### ai-engineering-culture *(18 records)*
+### ai-engineering-culture *(23 records)*
 
 *Team-level dynamics, organisational culture, the social/operational side.*
 
@@ -1713,7 +1868,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://jayminwest.substack.com/p/a-manifesto-for-agentic-development>
 
-- **Files:** html ✓
+- **Files:** html ✓ · mhtml ✓
 - **Tags:** `ai-engineering-culture`
 
 ### 80735d97d3 — AddyOsmani.com - Agentic Engineering <a id="80735d97d3"></a>
@@ -1809,6 +1964,41 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `ai-engineering-culture`
 - **Cited in:** `research/28-schillace-sunday-letters.md` *(1)*
 
+### ecc055b160 — Part 1: Why Building Fast Is Not Enough — 8090 Blog <a id="ecc055b160"></a>
+
+<https://www.8090.ai/blog/part-1-why-building-fast-is-not-enough>
+
+- **Files:** mhtml ✓
+- **Tags:** `ai-engineering-culture`
+
+### 4ccd0104d2 — Part 2: What Alignment Actually Is — 8090 Blog <a id="4ccd0104d2"></a>
+
+<https://www.8090.ai/blog/part-2-what-alignment-actually-is>
+
+- **Files:** mhtml ✓
+- **Tags:** `ai-engineering-culture`
+
+### 388198d08f — Part 3: Seven Properties of an Aligned System — 8090 Blog <a id="388198d08f"></a>
+
+<https://www.8090.ai/blog/part-3-seven-properties-of-an-aligned-system>
+
+- **Files:** mhtml ✓
+- **Tags:** `ai-engineering-culture`
+
+### 5a214ded33 — Part 4: How Alignment Compounds — 8090 Blog <a id="5a214ded33"></a>
+
+<https://www.8090.ai/blog/part-4-how-alignment-compounds->
+
+- **Files:** mhtml ✓
+- **Tags:** `ai-engineering-culture`
+
+### da116da1a4 — Quality, Not Speed: Building a Production Evaluation Framework for AI-Assisted Medical Document Authoring — 8090 Blog <a id="da116da1a4"></a>
+
+<https://www.8090.ai/blog/quality-not-speed-building-a-production-evaluation-framework-for-ai-assisted-medical-document-authoring>
+
+- **Files:** mhtml ✓
+- **Tags:** `ai-engineering-culture` · `evals-and-benchmarks`
+
 ### 7839068ee6 — The agent-shaped world - by Sam Schillace - Sunday Letters <a id="7839068ee6"></a>
 
 <https://sundaylettersfromsam.substack.com/p/the-agent-shaped-world>
@@ -1871,7 +2061,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 ## By status (cross-cutting view)
 
-### § 1 — Complete *(158 records)*
+### § 1 — Complete *(180 records)*
 
 *Every registered file is present and complete.*
 
@@ -1892,6 +2082,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`23b7d51d69` — [2511.03690] The OpenHands Software Agent SDK: A Composable and Extensible Foundation for Production Agents](#23b7d51d69)
 - [`2e49bcd671` — About assigning tasks to Copilot (file contains saved 2389-research/dotpowers GitHub page instead)](#2e49bcd671)
 - [`325d8c1018` — About extensions for Copilot (capture is a PNG image, not the docs page)](#325d8c1018)
+- [`ebc17186b3` — About GitHub Copilot cloud agent - GitHub Docs](#ebc17186b3)
 - [`80735d97d3` — AddyOsmani.com - Agentic Engineering](#80735d97d3)
 - [`1b03040a1b` — Agent Guidelines | Tabnine Docs](#1b03040a1b)
 - [`1c3b30521c` — Agent Skills Cookbook 01 — Introduction](#1c3b30521c)
@@ -1909,16 +2100,21 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`0d2f8d5810` — AI Life Cycle Core Principles - CodeX - Stanford Law School](#0d2f8d5810)
 - [`9d696416cb` — Anthropic Agent Skills — Overview (Platform docs)](#9d696416cb)
 - [`86f58b89a9` — Anti-patterns: things to avoid - Agentic Engineering Patterns](#86f58b89a9)
+- [`f313f7845c` — Artifacts | Docs | 8090](#f313f7845c)
 - [`4dae4e40d9` — Artisans and Factory Lines - by Sam Schillace](#4dae4e40d9)
 - [`384a19285c` — Attention and collaboration in the AI world](#384a19285c)
 - [`890af05bff` — Attention is all ya got - by Sam Schillace - Sunday Letters](#890af05bff)
+- [`83fcd19c73` — Blueprint Writing Guide | Docs | 8090](#83fcd19c73)
+- [`e36b18df01` — Blueprints | Docs | 8090](#e36b18df01)
 - [`ac5b4f8018` — Build your own AI developer tools with Claude Code (How I AI, Lenny's Newsletter)](#ac5b4f8018)
 - [`ffc229d838` — Building Effective Agents](#ffc229d838)
 - [`a4a2c507c6` — Built by Agents, Tested by Agents, Trusted by Whom? - CodeX - Stanford Law School](#a4a2c507c6)
+- [`dcc5c900a1` — Changelog | Docs | 8090](#dcc5c900a1)
 - [`1e18da4d24` — ChatGPT Deep Research synthesis (2026-05-11) — report](#1e18da4d24)
 - [`c2cdaebb34` — ChatGPT Deep Research synthesis (2026-05-11) — sources list](#c2cdaebb34)
 - [`cad3fa5db1` — Claude Code: Best practices for agentic coding](#cad3fa5db1)
 - [`8e651f5fda` — Coaching Guidelines | Tabnine Docs](#8e651f5fda)
+- [`d9aa0e7ad5` — Codebase Connection | Docs | 8090](#d9aa0e7ad5)
 - [`7ff9a0b608` — CodeGen: An Open Large Language Model for Code with Multi-Turn Program Synthesis (OpenReview, ICLR 2023)](#7ff9a0b608)
 - [`d01c58d1d5` — Cognitive Escrow: The Human-Centered Principle Has a Blind Spot - CodeX - Stanford Law School](#d01c58d1d5)
 - [`49a54313c7` — Competitive programming with AlphaCode — Google DeepMind](#49a54313c7)
@@ -1972,27 +2168,40 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`dbc37326e4` — Interactive explanations - Agentic Engineering Patterns - Simon Willison's Weblog](#dbc37326e4)
 - [`10b59b402b` — Introducing SWE-bench Verified](#10b59b402b)
 - [`8778ec392c` — Introduction - OpenHands Docs](#8778ec392c)
+- [`9ad71cb019` — Introduction | Docs | 8090](#9ad71cb019)
 - [`af38d390c2` — Kiro](#af38d390c2)
+- [`6ea6e28334` — Langfuse Blog (index of posts)](#6ea6e28334)
 - [`d95bf55a39` — Linear walkthroughs - Agentic Engineering Patterns - Simon Willison's Weblog](#d95bf55a39)
 - [`accca79ad1` — Machine with Concrete - by Sam Schillace - Sunday Letters](#accca79ad1)
 - [`e7eab5a353` — Mammoth — 2389 Research, Inc.](#e7eab5a353)
 - [`b973e0e535` — Managing code scanning alerts (capture is a PNG image, not the docs page)](#b973e0e535)
+- [`8e89b0d8e5` — Migrating from Jira | Docs | 8090](#8e89b0d8e5)
 - [`243a228bd1` — My AI Had Already Fixed the Code Before I Saw It](#243a228bd1)
 - [`fa20be05d7` — Neves-Bussmann (Stanford Computational Antitrust, Vol. 6, 2026)](#fa20be05d7)
 - [`a5209cf735` — OpenHands AI Action · Actions · GitHub Marketplace](#a5209cf735)
+- [`ecc055b160` — Part 1: Why Building Fast Is Not Enough — 8090 Blog](#ecc055b160)
+- [`4ccd0104d2` — Part 2: What Alignment Actually Is — 8090 Blog](#4ccd0104d2)
+- [`388198d08f` — Part 3: Seven Properties of an Aligned System — 8090 Blog](#388198d08f)
+- [`5a214ded33` — Part 4: How Alignment Compounds — 8090 Blog](#5a214ded33)
 - [`d77d04c052` — Privacy | Tabnine Docs](#d77d04c052)
 - [`271feb61a7` — Private Installation | Tabnine Docs](#271feb61a7)
 - [`1e8169decc` — Prompts I use - Agentic Engineering Patterns - Simon Willison's Weblog](#1e8169decc)
 - [`bdb0d1357f` — Provenance and Attribution | Tabnine Docs](#bdb0d1357f)
+- [`da116da1a4` — Quality, Not Speed: Building a Production Evaluation Framework for AI-Assisted Medical Document Authoring — 8090 Blog](#da116da1a4)
 - [`516e66f9f7` — Quests, token leaderboards, and a skills marketplace: The elite AI adoption playbook | John Kim (Sendbird)](#516e66f9f7)
+- [`607f6af312` — Quickstart | Docs | 8090](#607f6af312)
 - [`b4b5b2e638` — Red/green TDD - Agentic Engineering Patterns - Simon Willison's Weblog](#b4b5b2e638)
 - [`12d3cc73b8` — Replit — Introducing Replit App Monitoring](#12d3cc73b8)
+- [`34b7fdd99d` — Requirements Writing Guide | Docs | 8090](#34b7fdd99d)
+- [`f3e4b69e8c` — Requirements | Docs | 8090](#f3e4b69e8c)
 - [`c35a5146b7` — Rules – Codex | OpenAI Developers](#c35a5146b7)
 - [`66be122077` — Running Codex safely at OpenAI](#66be122077)
 - [`11ae110ddb` — Simon Willison on agentic-engineering](#11ae110ddb)
 - [`67dfba1ed6` — Simon Willison on evals](#67dfba1ed6)
+- [`ee885bfc4c` — Skill authoring best practices - Claude API Docs](#ee885bfc4c)
 - [`59d633b2c6` — Smasher — 2389 Research, Inc.](#59d633b2c6)
 - [`8282baf1e4` — Software factories and the agentic moment (Hacker News)](#8282baf1e4)
+- [`a03c2b3502` — Software Factory Roadmap 2026 — 8090](#a03c2b3502)
 - [`95265c651d` — Spec-driven development: The AI engineering workflow (Lenny's Newsletter)](#95265c651d)
 - [`5b2ed8c57e` — Spec-driven development: The AI engineering workflow at Notion | Ryan Nystrom](#5b2ed8c57e)
 - [`e951bbc27e` — strongdm/attractorbench: NLSpec instruction following benchmark](#e951bbc27e)
@@ -2023,6 +2232,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`71e8193f07` — Turning AI Governance Into Operational Infrastructure](#71e8193f07)
 - [`e205ffac9d` — Unlocking the Codex harness: how we built the App Server](#e205ffac9d)
 - [`97f2036966` — Untitled Webflow-hosted PDF (no /Title metadata)](#97f2036966)
+- [`8508964c2a` — Validator | Docs | 8090](#8508964c2a)
 - [`a811ab37e6` — Vibe coding and agentic engineering are getting closer than I'd like](#a811ab37e6)
 - [`3643d46af4` — What are Skills? (Anthropic support)](#3643d46af4)
 - [`375a9386eb` — What is a harness and why do I care? - by Sam Schillace](#375a9386eb)
@@ -2030,6 +2240,8 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`4ccc7d8083` — What is agentic engineering? - Agentic Engineering Patterns - Simon Willison's Weblog](#4ccc7d8083)
 - [`d9e1bd997d` — When AI Agents Write Your Code, Does Language Choice Matter?](#d9e1bd997d)
 - [`7dbf96d872` — William El Kaim — Medium](#7dbf96d872)
+- [`292ea05299` — Work Order Writing Guide | Docs | 8090](#292ea05299)
+- [`2f73d1a742` — Work Orders | Docs | 8090](#2f73d1a742)
 - [`4d44956ef1` — Writing about Agentic Engineering Patterns](#4d44956ef1)
 - [`470703acd9` — Writing code is cheap now - Agentic Engineering Patterns - Simon Willison's Weblog](#470703acd9)
 - [`faa604dace` — Your AI Product Needs Evals](#faa604dace)

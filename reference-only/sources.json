@@ -39,6 +39,9 @@
       }
     ],
     "id": "0c4bb49f75",
+    "references_from": [
+      "research/followup/07-evals-deepdive.md"
+    ],
     "short_summary": "Hamel Husain — operational manual for LLM judges (Critique Shadowing pattern)",
     "tags": [
       "evals-and-benchmarks"
@@ -353,6 +356,9 @@
       }
     ],
     "id": "18856eb4cf",
+    "references_from": [
+      "research/followup/07-evals-deepdive.md"
+    ],
     "short_summary": "Husain & Shankar — 60-80% of dev time on error analysis",
     "tags": [
       "evals-and-benchmarks"
@@ -775,6 +781,24 @@
     ],
     "title": "Private Installation | Tabnine Docs"
   },
+  "292ea05299": {
+    "canonical_url": "https://www.8090.ai/docs/opinions/work-order-writing-guide",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Work Order Writing Guide _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "d2eec565f80f414530468dee7c629e3d1bd5b6353579ac9476bcae12daf7daeb"
+      }
+    ],
+    "id": "292ea05299",
+    "tags": [
+      "other-vendor-substrate",
+      "spec-authorship"
+    ],
+    "title": "Work Order Writing Guide | Docs | 8090"
+  },
   "2e46f64134": {
     "canonical_url": "https://factory.strongdm.ai/techniques/pyramid-summaries",
     "files": [
@@ -813,6 +837,23 @@
       "other-vendor-substrate"
     ],
     "title": "About assigning tasks to Copilot (file contains saved 2389-research/dotpowers GitHub page instead)"
+  },
+  "2f73d1a742": {
+    "canonical_url": "https://www.8090.ai/docs/modules/work-orders",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Work Orders _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "6d9f26b48c7401a3a2f0a028617c8c9d0f5f77cece4355bed79e5a9bd221350d"
+      }
+    ],
+    "id": "2f73d1a742",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Work Orders | Docs | 8090"
   },
   "2ffe813975": {
     "canonical_url": "https://openreview.net/forum?id=mXpq6ut8J3",
@@ -914,6 +955,24 @@
       "other-vendor-substrate"
     ],
     "title": "Devin (Cognition AI)"
+  },
+  "34b7fdd99d": {
+    "canonical_url": "https://www.8090.ai/docs/opinions/requirements-writing-guide",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Requirements Writing Guide _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "9872947f4e2c635f2dad5158baef553d76976e10d5b2e84e5a823dd39fd82463"
+      }
+    ],
+    "id": "34b7fdd99d",
+    "tags": [
+      "other-vendor-substrate",
+      "spec-authorship"
+    ],
+    "title": "Requirements Writing Guide | Docs | 8090"
   },
   "35b057067e": {
     "canonical_url": "https://www.jayminwest.com/agentic-engineering-book/6-harnesses",
@@ -1046,6 +1105,23 @@
       "ai-engineering-culture"
     ],
     "title": "Attention and collaboration in the AI world"
+  },
+  "388198d08f": {
+    "canonical_url": "https://www.8090.ai/blog/part-3-seven-properties-of-an-aligned-system",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Part 3_ Seven Properties of an Aligned System — 8090 Blog.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "1bfdda6bfd44bde84452ae9f8cf561b66356a1a28761d3ff83e5440ae1521f32"
+      }
+    ],
+    "id": "388198d08f",
+    "tags": [
+      "ai-engineering-culture"
+    ],
+    "title": "Part 3: Seven Properties of an Aligned System — 8090 Blog"
   },
   "39405fa555": {
     "canonical_url": "https://www.langchain.com/blog/agentic-engineering-redefining-software-engineering",
@@ -1415,6 +1491,23 @@
     ],
     "title": "What is agentic engineering? - Agentic Engineering Patterns - Simon Willison's Weblog"
   },
+  "4ccd0104d2": {
+    "canonical_url": "https://www.8090.ai/blog/part-2-what-alignment-actually-is",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Part 2_ What Alignment Actually Is — 8090 Blog.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "e83f857555f11e80718222b9b9ab6b3731dd7693c9209bf7d5c837282b5582a0"
+      }
+    ],
+    "id": "4ccd0104d2",
+    "tags": [
+      "ai-engineering-culture"
+    ],
+    "title": "Part 2: What Alignment Actually Is — 8090 Blog"
+  },
   "4d0de0d106": {
     "canonical_url": "https://2389.ai/products/tracker",
     "files": [
@@ -1542,6 +1635,10 @@
       }
     ],
     "id": "53ed6e363d",
+    "references_from": [
+      "research/06-hn-and-lenny.md",
+      "research/followup/08-security-primitives.md"
+    ],
     "short_summary": "Willison summary of the CaMeL prompt-injection defense paper",
     "tags": [
       "security-primitives",
@@ -1682,6 +1779,23 @@
       "other-vendor-substrate"
     ],
     "title": "Smasher — 2389 Research, Inc."
+  },
+  "5a214ded33": {
+    "canonical_url": "https://www.8090.ai/blog/part-4-how-alignment-compounds-",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Part 4_ How Alignment Compounds — 8090 Blog.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "bebd779dd810ed4c7ed88fdaaccc869f8bad6f3f91f8e3a88dbe772a933303d2"
+      }
+    ],
+    "id": "5a214ded33",
+    "tags": [
+      "ai-engineering-culture"
+    ],
+    "title": "Part 4: How Alignment Compounds — 8090 Blog"
   },
   "5a9f63821f": {
     "canonical_url": "https://platform.claude.com/docs/en/agent-skills/security",
@@ -1841,6 +1955,23 @@
     ],
     "title": "GitHub Actions CI/CD Pipeline | All-Hands-AI/OpenHands | DeepWiki"
   },
+  "607f6af312": {
+    "canonical_url": "https://www.8090.ai/docs/general/quickstart",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Quickstart _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "267e8b863437ecd57ec06ef99bac3a5a39f5db646b3765e7f88a97f2d3b5c65f"
+      }
+    ],
+    "id": "607f6af312",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Quickstart | Docs | 8090"
+  },
   "60fbea1689": {
     "canonical_url": "https://medium.com/@welkaim/about",
     "files": [
@@ -1988,6 +2119,23 @@
     ],
     "title": "Factory (StrongDM) — Home"
   },
+  "6ea6e28334": {
+    "canonical_url": "https://langfuse.com/blog",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Langfuse blog posts available.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "e83c0f7b443fc09dc51e0e1a149f29f35fb13ba1384d50f8df792d16dc9bbe0a"
+      }
+    ],
+    "id": "6ea6e28334",
+    "tags": [
+      "evals-and-benchmarks"
+    ],
+    "title": "Langfuse Blog (index of posts)"
+  },
   "708f29cb35": {
     "canonical_url": "https://2389.ai/products/coven",
     "files": [
@@ -2034,6 +2182,9 @@
       }
     ],
     "id": "71d2de09c6",
+    "references_from": [
+      "research/followup/07-evals-deepdive.md"
+    ],
     "short_summary": "Hamel Husain — experiments-not-features roadmap reframe + NurtureBoss case study",
     "tags": [
       "evals-and-benchmarks"
@@ -2349,6 +2500,23 @@
     ],
     "title": "(unknown)"
   },
+  "83fcd19c73": {
+    "canonical_url": "https://www.8090.ai/docs/opinions/blueprint-writing-guide",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Blueprint Writing Guide _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "d177d8d5a35253c914849f112f821777f7433815d2c1e509b07f9a77fe214cdd"
+      }
+    ],
+    "id": "83fcd19c73",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Blueprint Writing Guide | Docs | 8090"
+  },
   "83fdf58ee6": {
     "canonical_url": "https://sundaylettersfromsam.substack.com/p/i-have-seen-the-compounding-teams",
     "files": [
@@ -2388,6 +2556,23 @@
       "ai-engineering-culture"
     ],
     "title": "AI and the marshmallow test - by Sam Schillace"
+  },
+  "8508964c2a": {
+    "canonical_url": "https://www.8090.ai/docs/modules/validator",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Validator _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "60ecb08eb89decd755db265878c84a532507aa23346f32d1d103da6d0824e931"
+      }
+    ],
+    "id": "8508964c2a",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Validator | Docs | 8090"
   },
   "85cdf07ac2": {
     "canonical_url": "https://www.8090.inc/blog",
@@ -2559,6 +2744,23 @@
       "other-vendor-substrate"
     ],
     "title": "Coaching Guidelines | Tabnine Docs"
+  },
+  "8e89b0d8e5": {
+    "canonical_url": "https://www.8090.ai/docs/opinions/jira-migration",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Migrating from Jira _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "2a29e1464c35c6cd28b6dfbfa2b9d062e028774b24f1ba5d8e4f40eb5ceac402"
+      }
+    ],
+    "id": "8e89b0d8e5",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Migrating from Jira | Docs | 8090"
   },
   "8f251bd57a": {
     "canonical_url": "https://github.com/2389-ai/smasher",
@@ -2747,6 +2949,23 @@
     ],
     "title": "The Five Levels: From Spicy Autocomplete to the Software Factory (Dan Shapiro)"
   },
+  "9ad71cb019": {
+    "canonical_url": "https://www.8090.ai/docs/general/introduction",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Introduction _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "2d80c795767e758f4a4dcf3cb7d15e2f98ff565f4d14382b37328358206f6886"
+      }
+    ],
+    "id": "9ad71cb019",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Introduction | Docs | 8090"
+  },
   "9c9554d27e": {
     "canonical_url": "https://simonwillison.net/2025/Jun/16/the-lethal-trifecta",
     "files": [
@@ -2814,6 +3033,23 @@
       "intent-driven-architecture"
     ],
     "title": "El Kaim Book — Chapter 5: Automating RISE with SAP"
+  },
+  "a03c2b3502": {
+    "canonical_url": "https://www.8090.ai/docs/resources/roadmap",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "software_factory_roadmap_8090.mmd",
+        "format": "other",
+        "ingestion_status": "have",
+        "sha256": "8d191201ec065f6dc2f17f7a7794a713c4898d061987a6332584e28592a01e2d"
+      }
+    ],
+    "id": "a03c2b3502",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Software Factory Roadmap 2026 — 8090"
   },
   "a1032841ba": {
     "canonical_url": "https://factory.strongdm.ai/principles",
@@ -3671,6 +3907,23 @@
     ],
     "title": "Linear walkthroughs - Agentic Engineering Patterns - Simon Willison's Weblog"
   },
+  "d9aa0e7ad5": {
+    "canonical_url": "https://www.8090.ai/docs/raw-materials/codebase",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Codebase Connection _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "9d6f58cad6c7237eee196f094ea3a6f69e02310e3702cbdf2e5da694b7a6663e"
+      }
+    ],
+    "id": "d9aa0e7ad5",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Codebase Connection | Docs | 8090"
+  },
   "d9e1bd997d": {
     "canonical_url": "https://www.thepragmaticcto.com/p/when-ai-agents-write-your-code-does",
     "files": [
@@ -3690,6 +3943,24 @@
       "dark-factory"
     ],
     "title": "When AI Agents Write Your Code, Does Language Choice Matter?"
+  },
+  "da116da1a4": {
+    "canonical_url": "https://www.8090.ai/blog/quality-not-speed-building-a-production-evaluation-framework-for-ai-assisted-medical-document-authoring",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Quality, Not Speed_ Building a Production Evaluation Framework for AI-Assisted Medical Document Authoring — 8090 Blog.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "1365fc37d2d3e852901b12dd050a54206dee078d27cc3dcca4de8d68a8ade44a"
+      }
+    ],
+    "id": "da116da1a4",
+    "tags": [
+      "ai-engineering-culture",
+      "evals-and-benchmarks"
+    ],
+    "title": "Quality, Not Speed: Building a Production Evaluation Framework for AI-Assisted Medical Document Authoring — 8090 Blog"
   },
   "dafe463e94": {
     "canonical_url": "https://docs.tabnine.com/main/welcome/readme/ai-models/tabnines-private-and-protect",
@@ -3727,6 +3998,23 @@
       "willison-canon"
     ],
     "title": "Interactive explanations - Agentic Engineering Patterns - Simon Willison's Weblog"
+  },
+  "dcc5c900a1": {
+    "canonical_url": "https://www.8090.ai/docs/resources/changelog",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Changelog _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "9b8cac5c1caae5e181ff2273d0e1f09df7e48349b23bd7b577c39147bd058190"
+      }
+    ],
+    "id": "dcc5c900a1",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Changelog | Docs | 8090"
   },
   "dccefbfc62": {
     "canonical_url": "https://developers.openai.com/codex/agent-approvals-security",
@@ -3783,6 +4071,23 @@
     ],
     "title": "Unlocking the Codex harness: how we built the App Server"
   },
+  "e36b18df01": {
+    "canonical_url": "https://www.8090.ai/docs/modules/blueprints",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Blueprints _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "e1009729c94ef5fd9febede609dc48c103db4401a84527ab655bee368ec90347"
+      }
+    ],
+    "id": "e36b18df01",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Blueprints | Docs | 8090"
+  },
   "e6f77b9e81": {
     "canonical_url": "https://jayminwest.substack.com/p/a-manifesto-for-agentic-development",
     "files": [
@@ -3792,6 +4097,13 @@
         "format": "html",
         "ingestion_status": "have",
         "sha256": "0ed3c77600f31fccda59ca9df2eeea3c17cd3d264ce30607e05fcb841cb824b6"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "A Manifesto for Agentic Development - Jaymin West.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "a5fc70a124422c49fb16e63ae4c8ae45e3832a40e80462638fc947d37bb57e74"
       }
     ],
     "id": "e6f77b9e81",
@@ -3862,6 +4174,26 @@
     ],
     "title": "strongdm/attractorbench: NLSpec instruction following benchmark"
   },
+  "ebc17186b3": {
+    "canonical_url": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "About GitHub Copilot cloud agent - GitHub Docs.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "94d83cde0f7c532e323c09964677ea540f51c0bb9a37baff27e37665492a621f"
+      }
+    ],
+    "id": "ebc17186b3",
+    "references_from": [
+      "research/19-github-copilot-cloud-agent.md"
+    ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "About GitHub Copilot cloud agent - GitHub Docs"
+  },
   "ec39dd30f2": {
     "canonical_url": "https://www.swebench.com/original.html",
     "files": [
@@ -3886,6 +4218,41 @@
     ],
     "title": "SWE-bench (original)"
   },
+  "ecc055b160": {
+    "canonical_url": "https://www.8090.ai/blog/part-1-why-building-fast-is-not-enough",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Part 1_ Why Building Fast Is Not Enough — 8090 Blog.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "a8555766e5c1ed40a9a7632532217541f48503e250695d7543deb2c8924cb3a0"
+      }
+    ],
+    "id": "ecc055b160",
+    "tags": [
+      "ai-engineering-culture"
+    ],
+    "title": "Part 1: Why Building Fast Is Not Enough — 8090 Blog"
+  },
+  "ee885bfc4c": {
+    "canonical_url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Skill authoring best practices - Claude API Docs.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "a226fec5a65dd0fc5882d20f63aa5e36c774d15be6b375875f3a35f081cab9a4"
+      }
+    ],
+    "id": "ee885bfc4c",
+    "tags": [
+      "anthropic-substrate",
+      "skills-composition"
+    ],
+    "title": "Skill authoring best practices - Claude API Docs"
+  },
   "f2abe271f9": {
     "canonical_url": "https://factory.strongdm.ai/techniques/dtu",
     "files": [
@@ -3906,6 +4273,40 @@
       "other-vendor-substrate"
     ],
     "title": "Factory (StrongDM) — DTU"
+  },
+  "f313f7845c": {
+    "canonical_url": "https://www.8090.ai/docs/raw-materials/artifacts",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Artifacts _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "536ae84cd6c64214ffa0c1ce2f22d180336948271538273a547861473c3fb5a0"
+      }
+    ],
+    "id": "f313f7845c",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Artifacts | Docs | 8090"
+  },
+  "f3e4b69e8c": {
+    "canonical_url": "https://www.8090.ai/docs/modules/requirements",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Requirements _ Docs _ 8090.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "ffc8367dece1252cfd0f9f8fe19811236411da0ec8245ef348c4286aad9ed3f0"
+      }
+    ],
+    "id": "f3e4b69e8c",
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "Requirements | Docs | 8090"
   },
   "f52a2d4098": {
     "files": [
@@ -3936,6 +4337,9 @@
       }
     ],
     "id": "f675af7d98",
+    "references_from": [
+      "research/07-dark-factory.md"
+    ],
     "tags": [
       "dark-factory"
     ],
@@ -4121,6 +4525,9 @@
       }
     ],
     "id": "faa604dace",
+    "references_from": [
+      "research/followup/07-evals-deepdive.md"
+    ],
     "short_summary": "Hamel Husain — the philosophical root of LLM eval discipline",
     "tags": [
       "evals-and-benchmarks"

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Load inline css and scripts first-->
+    <style>:root{--c-light-text:#333;--c-light-background:#fff;--c-light-focus:#00ff00;--c-light-interactive:#007bff;--c-dark-text:#fff;--c-dark-subtext:#a6a6a6;--c-dark-background:#333;--c-dark-focus:#00ff00;--c-dark-interactive:#66b0ff;--c-dark-callout:#003166;--c-text:var(--c-light-text);--c-background:var(--c-light-background);--c-focus:var(--c-light-focus);--c-interactive:var(--c-light-interactive)}.dark-mode-checkbox:checked~.theme-container{--c-text:var(--c-dark-text);--c-background:var(--c-dark-background);--c-focus:var(--c-dark-focus);--c-interactive:var(--c-dark-interactive)}html.dark-mode{--c-text:var(--c-dark-text);--c-background:var(--c-dark-background);--c-focus:var(--c-dark-focus);--c-interactive:var(--c-dark-interactive)}html.dark-mode .tag{background-color:#3e3e3e;color:var(--c-dark-interactive)}html.dark-mode a.tag:hover{background-color:var(--c-dark-interactive);color:#3e3e3e}a{text-decoration:none;background-color:transparent;color:var(--c-interactive)}</style>
+    <!-- darkmode JS at start of the doc so to ensure consistent view mode -->
+<link href="/js/darkmode.js" rel="preload" as="script">
+<script src="/js/darkmode.js" type="a7a534d55ebfed2078756293-text/javascript"></script>
+
+<!--Add active class to nav bar-->
+<link href="/js/navbar.js" rel="preload" as="script">
+<script src="/js/navbar.js" defer type="a7a534d55ebfed2078756293-text/javascript"></script>
+
+<!-- Load jQuery before anchor.min.js -->
+<link href="/js/jquery-3.7.1.min.js" rel="preload" as="script">
+<script src="/js/jquery-3.7.1.min.js" defer type="a7a534d55ebfed2078756293-text/javascript"></script>
+
+<!--Add anchors to headers-->
+<link href="/js/anchor.min.js" rel="preload" as="script">
+<script src="/js/anchor.min.js" defer type="a7a534d55ebfed2078756293-text/javascript"></script>
+
+<!-- Algolia Insights -->
+<script type="a7a534d55ebfed2078756293-text/javascript">
+  var ALGOLIA_INSIGHTS_SRC = "/js/search-insights.min.js"; // Using local version
+  !function(e,a,t,n,s,i,c){e.AlgoliaAnalyticsObject=s,e[s]=e[s]||function(){
+  (e[s].queue=e[s].queue||[]).push(arguments)},e[s].version=(n.match(/@([^\/]+)\/?.*/) || [])[1],i=a.createElement(t),c=a.getElementsByTagName(t)[0],
+  i.async=1,i.src=n,c.parentNode.insertBefore(i,c)
+  }(window,document,"script",ALGOLIA_INSIGHTS_SRC,"aa");
+</script>
+<script type="a7a534d55ebfed2078756293-text/javascript">
+  if (typeof aa === 'function') {
+    aa('init', {
+      appId: '2XJCLEABQD',
+      apiKey: 'b61ec4cb64bd32d62c053466fccbfa43',
+      useCookie: true
+    });
+  }
+</script>
+
+    <meta charset="utf-8">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=0.86, maximum-scale=3.0, minimum-scale=0.86">
+    <meta name="description" content="">
+    <meta name="author" content="Eugene Yan">
+
+    <meta content="eugeneyan.com" property="og:site_name">
+    <meta name=twitter:card content=summary_large_image>
+    <meta name=twitter:domain content=eugeneyan.com>
+    
+    <meta content="Opps, sorry. Page not found =(" property="og:title">
+    <meta name=twitter:title content="Opps, sorry. Page not found =(">
+    
+    
+    <meta content="article" property="og:type">
+    
+    
+    <meta content="Eugene Yan works at the intersection of consumer data & tech to build machine learning products, and writes about effective data science, learning & career." property="og:description">
+    <meta name=twitter:description content="">
+    
+    
+    <meta content="https://eugeneyan.com/404.html" property="og:url">
+    
+    
+    
+    <meta content="https://eugeneyan.com/assets/og_image/404.jpg" property="og:image">
+    <meta name=twitter:image content="https://eugeneyan.com/assets/og_image/404.jpg">
+    
+    
+    
+    <title>Opps, sorry. Page not found =(</title>
+    <!-- styles -->
+    <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="a7a534d55ebfed2078756293-|49"></script><link href="/css/main.min.css" rel="preload" as="style" onload="this.rel='stylesheet'" type="text/css">
+    <link rel="stylesheet" href="/css/main.css" type="text/css">
+
+    <!-- Preconnect to Google Fonts domains to reduce latency -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="a7a534d55ebfed2078756293-|49"></script><link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Raleway&display=swap"
+          rel="preload" as="style" onload="this.rel='stylesheet'">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Raleway&display=swap"
+          rel="stylesheet">
+
+    <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="a7a534d55ebfed2078756293-|49"></script><link href="/css/monokai.css" rel="preload" as="style" onload="this.rel='stylesheet'" type="text/css">
+    <link href="/css/monokai.css" rel="stylesheet" type="text/css">
+
+    <link rel="shortcut icon" type="image/png" href="https://eugeneyan.com/assets/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://eugeneyan.com/assets/favicon/apple-touch-icon.webp">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://eugeneyan.com/assets/favicon/favicon-32x32.webp">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://eugeneyan.com/assets/favicon/favicon-16x16.webp">
+    <link rel="manifest" href="/assets/favicon/site.webmanifest">
+
+    <link rel="canonical" href="https://eugeneyan.com/404.html"/>
+
+    <!--  Collect tags-->
+    
+    
+
+
+
+
+
+    
+
+    <!-- google analytics - i will not share this data with google -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4CKMNLRMCV" type="a7a534d55ebfed2078756293-text/javascript"></script>
+<script type="a7a534d55ebfed2078756293-text/javascript">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4CKMNLRMCV');
+
+</script>
+</head>
+
+<input class="dark-mode-checkbox" id="dark-mode" name="dark-mode-checkbox" type="checkbox"/>
+<label class="dark-mode-label" for="dark-mode"></label>
+<body>
+<div class="theme-container grow">
+    <div class="container" style="width: 95%">
+
+        <div class="header">
+    <div class="row">
+        <div class="col-sm-3">
+            <h1 class="text-muted nav"><a href="/">eugeneyan</a></h1>
+        </div>
+        <div class="col-sm-9">
+            <ul id="nav" class="nav-margin nav nav-pills float-sm-right">
+                <li><a href="/start-here/" title="Start Here">Start Here</a></li>
+                <li><a href="/writing/" title="Writing">Writing</a></li>
+                <li><a href="/speaking/" title="Speaking">Speaking</a></li>
+                <li><a href="/prototyping/" title="Prototyping">Prototyping</a></li>
+                <li><a href="/about/" title="About">About</a></li>
+                <li><a href="/search/" title="Search"><img class="icon icon-search" src="/assets/icon-search.svg" loading="lazy" alt=""/></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <script type="a7a534d55ebfed2078756293-text/javascript">
+function getRandomNumber(minRange, maxRange) {
+    return Math.floor(Math.random() * (maxRange) + minRange);
+}
+
+window.onload = function() {
+    const rand = getRandomNumber(1, 14);
+    <!--document.getElementById("rand").innerHTML = rand;-->
+    document.canvas.src="/assets/404/404-" + rand + ".jpg"
+};
+
+</script>
+
+<p style="text-align: center">Oppps, sorry! Page not found (<code>404</code>). Try searching for it below, or browse the
+    <a href="/writing/">archives</a>.</p>
+
+<div id="search-searchbar"></div>
+
+<ul class="posts cp" id="search-hits">
+
+    <h4 class="cp-title"><a href="${url}" title="${title}"></a></h4>
+    <p class="cp-desc">${content}</p>
+
+</ul>
+
+<!-- Use exact same script versions that were in the original implementation but with v4 API -->
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4/dist/algoliasearch-lite.umd.js" type="a7a534d55ebfed2078756293-text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4" type="a7a534d55ebfed2078756293-text/javascript"></script>
+<!-- Include minimal CSS to ensure consistent styling across browsers -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.css@8.0.0/themes/reset-min.css">
+
+<script type="a7a534d55ebfed2078756293-text/javascript">
+// Initialize the Algolia client
+const searchClient = algoliasearch(
+  '2XJCLEABQD',
+  'b61ec4cb64bd32d62c053466fccbfa43'
+);
+
+// Initialize InstantSearch
+// Note: The list of attributes to highlight (via the UI) should be title only
+const search = instantsearch({
+  indexName: 'eugeneyan.com',
+  searchClient,
+  insights: true,
+  clickAnalytics: true,
+  searchParameters: {
+    attributesToRetrieve: ['title', 'content', 'url']
+  },
+  searchFunction(helper) {
+    const hitsContainer = document.querySelector('#search-hits');
+    if (helper.state.query === '') {
+      if (hitsContainer) {
+        // Clear the hits container to remove any previous results or "No results found" message
+        hitsContainer.innerHTML = '';
+      }
+      // Abort the search if the query is empty
+      return;
+    }
+    // Otherwise, proceed with the search
+    helper.search();
+  }
+});
+
+// Custom render function for the search box to exactly match original v2 appearance
+const renderSearchBox = (renderOptions, isFirstRender) => {
+  const { query, refine, clear, isSearchStalled, widgetParams } = renderOptions;
+  
+  // On first render, create the search DOM structure to match v2
+  if (isFirstRender) {
+    const container = document.querySelector(widgetParams.container);
+    container.innerHTML = `
+      <form novalidate="novalidate" class="ais-search-box">
+        <input class="ais-search-box--input" type="search" placeholder="Search this site...">
+        <span class="ais-search-box--magnifier-wrapper">
+          <div class="ais-search-box--magnifier"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"><path d="M11.5 11.5l5 5"/><circle cx="7.5" cy="7.5" r="6"/></g></svg></div>
+        </span>
+        <span class="ais-search-box--reset-wrapper" style="display: none;">
+          <div class="ais-search-box--reset"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="10" height="10"><path d="M8.114 10L.944 2.83 0 1.885 1.886 0l.943.943L10 8.113l7.17-7.17.944-.943L20 1.886l-.943.943-7.17 7.17 7.17 7.17.943.944L18.114 20l-.943-.943-7.17-7.17-7.17 7.17-.944.943L0 18.114l.943-.943L8.113 10z" fill-rule="evenodd"></path></svg></div>
+        </span>
+      </form>
+    `;
+    
+    const input = container.querySelector('input');
+    const resetButton = container.querySelector('.ais-search-box--reset-wrapper');
+    
+    // Setup event listeners
+    input.addEventListener('input', event => {
+      refine(event.target.value);
+      if (event.target.value) {
+        resetButton.style.display = '';
+      } else {
+        resetButton.style.display = 'none';
+      }
+    });
+    
+    resetButton.addEventListener('click', () => {
+      clear();
+      resetButton.style.display = 'none';
+    });
+  }
+  
+  // On subsequent renders, update the input value
+  const input = document.querySelector(`${widgetParams.container} input`);
+  const resetButton = document.querySelector(`${widgetParams.container} .ais-search-box--reset-wrapper`);
+  
+  if (input.value !== query) {
+    input.value = query;
+  }
+  
+  if (query && resetButton.style.display === 'none') {
+    resetButton.style.display = '';
+  } else if (!query && resetButton.style.display !== 'none') {
+    resetButton.style.display = 'none';
+  }
+};
+
+// Add widgets
+search.addWidgets([
+  // Custom search box that exactly matches v2 appearance
+  instantsearch.connectors.connectSearchBox(renderSearchBox)({
+    container: '#search-searchbar'
+  }),
+
+  // Custom hits widget styled like the original
+  instantsearch.widgets.hits({
+    container: '#search-hits',
+    cssClasses: {
+      root: 'ais-hits',
+      list: 'ais-hits-list',
+      item: 'ais-hits-item'
+    },
+    templates: {
+      empty: 'No results found',
+      item(hit, { html, components, sendEvent }) {
+        const RENDER_URL = `${hit.url}${hit.anchor ? '#' + hit.anchor : ''}`;
+        
+        // Use html tagged template literal and components for highlighting/snippeting
+        // Add onClick handler to send click event
+        return html`
+          <h4 class="cp-title underline">
+            <a href="${RENDER_URL}" 
+               title="${hit.title}"
+               onClick="${() => {
+                sendEvent('click', hit, 'Search Result Clicked');
+              }}">
+              ${components.Highlight({ hit, attribute: 'title' })}
+            </a>
+          </h4>
+          <p class="search-desc underline">
+            ${components.Snippet({ hit, attribute: 'content' })}
+          </p>
+        `;
+      }
+    }
+  }),
+]);
+
+// Start the search
+search.start();
+
+</script>
+
+<style>
+    /* Using v2 class names for exact original appearance */
+    .ais-search-box {
+        max-width: 100%;
+        margin: 15px auto;
+        position: relative;
+    }
+    
+    .ais-search-box--input {
+        padding: 12px 28px 12px 32px;
+        height: 46px;
+        width: 100%;
+        border: 1px solid #CCC;
+        border-radius: 4px;
+        -webkit-appearance: none;
+        appearance: none;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+    
+    .ais-search-box--magnifier-wrapper {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 12px;
+        pointer-events: none;
+    }
+    
+    .ais-search-box--magnifier svg {
+        display: block;
+        width: 14px;
+        height: 14px;
+        fill: #999;
+    }
+    
+    .ais-search-box--reset-wrapper {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 12px;
+        cursor: pointer;
+    }
+    
+    .ais-search-box--reset svg {
+        display: block;
+        width: 10px;
+        height: 10px;
+        fill: #999;
+    }
+    
+    /* New API highlight classes also support the style */
+    .ais-Highlight-highlighted, 
+    .ais-Snippet-highlighted,
+    mark {
+        color: var(--c-dark-text);
+        font-weight: bold;
+        text-decoration: underline;
+        background-color:#007bff;
+    }
+</style>
+
+        <footer class="footer">
+    <div class="footer-col-wrapper">
+        <div class="col-sm-3 footer-col">
+            <ul class="contact-list">
+                <!-- <li>
+                    <img class="icon" src="/assets/bluesky.svg" loading="lazy" alt=""/>
+                    <a rel="me" href="https://bsky.app/profile/eugeneyan.com" target="_blank" title="Bluesky">Bluesky</a>
+                </li> -->
+                <li>
+                    <img class="icon" src="/assets/icon-twitter.svg" loading="lazy" alt=""/>
+                    <a href="https://twitter.com/eugeneyan" target="_blank" title="Twitter">Twitter</a>
+                </li>
+                <li>
+                    <img class="icon" src="/assets/icon-linkedin.svg" loading="lazy" alt=""/>
+                    <a href="https://www.linkedin.com/in/eugeneyan/" target="_blank" title="Linkedin">LinkedIn</a>
+                </li>
+                <!-- <li>
+                    <img class="icon" src="/assets/icon-threads.svg" loading="lazy" alt=""/>
+                    <a href="https://www.threads.net/@eugeneyan" target="_blank" title="Threads">Threads</a>
+                </li> -->
+                <li>
+                    <img class="icon" src="/assets/icon-github.svg" loading="lazy" alt=""/>
+                    <a href="https://github.com/eugeneyan/" target="_blank" title="GitHub">GitHub</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-sm-9 footer-col">
+            <p>I'm a Member of Technical Staff at Anthropic. I work to bridge the field and the frontier, and help build safe, reliable AI systems that scale. I've led ML/AI teams at Amazon, Alibaba, Lazada, and a Healthtech Series A, and write about LLMs, RecSys, and engineering at <a href="https://eugeneyan.com/" target="_blank">eugeneyan.com</a>.</p>
+        </div>
+    </div>
+    <p class="copyright">© Eugene Yan 2015 - 2026
+        • <a href="/site-feedback/">Feedback</a>
+        • <a href="/rss/">RSS</a>
+    </p>
+</footer>
+
+
+    </div> <!-- /container -->
+</div>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="a7a534d55ebfed2078756293-|49" defer></script></body>
+
+<script type="a7a534d55ebfed2078756293-text/javascript">
+  // Assemble mailto: from split data attributes on click (keeps full address out of source)
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest('a.js-email');
+    if (!a) return;
+    e.preventDefault();
+    var d = a.dataset;
+    window.location.href = 'mailto:' + d.u + '@' + d.d + '.' + d.t;
+  });
+
+  // Ensure aa is loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof aa === 'function') {
+      // Get the current page path for more specific tracking
+      const pagePath = '/404.html';
+
+      // Determine a specific event name based on the current page
+      let eventName;
+      if (pagePath.startsWith('/tag/')) {
+        eventName = 'Tag Page Link Clicked';
+      } else {
+        // Count the number of segments to determine if it's a site page or post page
+        const pathSegments = pagePath.split('/').filter(Boolean);
+        if (pathSegments.length <= 1) {
+          // Zero or one level deep (e.g., '/', '/writing/', '/speaking/')
+          eventName = 'Site Page Link Clicked';
+        } else {
+          // Two or more levels deep - considered a post
+          eventName = 'Post Link Clicked';
+        }
+      }
+
+      // Track clicks on internal links in the main container
+      const container = document.querySelector('div.container');
+      if (container) {
+        container.addEventListener('click', function(e) {
+          const link = e.target.closest('a');
+          if (link && !link.classList.contains('js-email') && link.href && link.origin === window.location.origin) {
+            const objectID = link.pathname;
+
+            aa('clickedObjectIDs', {
+              index: 'eugeneyan.com',
+              eventName: eventName,
+              objectIDs: [objectID]
+            });
+          }
+        });
+      }
+    }
+  });
+
+  // Track page read depth for conversion tracking
+  let hasTrackedPageRead = false;
+  window.addEventListener('scroll', function() {
+    if (hasTrackedPageRead) return; // Only track once per page view
+    
+    // Calculate read depth as percentage
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    const readPercentage = (scrollTop + clientHeight) / scrollHeight * 100;
+    
+    // If user has read at least 50% of the page
+    if (readPercentage >= 50 && typeof aa === 'function') {
+      hasTrackedPageRead = true;
+      const objectID = window.location.pathname; // Use current page path as objectID
+      const pagePath = '/404.html';
+      
+      // Create a meaningful event name
+      let eventName;
+      if (pagePath.startsWith('/tag/')) {
+        eventName = 'Tag Page Read 50%';
+      } else {
+        // Count the number of segments to determine if it's a site page or post page
+        const pathSegments = pagePath.split('/').filter(Boolean);
+        if (pathSegments.length <= 1) {
+          // Zero or one level deep (e.g., '/', '/writing/', '/speaking/')
+          eventName = 'Site Page Read 50%';
+        } else {
+          // Two or more levels deep - considered a post
+          eventName = 'Post Read 50%';
+        }
+      }
+      
+      // Send the convertedObjectIDs event to Algolia
+      aa('convertedObjectIDs', {
+        index: 'eugeneyan.com',
+        eventName: eventName,
+        objectIDs: [objectID]
+      });
+    }
+  });
+</script>
+</html>

@@ -25,6 +25,13 @@ run "URL ↔ reports"         python3 "$HERE/check-source-refs.py"
 run "fetch_provenance"      python3 "$HERE/check-fetch-provenance.py"
 run "sanity (warnings)"     python3 "$HERE/sanity-check-record.py"
 
+# Advisory: PLAN.md consistency check. Warnings here do NOT fail the lint
+# (so a missed PLAN.md edit doesn't block unrelated catalog work). CI can
+# call `check-plan-consistency.py --strict` directly to enforce.
+echo "=== PLAN.md consistency (advisory) ==="
+python3 "$HERE/check-plan-consistency.py" || true
+echo ""
+
 if [ $fail -ne 0 ]; then
     echo "✗ lint failed"
     exit 1

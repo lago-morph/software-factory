@@ -46,10 +46,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _config import (  # noqa: E402
     data_path, library_path, ingestion_paths, load_config, repo_root,
-    skill_md_path, ConfigError,
+    resolve, skill_md_path, ConfigError,
 )
 from url_canonicalize import canonicalize_and_id, canonicalize_url  # noqa: E402
 from extract_url import extract_url, companion_path  # noqa: E402
+from update_plan import update_plan_after_drain  # noqa: E402
 from extract_title import extract_title  # noqa: E402
 from classify_text import classify  # noqa: E402
 from youtube_urls import (  # noqa: E402
@@ -95,6 +96,7 @@ class DrainResult:
         self.transcripts_delivered: list[tuple[Path, str, str]] = []  # (file, record_id, video_url)
         self.companions_consumed: list[tuple[Path, Path]] = []  # (companion, target)
         self.companions_orphaned: list[Path] = []  # companion with no resolved target
+        self.wants_purged: list[tuple[str, int]] = []  # (record_id, count)
         self.errors_no_url: list[Path] = []
         self.errors_classification: list[tuple[Path, str]] = []
         self.errors_image_in_drop: list[Path] = []
@@ -122,6 +124,8 @@ class DrainResult:
             f"- YouTube transcripts delivered (want → have): **{len(self.transcripts_delivered)}**",
             f"- Companion URL files consumed: **{len(self.companions_consumed)}**",
             f"- Companion URL files left orphaned (target not ingested): **{len(self.companions_orphaned)}**",
+            f"- Stale `want` entries cleared by format-final attachments: **{sum(n for _, n in self.wants_purged)}** "
+            f"(across {len(self.wants_purged)} record(s))",
             f"- Files flagged (no extractable URL in drop dir): **{len(self.errors_no_url)}**",
             f"- Files flagged (mixed/unrecognized content): **{len(self.errors_classification)}**",
             f"- Images in drop dirs without `<id>/` placement: **{len(self.errors_image_in_drop)}**",
@@ -241,6 +245,117 @@ class DrainResult:
 
 COMPANION_NAME_RE = re.compile(r"^URL of (.+)\.txt$")
 
+# Files in ingestion drop directories whose filename is one of these are
+# documentation about the directory itself, not content to ingest. They're
+# silently skipped by stage 1 inventory. Case-insensitive match.
+INVENTORY_SKIP_FILENAMES = {
+    "readme.md", "readme.txt", "readme",
+    "notes.md", "notes.txt",
+    "agents.md", "claude.md",
+    ".gitignore", ".gitkeep",
+}
+
+
+# "Format-final" rule. A file is format-final for a record if its format is
+# the best we can capture for the record's canonical URL — in which case any
+# generic `want` placeholder on the same record can be safely cleared, since
+# no later ingestion will improve on it.
+#
+#   - MHTML for any URL: always format-final (highest-fidelity HTML save;
+#     embeds CSS + images; nothing strictly better exists).
+#   - PDF / TXT / MD / CSV / JSON / IPYNB for a URL whose path ends with the
+#     matching extension: format-final (the file IS the URL's payload).
+#   - HTML / HTM: format-final only if the URL ends with `.html` / `.htm`
+#     (MHTML is generally better for arbitrary article URLs).
+#   - Anything else: not format-final.
+#
+# Paywall / JS-block evidence overrides this rule — but that's caller-side
+# (the audit can mark a file `completeness: error`, which signals re-fetch).
+
+FORMAT_FINAL_EXTENSIONS = {
+    "pdf": ".pdf",
+    "txt": ".txt",
+    "md": ".md",
+    "csv": ".csv",
+    "json": ".json",
+    "ipynb": ".ipynb",
+}
+
+
+def _url_path_extension(url: str) -> str:
+    """Return the lowercased extension of the URL's path (incl. leading dot),
+    or '' if there's no extension. Strips query string + fragment.
+    """
+    if not url:
+        return ""
+    # Cut off query and fragment.
+    for sep in ("?", "#"):
+        i = url.find(sep)
+        if i != -1:
+            url = url[:i]
+    # Find the last path segment.
+    last = url.rsplit("/", 1)[-1]
+    if "." not in last:
+        return ""
+    return "." + last.rsplit(".", 1)[-1].lower()
+
+
+def is_format_final(file_format: str, canonical_url: str) -> bool:
+    """Return True iff a `have` file in this format is the best capture
+    we can hope to get for canonical_url — meaning any matching generic
+    `want` entries on the same record can be cleared.
+    """
+    if file_format == "mhtml":
+        return True
+    ext = _url_path_extension(canonical_url)
+    if file_format in ("html", "htm"):
+        return ext in (".html", ".htm")
+    expected = FORMAT_FINAL_EXTENSIONS.get(file_format)
+    if expected is None:
+        return False
+    return ext == expected
+
+
+def _purge_satisfied_wants(files: list, canonical_url: str) -> int:
+    """Remove generic `want` entries on a record that have now been
+    satisfied. A generic want is one without a `youtube_url` field;
+    transcript wants are tied to a specific video and are NEVER touched
+    by this function.
+
+    A generic want is "satisfied" iff EITHER:
+      (a) some `have` file on the record is format-final for canonical_url
+          (mhtml always; matching-extension otherwise — see is_format_final), OR
+      (b) some `have` file on the record has the same `format` as the want.
+
+    Returns the count of `want` entries removed.
+    """
+    haves = [
+        f for f in files
+        if isinstance(f, dict) and f.get("ingestion_status") == "have"
+    ]
+    has_format_final = any(
+        is_format_final(h.get("format", ""), canonical_url) for h in haves
+    )
+    have_formats = {h.get("format", "") for h in haves}
+    keep: list = []
+    removed = 0
+    for f in files:
+        if (isinstance(f, dict)
+                and f.get("ingestion_status") == "want"
+                and not f.get("youtube_url")):
+            want_fmt = f.get("format", "")
+            satisfied = has_format_final or (want_fmt in have_formats)
+            if satisfied:
+                removed += 1
+                continue
+        keep.append(f)
+    files[:] = keep
+    return removed
+
+
+# Back-compat alias for external imports during the refactor.
+_purge_generic_wants = _purge_satisfied_wants
+
 
 def stage_1_inventory(roots: list[Path]) -> tuple[list[Path], dict[Path, Path]]:
     """Find every file in ingestion paths that's a candidate for ingestion.
@@ -260,6 +375,10 @@ def stage_1_inventory(roots: list[Path]) -> tuple[list[Path], dict[Path, Path]]:
             continue
         for p in sorted(root.rglob("*")):
             if not (p.is_file() and p.suffix.lower() in suffixes):
+                continue
+            if p.name.lower() in INVENTORY_SKIP_FILENAMES:
+                # Directory README / NOTES / AGENTS / etc. — not ingestable
+                # content; silently skipped.
                 continue
             m = COMPANION_NAME_RE.match(p.name)
             if m:
@@ -562,6 +681,13 @@ def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
             if any(isinstance(x, dict) and x.get("filename") == f.name for x in files):
                 continue
             files.append(file_entry)
+            # Clear any generic `want` placeholders that are now satisfied
+            # (format-final attach, OR same-format have already on record).
+            # Transcript-format wants (those carrying youtube_url) are
+            # preserved — different ingestion track.
+            purged = _purge_satisfied_wants(files, data[rid].get("canonical_url", ""))
+            if purged:
+                result.wants_purged.append((rid, purged))
             data[rid]["files"] = files
             # If the existing title is the placeholder and we extracted a real
             # one from this newly-attached file, upgrade it.
@@ -729,6 +855,47 @@ def normalize_and_write(data: dict, data_p: Path):
     tmp.replace(data_p)
 
 
+def _run_tidy_wants(data: dict, data_p: Path, dry_run: bool) -> int:
+    """Catalog-wide want-sweep. For each record, apply `_purge_satisfied_wants`
+    to drop any generic `want` entries already satisfied by an existing
+    `have` file. Idempotent; safe to re-run.
+
+    Returns 0 always (informational sweep). Prints a per-record summary to
+    stdout and writes the catalog atomically (unless --dry-run).
+    """
+    touched = 0
+    purged_total = 0
+    lines = ["# Tidy-wants sweep", ""]
+    for rid in sorted(data.keys()):
+        rec = data[rid]
+        if not isinstance(rec, dict):
+            continue
+        files = list(rec.get("files") or [])
+        url = rec.get("canonical_url") or ""
+        purged = _purge_satisfied_wants(files, url)
+        if not purged:
+            continue
+        touched += 1
+        purged_total += purged
+        lines.append(f"- `{rid}` — clearing {purged} stale `want` entr"
+                     f"{'y' if purged == 1 else 'ies'}  ({url})")
+        if not dry_run:
+            rec["files"] = files
+
+    lines.append("")
+    lines.append(f"**Records touched:** {touched}  |  "
+                 f"**Total `want` entries cleared:** {purged_total}")
+    if dry_run:
+        lines.append("")
+        lines.append("_(dry-run — no changes written)_")
+    elif touched:
+        normalize_and_write(data, data_p)
+        lines.append("")
+        lines.append(f"_Catalog rewritten at {data_p.relative_to(repo_root())}._")
+    print("\n".join(lines))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="don't modify anything")
@@ -738,6 +905,14 @@ def main() -> int:
     ap.add_argument("--audit-mode", choices=["always", "sometimes", "never"],
                     help="override audit_after_ingestion from config")
     ap.add_argument("--target", help="only scan this dir (instead of all ingestion_paths)")
+    ap.add_argument("--tidy-wants", action="store_true",
+                    help="catalog-wide sweep: clear stale `want` entries on "
+                         "records that already have a format-final `have` file "
+                         "for the same URL. Skips the regular drain pipeline.")
+    ap.add_argument("--no-plan-update", action="store_true",
+                    help="skip the automatic Session-bullet + §10-row insertion "
+                         "into research/PLAN.md. Use only if you intend to write "
+                         "the entry by hand in the same commit.")
     args = ap.parse_args()
 
     try:
@@ -751,6 +926,9 @@ def main() -> int:
         return 1
 
     data = json.loads(data_p.read_text(encoding="utf-8"))
+
+    if args.tidy_wants:
+        return _run_tidy_wants(data, data_p, args.dry_run)
 
     roots = [Path(args.target)] if args.target else ingestion_paths()
     result = DrainResult()
@@ -813,8 +991,39 @@ def main() -> int:
             print(f"Stage 4b: audit skipped (mode={result.audit_mode}, "
                   f"touched={len(result.touched_record_ids)})", file=sys.stderr)
 
+    # Stage 4c: auto-record this drain in research/PLAN.md so the corpus
+    # narrative stays in step with the catalog. Skipped on --dry-run,
+    # --no-plan-update, or if the drain made no material changes.
+    plan_update_status: dict | None = None
+    if not args.dry_run and not args.no_plan_update:
+        try:
+            cfg_plan_path = resolve(load_config().get("plan_path", "research/PLAN.md"))
+        except ConfigError:
+            cfg_plan_path = resolve("research/PLAN.md")
+        plan_update_status = update_plan_after_drain(result, cfg_plan_path)
+        if plan_update_status.get("skipped"):
+            print(f"Stage 4c: PLAN.md update skipped — "
+                  f"{plan_update_status.get('skipped_reason')}", file=sys.stderr)
+        else:
+            print(f"Stage 4c: PLAN.md updated — Round-{plan_update_status.get('round_number')} "
+                  f"bullet={plan_update_status.get('bullet_inserted')} "
+                  f"row={plan_update_status.get('row_inserted')} "
+                  f"version={plan_update_status.get('version_after')}", file=sys.stderr)
+
     # Print summary to stdout (this is the agent's input to stage 5)
     print(result.to_markdown())
+    if plan_update_status and not plan_update_status.get("skipped"):
+        print()
+        print(f"## PLAN.md auto-update")
+        print()
+        print(f"- Round number assigned: **{plan_update_status.get('round_number')}**")
+        print(f"- Session bullet inserted under §1: **{plan_update_status.get('bullet_inserted')}**")
+        print(f"- §10 lookup-table row inserted: **{plan_update_status.get('row_inserted')}**")
+        print(f"- Version line bumped to: **{plan_update_status.get('version_after')}**")
+        print()
+        print(f"Both the bullet and the row are placeholder text. **Edit them to be hand-written** "
+              f"before the commit lands; see "
+              f"`.claude/skills/research-pipeline/resources/_plan/update-discipline.md`.")
 
     # Exit code reflects lint result (audit findings are informational, not fatal —
     # they're hints for what to fix or what to add to drain).

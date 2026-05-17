@@ -56,6 +56,15 @@ def plan_path() -> Path:
 
 # ---------- helpers -----------------------------------------------------
 
+def _safe_rel(p: Path) -> Path | str:
+    """Path relative to repo root if possible, else the path itself.
+    Tests construct PLAN.md outside the repo tree; don't crash on those."""
+    try:
+        return p.relative_to(repo_root())
+    except ValueError:
+        return p
+
+
 VERSION_LINE_RE = re.compile(
     r"^\*\*Version:\*\*\s+v(\d+)\.(\d+)\s+\((\d{4}-\d{2}-\d{2})\)\s*$",
     re.MULTILINE,
@@ -154,7 +163,7 @@ def check_version_line(plan: Path, findings: list[Finding]) -> tuple[int, int, s
         findings.append(Finding(
             "error", "version-line",
             f"no parseable '**Version:** vX.Y (YYYY-MM-DD)' line in the "
-            f"first 4 KB of {plan.relative_to(repo_root())}",
+            f"first 4 KB of {_safe_rel(plan)}",
         ))
         return None
     major, minor, date = m.group(1), m.group(2), m.group(3)
@@ -186,7 +195,7 @@ def check_latest_catalog_commit_touched_plan(
         findings.append(Finding(
             "warn", "latest-catalog",
             f"the most recent catalog commit ({latest[:8]} {date} \"{subject}\") "
-            f"did not also touch {plan.relative_to(repo_root())}. "
+            f"did not also touch {_safe_rel(plan)}. "
             f"Expectation: every catalog mutation accompanies a PLAN.md edit.",
         ))
 
@@ -204,7 +213,7 @@ def check_recent_window(
     if orphans:
         lines = [
             f"{len(orphans)} of the last {len(catalog_commits)} catalog-touching "
-            f"commit(s) did not also touch {plan.relative_to(repo_root())}:",
+            f"commit(s) did not also touch {_safe_rel(plan)}:",
         ]
         for sha in orphans[:10]:
             date = git_commit_date(sha)
@@ -322,7 +331,7 @@ def main(argv: list[str]) -> int:
 
     if not args.quiet:
         print(f"plan-consistency: {len(errors)} error(s), {len(warns)} warning(s), "
-              f"{len(infos)} info note(s) on {plan.relative_to(repo_root())}")
+              f"{len(infos)} info note(s) on {_safe_rel(plan)}")
     for f in findings:
         print(f.format())
     if not findings and not args.quiet:

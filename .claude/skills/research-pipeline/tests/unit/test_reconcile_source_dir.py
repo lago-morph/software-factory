@@ -12,7 +12,7 @@ from tests.conftest import write_skill_md, default_config_yaml, write_sources_js
 
 def _run(repo: Path, *args) -> subprocess.CompletedProcess:
     src_dir = Path(__file__).resolve().parents[2] / "scripts"
-    for name in ("reconcile-source-dir.py", "_config.py", "url_canonicalize.py", "extract_url.py", "youtube_urls.py"):
+    for name in ("reconcile-source-dir.py", "_config.py", "url_canonicalize.py", "extract_url.py", "youtube_urls.py", "drain.py", "update_plan.py", "extract_title.py", "classify_text.py"):
         (repo / ".claude" / "skills" / "research-pipeline" / "scripts" / name).write_text(
             (src_dir / name).read_text()
         )

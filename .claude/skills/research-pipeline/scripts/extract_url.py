@@ -163,10 +163,48 @@ def _from_html(path: Path) -> str | None:
 
 # -- PDF ----------------------------------------------------------------
 
+PDF_URL_RE = re.compile(r"/(?:URL|Source|URI)\s*\(([^)]+)\)")
+
+# When a PDF carries multiple /URL annotations (typical for papers that link
+# to a code repo AND their own canonical landing page), prefer canonical
+# scholarly hosts over code-repo / vendor URLs. Higher priority numbers
+# beat lower ones; unmatched URLs default to 0.
+PDF_URL_PREFERENCE = [
+    (re.compile(r"^https?://(www\.)?arxiv\.org/abs/"), 100),
+    (re.compile(r"^https?://(www\.)?arxiv\.org/pdf/"), 90),
+    (re.compile(r"^https?://ar5iv\.labs\.arxiv\.org/"), 90),
+    (re.compile(r"^https?://(dx\.)?doi\.org/"), 95),
+    (re.compile(r"^https?://(www\.)?openreview\.net/"), 80),
+    (re.compile(r"^https?://(www\.)?aclanthology\.org/"), 80),
+    (re.compile(r"^https?://pubs\.acs\.org/"), 70),
+    (re.compile(r"^https?://link\.springer\.com/"), 70),
+    (re.compile(r"^https?://(www\.)?cambridge\.org/"), 70),
+    (re.compile(r"^https?://(www\.)?nature\.com/"), 70),
+    (re.compile(r"^https?://(www\.)?sciencedirect\.com/"), 70),
+    (re.compile(r"^https?://(www\.)?ieeexplore\.ieee\.org/"), 70),
+    # github / code-repo URLs are explicitly LOW preference — they're
+    # usually accompanying-code links inside an academic paper, not the
+    # paper's canonical URL.
+    (re.compile(r"^https?://(www\.)?github\.com/"), -50),
+    (re.compile(r"^https?://(www\.)?gitlab\.com/"), -50),
+]
+
+
+def _pdf_url_score(url: str) -> int:
+    for pattern, score in PDF_URL_PREFERENCE:
+        if pattern.search(url):
+            return score
+    return 0
+
+
 def _from_pdf(path: Path) -> str | None:
-    """Best-effort: look for /URL or /Source in PDF info dict via byte scan.
+    """Best-effort: look for /URL, /Source, /URI in PDF info dict via byte scan.
 
     Not a full PDF parser; just searches the first 64KB for common patterns.
+    When multiple candidate URLs are present (typical for academic papers
+    that embed both a code-repo link and their canonical landing page),
+    the one with the highest preference score wins (see PDF_URL_PREFERENCE);
+    ties go to the first one encountered.
     """
     try:
         with open(path, "rb") as f:
@@ -174,19 +212,17 @@ def _from_pdf(path: Path) -> str | None:
     except OSError:
         return None
     text = head.decode("latin-1", errors="replace")
-    # PDF info dict /URL (PdfWriter) or /Source (custom)
-    m = re.search(r"/(?:URL|Source)\s*\(([^)]+)\)", text)
-    if m:
-        candidate = m.group(1).strip()
-        if candidate.startswith("http"):
-            return candidate
-    # Embedded URI annotations
-    m = re.search(r"/URI\s*\(([^)]+)\)", text)
-    if m:
-        candidate = m.group(1).strip()
-        if candidate.startswith("http"):
-            return candidate
-    return None
+    candidates: list[str] = []
+    for m in PDF_URL_RE.finditer(text):
+        url = m.group(1).strip()
+        if url.startswith("http"):
+            candidates.append(url)
+    if not candidates:
+        return None
+    # Stable sort by descending score; tie-break by first-seen position.
+    indexed = list(enumerate(candidates))
+    indexed.sort(key=lambda iu: (-_pdf_url_score(iu[1]), iu[0]))
+    return indexed[0][1]
 
 
 # -- TXT ----------------------------------------------------------------

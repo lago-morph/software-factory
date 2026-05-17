@@ -5,15 +5,22 @@ This script does all the mechanical work and produces a summary the agent
 uses to drive stage 5.
 
 Pipeline:
-  Stage 1 — Inventory uningested files in ingestion_paths.
-  Stage 2 — Try to extract a URL from each file.
-            Files in `reference-only/<id>/` get reconciled (no URL needed).
-            Files in ingestion drop dirs without URL → flagged as error.
-  Stage 3 — For each (file, URL) tuple:
-              - Create new record OR add file to existing record
-              - git mv the file into reference-only/<id>/<filename>
-              - For URL-list .txt files: create wanted records, delete the list
-  Stage 4 — Run lint-sources.sh. Halt if it fails.
+  Stage 1  — Inventory uningested files in ingestion_paths.
+  Stage 2  — Try to extract a URL from each file.
+             Files in `reference-only/<id>/` get reconciled (no URL needed).
+             Files in ingestion drop dirs without URL → flagged as error.
+  Stage 3  — For each (file, URL) tuple:
+               - Create new record OR add file to existing record
+               - Extract a title from the file content (HTML/MHTML/MD/TXT)
+                 and store it on the record so the audit passes
+               - git mv the file into reference-only/<id>/<filename>
+               - For URL-list .txt files: create wanted records, delete the list
+  Stage 4  — Run lint-sources.sh. Halt if it fails.
+  Stage 4b — Audit each touched record via audit-records.py per the
+             `audit_after_ingestion` config knob (always|sometimes|never).
+             Findings are surfaced to the agent/user but do NOT fail the run —
+             they're a forward-thinking signal: if drain produces an issue
+             flagged by the audit, drain.py is missing a step.
 
 Output: a drain-summary report on stdout (markdown) telling the agent what
 was processed, what failed, and what records are ready for stage 5.
@@ -38,11 +45,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _config import (  # noqa: E402
-    data_path, library_path, ingestion_paths, repo_root, ConfigError,
+    data_path, library_path, ingestion_paths, load_config, repo_root,
+    skill_md_path, ConfigError,
 )
 from url_canonicalize import canonicalize_and_id, canonicalize_url  # noqa: E402
 from extract_url import extract_url  # noqa: E402
+from extract_title import extract_title  # noqa: E402
 from classify_text import classify  # noqa: E402
+
+AUDIT_SCRIPT = Path(__file__).resolve().parent / "audit-records.py"
 
 # Format detection
 EXT_TO_FORMAT = {
@@ -81,8 +92,13 @@ class DrainResult:
         self.errors_classification: list[tuple[Path, str]] = []
         self.errors_image_in_drop: list[Path] = []
         self.records_with_image_summaries_pending: set[str] = set()
+        self.touched_record_ids: set[str] = set()
         self.lint_exit_code: int | None = None
         self.lint_output: str = ""
+        self.audit_mode: str = "always"
+        self.audit_ran: bool = False
+        self.audit_exit_code: int | None = None
+        self.audit_output: str = ""
 
     def to_markdown(self) -> str:
         lines = [
@@ -144,6 +160,33 @@ class DrainResult:
                 lines.append(f"- ⚠ `{f}` — image in drop dir; move to `reference-only/<id>/` manually")
             lines.append("")
 
+        if self.audit_ran:
+            lines.append(f"## Audit (mode: `{self.audit_mode}`)")
+            lines.append("")
+            if self.audit_exit_code == 0:
+                lines.append(
+                    f"✓ audit clean across {len(self.touched_record_ids)} touched record(s)."
+                )
+            else:
+                lines.append(
+                    f"⚠ audit flagged issues on touched record(s) "
+                    f"(exit code {self.audit_exit_code}). Findings:"
+                )
+                lines.append("")
+                lines.append("```")
+                lines.append(self.audit_output.strip()[-2000:])
+                lines.append("```")
+                lines.append("")
+                lines.append(
+                    "For each finding: either fix the record, or — if the issue "
+                    "points to a gap in the drain pipeline — extend `drain.py` so "
+                    "future ingestions satisfy the check."
+                )
+            lines.append("")
+        elif self.audit_mode == "never":
+            lines.append("_Audit skipped (`audit_after_ingestion: never`)._")
+            lines.append("")
+
         return "\n".join(lines)
 
 
@@ -189,6 +232,9 @@ def stage_1b_url_lists(candidates: list[Path], result: DrainResult, data: dict,
                         "files": [],
                     }
                     n_added += 1
+                # Every URL in the list — new or not — counts as touched, so
+                # audit can flag it if the record is still incomplete.
+                result.touched_record_ids.add(rid)
             result.url_lists_processed.append((f, n_added))
             if not dry_run:
                 f.unlink()
@@ -300,6 +346,12 @@ def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
             "completeness": "unknown",
         }
 
+        # Best-effort title extraction from the now-moved file. We read from
+        # the destination because the source was just git-mv'd. Falling back
+        # to "(unknown)" only if extraction yields nothing — the audit will
+        # then flag the record so the user knows to fill it in.
+        extracted_title = extract_title(dst) if dst.exists() else None
+
         if rid in data:
             # Append to existing record
             files = data[rid].get("files", [])
@@ -308,16 +360,21 @@ def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
                 continue
             files.append(file_entry)
             data[rid]["files"] = files
+            # If the existing title is the placeholder and we extracted a real
+            # one from this newly-attached file, upgrade it.
+            if (data[rid].get("title") in (None, "", "(unknown)")) and extracted_title:
+                data[rid]["title"] = extracted_title
             result.files_added_to_existing.append((f.relative_to(root), rid))
         else:
             # Create new record
             data[rid] = {
                 "id": rid,
                 "canonical_url": canon,
-                "title": "(unknown)",
+                "title": extracted_title or "(unknown)",
                 "files": [file_entry],
             }
             result.files_added_as_new_records.append((f.relative_to(root), rid))
+        result.touched_record_ids.add(rid)
 
 
 def stage_3c_reconcile(result: DrainResult, data: dict, dry_run: bool):
@@ -361,6 +418,7 @@ def stage_3c_reconcile(result: DrainResult, data: dict, dry_run: bool):
             if not dry_run:
                 record.setdefault("files", []).append(file_entry)
             result.reconciled_orphans.append((f.relative_to(root), rid))
+            result.touched_record_ids.add(rid)
 
 
 def stage_4_validate(result: DrainResult) -> None:
@@ -372,6 +430,39 @@ def stage_4_validate(result: DrainResult) -> None:
     )
     result.lint_exit_code = proc.returncode
     result.lint_output = proc.stdout + proc.stderr
+
+
+def stage_4b_audit(result: DrainResult, mode: str) -> None:
+    """Run audit-records.py against touched IDs based on `audit_after_ingestion`.
+
+    `mode` values:
+        always    — always audit when there are touched records.
+        sometimes — audit only when any record had a status change worth
+                    re-checking (new have-files attached or records created).
+        never     — skip entirely.
+    """
+    result.audit_mode = mode
+    if mode == "never":
+        return
+    if not result.touched_record_ids:
+        return
+    if mode == "sometimes":
+        # "sometimes" means: only worth running when something materially
+        # changed on disk. New records or new have-files qualify; pure
+        # wanted-record creation from URL lists does not.
+        has_material = bool(result.files_added_as_new_records
+                            or result.files_added_to_existing
+                            or result.reconciled_orphans)
+        if not has_material:
+            return
+
+    cmd = [sys.executable, str(AUDIT_SCRIPT), *sorted(result.touched_record_ids)]
+    if mode == "always":
+        cmd.append("--always-mode-footer")
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+    result.audit_ran = True
+    result.audit_exit_code = proc.returncode
+    result.audit_output = proc.stdout + proc.stderr
 
 
 def normalize_and_write(data: dict, data_p: Path):
@@ -389,6 +480,10 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="don't modify anything")
     ap.add_argument("--no-lint", action="store_true", help="skip stage 4 validation")
+    ap.add_argument("--no-audit", action="store_true",
+                    help="skip the post-ingestion audit regardless of config")
+    ap.add_argument("--audit-mode", choices=["always", "sometimes", "never"],
+                    help="override audit_after_ingestion from config")
     ap.add_argument("--target", help="only scan this dir (instead of all ingestion_paths)")
     args = ap.parse_args()
 
@@ -436,10 +531,33 @@ def main() -> int:
         stage_4_validate(result)
         print(f"Stage 4: lint exit code {result.lint_exit_code}", file=sys.stderr)
 
+    # Stage 4b: per-record audit on touched IDs
+    if not args.no_audit and not args.dry_run:
+        if args.audit_mode:
+            mode = args.audit_mode
+        else:
+            try:
+                mode = load_config().get("audit_after_ingestion", "always")
+            except ConfigError:
+                mode = "always"
+        if mode not in {"always", "sometimes", "never"}:
+            print(f"⚠ audit_after_ingestion={mode!r} invalid; defaulting to 'always'",
+                  file=sys.stderr)
+            mode = "always"
+        stage_4b_audit(result, mode)
+        if result.audit_ran:
+            print(f"Stage 4b: audit exit code {result.audit_exit_code} "
+                  f"on {len(result.touched_record_ids)} touched record(s)",
+                  file=sys.stderr)
+        else:
+            print(f"Stage 4b: audit skipped (mode={result.audit_mode}, "
+                  f"touched={len(result.touched_record_ids)})", file=sys.stderr)
+
     # Print summary to stdout (this is the agent's input to stage 5)
     print(result.to_markdown())
 
-    # Exit code reflects lint result
+    # Exit code reflects lint result (audit findings are informational, not fatal —
+    # they're hints for what to fix or what to add to drain).
     if result.lint_exit_code and result.lint_exit_code != 0:
         return 1
     return 0

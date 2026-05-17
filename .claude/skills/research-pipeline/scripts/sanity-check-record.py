@@ -30,53 +30,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _config import data_path, library_path, repo_root, ConfigError  # noqa: E402
 from extract_url import extract_url  # noqa: E402
+from extract_title import extract_title  # noqa: E402
 from url_canonicalize import canonicalize_url  # noqa: E402
 
 ID_RE = re.compile(r"^[0-9a-f]{10}$")
-TITLE_HTML_RE = re.compile(r"<title[^>]*>([^<]+)</title>", re.IGNORECASE | re.DOTALL)
-TITLE_H1_RE = re.compile(r"<h1[^>]*>([^<]+)</h1>", re.IGNORECASE | re.DOTALL)
-TITLE_MHTML_RE = re.compile(r"^Subject:\s*(.+)$", re.IGNORECASE | re.MULTILINE)
-TITLE_MD_RE = re.compile(r"^#\s+(.+)$", re.MULTILINE)
-TITLE_TXT_RE = re.compile(r"^\s*(?:TITLE|Title)\s*[:=]\s*(.+)$", re.MULTILINE)
-
-
-def extract_title(path: Path) -> str | None:
-    """Best-effort title from a file's content."""
-    if not path.exists():
-        return None
-    suffix = path.suffix.lower()
-    try:
-        if suffix == ".mhtml":
-            head = path.read_bytes()[:20480].decode("utf-8", errors="replace")
-            m = TITLE_MHTML_RE.search(head)
-            return _clean(m.group(1)) if m else None
-        if suffix in {".html", ".htm"}:
-            text = path.read_text(encoding="utf-8", errors="replace")
-            m = TITLE_HTML_RE.search(text[:50000])
-            if m:
-                return _clean(m.group(1))
-            m = TITLE_H1_RE.search(text[:50000])
-            return _clean(m.group(1)) if m else None
-        if suffix == ".md":
-            text = path.read_text(encoding="utf-8", errors="replace")
-            m = TITLE_MD_RE.search(text)
-            return _clean(m.group(1)) if m else None
-        if suffix == ".txt":
-            text = path.read_text(encoding="utf-8", errors="replace")
-            m = TITLE_TXT_RE.search(text[:5000])
-            return _clean(m.group(1)) if m else None
-    except OSError:
-        return None
-    return None
-
-
-def _clean(s: str) -> str:
-    s = s.strip()
-    # Decode common HTML entities
-    s = s.replace("&amp;", "&").replace("&#x27;", "'").replace("&quot;", '"')
-    s = s.replace("&lt;", "<").replace("&gt;", ">")
-    # Collapse whitespace
-    return re.sub(r"\s+", " ", s)
 
 
 def extract_text(path: Path, limit_chars: int = 50000) -> str:

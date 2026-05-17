@@ -759,11 +759,11 @@
       }
     ],
     "id": "26035151aa",
-    "title": "The Complete Guide to Building Skills for Claude",
     "tags": [
       "anthropic-substrate",
       "skills-composition"
-    ]
+    ],
+    "title": "The Complete Guide to Building Skills for Claude"
   },
   "265e444ae9": {
     "canonical_url": "https://docs.tabnine.com/main/welcome/readme/architecture/deployment-options",
@@ -2807,10 +2807,10 @@
       }
     ],
     "id": "8cc1f9afc8",
-    "title": "Hamel Husain’s Blog",
     "tags": [
       "evals-and-benchmarks"
-    ]
+    ],
+    "title": "Hamel Husain’s Blog"
   },
   "8e651f5fda": {
     "canonical_url": "https://docs.tabnine.com/main/getting-started/context-engine/admin-console/coaching",
@@ -3457,10 +3457,10 @@
       }
     ],
     "id": "b0d89f5419",
-    "title": "How to Work and Compound with AI",
     "tags": [
       "compound-engineering"
-    ]
+    ],
+    "title": "How to Work and Compound with AI"
   },
   "b1b49c4c3d": {
     "canonical_url": "https://github.com/anthropics/anthropic-cookbook/blob/main/skills/03_skills_custom_development.ipynb",
@@ -4229,11 +4229,11 @@
       }
     ],
     "id": "e588b9bb1a",
-    "title": "Defeating Prompt Injections by Design (arXiv:2503.18813v2)",
     "tags": [
       "security-primitives",
       "academic-foundations"
-    ]
+    ],
+    "title": "Defeating Prompt Injections by Design (arXiv:2503.18813v2)"
   },
   "e6f77b9e81": {
     "canonical_url": "https://jayminwest.substack.com/p/a-manifesto-for-agentic-development",
@@ -4333,10 +4333,10 @@
       }
     ],
     "id": "eb69cbdcba",
-    "title": "Writing • Eugene Yan",
     "tags": [
       "evals-and-benchmarks"
-    ]
+    ],
+    "title": "Writing • Eugene Yan"
   },
   "ebc17186b3": {
     "canonical_url": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent",

@@ -22,7 +22,7 @@ SCRIPT_FILES = [
     "validate-sources.py", "validate-config.py",
     "check-source-refs.py", "check-source-dirs.py",
     "check-fetch-provenance.py", "sanity-check-record.py",
-    "audit-records.py", "lint-sources.sh", "drain.py",
+    "audit-records.py", "lint-sources.sh", "drain.py", "youtube_urls.py",
 ]
 
 
@@ -284,3 +284,108 @@ class TestDrainAuditIntegration:
         result = _run_drain(repo, "--no-lint", "--no-audit")
         assert result.returncode == 0
         assert "## Audit" not in result.stdout
+
+
+# ---------------- YouTube transcript handling ----------------
+
+YT_VID = "dQw4w9WgXcQ"
+YT_URL = f"https://www.youtube.com/watch?v={YT_VID}"
+
+
+class TestDrainYoutubeEmbedSurfaces:
+    def test_embed_in_html_appears_as_candidate(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        f = repo / "research" / "manual" / "post.html"
+        f.write_text(
+            '<html><head><link rel="canonical" href="https://example.com/post">'
+            '<title>T</title></head>'
+            f'<body>Watch this: <a href="https://youtu.be/{YT_VID}">video</a></body></html>'
+        )
+        subprocess.run(["git", "add", str(f)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint")
+        assert result.returncode == 0, result.stderr
+        assert "YouTube embed candidates" in result.stdout
+        assert YT_URL in result.stdout
+
+    def test_existing_transcript_entry_suppresses_candidate(self, tmp_path):
+        # Set up an existing record (matching example.com/post id) with a
+        # youtube-transcript entry already, so the next drain run's embed
+        # scanner should skip it.
+        repo = _setup_repo(tmp_path)
+        from url_canonicalize import canonicalize_and_id
+        canon, rid = canonicalize_and_id("https://example.com/post")
+        sources_p = repo / "reference-only" / "sources.json"
+        sources_p.write_text(json.dumps({
+            rid: {
+                "id": rid,
+                "canonical_url": canon,
+                "title": "T",
+                "files": [
+                    # Existing have html file matching the doc
+                    # (sha not validated here)
+                    {"format": "youtube-transcript", "filename": None,
+                     "ingestion_status": "want", "youtube_url": YT_URL},
+                ],
+            }
+        }, indent=2, sort_keys=True))
+        f = repo / "research" / "manual" / "post.html"
+        f.write_text(
+            '<html><head><link rel="canonical" href="https://example.com/post">'
+            '<title>T</title></head>'
+            f'<body>Watch this: <a href="https://youtu.be/{YT_VID}">video</a></body></html>'
+        )
+        subprocess.run(["git", "add", str(f)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint")
+        assert result.returncode == 0, result.stderr
+        # Embed is already covered → candidates count is 0 and no
+        # section header is rendered.
+        assert "## YouTube embed candidates" not in result.stdout
+
+
+class TestDrainTranscriptDelivery:
+    def test_transcript_promotes_wanted_entry(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        from url_canonicalize import canonicalize_and_id
+        canon, rid = canonicalize_and_id("https://example.com/post")
+        sources_p = repo / "reference-only" / "sources.json"
+        sources_p.write_text(json.dumps({
+            rid: {
+                "id": rid,
+                "canonical_url": canon,
+                "title": "T",
+                "files": [
+                    {"format": "youtube-transcript", "filename": None,
+                     "ingestion_status": "want", "youtube_url": YT_URL},
+                ],
+            }
+        }, indent=2, sort_keys=True))
+
+        # Deliver a transcript .txt in the drop dir
+        tx = repo / "research" / "manual" / "talk-transcript.txt"
+        tx.write_text(YT_URL + "\n\n[0:00] hello\n", encoding="utf-8")
+        subprocess.run(["git", "add", str(tx)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint")
+        assert result.returncode == 0, result.stderr
+        assert "YouTube transcripts delivered" in result.stdout
+
+        data = json.loads(sources_p.read_text())
+        entry = data[rid]["files"][0]
+        assert entry["ingestion_status"] == "have"
+        assert entry["filename"] == "talk-transcript.txt"
+        assert entry["youtube_url"] == YT_URL
+        # File moved into <id>/
+        moved = repo / "reference-only" / rid / "talk-transcript.txt"
+        assert moved.exists()
+        assert not tx.exists()
+
+    def test_transcript_with_no_match_is_flagged(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        # No wanted entry in catalog
+        tx = repo / "research" / "manual" / "orphan-transcript.txt"
+        tx.write_text(YT_URL + "\nbody\n", encoding="utf-8")
+        subprocess.run(["git", "add", str(tx)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint")
+        assert result.returncode == 0
+        assert "Transcript files with no matching wanted entry" in result.stdout
+        # File stays where it is
+        assert tx.exists()

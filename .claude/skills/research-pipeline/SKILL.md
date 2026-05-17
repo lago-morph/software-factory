@@ -103,6 +103,7 @@ This same `--check` runs as a hard gate in CI for skill modifications (see `test
 | Tag a record with one of the 15 canonical categories | `resources/_catalog/category-taxonomy.md` |
 | Run the post-ingestion audit on specific records | `resources/_catalog/audit.md` |
 | Run the drain pipeline (process `research/manual/` or `research/fetched/`) | `resources/_drain/workflow-overview.md` |
+| Handle a YouTube video found embedded in an ingested document | `resources/_drain/youtube-transcripts.md` |
 | Write a new research report or extend one | `resources/_drain/stage-5-content-processing.md` |
 | Modify any script under `scripts/` | `resources/testing.md` |
 | Install or update the pipeline workflows | `resources/github-action.md` |

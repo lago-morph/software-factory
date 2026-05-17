@@ -52,6 +52,10 @@ from url_canonicalize import canonicalize_and_id, canonicalize_url  # noqa: E402
 from extract_url import extract_url  # noqa: E402
 from extract_title import extract_title  # noqa: E402
 from classify_text import classify  # noqa: E402
+from youtube_urls import (  # noqa: E402
+    canonicalize_youtube_url, extract_youtube_urls_from_file,
+    first_line_youtube_url, is_youtube_url,
+)
 
 AUDIT_SCRIPT = Path(__file__).resolve().parent / "audit-records.py"
 
@@ -88,10 +92,14 @@ class DrainResult:
         self.files_added_to_existing: list[tuple[Path, str]] = []  # (file, record_id)
         self.files_added_as_new_records: list[tuple[Path, str]] = []
         self.reconciled_orphans: list[tuple[Path, str]] = []
+        self.transcripts_delivered: list[tuple[Path, str, str]] = []  # (file, record_id, video_url)
         self.errors_no_url: list[Path] = []
         self.errors_classification: list[tuple[Path, str]] = []
         self.errors_image_in_drop: list[Path] = []
+        self.errors_unmatched_transcript: list[tuple[Path, str]] = []  # (file, video_url)
         self.records_with_image_summaries_pending: set[str] = set()
+        # (referrer_record_id, source_file, video_url, snippet)
+        self.youtube_embed_candidates: list[tuple[str, Path, str, str]] = []
         self.touched_record_ids: set[str] = set()
         self.lint_exit_code: int | None = None
         self.lint_output: str = ""
@@ -109,10 +117,13 @@ class DrainResult:
             f"- Files attached to existing records: **{len(self.files_added_to_existing)}**",
             f"- Files added as new records: **{len(self.files_added_as_new_records)}**",
             f"- Orphan files reconciled in `reference-only/<id>/`: **{len(self.reconciled_orphans)}**",
+            f"- YouTube transcripts delivered (want → have): **{len(self.transcripts_delivered)}**",
             f"- Files flagged (no extractable URL in drop dir): **{len(self.errors_no_url)}**",
             f"- Files flagged (mixed/unrecognized content): **{len(self.errors_classification)}**",
             f"- Images in drop dirs without `<id>/` placement: **{len(self.errors_image_in_drop)}**",
+            f"- Transcript files with no matching wanted entry: **{len(self.errors_unmatched_transcript)}**",
             f"- Records with images pending summary: **{len(self.records_with_image_summaries_pending)}**",
+            f"- YouTube embed candidates (awaiting agent judgement): **{len(self.youtube_embed_candidates)}**",
             "",
             f"**Lint exit code:** {self.lint_exit_code}",
             "",
@@ -149,7 +160,28 @@ class DrainResult:
             for rid in sorted(self.records_with_image_summaries_pending):
                 lines.append(f"- `{rid}`")
             lines.append("")
-        if self.errors_no_url or self.errors_classification or self.errors_image_in_drop:
+        if self.transcripts_delivered:
+            lines.append("## YouTube transcripts delivered")
+            lines.append("")
+            for f, rid, video in self.transcripts_delivered:
+                lines.append(f"- `{rid}` — {f.name} (video {video})")
+            lines.append("")
+        if self.youtube_embed_candidates:
+            lines.append("## YouTube embed candidates (agent: evaluate, then add wanted entries)")
+            lines.append("")
+            lines.append("Each link below was found in an ingested document. If the "
+                         "surrounding text suggests the video would be a useful source, "
+                         "add a `want` file entry of format `youtube-transcript` on the "
+                         "embedding record with `youtube_url` set. See "
+                         "`resources/_drain/youtube-transcripts.md`.")
+            lines.append("")
+            for rid, src, url, snippet in self.youtube_embed_candidates:
+                lines.append(f"- `{rid}` ← `{src.name}`: {url}")
+                if snippet:
+                    lines.append(f"  > {snippet[:240]}")
+            lines.append("")
+        if (self.errors_no_url or self.errors_classification
+                or self.errors_image_in_drop or self.errors_unmatched_transcript):
             lines.append("## Flagged files (NOT ingested)")
             lines.append("")
             for f in self.errors_no_url:
@@ -158,6 +190,13 @@ class DrainResult:
                 lines.append(f"- ❌ `{f}` — {reason}")
             for f in self.errors_image_in_drop:
                 lines.append(f"- ⚠ `{f}` — image in drop dir; move to `reference-only/<id>/` manually")
+            for f, video_url in self.errors_unmatched_transcript:
+                lines.append(
+                    f"- ⚠ `{f}` — transcript for {video_url} but no wanted "
+                    f"`youtube-transcript` entry references that video. Move to "
+                    f"`reference-only/<id>/` of the embedding record manually, or "
+                    f"add the wanted entry first."
+                )
             lines.append("")
 
         if self.audit_ran:
@@ -252,6 +291,113 @@ def stage_1b_url_lists(candidates: list[Path], result: DrainResult, data: dict,
     return remaining
 
 
+def _find_wanted_transcript(data: dict, video_url: str) -> tuple[str, int] | None:
+    """Return (record_id, file_index) of the first wanted youtube-transcript
+    file entry whose youtube_url matches video_url, or None."""
+    for rid, record in data.items():
+        if not isinstance(record, dict):
+            continue
+        for i, fe in enumerate(record.get("files") or []):
+            if not isinstance(fe, dict):
+                continue
+            if fe.get("format") != "youtube-transcript":
+                continue
+            if fe.get("ingestion_status") != "want":
+                continue
+            if fe.get("youtube_url") == video_url:
+                return rid, i
+    return None
+
+
+def _try_deliver_transcript(f: Path, result: DrainResult, data: dict,
+                            dry_run: bool) -> bool:
+    """If `f` is a .txt whose first line is a YouTube URL, attempt to
+    promote a matching wanted entry from want → have. Returns True if the
+    file was handled (either delivered or flagged unmatched); False if
+    it's not a transcript file and the caller should fall through to
+    normal URL extraction.
+    """
+    if f.suffix.lower() != ".txt":
+        return False
+    video = first_line_youtube_url(f)
+    if not video:
+        return False
+
+    root = repo_root()
+    lib = library_path()
+    match = _find_wanted_transcript(data, video)
+    if match is None:
+        result.errors_unmatched_transcript.append((f.relative_to(root), video))
+        return True
+
+    rid, idx = match
+    try:
+        sha = hashlib.sha256(f.read_bytes()).hexdigest()
+    except OSError:
+        result.errors_classification.append(
+            (f.relative_to(root), "could not read transcript file")
+        )
+        return True
+
+    dst = lib / rid / f.name
+    if dry_run:
+        result.transcripts_delivered.append((f.relative_to(root), rid, video))
+        result.touched_record_ids.add(rid)
+        return True
+
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    # Avoid clobbering an existing file at dst
+    if dst.exists() and dst.resolve() != f.resolve():
+        result.errors_classification.append(
+            (f.relative_to(root),
+             f"transcript collision: {dst.relative_to(root)} already exists")
+        )
+        return True
+    try:
+        subprocess.run(
+            ["git", "mv", str(f.relative_to(root)), str(dst.relative_to(root))],
+            cwd=root, check=True, capture_output=True, text=True,
+        )
+    except subprocess.CalledProcessError:
+        if not dst.exists():
+            shutil.move(str(f), str(dst))
+
+    entry = data[rid]["files"][idx]
+    entry["filename"] = f.name
+    entry["sha256"] = sha
+    entry["ingestion_status"] = "have"
+    entry.setdefault("completeness", "unknown")
+    # youtube_url stays as-is (already set on the wanted entry).
+    result.transcripts_delivered.append((f.relative_to(root), rid, video))
+    result.touched_record_ids.add(rid)
+    return True
+
+
+def _scan_for_youtube_embeds(record_id: str, file_path: Path,
+                             record: dict, result: DrainResult) -> None:
+    """Surface YouTube URLs found in an ingested document as candidates
+    for the agent to (manually) add wanted transcript entries for.
+
+    Skips URLs already covered by an existing youtube-transcript file
+    entry on the same record (any status).
+    """
+    mentions = extract_youtube_urls_from_file(file_path)
+    if not mentions:
+        return
+    already: set[str] = set()
+    for fe in record.get("files") or []:
+        if isinstance(fe, dict) and fe.get("format") == "youtube-transcript":
+            yu = fe.get("youtube_url")
+            if yu:
+                already.add(yu)
+    for m in mentions:
+        if m.url in already:
+            continue
+        result.youtube_embed_candidates.append(
+            (record_id, file_path, m.url, m.snippet)
+        )
+
+
 def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
                        dry_run: bool):
     """For each file: extract URL, create/update record, move file."""
@@ -263,6 +409,12 @@ def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
         fmt = detect_format(f.name)
         if fmt in IMAGE_FORMATS:
             result.errors_image_in_drop.append(f.relative_to(root))
+            continue
+
+        # YouTube transcript delivery (.txt with first-line video URL) —
+        # handled separately because the file's URL is *not* the parent
+        # record's canonical URL.
+        if _try_deliver_transcript(f, result, data, dry_run):
             continue
 
         # Try URL extraction
@@ -376,6 +528,11 @@ def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
             result.files_added_as_new_records.append((f.relative_to(root), rid))
         result.touched_record_ids.add(rid)
 
+        # Surface any YouTube URLs found in this newly-ingested document
+        # so the agent can decide whether to add wanted transcript entries.
+        scan_target = dst if dst.exists() else f
+        _scan_for_youtube_embeds(rid, scan_target, data[rid], result)
+
 
 def stage_3c_reconcile(result: DrainResult, data: dict, dry_run: bool):
     """For each per-id directory with orphan files, add them to the record."""
@@ -405,6 +562,47 @@ def stage_3c_reconcile(result: DrainResult, data: dict, dry_run: bool):
                 sha = hashlib.sha256(f.read_bytes()).hexdigest()
             except OSError:
                 continue
+
+            # YouTube-transcript detection: a .txt whose first line is a
+            # YouTube URL is a transcript file, not a plain txt source.
+            yt_url = first_line_youtube_url(f) if fmt == "txt" else None
+            if yt_url:
+                # If a wanted entry on this record matches, promote it
+                # in place rather than appending a new entry.
+                promoted = False
+                for fe in record.get("files") or []:
+                    if (isinstance(fe, dict)
+                            and fe.get("format") == "youtube-transcript"
+                            and fe.get("ingestion_status") == "want"
+                            and fe.get("youtube_url") == yt_url):
+                        if not dry_run:
+                            fe["filename"] = f.name
+                            fe["sha256"] = sha
+                            fe["ingestion_status"] = "have"
+                            fe.setdefault("completeness", "unknown")
+                        result.transcripts_delivered.append(
+                            (f.relative_to(root), rid, yt_url)
+                        )
+                        result.touched_record_ids.add(rid)
+                        promoted = True
+                        break
+                if promoted:
+                    continue
+                # No wanted entry — add a new have entry directly.
+                file_entry = {
+                    "format": "youtube-transcript",
+                    "filename": f.name,
+                    "sha256": sha,
+                    "ingestion_status": "have",
+                    "completeness": "unknown",
+                    "youtube_url": yt_url,
+                }
+                if not dry_run:
+                    record.setdefault("files", []).append(file_entry)
+                result.reconciled_orphans.append((f.relative_to(root), rid))
+                result.touched_record_ids.add(rid)
+                continue
+
             file_entry = {
                 "format": fmt,
                 "filename": f.name,

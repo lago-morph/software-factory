@@ -108,15 +108,23 @@
       "type": "object",
       "required": ["format", "ingestion_status"],
       "additionalProperties": false,
+      "allOf": [
+        {
+          "if":   { "properties": { "format": { "const": "youtube-transcript" } }, "required": ["format"] },
+          "then": { "required": ["youtube_url"] },
+          "else": { "not": { "required": ["youtube_url"] } }
+        }
+      ],
       "properties": {
         "format": {
           "enum": [
             "html", "mhtml", "md", "txt", "pdf", "ipynb", "bibtex",
             "image/png", "image/jpeg", "image/svg+xml", "image/gif", "image/webp",
             "video/mp4", "audio/mp3",
+            "youtube-transcript",
             "json", "yaml", "csv", "zip", "other"
           ],
-          "description": "MIME-style format identifier. 'other' for anything not in the enum."
+          "description": "MIME-style format identifier. 'other' for anything not in the enum. 'youtube-transcript' is a plain-text transcript of a YouTube video — the file's first line is the video URL; the rest is the transcript body. Requires the file entry to carry a `youtube_url` field."
         },
         "filename": {
           "type": ["string", "null"],
@@ -143,6 +151,12 @@
         "comment": {
           "type": ["string", "null"],
           "description": "File-specific notes. For images, this is where the image's auto-generated summary lives."
+        },
+        "youtube_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://(www\\.)?(youtube\\.com/|youtu\\.be/)",
+          "description": "Only present (and required) when format=\"youtube-transcript\". The URL of the YouTube video the transcript is for — recorded on the file entry rather than the parent record's canonical_url, because the parent record is the document where the video was embedded, not the video itself. When ingestion_status=have, the same URL must also appear as the first line of the transcript file."
         },
         "fetch_provenance": {
           "type": ["object", "null"],

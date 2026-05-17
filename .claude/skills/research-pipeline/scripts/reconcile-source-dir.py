@@ -34,6 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _config import data_path, library_path, ConfigError  # noqa: E402
 from extract_url import extract_url  # noqa: E402
 from url_canonicalize import canonicalize_url  # noqa: E402
+from youtube_urls import first_line_youtube_url  # noqa: E402
 
 ID_RE = re.compile(r"^[0-9a-f]{10}$")
 
@@ -100,6 +101,49 @@ def reconcile_one(record_id: str, data: dict, lib: Path, dry_run: bool) -> tuple
 
         fmt = FORMAT_BY_EXT.get(f.suffix.lower(), "other")
         sha = hashlib.sha256(f.read_bytes()).hexdigest()
+
+        # YouTube-transcript detection: a .txt whose first line is a YouTube
+        # URL is a transcript file, not a plain txt source. If a wanted
+        # entry on this record matches the video URL, promote it in place
+        # rather than appending a new entry.
+        yt_url = first_line_youtube_url(f) if fmt == "txt" else None
+        if yt_url:
+            promoted = False
+            for fe in existing_files:
+                if (isinstance(fe, dict)
+                        and fe.get("format") == "youtube-transcript"
+                        and fe.get("ingestion_status") == "want"
+                        and fe.get("youtube_url") == yt_url):
+                    if not dry_run:
+                        fe["filename"] = f.name
+                        fe["sha256"] = sha
+                        fe["ingestion_status"] = "have"
+                        fe.setdefault("completeness", "unknown")
+                    n_added += 1
+                    if dry_run:
+                        print(f"  ↑ would promote want→have: {record_id}/{f.name}  [youtube-transcript {yt_url}]")
+                    else:
+                        print(f"  ↑ promoted want→have:    {record_id}/{f.name}  [youtube-transcript {yt_url}]")
+                    promoted = True
+                    break
+            if promoted:
+                continue
+            # No wanted entry — fall through and add as a fresh have entry.
+            entry = {
+                "format": "youtube-transcript",
+                "filename": f.name,
+                "sha256": sha,
+                "ingestion_status": "have",
+                "completeness": "unknown",
+                "youtube_url": yt_url,
+            }
+            existing_files.append(entry)
+            n_added += 1
+            if dry_run:
+                print(f"  + would add: {record_id}/{f.name}  [youtube-transcript {yt_url}]")
+            else:
+                print(f"  + added:     {record_id}/{f.name}  [youtube-transcript {yt_url}]")
+            continue
 
         # Best-effort URL extraction. Not required to succeed for files in known dir.
         extracted = extract_url(f)

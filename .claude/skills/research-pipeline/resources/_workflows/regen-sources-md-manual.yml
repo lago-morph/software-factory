@@ -1,0 +1,63 @@
+name: Regenerate sources.md (manual)
+
+# Two manual triggers:
+#   1. Tickle-file approach: AI commits reference-only/.regen-trigger (any branch),
+#      this workflow fires, regenerates the MD on that branch, deletes the trigger file
+#      in the same commit, pushes.
+#   2. workflow_dispatch: clickable from the Actions tab in GitHub UI.
+#
+# Use case: debugging the regen pipeline, or forcing a regen after a failed auto run.
+# For normal operation, just push changes to sources.json on main — the auto workflow
+# handles it.
+
+on:
+  push:
+    paths:
+      - 'reference-only/.regen-trigger'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install deps
+        run: pip install pyyaml jsonschema
+      - name: Validate config
+        run: python __SKILL_PATH__/scripts/validate-config.py
+      - name: Validate schema + structure
+        run: python __SKILL_PATH__/scripts/validate-sources.py
+      - name: Normalize sources.json
+        run: |
+          jq -S 'to_entries | sort_by(.key) | from_entries' \
+            reference-only/sources.json > /tmp/normalized.json
+          mv /tmp/normalized.json reference-only/sources.json
+      - name: Render markdown
+        run: bash __SKILL_PATH__/scripts/render-sources-md.sh > reference-only/sources.md
+      - name: Delete trigger file if present
+        run: |
+          if [ -f reference-only/.regen-trigger ]; then
+            rm reference-only/.regen-trigger
+          fi
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reference-only/sources.json reference-only/sources.md
+          git add -A reference-only/.regen-trigger 2>/dev/null || true
+          if git diff --quiet --cached; then
+            echo "no changes"
+          else
+            git commit -m "regen: sources.md (manual trigger) [skip ci]"
+            git push
+          fi

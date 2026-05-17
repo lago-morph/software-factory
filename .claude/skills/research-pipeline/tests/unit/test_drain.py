@@ -170,6 +170,62 @@ class TestDrainDeduplicates:
         assert (real_dir / "page.html").exists()
 
 
+class TestDrainCompanionUrl:
+    def _minimal_pdf(self) -> bytes:
+        # PDF bytes with no /URL, /Source, or /URI — forces companion lookup.
+        return b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<< /Type /Catalog >>\nendobj\n"
+
+    def test_pdf_with_companion_ingested_and_companion_deleted(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        pdf = repo / "research" / "manual" / "Guide.pdf"
+        pdf.write_bytes(self._minimal_pdf())
+        comp = repo / "research" / "manual" / "URL of Guide.pdf.txt"
+        comp.write_text("The URL for the PDF is https://example.com/hub/Guide.pdf\n")
+        subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+
+        result = _run_drain(repo, "--no-lint")
+        assert result.returncode == 0, result.stderr
+        # PDF migrated into reference-only/<id>/
+        data = json.loads((repo / "reference-only" / "sources.json").read_text())
+        assert len(data) == 1
+        record = next(iter(data.values()))
+        assert record["canonical_url"] == "https://example.com/hub/Guide.pdf"
+        assert record["files"][0]["filename"] == "Guide.pdf"
+        # Companion file consumed
+        assert not comp.exists()
+        assert not pdf.exists()
+        assert "Companion URL files consumed: **1**" in result.stdout
+
+    def test_companion_without_target_is_flagged_not_consumed(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        comp = repo / "research" / "manual" / "URL of Missing.pdf.txt"
+        comp.write_text("https://example.com/missing.pdf\n")
+        subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+
+        result = _run_drain(repo, "--no-lint")
+        assert result.returncode == 0
+        # Companion left in place
+        assert comp.exists()
+        assert "Companion URL files left orphaned" in result.stdout
+
+    def test_companion_with_failing_target_left_in_place(self, tmp_path):
+        # Target file exists but its companion is empty of URLs: target gets
+        # flagged 'no extractable URL', companion stays put.
+        repo = _setup_repo(tmp_path)
+        pdf = repo / "research" / "manual" / "Bad.pdf"
+        pdf.write_bytes(self._minimal_pdf())
+        comp = repo / "research" / "manual" / "URL of Bad.pdf.txt"
+        comp.write_text("Just prose, no link.\n")
+        subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+
+        result = _run_drain(repo, "--no-lint")
+        assert result.returncode == 0
+        # Both files still in research/manual
+        assert pdf.exists()
+        assert comp.exists()
+        assert "no extractable URL" in result.stdout
+
+
 class TestDrainDryRun:
     def test_dry_run_no_changes(self, tmp_path):
         repo = _setup_repo(tmp_path)

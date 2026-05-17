@@ -49,7 +49,7 @@ from _config import (  # noqa: E402
     skill_md_path, ConfigError,
 )
 from url_canonicalize import canonicalize_and_id, canonicalize_url  # noqa: E402
-from extract_url import extract_url  # noqa: E402
+from extract_url import extract_url, companion_path  # noqa: E402
 from extract_title import extract_title  # noqa: E402
 from classify_text import classify  # noqa: E402
 from youtube_urls import (  # noqa: E402
@@ -93,6 +93,8 @@ class DrainResult:
         self.files_added_as_new_records: list[tuple[Path, str]] = []
         self.reconciled_orphans: list[tuple[Path, str]] = []
         self.transcripts_delivered: list[tuple[Path, str, str]] = []  # (file, record_id, video_url)
+        self.companions_consumed: list[tuple[Path, Path]] = []  # (companion, target)
+        self.companions_orphaned: list[Path] = []  # companion with no resolved target
         self.errors_no_url: list[Path] = []
         self.errors_classification: list[tuple[Path, str]] = []
         self.errors_image_in_drop: list[Path] = []
@@ -118,6 +120,8 @@ class DrainResult:
             f"- Files added as new records: **{len(self.files_added_as_new_records)}**",
             f"- Orphan files reconciled in `reference-only/<id>/`: **{len(self.reconciled_orphans)}**",
             f"- YouTube transcripts delivered (want → have): **{len(self.transcripts_delivered)}**",
+            f"- Companion URL files consumed: **{len(self.companions_consumed)}**",
+            f"- Companion URL files left orphaned (target not ingested): **{len(self.companions_orphaned)}**",
             f"- Files flagged (no extractable URL in drop dir): **{len(self.errors_no_url)}**",
             f"- Files flagged (mixed/unrecognized content): **{len(self.errors_classification)}**",
             f"- Images in drop dirs without `<id>/` placement: **{len(self.errors_image_in_drop)}**",
@@ -181,7 +185,8 @@ class DrainResult:
                     lines.append(f"  > {snippet[:240]}")
             lines.append("")
         if (self.errors_no_url or self.errors_classification
-                or self.errors_image_in_drop or self.errors_unmatched_transcript):
+                or self.errors_image_in_drop or self.errors_unmatched_transcript
+                or self.companions_orphaned):
             lines.append("## Flagged files (NOT ingested)")
             lines.append("")
             for f in self.errors_no_url:
@@ -196,6 +201,11 @@ class DrainResult:
                     f"`youtube-transcript` entry references that video. Move to "
                     f"`reference-only/<id>/` of the embedding record manually, or "
                     f"add the wanted entry first."
+                )
+            for f in self.companions_orphaned:
+                lines.append(
+                    f"- ⚠ `{f}` — companion URL file whose target was not ingested "
+                    f"(target missing or itself failed to ingest); left in place."
                 )
             lines.append("")
 
@@ -229,17 +239,35 @@ class DrainResult:
         return "\n".join(lines)
 
 
-def stage_1_inventory(roots: list[Path]) -> list[Path]:
-    """Find every file in ingestion paths that's a candidate for ingestion."""
-    candidates = []
+COMPANION_NAME_RE = re.compile(r"^URL of (.+)\.txt$")
+
+
+def stage_1_inventory(roots: list[Path]) -> tuple[list[Path], dict[Path, Path]]:
+    """Find every file in ingestion paths that's a candidate for ingestion.
+
+    Returns (candidates, companions) where companions maps a target path
+    to its `URL of <target.name>.txt` sibling. Companions are NOT in the
+    candidates list — they're consumed when their target is ingested.
+
+    A companion file whose target is missing from the ingestion paths is
+    NOT a candidate either; it's surfaced as an orphan in the summary.
+    """
+    candidates: list[Path] = []
+    companions: dict[Path, Path] = {}
     suffixes = set(EXT_TO_FORMAT.keys())
     for root in roots:
         if not root.exists():
             continue
         for p in sorted(root.rglob("*")):
-            if p.is_file() and p.suffix.lower() in suffixes:
-                candidates.append(p)
-    return candidates
+            if not (p.is_file() and p.suffix.lower() in suffixes):
+                continue
+            m = COMPANION_NAME_RE.match(p.name)
+            if m:
+                target = p.parent / m.group(1)
+                companions[target] = p
+                continue
+            candidates.append(p)
+    return candidates, companions
 
 
 def stage_1b_url_lists(candidates: list[Path], result: DrainResult, data: dict,
@@ -398,11 +426,32 @@ def _scan_for_youtube_embeds(record_id: str, file_path: Path,
         )
 
 
+def _consume_companion(target: Path, companions: dict[Path, Path],
+                       result: DrainResult, root: Path, dry_run: bool) -> None:
+    """If `target` has a registered companion file, git-rm it. Called
+    after the target has been successfully ingested."""
+    comp = companions.pop(target, None)
+    if comp is None or not comp.exists():
+        return
+    if dry_run:
+        result.companions_consumed.append((comp.relative_to(root), target.relative_to(root) if target.exists() else target))
+        return
+    try:
+        subprocess.run(
+            ["git", "rm", str(comp.relative_to(root))],
+            cwd=root, check=True, capture_output=True, text=True,
+        )
+    except subprocess.CalledProcessError:
+        comp.unlink(missing_ok=True)
+    result.companions_consumed.append((comp.relative_to(root), target))
+
+
 def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
-                       dry_run: bool):
+                       dry_run: bool, companions: dict[Path, Path] | None = None):
     """For each file: extract URL, create/update record, move file."""
     lib = library_path()
     root = repo_root()
+    companions = companions if companions is not None else {}
 
     for f in candidates:
         # Images in drop dirs without <id>/ → flag
@@ -465,6 +514,7 @@ def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
                     )
                 except subprocess.CalledProcessError:
                     f.unlink(missing_ok=True)
+            _consume_companion(f, companions, result, root, dry_run)
             continue
 
         # Plan the move
@@ -475,6 +525,7 @@ def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
                 result.files_added_to_existing.append((f.relative_to(root), rid))
             else:
                 result.files_added_as_new_records.append((f.relative_to(root), rid))
+            _consume_companion(f, companions, result, root, dry_run)
             continue
 
         # Execute the move
@@ -532,6 +583,10 @@ def stage_2_3_per_file(candidates: list[Path], result: DrainResult, data: dict,
         # so the agent can decide whether to add wanted transcript entries.
         scan_target = dst if dst.exists() else f
         _scan_for_youtube_embeds(rid, scan_target, data[rid], result)
+
+        # The target made it into the catalog; the companion URL file (if
+        # any) has done its job and can be removed.
+        _consume_companion(f, companions, result, root, dry_run)
 
 
 def stage_3c_reconcile(result: DrainResult, data: dict, dry_run: bool):
@@ -701,8 +756,9 @@ def main() -> int:
     result = DrainResult()
 
     # Stage 1
-    candidates = stage_1_inventory(roots)
-    print(f"Stage 1: {len(candidates)} candidate file(s) inventoried", file=sys.stderr)
+    candidates, companions = stage_1_inventory(roots)
+    print(f"Stage 1: {len(candidates)} candidate file(s) inventoried"
+          f" ({len(companions)} companion URL file(s) paired)", file=sys.stderr)
 
     # Stage 1b: handle URL lists
     candidates = stage_1b_url_lists(candidates, result, data, args.dry_run)
@@ -710,7 +766,13 @@ def main() -> int:
         print(f"Stage 1b: processed {len(result.url_lists_processed)} URL list(s)", file=sys.stderr)
 
     # Stages 2 + 3 combined
-    stage_2_3_per_file(candidates, result, data, args.dry_run)
+    stage_2_3_per_file(candidates, result, data, args.dry_run, companions)
+
+    # Any companion file whose target wasn't ingested stays put — flag it.
+    root = repo_root()
+    for target, comp in companions.items():
+        if comp.exists():
+            result.companions_orphaned.append(comp.relative_to(root))
     print(f"Stage 2-3: {len(result.files_added_to_existing) + len(result.files_added_as_new_records)} "
           f"file(s) ingested, {len(result.errors_no_url) + len(result.errors_classification)} flagged",
           file=sys.stderr)

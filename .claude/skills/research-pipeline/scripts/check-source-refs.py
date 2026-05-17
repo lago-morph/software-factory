@@ -42,6 +42,26 @@ def _is_casual(url: str, patterns: list[re.Pattern]) -> bool:
     return any(p.match(url) for p in patterns)
 
 
+def _excepted_urls() -> set[str]:
+    """Load URLs explicitly excluded from the catalog (MIGRATION-EXCEPTIONS.md).
+
+    Any URL listed there is treated as "we've decided not to track this" and
+    won't trigger a check-source-refs error.
+    """
+    exc_path = repo_root() / "reference-only" / "MIGRATION-EXCEPTIONS.md"
+    if not exc_path.exists():
+        return set()
+    text = exc_path.read_text(encoding="utf-8", errors="replace")
+    out = set()
+    for m in re.finditer(r'https?://[^\s<>"\'\)\]\}`,]+', text):
+        raw = m.group(0).rstrip('.,;:!?)]}>"\'`')
+        try:
+            out.add(canonicalize_url(raw))
+        except ValueError:
+            pass
+    return out
+
+
 def _strip_trailing_punctuation(url: str) -> str:
     """Remove punctuation like .,;:!?] that markdown might tail on a URL."""
     while url and url[-1] in ".,;:!?)]}>\"'`":
@@ -111,16 +131,21 @@ def main() -> int:
     report_urls = _collect_report_urls()
     catalog_urls = _collect_catalog_urls(data)
     casual_patterns = _casual_patterns()
+    excepted = _excepted_urls()
 
     errors = []
     warnings = []
     skipped_casual = 0
+    skipped_excepted = 0
 
     # URLs cited in reports but not in catalog
     missing_in_catalog = sorted(set(report_urls) - set(catalog_urls))
     for url in missing_in_catalog:
         if _is_casual(url, casual_patterns):
             skipped_casual += 1
+            continue
+        if url in excepted:
+            skipped_excepted += 1
             continue
         # Show the first report path that cites it
         report_list = report_urls[url][:3]
@@ -168,6 +193,8 @@ def main() -> int:
     n_cat = len(catalog_urls)
     if skipped_casual:
         print(f"  ({skipped_casual} casual-mention URL(s) skipped via config patterns)")
+    if skipped_excepted:
+        print(f"  ({skipped_excepted} URL(s) listed in MIGRATION-EXCEPTIONS.md as explicitly not-tracked)")
     if errors:
         print(
             f"\n{n_report} URL(s) in reports, {n_cat} URL(s) in catalog; "

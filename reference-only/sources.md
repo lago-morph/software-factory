@@ -69,11 +69,6 @@ To find the full record for any source, search this file for the 10-char id, the
 <https://docs.github.com/en/copilot/how-tos/agents/about-assigning-tasks-to-copilot>
 - **Files:** html ✓
 
-### 991f3bf0f6 — About Copilot Workspace (file contains Hamel Husain "Your AI Product Needs Evals" blog instead) <a id="991f3bf0f6"></a>
-<https://docs.github.com/en/copilot/copilot-workspace/about-copilot-workspace>
-- **Files:** html ✓
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
 ### 325d8c1018 — About extensions for Copilot (capture is a PNG image, not the docs page) <a id="325d8c1018"></a>
 <https://docs.github.com/en/copilot/concepts/copilot-extensions/about-extensions-for>
 - **Files:** html ✓
@@ -653,6 +648,12 @@ To find the full record for any source, search this file for the 10-char id, the
 <https://simonwillison.net/guides/agentic-engineering-patterns/code-is-cheap>
 - **Files:** html ✓
 - **Cited in:** `research/05-simon-willison.md` *(1)*
+
+### faa604dace — Your AI Product Needs Evals <a id="faa604dace"></a>
+<https://hamel.dev/blog/posts/evals>
+*Hamel Husain — the philosophical root of LLM eval discipline*
+- **Files:** html ✓
+- **Tags:** `evals`
 ## § 2 — Partial *(9 records)*
 
 *Has some content, but also files that are wanted, partial, or had fetch errors.*
@@ -671,12 +672,12 @@ To find the full record for any source, search this file for the 10-char id, the
 
 ### 5a9f63821f — Agent Skills: Security <a id="5a9f63821f"></a>
 <https://platform.claude.com/docs/en/agent-skills/security>
-- **Files:** html ✓ · md ✓
+- **Files:** html ✓ · md ✓ · html (want)
 - **Cited in:** `research/PLAN.md` *(1)*
 
 ### f8007cc630 — An AI State of the Union | Simon Willison (Lenny's Newsletter) <a id="f8007cc630"></a>
 <https://www.lennysnewsletter.com/p/an-ai-state-of-the-union>
-- **Files:** html ✓ · html ✓ · txt ✓ · txt ✓
+- **Files:** html ✓ · html ✓ · txt ✓ · txt ✓ · html (want)
 - **Cited in:** `research/06-hn-and-lenny.md` *(1)*
 
 ### 3274cc670c — Devin (Cognition AI) <a id="3274cc670c"></a>
@@ -695,899 +696,105 @@ To find the full record for any source, search this file for the 10-char id, the
 <https://medium.com/@welkaim/about>
 - **Files:** txt ✓ · html ✓ · html ✓
 - **Cited in:** `research/07-dark-factory.md` *(1)*
-## § 3a — Wanted (URL known) *(178 records)*
+## § 3a — Wanted (URL known) *(18 records)*
 
 *URL is known but no content acquired yet.*
 
-### 02d04bca2f — (unknown) <a id="02d04bca2f"></a>
-<https://every.to/chain-of-thought/teach-your-ai-to-think-like-a-senior-engineer>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/05-klaassen-siblings.md` *(1)*
-
-### 067d7a8769 — (unknown) <a id="067d7a8769"></a>
-<https://simonwillison.net/series/prompt-injection>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 08ab6db324 — (unknown) <a id="08ab6db324"></a>
-<https://developers.openai.com/codex>
-- **Files:** *(none registered)*
-- **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
-
-### 0c4bb49f75 — (unknown) <a id="0c4bb49f75"></a>
-<https://hamel.dev/blog/posts/llm-judge>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
-
-### 0edc3f0d9a — (unknown) <a id="0edc3f0d9a"></a>
-<https://simonwillison.net/2025/Jun/6/six-months-in-llms>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 0f2957ecc0 — (unknown) <a id="0f2957ecc0"></a>
-<https://docs.gastownhall.ai/other/why-these-features>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` · `research/followup/04-gastown-beads.md` *(2)*
-
-### 109739734e — (unknown) <a id="109739734e"></a>
-<https://www.lennysnewsletter.com/p/state-of-the-product-job-market-in-ee9>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 11086c2305 — (unknown) <a id="11086c2305"></a>
-<https://nraford7.github.io/road-runner-economy>
-- **Files:** *(none registered)*
-- **Cited in:** `research/PLAN.md` · `research/followup/01-shapiro-five-levels.md` *(2)*
-
-### 11856a86eb — (unknown) <a id="11856a86eb"></a>
-<https://platform.claude.com/docs/en/agent-skills/overview~~>
-- **Files:** *(none registered)*
-- **Cited in:** `research/PLAN.md` *(1)*
-
-### 13d96f6971 — (unknown) <a id="13d96f6971"></a>
-<https://github.com/anthropics/claude-code>
-- **Files:** *(none registered)*
-- **Cited in:** `research/02-strongdm-attractor.md` *(1)*
-
-### 15a66663df — (unknown) <a id="15a66663df"></a>
-<https://raw.githubusercontent.com/strongdm/attractor/main/README.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/02-strongdm-attractor.md` *(1)*
-
 ### 175cba9347 — (unknown) <a id="175cba9347"></a>
 <https://developers.openai.com/codex/guides/agents-md>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
-
-### 18856eb4cf — (unknown) <a id="18856eb4cf"></a>
-<https://hamel.dev/blog/posts/evals-faq>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
-
-### 1ccd02856e — (unknown) <a id="1ccd02856e"></a>
-<https://github.com/brynary/attractor>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/02-attractor-implementations.md` *(1)*
-
-### 1cd7728cac — (unknown) <a id="1cd7728cac"></a>
-<https://docs.github.com/en/copilot/concepts/context/spaces>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 1d9d9afab9 — (unknown) <a id="1d9d9afab9"></a>
-<https://github.com/fabro-sh/fabro>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/02-attractor-implementations.md` *(1)*
-
-### 1ddf58988e — (unknown) <a id="1ddf58988e"></a>
-<https://github.com/strongdm/attractor*>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 1e0bc03804 — (unknown) <a id="1e0bc03804"></a>
-<https://docs.github.com/en/copilot/copilot-workspace>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 1eba12a4a8 — (unknown) <a id="1eba12a4a8"></a>
-<https://www.anthropic.com/engineering/building-c-compiler>
-- **Files:** *(none registered)*
-- **Cited in:** `research/23-anthropic-engineering-trilogy.md` *(1)*
-
-### 1f5c6fccec — (unknown) <a id="1f5c6fccec"></a>
-<https://raw.githubusercontent.com/gastownhall/beads/main/DOLT.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
-
-### 1fc07213a1 — (unknown) <a id="1fc07213a1"></a>
-<https://github.blog/changelog/2024-08-14-copilot-autofix-for-codeql-code-scanning-alerts-is-now-generally-available>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 2114a523b6 — (unknown) <a id="2114a523b6"></a>
-<https://docs.replit.com/core-concepts/agent/plan-mode>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 214a4dd4bb — (unknown) <a id="214a4dd4bb"></a>
-<https://docs.github.com/en/code-security/concepts/code-scanning/codeql/about-code-scanning-with-codeql>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 24684c1ecc — (unknown) <a id="24684c1ecc"></a>
-<https://github.com/google-gemini/gemini-cli>
-- **Files:** *(none registered)*
-- **Cited in:** `research/02-strongdm-attractor.md` *(1)*
 
 ### 24ca29ee98 — (unknown) <a id="24ca29ee98"></a>
 <https://arxiv.org/abs/2503.18813>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/followup/08-security-primitives.md` *(1)*
-
-### 2531995c6a — (unknown) <a id="2531995c6a"></a>
-<https://www.lennysnewsletter.com/p/anthropic-co-founder-benjamin-mann>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 256dc65e0c — (unknown) <a id="256dc65e0c"></a>
-<https://github.com/EveryInc/every-marketplace/blob/main/plugins/compounding-engineering/agents/best-practices-researcher.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/05-klaassen-siblings.md` *(1)*
-
-### 282c8d057a — (unknown) <a id="282c8d057a"></a>
-<https://docs.github.com/copilot/how-tos/agents/copilot-coding-agent/reviewing-a-pull-request-created-by-copilot>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 2872a59165 — (unknown) <a id="2872a59165"></a>
-<https://en.wikipedia.org/wiki/K%C4%81k%C4%81p%C5%8D>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 2c299b26d4 — (unknown) <a id="2c299b26d4"></a>
-<https://kiro.dev/blog/from-copilots-to-coworkers>
-- **Files:** *(none registered)*
-- **Cited in:** `research/12-adjacent-ecosystem.md` *(1)*
-
-### 2c649205c3 — (unknown) <a id="2c649205c3"></a>
-<https://raw.githubusercontent.com/strongdm/attractor/main/attractor-spec.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/02-strongdm-attractor.md` *(1)*
-
-### 2e50ab69eb — (unknown) <a id="2e50ab69eb"></a>
-<https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills>
-- **Files:** *(none registered)*
-- **Cited in:** `research/23-anthropic-engineering-trilogy.md` *(1)*
-
-### 2f9466008c — (unknown) <a id="2f9466008c"></a>
-<https://www.anthropic.com/claude/opus>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 3062cd7cb5 — (unknown) <a id="3062cd7cb5"></a>
-<https://raw.githubusercontent.com/gastownhall/gastown/main/README.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
-
-### 32486befe5 — (unknown) <a id="32486befe5"></a>
-<https://raw.githubusercontent.com/gastownhall/beads/main/FAQ.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
-
-### 324eadf754 — (unknown) <a id="324eadf754"></a>
-<https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/gastown>
-- **Files:** *(none registered)*
-- **Cited in:** `research/12-adjacent-ecosystem.md` *(1)*
-
-### 3429c898d5 — (unknown) <a id="3429c898d5"></a>
-<https://docs.github.com/en/code-security/concepts/code-scanning/copilot-autofix-for-code-scanning>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 35de4ec755 — (unknown) <a id="35de4ec755"></a>
-<https://www.lennysnewsletter.com/p/inside-linear-building-with-taste>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
 
 ### 3703e782c0 — (unknown) <a id="3703e782c0"></a>
 <https://www.danshapiro.com/blog/2026/02/you-dont-write-the-code>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/07-dark-factory.md` · `research/followup/01-shapiro-five-levels.md` *(2)*
-
-### 3778716478 — (unknown) <a id="3778716478"></a>
-<https://www.anthropic.com/claude/haiku>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 37d6c50bc5 — (unknown) <a id="37d6c50bc5"></a>
-<https://www.anthropic.com/claude/sonnet>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 37dee7f647 — (unknown) <a id="37dee7f647"></a>
-<https://en.wikipedia.org/wiki/Alfred_Molina>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 380e7aa256 — (unknown) <a id="380e7aa256"></a>
-<https://gemini.google.com/app>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 3815cf90ed — (unknown) <a id="3815cf90ed"></a>
-<https://raw.githubusercontent.com/gastownhall/beads/main/README.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
-
-### 38e3d32975 — (unknown) <a id="38e3d32975"></a>
-<https://raw.githubusercontent.com/gastownhall/gastown/main/docs/ARCHITECTURE.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
-
-### 39b6e1cb0b — (unknown) <a id="39b6e1cb0b"></a>
-<https://github.com/simonw/rodney>
-- **Files:** *(none registered)*
-- **Cited in:** `research/05-simon-willison.md` *(1)*
-
-### 3a2a7f6a2d — (unknown) <a id="3a2a7f6a2d"></a>
-<https://psychsafety.com/normalisation-of-deviance>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 3bd57c0870 — (unknown) <a id="3bd57c0870"></a>
-<https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/pi-mono>
-- **Files:** *(none registered)*
-- **Cited in:** `research/12-adjacent-ecosystem.md` *(1)*
-
-### 3d1701f49c — (unknown) <a id="3d1701f49c"></a>
-<https://docs.replit.com/cloud-services/deployments/autoscale-deployments>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 4042fb8254 — (unknown) <a id="4042fb8254"></a>
-<https://www.cambridge.org/core/journals/design-science/article/challenges-in-applying-large-language-models-to-requirements-engineering-tasks/1FC7666F0A0B4E7091D2D4B2D46321B5>
-- **Files:** *(none registered)*
-- **Cited in:** `research/26-prompt-underspecification-academic.md` *(1)*
-
-### 41714c7162 — (unknown) <a id="41714c7162"></a>
-<https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/kotadb>
-- **Files:** *(none registered)*
-- **Cited in:** `research/12-adjacent-ecosystem.md` *(1)*
-
-### 4173e21dc3 — (unknown) <a id="4173e21dc3"></a>
-<https://www.danshapiro.com/blog/2025/10/slot-machine-development>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/01-shapiro-five-levels.md` *(1)*
-
-### 4295fc2a69 — (unknown) <a id="4295fc2a69"></a>
-<https://raw.githubusercontent.com/gastownhall/gastown/main/AGENTS.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
-
-### 432e80762d — (unknown) <a id="432e80762d"></a>
-<https://en.wikipedia.org/wiki/Johannes_Gutenberg>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 435d69cb2b — (unknown) <a id="435d69cb2b"></a>
-<https://github.blog/changelog/2026-03-02-network-configuration-changes-for-copilot-coding-agent-now-in-effect>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 46871b6d6e — (unknown) <a id="46871b6d6e"></a>
-<https://github.blog/changelog/2025-10-28-copilot-coding-agent-now-supports-self-hosted-runners>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 47b947bee4 — (unknown) <a id="47b947bee4"></a>
-<https://www.blackswanreport.com/blog/2009/11/thanksgiving-day%C2%A0chart-behind-the-net>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 47dca59f5e — (unknown) <a id="47dca59f5e"></a>
-<https://github.com/EveryInc/compound-engineering-plugin>
-- **Files:** *(none registered)*
-- **Cited in:** `research/03-every-compound-engineering.md` · `research/followup/05-klaassen-siblings.md` *(2)*
-
-### 481930933d — (unknown) <a id="481930933d"></a>
-<https://github.com/jayminwest/agentic-engineering-book/tree/main/chapters/10-practitioner-toolkit>
-- **Files:** *(none registered)*
-- **Cited in:** `research/12-adjacent-ecosystem.md` *(1)*
-
-### 487aa8b946 — (unknown) <a id="487aa8b946"></a>
-<https://every.to/chain-of-thought/opus-4-5-collapsed-six-months-of-development-work-into-one-week>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/05-klaassen-siblings.md` *(1)*
-
-### 4a627519bb — (unknown) <a id="4a627519bb"></a>
-<https://steve-yegge.medium.com/welcome-to-gas-town-4f25ee16dd04>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` *(1)*
-
-### 4b19672a7e — (unknown) <a id="4b19672a7e"></a>
-<https://github.blog/changelog/2026-04-01-research-plan-and-code-with-copilot-cloud-agent>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 4db94df5f2 — (unknown) <a id="4db94df5f2"></a>
-<https://docs.github.com/en/copilot/reference/copilot-allowlist-reference>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 52ef340dff — (unknown) <a id="52ef340dff"></a>
-<https://docs.replit.com/billing/ai-billing>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 53335dbc25 — (unknown) <a id="53335dbc25"></a>
-<https://github.com/joyrexus/software-factory>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/02-attractor-implementations.md` *(2)*
-
-### 5391cc64e5 — (unknown) <a id="5391cc64e5"></a>
-<https://docs.replit.com/core-concepts/agent>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 53ed6e363d — (unknown) <a id="53ed6e363d"></a>
-<https://simonwillison.net/2025/Apr/11/camel>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/08-security-primitives.md` *(2)*
-
-### 56c6edad43 — (unknown) <a id="56c6edad43"></a>
-<https://github.com/gastownhall/beads>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` · `research/followup/04-gastown-beads.md` *(2)*
-
-### 56f9065cf3 — (unknown) <a id="56f9065cf3"></a>
-<https://github.blog/changelog/2026-04-08-github-mobile-research-and-code-with-copilot-cloud-agent-anywhere>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 579172d312 — (unknown) <a id="579172d312"></a>
-<https://www.anthropic.com/webinars/future-of-ai-at-work-introducing-cowork>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 57ef8e0b67 — (unknown) <a id="57ef8e0b67"></a>
-<https://docs.github.com/en/code-security/responsible-use/responsible-use-autofix-code-scanning>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 58d2c67874 — (unknown) <a id="58d2c67874"></a>
-<https://docs.github.com/en/copilot/concepts/agents/code-review>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 5aae4cc693 — (unknown) <a id="5aae4cc693"></a>
-<https://techcrunch.com/2026/02/12/spotify-says-its-best-developers-havent-written-a-line-of-code-since-december-thanks-to-ai>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
 
 ### 5cc5a296b6 — (unknown) <a id="5cc5a296b6"></a>
 <https://blog.replit.com/introducing-agent-3-our-most-autonomous-agent-yet>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 613d2cb3aa — (unknown) <a id="613d2cb3aa"></a>
-<https://docs.replit.com/replitai/mcp/overview>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 61521abbba — (unknown) <a id="61521abbba"></a>
-<https://github.com/danshapiro/freshell>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` *(1)*
-
-### 6578b1c3d0 — (unknown) <a id="6578b1c3d0"></a>
-<https://alistairmavin.com/ears>
-- **Files:** *(none registered)*
-- **Cited in:** `research/25-requirements-engineering-foundations.md` *(1)*
-
-### 669c695bad — (unknown) <a id="669c695bad"></a>
-<https://github.com/simonw/tools>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 67fe9f3d52 — (unknown) <a id="67fe9f3d52"></a>
-<https://github.blog/changelog/2026-04-03-organization-firewall-settings-for-copilot-cloud-agent>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
 
 ### 6bea7182f9 — (unknown) <a id="6bea7182f9"></a>
 <https://arxiv.org/html/2505.13360v3>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/26-prompt-underspecification-academic.md` *(1)*
-
-### 6c08b0eb4f — (unknown) <a id="6c08b0eb4f"></a>
-<https://gateway.ai.cloudflare.com/v1>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` · `research/followup/02-attractor-implementations.md` *(2)*
-
-### 6c790a16de — (unknown) <a id="6c790a16de"></a>
-<https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
-
-### 6ec3916fa8 — (unknown) <a id="6ec3916fa8"></a>
-<https://raw.githubusercontent.com/strongdm/attractor/main/coding-agent-loop-spec.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/02-strongdm-attractor.md` *(1)*
-
-### 715a371662 — (unknown) <a id="715a371662"></a>
-<https://developers.openai.com/codex/cloud/environments>
-- **Files:** *(none registered)*
-- **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
-
-### 7160d989c9 — (unknown) <a id="7160d989c9"></a>
-<https://chatgpt.com/codex>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 71d29a1d9f — (unknown) <a id="71d29a1d9f"></a>
-<https://docs.replit.com/replitai/canvas>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 71d2de09c6 — (unknown) <a id="71d2de09c6"></a>
-<https://hamel.dev/blog/posts/field-guide>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
 
 ### 73dc7199ce — (unknown) <a id="73dc7199ce"></a>
 <https://blog.replit.com/introducing-agent-4-built-for-creativity>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 745810ed79 — (unknown) <a id="745810ed79"></a>
-<https://www.incose.org/docs/default-source/ProductsPublications/a-complexity-primer-for-systems-engineers.pdf>
-- **Files:** *(none registered)*
-- **Cited in:** `research/25-requirements-engineering-foundations.md` *(1)*
-
-### 75e1697b2f — (unknown) <a id="75e1697b2f"></a>
-<http://localhost:14318/v1/logs>
-- **Files:** *(none registered)*
-- **Cited in:** `research/18-openai-codex-substrate.md` *(1)*
-
-### 76edb73d8c — (unknown) <a id="76edb73d8c"></a>
-<https://openreview.net/forum?id=VTF8yNQM66>
-- **Files:** *(none registered)*
-- **Cited in:** `research/22-academic-foundations.md` *(1)*
-
-### 78197813e2 — (unknown) <a id="78197813e2"></a>
-<https://www.netflix.com/title/81024821>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 7b3d5332f0 — (unknown) <a id="7b3d5332f0"></a>
-<https://www.anthropic.com/careers/jobs>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 7be0152eed — (unknown) <a id="7be0152eed"></a>
-<https://www.incose.org/docs/default-source/default-document-library/final_incose-se-definition_2020-002-06.pdf>
-- **Files:** *(none registered)*
-- **Cited in:** `research/25-requirements-engineering-foundations.md` *(1)*
 
 ### 7beb3bc828 — (unknown) <a id="7beb3bc828"></a>
 <https://arxiv.org/html/2507.20439v1>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/26-prompt-underspecification-academic.md` *(1)*
-
-### 7c0c19d1b0 — (unknown) <a id="7c0c19d1b0"></a>
-<https://www.acquired.fm/episodes/nintendo>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 7cae089111 — (unknown) <a id="7cae089111"></a>
-<https://kiro.dev/blog/deep-spec-analysis>
-- **Files:** *(none registered)*
-- **Cited in:** `research/12-adjacent-ecosystem.md` *(1)*
-
-### 7cd609c43d — (unknown) <a id="7cd609c43d"></a>
-<https://newsletter.semianalysis.com/p/claude-code-is-the-inflection-point>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 7d2fe37ae2 — (unknown) <a id="7d2fe37ae2"></a>
-<https://every.to/source-code/the-folder-is-the-agent>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/05-klaassen-siblings.md` *(1)*
-
-### 7f7a70a676 — (unknown) <a id="7f7a70a676"></a>
-<https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents>
-- **Files:** *(none registered)*
-- **Cited in:** `research/23-anthropic-engineering-trilogy.md` *(1)*
-
-### 7fe77a63ae — (unknown) <a id="7fe77a63ae"></a>
-<https://docs.github.com/en/copilot/concepts/copilot-extensions/about-extensions-for-copilot>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### 80131ebb61 — (unknown) <a id="80131ebb61"></a>
-<https://support.claude.com/en/articles/12123587-import-and-export-your-memory-from-claude>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 810e621209 — (unknown) <a id="810e621209"></a>
-<https://github.com/lago-morph/software-factory/issues/8>
-- **Files:** *(none registered)*
-- **Cited in:** `research/11-openhands-substrate-audit.md` *(1)*
-
-### 811726eaca — (unknown) <a id="811726eaca"></a>
-<https://www.lennysnewsletter.com/p/anthropics-cpo-heres-what-comes-next>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
 
 ### 8334be0240 — (unknown) <a id="8334be0240"></a>
 <https://developers.openai.com/codex/subagents>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
-
-### 856bb4d982 — (unknown) <a id="856bb4d982"></a>
-<https://www.youtube.com/live/BfGL7A2YgUY>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### 8a9b7e732d — (unknown) <a id="8a9b7e732d"></a>
-<https://docs.replit.com/replitai/warehouse-connectors>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### 8c3dc2a018 — (unknown) <a id="8c3dc2a018"></a>
-<https://github.com/openai/codex>
-- **Files:** *(none registered)*
-- **Cited in:** `research/02-strongdm-attractor.md` *(1)*
-
-### 8c6014a36c — (unknown) <a id="8c6014a36c"></a>
-<https://github.com/obra/superpowers>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` *(1)*
-
-### 8df2fa0e78 — (unknown) <a id="8df2fa0e78"></a>
-<https://github.com/dolthub/dolt>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` *(1)*
-
-### 93df723a5f — (unknown) <a id="93df723a5f"></a>
-<https://github.com/EveryInc/everyskill/tree/main/skills>
-- **Files:** *(none registered)*
-- **Cited in:** `research/04-every-skill-libraries.md` *(1)*
-
-### 95f918fb9b — (unknown) <a id="95f918fb9b"></a>
-<https://github.com/EveryInc/every-marketplace/blob/main/plugins/compounding-engineering/agents/framework-docs-researcher.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/05-klaassen-siblings.md` *(1)*
-
-### 9be7ab97cd — (unknown) <a id="9be7ab97cd"></a>
-<https://github.com/strongdm/cxdb>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` · `research/07-dark-factory.md` *(2)*
-
-### 9c724fd01f — (unknown) <a id="9c724fd01f"></a>
-<https://github.com/EveryInc/every-marketplace>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/05-klaassen-siblings.md` *(1)*
 
 ### 9c9554d27e — (unknown) <a id="9c9554d27e"></a>
 <https://simonwillison.net/2025/Jun/16/the-lethal-trifecta>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/08-security-primitives.md` *(2)*
-
-### 9fa759b723 — (unknown) <a id="9fa759b723"></a>
-<https://www.anthropic.com/engineering/harness-design-long-running-apps>
-- **Files:** *(none registered)*
-- **Cited in:** `research/23-anthropic-engineering-trilogy.md` *(1)*
-
-### a031ec6b5b — (unknown) <a id="a031ec6b5b"></a>
-<https://raw.githubusercontent.com/strongdm/attractor/main/unified-llm-spec.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/02-strongdm-attractor.md` *(1)*
-
-### a04396a097 — (unknown) <a id="a04396a097"></a>
-<https://github.com/All-Hands-AI/OpenHands>
-- **Files:** *(none registered)*
-- **Cited in:** `research/11-openhands-substrate-audit.md` *(1)*
-
-### a2307ed340 — (unknown) <a id="a2307ed340"></a>
-<https://github.com/simonw/showboat>
-- **Files:** *(none registered)*
-- **Cited in:** `research/05-simon-willison.md` *(1)*
 
 ### a3afc1e8c7 — (unknown) <a id="a3afc1e8c7"></a>
 <https://www.anthropic.com/engineering/multi-agent-research-system>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
-
-### a6047d5e17 — (unknown) <a id="a6047d5e17"></a>
-<https://github.com/simonw/research>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### a85235de88 — (unknown) <a id="a85235de88"></a>
-<https://www.lennysnewsletter.com/p/ai-prompt-engineering-in-2025-sander-schulhoff>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### a860389ece — (unknown) <a id="a860389ece"></a>
-<https://docs.replit.com/replitai/app-testing>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### ac93197db4 — (unknown) <a id="ac93197db4"></a>
-<https://www.imdb.com/title/tt0316654>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### adee5362a5 — (unknown) <a id="adee5362a5"></a>
-<https://martinfowler.com/bliki/TestDrivenDevelopment.html>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### b18d460b61 — (unknown) <a id="b18d460b61"></a>
-<https://docs.replit.com/replitai/agents-and-automations>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
-
-### b2ecda719c — (unknown) <a id="b2ecda719c"></a>
-<https://www.lennysnewsletter.com/p/naming-expert-david-placek>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### b32f7db38a — (unknown) <a id="b32f7db38a"></a>
-<https://github.com/tesseract-ocr/tesseract>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### b39342b0dd — (unknown) <a id="b39342b0dd"></a>
-<https://www.incose.org/docs/default-source/working-groups/requirements-wg/gtwr/incose_rwg_gtwr_v4_summary_sheet.pdf>
-- **Files:** *(none registered)*
-- **Cited in:** `research/25-requirements-engineering-foundations.md` *(1)*
-
-### b62397cadb — (unknown) <a id="b62397cadb"></a>
-<https://every.to/chain-of-thought/stop-coding-and-start-planning>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/05-klaassen-siblings.md` *(1)*
-
-### b9b2ecfe1b — (unknown) <a id="b9b2ecfe1b"></a>
-<https://github.com/OpenHands/software-agent-sdk>
-- **Files:** *(none registered)*
-- **Cited in:** `research/11-openhands-substrate-audit.md` *(1)*
-
-### bc8e526a05 — (unknown) <a id="bc8e526a05"></a>
-<https://graphviz.org/doc/info/lang.html>
-- **Files:** *(none registered)*
-- **Cited in:** `research/02-strongdm-attractor.md` *(1)*
-
-### bcf8403363 — (unknown) <a id="bcf8403363"></a>
-<https://github.com/OpenHands/OpenHands-CLI>
-- **Files:** *(none registered)*
-- **Cited in:** `research/11-openhands-substrate-audit.md` *(1)*
-
-### be3ec0072b — (unknown) <a id="be3ec0072b"></a>
-<https://every.to/chain-of-thought/how-every-is-harnessing-the-world-changing-shift-of-opus-4-5>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/05-klaassen-siblings.md` *(1)*
-
-### be7aaf794a — (unknown) <a id="be7aaf794a"></a>
-<https://github.com/OpenHands/openhands-github-action>
-- **Files:** *(none registered)*
-- **Cited in:** `research/11-openhands-substrate-audit.md` *(1)*
-
-### bed3bc5b9e — (unknown) <a id="bed3bc5b9e"></a>
-<https://raw.githubusercontent.com/gastownhall/beads/main/AGENTS.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
-
-### c11d09b5bc — (unknown) <a id="c11d09b5bc"></a>
-<https://blog.fsck.com/2026/02/10/dorodango>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` *(1)*
-
-### c1bfd044f3 — (unknown) <a id="c1bfd044f3"></a>
-<https://www.youtube.com/watch?v=gwW8GKwHB3I>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### c50e6f8abd — (unknown) <a id="c50e6f8abd"></a>
-<https://en.wikipedia.org/wiki/Tamagotchi>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### c625af9b14 — (unknown) <a id="c625af9b14"></a>
-<https://github.com/steveyegge/gastown>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` *(1)*
-
-### c765441e96 — (unknown) <a id="c765441e96"></a>
-<https://www.anthropic.com/engineering/claude-code-sandboxing>
-- **Files:** *(none registered)*
-- **Cited in:** `research/23-anthropic-engineering-trilogy.md` *(1)*
-
-### c83c28022c — (unknown) <a id="c83c28022c"></a>
-<https://simonwillison.net/2023/Apr/25/dual-llm-pattern>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/08-security-primitives.md` *(1)*
-
-### c90aad46da — (unknown) <a id="c90aad46da"></a>
-<https://github.com/serval-uni-lu/Robustness-of-LLMs-to-prompt-imperfections>
-- **Files:** *(none registered)*
-- **Cited in:** `research/26-prompt-underspecification-academic.md` *(1)*
-
-### caa294831d — (unknown) <a id="caa294831d"></a>
-<https://github.com/EveryInc/claude_commands>
-- **Files:** *(none registered)*
-- **Cited in:** `research/04-every-skill-libraries.md` *(1)*
-
-### d0769a6872 — (unknown) <a id="d0769a6872"></a>
-<https://www.lennysnewsletter.com/p/the-rise-of-cursor-michael-truell>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### d4151e14a3 — (unknown) <a id="d4151e14a3"></a>
-<https://github.com/EveryInc/compound-knowledge-plugin>
-- **Files:** *(none registered)*
-- **Cited in:** `research/03-every-compound-engineering.md` *(1)*
-
-### d47e1f5270 — (unknown) <a id="d47e1f5270"></a>
-<https://www.youtube.com/watch?v=n7I-D4YXbzg>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### d7a00ae0ef — (unknown) <a id="d7a00ae0ef"></a>
-<https://github.com/tractorjuice/arc-kit>
-- **Files:** *(none registered)*
-- **Cited in:** `research/15-el-kaim-book-bmad-attractor-dark-factory.md` *(1)*
-
-### d86c752b0a — (unknown) <a id="d86c752b0a"></a>
-<https://github.com/amolstrongdm/attractor>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/02-attractor-implementations.md` *(1)*
-
-### d9902d4a55 — (unknown) <a id="d9902d4a55"></a>
-<https://arxiv.org/html/2511.03690v2>
-- **Files:** *(none registered)*
-- **Cited in:** `research/11-openhands-substrate-audit.md` *(1)*
-
-### d9f1ca25ea — (unknown) <a id="d9f1ca25ea"></a>
-<https://gcc.gnu.org/onlinedocs/gccint/Torture-Tests.html>
-- **Files:** *(none registered)*
-- **Cited in:** `research/23-anthropic-engineering-trilogy.md` *(1)*
-
-### dac2dfe084 — (unknown) <a id="dac2dfe084"></a>
-<https://simonwillison.net/2025/Jun/14/multi-agent-research-system>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
-
-### dacbb3b81e — (unknown) <a id="dacbb3b81e"></a>
-<https://github.blog/changelog/2024-09-18-now-available-for-free-on-all-public-repositories-copilot-autofix-for-codeql-code-scanning-alerts>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### db1e567345 — (unknown) <a id="db1e567345"></a>
-<https://www.lennysnewsletter.com/p/the-coming-ai-security-crisis>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### dbf167675b — (unknown) <a id="dbf167675b"></a>
-<https://docs.replit.com/replitai/replit-dot-md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
 
 ### dccefbfc62 — (unknown) <a id="dccefbfc62"></a>
 <https://developers.openai.com/codex/agent-approvals-security>
-- **Files:** *(none registered)*
+- **Files:** html (want)
 - **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
 
-### dd8c903202 — (unknown) <a id="dd8c903202"></a>
-<https://blog.replit.com/connectors>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
+### 71d2de09c6 — A Field Guide to Rapidly Improving AI Products <a id="71d2de09c6"></a>
+<https://hamel.dev/blog/posts/field-guide>
+*Hamel Husain — experiments-not-features roadmap reframe + NurtureBoss case study*
+- **Files:** html (want)
+- **Tags:** `evals`
 
-### dffd24dade — (unknown) <a id="dffd24dade"></a>
-<https://blog.replit.com/ghostwriter>
-- **Files:** *(none registered)*
-- **Cited in:** `research/20-replit-agent.md` *(1)*
-
-### e49fb9c85c — (unknown) <a id="e49fb9c85c"></a>
-<https://github.com/strongdm/attractor>
-- **Files:** *(none registered)*
-- **Cited in:** `research/02-strongdm-attractor.md` · `research/07-dark-factory.md` *(2)*
-
-### e588b9bb1a — (unknown) <a id="e588b9bb1a"></a>
-<https://github.com/google-research/camel-prompt-injection>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/08-security-primitives.md` *(1)*
-
-### e5ede90bd5 — (unknown) <a id="e5ede90bd5"></a>
-<https://github.com/smartcomputer-ai/forge>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/02-attractor-implementations.md` *(2)*
-
-### e6782c5e43 — (unknown) <a id="e6782c5e43"></a>
-<https://factory.strongdm.ai/weather-report>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` *(1)*
-
-### e75ff145a7 — (unknown) <a id="e75ff145a7"></a>
-<https://github.com/EveryInc/symphony-thumbtack>
-- **Files:** *(none registered)*
-- **Cited in:** `research/04-every-skill-libraries.md` *(1)*
-
-### e7947d38ed — (unknown) <a id="e7947d38ed"></a>
-<https://www.lennysnewsletter.com/p/everyone-should-be-using-claude-code>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### e8e07e53a3 — (unknown) <a id="e8e07e53a3"></a>
-<http://www.incompleteideas.net/IncIdeas/BitterLesson.html>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### e95a689939 — (unknown) <a id="e95a689939"></a>
-<https://simonwillison.net/2026/Feb/19/gemini-31-pro>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### ebc17186b3 — (unknown) <a id="ebc17186b3"></a>
-<https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent>
-- **Files:** *(none registered)*
+### 991f3bf0f6 — About Copilot Workspace (GitHub Docs) <a id="991f3bf0f6"></a>
+<https://docs.github.com/en/copilot/copilot-workspace/about-copilot-workspace>
+- **Files:** html (want)
 - **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
 
-### ec9470a0c2 — (unknown) <a id="ec9470a0c2"></a>
-<https://docs.github.com/en/copilot/concepts/agents/coding-agent/mcp-and-coding-agent>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
+### ffc229d838 — Building Effective Agents <a id="ffc229d838"></a>
+<https://www.anthropic.com/engineering/building-effective-agents>
+*Anthropic engineering — orchestrator-worker, evaluator-optimizer, augmented LLM patterns*
+- **Files:** html (want)
+- **Tags:** `agent-architecture` · `anthropic`
 
-### ecd031b838 — (unknown) <a id="ecd031b838"></a>
-<https://raw.githubusercontent.com/gastownhall/gastown/main/docs/MAYOR.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
+### 0c4bb49f75 — Creating an LLM-as-a-Judge <a id="0c4bb49f75"></a>
+<https://hamel.dev/blog/posts/llm-judge>
+*Hamel Husain — operational manual for LLM judges (Critique Shadowing pattern)*
+- **Files:** html (want)
+- **Tags:** `evals`
 
-### ed3bd2a8d6 — (unknown) <a id="ed3bd2a8d6"></a>
-<https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
+### caad3c1702 — Eugene Yan — LLM Evaluator <a id="caad3c1702"></a>
+<https://eugeneyan.com/writing/llm-evaluator>
+*Third core eval source (with Husain and Anthropic multi-agent)*
+- **Files:** html (want)
+- **Tags:** `evals`
 
-### f675af7d98 — (unknown) <a id="f675af7d98"></a>
-<https://el-kaim.com/the-dark-factory-how-software-is-learning-to-build-itself-6496a69ba14e>
-- **Files:** *(none registered)*
-- **Cited in:** `research/07-dark-factory.md` *(1)*
+### 18856eb4cf — FAQs About AI Evals <a id="18856eb4cf"></a>
+<https://hamel.dev/blog/posts/evals-faq>
+*Husain & Shankar — 60-80% of dev time on error analysis*
+- **Files:** html (want)
+- **Tags:** `evals`
 
-### f8b14ced96 — (unknown) <a id="f8b14ced96"></a>
-<https://raw.githubusercontent.com/gastownhall/beads/main/CHANGELOG.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
-
-### fa9bb443f1 — (unknown) <a id="fa9bb443f1"></a>
-<https://simonwillison.net/2024/Apr/17/ai-for-data-journalism>
-- **Files:** *(none registered)*
-- **Cited in:** `research/06-hn-and-lenny.md` *(1)*
-
-### faa604dace — (unknown) <a id="faa604dace"></a>
-<https://hamel.dev/blog/posts/evals>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
-
-### fbf7c828b1 — (unknown) <a id="fbf7c828b1"></a>
-<https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/working-with-code-scanning-alerts-with-copilot-autofix>
-- **Files:** *(none registered)*
-- **Cited in:** `research/19-github-copilot-cloud-agent.md` *(1)*
-
-### fbff54e497 — (unknown) <a id="fbff54e497"></a>
-<https://github.com/malusamayo/underspec-analysis>
-- **Files:** *(none registered)*
-- **Cited in:** `research/26-prompt-underspecification-academic.md` *(1)*
-
-### fcd460db54 — (unknown) <a id="fcd460db54"></a>
-<https://simonwillison.net/2025/Jul/3/faqs-about-ai-evals>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
-
-### ff1d616aab — (unknown) <a id="ff1d616aab"></a>
-<https://raw.githubusercontent.com/gastownhall/beads/main/CLAUDE.md>
-- **Files:** *(none registered)*
-- **Cited in:** `research/followup/04-gastown-beads.md` *(1)*
+### 53ed6e363d — Simon Willison — CaMeL paper writeup <a id="53ed6e363d"></a>
+<https://simonwillison.net/2025/Apr/11/camel>
+*Willison summary of the CaMeL prompt-injection defense paper*
+- **Files:** html (want)
+- **Tags:** `security` · `prompt-injection`
 ## § 3b — Wanted (title only) *(0 records)*
 
 *Title + search hints only; no URL yet.*
@@ -1602,4 +809,4 @@ To find the full record for any source, search this file for the 10-char id, the
 
 ---
 
-*Generated 2026-05-17 08:51:22 UTC*
+*Generated 2026-05-17 17:15:47 UTC*

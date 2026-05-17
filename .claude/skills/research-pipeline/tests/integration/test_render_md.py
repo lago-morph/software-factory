@@ -16,19 +16,23 @@ from tests.conftest import write_skill_md, default_config_yaml, write_sources_js
 
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
-RENDER = REPO_ROOT / ".claude" / "skills" / "research-pipeline" / "scripts" / "render-sources-md.sh"
+SCRIPTS = REPO_ROOT / ".claude" / "skills" / "research-pipeline" / "scripts"
 
 
 def _setup_repo_with_render(tmp_path: Path) -> Path:
-    """Build a temp repo and copy in the render script."""
+    """Build a temp repo and copy in the render script + its deps."""
     skill_dir = tmp_path / ".claude" / "skills" / "research-pipeline" / "scripts"
     skill_dir.mkdir(parents=True)
     (tmp_path / "reference-only").mkdir()
     write_skill_md(tmp_path, default_config_yaml())
-    # Copy render script
-    target = skill_dir / "render-sources-md.sh"
-    target.write_bytes(RENDER.read_bytes())
-    target.chmod(0o755)
+    # Copy render-related scripts
+    for name in ("render-sources-md.sh", "render-sources-md.py", "_config.py"):
+        src = SCRIPTS / name
+        if src.exists():
+            target = skill_dir / name
+            target.write_bytes(src.read_bytes())
+            if name.endswith(".sh"):
+                target.chmod(0o755)
     return tmp_path
 
 
@@ -69,7 +73,7 @@ class TestRenderMarkdown:
         md = _render(repo)
         # Title in § 1
         assert "Complete Test" in md
-        assert "§ 1 — Complete *(1 records)*" in md
+        assert "§ 1 — Complete *(1 record)*" in md
         # Anchor present
         assert 'id="0a7f3b8e00"' in md
 
@@ -88,7 +92,7 @@ class TestRenderMarkdown:
             }
         })
         md = _render(repo)
-        assert "§ 2 — Partial *(1 records)*" in md
+        assert "§ 2 — Partial *(1 record)*" in md
         # html ✓ and pdf (want) in same chip line
         assert "html ✓" in md
         assert "pdf (want)" in md
@@ -104,7 +108,7 @@ class TestRenderMarkdown:
             }
         })
         md = _render(repo)
-        assert "§ 3a — Wanted (URL known) *(1 records)*" in md
+        assert "§ 3a — Wanted (URL known) *(1 record)*" in md
 
     def test_wanted_title_only_in_section_3b(self, tmp_path):
         repo = _setup_repo_with_render(tmp_path)
@@ -116,7 +120,7 @@ class TestRenderMarkdown:
             }
         })
         md = _render(repo)
-        assert "§ 3b — Wanted (title only) *(1 records)*" in md
+        assert "§ 3b — Wanted (title only) *(1 record)*" in md
 
     def test_superseded_record_stub(self, tmp_path):
         repo = _setup_repo_with_render(tmp_path)
@@ -133,7 +137,7 @@ class TestRenderMarkdown:
             }
         })
         md = _render(repo)
-        assert "§ 4 — Superseded *(1 records)*" in md
+        assert "§ 4 — Superseded *(1 record)*" in md
         # Stub format
         assert "~~Old Source~~" in md
         assert "1111111111" in md

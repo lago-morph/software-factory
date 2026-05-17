@@ -80,6 +80,7 @@ On no, abort the current operation — the pipeline can't run safely without aut
 | Look up data on a source without changing anything | `resources/_catalog/query.md` |
 | Bootstrap a fresh catalog (`sources.json` doesn't exist or is `{}`) | `resources/_catalog/bootstrap.md` |
 | Add multiple files to an existing record's directory | `resources/_catalog/manual-additions.md` |
+| Tag a record with one of the 15 canonical categories | `resources/_catalog/category-taxonomy.md` |
 | Run the drain pipeline (process `research/manual/` or `research/fetched/`) | `resources/_drain/workflow-overview.md` |
 | Write a new research report or extend one | `resources/_drain/stage-5-content-processing.md` |
 | Modify any script under `scripts/` | `resources/testing.md` |

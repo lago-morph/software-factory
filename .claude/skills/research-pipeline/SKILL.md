@@ -53,23 +53,28 @@ casual_url_patterns:
 
 If anything in this config looks off — paths that don't exist, owner/repo wrong for this repo, syntax that won't parse cleanly — run `python .claude/skills/research-pipeline/scripts/validate-config.py` before doing anything else. If it fails, surface the failure to the user and stop. Do not proceed with operations on a misconfigured pipeline.
 
-## Pre-flight check (run this first, every invocation)
+## Pre-flight check (run this first, every invocation) — self-syncing
+
+**The skill is self-syncing.** The canonical source for all workflow YAML is `resources/_workflows/` inside this skill directory. The copies that actually run (under `.github/workflows/`) are derived artifacts; they must always match the templates. If they don't, the skill's `install-workflows.py` regenerates them.
 
 Before any catalog or drain operation:
 
 ```bash
-ls .github/workflows/regen-sources-md-auto.yml \
-   .github/workflows/regen-sources-md-manual.yml \
-   .github/workflows/test-research-pipeline.yml 2>/dev/null | wc -l
+python .claude/skills/research-pipeline/scripts/install-workflows.py --check
 ```
 
-If the count is less than 3, the pipeline workflows aren't installed. Ask the user: *"Pipeline workflows aren't installed in `.github/workflows/`. Install them now? (y/N)"*. On yes, run:
+Exit code:
+- `0` — all workflows installed and identical to templates. Proceed.
+- `1` — at least one is missing OR drifted (template edited but `.github/workflows/` still has the old content). **Auto-fix by running, without asking the user:**
+  ```bash
+  python .claude/skills/research-pipeline/scripts/install-workflows.py --force
+  ```
+  Then continue with the user's request. The install script auto-commits with a clear message; push that commit alongside your other work.
+- `2` — template file itself is missing from the skill. This is a skill-installation defect, not a workflow-drift issue. Surface to the user and stop.
 
-```bash
-python .claude/skills/research-pipeline/scripts/install-workflows.py
-```
+**Do not ask the user before installing/syncing.** The install is mechanical and deterministic — every workflow is regenerated from a template, nothing custom is destroyed. The whole design contract is that copying the skill directory into a fresh repo is sufficient to bootstrap; the LLM enforces that contract by running `--force` on mismatch.
 
-On no, abort the current operation — the pipeline can't run safely without auto-regeneration of `sources.md`.
+This same `--check` runs as a hard gate in CI for skill modifications (see `test-research-pipeline.yml`), so a template edit that doesn't propagate to `.github/workflows/` blocks the PR.
 
 ## Decision tree — load the right resource for the job
 

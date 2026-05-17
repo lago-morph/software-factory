@@ -1,0 +1,50 @@
+name: Regenerate sources.md (auto)
+
+# Fires when sources.json changes on main. Validates the catalog, normalizes
+# the JSON (sort keys + sort by id + pretty), re-renders sources.md, and
+# commits any diff back to main with [skip ci] so the workflow doesn't loop.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'reference-only/sources.json'
+
+permissions:
+  contents: write
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install deps
+        run: pip install pyyaml jsonschema
+      - name: Validate config
+        run: python .claude/skills/research-pipeline/scripts/validate-config.py
+      - name: Validate schema + structure
+        run: python .claude/skills/research-pipeline/scripts/validate-sources.py
+      - name: Normalize sources.json
+        run: |
+          jq -S 'to_entries | sort_by(.key) | from_entries' \
+            reference-only/sources.json > /tmp/normalized.json
+          mv /tmp/normalized.json reference-only/sources.json
+      - name: Render markdown
+        run: bash .claude/skills/research-pipeline/scripts/render-sources-md.sh > reference-only/sources.md
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reference-only/sources.json reference-only/sources.md
+          if git diff --quiet --cached; then
+            echo "no changes"
+          else
+            git commit -m "auto: regenerate sources.md from sources.json [skip ci]"
+            git push
+          fi

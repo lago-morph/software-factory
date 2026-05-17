@@ -2,14 +2,15 @@
 
 Reads templates from resources/_workflows/, substitutes __SKILL_PATH__ with
 the value from the SKILL.md config block, and writes to .github/workflows/.
-Skips files that already exist unless --force is passed.
 
 Usage:
     python install-workflows.py            # install missing ones
+    python install-workflows.py --check    # exit non-zero if installed != templates
     python install-workflows.py --force    # overwrite any existing ones
     python install-workflows.py --dry-run  # show what would happen
 
-Idempotent: running twice with no --force is a no-op on the second run.
+The skill's self-syncing pre-flight uses --check + --force to keep
+.github/workflows/ in lockstep with resources/_workflows/ automatically.
 """
 
 from __future__ import annotations
@@ -30,9 +31,16 @@ WORKFLOW_FILES = [
 ]
 
 
+def render_template(template: Path, skill_path_str: str) -> str:
+    """Read template + substitute __SKILL_PATH__ placeholder."""
+    return template.read_text(encoding="utf-8").replace("__SKILL_PATH__", skill_path_str)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--force", action="store_true", help="overwrite existing workflow files")
+    ap.add_argument("--check", action="store_true",
+                    help="exit non-zero if installed workflows are missing or drifted from templates")
     ap.add_argument("--dry-run", action="store_true", help="just print what would happen")
     ap.add_argument("--no-commit", action="store_true", help="don't git-add+commit installed files")
     args = ap.parse_args()
@@ -53,6 +61,37 @@ def main() -> int:
         print(f"✗ Templates directory not found: {templates_dir}", file=sys.stderr)
         return 1
 
+    # --check mode: detect missing OR drifted workflows, no writes
+    if args.check:
+        missing = []
+        drifted = []
+        for name in WORKFLOW_FILES:
+            template = templates_dir / name
+            target = workflows_dir / name
+            if not template.exists():
+                print(f"✗ Template missing: {template}", file=sys.stderr)
+                return 2
+            if not target.exists():
+                missing.append(name)
+                continue
+            expected = render_template(template, skill_path_str)
+            actual = target.read_text(encoding="utf-8")
+            if expected != actual:
+                drifted.append(name)
+        if missing or drifted:
+            for n in missing:
+                print(f"  missing: {n}", file=sys.stderr)
+            for n in drifted:
+                print(f"  drifted: {n} (template ≠ installed)", file=sys.stderr)
+            print(
+                f"\n{len(missing)} missing, {len(drifted)} drifted. "
+                f"Fix with: python {Path(__file__).name} --force",
+                file=sys.stderr,
+            )
+            return 1
+        print(f"✓ all {len(WORKFLOW_FILES)} workflow(s) in sync with templates")
+        return 0
+
     workflows_dir.mkdir(parents=True, exist_ok=True)
 
     installed = []
@@ -68,12 +107,15 @@ def main() -> int:
             return 1
 
         if target.exists() and not args.force:
+            # Detect drift; report it but skip (need --force to overwrite)
+            expected = render_template(template, skill_path_str)
+            actual = target.read_text(encoding="utf-8")
+            if expected != actual:
+                print(f"  {name}: DRIFT detected (use --force to overwrite)", file=sys.stderr)
             skipped.append(name)
             continue
 
-        # Read template, substitute placeholder, write
-        content = template.read_text(encoding="utf-8")
-        rendered = content.replace("__SKILL_PATH__", skill_path_str)
+        rendered = render_template(template, skill_path_str)
 
         if args.dry_run:
             action = "OVERWRITE" if target.exists() else "INSTALL"

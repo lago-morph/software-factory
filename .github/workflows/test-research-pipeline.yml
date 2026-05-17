@@ -1,0 +1,32 @@
+name: Test research-pipeline scripts
+
+# Runs the pipeline's pytest suite whenever scripts or tests change.
+# Required for merge — keeps the catalog tooling honest.
+
+on:
+  push:
+    paths:
+      - '.claude/skills/research-pipeline/scripts/**'
+      - '.claude/skills/research-pipeline/tests/**'
+      - 'reference-only/sources.schema.json'
+  pull_request:
+    paths:
+      - '.claude/skills/research-pipeline/scripts/**'
+      - '.claude/skills/research-pipeline/tests/**'
+      - 'reference-only/sources.schema.json'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install deps
+        run: pip install pyyaml jsonschema pytest
+      - name: Run unit tests
+        run: cd .claude/skills/research-pipeline && python -m pytest tests/unit -v
+      - name: Run integration tests
+        run: cd .claude/skills/research-pipeline && python -m pytest tests/integration -v

@@ -138,8 +138,8 @@ def main() -> int:
         print(f"\n{len(errors)} error(s), {len(warnings)} warning(s)", file=sys.stderr)
         return 1
     if warnings:
-        print(f"\nConfig OK with {len(warnings)} warning(s)")
-        return 2
+        print(f"\n✓ Config OK with {len(warnings)} warning(s)")
+        return 0  # warnings don't block (lint-sources.sh treats non-zero as fail)
     print("✓ Config valid")
     return 0
 

@@ -51,7 +51,7 @@ TRACKING_PARAMS = frozenset({
     # Hubspot
     "_hsenc", "_hsmi", "__hssc", "__hstc", "hsctatracking",
     # Substack
-    "publication_id", "post_id", "isFreemail", "r", "triedRedirect",
+    "publication_id", "post_id", "isfreemail", "r", "triedredirect",
     # Generic referrer tags
     "ref", "ref_src", "ref_url", "referrer", "source",
 })

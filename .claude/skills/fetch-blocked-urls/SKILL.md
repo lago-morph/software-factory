@@ -2,7 +2,7 @@
 name: fetch-blocked-urls
 description: Use when a web source is unreachable from the Claude Code sandbox — typical signals are WebFetch returning HTTP 403, "host not allowed", a tiny response (< 6 KB) whose body contains "Just a moment..." (Cloudflare challenge), or "Attention Required". The skill files a GitHub issue listing the URLs; the repository's `fetch-blocked-urls` action picks it up from a normal HTTP environment, fetches each page, commits the saved HTML and html2text markdown to a new `fetched/issue-N` branch, comments with merge instructions, and leaves the issue open for you to close once merged. Triggers on phrases like "fetch this URL", "the page is blocked", "Cloudflare is blocking us", "save these sources", "I need to read this page but I can't access it".
 tags: [research, github, actions, blocked-sources]
-allowed-tools: [Bash]
+allowed-tools: [Bash, mcp__github__issue_write, mcp__github__issue_read]
 ---
 
 # Fetch blocked URLs
@@ -50,7 +50,9 @@ Residual risk: a compromised collaborator account could trigger fetches of arbit
 
 ## Usage from this session
 
-Use the `gh` CLI. Standard template:
+Two paths depending on what your harness exposes. **Pick whichever is available** — both invoke the same action via the same GitHub issue gateway, so the outcome is identical.
+
+### Path A — `gh` CLI (preferred when available)
 
 ```bash
 gh issue create \
@@ -68,11 +70,43 @@ EOF
 )"
 ```
 
-Notes:
-- The `fetch-urls` label is mandatory; the workflow exits cleanly without it. If the label doesn't exist in the repo yet, create it once via `gh label create fetch-urls --description "Trigger fetch-blocked-urls.yml workflow"`.
+The `gh` CLI must be authenticated to a user with Triage role or higher in this repo, so it can apply the label. Run `gh auth status` first if uncertain.
+
+### Path B — restricted GitHub MCP server (when `gh` isn't available)
+
+The Claude Code on the Web sandbox doesn't ship `gh`; it provides a restricted GitHub MCP server instead. The whole skill was designed around what that limited toolset can do — file an issue with a label is one of the supported operations.
+
+Use `mcp__github__issue_write` with `method="create"` and the `labels` array:
+
+```python
+mcp__github__issue_write(
+    method="create",
+    owner="<owner>",       # e.g., "lago-morph"
+    repo="<repo>",         # e.g., "software-factory"
+    title="[fetch-urls] <short description>",
+    body=(
+        "URLs to fetch (one per line; markdown links are accepted):\n\n"
+        "- https://example.com/some-page\n"
+        "- https://another.example.com/article\n"
+        "- https://third.example/post?id=42\n\n"
+        "Context (optional): why we need these / which research thread this serves.\n"
+    ),
+    labels=["fetch-urls"],
+)
+```
+
+The MCP server token is provisioned with `issues: write` for the repo and can apply labels (the equivalent of Triage role), so the label gate is satisfied. The tool returns the created issue's number — capture it for the `git fetch origin fetched/issue-<N>` step later.
+
+### Auto-detection
+
+A research-pipeline integration script (`scripts/file-fetch-issue.py`) reads the catalog's `want` records and tries Path A first; on failure, falls back to Path B via the MCP server. See [research-pipeline](../research-pipeline/SKILL.md#integration-with-fetch-blocked-urls) for the catalog-driven invocation pattern.
+
+### Common notes (both paths)
+
+- The `fetch-urls` label is **mandatory**; the workflow exits cleanly without it. If the label doesn't exist in the repo yet, create it once (`gh label create fetch-urls --description "..."` or via MCP).
 - One URL per line is safest. List markers (`-`, `*`, `+`) are tolerated. Markdown link syntax `[text](url)` is parsed correctly. Bare URLs inline in prose also work — the extractor picks up every `http(s)://...` match and deduplicates.
 - The issue **title** is convention only (`[fetch-urls] …`). The workflow does not read the title for gating.
-- The `gh` CLI must be authenticated to a user with Triage role or higher in this repo, so it can apply the label. Run `gh auth status` first if uncertain.
+- The action will post a comment on the issue with per-URL status and merge instructions within ~1–3 minutes.
 
 After the action completes (typically 1–3 minutes), you'll see a comment on the issue with per-URL status and merge instructions. To pull the fetched content into your working branch:
 
@@ -93,6 +127,8 @@ If you need to re-fetch (e.g., a URL was transient and might work now, or you ed
 ```bash
 gh workflow run fetch-blocked-urls.yml -f issue_number=<N>
 ```
+
+Via MCP, edit the issue body to add a no-op edit (e.g., append a timestamp comment line) using `mcp__github__issue_write` with `method="update"` and a tweaked body — that fires the `edited` trigger.
 
 ## Filename convention
 

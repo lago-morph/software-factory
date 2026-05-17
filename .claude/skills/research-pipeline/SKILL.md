@@ -30,6 +30,24 @@ github:
   repo:  software-factory
   fetch_branch_prefix: fetched/issue-
   fetch_issue_label:   fetch-urls
+
+# URLs matching these regex patterns are "casual mentions" — `check-source-refs.py`
+# skips them when verifying that every cited URL has a catalog record. Use for
+# things like social-media profiles, video links, app store entries, and tool
+# homepages that get name-checked in reports without being substantive sources
+# worth cataloguing. Each pattern is a Python regex (anchored at start of URL).
+casual_url_patterns:
+  - 'https?://x\.com/'
+  - 'https?://twitter\.com/'
+  - 'https?://(www\.)?youtube\.com/'
+  - 'https?://youtu\.be/'
+  - 'https?://(www\.)?linkedin\.com/'
+  - 'https?://(www\.)?facebook\.com/'
+  - 'https?://apps\.apple\.com/'
+  - 'https?://play\.google\.com/'
+  - 'https?://api\.github\.com/'
+  # Pure homepage URLs (no path beyond /) — name-check mentions, not articles
+  - 'https?://[^/]+/?$'
 ```
 <!-- END PIPELINE CONFIG -->
 

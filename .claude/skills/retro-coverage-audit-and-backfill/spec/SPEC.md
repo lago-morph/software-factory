@@ -114,7 +114,7 @@ Step 7 fetches all PR bodies in a single message with N parallel tool calls (one
 
 ### Why an empty sibling directory is OK for synthetics
 
-The standard retro layout pairs `retrospective/YYYY-MM-DD-PPP.md` with `retrospective/YYYY-MM-DD-PPP/` (where `PPP` is the last PR number; or the legacy `-NN` suffix for the no-PR fallback). Contemporaneous retros populate the sibling directory with skill specs and `AGENTS-suggestions.md`.
+The standard retro layout pairs `retrospective/YYYY-MM-DD-PPP.md` with `retrospective/YYYY-MM-DD-PPP/` (where `PPP` is the last PR number; or the legacy `-NN` suffix for the no-PR fallback). Contemporaneous retros populate the sibling directory with per-skill specs (`SKILL-SPEC-<hash>-<name>.md`), per-ADR drafts (`ADR-<hash>-<name>.md`), and per-rule agents-file additions (`AGENT-<hash>-<name>.md`). Persuasion paragraphs for each agents-rule live in Part 3 of the report.
 
 Synthetic retros should not fabricate skill specs from material they didn't witness. The directory is created for layout consistency but may be empty. Git will ignore an empty directory at commit time — that's fine; the directory is implicit and any future user-driven skill-spec authoring will materialize it.
 

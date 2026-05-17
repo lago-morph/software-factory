@@ -1,6 +1,6 @@
 ---
 name: self-retrospective
-description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produces a structured retrospective on disk at `retrospective/YYYY-MM-DD-PPP.md` (where `PPP` is the highest PR number covered by the retro) plus a sibling directory with one self-contained spec per suggested skill (each carrying a durable `SKILL-SPEC-<hash>` ID), one full ADR draft per proposed architectural decision (each carrying a durable `ADR-<hash>` ID), and a consolidated `AGENTS-suggestions.md` whose sections each carry exact proposed agents-file text plus a persuasion argument. Session-aware: if a previous retrospective was already committed during the current session, the new retro is scoped to material after that commit. Has a secondary **reprocess** mode (`/retrospective reprocess <retro>`) that walks one or more old retros, renames their skill specs to carry `SKILL-SPEC-<hash>` IDs, and tries to back-fill the deferred ADRs from the retro report + skill specs + PR diffs — stopping (and writing an `ADR-DRAFT-<title>.md` with a pre-computed UID hash) when there is not enough context to author a complete ADR. Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", "anything to add to the agents file?", "reprocess the retro", "back-fill the ADRs", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
+description: Harvest the knowledge accumulated in a session before it's lost to context truncation. Produces a structured retrospective on disk at `retrospective/YYYY-MM-DD-PPP.md` (where `PPP` is the highest PR number covered by the retro) plus a sibling directory using a uniform `TYPE-<hash>-<name>.md` filename convention: one self-contained skill spec per suggested skill at `SKILL-SPEC-<hash>-<name>.md` (each carrying a durable `SKILL-SPEC-<hash>` ID), one full ADR draft per proposed architectural decision at `ADR-<hash>-<name>.md` (each carrying a durable `ADR-<hash>` ID), and one verbatim agents-file rule per proposed addition at `AGENT-<hash>-<name>.md` (each carrying a durable `AGENT-<hash>` ID) — the per-rule files are designed to be picked up mix-and-match by a CI/CD pipeline that assembles them into the canonical `AGENTS.md`, so each file contains ONLY the rule text with no `##` section headers; the persuasion arguments live in the retrospective report's Part 3. Session-aware: if a previous retrospective was already committed during the current session, the new retro is scoped to material after that commit. Has a secondary **reprocess** mode (`/retrospective reprocess <retro>`) that walks one or more old retros, migrates their spec/ADR filenames to the `TYPE-<hash>-<name>.md` convention, splits any legacy `AGENTS-suggestions.md` into per-rule `AGENT-<hash>-<name>.md` files (relocating the persuasion paragraphs into the source retro's Part 3 and deleting the consolidated file), and tries to back-fill deferred ADRs from the retro report + skill specs + PR diffs — stopping (and writing an `ADR-DRAFT-<title>.md` with a pre-computed UID hash) when there is not enough context to author a complete ADR. Use when the user says "do a retrospective", "what did we learn?", "what skills could we extract?", "lessons learned?", "anything to add to the agents file?", "reprocess the retro", "back-fill the ADRs", or proactively when a session spanned multiple distinct phases, surfaced unexpected real-world findings, used many subagents, ran long, or the user signals session-wrap ("we're done", "good work", "let's stop here").
 ---
 
 # Skill: self-retrospective
@@ -10,8 +10,15 @@ Harvest session knowledge before context truncation. Default output is a
 The package is structured so each suggested skill has a self-contained
 spec a fresh-context agent can implement from that one file, each
 proposed architectural decision has a full ADR draft (same level of
-detail as a skill spec), and the proposed agents-file additions live in
-one consolidated, persuasive document.
+detail as a skill spec), and each proposed agents-file addition is its
+own per-rule file that a downstream CI/CD pipeline assembles into the
+canonical `AGENTS.md`. All three artifact types share a uniform
+filename convention: `TYPE-<hash>-<name>.md`
+(`SKILL-SPEC-<hash>-<name>.md`, `ADR-<hash>-<name>.md`,
+`AGENT-<hash>-<name>.md`). The per-rule `AGENT-…` files contain only the
+verbatim rule text (no `##` section headers); the persuasion arguments
+for those rules live in Part 3 of the retrospective report body, where
+human reviewers see them at decision time.
 
 The skill has two modes:
 
@@ -61,8 +68,9 @@ Offer when **any** of these apply:
 | Invocation | Behavior |
 |------------|----------|
 | `/retrospective` | Default forward mode — full on-disk package + inline summary. |
-| `/retrospective --no-skills` | Skip per-skill specs; only narrative, commit log, AGENTS-suggestions, and ADR drafts. |
+| `/retrospective --no-skills` | Skip per-skill specs; only narrative, commit log, per-rule agents files, and ADR drafts. |
 | `/retrospective --no-adrs` | Skip ADR drafts; emit only Part 4 title list (legacy behaviour). |
+| `/retrospective --no-agents` | Skip per-rule agents files and the Part 3 suggestions section. |
 | `/retrospective --pr` | After writing the package, push the branch and open a PR. |
 | `/retrospective --since "YYYY-MM-DD"` | Force a specific lower bound, overriding session-scope detection. |
 | `/retrospective --full-session` | Disable session-scope auto-narrowing — cover the entire session even if a prior retro was committed during it. |
@@ -71,38 +79,70 @@ Offer when **any** of these apply:
 
 ---
 
-## Durable identifiers (mandatory)
+## Durable identifiers + filename convention (mandatory)
 
-Every per-skill spec and every proposed ADR (full or draft) carries a
-durable, hash-based identifier. The identifier exists so an artifact
-can be referenced across sessions, file renames, and history rewrites
-without ambiguity.
+Every per-skill spec, every proposed ADR (full or draft), and every
+per-rule agents-file addition carries a durable, hash-based identifier.
+The identifier exists so an artifact can be referenced across sessions,
+file renames, and history rewrites without ambiguity.
 
-### Format
+### ID format
 
-- `SKILL-SPEC-<hash>` for a per-skill spec.
-- `ADR-<hash>` for a proposed ADR (full draft or `ADR-DRAFT-…`).
+- `SKILL-SPEC-<hash>` — per-skill spec.
+- `ADR-<hash>` — proposed ADR (full draft or `ADR-DRAFT-…` placeholder).
+- `AGENT-<hash>` — per-rule agents-file addition (one rule per file).
 
 `<hash>` is the **first 10 hex characters of the SHA256 of a stable
 canonical form** of the artifact's content at the moment the identifier
 is first assigned.
 
-### Canonical form
+### Filename convention (uniform across all three types)
+
+All three artifact types use the same filename shape in the sibling
+directory:
 
 ```
-<TITLE>\n\n<INTENT_OR_DECISION_PARAGRAPH>\n
+<TYPE>-<hash>-<kebab-name>.md
+```
+
+Concretely:
+
+- `SKILL-SPEC-<hash>-<skill-id>.md`
+- `ADR-<hash>-<kebab-title>.md`
+- `AGENT-<hash>-<kebab-rule-name>.md`
+
+Rationale for the TYPE-first ordering: when the sibling directory is
+sorted alphabetically, all artifacts of the same type cluster together,
+the durable hash is in a constant position for easy parsing by CI/CD
+tooling, and the type token immediately tells a reader what they're
+looking at.
+
+The `ADR-DRAFT-<kebab-title>.md` placeholder (reprocess mode, §"Reprocess
+mode") is the **one exception**: it has no hash in the filename because
+its reserved hash is declared inside the file. The completing agent
+renames the placeholder to `ADR-<hash>-<kebab-title>.md` when finishing
+the draft.
+
+### Canonical form (for hash computation)
+
+```
+<TITLE>\n\n<INTENT_OR_DECISION_OR_RULE_BODY>\n
 ```
 
 - `<TITLE>` — the proposed title verbatim (no number, no prefix).
-- `<INTENT_OR_DECISION_PARAGRAPH>` — for skill specs, the one-paragraph
-  intent. For ADRs, the one-sentence decision (or, for ADR-DRAFTs where
-  the decision is still vague, the one-sentence problem statement from
-  the retro's Part 4 rationale).
+- The second component depends on type:
+  - **Skill specs** — the one-paragraph Intent.
+  - **ADRs** — the one-sentence Decision. For `ADR-DRAFT-…`
+    placeholders where the decision is still vague, the one-sentence
+    problem statement from the retro's Part 4 rationale.
+  - **Agents-file rules** — the verbatim rule body that gets pasted into
+    `AGENTS.md` (the `**Rule name.** "..."` blockquote content), trimmed
+    of surrounding whitespace.
 
 ### Compute
 
 ```bash
-printf '%s\n\n%s\n' "$TITLE" "$INTENT_OR_DECISION" \
+printf '%s\n\n%s\n' "$TITLE" "$INTENT_OR_DECISION_OR_RULE_BODY" \
   | sha256sum | head -c 10
 ```
 
@@ -114,7 +154,7 @@ import hashlib, sys
 title = sys.argv[1]
 body  = sys.argv[2]
 print(hashlib.sha256(f"{title}\n\n{body}\n".encode()).hexdigest()[:10])
-' "$TITLE" "$INTENT_OR_DECISION"
+' "$TITLE" "$INTENT_OR_DECISION_OR_RULE_BODY"
 ```
 
 ### Immutability rule (critical)
@@ -122,17 +162,20 @@ print(hashlib.sha256(f"{title}\n\n{body}\n".encode()).hexdigest()[:10])
 Once the ID is assigned and written into the file, it is **frozen**.
 Never recompute the hash on subsequent edits — not when the title is
 copy-edited, not when the body is rewritten, not when status flips
-Proposed → Accepted, not when references are added. The hash exists
-purely for uniqueness and durable cross-reference; it is not a content
-checksum.
+Proposed → Accepted, not when references are added, not when a file is
+renamed from the old `<name>-TYPE-<hash>.md` order to the new
+`TYPE-<hash>-<name>.md` order during reprocess. The hash exists purely
+for uniqueness and durable cross-reference; it is not a content checksum.
 
 If an editor accidentally regenerates an ID, restore the original from
-git history. The link from a retrospective to its ADRs and specs depends
-on the IDs not drifting.
+git history. The link from a retrospective to its ADRs, specs, and
+agents files depends on the IDs not drifting.
 
 ### Location of the ID inside the file
 
-The ID lives on a metadata bullet right under the H1:
+The ID lives on a metadata bullet right under the H1.
+
+Skill spec:
 
 ```markdown
 # Spec: `<skill-id>`
@@ -140,6 +183,8 @@ The ID lives on a metadata bullet right under the H1:
 - **ID**: SKILL-SPEC-<hash>
 - **Source retrospective**: ../<retro-basename>.md
 ```
+
+ADR draft:
 
 ```markdown
 # ADR: <Title in Sentence Case>
@@ -150,10 +195,22 @@ The ID lives on a metadata bullet right under the H1:
 - **Source retrospective**: ../<retro-basename>.md
 ```
 
-When such an ADR draft is later promoted into `docs/adr/NNNN-kebab.md`
-via the `adr` skill, the **ID line is preserved verbatim**. The
-`NNNN` number is a separate human-friendly sequence; the hash is the
-durable identifier.
+Per-rule agents file:
+
+```markdown
+# AGENTS rule: <Rule name>
+
+- **ID**: AGENT-<hash>
+- **Source retrospective**: ../<retro-basename>.md
+```
+
+When an ADR draft is later promoted into `docs/adr/NNNN-kebab.md` via
+the `adr` skill, the **ID line is preserved verbatim**. The `NNNN`
+number is a separate human-friendly sequence; the hash is the durable
+identifier. The same rule applies when a CI/CD pipeline assembles
+per-rule agents files into the canonical `AGENTS.md` — the `AGENT-<hash>`
+ID stays attached to the rule (typically as an HTML comment in the
+assembled output) so it can be traced back to its source retrospective.
 
 ---
 
@@ -463,7 +520,7 @@ unplanned but mattered.)
 
 | Skill | ID | Priority | Approx scope | Spec |
 |-------|----|----------|--------------|------|
-| `<id>` | SKILL-SPEC-<hash> | high/med/low | <1–3 words> | [./${UTC_DATE}-${PR}/<id>-SKILL-SPEC-<hash>.md](./${UTC_DATE}-${PR}/<id>-SKILL-SPEC-<hash>.md) |
+| `<id>` | SKILL-SPEC-<hash> | high/med/low | <1–3 words> | [./${UTC_DATE}-${PR}/SKILL-SPEC-<hash>-<id>.md](./${UTC_DATE}-${PR}/SKILL-SPEC-<hash>-<id>.md) |
 
 (One row per skill candidate. Detailed specs live in the sibling
 directory, not inline. The ID is the durable hash-based identifier
@@ -471,10 +528,39 @@ described in the "Durable identifiers" section above.)
 
 ## Part 3 — agents-file suggestions
 
-See [./${UTC_DATE}-${PR}/AGENTS-suggestions.md](./${UTC_DATE}-${PR}/AGENTS-suggestions.md)
-for proposed additions to the project's agents file (`AGENTS.md`), one
-section per rule, each with exact text to paste and a persuasion
-argument.
+Proposed additions to the project's agents file (`AGENTS.md`). **Each
+rule has its own per-rule file** in the sibling directory at
+`./${UTC_DATE}-${PR}/AGENT-<hash>-<kebab-name>.md` — the file contains
+only the verbatim rule body that a downstream CI/CD pipeline can
+concatenate into the canonical `AGENTS.md`. The persuasion arguments
+(why each rule earns its place) live here in Part 3 so the human
+reviewer has them at decision time and the per-rule files stay
+section-header-free.
+
+### Suggestion 1: <Rule name> — `AGENT-<hash>`
+
+- **File**: [./${UTC_DATE}-${PR}/AGENT-<hash>-<kebab-name>.md](./${UTC_DATE}-${PR}/AGENT-<hash>-<kebab-name>.md)
+
+**Proposed addition (verbatim from the per-rule file)**:
+
+> **<Rule name>.** "<The rule, phrased as a do/don't statement, ready
+> to paste verbatim.>"
+>
+> *Grounded in: <one-phrase session-event reference>.*
+
+**Why this earns its place in your agents file**:
+
+(A persuasive paragraph or two. Name the specific session event.
+Quantify the cost of not having the rule — "took 20 minutes to undo",
+"produced two parallel mechanisms", "five fabrications propagated for
+two passes before catching". State the marginal cost of adopting the
+rule — "one extra grep at session start", "two tool calls". Make the
+asymmetry vivid.)
+
+### Suggestion 2: ...
+
+(Repeat per rule. Aim for 5–15 rules. More than 15 is noise — pick the
+15 with the highest signal.)
 
 ## Part 4 — proposed ADRs
 
@@ -486,7 +572,7 @@ draft by invoking the `adr` skill, which moves it to
 
 | ID | Title | Draft |
 |----|-------|-------|
-| ADR-<hash> | <Proposed ADR title> | [./${UTC_DATE}-${PR}/<kebab-title>-ADR-<hash>.md](./${UTC_DATE}-${PR}/<kebab-title>-ADR-<hash>.md) |
+| ADR-<hash> | <Proposed ADR title> | [./${UTC_DATE}-${PR}/ADR-<hash>-<kebab-title>.md](./${UTC_DATE}-${PR}/ADR-<hash>-<kebab-title>.md) |
 
 One-line rationale per draft (the same one-liner the legacy format
 used) appears in the draft's `## Context` opening sentence; no need to
@@ -505,7 +591,8 @@ For each skill candidate:
 1. Compute `HASH = sha256(TITLE\n\nINTENT_PARAGRAPH\n)[:10]` (see the
    "Durable identifiers" section above).
 2. Write the spec to
-   `${SIBLING_DIR}/<skill-id>-SKILL-SPEC-${HASH}.md`.
+   `${SIBLING_DIR}/SKILL-SPEC-${HASH}-<skill-id>.md` (TYPE-HASH-NAME
+   ordering — see filename convention above).
 3. Put `**ID**: SKILL-SPEC-${HASH}` on the metadata bullet under the H1.
 
 **Each spec must be self-contained.** A fresh-context agent given only
@@ -575,7 +662,8 @@ the actual length.
 ## Step 5.5 — write per-ADR draft files
 
 For each proposed-ADR candidate identified in §3.9, write
-`${SIBLING_DIR}/<kebab-title>-ADR-<hash>.md`.
+`${SIBLING_DIR}/ADR-<hash>-<kebab-title>.md` (TYPE-HASH-NAME ordering —
+see filename convention above).
 
 Compute the hash from the canonical form (see the "Durable identifiers"
 section): `TITLE\n\nONE_SENTENCE_DECISION\n`. Freeze it the moment it's
@@ -620,7 +708,7 @@ Relative links to the source retrospective and the relevant skill specs
 in the sibling directory. Absolute URLs only for external sources.
 
 - [`../<retro-basename>.md`](../<retro-basename>.md) — the source retrospective.
-- [`./<skill-id>-SKILL-SPEC-<hash>.md`](./<skill-id>-SKILL-SPEC-<hash>.md) — related skill spec(s).
+- [`./SKILL-SPEC-<hash>-<skill-id>.md`](./SKILL-SPEC-<hash>-<skill-id>.md) — related skill spec(s).
 - PRs the decision was made in: #N, #M, …
 ```
 
@@ -638,64 +726,69 @@ the user's editorial control over the numbered ADR log.
 
 ---
 
-## Step 6 — write `AGENTS-suggestions.md`
+## Step 6 — write per-rule agents files
 
-Path: `${SIBLING_DIR}/AGENTS-suggestions.md`
+**Purpose**: capture each proposed agents-file rule as its own
+self-contained file so a downstream CI/CD pipeline can pick rules up
+mix-and-match and assemble them into the canonical `AGENTS.md` without
+any post-processing of section headers. The persuasion argument for
+each rule already lives in Part 3 of the main report (see Step 4).
 
-**Purpose**: give the user a single document with proposed agents-file
-additions. The user reads each section, decides whether to copy-paste
-into their actual `AGENTS.md`, and moves on.
+For each proposed rule, identified during the §3 scan:
 
-Structure:
+1. Pick a **rule name** in sentence case (e.g., "Stale-artifact check
+   before draining `research/manual/`").
+2. Write the **rule body** — the verbatim text that will be pasted into
+   `AGENTS.md`. Use the standard form:
 
-````markdown
-# AGENTS.md suggestions — ${UTC_DATE}-${PR}
+   ```
+   **<Rule name>.** "<The rule, phrased as a do/don't statement, ready
+   to paste verbatim.>"
 
-These are proposed additions to the project's agents file (typically
-`AGENTS.md` at the repo root). Each section contains:
+   *Grounded in: <one-phrase session-event reference>.*
+   ```
 
-1. **Proposed addition** — the exact text to paste.
-2. **Why this earns its place in your agents file** — the argument for
-   doing it, grounded in something that happened (or nearly happened).
+3. Compute the hash from the canonical form
+   `TITLE\n\nRULE_BODY\n` where `TITLE` is the rule name and
+   `RULE_BODY` is the verbatim rule text from step 2, trimmed of
+   surrounding whitespace. See the "Durable identifiers" section above.
+4. Write the file to `${SIBLING_DIR}/AGENT-<hash>-<kebab-rule-name>.md`.
 
-Decide each on its own merits. Skip ones that don't apply to your
-operating posture; copy-paste the ones that do.
+File contents (no `##` section headers — the file is consumed by
+concatenation):
 
----
+```markdown
+# AGENTS rule: <Rule name>
 
-## Suggestion 1: <Rule name>
-
-### Proposed addition
+- **ID**: AGENT-<hash>
+- **Source retrospective**: ../<retro-basename>.md
 
 > **<Rule name>.** "<The rule, phrased as a do/don't statement, ready
 > to paste verbatim.>"
 >
 > *Grounded in: <one-phrase session-event reference>.*
+```
 
-### Why this earns its place in your agents file
+Hard constraints:
 
-(A persuasive paragraph or two. Name the specific session event.
-Quantify the cost of not having the rule — "took 20 minutes to undo",
-"produced two parallel mechanisms", "five fabrications propagated for
-two passes before catching". State the marginal cost of adopting the
-rule — "one extra grep at session start", "two tool calls". Make the
-asymmetry vivid.)
+- The file body **must not contain any `##` headers**. The H1 at the
+  top is fine (it identifies the file); the body is the verbatim rule
+  blockquote. Use of `###` is also discouraged — keep the file
+  section-free so a concatenation-based assembler does the right thing
+  without parsing.
+- No persuasion argument inside this file. The "why this earns its
+  place" paragraph lives in Part 3 of the main report.
+- No back-references to the session ("see above", "as discussed in
+  Phase 4"). The rule must stand alone once concatenated into
+  `AGENTS.md`.
 
----
+Aim for 5–15 rules across the session. More than 15 is noise — pick
+the 15 with the highest signal.
 
-## Suggestion 2: ...
-````
-
-Aim for 5–15 suggestions. More than 15 is noise — pick the 15 with the
-highest signal.
-
-The **"Proposed addition"** block is the verbatim text the user will
-paste. Make sure it's self-contained — no references back to the
-session, no "see above". The user is making an editorial decision per
-section and only the proposed-addition text leaves the document.
-
-The **"Why this earns its place"** block exists to convince. Be
-specific. Be honest about costs. Don't pad.
+The per-rule files plus the Part 3 persuasion together replace the
+legacy consolidated `AGENTS-suggestions.md`. Do **not** write that
+file in forward mode; reprocess mode (below) splits any legacy
+consolidated file into per-rule files.
 
 ---
 
@@ -706,7 +799,9 @@ After writing all artifacts:
 1. **Print a short inline summary** in chat (not the full retrospective):
    - Path to the main report.
    - Skill count + names + IDs + paths to specs.
-   - AGENTS-suggestions count + path.
+   - **Per-rule agents files** — count + one line each:
+     `AGENT-<hash> — <rule name> — <path>`. Mention that the persuasion
+     for each lives in Part 3 of the main report.
    - **Proposed ADR drafts** — one line each: `ADR-<hash> — <title> — <path>`.
      Tell the user they can adopt any draft into `docs/adr/` via the
      `adr` skill (which preserves the ID).
@@ -718,7 +813,7 @@ After writing all artifacts:
 
    ```bash
    git add retrospective/
-   git commit -m "Retrospective ${UTC_DATE}-${PR}: <N> skills, <M> agents-file suggestions"
+   git commit -m "Retrospective ${UTC_DATE}-${PR}: <N> skills, <M> agents-file rules, <K> ADR drafts"
    ```
 
 3. If `--pr` was passed: push the branch and open a PR.
@@ -737,8 +832,31 @@ the path. The inline summary should fit in ~20 lines.
 - **Implementing while retrospecting.** If the user says "build it",
   that is a separate task. Wait for an explicit instruction.
 - **One giant unstructured document.** The on-disk structure (main
-  report + sibling directory with per-skill specs + `AGENTS-suggestions.md`)
-  is not optional — it's what makes the output consumable.
+  report + sibling directory with per-skill specs + per-ADR drafts +
+  per-rule agents files) is not optional — it's what makes the output
+  consumable.
+- **Writing a consolidated `AGENTS-suggestions.md` in forward mode.**
+  That format is legacy. Forward mode emits one `AGENT-<hash>-<name>.md`
+  per rule plus persuasion paragraphs in Part 3 of the main report.
+  Reprocess mode is the only path that touches a legacy
+  `AGENTS-suggestions.md` — and only to split it apart and delete it.
+- **`##` section headers inside a per-rule `AGENT-<hash>-<name>.md`
+  file.** The per-rule files are designed for concatenation into the
+  canonical `AGENTS.md` by a CI/CD assembler. Section headers inside
+  the file would create awkward subsections in the assembled output.
+  The H1 at the top identifies the file; everything below it is the
+  rule blockquote.
+- **Putting persuasion ("why this earns its place") inside the per-rule
+  agents file.** The per-rule file is the verbatim rule text only. The
+  persuasion lives in Part 3 of the main report so reviewers see it at
+  decision time and the assembled `AGENTS.md` doesn't carry editorial
+  commentary.
+- **The old `<name>-TYPE-<hash>.md` filename order.** Use
+  `TYPE-<hash>-<name>.md` uniformly across skill specs, ADR drafts,
+  and per-rule agents files. The TYPE-first ordering clusters
+  same-type artifacts on alphabetical sort and gives the durable hash a
+  constant position for tooling. Reprocess mode migrates legacy
+  filenames; do not re-introduce the old order in new retros.
 - **Generic advice.** "Write good prompts" is useless without a session
   anchor. Every teaching must be traceable to something that happened.
 - **Forgetting the agents-file suggestions.** Agents-file rules are
@@ -756,11 +874,14 @@ the path. The inline summary should fit in ~20 lines.
   name.
 - **Per-skill specs that defer to the session.** A spec that says "see
   the session for details" has failed its job. Specs must stand alone.
-- **Regenerating an immutable ID hash.** Once `SKILL-SPEC-<hash>` or
-  `ADR-<hash>` is written into a file, it never changes — not on title
-  copy-edits, not on body rewrites, not on status flips. If you
-  accidentally regenerate one, restore it from `git log -p`. The hash
-  is the durable identifier; if it drifts, every cross-reference rots.
+- **Regenerating an immutable ID hash.** Once `SKILL-SPEC-<hash>`,
+  `ADR-<hash>`, or `AGENT-<hash>` is written into a file, it never
+  changes — not on title copy-edits, not on body rewrites, not on
+  status flips, not on filename migrations (e.g., the old
+  `<name>-TYPE-<hash>.md` → `TYPE-<hash>-<name>.md` rename during
+  reprocess). If you accidentally regenerate one, restore it from
+  `git log -p`. The hash is the durable identifier; if it drifts,
+  every cross-reference rots.
 - **Title-only proposed ADRs (the old format).** Proposed ADRs must now
   carry a full draft body — Context, Decision, Alternatives, Consequences,
   References. The user still decides whether to *adopt* each draft into
@@ -794,8 +915,8 @@ Invocation:
   `/retrospective reprocess 2026-05-14-42`. Accepts a path
   (`retrospective/2026-05-14-42.md`) or a basename (`2026-05-14-42`).
 - `/retrospective reprocess --all` — walk every retro under
-  `retrospective/` that predates the durable-ID convention (i.e., whose
-  per-skill specs lack `SKILL-SPEC-<hash>` IDs).
+  `retrospective/` that predates any of the current conventions
+  (filename ordering, durable IDs, per-rule agents files).
 - `/retrospective reprocess --since YYYY-MM-DD` — only retros on or
   after this date.
 
@@ -803,21 +924,67 @@ Invocation:
 
 For each targeted retrospective, in order:
 
-1. **Add `SKILL-SPEC-<hash>` IDs to existing per-skill specs.** The old
-   specs predate the durable-ID convention. For each
-   `${SIBLING_DIR}/<skill-id>-spec.md`:
-   - Read the file. If it already contains `**ID**: SKILL-SPEC-…`, skip.
-   - Extract the title (the H1 text after `Spec:` or equivalent) and the
-     Intent paragraph.
-   - Compute the hash per the "Durable identifiers" canonical form.
-   - Rename the file to `${SIBLING_DIR}/<skill-id>-SKILL-SPEC-<hash>.md`
-     (drop the redundant `-spec` suffix; the `SKILL-SPEC-` token already
-     says it).
-   - Insert the `**ID**: SKILL-SPEC-<hash>` and `**Source retrospective**:
+1. **Migrate skill specs to the `SKILL-SPEC-<hash>-<name>.md` filename
+   convention and add IDs where missing.** Two cases:
+   - **Legacy `<skill-id>-spec.md` (no hash yet).** Read the file.
+     Extract the title (the H1 text after `Spec:` or equivalent) and
+     the Intent paragraph. Compute the hash per the "Durable
+     identifiers" canonical form. Rename to
+     `${SIBLING_DIR}/SKILL-SPEC-<hash>-<skill-id>.md`. Insert the
+     `**ID**: SKILL-SPEC-<hash>` and `**Source retrospective**:
      ../<retro-basename>.md` metadata bullets directly under the H1.
-   - In the retrospective's main report file, rewrite the links in the
-     Part 2 "skills summary" table to point at the renamed files.
-2. **Back-fill ADRs.** Read the retrospective's `## Part 4 — proposed
+   - **Older format `<skill-id>-SKILL-SPEC-<hash>.md` (name-first).**
+     Already has the hash and the metadata. Rename the file to
+     `${SIBLING_DIR}/SKILL-SPEC-<hash>-<skill-id>.md` — **preserve the
+     hash exactly**; do not recompute. Leave file contents untouched.
+   - **Already `SKILL-SPEC-<hash>-<skill-id>.md`.** Skip (idempotent).
+
+   Either way, rewrite the Part 2 "skills summary" table links in the
+   retrospective's main report to point at the new filenames.
+
+2. **Migrate ADR drafts to the `ADR-<hash>-<name>.md` filename
+   convention.** For each `${SIBLING_DIR}/<kebab-title>-ADR-<hash>.md`,
+   rename to `${SIBLING_DIR}/ADR-<hash>-<kebab-title>.md` — preserve the
+   hash. `ADR-DRAFT-<kebab-title>.md` placeholders keep their existing
+   filename (no hash in their filename by design — see "ADR-DRAFT
+   placeholder format" below). Rewrite Part 4 table links in the main
+   report to point at the renamed files.
+
+3. **Split any legacy `AGENTS-suggestions.md` into per-rule
+   `AGENT-<hash>-<name>.md` files.** This is the new third
+   responsibility added with the per-rule agents-file convention.
+
+   For each `${SIBLING_DIR}/AGENTS-suggestions.md`:
+   - Parse each `## Suggestion N: <Rule name>` section. Within each,
+     identify three components:
+     - The **rule name** (from the H2 heading after `Suggestion N:`).
+     - The **rule body** (the blockquote under `### Proposed addition`).
+     - The **persuasion paragraph(s)** (the text under `### Why this
+       earns its place in your agents file`).
+   - Compute the hash from the canonical form
+     `TITLE\n\nRULE_BODY\n` where `TITLE` is the rule name and
+     `RULE_BODY` is the blockquote body verbatim (trimmed of surrounding
+     whitespace). Freeze the hash.
+   - Write `${SIBLING_DIR}/AGENT-<hash>-<kebab-rule-name>.md` containing
+     the H1, the `**ID**` + `**Source retrospective**` metadata bullets,
+     and the verbatim rule blockquote — **no `##` headers, no
+     persuasion**. See "Per-rule agents file format" below for the exact
+     template.
+   - **Relocate the persuasion paragraphs into the retrospective's
+     report.** In the main report file, replace Part 3's existing
+     pointer (`See [./…/AGENTS-suggestions.md](...)`) with an expanded
+     Part 3 that lists each rule by name with a link to its per-rule
+     file followed by the persuasion paragraph(s) verbatim (same format
+     as forward-mode Part 3 — see Step 4 template). The persuasion text
+     itself is preserved unchanged; only its location moves.
+   - **Delete `${SIBLING_DIR}/AGENTS-suggestions.md`** once the per-rule
+     files are written and Part 3 has been rewritten. Use `git rm` so
+     the deletion is staged for the same commit.
+   - If the sibling directory has no `AGENTS-suggestions.md` but does
+     have per-rule `AGENT-<hash>-<name>.md` files already, skip
+     (idempotent).
+
+4. **Back-fill ADRs.** Read the retrospective's `## Part 4 — proposed
    ADRs` section. For each title:
    - Compute the candidate hash from `TITLE\n\n<Part-4 one-liner>\n` —
      this is the **pre-computed UID** that follows the artifact through
@@ -826,21 +993,44 @@ For each targeted retrospective, in order:
    - Gather the evidence pool (see "Evidence pool" below).
    - Run the **sufficiency check** (see below).
    - If sufficient → write the full ADR draft at
-     `${SIBLING_DIR}/<kebab-title>-ADR-<hash>.md` using the Step 5.5
+     `${SIBLING_DIR}/ADR-<hash>-<kebab-title>.md` using the Step 5.5
      template, populated from the evidence.
    - If insufficient → **STOP for this ADR** and write
      `${SIBLING_DIR}/ADR-DRAFT-<kebab-title>.md` (the placeholder
      format below). Do NOT guess; do NOT extrapolate.
-3. **Update the retrospective's Part 4 table** to point at whichever
+
+5. **Update the retrospective's Part 4 table** to point at whichever
    file got produced (full draft or placeholder). Do not edit Part 4's
    prose; only update the link target.
-4. **Print an inline summary** at the end of the reprocess run:
+
+6. **Print an inline summary** at the end of the reprocess run:
    - Number of retros processed.
-   - Number of skill specs renamed/ID'd.
-   - For each ADR: one line — full draft path OR placeholder path,
+   - Number of skill specs renamed and/or ID'd.
+   - Number of ADR drafts renamed.
+   - Number of `AGENTS-suggestions.md` files split and deleted, plus
+     the per-rule file count produced.
+   - For each ADR: one line — full draft path OR placeholder path.
    - The list of `ADR-DRAFT-…` placeholders that the user needs to
      return to original sessions for. **Surface this list prominently**
      — it is the primary actionable output for the user.
+
+### Per-rule agents file format (used by reprocess step 3 and forward Step 6)
+
+```markdown
+# AGENTS rule: <Rule name>
+
+- **ID**: AGENT-<hash>
+- **Source retrospective**: ../<retro-basename>.md
+
+> **<Rule name>.** "<verbatim rule body from the source — the
+> `### Proposed addition` blockquote in legacy
+> AGENTS-suggestions.md, or the body written in forward-mode Step 6>"
+>
+> *Grounded in: <one-phrase session-event reference>.*
+```
+
+No `##` section headers. No persuasion paragraph. The file is consumed
+by concatenation into the canonical `AGENTS.md`.
 
 ### Evidence pool
 
@@ -908,9 +1098,10 @@ MUST:
 
 1. Keep this hash on the `**ID**` metadata line. Do not recompute.
 2. Rename the file from `ADR-DRAFT-<kebab-title>.md` to
-   `<kebab-title>-ADR-<hash>.md` (sibling-dir form) — OR adopt it
-   directly into `docs/adr/NNNN-<kebab-title>.md` via the `adr` skill,
-   keeping `**ID**: ADR-<hash>` in the metadata.
+   `ADR-<hash>-<kebab-title>.md` (sibling-dir form, TYPE-HASH-NAME
+   ordering) — OR adopt it directly into
+   `docs/adr/NNNN-<kebab-title>.md` via the `adr` skill, keeping
+   `**ID**: ADR-<hash>` in the metadata.
 3. Update the retrospective's Part 4 link to point at the new filename.
 
 ## Source retrospective
@@ -981,15 +1172,32 @@ gaps. Be specific enough that the answer is one or two sentences.)
   recovered confidently, do not invent one. Write the placeholder.
 - **Regenerating the hash later.** The hash computed at reprocess time
   is the ID for the rest of the ADR's life. The completing agent must
-  preserve it byte-for-byte.
+  preserve it byte-for-byte. The same applies to hashes preserved
+  during the filename migrations in steps 1–3: copy the hash
+  byte-for-byte from the old filename / metadata into the new filename.
 - **Skipping retros that were already partially processed.** Always
-  re-check whether specs have `SKILL-SPEC-<hash>` IDs before assuming a
-  retro needs reprocess work. Idempotency is required — a second
-  reprocess run on an already-reprocessed retro must be a no-op.
-- **Editing the retrospective's narrative prose.** Reprocess only
-  touches the Part 4 link targets in the report and the spec metadata
-  in the sibling files. Part 1 narrative, Part 2 table contents, Part 3
-  pointer, and AGENTS-suggestions are left exactly as they were.
+  re-check the state of each artifact type before doing work: skill
+  specs already in `SKILL-SPEC-<hash>-<name>.md` form are skipped;
+  ADRs already in `ADR-<hash>-<name>.md` form are skipped; sibling
+  dirs that already contain per-rule `AGENT-<hash>-<name>.md` files
+  with no `AGENTS-suggestions.md` are skipped. Idempotency is required
+  — a second reprocess run on a fully-migrated retro must be a no-op.
+- **Editing the retrospective's narrative prose.** Reprocess touches
+  three specific things in the main report: (a) Part 2 link targets
+  (skill spec rename), (b) Part 3 — replaced with the expanded
+  agents-rules + persuasion layout when an `AGENTS-suggestions.md` is
+  split, and (c) Part 4 link targets (ADR rename + back-fill). Part 1
+  narrative, Part 2 row contents (skill names, IDs, priorities,
+  scopes), Part 4 row contents (titles, one-liners), and the metrics
+  table are left exactly as they were.
+- **Deleting `AGENTS-suggestions.md` without first relocating its
+  persuasion paragraphs into Part 3.** The persuasion is the
+  user-facing value of those paragraphs; losing them on the way to
+  per-rule files defeats half the point of the format. Always
+  rewrite Part 3 *before* the `git rm`.
+- **Re-introducing the old `<name>-TYPE-<hash>.md` order during
+  reprocess.** Both file renames in steps 1 and 2 produce
+  `TYPE-<hash>-<name>.md`. Do not invert them.
 - **Bulk-committing reprocessed retros without a final summary.** The
   user's main action item from a reprocess run is the
   `ADR-DRAFT-…` placeholder list. Surface it prominently.
@@ -1000,7 +1208,9 @@ Commit the reprocessed retros on the current branch:
 
 ```bash
 git add retrospective/
-git commit -m "Reprocess retros: <N> ADRs back-filled, <M> placeholders"
+# Use git rm for the deleted AGENTS-suggestions.md files (or rely on
+# `git add -A retrospective/` if the staged list is otherwise clean).
+git commit -m "Reprocess retros: <R> spec renames, <S> ADR renames, <A> AGENTS splits, <N> ADRs back-filled, <M> placeholders"
 ```
 
 In the chat reply, **list every `ADR-DRAFT-…` placeholder** with its

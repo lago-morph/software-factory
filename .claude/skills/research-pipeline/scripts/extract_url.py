@@ -10,6 +10,12 @@ Format-specific strategies (best-effort):
     .json   : look for top-level "url" or "canonical_url" key
     image/* : not supported (always returns None)
 
+Companion-file fallback (any format):
+    If format-specific extraction returns None, look for a sibling
+    `URL of <filename>.txt` and permissively scan it for any http(s) URL.
+    This is how we attach canonical URLs to files (typically PDFs) whose
+    own bytes carry no usable URL metadata.
+
 Returns None if no URL can be extracted (e.g. raw binary, image).
 
 CLI:
@@ -39,24 +45,60 @@ def extract_url(path: Path) -> str | None:
         return None
     suffix = path.suffix.lower()
 
+    primary: str | None = None
     if suffix in IMAGE_EXTS or suffix in VIDEO_EXTS or suffix in AUDIO_EXTS:
-        return None
+        primary = None
+    elif suffix == ".mhtml":
+        primary = _from_mhtml(path)
+    elif suffix in {".html", ".htm"}:
+        primary = _from_html(path)
+    elif suffix == ".pdf":
+        primary = _from_pdf(path)
+    elif suffix == ".txt":
+        primary = _from_text(path)
+    elif suffix == ".md":
+        primary = _from_markdown(path)
+    elif suffix == ".ipynb":
+        primary = _from_ipynb(path)
+    elif suffix == ".json":
+        primary = _from_json(path)
 
-    if suffix == ".mhtml":
-        return _from_mhtml(path)
-    if suffix in {".html", ".htm"}:
-        return _from_html(path)
-    if suffix == ".pdf":
-        return _from_pdf(path)
-    if suffix == ".txt":
-        return _from_text(path)
-    if suffix == ".md":
-        return _from_markdown(path)
-    if suffix == ".ipynb":
-        return _from_ipynb(path)
-    if suffix == ".json":
-        return _from_json(path)
-    return None
+    if primary is not None:
+        return primary
+    return _from_companion(path)
+
+
+def companion_path(target: Path) -> Path:
+    """Return the expected companion-URL file path for `target`.
+
+    Convention: a file named `URL of <target.name>.txt` sitting next to
+    the target carries the target's canonical URL when the target's own
+    bytes don't (typical for PDFs from publisher CDNs).
+    """
+    return target.parent / f"URL of {target.name}.txt"
+
+
+# Match a stand-alone http(s) URL anywhere in the file; tolerate the URL
+# being embedded in a sentence like "The URL for the PDF is https://...".
+COMPANION_URL_RE = re.compile(r"https?://\S+")
+
+
+def _from_companion(target: Path) -> str | None:
+    """If a sibling `URL of <target.name>.txt` exists, permissively
+    scan it for the first http(s) URL and return it.
+    """
+    comp = companion_path(target)
+    if not comp.exists() or not comp.is_file():
+        return None
+    try:
+        text = comp.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+    m = COMPANION_URL_RE.search(text)
+    if not m:
+        return None
+    # Trim trailing punctuation that's almost always sentence-glue, not URL.
+    return m.group(0).rstrip(".,;:)]\"'>")
 
 
 # -- MHTML --------------------------------------------------------------

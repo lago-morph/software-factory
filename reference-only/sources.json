@@ -320,6 +320,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "70f316e401504701389c4d62fde0369ccccdb694054d5ca64186d7df96334461"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "Custom instructions with AGENTS.md – Codex _ OpenAI Developers.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "d29eb4c89b363bc82784c9fe237a7d00075c0f3bd055fff5bfabb32e2f93c341"
       }
     ],
     "id": "175cba9347",
@@ -330,7 +337,7 @@
     "tags": [
       "openai-substrate"
     ],
-    "title": "(unknown)"
+    "title": "=?utf-8?Q?Custom=20instructions=20with=20AGENTS.md=20=E2=80=93=20Codex=20?="
   },
   "18856eb4cf": {
     "canonical_url": "https://hamel.dev/blog/posts/evals-faq",
@@ -353,6 +360,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "bac1a852625f1135625455604f48cb7893dfd7144068ed6f922523546ac9febe"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "LLM Evals_ Everything You Need to Know – Hamel’s Blog - Hamel Husain.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "03e88b32f457569c4610028fe1f41528a1fc9c560f4331fe07c16d065d43c491"
       }
     ],
     "id": "18856eb4cf",
@@ -733,6 +747,24 @@
     ],
     "title": "(unknown)"
   },
+  "26035151aa": {
+    "canonical_url": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+        "format": "pdf",
+        "ingestion_status": "have",
+        "sha256": "66cbcc06df9271e0bb59986582646f0c4c7c94697554f893f937a5a55cef736d"
+      }
+    ],
+    "id": "26035151aa",
+    "title": "The Complete Guide to Building Skills for Claude",
+    "tags": [
+      "anthropic-substrate",
+      "skills-composition"
+    ]
+  },
   "265e444ae9": {
     "canonical_url": "https://docs.tabnine.com/main/welcome/readme/architecture/deployment-options",
     "files": [
@@ -1054,6 +1086,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "6243e13ba8a762a0138e20143d8239b34d67f3fdc04f283f660e8cb3e858be96"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "You Don’t Write the Code. You Don’t Read the Code Either. – Dan Shapiro's Blog.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "b8c0ce09c31a089063ba2b337c4b952bf53c9d2e4f602e394577bcb42506d24a"
       }
     ],
     "id": "3703e782c0",
@@ -1064,7 +1103,7 @@
     "tags": [
       "dark-factory"
     ],
-    "title": "(unknown)"
+    "title": "=?utf-8?Q?You=20Don=E2=80=99t=20Write=20the=20Code.=20You=20Don=E2=80=99t?="
   },
   "375a9386eb": {
     "canonical_url": "https://sundaylettersfromsam.substack.com/p/what-is-a-harness-and-why-do-i-care",
@@ -1632,6 +1671,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "6b538d925045f8e7b141015d43a38dfeb181c942cf27615f7f59377b69ba1997"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "CaMeL offers a promising new direction for mitigating prompt injection attacks.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "e7782ae0a70ff1cc7017fce06c39471b47b0c9cf55ce23ed131b64612f0edcab"
       }
     ],
     "id": "53ed6e363d",
@@ -1915,6 +1961,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "e11fdcbe3e145aebe4aac28add2fe14d4f51f6097a4d21a8a5f63e4324ca2188"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "Replit — Introducing Agent 3_ Our Most Autonomous Agent Yet.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "a49282a2fcd84a9460bf5a05b7ed160949cdd1f07c5d446d96f992f9717999d4"
       }
     ],
     "id": "5cc5a296b6",
@@ -1925,7 +1978,7 @@
     "tags": [
       "other-vendor-substrate"
     ],
-    "title": "(unknown)"
+    "title": "=?utf-8?Q?Replit=20=E2=80=94=20Introducing=20Agent=203:=20Our=20Most=20Au?="
   },
   "5f4b04494f": {
     "canonical_url": "https://deepwiki.com/All-Hands-AI/OpenHands/11.3-cli-and-deployment-modes",
@@ -2179,6 +2232,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "eb8b13926dade09372ee521e655e1600a88ea04f3d83cd4d311b4a99eb1c7780"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "A Field Guide to Rapidly Improving AI Products – Hamel’s Blog - Hamel Husain.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "602f3e4ebea717cbf30f47de041f4c2945521343c1254f4ba57e93a6d800d5fd"
       }
     ],
     "id": "71d2de09c6",
@@ -2229,6 +2289,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "ad1704101d99bfa5e70cabfce4cd8e430cab33cc058c620dac70230b748be70c"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "Replit — Introducing Replit Agent 4_ Built for Creativity _ Blog.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "ac89f13cb9dea50fc3837f344c158796b09a946f0a32b42c46743740a70fdbe2"
       }
     ],
     "id": "73dc7199ce",
@@ -2239,7 +2306,7 @@
     "tags": [
       "other-vendor-substrate"
     ],
-    "title": "(unknown)"
+    "title": "=?utf-8?Q?Replit=20=E2=80=94=20Introducing=20Replit=20Agent=204:=20Built?="
   },
   "76447f23b5": {
     "canonical_url": "https://factory.strongdm.ai/techniques/semport",
@@ -2488,6 +2555,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "31f9819b004f4612123206b885dbd54590c869a3129d95ff564383459aff6b1e"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "Subagents – Codex _ OpenAI Developers.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "96b7ddb0d35a75a5ba9ae3db80e76d444a64a3a1b3260fdf91711ba4c4c83b65"
       }
     ],
     "id": "8334be0240",
@@ -2498,7 +2572,7 @@
     "tags": [
       "openai-substrate"
     ],
-    "title": "(unknown)"
+    "title": "=?utf-8?Q?Subagents=20=E2=80=93=20Codex=20|=20OpenAI=20Developers?="
   },
   "83fcd19c73": {
     "canonical_url": "https://www.8090.ai/docs/opinions/blueprint-writing-guide",
@@ -2720,6 +2794,23 @@
       "intent-driven-architecture"
     ],
     "title": "El Kaim Book — Chapter 1: The Limits of Traditional Enterprise Architecture"
+  },
+  "8cc1f9afc8": {
+    "canonical_url": "https://hamel.dev/",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Hamel Husain’s Blog – Hamel's Blog - Hamel Husain.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "53343ab8cb8ee7bc967ca89ad1694de41cc9c9af8eac8a09a50c96fc9e789d81"
+      }
+    ],
+    "id": "8cc1f9afc8",
+    "title": "Hamel Husain’s Blog",
+    "tags": [
+      "evals-and-benchmarks"
+    ]
   },
   "8e651f5fda": {
     "canonical_url": "https://docs.tabnine.com/main/getting-started/context-engine/admin-console/coaching",
@@ -2987,6 +3078,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "03b97ea208eb10e8a1049d85afd2cccf3429b9c22474c807709f0ddfc89f7099"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "The lethal trifecta for AI agents_ private data, untrusted content, and external communication.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "733819f1f41a434175483b6a4c56c586a1210897d19ac013abc123c4e3ba2f96"
       }
     ],
     "id": "9c9554d27e",
@@ -2997,7 +3095,7 @@
     "tags": [
       "willison-canon"
     ],
-    "title": "(unknown)"
+    "title": "The lethal trifecta for AI agents: private data, untrusted content, and external communication"
   },
   "9d696416cb": {
     "canonical_url": "https://platform.claude.com/docs/en/agent-skills/overview",
@@ -3280,6 +3378,13 @@
         "completeness": "unknown",
         "format": "html",
         "ingestion_status": "want"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "Evaluating the Effectiveness of LLM-Evaluators (aka LLM-as-Judge).mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "10551ebeec861b08e1e9d2282cd828646066c1048f28e8b15bf9be1cae1c9550"
       }
     ],
     "id": "ade5ef8d76",
@@ -3339,6 +3444,23 @@
       "evals-and-benchmarks"
     ],
     "title": "SWE-bench Verified"
+  },
+  "b0d89f5419": {
+    "canonical_url": "https://eugeneyan.com/writing/working-with-ai",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "How to Work and Compound with AI.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "a82d77335c191915bf2e3e1c37a7c12d530a81b5ddd2f96c6421b04f0986a6b6"
+      }
+    ],
+    "id": "b0d89f5419",
+    "title": "How to Work and Compound with AI",
+    "tags": [
+      "compound-engineering"
+    ]
   },
   "b1b49c4c3d": {
     "canonical_url": "https://github.com/anthropics/anthropic-cookbook/blob/main/skills/03_skills_custom_development.ipynb",
@@ -4037,6 +4159,13 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "486266dccb3715fd0b3fb5c04ba0850ac796b30ef02c62e2629320e663661e21"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "Agent approvals & security – Codex _ OpenAI Developers.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "211f3482631a1e8a4e5b21523cd52b7632086529b753032efe15265a2dcf8fe9"
       }
     ],
     "id": "dccefbfc62",
@@ -4047,7 +4176,7 @@
     "tags": [
       "openai-substrate"
     ],
-    "title": "(unknown)"
+    "title": "=?utf-8?Q?Agent=20approvals=20&=20security=20=E2=80=93=20Codex=20|=20Open?="
   },
   "e205ffac9d": {
     "canonical_url": "https://openai.com/index/unlocking-the-codex-harness",
@@ -4087,6 +4216,24 @@
       "other-vendor-substrate"
     ],
     "title": "Blueprints | Docs | 8090"
+  },
+  "e588b9bb1a": {
+    "canonical_url": "https://github.com/google-research/camel-prompt-injection",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "defeating prompt injections by design 2503.18813v2.pdf",
+        "format": "pdf",
+        "ingestion_status": "have",
+        "sha256": "c3719f6ce73eecf45e3764debef8a3d8ff8c9233b37d128c558b694ec3790cc7"
+      }
+    ],
+    "id": "e588b9bb1a",
+    "title": "Defeating Prompt Injections by Design (arXiv:2503.18813v2)",
+    "tags": [
+      "security-primitives",
+      "academic-foundations"
+    ]
   },
   "e6f77b9e81": {
     "canonical_url": "https://jayminwest.substack.com/p/a-manifesto-for-agentic-development",
@@ -4173,6 +4320,23 @@
       "other-vendor-substrate"
     ],
     "title": "strongdm/attractorbench: NLSpec instruction following benchmark"
+  },
+  "eb69cbdcba": {
+    "canonical_url": "https://eugeneyan.com/writing",
+    "files": [
+      {
+        "completeness": "unknown",
+        "filename": "Writing • Eugene Yan.mhtml",
+        "format": "mhtml",
+        "ingestion_status": "have",
+        "sha256": "24b3ad381a343c0c1d1cf12db793809fbacde3c443461336ff9d8d1050984a65"
+      }
+    ],
+    "id": "eb69cbdcba",
+    "title": "Writing • Eugene Yan",
+    "tags": [
+      "evals-and-benchmarks"
+    ]
   },
   "ebc17186b3": {
     "canonical_url": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent",

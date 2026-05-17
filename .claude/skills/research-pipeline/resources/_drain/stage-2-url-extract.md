@@ -23,6 +23,21 @@ Format-specific strategies built in:
 | `.json` | Top-level `canonical_url` or `url` field |
 | image/* | Always returns None (use directory placement instead) |
 
+## Companion-URL files
+
+If format-specific extraction fails, the extractor looks for a sibling
+file named `URL of <target.name>.txt` and permissively scans it for any
+`https?://` URL. Use this whenever the target file (typically a PDF
+from a publisher CDN) carries no usable URL metadata of its own. The
+companion file's content is freeform — a bare URL on one line, or a
+sentence like `The URL for the PDF is https://...`, both work.
+
+The drain pairs companions with their targets in stage 1 and removes
+the companion (`git rm`) after the target is successfully ingested.
+Companions whose target is missing — or whose target itself fails to
+ingest — stay in place and are surfaced as an orphan warning in the
+drain summary.
+
 ## Hard rule
 
 **If URL extraction fails for a file in an ingestion drop directory:** the file is flagged as an error and **stays where it is**. The drain does not invent a URL or guess. The file does NOT enter the catalog.

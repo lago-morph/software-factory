@@ -3,7 +3,7 @@
 from pathlib import Path
 import pytest
 
-from extract_url import extract_url
+from extract_url import companion_path, extract_url
 
 
 @pytest.fixture
@@ -135,6 +135,45 @@ class TestUnsupportedFormats:
 
     def test_missing_file_returns_none(self, tmp_path):
         assert extract_url(tmp_path / "nope.html") is None
+
+
+class TestCompanionFile:
+    def test_companion_path_construction(self, tmp_path):
+        target = tmp_path / "Foo.pdf"
+        assert companion_path(target).name == "URL of Foo.pdf.txt"
+        assert companion_path(target).parent == tmp_path
+
+    def test_pdf_with_companion_freeform_sentence(self, tmp_path):
+        pdf = tmp_path / "guide.pdf"
+        pdf.write_bytes(b"%PDF-1.4 fake content no url metadata")
+        (tmp_path / "URL of guide.pdf.txt").write_text(
+            "The URL for the PDF is https://example.com/hub/guide.pdf\n"
+        )
+        assert extract_url(pdf) == "https://example.com/hub/guide.pdf"
+
+    def test_companion_trims_trailing_punctuation(self, tmp_path):
+        pdf = tmp_path / "g.pdf"
+        pdf.write_bytes(b"%PDF nothing here")
+        (tmp_path / "URL of g.pdf.txt").write_text("See https://example.com/x.")
+        assert extract_url(pdf) == "https://example.com/x"
+
+    def test_primary_extraction_wins_over_companion(self, write, tmp_path):
+        # HTML has its own canonical URL; companion should be ignored.
+        html = '<head><link rel="canonical" href="https://primary.example/"></head>'
+        page = write("page.html", html)
+        (tmp_path / "URL of page.html.txt").write_text("https://wrong.example/")
+        assert extract_url(page) == "https://primary.example/"
+
+    def test_no_companion_returns_none(self, tmp_path):
+        pdf = tmp_path / "alone.pdf"
+        pdf.write_bytes(b"%PDF without url")
+        assert extract_url(pdf) is None
+
+    def test_empty_companion_returns_none(self, tmp_path):
+        pdf = tmp_path / "empty.pdf"
+        pdf.write_bytes(b"%PDF")
+        (tmp_path / "URL of empty.pdf.txt").write_text("no link here just prose\n")
+        assert extract_url(pdf) is None
 
 
 class TestJson:

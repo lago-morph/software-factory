@@ -38,14 +38,16 @@ For each file entry marked `(image — pending summary)`:
    jq --arg id "$ID" --arg fname "$FNAME" --arg s "$SUMMARY" \
       '.[$id].files |= map(if .filename == $fname then .comment = $s else . end)' "$F" \
       > /tmp/new.json && \
-   jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+   mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
    ```
 
 4. **Decide if the diagrams add information** — if yes and the record's `has_useful_diagrams` is `"unknown"` or `"no"`, update it:
    ```bash
    jq --arg id "$ID" '.[$id].has_useful_diagrams = "yes"' "$F" \
       > /tmp/new.json && \
-   jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+   mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
    ```
 
    "Useful" = informationally distinct from the text. A header banner is not useful. An architecture diagram is.

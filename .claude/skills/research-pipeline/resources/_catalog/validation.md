@@ -120,7 +120,8 @@ cat reference-only/<id>/<filename> | head -50
 ```bash
 # Edit
 jq '<transform>' "$F" > /tmp/new.json
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 
 # Lint
 bash .claude/skills/research-pipeline/scripts/lint-sources.sh

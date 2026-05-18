@@ -60,7 +60,8 @@ jq --arg id "$ID" --arg url "$VIDEO_URL" '
     "youtube_url": $url
   }])
 ' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ## Delivering the transcript (user)

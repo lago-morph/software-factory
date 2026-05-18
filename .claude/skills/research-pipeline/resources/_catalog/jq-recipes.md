@@ -73,21 +73,24 @@ jq 'to_entries | map(select(.value.has_useful_diagrams == "yes")) | map(.value.t
 ```bash
 jq --arg id "0a7f3b8e00" --arg new "New short summary text" \
    '.[$id].short_summary = $new' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Add a tag to a record (idempotent)
 ```bash
 jq --arg id "0a7f3b8e00" --arg tag "evals" \
    '.[$id].tags = ((.[$id].tags // []) + [$tag] | unique)' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Remove a tag
 ```bash
 jq --arg id "0a7f3b8e00" --arg tag "old-tag" \
    '.[$id].tags |= map(select(. != $tag))' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Add a new file entry to an existing record
@@ -99,7 +102,8 @@ jq --arg id "0a7f3b8e00" --argjson f '{
   "completeness": "complete",
   "sha256": "abcdef..."
 }' '.[$id].files += [$f]' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Mark a file's status (e.g. flip want → have)
@@ -107,7 +111,8 @@ jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
 jq --arg id "0a7f3b8e00" --arg fname "main.pdf" \
    '.[$id].files |= map(if .filename == $fname then .ingestion_status = "have" | .completeness = "complete" else . end)' \
    "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Create a new record from scratch
@@ -120,14 +125,16 @@ CANONICAL=$(python .claude/skills/research-pipeline/scripts/url_canonicalize.py 
 # Then add the record
 jq --arg id "$ID" --arg url "$CANONICAL" --arg title "Title Of Source" \
    '. + {($id): {id: $id, canonical_url: $url, title: $title, files: []}}' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Mark a record as superseded (pointer_to another)
 ```bash
 jq --arg old "0a7f3b8e00" --arg new "1b2c3d4e00" \
    '.[$old].pointer_to = $new' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Bulk: add `references_from` entries derived from a grep
@@ -144,7 +151,8 @@ for URL in $URLS; do
   fi
 done
 # Final sort:
-jq -S 'to_entries | sort_by(.key) | from_entries' "$F" > /tmp/new.json && mv /tmp/new.json "$F"
+mv "$F" /tmp/new.json
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh /tmp/new.json && mv /tmp/new.json "$F"
 ```
 
 ## Normalization & sort discipline
@@ -152,7 +160,8 @@ jq -S 'to_entries | sort_by(.key) | from_entries' "$F" > /tmp/new.json && mv /tm
 After ANY edit:
 
 ```bash
-jq -S 'to_entries | sort_by(.key) | from_entries' "$F" > /tmp/normalized.json && \
+mv "$F" /tmp/normalized.json
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh /tmp/normalized.json && \
 mv /tmp/normalized.json "$F"
 ```
 
@@ -195,7 +204,8 @@ F=reference-only/sources.json
 jq '...your transform...' "$F" > /tmp/new.json
 
 # 2. Normalize
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > /tmp/normalized.json
+mv /tmp/new.json /tmp/normalized.json
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh /tmp/normalized.json
 
 # 3. Replace atomically
 mv /tmp/normalized.json "$F"

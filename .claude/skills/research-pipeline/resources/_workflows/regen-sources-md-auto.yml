@@ -31,10 +31,8 @@ jobs:
       - name: Validate schema + structure
         run: python __SKILL_PATH__/scripts/validate-sources.py
       - name: Normalize sources.json
-        run: |
-          jq -S 'to_entries | sort_by(.key) | from_entries' \
-            reference-only/sources.json > /tmp/normalized.json
-          mv /tmp/normalized.json reference-only/sources.json
+        # Canonical normalizer — same script drain.py + hand-jq edits use.
+        run: bash __SKILL_PATH__/scripts/normalize-sources-json.sh reference-only/sources.json
       - name: Render markdown
         run: bash __SKILL_PATH__/scripts/render-sources-md.sh > reference-only/sources.md
       - name: Commit if changed

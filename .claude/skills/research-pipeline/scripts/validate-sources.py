@@ -87,7 +87,8 @@ def main() -> int:
     if keys != sorted(keys):
         warnings.append(
             "Top-level keys are not sorted alphabetically. "
-            "Run: jq -S 'to_entries | sort_by(.key) | from_entries' to fix."
+            "Run: bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "
+            "reference-only/sources.json to fix."
         )
 
     # 3. Per-record structural checks

@@ -36,7 +36,8 @@ For each record that has new content to process (i.e., files added in this drain
    jq --arg id "$ID" --arg r "$REPORT" \
       '.[$id].references_from = ((.[$id].references_from // []) + [$r] | unique)' "$F" \
       > /tmp/new.json && \
-   jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+   mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
    ```
 
 7. **If the source's content is now fully captured** (the report covers what's worth quoting), update the file's `completeness`:
@@ -44,7 +45,8 @@ For each record that has new content to process (i.e., files added in this drain
    jq --arg id "$ID" --arg fname "$PRIMARY" \
       '.[$id].files |= map(if .filename == $fname then .completeness = "complete" else . end)' \
       "$F" > /tmp/new.json && \
-   jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+   mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
    ```
 
 ## Image content

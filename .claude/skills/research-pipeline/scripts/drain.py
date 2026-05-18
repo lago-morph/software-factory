@@ -845,11 +845,27 @@ def stage_4b_audit(result: DrainResult, mode: str) -> None:
 
 
 def normalize_and_write(data: dict, data_p: Path):
-    """Sort keys + sort records + pretty print + write atomically."""
-    sorted_data = {k: data[k] for k in sorted(data.keys())}
+    """Write `data` to `data_p` in the canonical normalized shape.
+
+    This output MUST be byte-identical to what
+    ``scripts/normalize-sources-json.sh`` produces on the same data
+    (which runs ``jq -S '.'`` on the file). Both forms are the single
+    source of truth for "normalized sources.json" — the workflow,
+    drain.py, and any hand-jq edits all converge on the same bytes.
+
+    Canonical shape:
+      - All object keys sorted alphabetically at every level
+        (``sort_keys=True`` matches jq's ``-S``).
+      - 2-space indent (matches jq default).
+      - UTF-8 preserved (``ensure_ascii=False`` matches jq default).
+      - Arrays preserve their existing element order.
+      - Trailing newline.
+
+    Verified by ``tests/unit/test_normalize_sources.py``.
+    """
     tmp = data_p.with_suffix(".json.tmp")
     tmp.write_text(
-        json.dumps(sorted_data, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
+        json.dumps(data, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     tmp.replace(data_p)

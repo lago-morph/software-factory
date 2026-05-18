@@ -62,7 +62,8 @@ jq --arg id "$ID" --arg url "$CANONICAL" --arg title "$TITLE" \
     }]
   }}
 ' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### B. Existing record (id already in catalog)
@@ -88,7 +89,8 @@ jq --arg id "$ID" --argjson f "{
   \"ingestion_status\": \"have\",
   \"completeness\": \"unknown\"
 }" '.[$id].files += [$f]' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### C. Reconciliation (orphan files in existing `<id>/` dirs)
@@ -119,7 +121,8 @@ jq_filter='.'
 
 # Apply once
 jq "$jq_filter" "$F" > /tmp/new.json
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 Reduces the number of normalize passes and keeps the git diff coherent.

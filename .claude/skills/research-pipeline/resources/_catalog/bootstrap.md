@@ -64,7 +64,8 @@ PR #80 specifically handles the one-time migration of the existing `source-dedup
 
 ```bash
 # Normalize key ordering
-jq -S 'to_entries | sort_by(.key) | from_entries' reference-only/sources.json > /tmp/n.json
+mv reference-only/sources.json /tmp/n.json
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh /tmp/n.json
 mv /tmp/n.json reference-only/sources.json
 
 # Lint

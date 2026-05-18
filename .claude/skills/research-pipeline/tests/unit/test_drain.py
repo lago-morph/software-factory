@@ -23,6 +23,7 @@ SCRIPT_FILES = [
     "check-source-refs.py", "check-source-dirs.py",
     "check-fetch-provenance.py", "sanity-check-record.py",
     "audit-records.py", "lint-sources.sh", "drain.py", "youtube_urls.py",
+    "update_plan.py",
 ]
 
 
@@ -242,6 +243,185 @@ class TestDrainDryRun:
         # sources.json should still be empty
         data = json.loads((repo / "reference-only" / "sources.json").read_text())
         assert data == {}
+
+
+class TestDrainSkipsReadme:
+    def test_readme_md_in_drop_dir_is_silently_skipped(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        readme = repo / "research" / "manual" / "README.md"
+        readme.write_text("# About this directory\n\nNo URLs here.")
+        subprocess.run(["git", "add", str(readme)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--no-plan-update")
+        assert result.returncode == 0, result.stderr
+        # README should still exist (not deleted, not flagged)
+        assert readme.exists()
+        # Drain output should not list it as flagged
+        assert "README.md" not in result.stdout
+
+    def test_other_skip_filenames_also_ignored(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        for name in ("AGENTS.md", "NOTES.md", "claude.md"):
+            (repo / "research" / "manual" / name).write_text("placeholder")
+        subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--no-plan-update")
+        assert result.returncode == 0, result.stderr
+        for name in ("AGENTS.md", "NOTES.md", "claude.md"):
+            assert (repo / "research" / "manual" / name).exists()
+
+
+class TestDrainWantPromotion:
+    def _existing_record_with_want(self, repo: Path) -> str:
+        from url_canonicalize import canonicalize_and_id
+        canon, rid = canonicalize_and_id("https://example.com/article")
+        write_sources_json(repo, {
+            rid: {
+                "id": rid,
+                "canonical_url": canon,
+                "title": "Article",
+                "files": [
+                    {"format": "html", "filename": None, "ingestion_status": "want"},
+                ],
+            },
+        })
+        return rid
+
+    def test_mhtml_attach_clears_html_want(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        rid = self._existing_record_with_want(repo)
+        mhtml = repo / "research" / "manual" / "article.mhtml"
+        mhtml.write_text(
+            "From: <Saved by Blink>\n"
+            "Snapshot-Content-Location: https://example.com/article\n"
+            "MIME-Version: 1.0\n\nbody\n"
+        )
+        subprocess.run(["git", "add", str(mhtml)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--no-plan-update")
+        assert result.returncode == 0, result.stderr
+        data = json.loads((repo / "reference-only" / "sources.json").read_text())
+        files = data[rid]["files"]
+        wants = [f for f in files if f.get("ingestion_status") == "want"]
+        assert not wants, f"want entries should be cleared, got: {wants}"
+        haves = [f for f in files if f.get("ingestion_status") == "have"]
+        assert any(f.get("format") == "mhtml" for f in haves)
+
+    def test_tidy_wants_sweep(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        from url_canonicalize import canonicalize_and_id
+        canon, rid = canonicalize_and_id("https://example.com/article.pdf")
+        write_sources_json(repo, {
+            rid: {
+                "id": rid,
+                "canonical_url": canon,
+                "title": "Paper",
+                "files": [
+                    {"format": "pdf", "filename": None, "ingestion_status": "want"},
+                    {"format": "pdf", "filename": "paper.pdf",
+                     "sha256": "deadbeef" * 8, "ingestion_status": "have"},
+                ],
+            },
+        })
+        result = _run_drain(repo, "--tidy-wants")
+        assert result.returncode == 0, result.stderr
+        data = json.loads((repo / "reference-only" / "sources.json").read_text())
+        files = data[rid]["files"]
+        assert not any(f.get("ingestion_status") == "want" for f in files)
+
+    def test_youtube_transcript_want_is_preserved(self, tmp_path):
+        # A want entry carrying a youtube_url is a transcript want and MUST
+        # NOT be cleared by the generic-want purge.
+        repo = _setup_repo(tmp_path)
+        from url_canonicalize import canonicalize_and_id
+        canon, rid = canonicalize_and_id("https://example.com/post")
+        write_sources_json(repo, {
+            rid: {
+                "id": rid,
+                "canonical_url": canon,
+                "title": "Post",
+                "files": [
+                    {"format": "youtube-transcript", "filename": None,
+                     "ingestion_status": "want",
+                     "youtube_url": "https://youtu.be/abc123"},
+                ],
+            },
+        })
+        mhtml = repo / "research" / "manual" / "post.mhtml"
+        mhtml.write_text(
+            "From: <Saved by Blink>\n"
+            "Snapshot-Content-Location: https://example.com/post\n"
+            "MIME-Version: 1.0\n\nbody\n"
+        )
+        subprocess.run(["git", "add", str(mhtml)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--no-plan-update")
+        assert result.returncode == 0, result.stderr
+        data = json.loads((repo / "reference-only" / "sources.json").read_text())
+        files = data[rid]["files"]
+        transcript_wants = [
+            f for f in files
+            if f.get("ingestion_status") == "want" and f.get("youtube_url")
+        ]
+        assert len(transcript_wants) == 1
+
+
+class TestDrainPlanAutoUpdate:
+    def _setup_plan(self, repo: Path) -> Path:
+        plan = repo / "research" / "PLAN.md"
+        plan.parent.mkdir(parents=True, exist_ok=True)
+        plan.write_text(
+            "# Research PLAN\n\n"
+            "**Version:** v0.1 (2026-01-01)\n\n"
+            "## 1. Current state (TL;DR)\n\n"
+            "- **Session 2026-01-01 — initial** — bootstrap.\n\n"
+            "**Open items live in:**\n- §2\n\n"
+            "## 2. Other\n\nstuff\n\n"
+            "## 10. Round-by-round canonical reports (lookup table)\n\n"
+            "| Round | Topic | Status | Notes |\n"
+            "|---|---|---|---|\n"
+            "| 1 | bootstrap | ✅ | initial |\n\n"
+            "## 11. Archive\n\nstuff\n"
+        )
+        return plan
+
+    def test_drain_auto_appends_plan_entry(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        self._setup_plan(repo)
+        f = repo / "research" / "manual" / "auto.html"
+        f.write_text(
+            '<html><head><link rel="canonical" href="https://example.com/auto">'
+            '<title>Auto Post</title></head><body>x</body></html>'
+        )
+        subprocess.run(["git", "add", str(f)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint")
+        assert result.returncode == 0, result.stderr
+        plan_text = (repo / "research" / "PLAN.md").read_text()
+        # New session bullet should mention Round-2
+        assert "Round-2" in plan_text
+        # §10 should have a row for round 2
+        assert "| 2 |" in plan_text
+        # Version bumped from v0.1 to v0.2
+        assert "**Version:** v0.2" in plan_text
+
+    def test_no_plan_update_flag(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        plan_path = self._setup_plan(repo)
+        original = plan_path.read_text()
+        f = repo / "research" / "manual" / "auto.html"
+        f.write_text(
+            '<html><head><link rel="canonical" href="https://example.com/auto">'
+            '<title>Auto Post</title></head><body>x</body></html>'
+        )
+        subprocess.run(["git", "add", str(f)], cwd=repo, check=True)
+        result = _run_drain(repo, "--no-lint", "--no-plan-update")
+        assert result.returncode == 0, result.stderr
+        assert plan_path.read_text() == original
+
+    def test_no_material_change_skips_plan_update(self, tmp_path):
+        repo = _setup_repo(tmp_path)
+        plan_path = self._setup_plan(repo)
+        original = plan_path.read_text()
+        # Empty drain (no files dropped)
+        result = _run_drain(repo, "--no-lint")
+        assert result.returncode == 0, result.stderr
+        assert plan_path.read_text() == original
 
 
 class TestDrainImageInDrop:

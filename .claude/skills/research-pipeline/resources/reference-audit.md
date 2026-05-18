@@ -66,7 +66,8 @@ STALE_REPORT="research/05-simon-willison.md"
 
 jq --arg id "$ID" --arg r "$STALE_REPORT" \
    '.[$id].references_from |= map(select(. != $r))' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### "report cites this URL but it's not in references_from"
@@ -81,7 +82,8 @@ NEW_REPORT="research/29-prompt-engineering-survey.md"
 jq --arg id "$ID" --arg r "$NEW_REPORT" \
    '.[$id].references_from = ((.[$id].references_from // []) + [$r] | unique)' "$F" \
    > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 The drain pipeline (PR #81) will auto-populate `references_from` for every record after each report is written. Until then, hand-update.

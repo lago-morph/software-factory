@@ -35,6 +35,8 @@ from _config import data_path, library_path, ConfigError  # noqa: E402
 from extract_url import extract_url  # noqa: E402
 from url_canonicalize import canonicalize_url  # noqa: E402
 from youtube_urls import first_line_youtube_url  # noqa: E402
+# Reuse drain.py's format-final rule + want-purge helper.
+from drain import _purge_satisfied_wants  # noqa: E402
 
 ID_RE = re.compile(r"^[0-9a-f]{10}$")
 
@@ -177,6 +179,16 @@ def reconcile_one(record_id: str, data: dict, lib: Path, dry_run: bool) -> tuple
 
         existing_files.append(entry)
         n_added += 1
+        # Clear any generic `want` placeholders now satisfied by the new
+        # attachment (format-final OR same-format-have already on record).
+        purged = _purge_satisfied_wants(existing_files, record.get("canonical_url", ""))
+        if purged:
+            msg = f"cleared {purged} stale `want` entr{'y' if purged == 1 else 'ies'}"
+            warnings.append(f"{record_id}: {msg}")
+            if dry_run:
+                print(f"  ↪ would clear: {msg}")
+            else:
+                print(f"  ↪ cleared:     {msg}")
         if dry_run:
             print(f"  + would add: {record_id}/{f.name}  [{fmt}]")
         else:

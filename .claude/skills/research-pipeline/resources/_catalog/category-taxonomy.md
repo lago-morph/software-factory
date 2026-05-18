@@ -85,7 +85,8 @@ When automation gets it wrong (most often: a hybrid source that legitimately spa
 F=reference-only/sources.json
 jq --arg id "0a7f3b8e00" --arg tag "compound-engineering" \
    '.[$id].tags = ((.[$id].tags // []) + [$tag] | unique)' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ## What if a record genuinely fits none of the 15?

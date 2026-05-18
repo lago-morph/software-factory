@@ -304,11 +304,6 @@
     "files": [
       {
         "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
-      {
-        "completeness": "unknown",
         "filename": "77457a7169_developers.openai.com__codex__guides__agents-md.html",
         "format": "html",
         "ingestion_status": "have",
@@ -342,11 +337,6 @@
   "18856eb4cf": {
     "canonical_url": "https://hamel.dev/blog/posts/evals-faq",
     "files": [
-      {
-        "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
       {
         "completeness": "unknown",
         "filename": "b8fcb74562_hamel.dev__blog__posts__evals-faq.html",
@@ -695,11 +685,6 @@
     "files": [
       {
         "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
-      {
-        "completeness": "unknown",
         "filename": "91a944142c_arxiv.org__abs__2503.18813.html",
         "format": "html",
         "ingestion_status": "have",
@@ -735,6 +720,13 @@
         "format": "other",
         "ingestion_status": "have",
         "sha256": "d47e51d4a23a749707b49cb72397abce89f2ca1a5893cfe3e152ba67bae74dc9"
+      },
+      {
+        "completeness": "unknown",
+        "filename": "defeating prompt injections by design 2503.18813v2.pdf",
+        "format": "pdf",
+        "ingestion_status": "have",
+        "sha256": "c3719f6ce73eecf45e3764debef8a3d8ff8c9233b37d128c558b694ec3790cc7"
       }
     ],
     "id": "24ca29ee98",
@@ -745,7 +737,7 @@
       "academic-foundations",
       "security-primitives"
     ],
-    "title": "(unknown)"
+    "title": "Defeating Prompt Injections by Design"
   },
   "26035151aa": {
     "canonical_url": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
@@ -1068,11 +1060,6 @@
   "3703e782c0": {
     "canonical_url": "https://www.danshapiro.com/blog/2026/02/you-dont-write-the-code",
     "files": [
-      {
-        "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
       {
         "completeness": "unknown",
         "filename": "171372634d_www.danshapiro.com__blog__2026__02__you-dont-write-the-code.html",
@@ -1655,11 +1642,6 @@
     "files": [
       {
         "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
-      {
-        "completeness": "unknown",
         "filename": "2ab9a1ab38_simonwillison.net__2025__Apr__11__camel.html",
         "format": "html",
         "ingestion_status": "have",
@@ -1859,12 +1841,6 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "9348d93395d0beffaf1457bcd217b280ca2ce7852ad31c444726cc2b7ff3f292"
-      },
-      {
-        "comment": "Refetch — current capture is a JS-rendered shell",
-        "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
       }
     ],
     "id": "5a9f63821f",
@@ -1943,11 +1919,6 @@
   "5cc5a296b6": {
     "canonical_url": "https://blog.replit.com/introducing-agent-3-our-most-autonomous-agent-yet",
     "files": [
-      {
-        "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
       {
         "completeness": "unknown",
         "filename": "e1dffb38b4_blog.replit.com__introducing-agent-3-our-most-autonomous-agent-yet.html",
@@ -2216,11 +2187,6 @@
     "files": [
       {
         "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
-      {
-        "completeness": "unknown",
         "filename": "307762ff25_hamel.dev__blog__posts__field-guide.html",
         "format": "html",
         "ingestion_status": "have",
@@ -2271,11 +2237,6 @@
   "73dc7199ce": {
     "canonical_url": "https://blog.replit.com/introducing-agent-4-built-for-creativity",
     "files": [
-      {
-        "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
       {
         "completeness": "unknown",
         "filename": "ff906146e8_blog.replit.com__introducing-agent-4-built-for-creativity.html",
@@ -2537,11 +2498,6 @@
   "8334be0240": {
     "canonical_url": "https://developers.openai.com/codex/subagents",
     "files": [
-      {
-        "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
       {
         "completeness": "unknown",
         "filename": "d179e7b09d_developers.openai.com__codex__subagents.html",
@@ -3062,11 +3018,6 @@
     "files": [
       {
         "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
-      {
-        "completeness": "unknown",
         "filename": "65eac5afb6_simonwillison.net__2025__Jun__16__the-lethal-trifecta.html",
         "format": "html",
         "ingestion_status": "have",
@@ -3373,12 +3324,6 @@
   "ade5ef8d76": {
     "canonical_url": "https://eugeneyan.com/writing/llm-evaluators",
     "files": [
-      {
-        "comment": "Correct URL is plural 'evaluators'; original record had singular which 404'd",
-        "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
       {
         "completeness": "unknown",
         "filename": "Evaluating the Effectiveness of LLM-Evaluators (aka LLM-as-Judge).mhtml",
@@ -4143,11 +4088,6 @@
     "files": [
       {
         "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
-      },
-      {
-        "completeness": "unknown",
         "filename": "ed3b262d33_developers.openai.com__codex__agent-approvals-security.html",
         "format": "html",
         "ingestion_status": "have",
@@ -4219,16 +4159,9 @@
   },
   "e588b9bb1a": {
     "canonical_url": "https://github.com/google-research/camel-prompt-injection",
-    "files": [
-      {
-        "completeness": "unknown",
-        "filename": "defeating prompt injections by design 2503.18813v2.pdf",
-        "format": "pdf",
-        "ingestion_status": "have",
-        "sha256": "c3719f6ce73eecf45e3764debef8a3d8ff8c9233b37d128c558b694ec3790cc7"
-      }
-    ],
+    "files": [],
     "id": "e588b9bb1a",
+    "pointer_to": "24ca29ee98",
     "tags": [
       "security-primitives",
       "academic-foundations"
@@ -4583,12 +4516,6 @@
         "format": "txt",
         "ingestion_status": "have",
         "sha256": "b54cb893022881f9b1a5c5021105fb1e71bafcb5a1ee3fe06f2f6a2e35560208"
-      },
-      {
-        "comment": "Refetch — only partial transcript currently",
-        "completeness": "unknown",
-        "format": "html",
-        "ingestion_status": "want"
       },
       {
         "completeness": "unknown",

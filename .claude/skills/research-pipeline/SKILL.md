@@ -18,6 +18,7 @@ library_path: reference-only
 schema_path:  reference-only/sources.schema.json
 data_path:    reference-only/sources.json
 md_path:      reference-only/sources.md
+plan_path:    research/PLAN.md
 trigger_path: reference-only/.regen-trigger
 report_paths:
   - research
@@ -103,6 +104,8 @@ This same `--check` runs as a hard gate in CI for skill modifications (see `test
 | Tag a record with one of the 15 canonical categories | `resources/_catalog/category-taxonomy.md` |
 | Run the post-ingestion audit on specific records | `resources/_catalog/audit.md` |
 | Run the drain pipeline (process `research/manual/` or `research/fetched/`) | `resources/_drain/workflow-overview.md` |
+| Update `research/PLAN.md` after a drain or catalog mutation | `resources/_plan/update-discipline.md` |
+| Audit `research/PLAN.md` for consistency with catalog + recent git history | `resources/_plan/audit.md` |
 | Handle a YouTube video found embedded in an ingested document | `resources/_drain/youtube-transcripts.md` |
 | Write a new research report or extend one | `resources/_drain/stage-5-content-processing.md` |
 | Modify any script under `scripts/` | `resources/testing.md` |
@@ -115,7 +118,7 @@ Each resource doc is self-contained for its task. Loading two or three is normal
 ## Hard rules (always apply)
 
 1. **Never edit `sources.json` with `Edit` or `Write` directly.** All changes go through `jq` transformations piped to a temp file then `mv`-replaced. See `resources/_catalog/edit.md` for the safe patterns.
-2. **Always re-normalize after editing.** `jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > reference-only/sources.json`. Sort keys, sort by id, pretty-print. This keeps diffs minimal.
+2. **Always re-normalize after editing.** Hand-jq edits MUST end with `bash scripts/normalize-sources-json.sh reference-only/sources.json`. That script runs `jq -S '.'` in place atomically and is the **single source of truth** for what a normalized `sources.json` looks like on disk — every record's keys sorted alphabetically at every level, 2-space indent, UTF-8 preserved, trailing newline. `drain.py`'s `normalize_and_write` produces byte-identical output (verified in `tests/unit/test_normalize_sources.py`). The auto-regen workflow uses the same script. Never write a different normalization invocation inline — drift between tools is exactly what this rule prevents.
 3. **Always run `bash scripts/lint-sources.sh` before staging.** It runs schema validation + reference audit + filesystem audit + fetch-provenance audit + record sanity checks. Fix all errors before committing.
 4. **Record IDs are derived, not invented.** ID = `sha256(canonical_url)[:10]` after canonicalization (see `resources/_catalog/schema-reference.md`). Use `python scripts/url_canonicalize.py <url>` to compute.
 5. **Never delete a record.** To retire one, set its `pointer_to` field to its replacement record's id. Deletion would break references from reports and pointers from other records.
@@ -123,6 +126,7 @@ Each resource doc is self-contained for its task. Loading two or three is normal
 7. **A file with no extractable URL is fine IF it's in a known `<id>/` directory.** Directory placement substitutes for URL extraction. Files in ingestion drop directories WITHOUT a URL ARE flagged.
 8. **The `.regen-trigger` file is for debugging.** Normal operation uses the auto-regen workflow that fires on `sources.json` changes on `main`. The trigger file is the manual escape hatch when something goes wrong.
 9. **Audit findings are a forward-thinking signal.** When `scripts/audit-records.py` flags an issue on a record drain just touched, either fix the record OR extend `drain.py` so the next ingestion produces records that satisfy the check. Don't bypass the audit; that defeats the loop. See `resources/_catalog/audit.md`.
+10. **Every catalog mutation gets reflected in `research/PLAN.md` in the same commit.** Drain runs, manual additions, `pointer_to` retirements, title/tag fix-ups — anything that changes `reference-only/sources.json` or the file tree under it. The minimum acceptable footprint is a new `**Session YYYY-MM-DD — ...**` bullet under §1; bigger work (a new drain round) also gets a `**Version:**` bump and a §10 lookup-table row. See `resources/_plan/update-discipline.md` for the templates. `bash scripts/lint-sources.sh` includes `check-plan-consistency.py` as an advisory warning; `--strict` (CI) elevates it to a hard fail.
 
 ## Phase 0 — inventory pending work (run on every invocation)
 

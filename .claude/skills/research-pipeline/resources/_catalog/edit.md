@@ -21,7 +21,8 @@ F=reference-only/sources.json
 jq '<your transform>' "$F" > /tmp/new.json
 
 # 2. Normalize keys + ordering
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > /tmp/normalized.json
+mv /tmp/new.json /tmp/normalized.json
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh /tmp/normalized.json
 
 # 3. Atomic replace
 mv /tmp/normalized.json "$F"
@@ -53,7 +54,8 @@ read CANON ID <<< $(python .claude/skills/research-pipeline/scripts/url_canonica
 jq --arg id "$ID" --arg url "$CANON" \
    '. + {($id): {id: $id, canonical_url: $url, title: "(unknown)", files: []}}' \
    "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Case 2: You have a URL and a downloaded file
@@ -89,7 +91,8 @@ jq --arg id "$ID" --arg url "$CANON" --arg fname "$FNAME" --arg sha "$SHA" '
     }]
   }}
 ' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 Then run `python scripts/sanity-check-record.py $ID` to verify content consistency.
@@ -113,7 +116,8 @@ jq --arg id "$PLACEHOLDER_ID" --arg title "$TITLE" '
     ]
   }}
 ' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 When you eventually find a URL, **create a new record with the real id** (sha256 of URL) and set the placeholder's `pointer_to` to point at the new record. Don't try to mutate the id of the placeholder.
@@ -124,7 +128,8 @@ When you eventually find a URL, **create a new record with the real id** (sha256
 ```bash
 jq --arg id "0a7f3b8e00" --arg val "New summary text" \
    '.[$id].short_summary = $val' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Add a tag (idempotent)
@@ -132,7 +137,8 @@ jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
 jq --arg id "0a7f3b8e00" --arg tag "evals" \
    '.[$id].tags = ((.[$id].tags // []) + [$tag] | unique)' \
    "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 ### Add a file entry to an existing record
@@ -144,7 +150,8 @@ jq --arg id "0a7f3b8e00" --argjson f '{
   "completeness": "complete",
   "sha256": "abcd..."
 }' '.[$id].files += [$f]' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 **Easier alternative**: drop the file into `reference-only/<id>/` directly and run:
@@ -159,7 +166,8 @@ The reconciler computes sha256, detects format, and adds the entry for you.
 jq --arg id "0a7f3b8e00" --arg fname "partial.html" \
    '.[$id].files |= map(if .filename == $fname then .completeness = "partial" else . end)' \
    "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 If the file is genuinely useless, change `ingestion_status` to `skip-not-necessary` and consider whether to delete the file from disk (do so via `git rm reference-only/<id>/<fname>` so it's recorded in history).
@@ -174,7 +182,8 @@ NEW="1b2c3d4e00"
 
 jq --arg old "$OLD" --arg new "$NEW" \
    '.[$old].pointer_to = $new' "$F" > /tmp/new.json && \
-jq -S 'to_entries | sort_by(.key) | from_entries' /tmp/new.json > "$F"
+mv /tmp/new.json "$F"
+bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh "$F"
 ```
 
 Optionally move the old record's files into the new one's directory:
@@ -190,7 +199,7 @@ The retired record's `files[]` should be cleared (or files moved to the new reco
 | Don't | Do |
 |---|---|
 | `Edit` or `Write` on `sources.json` | jq transform → temp → mv |
-| Skip the normalize step | Always `jq -S 'to_entries \| sort_by(.key) \| from_entries'` |
+| Skip the normalize step | Always `bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh reference-only/sources.json` |
 | Skip the linter | Always `bash scripts/lint-sources.sh` before staging |
 | Hand-invent an id | Always `python scripts/url_canonicalize.py <url>` |
 | Delete a record | Set `pointer_to`; record stays in the catalog |

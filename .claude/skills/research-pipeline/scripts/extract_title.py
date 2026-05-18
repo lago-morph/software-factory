@@ -14,7 +14,14 @@ Public API:
 from __future__ import annotations
 
 import re
+from email.header import decode_header, make_header
 from pathlib import Path
+
+
+# Detects a Subject-line value that's still wrapped in an RFC 2047
+# encoded-word (`=?charset?Q-or-B?...?=`). MHTML files saved by Chrome use
+# this form for non-ASCII characters in the page title.
+_RFC2047_RE = re.compile(r"=\?[^?]+\?[BbQq]\?[^?]+\?=")
 
 TITLE_HTML_RE = re.compile(r"<title[^>]*>([^<]+)</title>", re.IGNORECASE | re.DOTALL)
 TITLE_H1_RE = re.compile(r"<h1[^>]*>([^<]+)</h1>", re.IGNORECASE | re.DOTALL)
@@ -23,7 +30,20 @@ TITLE_MD_RE = re.compile(r"^#\s+(.+)$", re.MULTILINE)
 TITLE_TXT_RE = re.compile(r"^\s*(?:TITLE|Title)\s*[:=]\s*(.+)$", re.MULTILINE)
 
 
+def _decode_rfc2047(s: str) -> str:
+    """Decode any RFC 2047 encoded-words in `s` to their unicode form. If
+    `s` doesn't contain any, returns it unchanged. Best-effort: decode
+    errors leave the original substring in place."""
+    if not _RFC2047_RE.search(s):
+        return s
+    try:
+        return str(make_header(decode_header(s)))
+    except (UnicodeDecodeError, LookupError, ValueError):
+        return s
+
+
 def _clean(s: str) -> str:
+    s = _decode_rfc2047(s)
     s = s.strip()
     s = s.replace("&amp;", "&").replace("&#x27;", "'").replace("&quot;", '"')
     s = s.replace("&lt;", "<").replace("&gt;", ">")

@@ -176,6 +176,44 @@ class TestCompanionFile:
         assert extract_url(pdf) is None
 
 
+class TestPdfUrlPreference:
+    def _pdf_with_urls(self, write, name: str, *urls: str):
+        body = b"%PDF-1.4\n"
+        for u in urls:
+            body += b"/URL (" + u.encode() + b")\n"
+        body += b"%%EOF\n"
+        return write(name, body)
+
+    def test_arxiv_wins_over_github(self, write):
+        p = self._pdf_with_urls(
+            write, "paper.pdf",
+            "https://github.com/x/y", "https://arxiv.org/abs/1234.56789",
+        )
+        assert extract_url(p) == "https://arxiv.org/abs/1234.56789"
+
+    def test_doi_wins_over_github(self, write):
+        p = self._pdf_with_urls(
+            write, "paper.pdf",
+            "https://github.com/x/y", "https://doi.org/10.1000/xyz",
+        )
+        assert extract_url(p) == "https://doi.org/10.1000/xyz"
+
+    def test_only_github_falls_back_to_github(self, write):
+        p = self._pdf_with_urls(write, "paper.pdf", "https://github.com/x/y")
+        assert extract_url(p) == "https://github.com/x/y"
+
+    def test_single_url_unchanged(self, write):
+        p = self._pdf_with_urls(write, "paper.pdf", "https://example.com/x")
+        assert extract_url(p) == "https://example.com/x"
+
+    def test_tie_breaks_by_first_seen(self, write):
+        # Two equal-priority unmatched URLs — first wins.
+        p = self._pdf_with_urls(
+            write, "paper.pdf", "https://example.com/a", "https://example.com/b",
+        )
+        assert extract_url(p) == "https://example.com/a"
+
+
 class TestJson:
     def test_canonical_url_field(self, write):
         p = write("test.json", '{"canonical_url": "https://example.com/jc"}')

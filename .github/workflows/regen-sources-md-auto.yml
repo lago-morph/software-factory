@@ -32,8 +32,6 @@ jobs:
         run: python .claude/skills/research-pipeline/scripts/validate-sources.py
       - name: Normalize sources.json
         # Canonical normalizer — same script drain.py + hand-jq edits use.
-        # Single source of truth lives in the helper so the workflow can
-        # never drift from the rest of the pipeline.
         run: bash .claude/skills/research-pipeline/scripts/normalize-sources-json.sh reference-only/sources.json
       - name: Render markdown
         run: bash .claude/skills/research-pipeline/scripts/render-sources-md.sh > reference-only/sources.md

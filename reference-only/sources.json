@@ -4161,12 +4161,12 @@
     "canonical_url": "https://github.com/google-research/camel-prompt-injection",
     "files": [],
     "id": "e588b9bb1a",
+    "pointer_to": "24ca29ee98",
     "tags": [
       "security-primitives",
       "academic-foundations"
     ],
-    "title": "Defeating Prompt Injections by Design (arXiv:2503.18813v2)",
-    "pointer_to": "24ca29ee98"
+    "title": "Defeating Prompt Injections by Design (arXiv:2503.18813v2)"
   },
   "e6f77b9e81": {
     "canonical_url": "https://jayminwest.substack.com/p/a-manifesto-for-agentic-development",

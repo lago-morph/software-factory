@@ -3,42 +3,7 @@
 Auto-generated from `reference-only/sources.json` by `scripts/render-sources-md.py`.
 Do not edit by hand — your changes will be overwritten on next push to `main`.
 
-**Records:** 209 · **Generated:** 2026-05-17 22:02 UTC
-
-## 🔴 Manual fetch needed
-
-**14 record(s)** have `ingestion_status=want` file entries — the fetch action couldn't get them automatically (Cloudflare challenge, JS-rendered SPA, paywall, or 404 with no successor).
-
-### How to fetch manually
-
-1. Open the URL in your browser (signed in if needed for paywalled content).
-2. **File → Save Page As → Webpage, Complete** (saves as MHTML — preserves embedded images + CSS). Chrome/Edge call this *"Save as MHTML"*; Firefox calls it *"Webpage, single file"* via an extension.
-3. Save the file with the suggested name from the **Drop as** column below into `research/manual/`.
-4. After all manual fetches are dropped, run:
-   ```bash
-   python .claude/skills/research-pipeline/scripts/reconcile-source-dir.py --all
-   ```
-   This will register each file into its catalog record (matching by sha256 + filename) and flip the status to `have`.
-
-### Records to fetch
-
-| Record | Title | URL | Reason want | Drop as |
-|---|---|---|---|---|
-| `175cba9347` | =?utf-8?Q?Custom=20instructions=20with=20AGENTS.md=20=E2=80= | [https://developers.openai.com/codex/guides/agents-md](https://developers.openai.com/codex/guides/agents-md) | Not yet fetched | `research/manual/175cba9347.mhtml` |
-| `18856eb4cf` | FAQs About AI Evals | [https://hamel.dev/blog/posts/evals-faq](https://hamel.dev/blog/posts/evals-faq) | Not yet fetched | `research/manual/18856eb4cf.mhtml` |
-| `24ca29ee98` | (unknown) | [https://arxiv.org/abs/2503.18813](https://arxiv.org/abs/2503.18813) | Not yet fetched | `research/manual/24ca29ee98.mhtml` |
-| `3703e782c0` | =?utf-8?Q?You=20Don=E2=80=99t=20Write=20the=20Code.=20You=20 | [https://www.danshapiro.com/blog/2026/02/you-dont-write-the-c](https://www.danshapiro.com/blog/2026/02/you-dont-write-the-code) | Not yet fetched | `research/manual/3703e782c0.mhtml` |
-| `53ed6e363d` | Simon Willison — CaMeL paper writeup | [https://simonwillison.net/2025/Apr/11/camel](https://simonwillison.net/2025/Apr/11/camel) | Not yet fetched | `research/manual/53ed6e363d.mhtml` |
-| `5a9f63821f` | Agent Skills: Security | [https://platform.claude.com/docs/en/agent-skills/security](https://platform.claude.com/docs/en/agent-skills/security) | Refetch — current capture is a JS-rendered shell | `research/manual/5a9f63821f.mhtml` |
-| `5cc5a296b6` | =?utf-8?Q?Replit=20=E2=80=94=20Introducing=20Agent=203:=20Ou | [https://blog.replit.com/introducing-agent-3-our-most-autonom](https://blog.replit.com/introducing-agent-3-our-most-autonomous-agent-yet) | Not yet fetched | `research/manual/5cc5a296b6.mhtml` |
-| `71d2de09c6` | A Field Guide to Rapidly Improving AI Products | [https://hamel.dev/blog/posts/field-guide](https://hamel.dev/blog/posts/field-guide) | Not yet fetched | `research/manual/71d2de09c6.mhtml` |
-| `73dc7199ce` | =?utf-8?Q?Replit=20=E2=80=94=20Introducing=20Replit=20Agent= | [https://blog.replit.com/introducing-agent-4-built-for-creati](https://blog.replit.com/introducing-agent-4-built-for-creativity) | Not yet fetched | `research/manual/73dc7199ce.mhtml` |
-| `8334be0240` | =?utf-8?Q?Subagents=20=E2=80=93=20Codex=20\|=20OpenAI=20Deve | [https://developers.openai.com/codex/subagents](https://developers.openai.com/codex/subagents) | Not yet fetched | `research/manual/8334be0240.mhtml` |
-| `9c9554d27e` | The lethal trifecta for AI agents: private data, untrusted c | [https://simonwillison.net/2025/Jun/16/the-lethal-trifecta](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta) | Not yet fetched | `research/manual/9c9554d27e.mhtml` |
-| `ade5ef8d76` | Eugene Yan — LLM Evaluators | [https://eugeneyan.com/writing/llm-evaluators](https://eugeneyan.com/writing/llm-evaluators) | Correct URL is plural 'evaluators'; original record had singular which 404'd | `research/manual/ade5ef8d76.mhtml` |
-| `dccefbfc62` | =?utf-8?Q?Agent=20approvals=20&=20security=20=E2=80=93=20Cod | [https://developers.openai.com/codex/agent-approvals-security](https://developers.openai.com/codex/agent-approvals-security) | Not yet fetched | `research/manual/dccefbfc62.mhtml` |
-| `f8007cc630` | An AI State of the Union \| Simon Willison (Lenny's Newslett | [https://www.lennysnewsletter.com/p/an-ai-state-of-the-union](https://www.lennysnewsletter.com/p/an-ai-state-of-the-union) | Refetch — only partial transcript currently | `research/manual/f8007cc630.mhtml` |
-
+**Records:** 209 · **Generated:** 2026-05-18 01:39 UTC
 
 ## By category
 
@@ -90,7 +55,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://www.danshapiro.com/blog/2026/02/you-dont-write-the-code>
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `dark-factory`
 - **Cited in:** `research/07-dark-factory.md` · `research/followup/01-shapiro-five-levels.md` *(2)*
 
@@ -472,7 +437,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://www.lennysnewsletter.com/p/an-ai-state-of-the-union>
 
-- **Files:** html ✓ · html ✓ · txt ✓ · txt ✓ · html (want) · md ✓ · txt ✓
+- **Files:** html ✓ · html ✓ · txt ✓ · txt ✓ · md ✓ · txt ✓
 - **Tags:** `willison-canon`
 - **Cited in:** `research/06-hn-and-lenny.md` *(1)*
 
@@ -602,7 +567,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 *Willison summary of the CaMeL prompt-injection defense paper*
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `security-primitives` · `willison-canon`
 - **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/08-security-primitives.md` *(2)*
 
@@ -618,7 +583,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://simonwillison.net/2025/Jun/16/the-lethal-trifecta>
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `willison-canon`
 - **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/08-security-primitives.md` *(2)*
 
@@ -835,7 +800,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://developers.openai.com/codex/agent-approvals-security>
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `openai-substrate`
 - **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
 
@@ -843,7 +808,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://developers.openai.com/codex/guides/agents-md>
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `openai-substrate`
 - **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
 
@@ -851,7 +816,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://developers.openai.com/codex/subagents>
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `openai-substrate`
 - **Cited in:** `research/18-openai-codex-substrate.md` · `research/plan-sync.md` *(2)*
 
@@ -958,7 +923,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://blog.replit.com/introducing-agent-3-our-most-autonomous-agent-yet>
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `other-vendor-substrate`
 - **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
 
@@ -966,7 +931,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://blog.replit.com/introducing-agent-4-built-for-creativity>
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `other-vendor-substrate`
 - **Cited in:** `research/20-replit-agent.md` · `research/plan-sync.md` *(2)*
 
@@ -1481,7 +1446,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 <https://platform.claude.com/docs/en/agent-skills/security>
 
-- **Files:** html ✓ · md ✓ · html (want)
+- **Files:** html ✓ · md ✓
 - **Tags:** `skills-composition`
 - **Cited in:** `research/PLAN.md` *(1)*
 
@@ -1578,7 +1543,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 *Hamel Husain — experiments-not-features roadmap reframe + NurtureBoss case study*
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `evals-and-benchmarks`
 - **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
 
@@ -1608,7 +1573,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 *Third core eval source (with Husain and Anthropic multi-agent)*
 
-- **Files:** html (want) · mhtml ✓
+- **Files:** mhtml ✓
 - **Tags:** `evals-and-benchmarks`
 
 ### 18856eb4cf — FAQs About AI Evals <a id="18856eb4cf"></a>
@@ -1617,7 +1582,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 *Husain & Shankar — 60-80% of dev time on error analysis*
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `evals-and-benchmarks`
 - **Cited in:** `research/followup/07-evals-deepdive.md` *(1)*
 
@@ -1747,14 +1712,6 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 *Academic methodology papers: underspecification, multi-task benchmarks, CHI/ICSE studies.*
 
-### 24ca29ee98 — (unknown) <a id="24ca29ee98"></a>
-
-<https://arxiv.org/abs/2503.18813>
-
-- **Files:** html (want) · html ✓ · md ✓ · other ✓ · other ✓ · other ✓
-- **Tags:** `academic-foundations` · `security-primitives`
-- **Cited in:** `research/followup/08-security-primitives.md` *(1)*
-
 ### 6bea7182f9 — (unknown) <a id="6bea7182f9"></a>
 
 <https://arxiv.org/html/2505.13360v3>
@@ -1786,12 +1743,15 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Tags:** `academic-foundations`
 - **Cited in:** `research/22-academic-foundations.md` *(1)*
 
-### e588b9bb1a — Defeating Prompt Injections by Design (arXiv:2503.18813v2) <a id="e588b9bb1a"></a>
+### 24ca29ee98 — Defeating Prompt Injections by Design <a id="24ca29ee98"></a>
 
-<https://github.com/google-research/camel-prompt-injection>
+<https://arxiv.org/abs/2503.18813>
 
-- **Files:** pdf ✓
-- **Tags:** `security-primitives` · `academic-foundations`
+- **Files:** html ✓ · md ✓ · other ✓ · other ✓ · other ✓ · pdf ✓
+- **Tags:** `academic-foundations` · `security-primitives`
+- **Cited in:** `research/followup/08-security-primitives.md` *(1)*
+
+### e588b9bb1a ~~Defeating Prompt Injections by Design (arXiv:2503.18813v2)~~ → see [24ca29ee98](#24ca29ee98)
 
 ### fa20be05d7 — Neves-Bussmann (Stanford Computational Antitrust, Vol. 6, 2026) <a id="fa20be05d7"></a>
 
@@ -1820,11 +1780,11 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 *Threat models, prompt-injection defenses, capability/data-flow security (CaMeL, AgentDojo).*
 
-### 24ca29ee98 — (unknown) <a id="24ca29ee98"></a>
+### 24ca29ee98 — Defeating Prompt Injections by Design <a id="24ca29ee98"></a>
 
 <https://arxiv.org/abs/2503.18813>
 
-- **Files:** html (want) · html ✓ · md ✓ · other ✓ · other ✓ · other ✓
+- **Files:** html ✓ · md ✓ · other ✓ · other ✓ · other ✓ · pdf ✓
 - **Tags:** `academic-foundations` · `security-primitives`
 - **Cited in:** `research/followup/08-security-primitives.md` *(1)*
 
@@ -1835,12 +1795,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - **Files:** html ✓ · md ✓
 - **Tags:** `security-primitives`
 
-### e588b9bb1a — Defeating Prompt Injections by Design (arXiv:2503.18813v2) <a id="e588b9bb1a"></a>
-
-<https://github.com/google-research/camel-prompt-injection>
-
-- **Files:** pdf ✓
-- **Tags:** `security-primitives` · `academic-foundations`
+### e588b9bb1a ~~Defeating Prompt Injections by Design (arXiv:2503.18813v2)~~ → see [24ca29ee98](#24ca29ee98)
 
 ### 53ed6e363d — Simon Willison — CaMeL paper writeup <a id="53ed6e363d"></a>
 
@@ -1848,7 +1803,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 *Willison summary of the CaMeL prompt-injection defense paper*
 
-- **Files:** html (want) · html ✓ · md ✓ · mhtml ✓
+- **Files:** html ✓ · md ✓ · mhtml ✓
 - **Tags:** `security-primitives` · `willison-canon`
 - **Cited in:** `research/06-hn-and-lenny.md` · `research/followup/08-security-primitives.md` *(2)*
 
@@ -2110,7 +2065,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 ## By status (cross-cutting view)
 
-### § 1 — Complete *(185 records)*
+### § 1 — Complete *(196 records)*
 
 *Every registered file is present and complete.*
 
@@ -2123,12 +2078,19 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`c317a03b84` — 2389-research/mammoth](#c317a03b84)
 - [`8f251bd57a` — 2389-research/smasher: A builder](#8f251bd57a)
 - [`f79769ac6c` — 2389-research/tracker](#f79769ac6c)
+- [`dccefbfc62` — =?utf-8?Q?Agent=20approvals=20&=20security=20=E2=80=93=20Codex=20|=20Open?=](#dccefbfc62)
+- [`175cba9347` — =?utf-8?Q?Custom=20instructions=20with=20AGENTS.md=20=E2=80=93=20Codex=20?=](#175cba9347)
+- [`5cc5a296b6` — =?utf-8?Q?Replit=20=E2=80=94=20Introducing=20Agent=203:=20Our=20Most=20Au?=](#5cc5a296b6)
+- [`73dc7199ce` — =?utf-8?Q?Replit=20=E2=80=94=20Introducing=20Replit=20Agent=204:=20Built?=](#73dc7199ce)
+- [`8334be0240` — =?utf-8?Q?Subagents=20=E2=80=93=20Codex=20|=20OpenAI=20Developers?=](#8334be0240)
+- [`3703e782c0` — =?utf-8?Q?You=20Don=E2=80=99t=20Write=20the=20Code.=20You=20Don=E2=80=99t?=](#3703e782c0)
 - [`2137eaa69f` — [2203.07814] Competition-Level Code Generation with AlphaCode](#2137eaa69f)
 - [`bee5963dd8` — [2203.07814] Competition-Level Code Generation with AlphaCode (ar5iv HTML)](#bee5963dd8)
 - [`5b36476e30` — [2203.13474] CodeGen: An Open Large Language Model for Code with Multi-Turn Program Synthesis](#5b36476e30)
 - [`3e4a5dea3a` — [2310.06770] SWE-bench: Can Language Models Resolve Real-World GitHub Issues?](#3e4a5dea3a)
 - [`54b1ddaabf` — [2405.15793] SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering](#54b1ddaabf)
 - [`23b7d51d69` — [2511.03690] The OpenHands Software Agent SDK: A Composable and Extensible Foundation for Production Agents](#23b7d51d69)
+- [`71d2de09c6` — A Field Guide to Rapidly Improving AI Products](#71d2de09c6)
 - [`2e49bcd671` — About assigning tasks to Copilot (file contains saved 2389-research/dotpowers GitHub page instead)](#2e49bcd671)
 - [`325d8c1018` — About extensions for Copilot (capture is a PNG image, not the docs page)](#325d8c1018)
 - [`ebc17186b3` — About GitHub Copilot cloud agent - GitHub Docs](#ebc17186b3)
@@ -2175,8 +2137,8 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`0c4bb49f75` — Creating an LLM-as-a-Judge](#0c4bb49f75)
 - [`67b1f7d3a3` — Culture of AI Engineering](#67b1f7d3a3)
 - [`3af462fa75` — danshapiro/kilroy](#3af462fa75)
+- [`24ca29ee98` — Defeating Prompt Injections by Design](#24ca29ee98)
 - [`d30b9fbd12` — Defeating Prompt Injections by Design (arXiv 2503.18813 PDF)](#d30b9fbd12)
-- [`e588b9bb1a` — Defeating Prompt Injections by Design (arXiv:2503.18813v2)](#e588b9bb1a)
 - [`265e444ae9` — Deployment Options | Tabnine Docs](#265e444ae9)
 - [`875b882ad1` — Designing agentic loops](#875b882ad1)
 - [`f908e4d494` — dotpowers — 2389 Research, Inc.](#f908e4d494)
@@ -2191,6 +2153,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`b59dfbed79` — El Kaim Book — Chapter 8: From Intent to Specification](#b59dfbed79)
 - [`f52a2d4098` — El Kaim Book — Chapter 9: Software Product Line and Variability](#f52a2d4098)
 - [`1b74bb31e3` — Embracing the parallel coding agent lifestyle](#1b74bb31e3)
+- [`ade5ef8d76` — Eugene Yan — LLM Evaluators](#ade5ef8d76)
 - [`b2e8ea6df7` — Factory (StrongDM) — Attractor](#b2e8ea6df7)
 - [`d93e59de67` — Factory (StrongDM) — CXDB](#d93e59de67)
 - [`f2abe271f9` — Factory (StrongDM) — DTU](#f2abe271f9)
@@ -2202,6 +2165,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`76447f23b5` — Factory (StrongDM) — Semport](#76447f23b5)
 - [`39c9037a8c` — Factory (StrongDM) — Techniques](#39c9037a8c)
 - [`109582ff1a` — Factory AI – Product](#109582ff1a)
+- [`18856eb4cf` — FAQs About AI Evals](#18856eb4cf)
 - [`c6074ee6d6` — First run the tests - Agentic Engineering Patterns - Simon Willison's Weblog](#c6074ee6d6)
 - [`0d8acce129` — From Principles to Practice: The 48 Controls That Make Responsible AI Auditable, Defensible, and Real - CodeX - Stanford Law School](#0d8acce129)
 - [`5f4b04494f` — GitHub Actions CI/CD Pipeline | All-Hands-AI/OpenHands | DeepWiki](#5f4b04494f)
@@ -2250,6 +2214,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`66be122077` — Running Codex safely at OpenAI](#66be122077)
 - [`11ae110ddb` — Simon Willison on agentic-engineering](#11ae110ddb)
 - [`67dfba1ed6` — Simon Willison on evals](#67dfba1ed6)
+- [`53ed6e363d` — Simon Willison — CaMeL paper writeup](#53ed6e363d)
 - [`ee885bfc4c` — Skill authoring best practices - Claude API Docs](#ee885bfc4c)
 - [`59d633b2c6` — Smasher — 2389 Research, Inc.](#59d633b2c6)
 - [`8282baf1e4` — Software factories and the agentic moment (Hacker News)](#8282baf1e4)
@@ -2275,6 +2240,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`3a16af6be1` — The Dark Software Factory (BCG Platinion)](#3a16af6be1)
 - [`99b58be420` — The Five Levels: From Spicy Autocomplete to the Software Factory (Dan Shapiro)](#99b58be420)
 - [`16aabc3cfe` — The hard part isn't doing the work now; it's choosing the work.](#16aabc3cfe)
+- [`9c9554d27e` — The lethal trifecta for AI agents: private data, untrusted content, and external communication](#9c9554d27e)
 - [`19fba72517` — The one scarce resource AI can't replace - by Sam Schillace](#19fba72517)
 - [`1175dde05f` — The OpenHands Software Agent SDK: A Composable and Extensible Foundation for Production Agents (arXiv 2511.03690 PDF)](#1175dde05f)
 - [`b4907c87f4` — The Prompt Report: A Systematic Survey of Prompt Engineering Techniques](#b4907c87f4)
@@ -2300,31 +2266,19 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`eb69cbdcba` — Writing • Eugene Yan](#eb69cbdcba)
 - [`faa604dace` — Your AI Product Needs Evals](#faa604dace)
 
-### § 2 — Partial *(22 records)*
+### § 2 — Partial *(10 records)*
 
 *Has some content, but also files that are wanted, partial, or had fetch errors.*
 
-- [`24ca29ee98` — (unknown)](#24ca29ee98)
 - [`5c785e88b3` — 404 - GitHub Docs](#5c785e88b3)
 - [`85cdf07ac2` — 8090 Inc Blog](#85cdf07ac2)
-- [`dccefbfc62` — =?utf-8?Q?Agent=20approvals=20&=20security=20=E2=80=93=20Codex=20|=20Open?=](#dccefbfc62)
-- [`175cba9347` — =?utf-8?Q?Custom=20instructions=20with=20AGENTS.md=20=E2=80=93=20Codex=20?=](#175cba9347)
-- [`5cc5a296b6` — =?utf-8?Q?Replit=20=E2=80=94=20Introducing=20Agent=203:=20Our=20Most=20Au?=](#5cc5a296b6)
-- [`73dc7199ce` — =?utf-8?Q?Replit=20=E2=80=94=20Introducing=20Replit=20Agent=204:=20Built?=](#73dc7199ce)
-- [`8334be0240` — =?utf-8?Q?Subagents=20=E2=80=93=20Codex=20|=20OpenAI=20Developers?=](#8334be0240)
-- [`3703e782c0` — =?utf-8?Q?You=20Don=E2=80=99t=20Write=20the=20Code.=20You=20Don=E2=80=99t?=](#3703e782c0)
-- [`71d2de09c6` — A Field Guide to Rapidly Improving AI Products](#71d2de09c6)
 - [`e6f77b9e81` — A Manifesto for Agentic Development](#e6f77b9e81)
 - [`5a9f63821f` — Agent Skills: Security](#5a9f63821f)
 - [`f8007cc630` — An AI State of the Union | Simon Willison (Lenny's Newsletter)](#f8007cc630)
 - [`3274cc670c` — Devin (Cognition AI)](#3274cc670c)
-- [`ade5ef8d76` — Eugene Yan — LLM Evaluators](#ade5ef8d76)
-- [`18856eb4cf` — FAQs About AI Evals](#18856eb4cf)
 - [`586cb02137` — Head of Claude Code: What happens when AI does 90% of the coding](#586cb02137)
-- [`53ed6e363d` — Simon Willison — CaMeL paper writeup](#53ed6e363d)
 - [`5492497a11` — Tabnine Docs (Server Setup Guide)](#5492497a11)
 - [`dafe463e94` — Tabnine Docs (Tabnine's Private and Protect)](#dafe463e94)
-- [`9c9554d27e` — The lethal trifecta for AI agents: private data, untrusted content, and external communication](#9c9554d27e)
 - [`60fbea1689` — William El Kaim — About (Medium)](#60fbea1689)
 
 ### § 3a — Wanted (URL known) *(1 record)*
@@ -2339,9 +2293,10 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 
 *(none)*
 
-### § 4 — Superseded *(1 record)*
+### § 4 — Superseded *(2 records)*
 
 *Records replaced by another; `pointer_to` is set.*
 
+- `e588b9bb1a` ~~Defeating Prompt Injections by Design (arXiv:2503.18813v2)~~ → [24ca29ee98](#24ca29ee98)
 - `caad3c1702` ~~Eugene Yan — LLM Evaluator~~ → [ade5ef8d76](#ade5ef8d76)
 

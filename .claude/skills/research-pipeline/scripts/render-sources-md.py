@@ -3,13 +3,21 @@
 Output structure (top to bottom):
 
   1. Header (auto-generated banner)
-  2. Manual-fetch table — records with want files that the fetch action couldn't
+  2. Table of contents — in-page anchors to every section.
+  3. Manual-fetch table — records with want files that the fetch action couldn't
      auto-grab (HTTP 404s, JS-rendered shells, paywalls). Includes save-as-MHTML
      instructions and the drop location.
-  3. By category — one section per category tag, with each matching record
-     rendered in full. A record with N tags appears in N sections (deliberate).
-  4. By status — fallback section for records with no category tag, plus the
-     traditional status buckets (complete / partial / wanted / superseded).
+  4. By category — one collapsible <details> block per category tag, each
+     containing a table of matching records. A record with N tags appears in
+     N sections (deliberate).
+  5. By status — fallback cross-cutting view; one collapsible block per status
+     bucket (complete / partial / wanted_url / wanted_title / superseded).
+
+The file is generated at reference-only/sources.md, so all relative links are
+expressed relative to that location:
+  - Per-record directory: `<id>/`
+  - Primary file:         `<id>/<filename>`
+  - Cited-in report:      `../research/<...>.md`
 """
 
 from __future__ import annotations
@@ -18,6 +26,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from urllib.parse import quote as _urlquote
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _config import data_path, ConfigError  # noqa: E402
@@ -57,6 +66,11 @@ CATEGORY_ORDER = [
 ]
 CATEGORIES = [c for c, _ in CATEGORY_ORDER]
 
+# Formats considered image-only — skipped when picking the primary file
+IMAGE_FORMATS = {
+    "image/png", "image/jpeg", "image/svg+xml", "image/gif", "image/webp",
+}
+
 
 def load() -> dict:
     p = data_path()
@@ -92,40 +106,129 @@ def file_chip(f: dict) -> str:
     return f"{fmt} (?)"
 
 
-def render_record(rid: str, rec: dict) -> str:
-    """Full per-record block."""
-    title = rec.get("title", "(untitled)")
+def primary_file(rec: dict) -> dict | None:
+    """Pick the "primary" file for a record.
+
+    Mirrors the heuristic used by the drain pipeline (stage-5): first file
+    whose format is not an image and whose ingestion_status is "have". Falls
+    back to first non-image file regardless of status, then first file overall.
+    """
+    files = [f for f in (rec.get("files") or []) if isinstance(f, dict)]
+    if not files:
+        return None
+
+    def _non_image(f: dict) -> bool:
+        return f.get("format") not in IMAGE_FORMATS
+
+    have_non_image = [f for f in files if _non_image(f) and f.get("ingestion_status") == "have"]
+    if have_non_image:
+        return have_non_image[0]
+    non_image = [f for f in files if _non_image(f)]
+    if non_image:
+        return non_image[0]
+    return files[0]
+
+
+def _cell(s: str) -> str:
+    """Escape a string for safe inclusion in a markdown table cell."""
+    if s is None:
+        return ""
+    # Pipes break table rows; <br> keeps multi-line cells working.
+    return s.replace("|", "\\|").replace("\n", " ")
+
+
+def _encode_path(p: str) -> str:
+    """URL-encode a relative path while keeping slashes literal."""
+    return _urlquote(p, safe="/")
+
+
+def _dir_link(rid: str) -> str:
+    """Link to the record's directory, relative to reference-only/sources.md."""
+    return f"[`{rid}`]({_encode_path(rid)}/)"
+
+
+def _local_source_link(rid: str, rec: dict) -> str:
+    """Link with text 'Local Source' to the primary file, or '—' if none on disk."""
+    f = primary_file(rec)
+    if not f or f.get("ingestion_status") != "have":
+        return "—"
+    fname = f.get("filename")
+    if not fname:
+        return "—"
+    # `location` overrides the default reference-only/<id>/<filename> path
+    location = f.get("location")
+    if location:
+        # location is repo-relative; sources.md lives in reference-only/ so go up one
+        target = f"../{location}"
+    else:
+        target = f"{rid}/{fname}"
+    return f"[Local Source]({_encode_path(target)})"
+
+
+def _source_url_link(rec: dict) -> str:
+    url = rec.get("canonical_url")
+    if not url:
+        return "—"
+    return f"[Source URL]({url})"
+
+
+def _cited_in_links(rec: dict, max_show: int = 5) -> str:
+    refs = rec.get("references_from") or []
+    if not refs:
+        return "—"
+    # Reports live at research/... (repo-relative); sources.md is in reference-only/
+    parts = [f"[`{r}`](../{_encode_path(r)})" for r in refs[:max_show]]
+    out = " · ".join(parts)
+    if len(refs) > max_show:
+        out += f" *(+{len(refs) - max_show} more)*"
+    out += f" *({len(refs)})*"
+    return out
+
+
+def _files_chips(rec: dict) -> str:
+    files = [f for f in (rec.get("files") or []) if isinstance(f, dict)]
+    if not files:
+        return "*(none registered)*"
+    return " · ".join(file_chip(f) for f in files)
+
+
+def render_record_row(rid: str, rec: dict) -> str:
+    """One <tr>-equivalent row in the by-category table."""
+    anchor = f'<a id="{rid}"></a>'
     if rec.get("pointer_to"):
-        return f"### {rid} ~~{title}~~ → see [{rec['pointer_to']}](#{rec['pointer_to']})"
+        target = rec["pointer_to"]
+        title = _cell(rec.get("title", "(untitled)"))
+        title_cell = f"~~{title}~~ → [`{target}`](#{target})"
+        return (
+            f"| {anchor}{_dir_link(rid)} "
+            f"| {title_cell} "
+            f"| — "
+            f"| — "
+            f"| — "
+            f"| — |"
+        )
 
-    lines = [f'### {rid} — {title} <a id="{rid}"></a>', ""]
-    if rec.get("canonical_url"):
-        lines.append(f"<{rec['canonical_url']}>")
-    else:
-        lines.append("*(no canonical URL)*")
-    lines.append("")
-    if rec.get("short_summary"):
-        lines.append(f"*{rec['short_summary']}*")
-        lines.append("")
+    title = _cell(rec.get("title", "(untitled)"))
+    summary = rec.get("short_summary")
+    title_cell = f"**{title}**"
+    if summary:
+        title_cell += f"<br><em>{_cell(summary)}</em>"
 
-    files = rec.get("files") or []
-    if files:
-        chips = " · ".join(file_chip(f) for f in files if isinstance(f, dict))
-        lines.append(f"- **Files:** {chips}")
-    else:
-        lines.append("- **Files:** *(none registered)*")
+    return (
+        f"| {anchor}{_dir_link(rid)} "
+        f"| {title_cell} "
+        f"| {_source_url_link(rec)} "
+        f"| {_local_source_link(rid, rec)} "
+        f"| {_cell(_files_chips(rec))} "
+        f"| {_cited_in_links(rec)} |"
+    )
 
-    if rec.get("tags"):
-        lines.append("- **Tags:** " + " · ".join(f"`{t}`" for t in rec["tags"]))
-    if rec.get("references_from"):
-        refs = rec["references_from"]
-        ref_str = " · ".join(f"`{r}`" for r in refs[:5])
-        if len(refs) > 5:
-            ref_str += f" *(+{len(refs)-5} more)*"
-        lines.append(f"- **Cited in:** {ref_str} *({len(refs)})*")
-    if rec.get("has_useful_diagrams") and rec["has_useful_diagrams"] != "unknown":
-        lines.append(f"- **Diagrams:** {rec['has_useful_diagrams']}")
-    return "\n".join(lines)
+
+def _table_header() -> list[str]:
+    return [
+        "| ID | Title / Summary | Source URL | Local Source | Files | Cited in |",
+        "|---|---|---|---|---|---|",
+    ]
 
 
 def manual_fetch_section(data: dict) -> str:
@@ -152,6 +255,7 @@ def manual_fetch_section(data: dict) -> str:
         return ""
 
     lines = [
+        '<a id="manual-fetch-needed"></a>',
         "## 🔴 Manual fetch needed",
         "",
         f"**{len(rows)} record(s)** have `ingestion_status=want` file entries — the fetch action couldn't get them automatically (Cloudflare challenge, JS-rendered SPA, paywall, or 404 with no successor).",
@@ -169,45 +273,67 @@ def manual_fetch_section(data: dict) -> str:
         "",
         "### Records to fetch",
         "",
-        "| Record | Title | URL | Reason want | Drop as |",
+        "| Record | Title | Source URL | Reason want | Drop as |",
         "|---|---|---|---|---|",
     ]
     for rid, title, url, reason, drop in rows:
-        # Truncate fields
-        t = title.replace("|", "\\|")[:60]
-        u = url
-        if u != "(no URL)":
-            u = f"[{u[:60]}]({url})"
-        r = reason.replace("|", "\\|")[:80]
+        t = _cell(title)[:80]
+        if url == "(no URL)":
+            u = "—"
+        else:
+            u = f"[Source URL]({url})"
+        r = _cell(reason)[:80]
         lines.append(f"| `{rid}` | {t} | {u} | {r} | {drop} |")
     lines.append("")
     return "\n".join(lines)
 
 
-def by_category_section(data: dict) -> str:
-    """Render by-category sections. A record appears in every category it's tagged with."""
-    lines = ["## By category", ""]
-    no_category = []
+def _cat_slug(cat: str) -> str:
+    return f"cat-{cat}"
+
+
+def _category_block(cat: str, blurb: str, members: list[tuple[str, dict]], slug: str | None = None) -> str:
+    n = len(members)
+    n_word = "record" if n == 1 else "records"
+    if slug is None:
+        slug = _cat_slug(cat)
+    lines = [
+        f'<a id="{slug}"></a>',
+        "",
+        "<details>",
+        f"<summary><b>{cat}</b> — {n} {n_word} — <em>{blurb}</em></summary>",
+        "",
+    ]
+    if not members:
+        lines.append("*(no records yet)*")
+        lines.append("")
+        lines.append("</details>")
+        return "\n".join(lines)
+    lines.extend(_table_header())
+    for rid, rec in members:
+        lines.append(render_record_row(rid, rec))
+    lines.append("")
+    lines.append("</details>")
+    return "\n".join(lines)
+
+
+def by_category_section(data: dict) -> tuple[str, list[tuple[str, str, int]]]:
+    """Render by-category sections plus return TOC entries (slug, label, count)."""
+    lines = ['<a id="by-category"></a>', "## By category", ""]
+    toc_entries: list[tuple[str, str, int]] = []
+
     for cat, blurb in CATEGORY_ORDER:
         members = [
             (rid, rec) for rid, rec in data.items()
             if isinstance(rec, dict) and cat in (rec.get("tags") or [])
         ]
         members.sort(key=lambda x: (x[1].get("title") or "").lower())
-        lines.append(f"### {cat} *({len(members)} record{'s' if len(members) != 1 else ''})*")
-        lines.append("")
-        lines.append(f"*{blurb}*")
-        lines.append("")
-        if not members:
-            lines.append("*(no records yet)*")
-            lines.append("")
-            continue
-        for rid, rec in members:
-            lines.append(render_record(rid, rec))
-            lines.append("")
+        toc_entries.append((_cat_slug(cat), cat, len(members)))
+        lines.append(_category_block(cat, blurb, members))
         lines.append("")
 
     # Records with no recognized category tag
+    no_category: list[tuple[str, dict]] = []
     for rid, rec in data.items():
         if not isinstance(rec, dict):
             continue
@@ -216,27 +342,32 @@ def by_category_section(data: dict) -> str:
             no_category.append((rid, rec))
     no_category.sort(key=lambda x: (x[1].get("title") or "").lower())
     if no_category:
-        lines.append(f"### (no category) *({len(no_category)} record{'s' if len(no_category) != 1 else ''})*")
+        toc_entries.append(("cat-none", "(no category)", len(no_category)))
+        lines.append(_category_block(
+            "(no category)",
+            "Records that don't yet have any of the 15 canonical category tags.",
+            no_category,
+            slug="cat-none",
+        ))
         lines.append("")
-        lines.append("*Records that don't yet have any of the 15 canonical category tags.*")
-        lines.append("")
-        for rid, rec in no_category:
-            lines.append(render_record(rid, rec))
-            lines.append("")
 
-    return "\n".join(lines)
+    return "\n".join(lines), toc_entries
 
 
-def by_status_section(data: dict) -> str:
+def _status_slug(key: str) -> str:
+    return f"status-{key.replace('_', '-')}"
+
+
+def by_status_section(data: dict) -> tuple[str, list[tuple[str, str, int]]]:
     """Traditional status grouping as a navigation aid."""
-    sections = {
-        "complete":     ("§ 1 — Complete",          "Every registered file is present and complete."),
-        "partial":      ("§ 2 — Partial",           "Has some content, but also files that are wanted, partial, or had fetch errors."),
-        "wanted_url":   ("§ 3a — Wanted (URL known)", "URL is known but no content acquired yet."),
-        "wanted_title": ("§ 3b — Wanted (title only)", "Title + search hints only; no URL yet."),
-        "superseded":   ("§ 4 — Superseded",        "Records replaced by another; `pointer_to` is set."),
-    }
-    by_state = {k: [] for k in sections}
+    sections = [
+        ("complete",     "§ 1 — Complete",             "Every registered file is present and complete."),
+        ("partial",      "§ 2 — Partial",              "Has some content, but also files that are wanted, partial, or had fetch errors."),
+        ("wanted_url",   "§ 3a — Wanted (URL known)",  "URL is known but no content acquired yet."),
+        ("wanted_title", "§ 3b — Wanted (title only)", "Title + search hints only; no URL yet."),
+        ("superseded",   "§ 4 — Superseded",           "Records replaced by another; `pointer_to` is set."),
+    ]
+    by_state: dict[str, list[tuple[str, dict]]] = {k: [] for k, *_ in sections}
     for rid, rec in data.items():
         if not isinstance(rec, dict):
             continue
@@ -244,10 +375,16 @@ def by_status_section(data: dict) -> str:
     for k in by_state:
         by_state[k].sort(key=lambda x: (x[1].get("title") or "").lower())
 
-    lines = ["## By status (cross-cutting view)", ""]
-    for state, (title, blurb) in sections.items():
-        members = by_state[state]
-        lines.append(f"### {title} *({len(members)} record{'s' if len(members) != 1 else ''})*")
+    lines = ['<a id="by-status"></a>', "## By status (cross-cutting view)", ""]
+    toc_entries: list[tuple[str, str, int]] = []
+    for key, title, blurb in sections:
+        members = by_state[key]
+        n = len(members)
+        n_word = "record" if n == 1 else "records"
+        slug = _status_slug(key)
+        toc_entries.append((slug, title, n))
+        lines.append(f'<a id="{slug}"></a>')
+        lines.append(f"### {title} *({n} {n_word})*")
         lines.append("")
         lines.append(f"*{blurb}*")
         lines.append("")
@@ -255,14 +392,31 @@ def by_status_section(data: dict) -> str:
             lines.append("*(none)*")
             lines.append("")
             continue
-        # Just a compact link list — no full render (avoid 3rd copy of every record)
         for rid, rec in members:
             t = rec.get("title", "(untitled)")
             if rec.get("pointer_to"):
-                lines.append(f"- `{rid}` ~~{t}~~ → [{rec['pointer_to']}](#{rec['pointer_to']})")
+                lines.append(f"- `{rid}` ~~{t}~~ → [`{rec['pointer_to']}`](#{rec['pointer_to']})")
             else:
                 lines.append(f"- [`{rid}` — {t}](#{rid})")
         lines.append("")
+    return "\n".join(lines), toc_entries
+
+
+def render_toc(
+    has_manual_fetch: bool,
+    cat_entries: list[tuple[str, str, int]],
+    status_entries: list[tuple[str, str, int]],
+) -> str:
+    lines = ["## Table of contents", ""]
+    if has_manual_fetch:
+        lines.append("- [🔴 Manual fetch needed](#manual-fetch-needed)")
+    lines.append("- [By category](#by-category)")
+    for slug, label, n in cat_entries:
+        lines.append(f"  - [{label}](#{slug}) *({n})*")
+    lines.append("- [By status (cross-cutting view)](#by-status)")
+    for slug, label, n in status_entries:
+        lines.append(f"  - [{label}](#{slug}) *({n})*")
+    lines.append("")
     return "\n".join(lines)
 
 
@@ -274,27 +428,29 @@ def main() -> int:
         return 1
 
     import datetime as _dt
+
+    # Build sections first so we know the TOC contents.
+    mf = manual_fetch_section(data)
+    cat_md, cat_toc = by_category_section(data)
+    status_md, status_toc = by_status_section(data)
+
     out = [
         "# Source catalog — browse view",
         "",
-        "Auto-generated from `reference-only/sources.json` by `scripts/render-sources-md.py`.",
+        "Auto-generated from `reference-only/sources.json` by `.claude/skills/research-pipeline/scripts/render-sources-md.py`.",
         "Do not edit by hand — your changes will be overwritten on next push to `main`.",
         "",
         f"**Records:** {len(data)} · **Generated:** {_dt.datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}",
         "",
+        render_toc(bool(mf), cat_toc, status_toc),
     ]
 
-    # 1. Manual fetch banner (if anything wants fetching)
-    mf = manual_fetch_section(data)
     if mf:
         out.append(mf)
         out.append("")
 
-    # 2. By category (the primary navigation)
-    out.append(by_category_section(data))
-
-    # 3. By status (cross-cutting summary)
-    out.append(by_status_section(data))
+    out.append(cat_md)
+    out.append(status_md)
 
     print("\n".join(out))
     return 0

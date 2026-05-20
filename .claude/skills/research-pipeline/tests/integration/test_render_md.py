@@ -122,6 +122,79 @@ class TestRenderMarkdown:
         md = _render(repo)
         assert "§ 3b — Wanted (title only) *(1 record)*" in md
 
+    def test_toc_and_collapsible_category_section(self, tmp_path):
+        repo = _setup_repo_with_render(tmp_path)
+        write_sources_json(repo, {
+            "0a7f3b8e00": {
+                "id": "0a7f3b8e00",
+                "canonical_url": "https://example.com/x",
+                "title": "Tagged Record",
+                "tags": ["dark-factory"],
+                "files": [{
+                    "format": "html", "filename": "main.html",
+                    "ingestion_status": "have", "completeness": "complete",
+                }],
+                "references_from": ["research/07-dark-factory.md"],
+            }
+        })
+        md = _render(repo)
+        # TOC must exist with an in-page anchor to the category section
+        assert "## Table of contents" in md
+        assert "(#cat-dark-factory)" in md
+        # Each category section must be wrapped in a collapsible <details> block
+        assert "<details>" in md
+        assert "<summary>" in md
+        # Table layout — header row
+        assert "| ID | Title / Summary | Source URL | Local Source | Files | Cited in |" in md
+        # Directory link uses relative path (no leading slash)
+        assert "[`0a7f3b8e00`](0a7f3b8e00/)" in md
+        # canonical URL is rendered with the "Source URL" link text
+        assert "[Source URL](https://example.com/x)" in md
+        # primary file gets a "Local Source" link to the relative file path
+        assert "[Local Source](0a7f3b8e00/main.html)" in md
+        # references_from is rendered as a relative link (../research/...)
+        assert "(../research/07-dark-factory.md)" in md
+
+    def test_primary_file_skips_images(self, tmp_path):
+        repo = _setup_repo_with_render(tmp_path)
+        write_sources_json(repo, {
+            "0a7f3b8e00": {
+                "id": "0a7f3b8e00",
+                "canonical_url": "https://example.com/x",
+                "title": "Has Image First",
+                "tags": ["dark-factory"],
+                "files": [
+                    {"format": "image/png", "filename": "figure-1.png",
+                     "ingestion_status": "have", "completeness": "complete"},
+                    {"format": "html", "filename": "main.html",
+                     "ingestion_status": "have", "completeness": "complete"},
+                ],
+            }
+        })
+        md = _render(repo)
+        # The primary file should be the html, not the png
+        assert "[Local Source](0a7f3b8e00/main.html)" in md
+        assert "[Local Source](0a7f3b8e00/figure-1.png)" not in md
+
+    def test_local_source_path_is_url_encoded(self, tmp_path):
+        repo = _setup_repo_with_render(tmp_path)
+        write_sources_json(repo, {
+            "0a7f3b8e00": {
+                "id": "0a7f3b8e00",
+                "canonical_url": "https://example.com/x",
+                "title": "Spaces In Filename",
+                "tags": ["dark-factory"],
+                "files": [{
+                    "format": "txt", "filename": "has spaces & comma, here.txt",
+                    "ingestion_status": "have", "completeness": "complete",
+                }],
+            }
+        })
+        md = _render(repo)
+        # Spaces become %20, comma becomes %2C
+        assert "has%20spaces" in md
+        assert "%2C" in md
+
     def test_superseded_record_stub(self, tmp_path):
         repo = _setup_repo_with_render(tmp_path)
         write_sources_json(repo, {

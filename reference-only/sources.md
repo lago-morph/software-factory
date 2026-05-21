@@ -3,7 +3,7 @@
 Auto-generated from `reference-only/sources.json` by `.claude/skills/research-pipeline/scripts/render-sources-md.py`.
 Do not edit by hand — your changes will be overwritten on next push to `main`.
 
-**Records:** 214 · **Generated:** 2026-05-21 05:47 UTC
+**Records:** 214 · **Generated:** 2026-05-21 08:31 UTC
 
 ## Table of contents
 

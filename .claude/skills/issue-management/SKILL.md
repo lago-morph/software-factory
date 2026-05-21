@@ -1,16 +1,67 @@
 ---
 name: issue-management
-description: Conventions for working with GitHub issues in this repository, plus a modify-behavior mode for adding, changing, or removing the behaviors it defines. **MUST be loaded any time the agent accesses a GitHub issue in any way** — including reading, querying, summarizing, commenting on, referencing in a PR or commit message, working on, picking up, claiming, investigating, answering questions on, closing, marking duplicate / invalid / wontfix, linking as a sub-issue, or opening a pull request for an issue. If the agent calls `mcp__github__issue_read`, `mcp__github__issue_write`, `mcp__github__add_issue_comment`, `mcp__github__list_issues`, `mcp__github__search_issues`, `mcp__github__sub_issue_write`, or otherwise touches an issue, this skill must already be loaded — no exceptions for "I'm only reading" or "I'm only doing one small thing." Primary mode triggers on the same surface — phrases like "work on issue #N", "pick up #N", "address #N", "look at #N", "what's #N about", "close #N as duplicate", "this is invalid", "wontfix this", "make this a sub-issue of #M". Modify-behavior mode triggers on any of these surfaces, all of which are equivalent: (a) the canonical form "I want to (action) issue behavior (name or synonym)" — e.g. "I want to add issue behavior X", "I want to change the STARTED issue behavior", "I want to modify the issue behavior for duplicates", "I want to remove the wontfix issue behavior", "I want to update issue behavior QUESTIONS"; (b) looser phrasings like "add a behavior to the issue skill", "change the X behavior", "I want issues to also do Y", "update the issue conventions", "the STARTED comment should also …", "add an issue convention for …", "whenever the agent picks up an issue, also label it"; (c) action-synonym variants — tweak / edit / revise / adjust / alter / drop / retire applied to any of the behavior names. In modify mode the skill walks the user through a 6-step intake (trigger, comment-or-not, side effects, MCP feasibility, edit-vs-add) and updates this SKILL.md plus the templates atomically.
+description: Conventions for working with GitHub issues in this repository, plus a modify-behavior mode for adding, changing, or removing the behaviors it defines. **MUST be loaded any time the agent accesses a GitHub issue in any way** — including reading, querying, summarizing, creating, commenting on, referencing in a PR or commit message, working on, picking up, claiming, investigating, answering questions on, closing, marking duplicate / invalid / wontfix, linking as a sub-issue, or opening a pull request for an issue. If the agent calls `mcp__github__issue_read`, `mcp__github__issue_write`, `mcp__github__add_issue_comment`, `mcp__github__list_issues`, `mcp__github__search_issues`, `mcp__github__sub_issue_write`, or otherwise touches an issue, this skill must already be loaded — no exceptions for "I'm only reading" or "I'm only doing one small thing." **This skill is self-installing and self-checking**: on every invocation its first action is `python .claude/skills/issue-management/scripts/install.py --check`; if exit code is 1, the same script runs with `--force` immediately (no user prompt). The install puts a PreToolUse hook in `.claude/settings.json` that hard-gates the issue-touching MCP tool calls listed above — a forgotten skill load is mechanically caught by the hook rather than relying on the agent reading this description. Primary mode triggers on the same surface — phrases like "work on issue #N", "pick up #N", "address #N", "look at #N", "what's #N about", "create an issue for #...", "open a new issue", "close #N as duplicate", "this is invalid", "wontfix this", "make this a sub-issue of #M". Modify-behavior mode triggers on any of these surfaces, all of which are equivalent: (a) the canonical form "I want to (action) issue behavior (name or synonym)" — e.g. "I want to add issue behavior X", "I want to change the STARTED issue behavior", "I want to modify the issue behavior for duplicates", "I want to remove the wontfix issue behavior", "I want to update issue behavior QUESTIONS"; (b) looser phrasings like "add a behavior to the issue skill", "change the X behavior", "I want issues to also do Y", "update the issue conventions", "the STARTED comment should also …", "add an issue convention for …", "whenever the agent picks up an issue, also label it"; (c) action-synonym variants — tweak / edit / revise / adjust / alter / drop / retire applied to any of the behavior names. In modify mode the skill walks the user through a 6-step intake (trigger, comment-or-not, side effects, MCP feasibility, edit-vs-add) and updates this SKILL.md plus the templates atomically.
 ---
 
 # Skill: issue-management
+
+## ⚠ STOP — run the pre-flight before reading anything else
+
+This is the unconditional first action on every invocation of this
+skill. Do it now, before scrolling further:
+
+```bash
+python .claude/skills/issue-management/scripts/install.py --check
+```
+
+Branch on the exit code:
+
+| Exit | Meaning | What you do |
+|---|---|---|
+| `0` | Gate is installed AND the per-session marker is now touched. | Proceed to the rest of this SKILL.md. |
+| `1` | Hook script missing/drifted OR `.claude/settings.json` lacks the PreToolUse entry. | **Immediately, no user prompt:** `python .claude/skills/issue-management/scripts/install.py --force`. It writes the hook, merges the PreToolUse entry into `.claude/settings.json`, touches the marker, and auto-commits both files. Push that commit alongside the rest of your work. Then proceed. |
+| `2` | Skill-internal file missing (`SKILL.md`, `scripts/install.py`, or `resources/hooks/require-issue-management-skill.sh`). | This is a skill-installation defect, not gate drift. Surface to the user and stop. |
+
+**No-prompt contract.** The install is mechanical and deterministic —
+the hook script is regenerated byte-for-byte from
+[`resources/hooks/require-issue-management-skill.sh`](./resources/hooks/require-issue-management-skill.sh), and the settings.json edit is an
+idempotent merge that touches only our PreToolUse entry. Every prompt
+to the user is a place the install gets skipped; skipped installs are
+exactly the failure mode this skill exists to prevent. Do not ask, do
+not announce — just run it.
+
+**What the gate does.** Once installed, `.claude/settings.json` carries
+a PreToolUse hook that intercepts every call to
+`mcp__github__issue_read`, `mcp__github__issue_write`,
+`mcp__github__add_issue_comment`, `mcp__github__list_issues`,
+`mcp__github__search_issues`, and `mcp__github__sub_issue_write`. If the
+per-session marker `/tmp/.claude-skill-loaded-issue-management` exists,
+the call goes through. If not, the hook exits 2 with an instructive
+stderr telling the agent to load this skill first. The marker is
+touched by `install.py --check` and `install.py --force`, so a
+successful pre-flight is the load signal.
+
+**Known limitation — first-session-in-fresh-repo blind spot.** Until
+this skill has run once in a given repo, the gate is not installed. So
+in the very first session that adds the skill to a repo, the failure
+mode this gate prevents can still happen one last time. Acceptable;
+the gate is in place for every subsequent session because
+`.claude/settings.json` and the hook script are committed to the repo.
+
+**Mid-session reactive load.** If at any point during a session you
+realise you touched an issue without loading this skill — typically
+because the hook fired and blocked you — run the pre-flight, then
+backfill the missed behavior (e.g. a retroactively-flagged STARTED
+comment naming the events that already happened). Never silent skipping.
+
+---
 
 This skill is a **conventions registry** for working with GitHub issues in
 this repository. It runs in one of two modes:
 
 - **Primary mode** — execute one of the defined behaviors when the agent is
-  working with an actual issue (claim it, ask questions, summarize answers,
-  close as duplicate/invalid/wontfix, link sub-issues, open a PR).
+  working with an actual issue (create it, claim it, ask questions, summarize
+  answers, close as duplicate/invalid/wontfix, link sub-issues, open a PR).
 - **[Modify-behavior mode](#modify-behavior-mode-add-change-or-remove-a-behavior)**
   — edit the skill itself: add a new behavior, change an existing one,
   or remove one, with templates and the quick-reference table kept in
@@ -126,6 +177,47 @@ Each behavior names the **trigger** (when the agent must act), the
 **comment type** to post (if any), and the **side effects** on the
 issue itself (assignee, label, state). The comment templates live in
 `templates/` next to this file.
+
+### Behavior: CREATE-ISSUE (agent opens a new issue)
+
+**Trigger**: The agent calls `mcp__github__issue_write` with
+`method=create` to open a new issue, for any reason (filing follow-up
+work, capturing a known-broken thing, recording a sub-task surfaced
+during a larger investigation).
+
+**Required action** (silent — no comment is posted):
+
+1. Call `mcp__github__issue_write` with `method=create` and whatever
+   `title` / `body` / `assignees` the situation calls for. **Include
+   `labels: ["help wanted"]`** in the create call so the marker lands
+   on the issue in a single round-trip. (If you also want to
+   pre-apply other labels in the same call, add them to the array —
+   `help wanted` must always be one of them.)
+2. If the create call didn't accept `labels` (older MCP variant) or
+   you forgot to include them, immediately follow up:
+   `issue_read method=get_labels` → compute new set as
+   `current ∪ {"help wanted"}` → `issue_write method=update`. The
+   label is a marker of agent-authorship, so do not skip it.
+3. Do **not** post a CREATE-ISSUE comment. This behavior is
+   intentionally silent — the `help wanted` label is the entire
+   signal. The issue body itself is the agent's own composition; no
+   meta-comment is needed.
+
+**The `help wanted` label is permanent.** Unlike `good first issue`
+(which marks "an agent claimed this") or `question` (which marks
+"waiting on user input"), `help wanted` on an agent-created issue
+records **who authored it**. It must not be removed when the issue is
+later assigned, started, answered, or closed. Other behaviors below
+that touch label sets must preserve `help wanted` if it's present.
+
+**Why this matters.** In a repo where the agent and the human both
+author issues, scanning the issue list for "what's mine vs. what's the
+agent's" is otherwise guesswork. The label makes that scan a one-look
+operation, and it stays put through the issue's lifetime so
+retrospective triage stays accurate.
+
+**No comment template.** Silent behavior. The body of the issue is
+authored by the agent in the create call.
 
 ### Behavior: STARTED (claiming an unclaimed issue)
 
@@ -361,7 +453,9 @@ Rules every comment template MUST follow:
    in use: `[STARTED]`, `[QUESTIONS]`, `[ANSWERS]`, `[PR-OPENED]`,
    `[CLOSED-NO-PR]`, `[DUPLICATE]`, `[INVALID]`, `[WONTFIX]`,
    `[SUB-ISSUE-LINKED]`. When modify-behavior mode adds a new behavior,
-   the new tag goes here in this list.
+   the new tag goes here in this list. (CREATE-ISSUE is intentionally
+   silent — no tag, no comment; the `help wanted` label is its entire
+   signal.)
 3. **A short one-line summary** follows the tag on the same line,
    separated by `— `. The summary tells a thread-scanner *what*
    without forcing them to expand the comment.
@@ -386,6 +480,7 @@ event it is).
 
 | Event | Tag | Trigger | Side effects on issue | Template |
 |---|---|---|---|---|
+| Created by agent | *(silent — no tag)* | Agent calls `issue_write method=create` | Add `help wanted` label (permanent) | *(no template — silent behavior)* |
 | Picked up | `[STARTED]` | Agent picks up an unassigned issue | Assignee = `<mcp-login>`; `good first issue` label | [`templates/comment-started.md`](./templates/comment-started.md) |
 | Asked | `[QUESTIONS]` | Agent needs user input | Add `question` label | [`templates/comment-questions.md`](./templates/comment-questions.md) |
 | Got answers | `[ANSWERS]` | User answered (here or in chat) | Remove `question` label | [`templates/comment-answers.md`](./templates/comment-answers.md) |
@@ -419,9 +514,26 @@ event it is).
 | INVALID | `invalid` added |
 | WONTFIX | `wontfix` added |
 
+| Behavior | `help wanted` label |
+|---|---|
+| CREATE-ISSUE | **added** — marker of agent authorship |
+| every other behavior | **preserved** — never removed; the label is permanent for issues the agent created |
+
 ---
 
 ## Workflow (per event)
+
+### CREATE-ISSUE
+
+```text
+1. compose title + body
+2. issue_write method="create" title=… body=… labels=[..., "help wanted"]
+   (also pass assignees/milestone here if appropriate)
+3. if the MCP variant rejected `labels` on create:
+     issue_read get_labels (now an empty set on the new issue)
+     issue_write update labels=(current ∪ {"help wanted"})
+4. silent — no comment posted
+```
 
 ### STARTED
 
@@ -826,6 +938,12 @@ The skill then:
 
 ## Bundled files
 
+- `scripts/install.py` — self-installing pre-flight; installs and
+  verifies the PreToolUse hook + `.claude/settings.json` entry, and
+  touches the per-session marker on every `--check` / `--force` run.
+- `resources/hooks/require-issue-management-skill.sh` — the hook
+  script template. `install.py` copies it to
+  `.claude/hooks/require-issue-management-skill.sh` and `chmod +x`s it.
 - `templates/comment-started.md` — STARTED comment template.
 - `templates/comment-questions.md` — QUESTIONS comment template.
 - `templates/comment-answers.md` — ANSWERS comment template.
@@ -839,6 +957,14 @@ The skill then:
   when modify-behavior mode creates a new per-event template.
 - `spec/FILLING-TEMPLATES.md` — concrete guidance on how to fill each
   placeholder in each template.
+
+## Installed (outside the skill dir) by `scripts/install.py`
+
+- `.claude/hooks/require-issue-management-skill.sh` — runtime hook
+  script invoked by the PreToolUse hook entry below.
+- `.claude/settings.json` — gains (or has merged into it) a PreToolUse
+  hook entry matching the issue-touching MCP tools and pointing at the
+  hook script above. Idempotent; other entries are untouched.
 
 ---
 

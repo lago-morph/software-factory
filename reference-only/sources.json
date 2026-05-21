@@ -1009,6 +1009,26 @@
     ],
     "title": "Requirements Writing Guide | Docs | 8090"
   },
+  "3592091691": {
+    "canonical_url": "https://github.com/jonathanmanton",
+    "comments": "User-authored document by the repository owner (Jonathan Manton). Drafted in a Claude.ai chat and pasted into the repo root in early development. Canonical-URL slot uses the author's GitHub profile because the document has no public hosted URL. It is a source for the project (informed Round-1 framing and Architecture 1 lineage), not a project-internal mutable artifact.",
+    "files": [
+      {
+        "comment": "User-authored methodology document. Originated as a Claude.ai chat output, pasted verbatim into the repo root at project genesis.",
+        "completeness": "complete",
+        "filename": "spec-driven-ai-dev.md",
+        "format": "md",
+        "ingestion_status": "have",
+        "sha256": "ef39a9c4e934a15ccec022091348db3ec8078b54ddef7d714afc7bef612ec695"
+      }
+    ],
+    "id": "3592091691",
+    "short_summary": "User-authored layered-spec / 5-failure-mode / revelation-cycle methodology",
+    "tags": [
+      "spec-authorship"
+    ],
+    "title": "Specification-Driven Agentic Development System: A Methodology for Iterative Specification Refinement Using AI Agents"
+  },
   "35b057067e": {
     "canonical_url": "https://www.jayminwest.com/agentic-engineering-book/6-harnesses",
     "files": [

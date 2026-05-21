@@ -121,7 +121,7 @@ Our `00-comparison.md` §4.1 lists nine shared-infrastructure primitives, none o
 | **Design Delegation** | Anti-pattern: an engineer defers architectural decisions to AI during implementation, then cannot write complete plans because the architecture was never consciously designed. Corrupts Leverage Points #3 and #4. |
 | **Post-Hoc Learning** | Anti-pattern: engineers acquire AI tooling knowledge ad-hoc rather than through structured programs; point-tool knowledge accumulates without ADW design literacy. Corrupts Leverage Point #1. |
 
-These 16 terms are recommended for direct verbatim adoption in our `architectures/` and `spec-driven-ai-dev.md` documents, where they fill gaps our current vocabulary does not. The first three (Harness, ADW, Leverage Point) should be promoted to *organizing* vocabulary — they restructure how the documents are written, not merely how they read.
+These 16 terms are recommended for direct verbatim adoption in our `architectures/` documents and any future v3 methodology document, where they fill gaps our current vocabulary does not. The first three (Harness, ADW, Leverage Point) should be promoted to *organizing* vocabulary — they restructure how the documents are written, not merely how they read. (`spec-driven-ai-dev.md` is a cataloged source — record [`3592091691`](../reference-only/3592091691/spec-driven-ai-dev.md), per issue [#105](https://github.com/lago-morph/software-factory/issues/105) — and is not amended directly; vocabulary adoption applies to project-authored documents.)
 
 ---
 

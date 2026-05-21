@@ -131,6 +131,8 @@ The five Codex disciplines (Ch6 §5.1–5.5) are typed objects, explicit relatio
 
 ## 9. Concrete proposals for our spec template
 
+> **Status note (2026-05-21, issue [#105](https://github.com/lago-morph/software-factory/issues/105)):** `spec-driven-ai-dev.md` is a cataloged source (record [`3592091691`](../reference-only/3592091691/spec-driven-ai-dev.md)), not a mutable internal artifact. The proposals below are research findings — they can inform a v3 methodology document authored separately, but they are not pending edits against the source file.
+
 **1. Add an explicit `Intent` section above Layer 1.** Required fields: `id`, `statement`, `businessOutcomes` (metric + baseline + target), `nonGoals` (what this spec will *not* do; surfaces buried tensions, Ch3 §4.3), `decisionSeeds` (open questions with `id`, `topic`, `question`, `targetResolutionDate`; each resolves into an ADR), `invariants` (each with `id`, `rule`, optional `bindingHint` naming the downstream control surface — Rego policy path, CEL admission rule, acceptance-test ID, runtime check, per Ch3 Appendix A.3), `guardrails` (metrics that must not regress), `feedbackSources`.
 
 **2. Separate `Policy` from `Invariant`.** Policies are enterprise-wide catalog entries referenced by ID; invariants are this-spec-specific and compile into executable controls. Our current Layer 4 (Quality and Constraints) mixes both. Split: policy references go in the Intent block; per-spec invariants live in Layer 4 with explicit `bindingHint`.

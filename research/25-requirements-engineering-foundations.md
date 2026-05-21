@@ -296,6 +296,8 @@ This section ties the four primary sources back to the existing corpus. Concrete
 
 ### 7.2 What should change in `spec-driven-ai-dev.md`
 
+> **Status note (2026-05-21, issue [#105](https://github.com/lago-morph/software-factory/issues/105)):** `spec-driven-ai-dev.md` is a cataloged source (record [`3592091691`](../reference-only/3592091691/spec-driven-ai-dev.md)), not a mutable internal artifact. The proposals below stand as research findings for any v3 methodology document authored separately; they are not pending edits against the source file.
+
 These are concrete proposals for the methodology document; they are *proposals*, not assertions, for lead-agent review.
 
 1. **Mandate EARS for acceptance-criteria field.** Layer 3 acceptance criteria should be expressed in one of the five EARS patterns. Prose statement, rationale, and risk fields remain free.

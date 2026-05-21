@@ -1,3 +1,8 @@
+---
+based-on-commit: c495dc9
+based-on-date: 2026-05-10
+---
+
 # Architecture 1 — The Specification Refinery
 ## A Software Factory Built Around Iterative Specification Refinement
 

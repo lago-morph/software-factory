@@ -1,3 +1,8 @@
+---
+based-on-commit: c495dc9
+based-on-date: 2026-05-10
+---
+
 # Architecture 4 — The Evolutionary Tournament
 ## A Software Factory Built on Population, Selection Pressure, and Lineage
 

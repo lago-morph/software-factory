@@ -1,3 +1,8 @@
+---
+based-on-commit: 8f737b3
+based-on-date: 2026-05-13
+---
+
 # 13 — Round-2 Synthesis
 
 **Round:** 2 — fanout `20260511-054258`, sub-26 (synthesis position 13)

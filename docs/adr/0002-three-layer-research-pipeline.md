@@ -37,8 +37,8 @@ non-overlapping purposes**:
    status.
 
 2. **Synthesis (condensation layer)** — currently
-   [`research/00-synthesis.md`](../../research/00-synthesis.md) (Round 1) and
-   [`research/13-round-2-synthesis.md`](../../research/13-round-2-synthesis.md)
+   [`research/synthesis/00-synthesis.md`](../../research/synthesis/00-synthesis.md) (Round 1) and
+   [`research/synthesis/13-round-2-synthesis.md`](../../research/synthesis/13-round-2-synthesis.md)
    (Round 2). The synthesis layer's job is to produce, from the reports, the
    canonical cross-source artifacts: the failure-mode catalog (F1, F2, ...),
    the consensus list, the tensions list, and the open-questions list. The
@@ -146,8 +146,8 @@ What this is explicitly **not** promising:
 ## References
 
 - [`research-plan.md`](../../research-plan.md) [§the-three-layer-pipeline](../../research-plan.md#the-three-layer-pipeline), [§what-enough-research-should-trigger](../../research-plan.md#what-enough-research-should-trigger), [§what-stays-as-individual-documents-vs-gets-folded](../../research-plan.md#what-stays-as-individual-documents-vs-gets-folded), [§one-specific-risk-for-the-greenfield-mandate](../../research-plan.md#one-specific-risk-for-the-greenfield-mandate) — the source document this ADR extracts.
-- [`research/00-synthesis.md`](../../research/00-synthesis.md) [§4](../../research/00-synthesis.md#4-failure-modes-any-architecture-must-defend-against), [§3](../../research/00-synthesis.md#3-where-the-sources-disagree), [§2](../../research/00-synthesis.md#2-where-the-sources-agree) — the Round-1 synthesis exemplifying the condensation layer's output (failure modes, tensions, consensus).
-- [`research/13-round-2-synthesis.md`](../../research/13-round-2-synthesis.md) [§1](../../research/13-round-2-synthesis.md#1-what-changed-in-the-consensus), [§3](../../research/13-round-2-synthesis.md#3-what-changed-in-the-failure-mode-list) — the Round-2 synthesis demonstrating supersession-by-extension within the condensation layer.
+- [`research/synthesis/00-synthesis.md`](../../research/synthesis/00-synthesis.md) [§4](../../research/synthesis/00-synthesis.md#4-failure-modes-any-architecture-must-defend-against), [§3](../../research/synthesis/00-synthesis.md#3-where-the-sources-disagree), [§2](../../research/synthesis/00-synthesis.md#2-where-the-sources-agree) — the Round-1 synthesis exemplifying the condensation layer's output (failure modes, tensions, consensus).
+- [`research/synthesis/13-round-2-synthesis.md`](../../research/synthesis/13-round-2-synthesis.md) [§1](../../research/synthesis/13-round-2-synthesis.md#1-what-changed-in-the-consensus), [§3](../../research/synthesis/13-round-2-synthesis.md#3-what-changed-in-the-failure-mode-list) — the Round-2 synthesis demonstrating supersession-by-extension within the condensation layer.
 - [`research/INDEX.md`](../../research/INDEX.md) — the catalog of reports in the provenance layer.
 - [`research/PLAN.md`](../../research/PLAN.md) [§2](../../research/PLAN.md#2-repository-layout-what-lives-where), [§10](../../research/PLAN.md#10-round-by-round-canonical-reports-lookup-table) — repository layout and the round-by-round report lookup table.
 - [`architectures/00-comparison.md`](../../architectures/00-comparison.md) [§7.1](../../architectures/00-comparison.md#71-the-single-recommended-starting-path), [§7.4](../../architectures/00-comparison.md#74-build-the-shared-infrastructure-first) — the action layer's current recommendation and the shared-infrastructure sequencing it depends on.

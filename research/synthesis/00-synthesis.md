@@ -1,3 +1,8 @@
+---
+based-on-commit: f480c8b
+based-on-date: 2026-05-13
+---
+
 # Research Synthesis — Findings, Tensions, and Failure Modes
 **Date:** 2026-05-10
 **Version:** 2 — revised after primary-source access

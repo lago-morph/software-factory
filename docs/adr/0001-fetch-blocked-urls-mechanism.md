@@ -118,5 +118,5 @@ What this is explicitly **not** promising:
 - [`.claude/skills/fetch-blocked-urls/SKILL.md`](../../.claude/skills/fetch-blocked-urls/SKILL.md) — agent-facing trigger surface.
 - [`research/PLAN.md`](../../research/PLAN.md) [§5](../../research/PLAN.md#5-the-blocked-url-fetch-loop), [§6](../../research/PLAN.md#6-github-action--security-stance), [§10.1](../../research/PLAN.md#101-fetch-action-history) — the blocked-URL fetch loop, security stance, and fetch-action history (issue #4 outcome).
 - [`research/blocked-urls.md`](../../research/blocked-urls.md), [`research/blocked-urls-round-2.md`](../../research/blocked-urls-round-2.md) — the round-1 and round-2 URL inventories.
-- [`research/00-synthesis.md`](../../research/00-synthesis.md) [§0 (revision notes v2)](../../research/00-synthesis.md#0-revision-notes-v2) — the v1→v2 fabrications, including the cost of *not* having primary access.
+- [`research/synthesis/00-synthesis.md`](../../research/synthesis/00-synthesis.md) [§0 (revision notes v2)](../../research/synthesis/00-synthesis.md#0-revision-notes-v2) — the v1→v2 fabrications, including the cost of *not* having primary access.
 - [Michael Nygard, "Documenting Architecture Decisions"](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) — the original ADR essay.

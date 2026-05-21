@@ -25,7 +25,6 @@ report_paths:
   - research/followup
 ingestion_paths:
   - research/manual
-  - research/fetched
 github:
   owner: lago-morph
   repo:  software-factory
@@ -62,6 +61,8 @@ casual_url_patterns:
   - 'https?://apps\.apple\.com/'
   - 'https?://play\.google\.com/'
   - 'https?://api\.github\.com/'
+  # GitHub PR URLs used as audit-trail links inside plan docs
+  - 'https?://github\.com/[^/]+/[^/]+/pull/\d+'
   # Pure homepage URLs (no path beyond /) — name-check mentions, not articles
   - 'https?://[^/]+/?$'
 ```

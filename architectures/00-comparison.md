@@ -1,3 +1,8 @@
+---
+based-on-commit: c495dc9
+based-on-date: 2026-05-10
+---
+
 # Software Factory Architecture Options — Comparison and Decision Guide
 **Date:** 2026-05-10
 **Version:** 2 — post-primary-source-access

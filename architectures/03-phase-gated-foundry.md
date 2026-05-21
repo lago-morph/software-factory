@@ -1,3 +1,8 @@
+---
+based-on-commit: c495dc9
+based-on-date: 2026-05-10
+---
+
 # Architecture 3 — The Phase-Gated Foundry
 ## A Software Factory Built on Pre-Agile Methodology with Hour-Scale Cycle Times
 

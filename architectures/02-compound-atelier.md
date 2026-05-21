@@ -1,3 +1,8 @@
+---
+based-on-commit: c495dc9
+based-on-date: 2026-05-10
+---
+
 # Architecture 2 — The Compound Atelier
 ## A Software Factory Built on Specialized Persona Workshops with Knowledge Compounding
 

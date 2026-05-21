@@ -112,15 +112,18 @@ GitHub MCP tools available to this project. The capability table:
 
 | Side effect | Achievable? |
 |---|---|
-| Assign existing collaborator | Yes — `issue_write update assignees=[…]`. |
-| Apply *existing* label | Yes — `issue_write update labels=[…]`. Verify with `get_label` first. |
-| Apply a *new* label | **No** — there is no `create_label` MCP tool. Ask the user to create the label in the GitHub UI first, then proceed. |
-| Close issue with reason | Yes — `issue_write update state=closed state_reason=…`. |
+| Self-assign as the MCP identity | Yes — `get_me` → `login` → `issue_write update assignees=[<login>]`. Never hardcode the login. |
+| Assign existing collaborator (other than self) | Yes — `issue_write update assignees=[…]`. |
+| Apply *existing* label | Yes — `issue_write update labels=[…]`. `get_label` first to confirm presence. **Note**: `issue_write update labels=…` REPLACES the set; always read current via `issue_read get_labels` and pass the merged list. |
+| Apply a *new* label (not yet in the repo) | **No** — there is no `create_label` MCP tool. Ask the user to create the label in the GitHub UI first, then proceed. |
+| Default GitHub labels (`bug`, `documentation`, `duplicate`, `enhancement`, `good first issue`, `help wanted`, `invalid`, `question`, `wontfix`) | Yes — confirmed present in `lago-morph/software-factory`. Behaviors may rely on these without setup. |
+| Remove a label | Yes — same `issue_write update labels=…` replace-with-the-filtered-set pattern. |
+| Close issue with reason | Yes — `issue_write update state=closed state_reason=…`. Reason enum: `completed` / `not_planned` / `duplicate`. No `invalid` or `wontfix` reason — use `not_planned` + the label. |
 | Mark duplicate | Yes — `issue_write update state=closed state_reason=duplicate duplicate_of=N`. |
 | Set milestone (when number is known) | Yes — `issue_write update milestone=N`. |
 | Discover milestones by name | **No** — no list-milestones MCP tool. User must supply the number. |
 | Set "issue type" (Bug, Feature, …) | **No** for this org — `list_issue_types` returned 403. Use labels instead. |
-| Sub-issue link to parent | Yes — `sub_issue_write add`. |
+| Sub-issue link to parent | Yes — `sub_issue_write add issue_number=<parent> sub_issue_id=<child node id>`. Note the child arg is the **node ID**, not the issue number. |
 | Lock / pin / convert issue | **No** — no MCP tool. |
 | Tie PR closure to issue closure | Yes via convention — put `Closes #N` in PR body. |
 

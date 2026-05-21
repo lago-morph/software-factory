@@ -72,6 +72,66 @@ update the PR (preferred — `mcp__github__update_pull_request`) or remove
 that paragraph from the comment before posting (a lie on the issue
 thread is worse than a missing convenience).
 
+## CLOSED-NO-PR — `comment-closed-no-pr.md`
+
+| Placeholder | What to put |
+|---|---|
+| `{{COMPLETED_OR_NOT_PLANNED}}` | Exactly one of the strings `completed` or `not_planned`. Must match the `state_reason` you actually passed to `issue_write`. The skill rule: `completed` if the situation the issue describes is now resolved by some other means; `not_planned` if the work is being abandoned. |
+| `{{BRANCH_NAME_OR_NONE}}` | The branch you were on when you decided to close, or the word `none` if you weren't on a feature branch. |
+| `{{ONE_OR_TWO_SENTENCE_REASON}}` | Plain prose: why this is being closed without a PR. |
+| `{{SHORT_JUSTIFICATION_FOR_THE_CHOSEN_STATE_REASON}}` | One sentence explaining `completed` vs `not_planned`. This pre-empts the most common reviewer question. |
+
+The `good first issue` label is **not** removed by this behavior; if you
+want to remove it (rare), do so separately and note it in the body.
+
+## DUPLICATE — `comment-duplicate.md`
+
+| Placeholder | What to put |
+|---|---|
+| `{{ORIGINAL_ISSUE_NUMBER}}` | The original issue's number without `#`. The template adds `#`. |
+| `{{ORIGINAL_ISSUE_TITLE}}` | The original issue's title, verbatim. |
+| `{{ORIGINAL_ISSUE_URL}}` | Full `https://github.com/...` URL to the original. |
+| `{{ONE_OR_TWO_SENTENCE_EXPLANATION_OF_OVERLAP}}` | Why these two issues are the same problem. Be specific — handwavy "looks similar" closes are the most common cause of legitimate re-opens. |
+
+Side effects to perform alongside the comment: `state=closed`,
+`state_reason=duplicate`, `duplicate_of=<orig>`, add `duplicate` label,
+remove `good first issue` label.
+
+## INVALID — `comment-invalid.md`
+
+| Placeholder | What to put |
+|---|---|
+| `{{ONE_OR_TWO_SENTENCE_EXPLANATION_OF_WHY_NOT_A_BUG}}` | The substantive reason the issue does not describe a real defect. |
+| `{{WHAT_THE_OBSERVED_BEHAVIOR_ACTUALLY_IS_OR_WHY_IT_IS_INTENTIONAL}}` | What is actually happening (e.g. "the user is invoking the CLI with `--strict` which intentionally rejects this input"). The reader of an INVALID closure usually wants to know "OK then what *was* going on" — answer that here. |
+
+Side effects: `state=closed`, `state_reason=not_planned`, add `invalid`
+label, remove `good first issue` label.
+
+## WONTFIX — `comment-wontfix.md`
+
+| Placeholder | What to put |
+|---|---|
+| `{{ONE_OR_TWO_SENTENCE_REASON_E_G_OUT_OF_SCOPE_TOO_EXPENSIVE_CONFLICTS_WITH_DESIGN}}` | The substantive reason the project won't pursue this. Be specific — "out of scope" alone isn't enough; name the scope boundary it crosses. |
+| `{{WORKAROUND_OR_RELATED_FEATURE_OR_THE_WORD_NONE}}` | A workaround, related feature, or external tool the reporter could use instead. If none exists, write `none`. |
+
+Side effects: `state=closed`, `state_reason=not_planned`, add `wontfix`
+label, remove `good first issue` label.
+
+## SUB-ISSUE-LINKED — `comment-sub-issue-linked.md`
+
+| Placeholder | What to put |
+|---|---|
+| `{{PARENT_ISSUE_NUMBER}}` | The parent issue's number (the issue this comment is being posted on). |
+| `{{CHILD_ISSUE_NUMBER}}` | The child issue's number. |
+| `{{CHILD_ISSUE_TITLE}}` | The child issue's title, verbatim. |
+| `{{CHILD_ISSUE_URL}}` | Full URL to the child. |
+| `{{ONE_OR_TWO_SENTENCE_EXPLANATION_OF_WHY_THE_CHILD_EXISTS_SEPARATELY}}` | Why this is being broken out — e.g. "the original combines an API change and a UI change; splitting so they can land on independent timelines." |
+| `{{ONE_LINE_SCOPE_OR_LINK_TO_CHILD_DESCRIPTION}}` | A one-line scope summary, or `see #N` pointing to the child's body. |
+
+Side effects: `sub_issue_write add` (no label or state change on either
+issue). The comment is **posted on the parent only** — the child's
+linkage is visible in its own sidebar without needing a comment.
+
 ## General authoring rules
 
 - **No emojis.** Project style.

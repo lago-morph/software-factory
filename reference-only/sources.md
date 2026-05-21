@@ -3,10 +3,11 @@
 Auto-generated from `reference-only/sources.json` by `.claude/skills/research-pipeline/scripts/render-sources-md.py`.
 Do not edit by hand — your changes will be overwritten on next push to `main`.
 
-**Records:** 209 · **Generated:** 2026-05-20 18:08 UTC
+**Records:** 209 · **Generated:** 2026-05-21 02:24 UTC
 
 ## Table of contents
 
+- [🔴 Manual fetch needed](#manual-fetch-needed)
 - [By category](#by-category)
   - [dark-factory](#cat-dark-factory) *(38)*
   - [intent-driven-architecture](#cat-intent-driven-architecture) *(9)*
@@ -24,11 +25,34 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
   - [ai-engineering-culture](#cat-ai-engineering-culture) *(23)*
   - [meta-synthesis](#cat-meta-synthesis) *(2)*
 - [By status (cross-cutting view)](#by-status)
-  - [§ 1 — Complete](#status-complete) *(196)*
-  - [§ 2 — Partial](#status-partial) *(10)*
+  - [§ 1 — Complete](#status-complete) *(195)*
+  - [§ 2 — Partial](#status-partial) *(11)*
   - [§ 3a — Wanted (URL known)](#status-wanted-url) *(1)*
   - [§ 3b — Wanted (title only)](#status-wanted-title) *(0)*
   - [§ 4 — Superseded](#status-superseded) *(2)*
+
+<a id="manual-fetch-needed"></a>
+## 🔴 Manual fetch needed
+
+**1 record(s)** have `ingestion_status=want` file entries — the fetch action couldn't get them automatically (Cloudflare challenge, JS-rendered SPA, paywall, or 404 with no successor).
+
+### How to fetch manually
+
+1. Open the URL in your browser (signed in if needed for paywalled content).
+2. **File → Save Page As → Webpage, Complete** (saves as MHTML — preserves embedded images + CSS). Chrome/Edge call this *"Save as MHTML"*; Firefox calls it *"Webpage, single file"* via an extension.
+3. Save the file with the suggested name from the **Drop as** column below into `research/manual/`.
+4. After all manual fetches are dropped, run:
+   ```bash
+   python .claude/skills/research-pipeline/scripts/reconcile-source-dir.py --all
+   ```
+   This will register each file into its catalog record (matching by sha256 + filename) and flip the status to `have`.
+
+### Records to fetch
+
+| Record | Title | Source URL | Reason want | Drop as |
+|---|---|---|---|---|
+| `992e4f88b6` | Agentic Engineering Book (Jaymin West) | [Source URL](https://www.jayminwest.com/agentic-engineering-book) | Not yet fetched | `research/manual/992e4f88b6.mhtml` |
+
 
 <a id="by-category"></a>
 ## By category
@@ -407,7 +431,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 |---|---|---|---|---|---|
 | <a id="e6f77b9e81"></a>[`e6f77b9e81`](e6f77b9e81/) | **A Manifesto for Agentic Development** | [Source URL](https://jayminwest.substack.com/p/a-manifesto-for-agentic-development) | [Local Source](e6f77b9e81/5b9538c4e3_jayminwest.substack.com__p__a-manifesto-for-agentic-development.html) | html ✓ · mhtml ✓ | — |
 | <a id="80735d97d3"></a>[`80735d97d3`](80735d97d3/) | **AddyOsmani.com - Agentic Engineering** | [Source URL](https://addyosmani.com/blog/agentic-engineering) | [Local Source](80735d97d3/b6ee58bd76_addyosmani.com__blog__agentic-engineering__.html) | html ✓ · md ✓ | [`research/12-adjacent-ecosystem.md`](../research/12-adjacent-ecosystem.md) *(1)* |
-| <a id="992e4f88b6"></a>[`992e4f88b6`](992e4f88b6/) | **Agentic Engineering Book (Jaymin West)** | [Source URL](https://www.jayminwest.com/agentic-engineering-book) | [Local Source](992e4f88b6/96bb6edd45_www.jayminwest.com__agentic-engineering-book.html) | html ✓ · md ✓ | — |
+| <a id="992e4f88b6"></a>[`992e4f88b6`](992e4f88b6/) | **Agentic Engineering Book (Jaymin West)** | [Source URL](https://www.jayminwest.com/agentic-engineering-book) | [Local Source](992e4f88b6/96bb6edd45_www.jayminwest.com__agentic-engineering-book.html) | html ✓ · md ✓ · youtube-transcript (want) · youtube-transcript (want) · youtube-transcript (want) | — |
 | <a id="35b057067e"></a>[`35b057067e`](35b057067e/) | **Agentic Engineering Book – Chapter 6: Harnesses (Jaymin West)** | [Source URL](https://www.jayminwest.com/agentic-engineering-book/6-harnesses) | [Local Source](35b057067e/8569c92993_www.jayminwest.com__agentic-engineering-book__6-harnesses.html) | html ✓ · md ✓ | — |
 | <a id="8484aea116"></a>[`8484aea116`](8484aea116/) | **AI and the marshmallow test - by Sam Schillace** | [Source URL](https://sundaylettersfromsam.substack.com/p/ai-and-the-marshmallow-test) | [Local Source](8484aea116/AI%20and%20the%20marshmallow%20test%20-%20by%20Sam%20Schillace.txt) | txt ✓ | [`research/28-schillace-sunday-letters.md`](../research/28-schillace-sunday-letters.md) *(1)* |
 | <a id="4dae4e40d9"></a>[`4dae4e40d9`](4dae4e40d9/) | **Artisans and Factory Lines - by Sam Schillace** | [Source URL](https://sundaylettersfromsam.substack.com/p/artisans-and-factory-lines) | [Local Source](4dae4e40d9/Artisans%20and%20Factory%20Lines%20-%20by%20Sam%20Schillace.mhtml) | mhtml ✓ | [`research/28-schillace-sunday-letters.md`](../research/28-schillace-sunday-letters.md) *(1)* |
@@ -447,7 +471,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 ## By status (cross-cutting view)
 
 <a id="status-complete"></a>
-### § 1 — Complete *(196 records)*
+### § 1 — Complete *(195 records)*
 
 *Every registered file is present and complete.*
 
@@ -483,7 +507,6 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`b1b49c4c3d` — Agent Skills Cookbook 03 — Custom Development](#b1b49c4c3d)
 - [`bdba59d7ee` — Agent Skills — Best Practices (Claude docs)](#bdba59d7ee)
 - [`8962e872bd` — Agentic Engineering (IBM Think Topics)](#8962e872bd)
-- [`992e4f88b6` — Agentic Engineering Book (Jaymin West)](#992e4f88b6)
 - [`35b057067e` — Agentic Engineering Book – Chapter 6: Harnesses (Jaymin West)](#35b057067e)
 - [`08be49ea7d` — Agentic Engineering Patterns - Simon Willison's Weblog](#08be49ea7d)
 - [`39405fa555` — Agentic Engineering: Redefining Software Engineering (LangChain)](#39405fa555)
@@ -649,7 +672,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`faa604dace` — Your AI Product Needs Evals](#faa604dace)
 
 <a id="status-partial"></a>
-### § 2 — Partial *(10 records)*
+### § 2 — Partial *(11 records)*
 
 *Has some content, but also files that are wanted, partial, or had fetch errors.*
 
@@ -657,6 +680,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`85cdf07ac2` — 8090 Inc Blog](#85cdf07ac2)
 - [`e6f77b9e81` — A Manifesto for Agentic Development](#e6f77b9e81)
 - [`5a9f63821f` — Agent Skills: Security](#5a9f63821f)
+- [`992e4f88b6` — Agentic Engineering Book (Jaymin West)](#992e4f88b6)
 - [`f8007cc630` — An AI State of the Union | Simon Willison (Lenny's Newsletter)](#f8007cc630)
 - [`3274cc670c` — Devin (Cognition AI)](#3274cc670c)
 - [`586cb02137` — Head of Claude Code: What happens when AI does 90% of the coding](#586cb02137)

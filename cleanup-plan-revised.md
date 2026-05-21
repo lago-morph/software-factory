@@ -225,6 +225,84 @@ Numbering matches v1 where the change still applies; revised items are marked **
 
 ---
 
+## L. Linter findings — separate work item (deferred from this cleanup)
+
+`bash scripts/lint-sources.sh` currently exits non-zero. Schema validation passes (209 records valid); the lint failure is concentrated in the URL-vs-reports cross-check plus a stack of advisory sanity warnings. Captured here so a future agent has the full context + a concrete fix path without re-running diagnostic loops.
+
+### L.1 URL-vs-reports — 5 errors (the only hard FAIL)
+
+**Context.** Round-12 (gas-systems substrate analysis, PR #101, 2026-05-20) added `research/38-gas-systems-substrate.md` + `research/followup/13-gas-city-deep-dive.md` + `research/followup/14-gas-town-deep-dive.md` without running the catalog drain afterward. As a result the reports cite URLs that have no record in `sources.json`:
+
+| # | URL | Cited in | Substantive? |
+|---|------|------|------|
+| 1 | `http://localhost:8428/api/v1/write` | followup/14 | No — Gas Town config example reference |
+| 2 | `http://localhost:9428/insert/jsonline` | followup/14 | No — same |
+| 3 | `https://github.com/gastownhall/gascity` | report 38 + followup/13 | **Yes** — primary repo subagent walked |
+| 4 | `https://github.com/gastownhall/gascity/issues/586` | followup/13 | **Yes** — specific issue cited |
+| 5 | `https://github.com/gastownhall/gastown` | report 38 + followup/14 | **Yes** — primary repo subagent walked |
+
+**Proposed solution.**
+- **Localhost URLs (1, 2):** Add to `reference-only/MIGRATION-EXCEPTIONS.md` under a new "casual host: localhost (2 records)" section. These are config-illustration URLs inside source code samples, not substantive external sources — same handling as `api.github.com`, `x.com` etc. (See existing MIGRATION-EXCEPTIONS.md for the exact format.)
+- **GitHub repo + issue URLs (3, 4, 5):** Create three proper catalog records. Use the standard URL → id → record flow per `_catalog/edit.md` Case 1 (no files — `wanted` status). Tag with category `other-vendor-substrate` (or `dark-factory` — the user picks at edit time). The repos *were* walked by Round-12 subagents but the working clones lived in ephemeral `/tmp/` and weren't preserved; mark `ingestion_status: want` for now. If the user wants the repos re-cloned and the worktrees persisted, that's a separate ingestion task (likely needs `git clone --depth 1` + a custom file-naming convention because the catalog isn't designed to hold full git checkouts).
+- **Also update `references_from`** on all five new/excepted records: run `python .claude/skills/research-pipeline/scripts/check-source-refs.py --fix` after the records exist, which back-populates the array from the actual report citations.
+
+### L.2 references_from drift on `e588b9bb1a` — 1 warning
+
+**Context.** Record `e588b9bb1a` is the superseded CaMeL arXiv record (`pointer_to → 24ca29ee98`). `research/followup/08-security-primitives.md` cites the old URL but `references_from` on `e588b9bb1a` wasn't updated when the citation pattern changed.
+
+**Proposed solution.** `python .claude/skills/research-pipeline/scripts/check-source-refs.py --fix` will repopulate `references_from`. Single-record fix; takes seconds.
+
+### L.3 Filesystem ↔ catalog — 4 stray-file warnings
+
+| Stray | Disposition |
+|------|------|
+| `reference-only/MIGRATION-EXCEPTIONS.md` | **Keep** — accurate audit trail; expected stray. The linter has no concept of "intentional top-level docs"; either suppress this specific warning or accept it permanently. |
+| `reference-only/category-survey.md` | **Delete** — this cleanup already proposes deleting it (item 37). The warning disappears after the cleanup PR lands. |
+| `reference-only/reorg-plan.md` | **Delete** — this cleanup already proposes deleting it (item 36). The warning disappears after the cleanup PR lands. |
+| `reference-only/f3b49991be/` (orphan directory, no record) | **Delete** — Investigated in this session: the dir contains `software-factory-deep-research-report.md` (a `git ls-tree` dump, not actual report content — likely an accidental shell-redirect commit) and `software-factory-deep-research-report-sources.md` (a Cloudflare "Just a moment…" interstitial captured by mistake). Neither file has substantive content; the directory's id `f3b49991be` doesn't match any current canonical URL. **Action:** `git rm -r reference-only/f3b49991be/` as part of the cleanup commit. |
+
+### L.4 Sanity warnings — 65 advisory items
+
+**Context.** Title / word-overlap heuristic warnings. Three distinct sub-categories:
+
+1. **"Just a moment…" / "404 / Not Found" / "Search code, repositories…" titled files (~15 warnings).** Files where the captured page is actually a Cloudflare challenge, an interstitial, or a search-results page — not the intended content. **Examples:** records `60fbea1689`, `7dbf96d872`, `e6f77b9e81` (Cloudflare on Medium / Substack), `5a9f63821f` (404 on platform.claude.com `security` page HTML), `3274cc670c` (Cognition 404), `85cdf07ac2` (8090 blog 404), `2e49bcd671` (saved dotpowers page instead of Copilot doc), `a5209cf735` (GitHub search), `1e18da4d24` (`report.md` title mismatch — the file is the legit content but its `title` metadata doesn't reflect the canonical record title).
+2. **Host normalization warnings (~5 warnings).** File's URL host is `cognition.ai` but the record's canonical URL is `www.cognition.ai` (and similar for `factory.ai` / `www.factory.ai`, `jayminwest.com` / `www.jayminwest.com`, `docs.openhands.dev` / `docs.all-hands.dev`). Either canonicalize the file's recorded host on ingestion, or relax the audit to treat `www.X` and `X` as the same host.
+3. **Format-variant low-overlap (~45 warnings).** HTML + MD + MHTML files for the same source naturally have <30% token overlap because HTML carries navigation chrome and MD doesn't. Most of these are false positives — the threshold is set too tight for multi-format records. Examples: `5cc5a296b6` (Replit Agent 3 HTML+MHTML 11%), `9c9554d27e` (lethal-trifecta HTML+MHTML 13%), `f8007cc630` (Lenny + transcripts).
+
+**Proposed solution — process in three passes, ordered by leverage:**
+- **Pass 1 (high-leverage, ~15 records):** Re-fetch the broken-content files via the `fetch-blocked-urls` action runner (Cloudflare-blocked records often work from GitHub Actions IP), OR mark them `completeness: error` and `ingestion_status: skip-not-necessary` if the canonical content lives in another file on the same record. The fetch-blocked-urls skill has the workflow.
+- **Pass 2 (low-leverage, ~5 records):** Normalize `host` handling — either in the records or in the audit. Cheapest fix is to teach the audit that bare-host and `www.host` are equivalent. Edit `.claude/skills/research-pipeline/scripts/audit-records.py` (the host-comparison check) to call `url_canonicalize.py`'s host-normalization helper before comparing.
+- **Pass 3 (no-leverage, ~45 records):** Loosen the multi-format word-overlap threshold from "warn at <30%" to "warn at <10%" — `audit-records.py` constant. The 11–25% range for HTML+MD+MHTML pairs is normal and produces only noise.
+
+The whole set is processable in ~1 hour by a focused subagent once the criterion calls are made.
+
+### L.5 PLAN.md consistency — 2 warnings (advisory only)
+
+**Context.** `check-plan-consistency.py` reports that 8 of the last 10 catalog-touching commits didn't also touch PLAN.md, including auto-regen commits (`auto: regenerate sources.md from sources.json`) which are mechanical, and merge commits.
+
+**Proposed solution.** Either (a) suppress the warning class for `auto:`-prefixed commits and merge commits in `check-plan-consistency.py`, or (b) accept the noise (it's advisory; lint exits 0 on it). The cleanup PR will reset the window — once PLAN.md is rewritten as part of the cleanup, the next 10 commits land with PLAN.md updates per Hard rule #10, and the warning self-resolves until skill drift recurs.
+
+### L.6 Config validation — 1 warning
+
+`research/fetched/` (in `ingestion_paths` config) doesn't exist on disk. **Proposed solution:** remove `research/fetched/` from the pipeline config YAML in `SKILL.md`, since the fetch-blocked-urls workflow now writes to a `fetched/issue-N/` branch (not a top-level dir) and drain consumes from that branch directly. Single-line edit.
+
+---
+
+### Summary of L items by execution cost
+
+| Item | Type | Effort | Blocking? |
+|------|------|------|------|
+| L.1 (5 URL errors) | Catalog edits | ~20 min | **Yes — this is what makes lint exit non-zero** |
+| L.2 (1 references_from) | Script run | 30 sec | No (advisory warning) |
+| L.3 (4 stray files) | Already covered by main cleanup | 0 min extra | No |
+| L.4 (65 sanity warnings) | Re-fetch + audit tuning | ~1 hour subagent | No (advisory) |
+| L.5 (PLAN.md consistency) | Script tweak | 5 min | No (advisory) |
+| L.6 (config warning) | One-line config edit | 1 min | No |
+
+**Recommendation:** Address L.1 in the same cleanup commit (it's the only one that flips lint from FAIL to PASS), L.3 already lands with the main cleanup, L.6 alongside the SKILL.md updates per N4, and L.2 as a one-liner. Defer L.4 + L.5 to a follow-up PR — they're noise, not correctness, and they don't gate anything.
+
+---
+
 ## Out of scope (flagged but not in this cleanup)
 
 - **Architectures §2.4 / §7 swap, `spec-driven-ai-dev.md` extension, Round-2 stanza** — the three §3.2 tasks. They remain pending in §3.2 after cleanup; this PR doesn't execute them.
@@ -238,14 +316,16 @@ Numbering matches v1 where the change still applies; revised items are marked **
 
 1. Move syntheses (N1) and add headers (N3).
 2. Add architecture headers (N3).
-3. Delete obsolete files (C/D/E rewrite, F1).
+3. Delete obsolete files (C/D/E rewrite, F1, L.3 orphan dir).
 4. Edit `research/PLAN.md` (all §1–§17 changes; bullet reformat; future-research deletion).
 5. Edit `research-plan.md` (root).
-6. Update research-pipeline skill resources (N4).
+6. Update research-pipeline skill resources (N4 + L.6 config).
 7. Add Noah Radford wanted record (N6).
-8. Close issues #41, #42 (N5).
-9. Single commit with all of the above. Run `bash scripts/lint-sources.sh` before commit.
-10. Push, open PR ready-for-review, subscribe to PR activity.
+8. Address L.1 — add MIGRATION-EXCEPTIONS entries (localhost URLs) + 3 catalog records (gas-systems repos + issue).
+9. Run `python .claude/skills/research-pipeline/scripts/check-source-refs.py --fix` (L.2).
+10. Close issues #41, #42 (N5).
+11. Single commit with all of the above. Run `bash scripts/lint-sources.sh` and confirm it exits clean (only L.4/L.5 advisory warnings remain, both deferred).
+12. Push, open PR ready-for-review, subscribe to PR activity.
 
 ---
 

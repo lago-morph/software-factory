@@ -19,6 +19,7 @@ python3 .claude/skills/adr/scripts/check_adr_links.py docs/adr/
 | [0000](./0000-template.md) | Template | n/a | — |
 | [0001](./0001-fetch-blocked-urls-mechanism.md) | Use `fetch-blocked-urls` action for sandbox-blocked sources | Accepted | 2026-05-11 |
 | [0002](./0002-three-layer-research-pipeline.md) | Three-layer research-to-architecture knowledge pipeline | Accepted | 2026-05-21 |
+| [0007](./0007-advisory-ci-gates-emit-dismissible-pr-reviews.md) | Advisory CI gates emit dismissible PR reviews, not failing checks | Accepted | 2026-05-21 |
 
 ## Conventions in one screen
 

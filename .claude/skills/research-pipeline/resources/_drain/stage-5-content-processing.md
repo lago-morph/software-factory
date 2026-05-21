@@ -67,11 +67,11 @@ Full procedure: `youtube-transcripts.md`.
 
 ## Failure-mode discovery and registration
 
-When a source proposes, names, or surfaces a new failure mode, the canonical project-wide index is `architectures/failure-modes.md`. This is the index of record — every newly-promoted failure mode MUST be registered there in the same commit that lands the report proposing it. Failure-mode *definitions* may continue to live in their proposing report or synthesis doc (that is where the verbatim provenance sits); `architectures/failure-modes.md` is the index — short row per F-mode pointing to the canonical definition — plus the per-architecture coverage matrix seeded from `architectures/00-comparison.md` §2.4.
+When a source proposes, names, or surfaces a new failure mode, the canonical project-wide index is [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md). This is the index of record — every newly-promoted failure mode MUST be registered there in the same commit that lands the report proposing it. Failure-mode *definitions* may continue to live in their proposing report or synthesis doc (that is where the verbatim provenance sits); [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md) is the index — short row per F-mode pointing to the canonical definition — plus the per-architecture coverage matrix seeded from [`architectures/00-comparison.md`](../../../../../architectures/00-comparison.md) §2.4.
 
 ### Procedure when a report proposes a new failure mode
 
-1. **Pick a candidate number.** Read `architectures/failure-modes.md` AND `research/INDEX.md` ("Looking for a failure mode" entry) to find the current high-water mark. Allocate the next free integer.
+1. **Pick a candidate number.** Read [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md) AND [`research/INDEX.md`](../../../../../research/INDEX.md) ("Looking for a failure mode" entry) to find the current high-water mark. Allocate the next free integer.
 
 2. **Detect collisions.** Search the repo for the candidate number BEFORE writing the report:
 
@@ -80,14 +80,14 @@ When a source proposes, names, or surfaces a new failure mode, the canonical pro
    grep -rn "F47\b" --include="*.md" .
    ```
 
-   If the number is already used by a *different* proposed failure mode (this happened with F36/F37 — see `research/PLAN.md` §3.6), you have a collision.
+   If the number is already used by a *different* proposed failure mode (this happened with F36/F37 — see [`research/PLAN.md` §3.6 at commit `58216ff`](https://github.com/lago-morph/software-factory/blob/58216ffdf8b0e2a86ec0fd536eed57c6d6fbc713/research/PLAN.md#L83-L97) for the worked example; the live file is [`research/PLAN.md`](../../../../../research/PLAN.md) but its section numbers drift), you have a collision.
 
 3. **Resolve collisions by renumbering, not by ignoring.** When two proposals collide:
    - The earlier-merged proposal keeps the number (de-facto incumbent).
    - The new proposal takes the next free integer.
-   - If both are landing in the same session, the report that registers first in `architectures/failure-modes.md` keeps the number; the other re-numbers.
+   - If both are landing in the same session, the report that registers first in [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md) keeps the number; the other re-numbers.
 
-4. **Propagate the renumbered identifier.** A renumber is not done until every reference is updated. After the table in `architectures/failure-modes.md` settles, search carefully and fix EVERY occurrence:
+4. **Propagate the renumbered identifier.** A renumber is not done until every reference is updated. After the table in [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md) settles, search carefully and fix EVERY occurrence:
 
    ```bash
    # Use word-boundary matching to avoid matching F45 when searching for F4
@@ -98,18 +98,18 @@ When a source proposes, names, or surfaces a new failure mode, the canonical pro
 
    Common reference sites:
    - The proposing report itself (the §N.N title; in-line citations like "F<OLD> proposed")
-   - `research/INDEX.md` (the per-report row + the "Looking for a failure mode" entry)
-   - `research/PLAN.md` (collision notes; round-summary bullets)
-   - `research/synthesis/*.md` (cross-references)
+   - [`research/INDEX.md`](../../../../../research/INDEX.md) (the per-report row + the "Looking for a failure mode" entry)
+   - [`research/PLAN.md`](../../../../../research/PLAN.md) (collision notes; round-summary bullets)
+   - [`research/synthesis/`](../../../../../research/synthesis/) `*.md` (cross-references)
    - Other reports that already cite the colliding number
-   - `architectures/*.md` (rarely; the comparison doc's matrix is in `architectures/failure-modes.md` itself)
-   - Retrospectives and ADRs
+   - [`architectures/`](../../../../../architectures/) `*.md` (rarely; the comparison doc's matrix is in [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md) itself)
+   - [Retrospectives](../../../../../retrospective/) and [ADRs](../../../../../docs/adr/)
 
    A renumber missed in any of these silently corrupts cross-references — the diff must show every old number replaced.
 
-5. **Register in `architectures/failure-modes.md`.** Add a row to the index naming the F-mode and its canonical definition site. If the report adds per-architecture coverage data, extend the coverage matrix too. Commit `architectures/failure-modes.md` in the same commit as the proposing report.
+5. **Register in [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md).** Add a row to the index naming the F-mode and its canonical definition site. If the report adds per-architecture coverage data, extend the coverage matrix too. Commit [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md) in the same commit as the proposing report.
 
-6. **Update `research/INDEX.md`.** The "Looking for a failure mode" entry at the bottom of `INDEX.md` is the lookup table from F-mode number to definition site; keep it in sync.
+6. **Update [`research/INDEX.md`](../../../../../research/INDEX.md).** The "Looking for a failure mode" entry at the bottom of the index is the lookup table from F-mode number to definition site; keep it in sync.
 
 ### When NOT to propose a new F-mode
 

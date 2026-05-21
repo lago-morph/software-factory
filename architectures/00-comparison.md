@@ -78,7 +78,7 @@ Each is described in full in `architectures/0N-*.md`. This document is the compa
 
 ### 2.4 Failure mode coverage
 
-Moved to the canonical project-wide index at [`architectures/failure-modes.md`](failure-modes.md). The per-architecture coverage matrix for F1–F20 lives there now; new failure modes discovered in research, retrospectives, or architecture work are registered against the same file.
+Moved to the canonical project-wide index at [`architectures/failure-modes.md`](failure-modes.md). The per-architecture coverage matrix for F1–F20 lives there now; new failure modes discovered in research, retrospectives, or architecture work are registered against the same file (procedure: [`.claude/skills/research-pipeline/resources/_drain/stage-5-content-processing.md`](../.claude/skills/research-pipeline/resources/_drain/stage-5-content-processing.md) "Failure-mode discovery and registration").
 
 ---
 

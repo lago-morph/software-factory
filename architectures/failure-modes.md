@@ -1,10 +1,10 @@
 # Failure modes — canonical index
 
 **Status:** Canonical project-wide index of failure modes.
-**Seed source:** `architectures/00-comparison.md` §2.4 (extracted verbatim 2026-05-21 per issue #111).
-**Convention:** Every new failure mode discovered in research reports, retrospectives, or architecture work is registered here. See `.claude/skills/research-pipeline/resources/_drain/stage-5-content-processing.md` for the registration, renumbering, and propagation procedure.
+**Seed source:** [`architectures/00-comparison.md` §2.4 at commit `8530bee`](https://github.com/lago-morph/software-factory/blob/8530bee96eaf8b7ac892c973c3b9c7a159299765/architectures/00-comparison.md#L79-L113) — extracted verbatim 2026-05-21 per issue [#111](https://github.com/lago-morph/software-factory/issues/111). The permalink pins the pre-extraction state of the comparison doc; the live file (which changes a lot) is at [`00-comparison.md`](00-comparison.md).
+**Convention:** Every new failure mode discovered in research reports, retrospectives, or architecture work is registered here. See [`.claude/skills/research-pipeline/resources/_drain/stage-5-content-processing.md`](../.claude/skills/research-pipeline/resources/_drain/stage-5-content-processing.md) for the registration, renumbering, and propagation procedure.
 
-Failure-mode *definitions* (what F1–F20 mean) live in `research/synthesis/00-synthesis.md` §4; later additions (F21–F49+) are scattered across reports (see `research/INDEX.md` "Looking for a failure mode" entry). The matrix below is per-architecture *coverage* for F1–F20 — extend it as new failure modes are promoted.
+Failure-mode *definitions* (what F1–F20 mean) live in [`research/synthesis/00-synthesis.md`](../research/synthesis/00-synthesis.md) §4; later additions (F21–F49+) are scattered across reports (see [`research/INDEX.md`](../research/INDEX.md) "Looking for a failure mode" entry). The matrix below is per-architecture *coverage* for F1–F20 — extend it as new failure modes are promoted.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: issue-management
-description: Conventions for working with GitHub issues in this repository, plus a modify-behavior mode for adding, changing, or removing the behaviors it defines. Primary mode triggers whenever the agent is asked to work on, pick up, claim, investigate, answer questions on, close, mark duplicate / invalid / wontfix, link as a sub-issue, or open a pull request for a GitHub issue — phrases like "work on issue #N", "pick up #N", "address #N", "close #N as duplicate", "this is invalid", "wontfix this", "make this a sub-issue of #M". Modify-behavior mode triggers on phrases of the form "I want to (action) issue behavior (name or synonym)" or semantically equivalent — e.g. "I want to add issue behavior X", "I want to change the STARTED issue behavior", "I want to modify the issue behavior for duplicates", "I want to remove the wontfix issue behavior", "I want to update issue behavior QUESTIONS", "tweak / edit / revise / adjust the issue skill's ANSWERS behavior", "add a new issue behavior for Y". In modify mode the skill walks the user through a 6-step intake (trigger, comment-or-not, side effects, MCP feasibility, edit-vs-add) and updates this SKILL.md plus the templates atomically.
+description: Conventions for working with GitHub issues in this repository, plus a modify-behavior mode for adding, changing, or removing the behaviors it defines. Primary mode triggers whenever the agent is asked to work on, pick up, claim, investigate, answer questions on, close, mark duplicate / invalid / wontfix, link as a sub-issue, or open a pull request for a GitHub issue — phrases like "work on issue #N", "pick up #N", "address #N", "close #N as duplicate", "this is invalid", "wontfix this", "make this a sub-issue of #M". Modify-behavior mode triggers on any of these surfaces, all of which are equivalent: (a) the canonical form "I want to (action) issue behavior (name or synonym)" — e.g. "I want to add issue behavior X", "I want to change the STARTED issue behavior", "I want to modify the issue behavior for duplicates", "I want to remove the wontfix issue behavior", "I want to update issue behavior QUESTIONS"; (b) looser phrasings like "add a behavior to the issue skill", "change the X behavior", "I want issues to also do Y", "update the issue conventions", "the STARTED comment should also …", "add an issue convention for …", "whenever the agent picks up an issue, also label it"; (c) action-synonym variants — tweak / edit / revise / adjust / alter / drop / retire applied to any of the behavior names. In modify mode the skill walks the user through a 6-step intake (trigger, comment-or-not, side effects, MCP feasibility, edit-vs-add) and updates this SKILL.md plus the templates atomically.
 ---
 
 # Skill: issue-management
@@ -547,21 +547,35 @@ or **remove** one.
 
 ### Triggers for this mode
 
-Phrases of the form **"I want to (action) issue behavior (name or
-synonym for the behavior)"**, and semantic equivalents. Examples:
+Any of these surfaces — all equivalent. Treat them as a single trigger
+class; the canonical form is the most explicit, the looser forms are
+how the user might naturally phrase the same request.
+
+**Canonical form**: **"I want to (action) issue behavior (name or
+synonym for the behavior)"**. Examples:
 
 - "I want to add issue behavior X"
 - "I want to change issue behavior STARTED"
 - "I want to modify the issue behavior for duplicates"
 - "I want to remove the wontfix issue behavior"
 - "I want to update issue behavior QUESTIONS"
-- "Tweak / edit / revise / adjust the issue skill's ANSWERS behavior"
-- "Add a new issue behavior for marking a stale issue"
-- "Drop the SUB-ISSUE-LINKED behavior"
 
-Action synonyms that should trip this mode: add, create, introduce,
-change, modify, update, alter, adjust, tweak, edit, revise, rewrite,
-remove, delete, drop, retire.
+**Looser phrasings** (also valid triggers):
+
+- "Add a behavior to the issue skill"
+- "Change the X behavior" / "change how the issue skill handles X"
+- "I want issues to also do Y"
+- "Update the issue conventions"
+- "The STARTED comment should also …"
+- "Add an issue convention for …"
+- "Whenever the agent picks up an issue, also label it"
+- "When the user does X, the issue should …"
+
+**Action-synonym variants** apply to all of the above. Action synonyms
+that should trip this mode: add, create, introduce, change, modify,
+update, alter, adjust, tweak, edit, revise, rewrite, remove, delete,
+drop, retire. Example: "Tweak / edit / revise / adjust the issue
+skill's ANSWERS behavior", "Drop the SUB-ISSUE-LINKED behavior".
 
 Behavior names can be referenced by their tag (`STARTED`,
 `PR-OPENED`, ...) or by a synonym ("the claim behavior", "the duplicate

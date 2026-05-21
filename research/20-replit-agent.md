@@ -2,8 +2,8 @@
 
 **Date:** 2026-05-11
 **Author:** Round-5 subagent sub-22 (fanout 20260511-054258)
-**Cluster:** Round-5 13.1.3 per `research/PLAN.md` §13.1.3
-**Companion reports:** `research/18-openai-codex-substrate.md` (Codex analog), `research/11-openhands-substrate-audit.md` (OpenHands analog), `research/followup/06-competitor-landscape.md` (competitor map).
+**Cluster:** Round-5 13.1.3 per [`PLAN`](PLAN.md) §13.1.3
+**Companion reports:** [`18-openai-codex-substrate`](18-openai-codex-substrate.md) (Codex analog), [`11-openhands-substrate-audit`](11-openhands-substrate-audit.md) (OpenHands analog), [`06-competitor-landscape`](followup/06-competitor-landscape.md) (competitor map).
 **Stance in one sentence:** Replit Agent's organizing primitive is not the repo but the *deployed app*; `replit.md` is a managed (not static) instruction file that the Agent itself can read and update as it learns; connectors and the "agents-build-agents" loop make the substrate's first-class output a running, deployed, integrated system — a different shape from Codex/Claude/Copilot's repo-modification shape, and the closest analog to our Architecture-4 "operate the deployed system" loop. (Apr 29 2026 update: App Monitoring extends the substrate post-deploy into observability — Agent can now read prod logs and read-only prod DB to root-cause failures — see §3a.)
 
 All web claims here were originally verified on **2026-05-11 America/Chicago**; thirteen primary `docs.replit.com` and `blog.replit.com` URLs were re-verified by direct GitHub Actions fetch on **2026-05-13** (see drain note below).

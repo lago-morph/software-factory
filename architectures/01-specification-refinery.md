@@ -8,7 +8,7 @@ based-on-date: 2026-05-10
 
 **Version:** 0.2
 **Status:** Draft architecture proposal
-**Lineage:** Refines `spec-driven-ai-dev.md` v0.1 with findings from `research/00-synthesis.md` (v2, post-primary-source-access)
+**Lineage:** Refines `spec-driven-ai-dev.md` v0.1 with findings from [`00-synthesis`](../research/synthesis/00-synthesis.md) (v2, post-primary-source-access)
 **Stance in one sentence:** *The specification is the product; everything else is instrumentation.*
 
 ---

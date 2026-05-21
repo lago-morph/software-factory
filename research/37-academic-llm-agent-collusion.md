@@ -261,4 +261,4 @@ These secondary citations are flagged for a future round if the corpus deepens t
 
 ---
 
-*End of `research/37-academic-llm-agent-collusion.md` — Cluster O (final cluster) of the 2026-05-16 manual drain.*
+*End of [`37-academic-llm-agent-collusion`](37-academic-llm-agent-collusion.md) — Cluster O (final cluster) of the 2026-05-16 manual drain.*

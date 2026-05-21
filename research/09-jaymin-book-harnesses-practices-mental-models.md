@@ -42,7 +42,7 @@ Jaymin's Ch 6 §1 fixes the term: **a harness is everything around the model tha
 
 The chapter explicitly distinguishes **harness** from **scaffold** by citing arXiv:2603.05344 (2026-03): "Scaffolding assembles the agent before the first prompt; the harness orchestrates everything after." Scaffolding is pre-runtime (system prompt construction, tool registration, initial context); harness is runtime (dispatch, context management, safety enforcement, loop control). The chapter also distinguishes harness from "wrapper" (too passive) and "framework" (Jaymin treats LangGraph / CrewAI as *framework + runtime*, with the harness being the assembled runtime configuration).
 
-**Diff against our `architectures/00-comparison.md` §4.1.** Our §4.1 lists nine substrate primitives — worktree, sandbox, stable IDs, out-of-tree scenarios, LLM-judge, trajectory capture, manager loop, decision log, AGENTS.md. Mapping Jaymin's six Raschka components against our list:
+**Diff against our [`00-comparison`](../architectures/00-comparison.md) §4.1.** Our §4.1 lists nine substrate primitives — worktree, sandbox, stable IDs, out-of-tree scenarios, LLM-judge, trajectory capture, manager loop, decision log, AGENTS.md. Mapping Jaymin's six Raschka components against our list:
 
 | Jaymin's Raschka component | Closest in our §4.1 | Coverage |
 |---|---|---|
@@ -71,7 +71,7 @@ Ch 9 §7 ("Software Factories", 2026-04-09) is the chapter whose title directly 
 
 ### 2a. What Jaymin says our comparison missed
 
-**The historical lineage argument.** Our `architectures/00-comparison.md` does not place the four architectures into the historical trajectory of factory thinking. Jaymin's framing — the 2004 DSL framework was the right architecture for a missing component (the general-purpose language model) — *predicts* that the highest-leverage methodologies will be those that **invest in specification infrastructure** rather than implementation infrastructure. Our Arch 1 (Specification Refinery) and Arch 3 (Phase-Gated Foundry) implicitly make this bet; Arch 2 and Arch 4 do not, and we never argued why this matters historically.
+**The historical lineage argument.** Our [`00-comparison`](../architectures/00-comparison.md) does not place the four architectures into the historical trajectory of factory thinking. Jaymin's framing — the 2004 DSL framework was the right architecture for a missing component (the general-purpose language model) — *predicts* that the highest-leverage methodologies will be those that **invest in specification infrastructure** rather than implementation infrastructure. Our Arch 1 (Specification Refinery) and Arch 3 (Phase-Gated Foundry) implicitly make this bet; Arch 2 and Arch 4 do not, and we never argued why this matters historically.
 
 **Dan Shapiro's five levels.** Our comparison does not place the four architectures on Shapiro's L0–L5 spectrum (L0 manual → L1 task offloading → L2 active partnership → L3 human oversight → L4 autonomous coding → L5 dark factory). Each of our architectures implicitly targets a level:
 
@@ -84,7 +84,7 @@ This is a missing axis in our §5 ("decisions each architecture makes differentl
 
 **The validation-separation pattern.** Jaymin's discussion of StrongDM's *scenarios-as-holdout-sets* (acceptance criteria withheld from code-generating agents) names a specific pattern we describe under different names across our four architectures: in Arch 1 it's the "out-of-tree scenarios"; in Arch 3 it's the "acceptance V&V"; in Arch 4 it's the "predator agent." Jaymin gives us a single industry-canonical name — **holdout** — for this distributed pattern. Adopting the term improves cross-architecture clarity.
 
-**The circularity problem as a first-class concern.** Stanford Law CodeX's framing — "Built by Agents, Tested by Agents, Trusted by Whom?" — is a doctrinal challenge we partially address (independent judge in Arch 1; Primary + Secondary judge in Arch 4) but never name as the *core epistemic challenge of factory operation*. Adding a §2.5 on "circularity / independent inspection" to `architectures/00-comparison.md` would make explicit what each architecture does to dodge or mitigate the same-model-both-builds-and-validates problem.
+**The circularity problem as a first-class concern.** Stanford Law CodeX's framing — "Built by Agents, Tested by Agents, Trusted by Whom?" — is a doctrinal challenge we partially address (independent judge in Arch 1; Primary + Secondary judge in Arch 4) but never name as the *core epistemic challenge of factory operation*. Adding a §2.5 on "circularity / independent inspection" to [`00-comparison`](../architectures/00-comparison.md) would make explicit what each architecture does to dodge or mitigate the same-model-both-builds-and-validates problem.
 
 **Greenfield vs. brownfield ceiling.** Jaymin's "the realistic ceiling for brownfield factory operations sits closer to Level 3 than Level 5" is a constraint we never discuss. Three of our four architectures are implicitly greenfield-shaped (Refinery, Tournament, Foundry); only Atelier reads as brownfield-tolerant. This should be an explicit dimension in §2 of our comparison.
 
@@ -102,11 +102,11 @@ This is a missing axis in our §5 ("decisions each architecture makes differentl
 
 **On Level 5 as a target.** Jaymin's Ch 9 §7 explicitly names "Level 5 as the target" as an anti-pattern, recommending L3–L4 as the sweet spot. Arch 4 (Evolutionary Tournament) operates closer to L4 by construction (human-as-Geneticist doesn't read implementations), and Arch 2 (Atelier) can drift to L4 if the human stops reviewing PRs. We do not currently flag this as a risk; we should. Jaymin's evidence (CodeRabbit 1.4× critical-issue rate, Veracode 45% OWASP-vulnerable AI code, METR 19%-slower-than-self-estimated) is the empirical basis.
 
-**On brownfield applicability.** Jaymin asserts the L5 dark-factory ceiling for brownfield is around L3. Our `architectures/00-comparison.md` makes no greenfield-vs-brownfield distinction. If the synthesis claim is "build factory infrastructure once and it amortizes across all four," and three of four are greenfield-leaning, the amortization argument weakens under Jaymin's empirical claim. This is a real disagreement that should be resolved by adding an explicit brownfield-ceiling discussion to §3 ("when to pick which").
+**On brownfield applicability.** Jaymin asserts the L5 dark-factory ceiling for brownfield is around L3. Our [`00-comparison`](../architectures/00-comparison.md) makes no greenfield-vs-brownfield distinction. If the synthesis claim is "build factory infrastructure once and it amortizes across all four," and three of four are greenfield-leaning, the amortization argument weakens under Jaymin's empirical claim. This is a real disagreement that should be resolved by adding an explicit brownfield-ceiling discussion to §3 ("when to pick which").
 
 **On dark factory framing.** Jaymin sources the "dark factory" term to FANUC's lights-out manufacturing and Johnny Butler's "No Humans Should Write Code." Our internal naming (`software-factory`) was adopted without that historical baggage. Jaymin's chapter is at pains to *distance* serious factory thinking from L5 dark-factory advocacy. We should likewise be explicit that our project name is the L3–L4 factory, not the dark factory — otherwise readers familiar with the 2026 vocabulary will assume L5 and over-claim.
 
-**On the talent pipeline.** Jaymin names "U.S. junior developer hiring declined 67% in 2024; UK technology graduate roles fell 46%" as a structural long-term constraint on factory operations (the architects who write factory specs come from the junior pipeline). Our `architectures/00-comparison.md` is silent on this. It is not necessarily a *disagreement* but it is a multi-year constraint our architectures don't price in.
+**On the talent pipeline.** Jaymin names "U.S. junior developer hiring declined 67% in 2024; UK technology graduate roles fell 46%" as a structural long-term constraint on factory operations (the architects who write factory specs come from the junior pipeline). Our [`00-comparison`](../architectures/00-comparison.md) is silent on this. It is not necessarily a *disagreement* but it is a multi-year constraint our architectures don't price in.
 
 ---
 
@@ -174,7 +174,7 @@ Core operational practices:
 
 ### Diff against Arch 2 (Compound Atelier) manager loop / 5-state queue
 
-Our Arch 2 has a manager-loop construct and a 5-state queue (states like `pending`, `in-progress`, `under-review`, `residual`, `done` — see `architectures/02-compound-atelier.md` for exact names). Comparing:
+Our Arch 2 has a manager-loop construct and a 5-state queue (states like `pending`, `in-progress`, `under-review`, `residual`, `done` — see [`02-compound-atelier`](../architectures/02-compound-atelier.md) for exact names). Comparing:
 
 | Capability | Arch 2 (Atelier) | Jaymin Ch 8 §7 |
 |---|---|---|
@@ -197,9 +197,9 @@ Our Arch 2 has a manager-loop construct and a 5-state queue (states like `pendin
 - **Cost budgets with hard limits.** Arch 2 doesn't price per-agent or per-task token consumption. Adding budget ceilings (kill agent if exceeded; reject tasks above estimate threshold; pause daily work at limit) is a direct adoption.
 - **Three-tier watchdog.** Our manager loop is one tier (process-monitor + human-escalate). Inserting the AI-triage tier in the middle (Tier 2) is the operational pattern that scales the manager loop past the 5-agent ceiling.
 - **Agent CVs as capability-routing input.** Arch 2 has stable IDs but doesn't aggregate per-agent performance history; routing is based on role, not track record. Capability routing (build-03 has 12 auth tasks at 92% pass rate → assign auth work to build-03) is a strict improvement.
-- **Daily operating rhythm with time allocation.** Our `architectures/02-compound-atelier.md` doesn't describe the human operator's daily rhythm in this granularity. Adopting the 40/25/20/15 split (design / monitor / review / infrastructure) makes the cognitive-load profile explicit.
+- **Daily operating rhythm with time allocation.** Our [`02-compound-atelier`](../architectures/02-compound-atelier.md) doesn't describe the human operator's daily rhythm in this granularity. Adopting the 40/25/20/15 split (design / monitor / review / infrastructure) makes the cognitive-load profile explicit.
 
-**The structural adoption.** Arch 2's 5-state queue + Jaymin's three-tier watchdog + Agent CVs is a strict upgrade over either component alone. Recommend adding these as **enhancement options** in `architectures/02-compound-atelier.md` §3 or §5.
+**The structural adoption.** Arch 2's 5-state queue + Jaymin's three-tier watchdog + Agent CVs is a strict upgrade over either component alone. Recommend adding these as **enhancement options** in [`02-compound-atelier`](../architectures/02-compound-atelier.md) §3 or §5.
 
 ---
 
@@ -211,7 +211,7 @@ Five operational practices from Ch 8 that our four architectures under-specify, 
 
 Jaymin's diagnostic discipline: every agent failure traces to one or more of the **Core Four** components — Prompt / Model / Context / Tools. The diagnostic sequence is **tools first** (easiest to verify) → context (what did agent know?) → prompt (ambiguity?) → model (capability?) last. The chapter then provides a six-branch decision tree (Wrong Output / Stuck-Looping / Stopped Too Early / Wrong Tool / Hallucination / Crash).
 
-**Adoption proposal.** Our `architectures/00-comparison.md` §2.4 lists 20 failure modes (F1–F20). Jaymin's Core Four is **a debugging discipline orthogonal to that taxonomy**. F1–F20 names *what goes wrong*; the Core Four names *which layer to audit*. Adding a `debugging` subsection to each architecture document that names "audit tools first, then context, then prompt, then model" would give operators a concrete first-action protocol when a cycle fails. This is a 200-word addition per architecture, not a structural change.
+**Adoption proposal.** Our [`00-comparison`](../architectures/00-comparison.md) §2.4 lists 20 failure modes (F1–F20). Jaymin's Core Four is **a debugging discipline orthogonal to that taxonomy**. F1–F20 names *what goes wrong*; the Core Four names *which layer to audit*. Adding a `debugging` subsection to each architecture document that names "audit tools first, then context, then prompt, then model" would give operators a concrete first-action protocol when a cycle fails. This is a 200-word addition per architecture, not a structural change.
 
 ### 5.2 Evaluation — four reliability dimensions (Ch 8 §2 / §4)
 
@@ -270,7 +270,7 @@ Failure modes Jaymin names that are not in our existing F1–F20 list. Numbering
 
 **F30. Liability vacuum** (Ch 9 §7). No regulatory framework adapted to software production where no human reviewed the final artifact. In regulated domains (healthcare, finance, transportation), the dark-factory artifact carries no attribution chain. Distinct from F14 (Attribution collapse) — F14 is internal traceability; F30 is *external regulatory* attribution. *Mitigation: explicit Augmentation Mode for regulated work; named human reviewer of record in the audit trail.*
 
-Net: **ten new failure modes** (F21–F30) named in Jaymin's Ch 6 / Ch 8 / Ch 9 that aren't in our F1–F20. Several are operational and per-cycle (F21–F25, F28); two are systemic and per-population (F27, F30); two are temporal / multi-cycle (F26 telephone is per-session; F29 talent pipeline is multi-year). Recommend extending `architectures/00-comparison.md` §2.4 with the operational set (F21–F25, F27, F28) at minimum.
+Net: **ten new failure modes** (F21–F30) named in Jaymin's Ch 6 / Ch 8 / Ch 9 that aren't in our F1–F20. Several are operational and per-cycle (F21–F25, F28); two are systemic and per-population (F27, F30); two are temporal / multi-cycle (F26 telephone is per-session; F29 talent pipeline is multi-year). Recommend extending [`00-comparison`](../architectures/00-comparison.md) §2.4 with the operational set (F21–F25, F27, F28) at minimum.
 
 ---
 
@@ -308,7 +308,7 @@ The deepening pass yields three durable contributions to the synthesis:
 
 1. **Vocabulary unification.** "Harness" is the canonical 2026 industry term and should replace our "shared infrastructure / substrate / runtime / manager loop" usage. Scaffold (pre-runtime) vs harness (runtime) is a load-bearing distinction. Specs-as-source-code, context-as-code, agent-as-code, Living Artifacts, and the Core Four debugging discipline are now part of the standard vocabulary.
 
-2. **Ten new failure modes (F21–F30).** Context-window exhaustion, zombie agents, stalled-vs-thinking ambiguity, trust creep, design starvation, telephone, circularity, holdout leakage, talent pipeline depletion, liability vacuum. Most are operational and per-cycle; the operational set should extend `architectures/00-comparison.md` §2.4.
+2. **Ten new failure modes (F21–F30).** Context-window exhaustion, zombie agents, stalled-vs-thinking ambiguity, trust creep, design starvation, telephone, circularity, holdout leakage, talent pipeline depletion, liability vacuum. Most are operational and per-cycle; the operational set should extend [`00-comparison`](../architectures/00-comparison.md) §2.4.
 
 3. **The CI/CD vs desktop translation problem.** Jaymin's operating discipline is desktop-shaped; ours is CI/CD-shaped. The harness vocabulary translates cleanly; the operating rhythm does not. The synthesis must explicitly call out that our project is the CI/CD version of factory operations and re-derive the operating rhythm in event-driven terms.
 
@@ -344,7 +344,7 @@ Maps to **Raschka component 4 (Context management)** in §1. Sharpens the book's
 
 > "Several times, on several different projects, I've come to the conclusion that a huge, interconnected web of markdown files was essential to making these tools perform. This is incorrect and will remain incorrect, especially in the context of software. […] By adding documentation to what should be self-documenting, high quality code you are asking for miscommunication and code-documentation drift."
 
-**Tension flag.** This contradicts the *scaffold* category in §1 (which valorizes CLAUDE.md / AGENTS.md / project conventions as pre-runtime artifacts). The manifesto's position is that grep-equipped CLI agents should read the code itself, and that documentation is a liability because it drifts. The book chapter (~9 months later) has clearly moved on from this stance — it treats scaffold as load-bearing. This is not a minor disagreement: the book treats scaffold quality as something the harness depends on; the manifesto treats it as anti-pattern. **Implication for our project:** the scaffold-vs-harness distinction is not a settled doctrine even within Jaymin's own writing. Our `architectures/00-comparison.md` decisions about CLAUDE.md / AGENTS.md should be made with awareness that the most experienced practitioners disagree.
+**Tension flag.** This contradicts the *scaffold* category in §1 (which valorizes CLAUDE.md / AGENTS.md / project conventions as pre-runtime artifacts). The manifesto's position is that grep-equipped CLI agents should read the code itself, and that documentation is a liability because it drifts. The book chapter (~9 months later) has clearly moved on from this stance — it treats scaffold as load-bearing. This is not a minor disagreement: the book treats scaffold quality as something the harness depends on; the manifesto treats it as anti-pattern. **Implication for our project:** the scaffold-vs-harness distinction is not a settled doctrine even within Jaymin's own writing. Our [`00-comparison`](../architectures/00-comparison.md) decisions about CLAUDE.md / AGENTS.md should be made with awareness that the most experienced practitioners disagree.
 
 **Rule 3 — "everything should be a one-shot"**
 
@@ -415,4 +415,4 @@ Both diagrams are referenced (not copied) from `research/figures/28-schillace-su
 
 ---
 
-*End of report 09 — `research/09-jaymin-book-harnesses-practices-mental-models.md` v1.2 (v1.0 + Substack manifesto §9 folded in 2026-05-13; v1.2 + Schillace harness diagrams §10 added 2026-05-16)*
+*End of report 09 — [`09-jaymin-book-harnesses-practices-mental-models`](09-jaymin-book-harnesses-practices-mental-models.md) v1.2 (v1.0 + Substack manifesto §9 folded in 2026-05-13; v1.2 + Schillace harness diagrams §10 added 2026-05-16)*

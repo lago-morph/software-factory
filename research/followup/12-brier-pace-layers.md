@@ -3,8 +3,8 @@
 **Thread:** Round-3 fanout 20260511 sub-30 — drain of `reference-only/brier-culture-of-ai-engineering.txt` (was at `research/manual/2026-05-08-every-noah-brier-culture-of-ai-engineering.txt` at drain time; moved to `/reference-only/` in the 2026-05-13 cleanup pass)
 **Date:** 2026-05-11
 **Source:** every.to *Chain of Thought / Thesis* column, Friday 2026-05-08, "The Culture of AI Engineering: A framework for getting humans, agents, and everything in between to build the same vision," by Noah Brier (Alephic). Editor's intro by Kate Lee.
-**Diff targets:** `research/13-round-2-synthesis.md` §1–§2; `research/followup/01-shapiro-five-levels.md`; `research/07-dark-factory.md`; `research/15-el-kaim-book-bmad-attractor-dark-factory.md`; `research/followup/06-competitor-landscape.md` §3.
-**Output protocol:** proposal only. Does **not** edit `architectures/00-comparison.md` or `spec-driven-ai-dev.md`. §6 flags proposed additions.
+**Diff targets:** [`13-round-2-synthesis`](../synthesis/13-round-2-synthesis.md) §1–§2; [`01-shapiro-five-levels`](01-shapiro-five-levels.md); [`07-dark-factory`](../07-dark-factory.md); [`15-el-kaim-book-bmad-attractor-dark-factory`](../15-el-kaim-book-bmad-attractor-dark-factory.md); [`06-competitor-landscape`](06-competitor-landscape.md) §3.
+**Output protocol:** proposal only. Does **not** edit [`00-comparison`](../../architectures/00-comparison.md) or `spec-driven-ai-dev.md`. §6 flags proposed additions.
 
 ---
 
@@ -40,7 +40,7 @@ Brier presents them top-down, fastest to slowest:
 
 Named targets, ¶1: *"Strong DM is a software company whose three-person AI team calls their system for autonomous code generation a 'Software Factory.' Entrepreneur Dan Shapiro's widely circulated framework for AI coding culminates in 'the Dark Factory,' named after a Japanese robotics plant that runs with the lights off. Factory.ai, which has raised millions from Sequoia and Khosla Ventures, has built an entire business around the metaphor—its autonomous coding agents are called Droids."*
 
-Named pushback targets: **StrongDM, Dan Shapiro, Factory.ai.** El Kaim is *not* named but is functionally covered because El Kaim's article is a restatement of Shapiro (`research/07-dark-factory.md`).
+Named pushback targets: **StrongDM, Dan Shapiro, Factory.ai.** El Kaim is *not* named but is functionally covered because El Kaim's article is a restatement of Shapiro ([`07-dark-factory`](../07-dark-factory.md)).
 
 What Brier rejects:
 - **Defect-elimination as primary metric** (¶3): *"Ford's factory… was designed to eliminate imperfections. Six Sigma… is literally a measure of the defect rate. Quality starts with deciding what to build."*
@@ -49,7 +49,7 @@ What Brier rejects:
 
 What Brier **keeps**: he is a user of StrongDM's substrate (*"incorporating many of StrongDM's concepts"*) while a critic of the metaphor. The article's emphasis on tests + static analysis + Skills is consistent with the StrongDM toolchain.
 
-**Implicit targets.** Shapiro's "Level 5 = dark factory" terminus (per `research/followup/01-shapiro-five-levels.md`) is directly contradicted by Brier's "company > factory" framing. El Kaim's *"the spec is the new source code"* thesis is *partially aligned* (specs do matter) but *opposed* on the dark-factory aspiration. Brier reframes Zechner's quip — *"the mess that used to take a large organization years to accumulate now arrives in weeks with a two-person team and a fleet of agents"* — as a *cultural* (alignment) problem, not an *operational* (throughput/cost) one.
+**Implicit targets.** Shapiro's "Level 5 = dark factory" terminus (per [`01-shapiro-five-levels`](01-shapiro-five-levels.md)) is directly contradicted by Brier's "company > factory" framing. El Kaim's *"the spec is the new source code"* thesis is *partially aligned* (specs do matter) but *opposed* on the dark-factory aspiration. Brier reframes Zechner's quip — *"the mess that used to take a large organization years to accumulate now arrives in weeks with a two-person team and a fleet of agents"* — as a *cultural* (alignment) problem, not an *operational* (throughput/cost) one.
 
 ---
 
@@ -93,7 +93,7 @@ Brier is *deepest* where the operational corpus is *shallowest*: the **culture-a
 
 ## 6. Implications for the four architectures
 
-Proposed additions; no edits made to `architectures/00-comparison.md` or `spec-driven-ai-dev.md`.
+Proposed additions; no edits made to [`00-comparison`](../../architectures/00-comparison.md) or `spec-driven-ai-dev.md`.
 
 > **Status note (2026-05-21, issue [#105](https://github.com/lago-morph/software-factory/issues/105)):** `spec-driven-ai-dev.md` is a cataloged source (record [`3592091691`](../../reference-only/3592091691/spec-driven-ai-dev.md)), not a mutable internal artifact. References below that propose adding artifacts "to `spec-driven-ai-dev.md`" stand as research findings for a v3 methodology document authored separately.
 

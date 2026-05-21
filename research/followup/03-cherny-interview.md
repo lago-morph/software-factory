@@ -2,19 +2,19 @@
 
 **Status: ✅ FULL primary-source-anchored.** Manual transcript of the **full ~90-minute podcast** is integrated below. This was previously a 🔴 blocked-on-fetch report relying entirely on secondary write-up snippets; most of the highest-stakes Cherny claims in the corpus are now verbatim-anchored. Drain notes at top document what flipped, what got resolved in the 30–90 segment, and what remains genuinely unsaid even after the full transcript.
 
-**Round-3 follow-up thread 3 (per `research/PLAN.md` §11.3).** Cherny is the head of Claude Code at Anthropic and, by most accounts, the practitioner operating closest to the "Dark Factory" end of the human-role axis.
+**Round-3 follow-up thread 3 (per [`PLAN`](../PLAN.md) §11.3).** Cherny is the head of Claude Code at Anthropic and, by most accounts, the practitioner operating closest to the "Dark Factory" end of the human-role axis.
 
 ---
 
 ## Drain note (issue #36 extras) — 2026-05-14 — FULL transcript drain
 
-The full ~90-minute Lenny × Cherny YouTube episode transcript (`https://youtu.be/We7BZVKbCVw`) is now integrated. First 30 min landed 2026-05-13; remaining ~60 min landed and was drained 2026-05-14. ASR artifacts normalized on the fly when quoting ("quad code" → "Claude Code" except where preserving Cherny's vocal "quad", "Boris Turney" → "Boris Cherny", "ant"/"anthropic" → "Anthropic", "Ben Manton" → "Ben Mann", "1020, 30" → "10, 20, 30", "cowork" → "Cowork", "Seishin Lu" → "Cixin Liu", "Seer/Sentry/Anish/MetaView/DX" sponsor reads dropped). Source file moved to `reference-only/lenny-podcast-transcripts/` per the `research/manual/README.md` lifecycle.
+The full ~90-minute Lenny × Cherny YouTube episode transcript (`https://youtu.be/We7BZVKbCVw`) is now integrated. First 30 min landed 2026-05-13; remaining ~60 min landed and was drained 2026-05-14. ASR artifacts normalized on the fly when quoting ("quad code" → "Claude Code" except where preserving Cherny's vocal "quad", "Boris Turney" → "Boris Cherny", "ant"/"anthropic" → "Anthropic", "Ben Manton" → "Ben Mann", "1020, 30" → "10, 20, 30", "cowork" → "Cowork", "Seishin Lu" → "Cixin Liu", "Seer/Sentry/Anish/MetaView/DX" sponsor reads dropped). Source file moved to `reference-only/lenny-podcast-transcripts/` per the [`README`](../manual/README.md) lifecycle.
 
 **Status flipped:** This report was 🔴 blocked-on-fetch as of Round 1; flipped to 🟡 partial after the 0–30 min drain on 2026-05-13; now flipped to **✅ FULL primary-source-anchored** after the 30–90 min drain on 2026-05-14.
 
 **Corpus claims now verbatim-anchored to Cherny himself:**
 
-1. **"10–30 PRs/day"** (was in `research/06-hn-and-lenny.md` and various secondary snippets) — Cherny, cold open: *"Every day I ship like 10, 20, 30 pull requests, something like that... every day."* (Confirmed every-day cadence; not week-totaled.)
+1. **"10–30 PRs/day"** (was in [`06-hn-and-lenny`](../06-hn-and-lenny.md) and various secondary snippets) — Cherny, cold open: *"Every day I ship like 10, 20, 30 pull requests, something like that... every day."* (Confirmed every-day cadence; not week-totaled.)
 2. **"100% of my code is written by Claude Code"** — Cherny, cold open and again later: *"100% of my code is written by Claude Code. I have not edited a single line by hand since November."*
 3. **"Productivity per engineer has increased 200%"** — Cherny, in discussion of Anthropic-wide numbers: *"Productivity per engineer has increased 200% in terms of, like, pull requests, and this number is just crazy for anyone that actually works in the space."* (Was flagged 'single unverified snippet' in the prior version of this report. Now verbatim-anchored, and Cherny explicitly contrasts it against his Meta dev-productivity experience where year-over-year gains were "a few percentage points.")
 4. **"Coding is largely solved"** — Cherny: *"I think at this point it's safe to say that coding is largely solved, at least for the kinds of programming that I do."*
@@ -67,12 +67,12 @@ The full ~90-minute Lenny × Cherny YouTube episode transcript (`https://youtu.b
 
 | Source | Status | Note |
 |---|---|---|
-| `https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens` | **VIDEO-ONLY, BLOCKED** | Confirmed video-only per `research/06-hn-and-lenny.md` and `PLAN.md §11.3`. No text interview body — the "biggest takeaways" stub is a paywall placeholder. **HTTP 403** to WebFetch. |
-| `https://youtu.be/We7BZVKbCVw` (YouTube video) | ✅ **FULL** | Manual full transcript of all ~90 min drained 2026-05-14. Source file moved to `reference-only/lenny-podcast-transcripts/cherny-head-of-claude-code-full.txt` per the `research/manual/README.md` lifecycle (preserve as primary-source quote). See drain note above. |
+| `https://www.lennysnewsletter.com/p/head-of-claude-code-what-happens` | **VIDEO-ONLY, BLOCKED** | Confirmed video-only per [`06-hn-and-lenny`](../06-hn-and-lenny.md) and `PLAN.md §11.3`. No text interview body — the "biggest takeaways" stub is a paywall placeholder. **HTTP 403** to WebFetch. |
+| `https://youtu.be/We7BZVKbCVw` (YouTube video) | ✅ **FULL** | Manual full transcript of all ~90 min drained 2026-05-14. Source file moved to `reference-only/lenny-podcast-transcripts/cherny-head-of-claude-code-full.txt` per the [`README`](../manual/README.md) lifecycle (preserve as primary-source quote). See drain note above. |
 | Secondary write-ups (Medium, Roger Wong, mejba.me, pjfp.com, ernestchiang.com, waydev.co, podwise.ai, DEV.to, aol.com, dnyuz.com) | **BLOCKED 403** | All returned 403 to WebFetch. |
 | Lenny's LinkedIn takeaways post; Anish Moonka X thread; Threads posts | **BLOCKED 403** | All 403. |
 | WebSearch result *snippets* over the above | **REACHABLE** | The only primary-quality material this report is built on. Treat as summaries-of-summaries. |
-| `research/06-hn-and-lenny.md` (Wayback editorial preface + topic list + references) | **REACHABLE** | Already integrated. |
+| [`06-hn-and-lenny`](../06-hn-and-lenny.md) (Wayback editorial preface + topic list + references) | **REACHABLE** | Already integrated. |
 
 **Provenance rule:** every number and quote is tagged **primary** (Cherny's own X/Threads), **secondary** (third-party blog/note snippet from WebSearch), or **reconstructed** (paraphrase without verbatim quote). No quotes invented. Contested numbers flagged.
 
@@ -114,7 +114,7 @@ The **only quantitative claim paywall-visible** from the Lenny post itself is "*
 
 ## The PRs/day claim — what counts, what the merge gate is
 
-**Resolved (primary, minutes 0–30):** Cherny: *"Every day I ship like 10, 20, 30 pull requests, something like that... every day."* Verbatim phrasing recovered. The "10–30 PRs/day" range in `research/06-hn-and-lenny.md` is correct; the higher 100/week snippet is consistent with the upper end of Cherny's stated range.
+**Resolved (primary, minutes 0–30):** Cherny: *"Every day I ship like 10, 20, 30 pull requests, something like that... every day."* Verbatim phrasing recovered. The "10–30 PRs/day" range in [`06-hn-and-lenny`](../06-hn-and-lenny.md) is correct; the higher 100/week snippet is consistent with the upper end of Cherny's stated range.
 
 **Merge gate — resolved (primary):** Cherny: *"We have Claude doing automatic code review for everything. So here at Anthropic, Claude reviews 100% of pull requests. There's still a layer of human review after it, but you kind of like — you still do want some of these checkpoints. You still want a human looking at the code, unless it's like pure prototype code that you know it's not going to run anywhere."*
 
@@ -161,7 +161,7 @@ No verbatim quote available, but workflow shape is consistent:
 - **Sub-agent fan-out** for deep tasks suggests explore-many / verify-against-harness, not human review of each branch.
 - **"When an engineer reads a PR, the code is already in good shape"** (secondary paraphrase) is the cleanest summary.
 
-This is **scheduler mode**, not supervisor mode, per `architectures/00-comparison.md` human-role axis. Cherny picks *what* to build, agents pick *how*, human review happens at PR-as-artifact level, not at every-edit level.
+This is **scheduler mode**, not supervisor mode, per [`00-comparison`](../../architectures/00-comparison.md) human-role axis. Cherny picks *what* to build, agents pick *how*, human review happens at PR-as-artifact level, not at every-edit level.
 
 ---
 
@@ -263,7 +263,7 @@ Plus the corollary on what you have to know (~minute 50):
 
 > *"I was talking to an engineer earlier today. They're writing some service in Go and it's been like a month already and they built up the service. Like it's working quite well. And then I was like, okay, so like, how do you feel writing it? And he was like, you know, like, I still don't really know Go, but. And I think we're gonna start to see more and more of this. It's like, if you know that it works correctly and efficiently, then you don't actually have to know all the details."*
 
-This is the strongest in-corpus formulation of the **"specification, not implementation"** thesis from a primary-source AI lab operator. It is materially stronger than the equivalent quotes in `research/06-hn-and-lenny.md` reconstructed from secondaries.
+This is the strongest in-corpus formulation of the **"specification, not implementation"** thesis from a primary-source AI lab operator. It is materially stronger than the equivalent quotes in [`06-hn-and-lenny`](../06-hn-and-lenny.md) reconstructed from secondaries.
 
 ---
 
@@ -338,7 +338,7 @@ Maps onto The Bitter Lesson framing in the references — scale-of-compute (toke
 
 ## Implications for our architecture work
 
-1. **Refine the human-role axis.** `architectures/00-comparison.md` currently has "supervises vs. schedules." Cherny is a clean instance of **schedules at scale** — five agents at any moment, three-thirds split across terminal / desktop multi-cladding / iOS, plan-mode-first, auto-accept-edits, two-stage Claude+human PR review. (The older "thousands of overnight sub-agents + dozens of `/loops`" framing is **no longer primary-anchored** after the full drain; treat as secondary.) Atelier (Arch 2) and Compound (Arch 3) docs should explicitly note which mode they target — scheduler mode appears to be *the* productivity ceiling-breaker.
+1. **Refine the human-role axis.** [`00-comparison`](../../architectures/00-comparison.md) currently has "supervises vs. schedules." Cherny is a clean instance of **schedules at scale** — five agents at any moment, three-thirds split across terminal / desktop multi-cladding / iOS, plan-mode-first, auto-accept-edits, two-stage Claude+human PR review. (The older "thousands of overnight sub-agents + dozens of `/loops`" framing is **no longer primary-anchored** after the full drain; treat as secondary.) Atelier (Arch 2) and Compound (Arch 3) docs should explicitly note which mode they target — scheduler mode appears to be *the* productivity ceiling-breaker.
 
 2. **The "10-day Cowork build" is a planning benchmark.** A small team using Claude Code shipped a launchable product with novel safety/VM infrastructure in ~10 days. Architecture roadmaps proposing multi-month substrate cycles should justify why, given Cowork did it in 10 days with much harder safety surface.
 
@@ -352,7 +352,7 @@ Maps onto The Bitter Lesson framing in the references — scale-of-compute (toke
 2. **Cost-per-day for Cherny's own setup** — **STILL OPEN.** Even in the full transcript, the only concrete dollar figure is *"some engineers at Anthropic"* spending *"hundreds of thousands a month."* Cherny's own number not stated.
 3. **What counts as a PR for 10–30/day** — **STILL OPEN.** Granularity not defined.
 4. ~~**The Cursor-to-Anthropic two-week return story**~~ — **RESOLVED.** Mission pull, no drama, no equity story.
-5. **Cherny's direct view on the human-role axis** — **PARTIALLY RESOLVED.** He doesn't use the supervisor/scheduler vocabulary, but the *"five agents running, thirds across terminal/desktop/iOS, plan-mode-first, auto-accept-edits, two-stage Claude+human review"* pattern is unambiguous scheduler-mode operation. Pin this in `architectures/00-comparison.md`.
+5. **Cherny's direct view on the human-role axis** — **PARTIALLY RESOLVED.** He doesn't use the supervisor/scheduler vocabulary, but the *"five agents running, thirds across terminal/desktop/iOS, plan-mode-first, auto-accept-edits, two-stage Claude+human review"* pattern is unambiguous scheduler-mode operation. Pin this in [`00-comparison`](../../architectures/00-comparison.md).
 6. ~~**The full third "new team member principle"**~~ — **STILL ONLY TWO ENUMERATED.** Even at full length, Cherny names only "underfund a little" and "encourage going faster." The third is tacit (have Claude do it) and may be a secondary-writer's clean-copy artifact. The corpus *"three principles for new team members"* should be downgraded to *"two named principles plus one tacit principle."*
 7. **`/loops` and `/batch` slash commands** — **NEWLY DOWNGRADED.** Not mentioned anywhere in the 90-min transcript. Single-secondary-source confidence. Possibly real, possibly a `ociubotaru` synthesis from a different Cherny appearance.
 8. **"Thousands of overnight agents"** — **NEWLY DOWNGRADED.** Same status. Strongest related primary is *"some examples where they ran for many weeks"* — single long-running agents, not thousands of parallel ones.

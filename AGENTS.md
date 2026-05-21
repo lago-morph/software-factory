@@ -21,9 +21,9 @@ the target moves.
 The rules:
 
 1. **Always use a relative link.** Compute the path relative to the file that
-   contains the reference, not the repo root. From `architectures/00-comparison.md`,
-   a link to `research/PLAN.md` is `../research/PLAN.md`; from
-   `research/synthesis/00-synthesis.md`, it is `../PLAN.md`. Absolute paths
+   contains the reference, not the repo root. From [`00-comparison`](architectures/00-comparison.md),
+   a link to [`PLAN`](research/PLAN.md) is `../research/PLAN.md`; from
+   [`00-synthesis`](research/synthesis/00-synthesis.md), it is `../PLAN.md`. Absolute paths
    (`/research/PLAN.md`) and `github.com/...` URLs pointing at our own files
    break under forks, branch renames, and local clones.
 2. **Descriptive link text, not the URL.** The visible text should describe the
@@ -36,7 +36,7 @@ The rules:
 3. **No stale paths.** Before adding or keeping a link, confirm the target file
    exists. When you move a file, grep the repo for the old path and fix every
    reference in the same commit.
-4. **External sources go through `reference-only/sources.json`.** If a `.md`
+4. **External sources go through [`sources`](reference-only/sources.json).** If a `.md`
    file cites an external URL (a research source, a referenced article, a tool
    homepage that is not just name-checked), the catalog should carry a record
    for it. If you encounter a cited URL with no catalog entry while editing,

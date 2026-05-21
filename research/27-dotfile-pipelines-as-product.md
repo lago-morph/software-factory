@@ -16,13 +16,13 @@ If the *attractor* convergence claim is real — four independent runner impleme
 
 The durable artifact in a dark-factory stack is not the runner. It is the pipeline file.
 
-Engines proliferate. As of 2026-05-16 the corpus has surveyed seven of them — Kilroy (Go), Forge (Rust), brynary/attractor (TypeScript, archived), Fabro (Rust), Mammoth (Go, now a Tracker-frontend), Smasher (Rust), Tracker (Go) — plus a Python variant (Amol Kabe) that drops the DOT layer altogether. Four of the seven were drained in `followup/02-attractor-implementations.md`; the Round-4 addendum to that followup added three more. The runners differ in language, sandbox model, persistence substrate, and front-end (CLI / TUI / server + React UI / chat-platform-federated). The pipelines they execute, however, **survive porting intact**: standard Graphviz DOT, the eight canonical node shapes, the same CSS-like model stylesheet, the same `goal_gate`/`retry_target` semantics, the same `prompt.md`/`response.md`/`status.json` per-node contract.
+Engines proliferate. As of 2026-05-16 the corpus has surveyed seven of them — Kilroy (Go), Forge (Rust), brynary/attractor (TypeScript, archived), Fabro (Rust), Mammoth (Go, now a Tracker-frontend), Smasher (Rust), Tracker (Go) — plus a Python variant (Amol Kabe) that drops the DOT layer altogether. Four of the seven were drained in [`02-attractor-implementations`](followup/02-attractor-implementations.md); the Round-4 addendum to that followup added three more. The runners differ in language, sandbox model, persistence substrate, and front-end (CLI / TUI / server + React UI / chat-platform-federated). The pipelines they execute, however, **survive porting intact**: standard Graphviz DOT, the eight canonical node shapes, the same CSS-like model stylesheet, the same `goal_gate`/`retry_target` semantics, the same `prompt.md`/`response.md`/`status.json` per-node contract.
 
 That is the leverage point. A DOT pipeline file is a self-contained, version-controllable, portable description of *what the factory builds and how*. It is not a script. It is a process definition — closer in spirit to a BPMN diagram than to a Makefile. Harper Reed's "Dark Factory Is a .dot file" essay (Mar 9, 2026, 2389 Research) makes the argument bluntly: *"The factory code is dorodango — polish it, throw it away, rebuild from spec. The pipeline files are the durable artifact. They're the part worth sharing."*
 
 The companion observation is asymmetry. Reed notes that the engines are open-sourcing themselves at a healthy clip, but the pipelines — the actual blueprints — *are not*. Everyone is shipping the factory and hiding what they build with it. *"The factory implementations are open source and multiplying. Great. But the pipeline files — the DOT graphs that describe what the factory actually builds — are mostly private. Everyone's sharing the engine and hiding the blueprints."* This is the load-bearing claim of the report. If pipelines are the product, then the absence of a market for pipelines is the absence of a market for the methodology layer.
 
-**Stretch claim (flagged for cross-corpus alignment).** `.dot` is in the process of being supplanted by `.dip` (the Dippin language) in the 2389 ecosystem — Tracker's primary pipeline format is now `.dip`, with `.dot` deprecated (`--format dot` emits a deprecation warning) and `.dipx` content-addressed bundles (SHA-256 over manifest) layered on top. This contradicts the framing in `research/07-dark-factory.md` (which still treats the DOT/Graphviz substrate as canonical) and in the headline of Reed's own essay. *But the underlying thesis — pipeline-as-deliverable, runner-agnostic, content-addressable, ship-the-blueprint — strengthens rather than weakens under the migration.* `.dipx` is in fact a more honest answer to the "what is the version-control unit?" question than a raw `.dot` blob: it is content-addressed, manifested, and explicitly designed to be the unit of distribution. The migration evidence sits in `followup/02-attractor-implementations.md` §11.1; this report inherits it.
+**Stretch claim (flagged for cross-corpus alignment).** `.dot` is in the process of being supplanted by `.dip` (the Dippin language) in the 2389 ecosystem — Tracker's primary pipeline format is now `.dip`, with `.dot` deprecated (`--format dot` emits a deprecation warning) and `.dipx` content-addressed bundles (SHA-256 over manifest) layered on top. This contradicts the framing in [`07-dark-factory`](07-dark-factory.md) (which still treats the DOT/Graphviz substrate as canonical) and in the headline of Reed's own essay. *But the underlying thesis — pipeline-as-deliverable, runner-agnostic, content-addressable, ship-the-blueprint — strengthens rather than weakens under the migration.* `.dipx` is in fact a more honest answer to the "what is the version-control unit?" question than a raw `.dot` blob: it is content-addressed, manifested, and explicitly designed to be the unit of distribution. The migration evidence sits in [`02-attractor-implementations`](followup/02-attractor-implementations.md) §11.1; this report inherits it.
 
 Two corollaries follow from the thesis.
 
@@ -94,7 +94,7 @@ The synthesis is **hybrid pipelines** like `sprint-exec`: deterministic tool nod
 
 Reed name-drops three things the corpus has already drained or will drain:
 
-- **Dan Shapiro's "Five Levels"** post (drained at `followup/01-shapiro-five-levels.md`). Reed cites Level 0 = vi / Level 2 = pair-program / Level 4 = "you've become a PM, you write specs, argue about specs, leave for 12 hours, check if the tests pass" / Level 5 = dark factory, lights off, nobody reviews.
+- **Dan Shapiro's "Five Levels"** post (drained at [`01-shapiro-five-levels`](followup/01-shapiro-five-levels.md)). Reed cites Level 0 = vi / Level 2 = pair-program / Level 4 = "you've become a PM, you write specs, argue about specs, leave for 12 hours, check if the tests pass" / Level 5 = dark factory, lights off, nobody reviews.
 - **Fanuc Robotics 2003** as the dark-factory etymology. The corpus has this in report 07 already.
 - **AttractorBench tiers** — Reed names "smoke test, then a unified LLM SDK, then a coding agent loop, then the full pipeline runner. Language-agnostic. Agents pick their own implementation language. The only contract is make build, make test, and a conformance suite against a mock LLM server. No real API calls. Deterministic verification. Cost-aware scoring." This is the §5 material.
 
@@ -226,7 +226,7 @@ The pedagogical claim is that *every loop must have a declared cap*. The dotpowe
 
 > *"It is not cheap. A full run hits Opus 4.6, GPT-5.4, GPT-5.2, and Gemini 3.5 Flash across dozens of nodes. If loops iterate (and they will), costs add up. **We burned 3.5M OpenAI tokens on a single bad run before adding loop limits.**"*
 
-This is the corpus's first explicit dollars-on-the-floor figure for a runaway-loop incident. Tracker's own v0.28.2 release notes (drained in `followup/02-attractor-implementations.md` §11.4) describe a structurally identical failure mode (the `build_product` workflow spending ~10 minutes and ~39k output tokens inside the Start node before context-cancel), which suggests the budget discipline dotpowers encodes per-graph belongs *also* in the engine's defaults — at least as a `max_turns` cap on every codergen node and a graph-level budget gate. Tracker v0.19.0 onward supports declaring the latter inline (`defaults: max_total_tokens:` / `max_cost_cents:` / `max_wall_time:` in `.dip`); dotpowers achieves the former through per-node `max_retries`.
+This is the corpus's first explicit dollars-on-the-floor figure for a runaway-loop incident. Tracker's own v0.28.2 release notes (drained in [`02-attractor-implementations`](followup/02-attractor-implementations.md) §11.4) describe a structurally identical failure mode (the `build_product` workflow spending ~10 minutes and ~39k output tokens inside the Start node before context-cancel), which suggests the budget discipline dotpowers encodes per-graph belongs *also* in the engine's defaults — at least as a `max_turns` cap on every codergen node and a graph-level budget gate. Tracker v0.19.0 onward supports declaring the latter inline (`defaults: max_total_tokens:` / `max_cost_cents:` / `max_wall_time:` in `.dip`); dotpowers achieves the former through per-node `max_retries`.
 
 ### 3.5 Batch-checkpoint-every-3-tasks — the headfake against per-task human review
 
@@ -240,7 +240,7 @@ This is the dark-factory pattern made concrete in a DOT graph. Three completed t
 
 ## 4. Kilroy as the canonical reference implementation evolving past "Level 5"
 
-If dotpowers is the worked-example pipeline, Kilroy (https://github.com/danshapiro/kilroy) is the worked-example *runner*. As of `b55fb0f` (Apr 27, 2026): **944 commits, 197 stars, 49 forks, Go, MIT**, latest commit *"feat: expose KILROY_PREDECESSOR_NODE/OUTCOME env to handlers (#13) (#88)"* by mattleaverton. Kilroy was already drained in `followup/02-attractor-implementations.md` §1–§5 (canonical-DOT lineage, full eight node shapes, CXDB, `attractor ingest` skill, git-worktree-per-run, AGENTS.md "Prime Directive"). This section drains the **post-Feb-2026 evolution signals** the landing-page recapture surfaces — signals that show Kilroy moving from "the canonical Attractor reference implementation" to *"a layered platform"*, which is the natural shape of what an engine becomes once the methodology layer (the DOT file) is recognised as the product.
+If dotpowers is the worked-example pipeline, Kilroy (https://github.com/danshapiro/kilroy) is the worked-example *runner*. As of `b55fb0f` (Apr 27, 2026): **944 commits, 197 stars, 49 forks, Go, MIT**, latest commit *"feat: expose KILROY_PREDECESSOR_NODE/OUTCOME env to handlers (#13) (#88)"* by mattleaverton. Kilroy was already drained in [`02-attractor-implementations`](followup/02-attractor-implementations.md) §1–§5 (canonical-DOT lineage, full eight node shapes, CXDB, `attractor ingest` skill, git-worktree-per-run, AGENTS.md "Prime Directive"). This section drains the **post-Feb-2026 evolution signals** the landing-page recapture surfaces — signals that show Kilroy moving from "the canonical Attractor reference implementation" to *"a layered platform"*, which is the natural shape of what an engine becomes once the methodology layer (the DOT file) is recognised as the product.
 
 ### 4.1 Platform reframe (PR #81, Apr 17 2026)
 
@@ -264,7 +264,7 @@ Tracker solves the same problem with declarative typed routing channels — `mar
 
 - Kilroy: `progress.ndjson`.
 - Tracker: `activity.jsonl` (and `tracker.NewNDJSONWriter` as the public Go API).
-- Forge: JSONL event-streaming contract (per `followup/02-attractor-implementations.md` §5).
+- Forge: JSONL event-streaming contract (per [`02-attractor-implementations`](followup/02-attractor-implementations.md) §5).
 
 NDJSON is a thinner substrate than CXDB (Kilroy's prior durable typed-event database) and replaces some — but not all — of the CXDB-event-replay surface. Reading run progress no longer requires reading CXDB; reading run state for resume still does. This is methodology-friendly: a pipeline author who wants to integrate with `progress.ndjson` does not need a Kilroy SDK.
 
@@ -282,7 +282,7 @@ The two `SKILL.md`s named in the README — `skills/using-kilroy/SKILL.md` (oper
 
 ### 4.5 Cross-reference to followup/02
 
-`followup/02-attractor-implementations.md` §11.7 already covers Kilroy's post-Feb-2026 evolution in similar detail; this report does not duplicate. The cross-reference annotation in §11.7 should now point back to this report (§4 here) for the *methodology-layer* implications (workflow packaging, blueprint authorship via skills, the pipeline-as-product framing); §11.7 remains the canonical *runner-implementation* coverage. The cross-reference is added in the followup/02 update (see Deliverable §2 of this report's commit).
+[`02-attractor-implementations`](followup/02-attractor-implementations.md) §11.7 already covers Kilroy's post-Feb-2026 evolution in similar detail; this report does not duplicate. The cross-reference annotation in §11.7 should now point back to this report (§4 here) for the *methodology-layer* implications (workflow packaging, blueprint authorship via skills, the pipeline-as-product framing); §11.7 remains the canonical *runner-implementation* coverage. The cross-reference is added in the followup/02 update (see Deliverable §2 of this report's commit).
 
 ---
 
@@ -320,7 +320,7 @@ Four tiers, summarised verbatim from the README:
 
 Tier 0 validates plumbing (Harbor integration, mock server, scoring pipeline); Tier 1 is the *flagship* — a multi-provider LLM client library with streaming, tool calling, structured output, and error handling; Tiers 2 and 3 build conceptually on Tier 1. The "Coverage" column is the fraction of DoD items that the tier's conformance tests actually exercise (which is itself a methodology-layer disclosure — the bench is honest about how much of the spec it tests).
 
-The DoD-section grouping (each tier's tests grouped by DoD section) maps directly onto the spec-driven discipline `report 25` (`research/25-requirements-engineering-foundations.md`) drains from INCOSE GtWR — *"verifiable" is a per-requirement property, not a per-system property, and the unit of verification is the requirement, not the system.* AttractorBench's per-DoD-section scoring is the conformance-suite shape that INCOSE recommends. Worth noting for cross-corpus alignment.
+The DoD-section grouping (each tier's tests grouped by DoD section) maps directly onto the spec-driven discipline `report 25` ([`25-requirements-engineering-foundations`](25-requirements-engineering-foundations.md)) drains from INCOSE GtWR — *"verifiable" is a per-requirement property, not a per-system property, and the unit of verification is the requirement, not the system.* AttractorBench's per-DoD-section scoring is the conformance-suite shape that INCOSE recommends. Worth noting for cross-corpus alignment.
 
 ### 5.4 Current leaderboard anchor — v13, Gemini = 0.508
 
@@ -336,7 +336,7 @@ This is *the same shape as dotpowers' methodology-as-DOT*. AttractorBench's spec
 
 ### 5.6 Why this becomes a future drain target
 
-This report flags AttractorBench for fuller drain into `followup/07-evals-deepdive.md` rather than draining it exhaustively here, because §1's thesis is *pipelines as product* and AttractorBench's current focus is *runner tier* (Tier 0–3), not blueprint-tier. The eval-deepdive followup is the right home for: (a) the tier structure as a model for blueprint-tier benchmarks; (b) the cost-aware scoring formula as an incentive-structure design lesson; (c) the v13 / Gemini = 0.508 anchor for future-comparable runs; (d) the eval-contamination defence (specs in repo, tests generated locally) as a methodology-layer reproducibility pattern. The flag has been added to `followup/07-evals-deepdive.md` §5 (see Deliverable §3 of this report's commit).
+This report flags AttractorBench for fuller drain into [`07-evals-deepdive`](followup/07-evals-deepdive.md) rather than draining it exhaustively here, because §1's thesis is *pipelines as product* and AttractorBench's current focus is *runner tier* (Tier 0–3), not blueprint-tier. The eval-deepdive followup is the right home for: (a) the tier structure as a model for blueprint-tier benchmarks; (b) the cost-aware scoring formula as an incentive-structure design lesson; (c) the v13 / Gemini = 0.508 anchor for future-comparable runs; (d) the eval-contamination defence (specs in repo, tests generated locally) as a methodology-layer reproducibility pattern. The flag has been added to [`07-evals-deepdive`](followup/07-evals-deepdive.md) §5 (see Deliverable §3 of this report's commit).
 
 ---
 
@@ -344,17 +344,17 @@ This report flags AttractorBench for fuller drain into `followup/07-evals-deepdi
 
 Three flags for the orchestrator.
 
-### 6.1 Refines `research/07-dark-factory.md`
+### 6.1 Refines [`07-dark-factory`](07-dark-factory.md)
 
-Report 07 is anchored on El Kaim's April 2026 Medium essay, which lifted Reed's convergence story but presented Tracker as *"a weekend-scale implementation that still converges on the same shape"*. The 2026-05-16 corpus knows this is no longer accurate: Tracker is v0.28.2, 52 releases, 9 contributors, ~10k lines of Go, with programmatic `Audit`/`Diagnose`/`Doctor`/`Simulate` APIs and a hardening push through April–May (security audit pass v0.24.2, runaway-agent fix v0.28.2, typed routing channels v0.28.0). The "weekend-scale" framing is a stale snapshot, fully updated in `followup/02-attractor-implementations.md` §11. Report 07 should either re-anchor on the primary Reed essay (which this report drains) or carry a footnote pointing to followup/02 §11 and this report §1.
+Report 07 is anchored on El Kaim's April 2026 Medium essay, which lifted Reed's convergence story but presented Tracker as *"a weekend-scale implementation that still converges on the same shape"*. The 2026-05-16 corpus knows this is no longer accurate: Tracker is v0.28.2, 52 releases, 9 contributors, ~10k lines of Go, with programmatic `Audit`/`Diagnose`/`Doctor`/`Simulate` APIs and a hardening push through April–May (security audit pass v0.24.2, runaway-agent fix v0.28.2, typed routing channels v0.28.0). The "weekend-scale" framing is a stale snapshot, fully updated in [`02-attractor-implementations`](followup/02-attractor-implementations.md) §11. Report 07 should either re-anchor on the primary Reed essay (which this report drains) or carry a footnote pointing to followup/02 §11 and this report §1.
 
 Second refinement: report 07's framing treats the DOT/Graphviz substrate as canonical and stable, but the **2389 ecosystem is migrating to `.dip` (Dippin language)**, with legacy `.dot` deprecated and content-addressed `.dipx` bundles emerging as the actual ship unit. The DOT-as-product thesis survives the migration — arguably it strengthens — but Report 07's specific framing ("the dark factory is a `.dot` file") is moving stale even though Reed's essay title still reads that way. Flag for cross-corpus alignment: when report 07 is next revised, the `.dot` → `.dip` → `.dipx` succession should be footnoted with a pointer to this report §1 and to followup/02 §11.1 (the Tracker row).
 
-### 6.2 Supplements `followup/02-attractor-implementations.md`
+### 6.2 Supplements [`02-attractor-implementations`](followup/02-attractor-implementations.md)
 
 The runner-implementation coverage in followup/02 is canonical; this report does not duplicate it. The two reports are complementary: followup/02 maps the *engines* (Kilroy/Forge/brynary/Fabro/Coven/Mammoth/Smasher/Tracker/Amol Kabe + dotpowers as a row); this report frames the *pipeline-as-product* thesis and treats Kilroy / dotpowers / AttractorBench as worked examples of three different layers of that thesis (the canonical engine, the canonical methodology payload, the canonical conformance suite). A short cross-reference paragraph is added to followup/02 §13 pointing to this report.
 
-### 6.3 Opens drain target for `followup/07-evals-deepdive.md`
+### 6.3 Opens drain target for [`07-evals-deepdive`](followup/07-evals-deepdive.md)
 
 AttractorBench is flagged into followup/07 as a future drain target. The flag captures: tier structure, cost-aware scoring formula (weighted composite — 5/5/30/30/30 for main task), v13 Gemini = 0.508 anchor, eval-contamination defence pattern, `AGENTS.md` curation runbook, manual leaderboard curation rationale. The full drain (paper-body of `specs/` per tier, the `src/attractorbench/adapter.py` test-generation logic, the actual leaderboard contents, the cost-vs-conformance Pareto frontier across the v1–v13 history) is deferred. This is the right partition: AttractorBench belongs *primarily* to the eval-discipline followup, with a methodology-layer pointer (this report) framing why it exists.
 
@@ -389,4 +389,4 @@ Legend: ✅ FULL = primary-source content (HTML / blob / MHTML body) captured; �
 
 ---
 
-**Cross-references active in this report:** `research/07-dark-factory.md` (refines, §6.1); `research/followup/02-attractor-implementations.md` (supplements / cross-cites at §13 ← →, §6.2); `research/followup/07-evals-deepdive.md` (drain target flag, §6.3); `research/followup/01-shapiro-five-levels.md` (Five Levels referent, §2.5); `research/25-requirements-engineering-foundations.md` (per-DoD-section verification, §5.3). The `research/PLAN.md` update for this report's incorporation is left to the orchestrator per Cluster-C dispatch instructions.
+**Cross-references active in this report:** [`07-dark-factory`](07-dark-factory.md) (refines, §6.1); [`02-attractor-implementations`](followup/02-attractor-implementations.md) (supplements / cross-cites at §13 ← →, §6.2); [`07-evals-deepdive`](followup/07-evals-deepdive.md) (drain target flag, §6.3); [`01-shapiro-five-levels`](followup/01-shapiro-five-levels.md) (Five Levels referent, §2.5); [`25-requirements-engineering-foundations`](25-requirements-engineering-foundations.md) (per-DoD-section verification, §5.3). The [`PLAN`](PLAN.md) update for this report's incorporation is left to the orchestrator per Cluster-C dispatch instructions.

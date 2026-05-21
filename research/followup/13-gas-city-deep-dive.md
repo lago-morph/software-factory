@@ -6,9 +6,9 @@
 
 **Companion documents:**
 
-- `research/followup/14-gas-town-deep-dive.md` — sibling deep-dive on Gas Town, the system Gas City was extracted from.
-- `research/38-gas-systems-substrate.md` — synthesis report: how Gas City + Gas Town map to StrongDM Dark Factory and Every.to Compound Engineering, with concrete deployment sketches.
-- `research/followup/04-gastown-beads.md` — earlier (Round-3) comparison of Gas Town + Beads against Attractor; this analysis supersedes it on Gas Town/Gas City primitives but remains consistent on the Attractor-comparison axis.
+- [`14-gas-town-deep-dive`](14-gas-town-deep-dive.md) — sibling deep-dive on Gas Town, the system Gas City was extracted from.
+- [`38-gas-systems-substrate`](../38-gas-systems-substrate.md) — synthesis report: how Gas City + Gas Town map to StrongDM Dark Factory and Every.to Compound Engineering, with concrete deployment sketches.
+- [`04-gastown-beads`](04-gastown-beads.md) — earlier (Round-3) comparison of Gas Town + Beads against Attractor; this analysis supersedes it on Gas Town/Gas City primitives but remains consistent on the Attractor-comparison axis.
 
 ---
 

@@ -73,6 +73,6 @@ These clusters seed future drain runs.
 
 ## Cross-references with other skills
 
-- For fetching blocked URLs, use [fetch-blocked-urls](../../../../fetch-blocked-urls/SKILL.md).
-- For in-flight workflow tracking (issues filed but not yet drained), use [in-flight-workflow-tracking](../../../../in-flight-workflow-tracking/SKILL.md).
-- For per-source-cluster preliminary indexing (before a heavy drain), use [preliminary-index-pass](../../../../preliminary-index-pass/SKILL.md).
+- For fetching blocked URLs, use [`fetch-blocked-urls`](../../../fetch-blocked-urls/SKILL.md).
+- For in-flight workflow tracking (issues filed but not yet drained), use [`in-flight-workflow-tracking`](../../../in-flight-workflow-tracking/SKILL.md).
+- For per-source-cluster preliminary indexing (before a heavy drain), use [`preliminary-index-pass`](../../../preliminary-index-pass/SKILL.md).

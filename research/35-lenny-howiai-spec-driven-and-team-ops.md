@@ -9,17 +9,17 @@
 **Subject.** Ryan Nystrom — software engineer and engineering manager at Notion (post-Campsite acquisition; previously co-founder of Campsite; ex-iOS at Instagram / GitHub). Manages a team of 6–7. Leading **Project Afterburner** to cut Notion's CI to 25% of current time. Demonstrates three workflows: (1) auto-generated standup pre-read via custom Notion AI agent ("hot potato"); (2) **Boxy**, Notion's internal VM-based background agent dispatched by @mention-Codex from a Notion task comment; (3) spec-driven development with Markdown spec files checked into the repo as source of truth.
 
 **Cross-refs:**
-- `research/14-el-kaim-book-intent-and-spec-authorship.md` (El Kaim 9-field intent block / typed spec discipline).
-- `research/25-requirements-engineering-foundations.md` §6.3 (AFIS three modelling strategies; Notion is now a primary industrial instance of strategy-3 — models/specs as the source of truth).
-- `research/28-schillace-sunday-letters.md` §6 (compounding teams; attention-firewall pattern; >500 projects / 12-person team).
-- `research/29-prompt-engineering-survey.md` §5 (Schulhoff sycophancy taxonomy — Nystrom's "you're wrong; defend your argument with evidence" is the empirical practitioner counter-prompt).
-- `research/26-prompt-underspecification-academic.md` §5 (Larbi RIR 89% — Nystrom's "I literally don't know what I'm doing here" is the practitioner companion to Larbi's lab finding).
-- `research/03-every-compound-engineering.md` (compound-engineering anchor).
-- `research/followup/03-cherny-interview.md` (Cherny's "iteration count is the bottleneck"; Stripe's 1,300 agent-PRs/week — Notion's CI-as-binding-constraint argument is the same observation from a different vendor).
-- `research/followup/05-klaassen-siblings.md` (Klaassen's "stop coding" — manager-as-engineer alignment).
-- `research/06-hn-and-lenny.md` (Stripe-1,300-PRs/week mentioned by Nystrom in transcript — confirmation of Cherny-claimed Stripe figure from a third source).
-- `research/32-shapiro-completion-chat-agent-claw.md` (claw-printer org primitive — Boxy is Notion's per-employee dispatch surface, peer to Glowforge's "one Claw per employee").
-- Forthcoming `research/36-sendbird-quests-token-tiers.md` (per-employee leaderboards / Automators marketplace — sibling org-design primitive).
+- [`14-el-kaim-book-intent-and-spec-authorship`](14-el-kaim-book-intent-and-spec-authorship.md) (El Kaim 9-field intent block / typed spec discipline).
+- [`25-requirements-engineering-foundations`](25-requirements-engineering-foundations.md) §6.3 (AFIS three modelling strategies; Notion is now a primary industrial instance of strategy-3 — models/specs as the source of truth).
+- [`28-schillace-sunday-letters`](28-schillace-sunday-letters.md) §6 (compounding teams; attention-firewall pattern; >500 projects / 12-person team).
+- [`29-prompt-engineering-survey`](29-prompt-engineering-survey.md) §5 (Schulhoff sycophancy taxonomy — Nystrom's "you're wrong; defend your argument with evidence" is the empirical practitioner counter-prompt).
+- [`26-prompt-underspecification-academic`](26-prompt-underspecification-academic.md) §5 (Larbi RIR 89% — Nystrom's "I literally don't know what I'm doing here" is the practitioner companion to Larbi's lab finding).
+- [`03-every-compound-engineering`](03-every-compound-engineering.md) (compound-engineering anchor).
+- [`03-cherny-interview`](followup/03-cherny-interview.md) (Cherny's "iteration count is the bottleneck"; Stripe's 1,300 agent-PRs/week — Notion's CI-as-binding-constraint argument is the same observation from a different vendor).
+- [`05-klaassen-siblings`](followup/05-klaassen-siblings.md) (Klaassen's "stop coding" — manager-as-engineer alignment).
+- [`06-hn-and-lenny`](06-hn-and-lenny.md) (Stripe-1,300-PRs/week mentioned by Nystrom in transcript — confirmation of Cherny-claimed Stripe figure from a third source).
+- [`32-shapiro-completion-chat-agent-claw`](32-shapiro-completion-chat-agent-claw.md) (claw-printer org primitive — Boxy is Notion's per-employee dispatch surface, peer to Glowforge's "one Claw per employee").
+- Forthcoming [`36-sendbird-quests-token-tiers`](36-sendbird-quests-token-tiers.md) (per-employee leaderboards / Automators marketplace — sibling org-design primitive).
 
 ---
 

@@ -140,7 +140,7 @@ Patterns that make a single human run many agents efficiently:
 - **YAML frontmatter is the trigger contract.** `name`, `description` (with explicit trigger phrases), `tags`, `version`, `allowed-tools`. The description *is* the discovery mechanism.
 - **Skills can have side-files.** `scripts/`, `references/`, `assets/` under a SKILL.md, capped at 50 files / 1MB. The body of SKILL.md remains the index.
 
-> **Cross-reference from `research/23-anthropic-engineering-trilogy.md` §3 drain (2026-05-13):** Anthropic's primary platform docs and cookbook notebooks tighten / contradict four of the conventions above:
+> **Cross-reference from [`23-anthropic-engineering-trilogy`](23-anthropic-engineering-trilogy.md) §3 drain (2026-05-13):** Anthropic's primary platform docs and cookbook notebooks tighten / contradict four of the conventions above:
 >
 > 1. **`name` is bounded:** max 64 chars, lowercase-alphanumeric+hyphens only, reserved words `anthropic` and `claude` are forbidden, no XML tags. Every's docs don't surface these constraints — they're inherited from the canonical Anthropic spec.
 > 2. **`description` is bounded:** non-empty, max 1024 chars, no XML tags. (Every's docs say only that the field "doubles as the trigger contract" without quoting a length.)

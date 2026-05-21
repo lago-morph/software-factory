@@ -38,7 +38,7 @@ El Kaim defines a typed chain, not synonyms:
 
 The canonical failure he names: "Traditional enterprise architecture often blurred these distinctions" — "Principles drifted into vague aspirations. Standards documents mixed policy, recommendation, and historical preference. Roadmaps presented intended motion without making the governing design choices explicit." (Ch1 §1) Chapter 3 §1 restates the chain compactly: "Intent defines direction. Capabilities define stable business scope. Policies define constraints. Design decisions define execution choices. Specifications formalize those choices. Controls verify conformance. Feedback updates future decisions."
 
-**Our usage is loose by comparison.** `spec-driven-ai-dev.md` uses "specification" for everything from directional Layer 1 prose down to Given/When/Then ACs. `architectures/00-comparison.md` uses "spec" as one category dimension. We collapse intent, policy, decision, and spec into one artifact and let layering carry the whole distinction. That layering solves *implementation-probe* attribution but leaves no place for "this outcome is non-negotiable" or "this rule must remain intact regardless of what the implementation discovers."
+**Our usage is loose by comparison.** `spec-driven-ai-dev.md` uses "specification" for everything from directional Layer 1 prose down to Given/When/Then ACs. [`00-comparison`](../architectures/00-comparison.md) uses "spec" as one category dimension. We collapse intent, policy, decision, and spec into one artifact and let layering carry the whole distinction. That layering solves *implementation-probe* attribution but leaves no place for "this outcome is non-negotiable" or "this rule must remain intact regardless of what the implementation discovers."
 
 We should adopt **intent → decision → spec → control → feedback**, with the layered spec as the third element. Policy lives orthogonally as a catalog; invariants are the bridge that compiles down into executable controls.
 
@@ -123,9 +123,9 @@ The five Codex disciplines (Ch6 §5.1–5.5) are typed objects, explicit relatio
 
 **`spec-driven-ai-dev.md`** has layers, Given/When/Then ACs, and a Pending Observations buffer. Invariants are buried in Layer 1 prose and per-use-case post-conditions. It lacks an explicit **non-goals** field, **decision-seeds** field, and **structured invariant list with downstream binding hints**. Outcomes and guardrails are not separated.
 
-**`architectures/00-comparison.md`** treats "the spec" as the seed of the agent loop in all four architectures. None has an upstream intent object. The Phase-Gated Foundry's Phase 1 (Requirements) is the nearest analog, but SRS-shaped (functional + NFR) rather than intent-shaped (outcomes + invariants + non-goals + decision seeds). The Tournament's "deliberately under-specified seed" is the *opposite* discipline: under-specification as a diversity-driver. The Atelier's `STRATEGY.md` gestures at intent without a schema.
+**[`00-comparison`](../architectures/00-comparison.md)** treats "the spec" as the seed of the agent loop in all four architectures. None has an upstream intent object. The Phase-Gated Foundry's Phase 1 (Requirements) is the nearest analog, but SRS-shaped (functional + NFR) rather than intent-shaped (outcomes + invariants + non-goals + decision seeds). The Tournament's "deliberately under-specified seed" is the *opposite* discipline: under-specification as a diversity-driver. The Atelier's `STRATEGY.md` gestures at intent without a schema.
 
-**`research/03-every-compound-engineering.md`** is process-shaped (plan → work → review → compound), not artifact-shaped. It assumes intent lives in the issue description and the operator's head — the "intent left implicit" pattern of Chapter 1.
+**[`03-every-compound-engineering`](03-every-compound-engineering.md)** is process-shaped (plan → work → review → compound), not artifact-shaped. It assumes intent lives in the issue description and the operator's head — the "intent left implicit" pattern of Chapter 1.
 
 ---
 
@@ -228,7 +228,7 @@ And what they *do* do:
 
 A critical operational detail: the policy must explain its rejection, not merely block. "A gate that simply blocks work creates frustration; a traceable constraint tells the team what boundary was crossed and what must change." (Ch8 §6) The Rego `deny_reasons` set in the worked example produces messages that name the violated action, the specification ID, and the decision ID — a traceable rejection rather than an opaque one. This is directly applicable to our preflight linter design from §9.3: every blocked check should cite the rule, the decision, and the intent it derives from.
 
-For our security-primitives line of inquiry, this is also where Chapter 8 reinforces `research/followup/08-security-primitives.md`: OPA/Rego is not merely an authorization layer; in the specification-driven workflow it is the runtime expression of an architectural decision, with stable ID linkage back through `DecisionRecord` to `EnterpriseIntent`.
+For our security-primitives line of inquiry, this is also where Chapter 8 reinforces [`08-security-primitives`](followup/08-security-primitives.md): OPA/Rego is not merely an authorization layer; in the specification-driven workflow it is the runtime expression of an architectural decision, with stable ID linkage back through `DecisionRecord` to `EnterpriseIntent`.
 
 ---
 
@@ -253,7 +253,7 @@ The discipline is symmetric with Rego: an eval run is a gate, not a report. "A n
 
 The two-source feedback model: production behavior produces signals like override rate and blocked-action count; the eval suite produces complementary signals under controlled inputs. "Production tells architecture what is happening under real load; evals tell architecture what the system is capable of under known inputs. The combination is what distinguishes a specification whose claims are asserted from a specification whose claims are verified." (Ch8 §7)
 
-This is the part of Chapter 8 most directly relevant to `research/followup/07-evals-deepdive.md`. The `protects: RULE-ID` link from metric back to specification rule is the structural piece that follow-up should foreground. Our prior evals work treated eval suites as quality gates; Chapter 8's contribution is to bind each metric to a specific architectural commitment, so a metric failure is traceable to a violated specification rule rather than to a vague "quality regression."
+This is the part of Chapter 8 most directly relevant to [`07-evals-deepdive`](followup/07-evals-deepdive.md). The `protects: RULE-ID` link from metric back to specification rule is the structural piece that follow-up should foreground. Our prior evals work treated eval suites as quality gates; Chapter 8's contribution is to bind each metric to a specific architectural commitment, so a metric failure is traceable to a violated specification rule rather than to a vague "quality regression."
 
 The chapter's punchline on the relationship between the two executable controls:
 
@@ -313,6 +313,6 @@ This is also the failure mode that connects Chapter 8 back to Chapter 7's warnin
 - Cluster B / Chapter 2: *continuous architecture* framing alongside the intent artifact for our Healer / production-trace loop.
 - Cluster C / Chapter 4: "agent harness" vs "intent thinking" split (Ch7 §2); the architecture-package object (Ch7 §2.2) as candidate replacement for per-issue `STRATEGY.md`.
 - Author the actual JSON Schema for our spec template's Intent block, mirroring Ch3 Appendix A.2; extend with a sibling `ArchitectureSpecification` schema mirroring Ch8 §5.
-- Update `research/followup/07-evals-deepdive.md` with the `protects: RULE-ID` linkage pattern from Ch8 §7: each eval metric should point back to a specific specification rule, so a metric failure is traceable to a violated architectural commitment.
-- Update `research/followup/08-security-primitives.md` with the Ch8 §6 framing of OPA/Rego as the *runtime expression of an architectural decision* (Rego package bound by ID to `DecisionRecord` and `ArchitectureSpecification`), and the traceable-`deny_reasons` pattern.
-- Cross-reference with the parallel Chapter 9 drain in `research/24-el-kaim-book-product-line-variability.md` once that report is in place; Ch8's `variation.allowed` / `variation.prohibited` envelope is the surface Ch9's SPL framing builds on.
+- Update [`07-evals-deepdive`](followup/07-evals-deepdive.md) with the `protects: RULE-ID` linkage pattern from Ch8 §7: each eval metric should point back to a specific specification rule, so a metric failure is traceable to a violated architectural commitment.
+- Update [`08-security-primitives`](followup/08-security-primitives.md) with the Ch8 §6 framing of OPA/Rego as the *runtime expression of an architectural decision* (Rego package bound by ID to `DecisionRecord` and `ArchitectureSpecification`), and the traceable-`deny_reasons` pattern.
+- Cross-reference with the parallel Chapter 9 drain in [`24-el-kaim-book-product-line-variability`](24-el-kaim-book-product-line-variability.md) once that report is in place; Ch8's `variation.allowed` / `variation.prohibited` envelope is the surface Ch9's SPL framing builds on.

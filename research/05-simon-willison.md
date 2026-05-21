@@ -446,7 +446,7 @@ Simon confirms Sander Schulhoff (Lenny's prior security guest) recommended the s
 >
 > *(Simon)*: *"My goodness, yeah. … No, that stuff's absolutely terrifying."*
 
-**Filed cross-reference**: this material strengthens `research/followup/08-security-primitives.md` (lethal-trifecta section). No edits to that file from this drain — primary anchor lives here.
+**Filed cross-reference**: this material strengthens [`08-security-primitives`](followup/08-security-primitives.md) (lethal-trifecta section). No edits to that file from this drain — primary anchor lives here.
 
 ### The Challenger disaster prediction — full elaboration **[2026-05-13 full-transcript drain]**
 

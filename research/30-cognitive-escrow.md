@@ -143,4 +143,4 @@ The catalogue is corpus-novel — Kahana names the *site*; this section enumerat
 
 ---
 
-*End of `research/30-cognitive-escrow.md` — Cluster J drain, 2026-05-16.*
+*End of [`30-cognitive-escrow`](30-cognitive-escrow.md) — Cluster J drain, 2026-05-16.*

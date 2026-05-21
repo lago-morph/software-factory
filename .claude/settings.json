@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": ".claude/hooks/require-issue-management-skill.sh",
+            "description": "issue-management: require skill load before issue tools",
+            "type": "command"
+          }
+        ],
+        "matcher": "mcp__github__(issue_read|issue_write|add_issue_comment|list_issues|search_issues|sub_issue_write)"
+      }
+    ]
+  }
+}

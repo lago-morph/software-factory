@@ -301,6 +301,57 @@ The whole set is processable in ~1 hour by a focused subagent once the criterion
 
 **Recommendation:** Address L.1 in the same cleanup commit (it's the only one that flips lint from FAIL to PASS), L.3 already lands with the main cleanup, L.6 alongside the SKILL.md updates per N4, and L.2 as a one-liner. Defer L.4 + L.5 to a follow-up PR — they're noise, not correctness, and they don't gate anything.
 
+### L.7 What ends up persisted in PLAN.md after cleanup
+
+L.1, L.2, L.3, L.6 are resolved by the cleanup commit itself — no PLAN.md mention needed (they're done). **L.4 and L.5 are deferred and must land as tasks in the cleaned-up PLAN.md §5 work-remaining list** so a future agent finds them.
+
+**[ADDED PROPOSED CHANGE]** Item **52** below captures this.
+
+52. **[NEW]** When rewriting PLAN.md §5 (per item 24/25/26 above), add two new task entries for the deferred linter work. Both must follow the concrete-task criterion:
+
+    ```markdown
+    ### Linter sanity-warning sweep (~1 hour subagent)
+
+    `bash scripts/lint-sources.sh` produces 65 advisory `sanity` warnings on
+    `audit-records.py`. Three buckets, processed in order:
+
+    1. **Broken-content captures (~15 records).** Files whose captured page
+       is a Cloudflare interstitial, a 404 page, or a search-results page.
+       For each: either re-fetch via the `fetch-blocked-urls` action (often
+       succeeds from the GitHub Actions IP when sandbox is blocked), or set
+       `completeness: error` + `ingestion_status: skip-not-necessary` if a
+       sibling file on the same record already carries the canonical content.
+       Affected records (representative): `60fbea1689`, `7dbf96d872`,
+       `e6f77b9e81`, `5a9f63821f`, `3274cc670c`, `85cdf07ac2`, `2e49bcd671`,
+       `a5209cf735`. See L.4 of `cleanup-plan-revised.md` (git history) for
+       the full list captured at PR #106 time.
+    2. **Host normalization (~5 records).** File's URL host is `cognition.ai`
+       but record's canonical URL host is `www.cognition.ai` (and similar).
+       Fix: teach `audit-records.py` to call `url_canonicalize.py`'s
+       host-normalization helper before comparing.
+    3. **Format-variant low-overlap (~45 records).** HTML + MD + MHTML files
+       for the same source naturally have <30% token overlap because HTML
+       carries nav chrome. Fix: loosen the audit threshold from "warn at
+       <30%" to "warn at <10%" — a constant in `audit-records.py`.
+
+    Trigger: lint output is dominated by these. Worth doing when the sweep
+    cost (~1 hour) is below the irritation cost.
+
+    ### PLAN.md consistency-check tightening (5 min)
+
+    `check-plan-consistency.py` warns when a catalog-touching commit didn't
+    also touch PLAN.md. False-positive rate is high because auto-regen
+    commits (`auto: regenerate sources.md from sources.json`) and merge
+    commits are mechanical and shouldn't trigger the warning. Fix: in
+    `.claude/skills/research-pipeline/scripts/check-plan-consistency.py`,
+    skip commits whose subject starts with `auto:` or `Merge ` from the
+    catalog-commit window. Single-function edit.
+    ```
+
+    Both items pass the concrete-task criterion — exact files, exact actions, exact thresholds named.
+
+---
+
 ---
 
 ## Out of scope (flagged but not in this cleanup)
@@ -317,14 +368,14 @@ The whole set is processable in ~1 hour by a focused subagent once the criterion
 1. Move syntheses (N1) and add headers (N3).
 2. Add architecture headers (N3).
 3. Delete obsolete files (C/D/E rewrite, F1, L.3 orphan dir).
-4. Edit `research/PLAN.md` (all §1–§17 changes; bullet reformat; future-research deletion).
+4. Edit `research/PLAN.md` (all §1–§17 changes; bullet reformat; future-research deletion; **item 52 — add the two deferred linter tasks to §5**).
 5. Edit `research-plan.md` (root).
 6. Update research-pipeline skill resources (N4 + L.6 config).
 7. Add Noah Radford wanted record (N6).
 8. Address L.1 — add MIGRATION-EXCEPTIONS entries (localhost URLs) + 3 catalog records (gas-systems repos + issue).
 9. Run `python .claude/skills/research-pipeline/scripts/check-source-refs.py --fix` (L.2).
 10. Close issues #41, #42 (N5).
-11. Single commit with all of the above. Run `bash scripts/lint-sources.sh` and confirm it exits clean (only L.4/L.5 advisory warnings remain, both deferred).
+11. Single commit with all of the above. Run `bash scripts/lint-sources.sh` and confirm it exits clean (only L.4/L.5 advisory warnings remain, both deferred and captured in PLAN.md §5 per item 52).
 12. Push, open PR ready-for-review, subscribe to PR activity.
 
 ---

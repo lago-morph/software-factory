@@ -115,6 +115,10 @@ When a source proposes, names, or surfaces a new failure mode, the canonical pro
 
 Before allocating a new number, check whether the phenomenon is already covered by an existing F-mode. The corpus has caught false novelty several times (e.g., F24 *trust creep* is adjacent to F7 *normalization of deviance* but distinguishable; promoted as separate after vetting). When in doubt, frame as a sharpening of the existing F-mode rather than a new one — the catalog's value is in distinct mitigations, not in count.
 
+### Interaction with the architecture-table CI gate
+
+Adding a new F-mode ROW to `architectures/failure-modes.md` populates cells across all architecture columns, but the [`failure-modes-gate.yml`](../../../../../.github/workflows/failure-modes-gate.yml) gate treats row additions/removals as row-level events that do NOT trigger column-spillover errors. So a research-pipeline drain that registers a new F-mode does NOT need to also touch every `architectures/0N-*.md` file. The gate only enforces column-correspondence when an existing row's cells (or the header) change. See `architectures/failure-modes.md` "Schema and update discipline" for the full rules.
+
 ---
 
 ## Multi-source synthesis

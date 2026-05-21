@@ -1,0 +1,35 @@
+name: Failure-mode table gate
+
+# Hard-fails any PR that drifts the failure-mode coverage table out of
+# correspondence with the architecture alternatives in architectures/.
+# See architectures/failure-modes.md "Schema and update discipline".
+
+on:
+  pull_request:
+    paths:
+      - 'architectures/**'
+      - '.github/scripts/lint-failure-modes.py'
+      - '.github/workflows/failure-modes-gate.yml'
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Honor failure-mode-only PR label
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          if echo "$LABELS" | grep -q '"failure-mode-only"'; then
+            echo "FAILURE_MODE_ONLY=1" >> "$GITHUB_ENV"
+            echo "Label 'failure-mode-only' present — column-only edits permitted."
+          fi
+      - name: Lint failure-modes.md vs architecture files
+        run: |
+          python .github/scripts/lint-failure-modes.py \
+            --check-diff ${{ github.event.pull_request.base.sha }}

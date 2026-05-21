@@ -65,6 +65,58 @@ If the drain run summary lists any YouTube URLs under "YouTube embed candidates"
 
 Full procedure: `youtube-transcripts.md`.
 
+## Failure-mode discovery and registration
+
+When a source proposes, names, or surfaces a new failure mode, the canonical project-wide index is `/failure-modes.md` at the repo root. This is the index of record — every newly-promoted failure mode MUST be registered there in the same commit that lands the report proposing it. Failure-mode *definitions* may continue to live in their proposing report or synthesis doc (that is where the verbatim provenance sits); `failure-modes.md` is the index — short row per F-mode pointing to the canonical definition — plus the per-architecture coverage matrix seeded from `architectures/00-comparison.md` §2.4.
+
+### Procedure when a report proposes a new failure mode
+
+1. **Pick a candidate number.** Read `/failure-modes.md` AND `research/INDEX.md` ("Looking for a failure mode" entry) to find the current high-water mark. Allocate the next free integer.
+
+2. **Detect collisions.** Search the repo for the candidate number BEFORE writing the report:
+
+   ```bash
+   # Replace 47 with the candidate number
+   grep -rn "F47\b" --include="*.md" .
+   ```
+
+   If the number is already used by a *different* proposed failure mode (this happened with F36/F37 — see `research/PLAN.md` §3.6), you have a collision.
+
+3. **Resolve collisions by renumbering, not by ignoring.** When two proposals collide:
+   - The earlier-merged proposal keeps the number (de-facto incumbent).
+   - The new proposal takes the next free integer.
+   - If both are landing in the same session, the report that registers first in `failure-modes.md` keeps the number; the other re-numbers.
+
+4. **Propagate the renumbered identifier.** A renumber is not done until every reference is updated. After the table in `failure-modes.md` settles, search carefully and fix EVERY occurrence:
+
+   ```bash
+   # Use word-boundary matching to avoid matching F45 when searching for F4
+   grep -rn "F<OLD>\b" --include="*.md" .
+   # Also check non-markdown formats — JSON, YAML, scripts
+   grep -rn "F<OLD>\b" .
+   ```
+
+   Common reference sites:
+   - The proposing report itself (the §N.N title; in-line citations like "F<OLD> proposed")
+   - `research/INDEX.md` (the per-report row + the "Looking for a failure mode" entry)
+   - `research/PLAN.md` (collision notes; round-summary bullets)
+   - `research/synthesis/*.md` (cross-references)
+   - Other reports that already cite the colliding number
+   - `architectures/*.md` (rarely; the comparison doc's matrix is in `failure-modes.md` itself)
+   - Retrospectives and ADRs
+
+   A renumber missed in any of these silently corrupts cross-references — the diff must show every old number replaced.
+
+5. **Register in `failure-modes.md`.** Add a row to the index naming the F-mode and its canonical definition site. If the report adds per-architecture coverage data, extend the coverage matrix too. Commit `failure-modes.md` in the same commit as the proposing report.
+
+6. **Update `research/INDEX.md`.** The "Looking for a failure mode" entry at the bottom of `INDEX.md` is the lookup table from F-mode number to definition site; keep it in sync.
+
+### When NOT to propose a new F-mode
+
+Before allocating a new number, check whether the phenomenon is already covered by an existing F-mode. The corpus has caught false novelty several times (e.g., F24 *trust creep* is adjacent to F7 *normalization of deviance* but distinguishable; promoted as separate after vetting). When in doubt, frame as a sharpening of the existing F-mode rather than a new one — the catalog's value is in distinct mitigations, not in count.
+
+---
+
 ## Multi-source synthesis
 
 When multiple records contribute to the same section of a report, the drain agent's job is to synthesize — not just append. Read all relevant sources, identify overlapping claims, surface contradictions, note where one source is the primary anchor and others are corroborating.

@@ -14,7 +14,7 @@ These come from user feedback on v1 and override prior style assumptions.
 - **Source-availability tracking lives in `sources.json`, not in `PLAN.md`.** Every "wanted URL" or "outstanding source" becomes a wanted-status record in `sources.json` — never a TODO bullet in `PLAN.md`.
 - **No references to retrospective follow-up anywhere.** Retrospectives are a separate process; their backlog does not belong in the research plan.
 - **A task is only a task if it's a concrete, executable instruction.** "Maybe revisit X someday" is not a task. "Decide X" with a defined input and output is. Wishlist items either become sources.json wanted records (if they're sources) or are deleted.
-- **Session/round bullets use a strict short format.** One sentence + hyperlinks. PR hyperlinks display as `#nn`; rare commit hyperlinks display as the first 8 hex digits. Both are short link tags, not prose narrative.
+- **Session/round bullets use the strictest possible short format.** Three components only: date + 24-hour time, the run's short name, the PR link. No prose, no semicolons-as-cheat. PR hyperlinks display as `#nn`; rare commit hyperlinks display as the first 8 hex digits. Both are short link tags, not narrative.
 - **Syntheses live in `research/synthesis/`.** Both existing syntheses get moved; future ones get authored there.
 - **Synthesis docs and architecture docs carry a `based-on-commit` header.** This is the only way a reader can tell what corpus state a synthesis is grounded in.
 
@@ -63,12 +63,12 @@ Numbering matches v1 where the change still applies; revised items are marked **
 
 #### B.2 §1 done-bullet list
 
-8. **[REVISED]** Keep one bullet per run, but reformat all of them to the new style: one short sentence + PR/commit hyperlinks. Example:
+8. **[REVISED — v3]** Keep one bullet per run, in the strictest possible form. Three components only: date + time (24-hour), the run's short name, the PR link. **No prose sentences. No semicolons-as-cheat. No content summary.** Example:
 
-   - OLD: `**Session 2026-05-17 — Round-11 manual drain (16 files; ingestion only, stage 5 deferred)** — User dropped 17 files into research/manual/ (15 MHTML + 2 PDFs); one PDF shipped with a companion URL of <name>.txt because its bytes carry no URL metadata. Used this PR to teach extract_url.py the companion-URL pattern...` (paragraph, ~150 words)
-   - NEW: `**2026-05-17 Round-11 manual drain** — 16 files ingested; stage 5 deferred; PDF companion-URL plumbing added. [#93](https://github.com/lago-morph/software-factory/pull/93)`
+   - OLD: `**Session 2026-05-17 — Round-11 manual drain (16 files; ingestion only, stage 5 deferred)** — User dropped 17 files into research/manual/ (15 MHTML + 2 PDFs); one PDF shipped with a companion URL of <name>.txt because its bytes carry no URL metadata. Used this PR to teach extract_url.py the companion-URL pattern...` (~150 words)
+   - NEW: `**2026-05-17 18:42 Round-11 manual drain** [#93](https://github.com/lago-morph/software-factory/pull/93)`
 
-   Hyperlink rules: PR link text = `#nn`; commit link text = `abcd1234` (first 8 hex); used only when commit message carries info not in the PR description.
+   The bullet says when it happened, what it was, and where to read about it. Anyone who needs the content reads the PR. Hyperlink rules: PR link display = `#nn`; rare commit link display = `abcd1234` (first 8 hex), used only when the commit message carries info not in the PR description. Time comes from the merge-commit timestamp.
 9. Add a bullet for Round 12 (gas-systems substrate analysis, [#101](https://github.com/lago-morph/software-factory/pull/101)) — the round itself isn't in PLAN.md yet because v0.17 predates it.
 10. Update the "Open items live in" sub-list at the end of §1 to reference only the live sections that survive cleanup (§3, §5, §6.1, and `research-plan.md`).
 
@@ -132,12 +132,13 @@ Numbering matches v1 where the change still applies; revised items are marked **
 
 #### B.11 Future research
 
-35. **[REVISED]** Apply the concrete-task criterion:
+35. **[REVISED — v3]** Apply the concrete-task criterion:
     - **"El Kaim Medium corpus"** — requires URL harvesting first; not a concrete task → DELETE.
     - **"Noah Radford road runner economy"** — one URL, action-fetchable → move to `sources.json` as a `wanted (URL known)` record per N6 below. Delete the prose section.
     - **"platform.claude.com Agent Skills 2-of-3"** — both URLs now in catalog as `have+complete` → DELETE.
-    - **"residuals (LukePM, Schillace compounding teams, 3 jaymin YouTube URLs)"** — LukePM and Schillace are drained; jaymin URLs require transcript-extraction service we don't have → DELETE all.
-    - Result: the entire `## Future research` section disappears. Anything anyone wants tracked goes into `sources.json` as a wanted record.
+    - **"residuals — LukePM, Schillace compounding teams"** — both drained → DELETE.
+    - **"residuals — 3 jaymin YouTube URLs (K7nY3MUzDuk / njRAmppPvFk / 95TEFWdo6Mw)"** — **KEEP as a concrete task** per user recollection of having provided a transcript. The task: confirm whether the transcript is already present somewhere or was at any point. Searched in this session: not in `sources.json`, no `youtube-transcript`-format records in catalog at all, not in git history under `research/manual/` / `reference-only/`, not in reflog. Resolution: either the user finds it locally and we ingest it, or we mark it confirmed-not-present and drop it. The task lives in PLAN.md §5 as one item with a one-paragraph description of what was searched.
+    - Result: the `## Future research` section collapses to (at most) the jaymin-transcript-confirm task — if even that lives in §5 directly, the whole `Future research` section disappears.
 
 ### C. `/reference-only/reorg-plan.md`
 
@@ -167,20 +168,32 @@ Numbering matches v1 where the change still applies; revised items are marked **
 
 43. Filenames as moved keep their existing prefixes (`00-`, `13-`). Future syntheses get whichever number is appropriate (e.g., `39-final-synthesis.md` or simply `final.md` — user preference; I'll default to the numbered scheme for consistency with the rest of `/research/`).
 
-#### N3. Metadata header — proposed format
+#### N3. Metadata header — proposed format, with historical commits per file
 
 44. Add a YAML frontmatter block at the top of each synthesis and architecture file:
 
     ```yaml
     ---
-    based-on-commit: a6d6eff
-    based-on-date: 2026-05-21
+    based-on-commit: f480c8b
+    based-on-date: 2026-05-13
     ---
     ```
 
-    Reader semantics: this synthesis (or architecture decision) is grounded in the corpus state at commit `a6d6eff`. Re-reading later, you know exactly what evidence base it sits on.
+    Reader semantics: this synthesis (or architecture decision) is grounded in the corpus state at commit `f480c8b`. Re-reading later, you know exactly what evidence base it sits on. **The commit hash + date are historical — they record when the file was last substantively edited, not when the header was added.**
 
-45. Apply the header to all existing files in `architectures/`: `00-comparison.md`, `01-specification-refinery.md`, `02-compound-atelier.md`, `03-phase-gated-foundry.md`, `04-evolutionary-tournament.md`. The commit-hash these are based on is whatever the most recent commit was when they were last substantively updated — best-effort backfill from git log per file.
+45. **[REVISED — v3]** Specific historical commit + date for each file, established from `git log <parent-ref> -- <file>` walks across the visible-history boundary:
+
+    | File | based-on-commit | based-on-date | Source commit message |
+    |------|------|------|------|
+    | `research/00-synthesis.md` | `f480c8b` | 2026-05-13 | "Reversal-of-reversal + cross-corpus updates + move sources to reference-only" |
+    | `research/13-round-2-synthesis.md` | `8f737b3` | 2026-05-13 | "Editorial collapse: fold 09-partial Substack manifesto into report 09; delete partial" |
+    | `architectures/00-comparison.md` | `c495dc9` | 2026-05-10 | "v2: update synthesis, blocked-URLs, architectures, and comparison" |
+    | `architectures/01-specification-refinery.md` | `c495dc9` | 2026-05-10 | (same) |
+    | `architectures/02-compound-atelier.md` | `c495dc9` | 2026-05-10 | (same) |
+    | `architectures/03-phase-gated-foundry.md` | `c495dc9` | 2026-05-10 | (same) |
+    | `architectures/04-evolutionary-tournament.md` | `c495dc9` | 2026-05-10 | (same) |
+
+    Note: the visible history in the current repo starts at the PR #48 merge commit `42ed807` (2026-05-13), but the parent commits accessible by hash extend further back. The hashes above are from the pre-squash history; they're stable references even though `git log --all` doesn't surface them.
 
 #### N4. Update research-pipeline skill
 

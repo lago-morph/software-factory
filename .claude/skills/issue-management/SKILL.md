@@ -1,6 +1,6 @@
 ---
 name: issue-management
-description: Conventions for working with GitHub issues in this repository, plus a modify-behavior mode for adding, changing, or removing the behaviors it defines. Primary mode triggers whenever the agent is asked to work on, pick up, claim, investigate, answer questions on, close, mark duplicate / invalid / wontfix, link as a sub-issue, or open a pull request for a GitHub issue — phrases like "work on issue #N", "pick up #N", "address #N", "close #N as duplicate", "this is invalid", "wontfix this", "make this a sub-issue of #M". Modify-behavior mode triggers on any of these surfaces, all of which are equivalent: (a) the canonical form "I want to (action) issue behavior (name or synonym)" — e.g. "I want to add issue behavior X", "I want to change the STARTED issue behavior", "I want to modify the issue behavior for duplicates", "I want to remove the wontfix issue behavior", "I want to update issue behavior QUESTIONS"; (b) looser phrasings like "add a behavior to the issue skill", "change the X behavior", "I want issues to also do Y", "update the issue conventions", "the STARTED comment should also …", "add an issue convention for …", "whenever the agent picks up an issue, also label it"; (c) action-synonym variants — tweak / edit / revise / adjust / alter / drop / retire applied to any of the behavior names. In modify mode the skill walks the user through a 6-step intake (trigger, comment-or-not, side effects, MCP feasibility, edit-vs-add) and updates this SKILL.md plus the templates atomically.
+description: Conventions for working with GitHub issues in this repository, plus a modify-behavior mode for adding, changing, or removing the behaviors it defines. **MUST be loaded any time the agent accesses a GitHub issue in any way** — including reading, querying, summarizing, commenting on, referencing in a PR or commit message, working on, picking up, claiming, investigating, answering questions on, closing, marking duplicate / invalid / wontfix, linking as a sub-issue, or opening a pull request for an issue. If the agent calls `mcp__github__issue_read`, `mcp__github__issue_write`, `mcp__github__add_issue_comment`, `mcp__github__list_issues`, `mcp__github__search_issues`, `mcp__github__sub_issue_write`, or otherwise touches an issue, this skill must already be loaded — no exceptions for "I'm only reading" or "I'm only doing one small thing." Primary mode triggers on the same surface — phrases like "work on issue #N", "pick up #N", "address #N", "look at #N", "what's #N about", "close #N as duplicate", "this is invalid", "wontfix this", "make this a sub-issue of #M". Modify-behavior mode triggers on any of these surfaces, all of which are equivalent: (a) the canonical form "I want to (action) issue behavior (name or synonym)" — e.g. "I want to add issue behavior X", "I want to change the STARTED issue behavior", "I want to modify the issue behavior for duplicates", "I want to remove the wontfix issue behavior", "I want to update issue behavior QUESTIONS"; (b) looser phrasings like "add a behavior to the issue skill", "change the X behavior", "I want issues to also do Y", "update the issue conventions", "the STARTED comment should also …", "add an issue convention for …", "whenever the agent picks up an issue, also label it"; (c) action-synonym variants — tweak / edit / revise / adjust / alter / drop / retire applied to any of the behavior names. In modify mode the skill walks the user through a 6-step intake (trigger, comment-or-not, side effects, MCP feasibility, edit-vs-add) and updates this SKILL.md plus the templates atomically.
 ---
 
 # Skill: issue-management
@@ -23,20 +23,54 @@ this repository. It runs in one of two modes:
 
 ## When to use primary mode
 
-Read this skill at the start of any turn that involves an issue, including:
+**Load this skill at the start of any turn that touches a GitHub issue
+in any way.** This is a hard requirement, not a suggestion. The
+distinguishing test is: *am I about to call an `mcp__github__issue_*`
+tool, `mcp__github__add_issue_comment`, `mcp__github__list_issues`,
+`mcp__github__search_issues`, or `mcp__github__sub_issue_write`, OR am
+I about to reference an issue number in something I'm writing
+(commit message, PR body, comment, plan doc)?* If yes, this skill is
+already loaded before the first such call. There is no
+"I'm only reading the issue body" carve-out, no "I'm only summarizing"
+carve-out, no "I'll load it later when I actually do something" carve-out.
+Read-only access still requires the skill so that the per-event
+behaviors below trip on the right surfaces (a read on an unassigned
+issue is the moment STARTED applies; a read after the user posted in
+chat is the moment ANSWERS applies).
 
-- "Work on issue #N" / "pick up #N" / "look at #N" / "address #N".
-- "What's the status of issue #N?" — the skill tells you which comments to expect.
+Concrete triggers, all of which require the skill to be loaded
+*before* the agent acts:
+
+- "Work on issue #N" / "pick up #N" / "look at #N" / "address #N" /
+  "investigate #N" / "fix #N" / "resolve #N".
+- "What's the status of issue #N?" / "what does #N say?" /
+  "summarize #N" / "is #N still open?" — read-only, but still requires
+  the skill (so STARTED / ANSWERS triggers are not missed).
 - "Close #N as duplicate of #M" / "this is invalid" / "wontfix this".
 - "Make #N a sub-issue of #M" / "link these as parent / child".
-- The user answers a question you previously posted — the **ANSWERS** behavior triggers.
-- You're about to open a PR that fixes an issue — the **PR-OPENED** behavior triggers.
+- Any time the agent is about to post a comment on an issue, for any
+  reason — the comment skeleton and the per-tag templates apply.
+- The user answers a question you previously posted — the **ANSWERS**
+  behavior triggers.
+- You're about to open a PR that fixes / closes / references an
+  issue — the **PR-OPENED** behavior triggers.
+- A `<github-webhook-activity>` event arrives for an issue this
+  session is subscribed to.
+
+If the agent realises mid-turn that it has already touched an issue
+without loading the skill, load it immediately and backfill the
+appropriate behavior (e.g. a retroactively-flagged STARTED comment
+plus the missing label / assignee writes — exactly what catching up
+looks like, never silent skipping).
 
 Do NOT use this skill for:
 
 - Pull-request review conventions (separate concern; not in scope here).
 - Issue-comment text that is purely conversational and not one of the
-  defined events. Conversational replies don't use the template.
+  defined events. Conversational replies don't use the template — but
+  the skill must still be loaded so the agent can recognise that the
+  reply is conversational rather than a missed ANSWERS / QUESTIONS
+  surface.
 
 For modify-behavior triggers, see the
 [modify-behavior section](#modify-behavior-mode-add-change-or-remove-a-behavior)

@@ -35,12 +35,41 @@ WORKFLOWS_DIR = REPO / ".github" / "workflows"
 
 WORKFLOW_FILES = ["failure-modes-gate.yml"]
 
+# Files INSIDE the skill that other components (CI workflow, agent CLI)
+# reference by path. If any is missing, the skill installation is broken
+# and --check returns exit 2. We do NOT regenerate these — they ship with
+# the skill itself; their absence means the skill was incompletely copied.
+REQUIRED_SKILL_FILES = [
+    SKILL_DIR / "SKILL.md",
+    SKILL_DIR / "scripts" / "lint-failure-modes.py",
+    SKILL_DIR / "scripts" / "install.py",
+    SKILL_DIR / "resources" / "_workflows" / "failure-modes-gate.yml",
+]
+
+
+def check_skill_intact() -> list[str]:
+    missing = [p for p in REQUIRED_SKILL_FILES if not p.exists()]
+    return [str(p.relative_to(REPO)) for p in missing]
+
 
 def render_template(template: Path) -> str:
     return template.read_text(encoding="utf-8").replace("__SKILL_PATH__", SKILL_PATH)
 
 
 def cmd_check() -> int:
+    skill_missing = check_skill_intact()
+    if skill_missing:
+        print("✗ Skill installation is incomplete. Missing skill-internal files:",
+              file=sys.stderr)
+        for m in skill_missing:
+            print(f"  - {m}", file=sys.stderr)
+        print(
+            "\nThis is a skill-install defect (not a workflow-drift issue) — "
+            "the skill directory was copied incompletely or a file was deleted. "
+            "Re-copy the skill from its source.",
+            file=sys.stderr,
+        )
+        return 2
     missing: list[str] = []
     drifted: list[str] = []
     for name in WORKFLOW_FILES:
@@ -72,6 +101,13 @@ def cmd_check() -> int:
 
 
 def cmd_install(force: bool, dry_run: bool, no_commit: bool) -> int:
+    skill_missing = check_skill_intact()
+    if skill_missing:
+        print("✗ Skill installation is incomplete. Missing skill-internal files:",
+              file=sys.stderr)
+        for m in skill_missing:
+            print(f"  - {m}", file=sys.stderr)
+        return 2
     WORKFLOWS_DIR.mkdir(parents=True, exist_ok=True)
     installed: list[str] = []
     skipped: list[str] = []

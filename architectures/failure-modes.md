@@ -8,31 +8,6 @@ Failure-mode *definitions* (what F1–F20 mean) live in [`research/synthesis/00-
 
 ---
 
-## Schema and update discipline
-
-The §2.4 coverage table is the **only** structural surface in this file and follows a strict schema:
-
-- **Header row:** `| Failure mode | N: ShortName | ... |` with one `N: ShortName` column per architecture alternative file `architectures/0N-*.md` (00-comparison.md and this file excluded). Column ordering is by integer N ascending; the `ShortName` is the slug used in the comparison doc (Refinery, Atelier, Foundry, Tournament).
-- **Body rows:** `| F<K> <Name> | <cell> | <cell> | ... |` with exactly one cell per architecture column. Row identifier `F<K>` must be unique and is the same number used by the proposing research report (registration procedure in [`stage-5-content-processing.md`](../.claude/skills/research-pipeline/resources/_drain/stage-5-content-processing.md)).
-- **End marker:** the §2.4 table ends at the `**Coverage column scores ...**` heading. The summary tables that follow are NOT validated cell-by-cell.
-
-**Update rule (enforced by CI):** when you modify `architectures/0N-*.md`, you must also update **column N — and only column N** — of this table. When you add a new alternative `architectures/0M-*.md`, add a new column `M: ShortName`; when you remove one, drop its column. The [`failure-modes-gate.yml`](../.github/workflows/failure-modes-gate.yml) workflow runs [`.github/scripts/lint-failure-modes.py`](../.github/scripts/lint-failure-modes.py) on every PR that touches `architectures/**` and hard-fails on:
-
-1. An `architectures/0N-*.md` change with no matching column-N update.
-2. A column-N change with no matching `architectures/0N-*.md` edit (spillover).
-3. Structural drift — header count ≠ alternative count, row width mismatch, etc.
-
-The escape hatch is the PR label **`failure-mode-only`** — apply it when you are deliberately refining a cell's wording with no architecture-doc change. The gate then permits column edits without a corresponding arch-file edit. (It still blocks spillover when an arch file *is* edited — the label is for column-only PRs, not column-plus-spillover ones.)
-
-Run the linter locally before pushing:
-
-```bash
-python3 .github/scripts/lint-failure-modes.py                       # structure-only
-python3 .github/scripts/lint-failure-modes.py --check-diff origin/main  # full
-```
-
----
-
 ### 2.4 Failure mode coverage
 
 | Failure mode | 1: Refinery | 2: Atelier | 3: Foundry | 4: Tournament |

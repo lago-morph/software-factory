@@ -21,6 +21,8 @@ Default mode (structure-only):
 Exit 0 on pass, 1 on lint errors.
 """
 
+from __future__ import annotations
+
 import argparse
 import os
 import re
@@ -28,7 +30,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent.parent
+# Skill lives at .claude/skills/architecture-failure-mode-gate/scripts/
+# Repo root is 4 levels up.
+REPO = Path(__file__).resolve().parents[4]
 ARCH_DIR = REPO / "architectures"
 TABLE_PATH = ARCH_DIR / "failure-modes.md"
 ARCH_PATTERN = re.compile(r"^0([1-9])-.*\.md$")
@@ -38,7 +42,7 @@ SECTION_MARKER = "### 2.4 Failure mode coverage"
 SECTION_END = "**Coverage column scores"
 
 
-def find_arch_files():
+def find_arch_files() -> dict[int, str]:
     return {
         int(ARCH_PATTERN.match(p.name).group(1)): p.name
         for p in ARCH_DIR.iterdir()
@@ -46,10 +50,10 @@ def find_arch_files():
     }
 
 
-def parse_table(text):
+def parse_table(text: str):
     """Return (headers_excluding_first_col, {fmode_id: [cells_excluding_first_col]})."""
     headers = None
-    rows = {}
+    rows: dict[str, list[str]] = {}
     in_table = False
     for line in text.splitlines():
         if line.startswith(SECTION_MARKER):
@@ -63,7 +67,7 @@ def parse_table(text):
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if cells and all(re.fullmatch(r":?-+:?", c) for c in cells):
-            continue  # separator
+            continue
         if headers is None:
             headers = cells[1:]
             continue
@@ -74,12 +78,12 @@ def parse_table(text):
     return headers, rows
 
 
-def structure_errors():
+def structure_errors() -> list[str]:
     if not TABLE_PATH.exists():
         return [f"{TABLE_PATH.relative_to(REPO)} does not exist"]
     text = TABLE_PATH.read_text(encoding="utf-8")
     headers, rows = parse_table(text)
-    errors = []
+    errors: list[str] = []
     if not headers:
         return [f"§2.4 table not found in {TABLE_PATH.relative_to(REPO)}"]
     arch_files = find_arch_files()
@@ -106,7 +110,7 @@ def structure_errors():
     return errors
 
 
-def git_show(ref, path):
+def git_show(ref: str, path: str) -> str:
     try:
         return subprocess.check_output(
             ["git", "show", f"{ref}:{path}"], stderr=subprocess.DEVNULL
@@ -115,19 +119,19 @@ def git_show(ref, path):
         return ""
 
 
-def changed_files(base):
+def changed_files(base: str) -> list[str]:
     return subprocess.check_output(
         ["git", "diff", "--name-only", f"{base}...HEAD"]
     ).decode("utf-8").splitlines()
 
 
-def changed_columns(old_text, new_text):
+def changed_columns(old_text: str, new_text: str) -> set[int]:
     h_old, r_old = parse_table(old_text)
     h_new, r_new = parse_table(new_text)
     h_old = h_old or []
     h_new = h_new or []
     width = max(len(h_old), len(h_new))
-    changed = set()
+    changed: set[int] = set()
     for i in range(width):
         o = h_old[i] if i < len(h_old) else None
         n = h_new[i] if i < len(h_new) else None
@@ -143,7 +147,7 @@ def changed_columns(old_text, new_text):
     return changed
 
 
-def diff_errors(base):
+def diff_errors(base: str) -> list[str]:
     files = set(changed_files(base))
     arch_changed = {
         int(ARCH_PATH_PATTERN.match(f).group(1))
@@ -160,7 +164,7 @@ def diff_errors(base):
         return []
     new = TABLE_PATH.read_text(encoding="utf-8")
     col_changed = changed_columns(old, new)
-    errors = []
+    errors: list[str] = []
     label_override = os.environ.get("FAILURE_MODE_ONLY", "").strip() in ("1", "true", "yes")
     for n in sorted(arch_changed - col_changed):
         errors.append(
@@ -177,7 +181,7 @@ def diff_errors(base):
     return errors
 
 
-def main():
+def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--check-diff", metavar="BASE_REF",
                     help="Also enforce diff-correspondence vs BASE_REF.")
@@ -189,8 +193,11 @@ def main():
         print("failure-modes.md lint FAILED:", file=sys.stderr)
         for e in errors:
             print(f"  - {e}", file=sys.stderr)
-        print("\nSee architectures/failure-modes.md \"Schema and update discipline\".",
-              file=sys.stderr)
+        print(
+            "\nSee .claude/skills/architecture-failure-mode-gate/SKILL.md "
+            "\"Schema and update discipline\".",
+            file=sys.stderr,
+        )
         return 1
     print("failure-modes.md lint: OK")
     return 0

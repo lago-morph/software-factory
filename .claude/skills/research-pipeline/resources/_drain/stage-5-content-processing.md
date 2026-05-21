@@ -67,6 +67,8 @@ Full procedure: `youtube-transcripts.md`.
 
 ## Failure-mode discovery and registration
 
+> **Cross-reference:** [`architecture-failure-mode-gate`](../../../architecture-failure-mode-gate/SKILL.md) skill owns `architectures/failure-modes.md`, its schema, and the CI gate that enforces column-correspondence with the architecture alternatives. Load it whenever you touch the file. The procedure below covers the *discovery* side (proposing a new F-mode from a research source); the gate skill covers the *table edit* side (the row/column mechanics). Adding a new F-mode row is a row-level event — the gate explicitly does NOT require column-spillover correspondence for row additions.
+
 When a source proposes, names, or surfaces a new failure mode, the canonical project-wide index is [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md). This is the index of record — every newly-promoted failure mode MUST be registered there in the same commit that lands the report proposing it. Failure-mode *definitions* may continue to live in their proposing report or synthesis doc (that is where the verbatim provenance sits); [`architectures/failure-modes.md`](../../../../../architectures/failure-modes.md) is the index — short row per F-mode pointing to the canonical definition — plus the per-architecture coverage matrix seeded from [`architectures/00-comparison.md`](../../../../../architectures/00-comparison.md) §2.4.
 
 ### Procedure when a report proposes a new failure mode
@@ -114,10 +116,6 @@ When a source proposes, names, or surfaces a new failure mode, the canonical pro
 ### When NOT to propose a new F-mode
 
 Before allocating a new number, check whether the phenomenon is already covered by an existing F-mode. The corpus has caught false novelty several times (e.g., F24 *trust creep* is adjacent to F7 *normalization of deviance* but distinguishable; promoted as separate after vetting). When in doubt, frame as a sharpening of the existing F-mode rather than a new one — the catalog's value is in distinct mitigations, not in count.
-
-### Interaction with the architecture-table CI gate
-
-Adding a new F-mode ROW to `architectures/failure-modes.md` populates cells across all architecture columns, but the [`failure-modes-gate.yml`](../../../../../.github/workflows/failure-modes-gate.yml) gate treats row additions/removals as row-level events that do NOT trigger column-spillover errors. So a research-pipeline drain that registers a new F-mode does NOT need to also touch every `architectures/0N-*.md` file. The gate only enforces column-correspondence when an existing row's cells (or the header) change. See `architectures/failure-modes.md` "Schema and update discipline" for the full rules.
 
 ---
 

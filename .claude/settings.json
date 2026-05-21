@@ -10,6 +10,16 @@
           }
         ],
         "matcher": "mcp__github__(issue_read|issue_write|add_issue_comment|list_issues|search_issues|sub_issue_write)"
+      },
+      {
+        "hooks": [
+          {
+            "command": ".claude/hooks/remind-questions-on-askuserquestion.sh",
+            "description": "issue-management: remind AskUserQuestion-is-QUESTIONS rule",
+            "type": "command"
+          }
+        ],
+        "matcher": "AskUserQuestion"
       }
     ]
   }

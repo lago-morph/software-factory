@@ -62,7 +62,7 @@ Verbatim:
 >
 > Identify RE tasks and reference use cases in the context of a real Product Development Process to design and deploy NLP and LLM methods and evaluate their strengths and limitations relative to existing methods." (Paper §5.1)
 
-The third and fourth bullets are exactly what `research/followup/07-evals-deepdive.md` and El Kaim's `EvaluationSuite` typed object (Report 14 §15) try to provide on the methodology side. This paper is the academic warrant for that work.
+The third and fourth bullets are exactly what [`07-evals-deepdive`](followup/07-evals-deepdive.md) and El Kaim's `EvaluationSuite` typed object (Report 14 §15) try to provide on the methodology side. This paper is the academic warrant for that work.
 
 ## 2. Yang et al. (arXiv:2505.13360v3) — "What Prompts Don't Say"
 
@@ -299,13 +299,13 @@ Five concrete proposals, each grounded in a numbered claim above:
 
 ### 5.4 Cross-references the lead agent should consider weaving in
 
-- `research/14-el-kaim-book-intent-and-spec-authorship.md` §15 (evals as second executable control) — Yang et al. §4.2's COPRO-R *is* the eval-as-gate pattern, with empirical numbers attached (+5.8%, +3.8%, −41–45% tokens).
-- `research/22-academic-foundations.md` — extend the §11.7 evals deep-dive (or its replacement) to cite Yang et al. as the prompt-side companion to AlphaCode's verify-by-tests pipeline. The shared insight: *generate many, then verify against a per-requirement criterion*.
-- `research/05-simon-willison.md` — Willison's "97% is a failing grade" doctrine now has direct empirical support: Larbi et al. §6.2's GPT-4 RIR climbs from 24% on clean prompts to 89% on contradictory prompts. The 97% claim is not just rhetoric; the field-failure mode is *exactly* "looks like it works (SER stays high) but is semantically broken."
-- `research/followup/07-evals-deepdive.md` — adopt Yang et al.'s "validators with 95.6% human-LLM agreement" as a calibration target; adopt Larbi et al.'s exception-class binning as a field-failure triage method.
-- `research/followup/08-security-primitives.md` — Larbi §6.1's finding that LLMs cannot detect contradictory prompts is a *direct adjunct* to F12 (lethal trifecta) / F33 (adversarial-prompt defeat of LLM-based security analysis). The prompt itself can be the adversarial input.
-- `research/00-synthesis.md` §4 — the F1–F35 table should grow to include proposed F36 (instruction-following ceiling) and F37 (silent contradictory-prompt collapse) pending lead-agent review.
-- `research/13-round-2-synthesis.md` §3 — both proposed failure modes are *methodology-layer*, not substrate-layer, in the §3 dichotomy. They sit alongside F1–F30, not F31–F33.
+- [`14-el-kaim-book-intent-and-spec-authorship`](14-el-kaim-book-intent-and-spec-authorship.md) §15 (evals as second executable control) — Yang et al. §4.2's COPRO-R *is* the eval-as-gate pattern, with empirical numbers attached (+5.8%, +3.8%, −41–45% tokens).
+- [`22-academic-foundations`](22-academic-foundations.md) — extend the §11.7 evals deep-dive (or its replacement) to cite Yang et al. as the prompt-side companion to AlphaCode's verify-by-tests pipeline. The shared insight: *generate many, then verify against a per-requirement criterion*.
+- [`05-simon-willison`](05-simon-willison.md) — Willison's "97% is a failing grade" doctrine now has direct empirical support: Larbi et al. §6.2's GPT-4 RIR climbs from 24% on clean prompts to 89% on contradictory prompts. The 97% claim is not just rhetoric; the field-failure mode is *exactly* "looks like it works (SER stays high) but is semantically broken."
+- [`07-evals-deepdive`](followup/07-evals-deepdive.md) — adopt Yang et al.'s "validators with 95.6% human-LLM agreement" as a calibration target; adopt Larbi et al.'s exception-class binning as a field-failure triage method.
+- [`08-security-primitives`](followup/08-security-primitives.md) — Larbi §6.1's finding that LLMs cannot detect contradictory prompts is a *direct adjunct* to F12 (lethal trifecta) / F33 (adversarial-prompt defeat of LLM-based security analysis). The prompt itself can be the adversarial input.
+- [`00-synthesis`](synthesis/00-synthesis.md) §4 — the F1–F35 table should grow to include proposed F36 (instruction-following ceiling) and F37 (silent contradictory-prompt collapse) pending lead-agent review.
+- [`13-round-2-synthesis`](synthesis/13-round-2-synthesis.md) §3 — both proposed failure modes are *methodology-layer*, not substrate-layer, in the §3 dichotomy. They sit alongside F1–F30, not F31–F33.
 
 ### 5.5 What this report does *not* settle
 
@@ -331,6 +331,6 @@ Status legend: ✅ full primary text read · 🟡 partial · ❌ unobtainable.
 **Open follow-ups (for lead-agent triage):**
 
 - Decide on proposed F36 (instruction-following ceiling) and F37 (silent contradictory-prompt collapse).
-- Update `research/INDEX.md` and `research/PLAN.md` to reflect Report 26 and the two proposed F-modes (out of scope for this subagent).
-- Consider extending `research/followup/07-evals-deepdive.md` with COPRO-R and the requirement-validator pattern as concrete operationalizations of `EvaluationSuite.metrics`.
+- Update [`INDEX`](INDEX.md) and [`PLAN`](PLAN.md) to reflect Report 26 and the two proposed F-modes (out of scope for this subagent).
+- Consider extending [`07-evals-deepdive`](followup/07-evals-deepdive.md) with COPRO-R and the requirement-validator pattern as concrete operationalizations of `EvaluationSuite.metrics`.
 - Consider whether the Larbi et al. mutation dataset should be adopted as a corpus-level holdout eval.

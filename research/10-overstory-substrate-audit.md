@@ -1,6 +1,6 @@
 # Overstory — Substrate Audit
 
-> Round-2 subagent 10 of `research/PLAN.md` §3.3.
+> Round-2 subagent 10 of [`PLAN`](PLAN.md) §3.3.
 > Source: `github.com/jayminwest/overstory` branch `main` at audit time (package
 > version `0.11.0`, MIT, npm `@os-eco/overstory-cli`).
 > Files consulted: `README.md`, `STEELMAN.md`, `CLAUDE.md`, `SECURITY.md`,
@@ -165,7 +165,7 @@ orchestration logic stops needing to know about Claude Code specifically.
    (`resolver.ts:367`). Adopters can route conflict resolution to a
    completely different model from the one driving workers — useful for
    independence in any architecture that requires V&V model-family
-   separation (Architecture 3 of `architectures/00-comparison.md`).
+   separation (Architecture 3 of [`00-comparison`](../architectures/00-comparison.md)).
 
 ## 4. Worktree isolation
 
@@ -435,7 +435,7 @@ assembled by the caller**. There is no single `ov run --until-done <task>`.
 For a CI/CD pipeline this is a meaningful gap. It is also a small gap: a
 ~150-line wrapper script could close it.
 
-## 8. Diff against `architectures/00-comparison.md` §4.1
+## 8. Diff against [`00-comparison`](../architectures/00-comparison.md) §4.1
 
 Each row is one shared-infrastructure primitive. "Provides" = present and
 usable as-is. "Partial" = the primitive exists but is incomplete in a way
@@ -524,7 +524,7 @@ Bun-locked and TypeScript-locked.** The `AgentRuntime` interface
 translation. But the implementation depends on `bun:sqlite`, `Bun.spawn`,
 `Bun.file`, and Bun's stream/process APIs. Adopting as-is means accepting
 Bun + TypeScript as a permanent constraint on the substrate. Given that
-`research/PLAN.md` §10.4 anticipates OpenHands (Python) as a peer
+[`PLAN`](PLAN.md) §10.4 anticipates OpenHands (Python) as a peer
 substrate, and that Architecture 3's V&V discipline favors Python's broader
 ML/eval ecosystem, a Bun-only substrate creates an unnecessary integration
 boundary.
@@ -596,7 +596,7 @@ in the merge pre-check, the `validateWorktreeCreation` two-step post-flight
 check. Re-discovering those costs months. Stealing them costs days.
 
 **Why not "discard":** Of the substrate primitives in
-`architectures/00-comparison.md` §4.1, Overstory provides 5 outright and 3
+[`00-comparison`](../architectures/00-comparison.md) §4.1, Overstory provides 5 outright and 3
 partially. The next-closest candidate (OpenHands SDK, audited in
 report 11) attacks the *runtime* layer, not the orchestration layer. We
 will need both. Discarding Overstory means re-deriving worktree GC, mail

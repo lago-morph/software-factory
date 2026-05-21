@@ -9,12 +9,12 @@
 **Subject.** John Kim — co-founder and CEO of Sendbird. Describes the org-wide AI-adoption playbook that Sendbird has rolled out under its internal AI-product brand (the captures occasionally name an internal product "Delight.ai" — see §5.2 below for the disambiguation). The playbook has four interlocking primitives: (1) the **Automators** marketplace where employees file *quests* (automation requests) tagged with risk / weeks-saved / beneficiary, claimed by engineers or AI agents, completers earn XP; (2) **per-person daily-token tiers** from Beginner (<1M tokens/day) to **AI God** (>100M/day) as a visible AI-fluency leaderboard; (3) InfoSec-vetted secure app templates that let non-engineers build to production; (4) a cross-functional weekly AI task force led by an "AI Engineer for Internal Operations" who reports directly to the CEO + chief of staff.
 
 **Cross-refs:**
-- `research/32-shapiro-completion-chat-agent-claw.md` §6 (claw-printer / one-Claw-per-employee — supply-side peer).
-- `research/35-lenny-howiai-spec-driven-and-team-ops.md` (Boxy as per-engineer fleet — peer demand-side primitive).
-- `research/28-schillace-sunday-letters.md` §6 (compounding teams: 12-person team / >500 projects — the corpus-canonical supply-side anchor).
-- `research/27-dotfile-pipelines-as-product.md` (per-pipeline as primitive — peer at a different layer).
-- `research/13-round-2-synthesis.md` §3 (failure-mode framework F21–F33 — F47 is the candidate added here).
-- `research/followup/10-governance.md` (governance overlay — visible-metric drift, Goodhart's-Law-on-tokens risk).
+- [`32-shapiro-completion-chat-agent-claw`](32-shapiro-completion-chat-agent-claw.md) §6 (claw-printer / one-Claw-per-employee — supply-side peer).
+- [`35-lenny-howiai-spec-driven-and-team-ops`](35-lenny-howiai-spec-driven-and-team-ops.md) (Boxy as per-engineer fleet — peer demand-side primitive).
+- [`28-schillace-sunday-letters`](28-schillace-sunday-letters.md) §6 (compounding teams: 12-person team / >500 projects — the corpus-canonical supply-side anchor).
+- [`27-dotfile-pipelines-as-product`](27-dotfile-pipelines-as-product.md) (per-pipeline as primitive — peer at a different layer).
+- [`13-round-2-synthesis`](synthesis/13-round-2-synthesis.md) §3 (failure-mode framework F21–F33 — F47 is the candidate added here).
+- [`10-governance`](followup/10-governance.md) (governance overlay — visible-metric drift, Goodhart's-Law-on-tokens risk).
 
 ---
 

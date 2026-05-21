@@ -76,10 +76,10 @@ These three tasks were explicitly excluded from subagent dispatch in the origina
 
 | Task | What | Source of the proposed change | Risk if skipped |
 |---|---|---|---|
-| **Update `architectures/00-comparison.md`** | (a) Replace §7 with the substrate-stack recommendation from `research/synthesis/13-round-2-synthesis.md` §6 (preserve original §7 as "§7 (Round 1)"). (b) Extend §2.4 with F21–F33 from report 09 + report 13 + G12/G13/G14 from drained report 10. | Round-2 synthesis report 13 §6; Round-2 failure-mode extension in report 09 §6 + report 13 §3 + governance drain in report 10 | The canonical comparison doc lags 4 rounds of synthesis. New readers see a 2025-era comparison; they don't see "harness" vocabulary, substrate-stack recommendation, or failure modes F21–F33. |
+| **Update [`00-comparison`](../architectures/00-comparison.md)** | (a) Replace §7 with the substrate-stack recommendation from [`13-round-2-synthesis`](synthesis/13-round-2-synthesis.md) §6 (preserve original §7 as "§7 (Round 1)"). (b) Extend §2.4 with F21–F33 from report 09 + report 13 + G12/G13/G14 from drained report 10. | Round-2 synthesis report 13 §6; Round-2 failure-mode extension in report 09 §6 + report 13 §3 + governance drain in report 10 | The canonical comparison doc lags 4 rounds of synthesis. New readers see a 2025-era comparison; they don't see "harness" vocabulary, substrate-stack recommendation, or failure modes F21–F33. |
 | **Round 2 complete stanza** | Append a "Round 2 complete" stanza to the §10 lookup row with the drain merge commit hash `423940f`. | Bookkeeping. | Audit trail is incomplete. |
 
-The original §3.2 carried a third task — "Update `spec-driven-ai-dev.md`" with the 4-field El Kaim extension from `research/14-el-kaim-book-intent-and-spec-authorship.md`. **Retired 2026-05-21** (issue [#105](https://github.com/lago-morph/software-factory/issues/105)): `spec-driven-ai-dev.md` was reframed as a cataloged source (record [`3592091691`](../reference-only/3592091691/spec-driven-ai-dev.md)) and is no longer treated as a mutable internal artifact. The 4-field discipline from Report 14 lives on as a research finding that informs the v3 architecture choice (see `research-plan.md`); it does not amend the source document.
+The original §3.2 carried a third task — "Update `spec-driven-ai-dev.md`" with the 4-field El Kaim extension from [`14-el-kaim-book-intent-and-spec-authorship`](14-el-kaim-book-intent-and-spec-authorship.md). **Retired 2026-05-21** (issue [#105](https://github.com/lago-morph/software-factory/issues/105)): `spec-driven-ai-dev.md` was reframed as a cataloged source (record [`3592091691`](../reference-only/3592091691/spec-driven-ai-dev.md)) and is no longer treated as a mutable internal artifact. The 4-field discipline from Report 14 lives on as a research finding that informs the v3 architecture choice (see `research-plan.md`); it does not amend the source document.
 
 ### 3.6 Failure-mode numbering collision — F36/F37 dual-proposed by reports 25 and 26
 
@@ -110,7 +110,7 @@ The research phase is complete when **all** of the following hold:
 ### 5.1 Concrete tasks
 
 - **Decide on `research-plan.md` direction.** Two coupled questions: (a) cut a single unified Round-1–N synthesis, or keep the current two-synthesis-plus-followups state; (b) collapse the four architectures to one chosen path (likely Atelier + Refinery layered-spec discipline) + "rejected alternatives" appendix, or keep all four.
-- **§3.2 curated human-review tasks.** Update `architectures/00-comparison.md` §7 + §2.4; add the Round-2-complete stanza. (The §3.2 task to amend `spec-driven-ai-dev.md` with the 4-field El Kaim extension was retired 2026-05-21 when the file was reframed as a cataloged source — issue [#105](https://github.com/lago-morph/software-factory/issues/105).)
+- **§3.2 curated human-review tasks.** Update [`00-comparison`](../architectures/00-comparison.md) §7 + §2.4; add the Round-2-complete stanza. (The §3.2 task to amend `spec-driven-ai-dev.md` with the 4-field El Kaim extension was retired 2026-05-21 when the file was reframed as a cataloged source — issue [#105](https://github.com/lago-morph/software-factory/issues/105).)
 - **Cross-corpus propagation sweep (§6.1).** Mechanical grep + small subagent dispatch.
 - **F36/F37 triage decision (§3.6).** Lead-agent call on numbering.
 - **Locate the three jaymin YouTube transcripts.** User believes the three jaymin YouTube transcripts are on their laptop — find and drop into `research/manual/`, or confirm not-present and mark `skip-not-necessary`. (The three wanted-transcript records are already in `sources.json` on the Jaymin West Agentic Engineering Book record `992e4f88b6`.)
@@ -148,7 +148,7 @@ cost (~1 hour) is below the irritation cost.
 also touch PLAN.md. False-positive rate is high because auto-regen
 commits (`auto: regenerate sources.md from sources.json`) and merge
 commits are mechanical and shouldn't trigger the warning. Fix: in
-`.claude/skills/research-pipeline/scripts/check-plan-consistency.py`,
+[`check-plan-consistency`](../.claude/skills/research-pipeline/scripts/check-plan-consistency.py),
 skip commits whose subject starts with `auto:` or `Merge ` from the
 catalog-commit window. Single-function edit.
 
@@ -169,8 +169,8 @@ When picking this up cold:
 
 Round 7's Shapiro canonical-post drain refuted prior corpus framings of Shapiro as a Level-5 practitioner (he positions himself at L4 with the verbatim "I'm here.") and surfaced 8 El Kaim-vs-Shapiro discrepancies. The following propagation edits are pending:
 
-- **`research/07-dark-factory.md`** — should note that El Kaim *paraphrases* and conflates Shapiro's canonical Five Levels post with the companion "You don't write the code" post; flag the L4 and L5 divergences. The "Nobody writes / Nobody reads" L5 framing currently in the report is El Kaim's, not Shapiro's.
-- **`research/01-strongdm-factory.md`** and **`research/02-strongdm-attractor.md`** — anywhere the named StrongDM team-size datum ("less than five people" / "Justin McCarthy three-person team") is attributed to Shapiro's Five Levels post: the Five Levels post says only "less than five people"; the named StrongDM/Justin/three-person datum traces to the companion post only.
+- **[`07-dark-factory`](07-dark-factory.md)** — should note that El Kaim *paraphrases* and conflates Shapiro's canonical Five Levels post with the companion "You don't write the code" post; flag the L4 and L5 divergences. The "Nobody writes / Nobody reads" L5 framing currently in the report is El Kaim's, not Shapiro's.
+- **[`01-strongdm-factory`](01-strongdm-factory.md)** and **[`02-strongdm-attractor`](02-strongdm-attractor.md)** — anywhere the named StrongDM team-size datum ("less than five people" / "Justin McCarthy three-person team") is attributed to Shapiro's Five Levels post: the Five Levels post says only "less than five people"; the named StrongDM/Justin/three-person datum traces to the companion post only.
 - **Anywhere in the corpus** Kilroy is called "Shapiro's Level-5 reference implementation": Kilroy is *not mentioned* in the canonical Five Levels post; that positioning exists only in the companion post.
 - **Anywhere in the corpus** Shapiro is described as "a Level 5 practitioner" or "Level 4–5 practitioner-tooler": refute with Shapiro's verbatim L4 self-position ("I'm here.").
 
@@ -191,7 +191,7 @@ Each row is an open thread; the third column states the explicit trigger that mo
 
 ## 8. GitHub Action — security stance (frozen)
 
-The `fetch-blocked-urls` workflow uses **label-only authorization** (`fetch-urls` label, applied by a Triage-role human). This avoids the `author_association` footgun where webhook payload and REST API disagree. Documented in ADR-0001 (`docs/adr/0001-fetch-blocked-urls-mechanism.md`).
+The `fetch-blocked-urls` workflow uses **label-only authorization** (`fetch-urls` label, applied by a Triage-role human). This avoids the `author_association` footgun where webhook payload and REST API disagree. Documented in ADR-0001 ([`0001-fetch-blocked-urls-mechanism`](../docs/adr/0001-fetch-blocked-urls-mechanism.md)).
 
 The runner has full network egress and writes to a fresh `fetched/issue-N` branch (never to `main`). All merges into `main` are human-driven.
 
@@ -210,12 +210,12 @@ The runner has full network egress and writes to a fresh `fetched/issue-N` branc
 
 | Round | Reports | Status | Summary |
 |---|---|---|---|
-| 1 | `research/01-07-*`, `research/synthesis/00-synthesis.md` | ✅ Complete | 7-source initial reconstruction; F1–F20 promoted. |
-| 2 | `research/08-12-*`, `research/synthesis/13-round-2-synthesis.md` | ✅ Complete | Jaymin / Overstory / OpenHands substrate audits; F21–F33 promoted. Drain merge `423940f`. |
+| 1 | `research/01-07-*`, [`00-synthesis`](synthesis/00-synthesis.md) | ✅ Complete | 7-source initial reconstruction; F1–F20 promoted. |
+| 2 | `research/08-12-*`, [`13-round-2-synthesis`](synthesis/13-round-2-synthesis.md) | ✅ Complete | Jaymin / Overstory / OpenHands substrate audits; F21–F33 promoted. Drain merge `423940f`. |
 | 3 | `research/followup/01-12-*` | ✅ Complete | 12 follow-up threads; Thread 12 resolved into report 07; post-Round-3 Brier drain recovered onto main via cherry-pick (F34 promoted). |
-| 4 | `research/14-17-*` + `research/24-el-kaim-book-product-line-variability.md` | ✅ Complete | El Kaim book: spec authorship, BMAD, council, codex+skills, plus Chapter 9 (F35 promoted). |
+| 4 | `research/14-17-*` + [`24-el-kaim-book-product-line-variability`](24-el-kaim-book-product-line-variability.md) | ✅ Complete | El Kaim book: spec authorship, BMAD, council, codex+skills, plus Chapter 9 (F35 promoted). |
 | 5 | `research/18-23-*` | ✅ Complete | Counterfactual harvest: OpenAI Codex, GitHub Copilot, Replit, Tabnine, academic foundations, Anthropic engineering. |
-| 6 | `harness/runs/20260511-054258/report.md` + `report-pt2.md` | ✅ Complete | 26-subtask parallel-fanout night run + pt-2 wave recovered via cherry-pick. Drain merge `423940f`. |
+| 6 | [`report`](../harness/runs/20260511-054258/report.md) + `report-pt2.md` | ✅ Complete | 26-subtask parallel-fanout night run + pt-2 wave recovered via cherry-pick. Drain merge `423940f`. |
 | 7 | drain of issue #36 + 3 manual drops | ✅ Complete | Shapiro canonical Five Levels (L4 self-position; 8 El Kaim discrepancies → §6.1); El Kaim post-index Path B; El Kaim Chapter 9 → report 24; `platform.claude.com/.../agent-skills/overview` Path B → report 23 §3. |
 | 8 | drain of issues #41 + #42 + Lenny full transcripts | ✅ Complete | Reports 19, 20 ✅; followup/08 §3 paper-body-anchored via CaMeL arXiv `/e-print/` recovery; reports 05, 06 ✅ FULL via Willison + Cherny transcripts. [#43](https://github.com/lago-morph/software-factory/pull/43), [#44](https://github.com/lago-morph/software-factory/pull/44), [#46](https://github.com/lago-morph/software-factory/pull/46), [#56](https://github.com/lago-morph/software-factory/pull/56). |
 | 9 | Round-9 manual drain | ✅ Complete | RE/SE foundations + LLM+RE academic + Kiro: new reports 25 + 26, report 12 §2.5 extension; F36–F39 candidate proposals with numbering collision (see §3.6). [#57](https://github.com/lago-morph/software-factory/pull/57). |

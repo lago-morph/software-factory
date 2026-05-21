@@ -76,7 +76,7 @@ What is **not** in the sandbox by default:
 
 **Resource accounting.** "Copilot cloud agent uses GitHub Actions minutes and Copilot premium requests" — the cost surface is the union of two metered pools, not a separate agent SKU. \[Re-anchored 2026-05-13 to the canonical concept page at https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent which states verbatim under "Copilot cloud agent usage costs": "Copilot cloud agent uses GitHub Actions minutes and Copilot premium requests. Within your monthly usage allowance for GitHub Actions and premium requests, you can ask Copilot cloud agent to work on coding tasks without incurring any additional costs." **\[2026-05-13 primary fetch ✅]**]
 
-Structurally, this matches Architecture 1 (`architectures/01-specification-refinery.md`) and Architecture 3 (`architectures/03-phase-gated-foundry.md`): isolated environment, checkout, tool surface, CI hook, branch + PR as the only durable output. Copilot cloud agent is the **closest commercially-shipping instantiation** of that pattern.
+Structurally, this matches Architecture 1 ([`01-specification-refinery`](../architectures/01-specification-refinery.md)) and Architecture 3 ([`03-phase-gated-foundry`](../architectures/03-phase-gated-foundry.md)): isolated environment, checkout, tool surface, CI hook, branch + PR as the only durable output. Copilot cloud agent is the **closest commercially-shipping instantiation** of that pattern.
 
 ---
 
@@ -92,8 +92,8 @@ Three changes are announced verbatim in S24:
 
 S24 thereby promotes the agent from "open-a-PR-on-an-issue" to the four-stage loop the brief calls for:
 
-- **Research.** Repository-grounded Q&A. Output: an investigation summary, no commits. This is the closest commercial analog to the "investigation phase" in `architectures/03-phase-gated-foundry.md` §gates.
-- **Plan.** A separately-approvable implementation plan, surfaced before any code is written. Output: a plan document, no commits. Direct analog to the "spec ratification" gate in `architectures/01-specification-refinery.md`.
+- **Research.** Repository-grounded Q&A. Output: an investigation summary, no commits. This is the closest commercial analog to the "investigation phase" in [`03-phase-gated-foundry`](../architectures/03-phase-gated-foundry.md) §gates.
+- **Plan.** A separately-approvable implementation plan, surfaced before any code is written. Output: a plan document, no commits. Direct analog to the "spec ratification" gate in [`01-specification-refinery`](../architectures/01-specification-refinery.md).
 - **Code.** The agent commits to a `copilot/*` branch. "As the agent works, it pushes commits to a draft pull request, and you can track it every step of the way through the agent session logs" (https://docs.github.com/copilot/how-tos/agents/copilot-coding-agent/reviewing-a-pull-request-created-by-copilot — not re-verified on 2026-05-13). The "draft PR" framing is important: the PR exists as a *live build log*, not as a finished proposal.
 - **Self-review.** The agent's *own* review surface is the in-PR diff plus Copilot code review (see §4). The agent does not approve its own PR; "Copilot can't approve or merge its own work" (same page).
 - **PR handoff.** "Copilot will work on the task and push changes to its pull request, then add you as a reviewer when it has finished, triggering a notification" (same page). Commits are co-authored: "All commits are co-authored for traceability."
@@ -193,7 +193,7 @@ The cloud agent's *own* self-review is therefore thin — what GitHub markets as
 
 Three explicit human gates, in addition to the implicit final-merge gate every repo already enforces:
 
-1. **Plan approval (S24).** Before any code is written, "Review Copilot's proposed approach and approve or provide feedback." This is opt-in via prompt — `"plan first"` triggers it. It maps cleanly onto the spec-ratification gate in `architectures/01-specification-refinery.md` and onto a "plan-phase exit gate" in `architectures/03-phase-gated-foundry.md`.
+1. **Plan approval (S24).** Before any code is written, "Review Copilot's proposed approach and approve or provide feedback." This is opt-in via prompt — `"plan first"` triggers it. It maps cleanly onto the spec-ratification gate in [`01-specification-refinery`](../architectures/01-specification-refinery.md) and onto a "plan-phase exit gate" in [`03-phase-gated-foundry`](../architectures/03-phase-gated-foundry.md).
 2. **CI-run approval.** "The agent's pull requests require human approval before any CI/CD workflows are run." A reviewer must explicitly authorize the first workflow run on the agent's branch — a defense against agent-introduced workflows that would otherwise auto-run on PR open. **\[2026-05-13 primary fetch REFUTES the verbatim framing — see §1 note above. This sentence no longer appears in the canonical `concepts/agents/cloud-agent/about-cloud-agent` page; it may live on the not-yet-fetched `risks-and-mitigations` sibling. The operational behavior (Actions' first-time-contributor approval gate) is independently true via standard GitHub Actions semantics, but the cloud-agent-specific framing is no longer documented at the cited spot.]**
 3. **PR review and approval.** "Copilot can't approve or merge its own work." "The developer who asks the agent to open a pull request cannot be the one to approve it — so any 'required reviews' rule you have set up in your repository will be honored" (https://docs.github.com/copilot/how-tos/agents/copilot-coding-agent/reviewing-a-pull-request-created-by-copilot — not re-verified on 2026-05-13).
 
@@ -207,7 +207,7 @@ A sixth, **post-fix verification step** is explicitly required by the Autofix do
 
 ## 6. Where Copilot cloud agent fits on the competitor map
 
-(Cross-reference target was `research/followup/06-competitor-landscape.md`, which has not reached this branch. The mapping below is framed against the substrate audits we have: `research/11-openhands-substrate-audit.md`, `research/18-openai-codex-substrate.md` (Round-5 sibling), and `architectures/00-comparison.md`. The competitor-landscape file, when merged, should subsume this section.)
+(Cross-reference target was [`06-competitor-landscape`](followup/06-competitor-landscape.md), which has not reached this branch. The mapping below is framed against the substrate audits we have: [`11-openhands-substrate-audit`](11-openhands-substrate-audit.md), [`18-openai-codex-substrate`](18-openai-codex-substrate.md) (Round-5 sibling), and [`00-comparison`](../architectures/00-comparison.md). The competitor-landscape file, when merged, should subsume this section.)
 
 Copilot cloud agent occupies a distinctive niche on four shape-dimensions:
 
@@ -216,7 +216,7 @@ Copilot cloud agent occupies a distinctive niche on four shape-dimensions:
 - **State persistence.** Repository-only. No long-term skill registry, no cross-session memory beyond what is checked in. The *thinnest* state model among major substrates; the dimension on which Anthropic Skills (S13) and Codex subagents (S11) most clearly outrun Copilot.
 - **Governance posture.** Strong, but inherited from GitHub's existing primitives — required reviews, branch protections, Actions approvals, code scanning, CodeQL — rather than designed in fresh. The *path-of-least-resistance* substrate for organizations already on GitHub Enterprise Cloud, and arguably the only commercial substrate where the governance story doesn't require new policy authoring.
 
-In short: Copilot cloud agent is the **least-novel-and-most-shipped** substrate. Its workflow shape is the one Architectures 1 and 3 are converging on independently; its governance posture is the one `architectures/03-phase-gated-foundry.md` requires; its weaknesses (thin self-critic, no durable memory, no off-GitHub deployment) are exactly the dimensions a software-factory built around it would need to add. The commercially-shipping minimum-viable substrate is closer to what we have been designing than the alternative substrates, but it stops at the point where the harder design problems begin.
+In short: Copilot cloud agent is the **least-novel-and-most-shipped** substrate. Its workflow shape is the one Architectures 1 and 3 are converging on independently; its governance posture is the one [`03-phase-gated-foundry`](../architectures/03-phase-gated-foundry.md) requires; its weaknesses (thin self-critic, no durable memory, no off-GitHub deployment) are exactly the dimensions a software-factory built around it would need to add. The commercially-shipping minimum-viable substrate is closer to what we have been designing than the alternative substrates, but it stops at the point where the harder design problems begin.
 
 ---
 

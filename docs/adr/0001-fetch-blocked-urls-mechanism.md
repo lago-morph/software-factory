@@ -29,7 +29,7 @@ this collision is documented in the present ADR.
 ## Decision
 
 Use the `fetch-blocked-urls` GitHub Action at
-`.github/workflows/fetch-blocked-urls.yml` as the **single mechanism**
+[`fetch-blocked-urls`](../../.github/workflows/fetch-blocked-urls.yml) as the **single mechanism**
 for retrieving sandbox-blocked web sources.
 
 The mechanism's contract:
@@ -52,7 +52,7 @@ The mechanism's contract:
 6. **Documentation surface.** Agent-facing entry point is the
    `fetch-blocked-urls` skill; the operational scripts are
    `extract_urls.py` and `fetch_urls.sh` with helper documentation in
-   `.github/scripts/README.md`.
+   [`README`](../../.github/scripts/README.md).
 
 ## Alternatives considered
 
@@ -117,6 +117,6 @@ What this is explicitly **not** promising:
 - [`.github/scripts/`](../../.github/scripts/README.md) — [extract_urls.py](../../.github/scripts/extract_urls.py), [fetch_urls.sh](../../.github/scripts/fetch_urls.sh).
 - [`.claude/skills/fetch-blocked-urls/SKILL.md`](../../.claude/skills/fetch-blocked-urls/SKILL.md) — agent-facing trigger surface.
 - [`research/PLAN.md`](../../research/PLAN.md) [§5](../../research/PLAN.md#5-the-blocked-url-fetch-loop), [§6](../../research/PLAN.md#6-github-action--security-stance), [§10.1](../../research/PLAN.md#101-fetch-action-history) — the blocked-URL fetch loop, security stance, and fetch-action history (issue #4 outcome).
-- [`research/blocked-urls.md`](../../research/blocked-urls.md), [`research/blocked-urls-round-2.md`](../../research/blocked-urls-round-2.md) — the round-1 and round-2 URL inventories.
+- Historical round-1 and round-2 URL inventories used to live at `research/blocked-urls.md` and `research/blocked-urls-round-2.md`. Those files have been retired in favour of per-batch GitHub issues filed by the [`fetch-blocked-urls`](../../.claude/skills/fetch-blocked-urls/SKILL.md) skill; the inventory is now the set of open + closed issues labelled `fetch-urls`.
 - [`research/synthesis/00-synthesis.md`](../../research/synthesis/00-synthesis.md) [§0 (revision notes v2)](../../research/synthesis/00-synthesis.md#0-revision-notes-v2) — the v1→v2 fabrications, including the cost of *not* having primary access.
 - [Michael Nygard, "Documenting Architecture Decisions"](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) — the original ADR essay.

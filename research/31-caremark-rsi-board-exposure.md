@@ -183,4 +183,4 @@ The single sentence in Kahana's piece that most directly connects to this corpus
 
 ---
 
-*End of `research/31-caremark-rsi-board-exposure.md` — Cluster J drain, 2026-05-16.*
+*End of [`31-caremark-rsi-board-exposure`](31-caremark-rsi-board-exposure.md) — Cluster J drain, 2026-05-16.*

@@ -1,22 +1,36 @@
 #!/usr/bin/env python3
-"""Install the issue-management PreToolUse gate.
+"""Install the issue-management PreToolUse gates.
 
-The gate is two artifacts living outside the skill directory:
+Two hooks ship with this skill:
 
-  .claude/hooks/require-issue-management-skill.sh   (hook script)
-  .claude/settings.json                              (hook registration)
+  1. The hard gate: `require-issue-management-skill.sh`, matched on
+     `mcp__github__issue_*` / `add_issue_comment` / `list_issues` /
+     `search_issues` / `sub_issue_write`. Blocks issue-touching MCP
+     calls unless the skill has been loaded in this session.
+  2. The AskUserQuestion reminder:
+     `remind-questions-on-askuserquestion.sh`, matched on
+     `AskUserQuestion`. Fires once per call when the skill is loaded,
+     exiting 2 with a short reminder so the agent considers whether the
+     question is about an in-flight issue (and therefore a QUESTIONS
+     event needing an issue-thread comment + `question` label).
+
+Each is two artifacts living outside the skill directory:
+
+  .claude/hooks/<script>.sh         (hook script)
+  .claude/settings.json             (hook registration)
 
 Both are installed from templates that ship with this skill. Idempotent
 by design — running with --check tells you whether anything is drifted
-or missing; running with --force regenerates the script and merges the
-hook entry into settings.json without disturbing other entries.
+or missing; running with --force regenerates the scripts and merges the
+hook entries into settings.json without disturbing other entries.
 
 Also touches the per-session marker at
     /tmp/.claude-skill-loaded-issue-management
 when --check returns 0 (or when --force completes successfully). That
-marker is what the hook itself looks for. Touching it here means: every
-time the agent runs the skill's pre-flight, the skill is signalled
-"loaded for this session", and the gate trusts the next tool call.
+marker is what both hooks look for. Touching it here means: every time
+the agent runs the skill's pre-flight, the skill is signalled "loaded
+for this session", and the hard gate trusts the next issue-touching
+tool call (while the AskUserQuestion reminder begins firing).
 
 Usage:
     python install.py            # install missing, leave existing
@@ -46,29 +60,59 @@ SKILL_DIR = Path(__file__).resolve().parents[1]
 SKILL_PATH = ".claude/skills/issue-management"
 REPO = Path(__file__).resolve().parents[4]
 
-HOOK_TEMPLATE = SKILL_DIR / "resources" / "hooks" / "require-issue-management-skill.sh"
-HOOK_TARGET_REL = ".claude/hooks/require-issue-management-skill.sh"
-HOOK_TARGET = REPO / HOOK_TARGET_REL
-
 SETTINGS_PATH = REPO / ".claude" / "settings.json"
 
 MARKER = Path("/tmp/.claude-skill-loaded-issue-management")
 
-# The matcher regex covers every MCP tool that names or lists an issue.
-# Add to this list (and to the docs) if new gated tools surface.
-HOOK_MATCHER = (
-    "mcp__github__("
-    "issue_read|issue_write|add_issue_comment|"
-    "list_issues|search_issues|sub_issue_write"
-    ")"
+
+class HookSpec:
+    """One PreToolUse hook entry: script template + matcher + description."""
+
+    def __init__(
+        self,
+        *,
+        template_name: str,
+        target_rel: str,
+        matcher: str,
+        description: str,
+    ) -> None:
+        self.template = SKILL_DIR / "resources" / "hooks" / template_name
+        self.target_rel = target_rel
+        self.target = REPO / target_rel
+        self.matcher = matcher
+        self.command = target_rel
+        self.description = description
+
+
+# The hard gate. Covers every MCP tool that names or lists an issue.
+HARD_GATE = HookSpec(
+    template_name="require-issue-management-skill.sh",
+    target_rel=".claude/hooks/require-issue-management-skill.sh",
+    matcher=(
+        "mcp__github__("
+        "issue_read|issue_write|add_issue_comment|"
+        "list_issues|search_issues|sub_issue_write"
+        ")"
+    ),
+    description="issue-management: require skill load before issue tools",
 )
-HOOK_COMMAND = f".claude/hooks/require-issue-management-skill.sh"
-HOOK_DESCRIPTION = "issue-management: require skill load before issue tools"
+
+# AskUserQuestion reminder. Fires once per call when the skill is
+# loaded, so the agent has to actively consider whether a question is
+# about an in-flight issue (the QUESTIONS behavior).
+ASK_REMINDER = HookSpec(
+    template_name="remind-questions-on-askuserquestion.sh",
+    target_rel=".claude/hooks/remind-questions-on-askuserquestion.sh",
+    matcher="AskUserQuestion",
+    description="issue-management: remind AskUserQuestion-is-QUESTIONS rule",
+)
+
+HOOKS: list[HookSpec] = [HARD_GATE, ASK_REMINDER]
 
 REQUIRED_SKILL_FILES = [
     SKILL_DIR / "SKILL.md",
     SKILL_DIR / "scripts" / "install.py",
-    SKILL_DIR / "resources" / "hooks" / "require-issue-management-skill.sh",
+    *(h.template for h in HOOKS),
 ]
 
 
@@ -93,18 +137,18 @@ def touch_marker() -> None:
         pass
 
 
-def hook_script_matches() -> bool:
-    if not HOOK_TARGET.exists():
+def hook_script_matches(spec: HookSpec) -> bool:
+    if not spec.target.exists():
         return False
-    expected = HOOK_TEMPLATE.read_text(encoding="utf-8")
-    actual = HOOK_TARGET.read_text(encoding="utf-8")
+    expected = spec.template.read_text(encoding="utf-8")
+    actual = spec.target.read_text(encoding="utf-8")
     return expected == actual
 
 
-def hook_script_executable() -> bool:
-    if not HOOK_TARGET.exists():
+def hook_script_executable(spec: HookSpec) -> bool:
+    if not spec.target.exists():
         return False
-    return bool(HOOK_TARGET.stat().st_mode & stat.S_IXUSR)
+    return bool(spec.target.stat().st_mode & stat.S_IXUSR)
 
 
 def load_settings() -> dict:
@@ -116,18 +160,18 @@ def load_settings() -> dict:
         raise SystemExit(f"✗ {_rel(SETTINGS_PATH)} is not valid JSON: {e}")
 
 
-def settings_have_hook(settings: dict) -> bool:
+def settings_have_hook(settings: dict, spec: HookSpec) -> bool:
     pre = settings.get("hooks", {}).get("PreToolUse", [])
     for entry in pre:
-        if entry.get("matcher") != HOOK_MATCHER:
+        if entry.get("matcher") != spec.matcher:
             continue
         for h in entry.get("hooks", []):
-            if h.get("type") == "command" and h.get("command") == HOOK_COMMAND:
+            if h.get("type") == "command" and h.get("command") == spec.command:
                 return True
     return False
 
 
-def merge_hook_into_settings(settings: dict) -> dict:
+def merge_hook_into_settings(settings: dict, spec: HookSpec) -> dict:
     hooks_root = settings.setdefault("hooks", {})
     pre = hooks_root.setdefault("PreToolUse", [])
 
@@ -136,16 +180,16 @@ def merge_hook_into_settings(settings: dict) -> dict:
     # template edit.
     pre = [
         entry for entry in pre
-        if entry.get("matcher") != HOOK_MATCHER
+        if entry.get("matcher") != spec.matcher
     ]
 
     pre.append({
-        "matcher": HOOK_MATCHER,
+        "matcher": spec.matcher,
         "hooks": [
             {
                 "type": "command",
-                "command": HOOK_COMMAND,
-                "description": HOOK_DESCRIPTION,
+                "command": spec.command,
+                "description": spec.description,
             }
         ],
     })
@@ -172,16 +216,19 @@ def cmd_check() -> int:
         return 2
 
     problems: list[str] = []
-    if not HOOK_TARGET.exists():
-        problems.append(f"missing: {HOOK_TARGET_REL}")
-    elif not hook_script_matches():
-        problems.append(f"drifted: {HOOK_TARGET_REL} (template ≠ installed)")
-    elif not hook_script_executable():
-        problems.append(f"not executable: {HOOK_TARGET_REL}")
-
     settings = load_settings()
-    if not settings_have_hook(settings):
-        problems.append(f"missing hook entry in {_rel(SETTINGS_PATH)}")
+    for spec in HOOKS:
+        if not spec.target.exists():
+            problems.append(f"missing: {spec.target_rel}")
+        elif not hook_script_matches(spec):
+            problems.append(f"drifted: {spec.target_rel} (template ≠ installed)")
+        elif not hook_script_executable(spec):
+            problems.append(f"not executable: {spec.target_rel}")
+
+        if not settings_have_hook(settings, spec):
+            problems.append(
+                f"missing hook entry for matcher `{spec.matcher}` in {_rel(SETTINGS_PATH)}"
+            )
 
     if problems:
         for p in problems:
@@ -194,7 +241,7 @@ def cmd_check() -> int:
         return 1
 
     touch_marker()
-    print("✓ issue-management gate installed and in sync")
+    print(f"✓ issue-management gates installed and in sync ({len(HOOKS)} hook(s))")
     return 0
 
 
@@ -209,38 +256,46 @@ def cmd_install(force: bool, dry_run: bool, no_commit: bool) -> int:
 
     changed: list[str] = []
 
-    # 1. The hook script
-    need_script = (
-        not HOOK_TARGET.exists()
-        or not hook_script_matches()
-        or not hook_script_executable()
-    )
-    if need_script:
-        if dry_run:
-            action = "OVERWRITE" if HOOK_TARGET.exists() else "INSTALL"
-            print(f"  {action}: {HOOK_TARGET_REL}")
-        else:
-            HOOK_TARGET.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(HOOK_TEMPLATE, HOOK_TARGET)
-            mode = HOOK_TARGET.stat().st_mode
-            HOOK_TARGET.chmod(mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-            changed.append(HOOK_TARGET_REL)
-    elif force:
-        # --force regenerates even when content matches — useful when a
-        # template edit doesn't change rendered bytes but the test wants
-        # a deterministic write.
-        pass
+    # 1. Each hook script
+    for spec in HOOKS:
+        need_script = (
+            not spec.target.exists()
+            or not hook_script_matches(spec)
+            or not hook_script_executable(spec)
+        )
+        if need_script:
+            if dry_run:
+                action = "OVERWRITE" if spec.target.exists() else "INSTALL"
+                print(f"  {action}: {spec.target_rel}")
+            else:
+                spec.target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(spec.template, spec.target)
+                mode = spec.target.stat().st_mode
+                spec.target.chmod(mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+                changed.append(spec.target_rel)
+        elif force:
+            pass
 
-    # 2. settings.json hook entry
+    # 2. settings.json hook entries (one per spec)
     settings = load_settings()
-    if not settings_have_hook(settings) or force:
-        if dry_run:
-            print(f"  MERGE hook entry into: {_rel(SETTINGS_PATH)}")
-        else:
-            new_settings = merge_hook_into_settings(dict(settings))
-            if new_settings != settings:
-                write_settings(new_settings)
-                changed.append(_rel(SETTINGS_PATH))
+    settings_changed = False
+    new_settings = dict(settings)
+    for spec in HOOKS:
+        if not settings_have_hook(new_settings, spec) or force:
+            if dry_run:
+                print(
+                    f"  MERGE hook entry (matcher `{spec.matcher}`) into: "
+                    f"{_rel(SETTINGS_PATH)}"
+                )
+            else:
+                before = json.dumps(new_settings, sort_keys=True)
+                new_settings = merge_hook_into_settings(new_settings, spec)
+                after = json.dumps(new_settings, sort_keys=True)
+                if before != after:
+                    settings_changed = True
+    if settings_changed and not dry_run:
+        write_settings(new_settings)
+        changed.append(_rel(SETTINGS_PATH))
 
     if dry_run:
         print("(dry run — no changes made)")

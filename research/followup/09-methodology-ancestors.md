@@ -1,6 +1,6 @@
 # 09 — Methodology Ancestors
 
-**Round 3, Thread 9** — per `research/PLAN.md` §11.9
+**Round 3, Thread 9** — per [`PLAN`](../PLAN.md) §11.9
 **Date:** 2026-05-11
 **One-line:** Three pre-LLM methodology ancestors that the four architectures structurally inherit from — and what the ancestors did that the descendants dropped.
 

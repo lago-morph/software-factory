@@ -298,8 +298,8 @@ These are starting points for further iteration, not blockers to adoption.
 
 For a new reader, the recommended order is:
 
-1. **`research/00-synthesis.md`** — the shared findings, tensions, and failure modes.
-2. **This document (`architectures/00-comparison.md`)** — the matrix and decision guide.
+1. **[`00-synthesis`](../research/synthesis/00-synthesis.md)** — the shared findings, tensions, and failure modes.
+2. **This document ([`00-comparison`](00-comparison.md))** — the matrix and decision guide.
 3. **One full architecture spec** — pick the one that matches your context; read it end-to-end.
 4. **The other three architecture specs** — skim to understand the design space.
 5. **`research/01-` through `07-`** — the source-by-source research reports if deeper provenance is needed.
@@ -307,4 +307,4 @@ For a new reader, the recommended order is:
 
 ---
 
-*End of comparison document — `architectures/00-comparison.md` v0.1*
+*End of comparison document — [`00-comparison`](00-comparison.md) v0.1*

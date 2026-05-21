@@ -7,19 +7,19 @@ based-on-date: 2026-05-13
 
 **Round:** 2 — fanout `20260511-054258`, sub-26 (synthesis position 13)
 **Date:** 2026-05-11
-**Inputs:** `research/08-jaymin-book-foundations-patterns.md`, `research/09-jaymin-book-harnesses-practices-mental-models.md` (which now incorporates the prior partial's Substack-manifesto digest in §9; partial deleted 2026-05-13), `research/10-overstory-substrate-audit.md`, `research/11-openhands-substrate-audit.md`, `research/12-adjacent-ecosystem.md`.
-**Diff targets:** `research/00-synthesis.md` §2 and §3; `architectures/00-comparison.md` §2.4 (F1–F20), §4.1 (shared infrastructure), §7 (recommended path).
-**Output protocol:** proposal only. This document does **not** edit `architectures/00-comparison.md`; the orchestrator + future user pass is responsible for the §7 replacement.
+**Inputs:** [`08-jaymin-book-foundations-patterns`](../08-jaymin-book-foundations-patterns.md), [`09-jaymin-book-harnesses-practices-mental-models`](../09-jaymin-book-harnesses-practices-mental-models.md) (which now incorporates the prior partial's Substack-manifesto digest in §9; partial deleted 2026-05-13), [`10-overstory-substrate-audit`](../10-overstory-substrate-audit.md), [`11-openhands-substrate-audit`](../11-openhands-substrate-audit.md), [`12-adjacent-ecosystem`](../12-adjacent-ecosystem.md).
+**Diff targets:** [`00-synthesis`](00-synthesis.md) §2 and §3; [`00-comparison`](../../architectures/00-comparison.md) §2.4 (F1–F20), §4.1 (shared infrastructure), §7 (recommended path).
+**Output protocol:** proposal only. This document does **not** edit [`00-comparison`](../../architectures/00-comparison.md); the orchestrator + future user pass is responsible for the §7 replacement.
 
 ---
 
 ## 1. What changed in the consensus
 
-Section-by-section diff against `research/00-synthesis.md` §2 ("Where the sources agree"). Round-2 evidence either **strengthens** an existing consensus item, **introduces** a new one, or **falsifies** part of an old one.
+Section-by-section diff against [`00-synthesis`](00-synthesis.md) §2 ("Where the sources agree"). Round-2 evidence either **strengthens** an existing consensus item, **introduces** a new one, or **falsifies** part of an old one.
 
 ### 1.1 New consensus items promoted in Round 2
 
-**C10 — `Agent = Model + Harness` is the canonical 2026 vocabulary.** Five independent practitioners (Fowler, Mollick, Raschka, Schmid, Hashimoto) converged on the formula within a 90-day window in spring 2026 (report 08 §6, report 09 §1, partial 09 §2). LangChain, Google Cloud, Addy Osmani, and IBM use the term in their own definitions (report 12 §2.1–§2.4). OpenHands V1's four design principles (report 11 §4a) and Overstory's `AgentRuntime` interface (report 10 §3) are concrete implementations of the harness concept. This consensus did not exist in `research/00-synthesis.md` v2 — that document's §2 lists nine consensus items but none of them name the harness vocabulary. Round 2 makes the vocabulary load-bearing.
+**C10 — `Agent = Model + Harness` is the canonical 2026 vocabulary.** Five independent practitioners (Fowler, Mollick, Raschka, Schmid, Hashimoto) converged on the formula within a 90-day window in spring 2026 (report 08 §6, report 09 §1, partial 09 §2). LangChain, Google Cloud, Addy Osmani, and IBM use the term in their own definitions (report 12 §2.1–§2.4). OpenHands V1's four design principles (report 11 §4a) and Overstory's `AgentRuntime` interface (report 10 §3) are concrete implementations of the harness concept. This consensus did not exist in [`00-synthesis`](00-synthesis.md) v2 — that document's §2 lists nine consensus items but none of them name the harness vocabulary. Round 2 makes the vocabulary load-bearing.
 
 **C11 — Scaffold and harness are different layers and must be named separately.** Scaffold = pre-runtime artifacts (CLAUDE.md, AGENTS.md, system prompts, project conventions). Harness = runtime control system (dispatch, context management, safety enforcement, loop control). Report 08 §1, partial 09 §4, report 09 §1, report 11 §5 (Skills = scaffold; SecurityAnalyzer + ConfirmationPolicy + workspace = harness), and report 10 §5 (mail bus + watchdog tiers + merge resolver = harness; `agents/*.md` + per-task overlay = scaffold) all use the distinction. The original synthesis §4 row "AGENTS.md / discoverability" conflated the two layers; Round 2 demands separation.
 
@@ -31,9 +31,9 @@ Section-by-section diff against `research/00-synthesis.md` §2 ("Where the sourc
 
 **C15 — Cost ceilings are not optional in CI.** Overstory's STEELMAN risk 12 explicitly names the gap: "swarms require active monitoring and circuit breakers" which Overstory does not provide (report 10 §9). The 20-agents × 15-tasks × 6-hour example burns ≈$60; same work sequential ≈$9; the "2-hour speedup cost $51 in coordination" (report 10 §9). OpenHands V1 does not provide cost ceilings either (report 11). Report 09 §5.3 makes this explicit: per-agent + per-task + daily-swarm hard budgets are mandatory in CI because subscription-cost approaches (Claude Code Pro) don't apply to API-backed pipelines (report 09 §7 A3). Round-1's §2.9 had cost as a first-class concern but framed it as observability ("surfacing per-loop cost telemetry"); Round 2 promotes it to an enforcement primitive.
 
-**C16 — Trajectory capture is a substrate primitive and is now empirically cheap.** OpenHands V1's event-sourced state model measures **sub-millisecond per-event persist latency and 7.4ms median crash recovery** over 433 SWE-Bench Verified replays (report 11 §4d). Overstory's NDJSON event tailer is operationally similar (report 10 §8, "trajectory capture: provides"). This was a Round-1 nice-to-have ("CXDB would be the gold standard; cheaper alternatives exist," `architectures/00-comparison.md` §7.4); Round 2 confirms the cheap alternative exists and is production-tested.
+**C16 — Trajectory capture is a substrate primitive and is now empirically cheap.** OpenHands V1's event-sourced state model measures **sub-millisecond per-event persist latency and 7.4ms median crash recovery** over 433 SWE-Bench Verified replays (report 11 §4d). Overstory's NDJSON event tailer is operationally similar (report 10 §8, "trajectory capture: provides"). This was a Round-1 nice-to-have ("CXDB would be the gold standard; cheaper alternatives exist," [`00-comparison`](../../architectures/00-comparison.md) §7.4); Round 2 confirms the cheap alternative exists and is production-tested.
 
-### 1.2 Strengthened consensus items (already in §2 of `research/00-synthesis.md`)
+### 1.2 Strengthened consensus items (already in §2 of [`00-synthesis`](00-synthesis.md))
 
 - **§2.1 (specs become primary artifact)** — strengthened by Jaymin Ch 9 §3 (Sean Grove, report 09 §3), BMAD's Living Artifacts (report 09 §3), Kiro's EARS notation (report 12 §2.5), and Cisco/LangChain's Leader+Worker spec-driven control plane (report 12 §2.2).
 - **§2.4 (LLM running tools in a loop)** — Jaymin's Ch 6 explicitly endorses the framing (partial 09 §1, the `Agent = Model + Harness` formula is exactly this) but reframes "tools in a loop" as the *harness's* job, not the agent's. The agent is the *outcome*, not the architecture.
@@ -50,7 +50,7 @@ Section-by-section diff against `research/00-synthesis.md` §2 ("Where the sourc
 
 ## 2. What changed in the disagreements
 
-Section-by-section diff against `research/00-synthesis.md` §3. The three tensions the brief flags — humans-review-or-not, persona-vs-graph, prose-vs-structured-spec — each got new evidence.
+Section-by-section diff against [`00-synthesis`](00-synthesis.md) §3. The three tensions the brief flags — humans-review-or-not, persona-vs-graph, prose-vs-structured-spec — each got new evidence.
 
 ### 2.1 §3.1 — Human review (required / eliminated / tiered)
 
@@ -92,7 +92,7 @@ Round 2 hardens the answer rather than changing it.
 
 ## 3. What changed in the failure-mode list
 
-Diff against `architectures/00-comparison.md` §2.4 (F1–F20). Report 09 explicitly proposes F21–F30; this synthesis incorporates them, vets each against Round-1 evidence, and adds two more derived from reports 10 and 11.
+Diff against [`00-comparison`](../../architectures/00-comparison.md) §2.4 (F1–F20). Report 09 explicitly proposes F21–F30; this synthesis incorporates them, vets each against Round-1 evidence, and adds two more derived from reports 10 and 11.
 
 ### 3.1 New failure modes promoted (with provenance)
 
@@ -244,9 +244,9 @@ The reconciliation makes the CI/CD adaptation tractable:
 
 ---
 
-## 6. Updated recommended path forward (proposal — does not edit `architectures/00-comparison.md`)
+## 6. Updated recommended path forward (proposal — does not edit [`00-comparison`](../../architectures/00-comparison.md))
 
-This section proposes a replacement for `architectures/00-comparison.md` §7. The original §7 is preserved verbatim in §6.1 below so the diff is traceable. The proposed replacement is in §6.2. The orchestrator + future user pass owns the actual edit.
+This section proposes a replacement for [`00-comparison`](../../architectures/00-comparison.md) §7. The original §7 is preserved verbatim in §6.1 below so the diff is traceable. The proposed replacement is in §6.2. The orchestrator + future user pass owns the actual edit.
 
 ### 6.1 §7 (Round 1) — preserved for diff
 
@@ -344,7 +344,7 @@ L5 is explicitly not a target for any architecture. The talent pipeline (F29) an
 
 ## 7. Open questions for Round 3
 
-The Round-3 follow-up threads are already catalogued in `research/PLAN.md` §11. This section cross-references rather than duplicates. Threads sharpened by Round 2 evidence:
+The Round-3 follow-up threads are already catalogued in [`PLAN`](../PLAN.md) §11. This section cross-references rather than duplicates. Threads sharpened by Round 2 evidence:
 
 - **Thread 4 (Steve Yegge's Gas Town + Beads).** Round 2 strengthens this: Gas Town is now named as one of two production implementations of the three-tier watchdog (the other being Overstory). A direct read of Gas Town's Go implementation would let us pick a substrate-level reference for the watchdog primitive.
 - **Thread 5 (Klaassen's three sibling Every articles).** Round 2 strengthens this: Cisco/LangChain's pilot is the first empirical validation of the Worker+Leader pattern Klaassen describes. The sibling articles likely contain the per-stage adoption ladder details Round 1's synthesis already incorporated; Round 3 should harvest the remaining detail.

@@ -371,4 +371,4 @@ Both figures are also referenced (not copied) from report 09 §9a per the orches
 
 ---
 
-*End of report 28 — `research/28-schillace-sunday-letters.md` v1.0, 2026-05-16.*
+*End of report 28 — [`28-schillace-sunday-letters`](28-schillace-sunday-letters.md) v1.0, 2026-05-16.*

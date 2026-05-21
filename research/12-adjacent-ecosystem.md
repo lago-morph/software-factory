@@ -1,7 +1,7 @@
 # Research Report 12 — Adjacent Ecosystem and Vocabulary Cross-Check
 
 **Date:** 2026-05-11
-**Author:** Lead agent (lead-agent pass; the original subagent prompt in `research/PLAN.md` §3.5 covered more — specifically gastown / kotadb / pi-mono / Jaymin's Ch 10 toolkit — which still need a deeper read.)
+**Author:** Lead agent (lead-agent pass; the original subagent prompt in [`PLAN`](PLAN.md) §3.5 covered more — specifically gastown / kotadb / pi-mono / Jaymin's Ch 10 toolkit — which still need a deeper read.)
 **Status:** Capsule-quality on the six Tier-2 perspective pieces we fetched; the gastown / kotadb / pi-mono / Ch 10 reads are deferred.
 
 **Revision notes:**
@@ -27,7 +27,7 @@ Status legend: ✅ full review (read end-to-end) · 🟡 reconstructed from sear
 | https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/pi-mono | ❌ | Same as above. |
 | https://github.com/jayminwest/agentic-engineering-book/tree/main/chapters/10-practitioner-toolkit (Ch 10 sub-pages) | ❌ | Same — reachable via raw.githubusercontent.com. Ch 10 covers Claude Code, Google ADK, IDE Integrations, Agent Frameworks, Multi-Agent Workspace Managers, Enterprise Codebase Context Tools — each merits a capsule. |
 
-**Primary sources** for the six §2 capsules are all ✅ except IBM (🟡). The ❌ items are deferred to the subagent 12-completion dispatch tracked in `research/PLAN.md` §10.4.
+**Primary sources** for the six §2 capsules are all ✅ except IBM (🟡). The ❌ items are deferred to the subagent 12-completion dispatch tracked in [`PLAN`](PLAN.md) §10.4.
 
 ## 1. Framing
 
@@ -146,10 +146,10 @@ Kiro is candid about the boundary: *"What needs more work in the future is extra
 
 **Cross-corpus alignment.** Where these two posts sit relative to our existing pillars:
 
-- **Agreement with the spec-driven baseline.** Kiro's five properties (testable / solution-free / unambiguous / consistent / complete) are a strict subset of the discipline encoded in EARS, INCOSE GtWR, and El Kaim's nine-field spec template covered in `research/15-el-kaim-book-bmad-attractor-dark-factory.md`. Kiro extends those by claiming SMT-backed *automated* enforcement of consistency and completeness — a capability El Kaim's discipline names but does not mechanize.
+- **Agreement with the spec-driven baseline.** Kiro's five properties (testable / solution-free / unambiguous / consistent / complete) are a strict subset of the discipline encoded in EARS, INCOSE GtWR, and El Kaim's nine-field spec template covered in [`15-el-kaim-book-bmad-attractor-dark-factory`](15-el-kaim-book-bmad-attractor-dark-factory.md). Kiro extends those by claiming SMT-backed *automated* enforcement of consistency and completeness — a capability El Kaim's discipline names but does not mechanize.
 - **Agreement with the underspecification literature.** The Larbi et al. and Yang et al. citations are also drained into `research/manual/` and appear in the spec-discipline reports. Kiro is the first vendor in our corpus to cite that work and tie a product feature to it.
 - **Extension over our Architecture 1 (Refinery).** Refinery's layered-spec discipline is *methodological*; Kiro's refinement → auto-formalization → logical-analysis pipeline is one possible *implementation* of the lowest layer (acceptance-criteria refinement) with a neuro-symbolic mechanism we have not seen elsewhere. The semantic-entropy-as-ambiguity-detector idea is portable to any spec-driven harness and is the single most copyable primitive in these two posts.
-- **Disagreement with the "AI judge is enough" stance.** Kiro is explicit that LLM judges are non-deterministic and must be cross-checked by an automated reasoning engine. This is a sharper position than the AI-assisted-code-review framing in our Round-1 corpus and a useful corrective to over-trust in single-judge architectures (relevant to `research/13-round-2-synthesis.md`'s notes on the LangChain/Cisco eval-agent pattern).
+- **Disagreement with the "AI judge is enough" stance.** Kiro is explicit that LLM judges are non-deterministic and must be cross-checked by an automated reasoning engine. This is a sharper position than the AI-assisted-code-review framing in our Round-1 corpus and a useful corrective to over-trust in single-judge architectures (relevant to [`13-round-2-synthesis`](synthesis/13-round-2-synthesis.md)'s notes on the LangChain/Cisco eval-agent pattern).
 - **Tangential to the lethal-trifecta security framing.** Kiro's posts do not engage prompt-injection or capability-scoping; the security posture in §2.3 (Google Cloud) and elsewhere remains where this report's security framing lives. Adopt Kiro's primitives without inheriting any safety claim.
 
 **Caveats.** Both posts are vendor authorship; the AAAI piece is a panel report so the framing is multi-source but the curation is Kiro's; the deep-spec-analysis post is product-launch material. The empirical hooks (Larbi 2025, Yang 2025, Norheim 2024) are independent third-party studies that we have separately drained into the manual corpus. Kiro reports no quantitative evaluation of its own deep-spec-analysis feature in the post — the worked Delete-Property example is illustrative, not benchmarked.
@@ -228,7 +228,7 @@ The original subagent prompt for this position (PLAN §3.5) called for:
 3. ❌ Capsule of `appendices/examples/kotadb` — not yet read.
 4. ❌ Capsule of `appendices/examples/pi-mono` — not yet read.
 
-These three are the named exemplars in Jaymin's book — gastown specifically came up in `research/07-dark-factory.md`. A short read of their `_index.md` files in a future pass would close this loop. Cost: ~30 min of agent time.
+These three are the named exemplars in Jaymin's book — gastown specifically came up in [`07-dark-factory`](07-dark-factory.md). A short read of their `_index.md` files in a future pass would close this loop. Cost: ~30 min of agent time.
 
 ---
 
@@ -260,7 +260,7 @@ The sections below close out the gastown / kotadb / pi-mono / Chapter 10 capsule
 3. **Persistent identity + ephemeral session.** Substitutes for our "trajectory capture" infrastructure goal — a CV-per-agent is a cheaper, more legible form of trajectory capture than a CXDB-style turn DAG.
 4. **Seancing.** Targeted retrieval from per-agent persistent state. Useful primitive for our "manager-loop survives across sessions" requirement.
 
-**Would adopting it move a decision in `architectures/00-comparison.md` §7?**
+**Would adopting it move a decision in [`00-comparison`](../architectures/00-comparison.md) §7?**
 
 - **§7.1 (recommended starting path: Architecture 2 Atelier).** **No change** — Gas Town *strengthens* the case for Atelier by providing an external production-scale validation of the pattern. Mayor/Polecat/Witness/Refinery is the Operator/Worker/Reviewer/Gate pattern.
 - **§7.2 (selective borrows).** **Add a fifth borrow**: from Gas Town, adopt the Refinery merge-queue pattern and the persistent-identity/ephemeral-session separation. Both fit cleanly into Atelier's existing primitives without requiring the full Gas Town stack.
@@ -282,10 +282,10 @@ The sections below close out the gastown / kotadb / pi-mono / Chapter 10 capsule
 | KotaDB component | Maps to |
 |---|---|
 | 5-phase workflow (Scout → Plan → Build → Review → Validate) | Atelier's Operator + worker + reviewer pipeline; Foundry's phase gates |
-| `docs/specs/<name>.md` as shared artifact through all phases | Architecture-1 (Refinery)-style spec-as-source; **`STRATEGY.md`** in our `architectures/01-specification-refinery.md` |
+| `docs/specs/<name>.md` as shared artifact through all phases | Architecture-1 (Refinery)-style spec-as-source; **`STRATEGY.md`** in our [`01-specification-refinery`](../architectures/01-specification-refinery.md) |
 | Single-message parallelism for build agents (`Use Task tool — multiple calls in SINGLE message`) | Atelier's parallel worker dispatch |
-| Tool-restricted scout (read-only) + tool-restricted orchestrator (no Edit/Write/Bash) | Capability minimization — `architectures/00-comparison.md` §4.1 sandboxed-execution + capability-scoping |
-| 7-expert planning council + review panel with explicit aggregation rules | **Compound Engineering's 14-review-agent army** from `research/03-every-compound-engineering.md`, in production. |
+| Tool-restricted scout (read-only) + tool-restricted orchestrator (no Edit/Write/Bash) | Capability minimization — [`00-comparison`](../architectures/00-comparison.md) §4.1 sandboxed-execution + capability-scoping |
+| 7-expert planning council + review panel with explicit aggregation rules | **Compound Engineering's 14-review-agent army** from [`03-every-compound-engineering`](03-every-compound-engineering.md), in production. |
 | Self-improving expert commands (PRESERVE / APPEND / DATE / REMOVE rules) | Architecture-2's knowledge-accumulation loop (`docs/solutions/` analog) |
 | Model tier assignment (haiku scout/review, sonnet build, opus orchestrator) | Cost discipline absent from our four architectures — a useful borrow |
 | `agent-registry.json` with capability/model/tool indexes | New primitive — not in any of our four architectures |
@@ -294,11 +294,11 @@ The sections below close out the gastown / kotadb / pi-mono / Chapter 10 capsule
 
 1. **`docs/specs/` + `docs/reviews/` as the durable artifacts that survive phases.** Concrete file-system convention for the Atelier-style shared workpad.
 2. **Phase-gate prerequisite checks** (`test -f {spec_file_path}` before build). A simple, mechanical Foundry-style gate that doesn't require a full audit-trail product.
-3. **The `*_improve` self-improvement command pattern.** Codified rules — PRESERVE existing patterns unless obsolete, APPEND new learnings, DATE entries with commit references, REMOVE only with multi-implementation evidence — directly executable. Our `architectures/02-compound-atelier.md` describes this loop conceptually; KotaDB shows what the command file looks like.
+3. **The `*_improve` self-improvement command pattern.** Codified rules — PRESERVE existing patterns unless obsolete, APPEND new learnings, DATE entries with commit references, REMOVE only with multi-implementation evidence — directly executable. Our [`02-compound-atelier`](../architectures/02-compound-atelier.md) describes this loop conceptually; KotaDB shows what the command file looks like.
 4. **The `agent-registry.json` capability index.** Dynamic agent selection instead of hardcoded routing. Particularly valuable when the agent inventory grows past ~5.
 5. **Output discipline (forbidden meta-commentary patterns).** Eliminates "Based on the changes..." / "Here is the..." preambles. Useful for any agent whose output is piped into another agent.
 
-**Would adopting it move a decision in `architectures/00-comparison.md` §7?**
+**Would adopting it move a decision in [`00-comparison`](../architectures/00-comparison.md) §7?**
 
 - **§7.1.** **No change** — KotaDB is itself a Compound Atelier implementation; it confirms §7.1 rather than challenging it.
 - **§7.2.** **Add to the "from Architecture 1" borrow**: KotaDB shows that the layered-spec discipline doesn't require a whole methodology — a single `docs/specs/<name>.md` artifact threaded through phases is enough. **Add a "from KotaDB" borrow**: self-improvement command pattern with PRESERVE/APPEND/DATE/REMOVE rules; capability registry.
@@ -325,14 +325,14 @@ The sections below close out the gastown / kotadb / pi-mono / Chapter 10 capsule
 
 **Direct architectural primitives we could borrow.**
 
-1. **Lifecycle hooks as the integration surface.** Pi's 20+ hooks (`session_start`, `before_tool_call`, `after_tool_call`, `compaction`, `session_shutdown`, etc.) are a clean event model. Our `architectures/00-comparison.md` §4.1 calls for "trajectory capture" and "manager-loop / orchestrator"; lifecycle hooks are how you wire those without coupling them to a specific runtime.
+1. **Lifecycle hooks as the integration surface.** Pi's 20+ hooks (`session_start`, `before_tool_call`, `after_tool_call`, `compaction`, `session_shutdown`, etc.) are a clean event model. Our [`00-comparison`](../architectures/00-comparison.md) §4.1 calls for "trajectory capture" and "manager-loop / orchestrator"; lifecycle hooks are how you wire those without coupling them to a specific runtime.
 2. **Serializable context enabling provider switching.** Useful for cost-discipline and for the Tournament architecture's per-variant model assignment.
 3. **`steer()` (interrupts after tool calls) and `followUp()` (queues messages for next turn).** Concrete primitives for the human-in-the-loop interruption modes we've left under-specified.
-4. **Unified `AGENTS.md` for humans and agents.** Reinforces Simon Willison's `AGENTS.md` preference noted in §8 of `architectures/00-comparison.md`.
+4. **Unified `AGENTS.md` for humans and agents.** Reinforces Simon Willison's `AGENTS.md` preference noted in §8 of [`00-comparison`](../architectures/00-comparison.md).
 
 **The trust-model concern.** Pi's no-permission-system stance ("the user launched the agent, the agent should do its job") is **incompatible with most of our four architectures' security posture**, which assume capability-scoped sandboxes and PR-gated merges. Adopting Pi would mean either (a) writing a permission extension or (b) accepting Pi's stance and relying on user extension selection for safety. The book itself flags this honestly: "only install extensions you trust."
 
-**Would adopting it move a decision in `architectures/00-comparison.md` §7?**
+**Would adopting it move a decision in [`00-comparison`](../architectures/00-comparison.md) §7?**
 
 - **§7.1.** **No change** — Pi is a substrate, not an architecture; choice of methodology unaffected.
 - **§7.2.** **No change.**
@@ -350,7 +350,7 @@ The chapter is a tool catalog organized by category, with operational rather tha
 
 **Mapped to our architectures.** Claude Code is the de-facto substrate underneath Compound Atelier (it powers Every.to's compound-engineering plugin), the Refinery (it can host the spec → review → implement loop), the Foundry (hooks + Skills give you phase gates), and the Tournament (Task tool gives you parallel variants).
 
-**Should we look harder?** **Already covered** in `research/09-jaymin-book-harnesses-practices-mental-models.md`. No additional dispatch needed.
+**Should we look harder?** **Already covered** in [`09-jaymin-book-harnesses-practices-mental-models`](09-jaymin-book-harnesses-practices-mental-models.md). No additional dispatch needed.
 
 ### A.6.2 Google ADK (Agent Development Kit)
 
@@ -388,9 +388,9 @@ The chapter is a tool catalog organized by category, with operational rather tha
 
 **What the chapter says.** Survey of 9 tools organized around **7 durable patterns** rather than vendor offerings. Author's thesis: "the patterns documented in Context at Codebase Scale are durable; the specific products that implement those patterns are not." Patterns: semantic indexing (Aider Repo Map, Augment, Sourcegraph Amp, Continue.dev, Qdrant+tree-sitter); hierarchical navigation (CLAUDE.md files); ADRs as context (plain markdown); LSP-backed dependency navigation (Serena MCP); retrospective documentation in legacy systems (Cognition Devin); graduated adoption / air-gapped (Tabnine Enterprise). **Universal recommendation:** nested CLAUDE.md files across all strategies — "they capture what semantic search cannot infer." **Honest gaps:** (1) no tool filters PII at indexing time; (2) cross-language dependency tracing remains unsolved; (3) cost models for high-frequency agent loops are underdocumented.
 
-**Mapped to our architectures.** Context tools are **shared infrastructure** (§4.1 row). The chapter's "patterns are durable; products are not" framing exactly matches our `architectures/00-comparison.md` §7.4 "build the infrastructure first" stance.
+**Mapped to our architectures.** Context tools are **shared infrastructure** (§4.1 row). The chapter's "patterns are durable; products are not" framing exactly matches our [`00-comparison`](../architectures/00-comparison.md) §7.4 "build the infrastructure first" stance.
 
-**Should we look harder?** **Patterns — yes, light** (a half-page borrow of the 7-pattern taxonomy into our `architectures/00-comparison.md` §4.1). **Specific products — no audit needed.** ADRs-as-context is the cheapest, highest-leverage practice and we should adopt it explicitly. (Project already uses ADRs — see `adr` skill.)
+**Should we look harder?** **Patterns — yes, light** (a half-page borrow of the 7-pattern taxonomy into our [`00-comparison`](../architectures/00-comparison.md) §4.1). **Specific products — no audit needed.** ADRs-as-context is the cheapest, highest-leverage practice and we should adopt it explicitly. (Project already uses ADRs — see `adr` skill.)
 
 ## A.7 Final two-line summary
 
@@ -398,4 +398,4 @@ Of all items reviewed (six Tier-2 perspective pieces in §2 plus gastown/kotadb/
 
 ---
 
-*End of report 12 — `research/12-adjacent-ecosystem.md` v0.2 (sub-04 completion)*
+*End of report 12 — [`12-adjacent-ecosystem`](12-adjacent-ecosystem.md) v0.2 (sub-04 completion)*

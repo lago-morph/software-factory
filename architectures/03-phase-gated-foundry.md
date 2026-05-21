@@ -8,7 +8,7 @@ based-on-date: 2026-05-10
 
 **Version:** 0.2
 **Status:** Draft architecture proposal
-**Lineage:** Pre-agile structured methodologies (Waterfall, V-Model, RUP, Cleanroom Software Engineering, Stage-Gate) reconsidered for an environment where agent-driven implementation collapses cycle time from months to hours; refined with findings from `research/00-synthesis.md` (v2)
+**Lineage:** Pre-agile structured methodologies (Waterfall, V-Model, RUP, Cleanroom Software Engineering, Stage-Gate) reconsidered for an environment where agent-driven implementation collapses cycle time from months to hours; refined with findings from [`00-synthesis`](../research/synthesis/00-synthesis.md) (v2)
 **Stance in one sentence:** *Formal phases, structured exchanges, and independent verification — rejected by Agile because they were too slow for humans — become the right shape when agents make them fast.*
 
 ---

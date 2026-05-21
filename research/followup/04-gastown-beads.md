@@ -12,7 +12,7 @@
 - ❌ https://raw.githubusercontent.com/gastownhall/beads/main/DOLT.md (404 — file does not exist at that path)
 - ❌ https://raw.githubusercontent.com/gastownhall/beads/main/FAQ.md (404)
 - ❌ https://raw.githubusercontent.com/gastownhall/beads/main/CLAUDE.md (existed, but contained only delegation pointers to other docs)
-- Read for context: `research/02-strongdm-attractor.md`, `research/07-dark-factory.md`, `architectures/00-comparison.md`
+- Read for context: [`02-strongdm-attractor`](../02-strongdm-attractor.md), [`07-dark-factory`](../07-dark-factory.md), [`00-comparison`](../../architectures/00-comparison.md)
 
 **Date:** 2026-05-11
 
@@ -266,7 +266,7 @@ The pattern-level invariants are what a third implementation (e.g., the parent p
 - **Report 02 (Attractor)** is the canonical Attractor primitive list. This report's comparison table re-uses report 02's row-level claims directly. No conflicts.
 - **Report 07 (Dark Factory)** previously misattributed DOT-graph orchestration to Gas Town; the corrected Round-2 revision (and this report) agree: Gas Town is *not* the DOT-graph layer. The DOT layer lives in Attractor + its four independent implementations. This thread reinforces that correction with primary-source GitHub fetches.
 - **Report 06 (HN/Lenny)** is the original source of the SQLite→Dolt migration story for Beads. This report adds primary-source CHANGELOG evidence (v0.50.0 default-switch, v0.50.2 hint, v0.51.0 Phase 6 removal, v0.57–v1.0.0 stability series). The HN-thread provenance and the CHANGELOG provenance agree.
-- **`architectures/00-comparison.md`** — the four candidate architectures should be evaluated against both Attractor's pattern *and* Gas Town's pattern. Architecture 2 (Compound Atelier) is closest to Gas Town in role-named decomposition; Architecture 3 (Phase-Gated Foundry) is closest to Attractor in graph-as-workflow. Architecture 4 (Evolutionary Tournament) is the only one that has neither inheritance — flag for synthesis.
+- **[`00-comparison`](../../architectures/00-comparison.md)** — the four candidate architectures should be evaluated against both Attractor's pattern *and* Gas Town's pattern. Architecture 2 (Compound Atelier) is closest to Gas Town in role-named decomposition; Architecture 3 (Phase-Gated Foundry) is closest to Attractor in graph-as-workflow. Architecture 4 (Evolutionary Tournament) is the only one that has neither inheritance — flag for synthesis.
 
 ---
 

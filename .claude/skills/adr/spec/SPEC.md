@@ -211,7 +211,7 @@ The first real ADR in this repo demonstrates every feature:
 - References use both forms:
   - Single-link bullets for sibling skill, workflow file.
   - **Direct subsection linking** for `research/PLAN.md` (three section
-    links) and `research/00-synthesis.md` (one anchor).
+    links) and `research/synthesis/00-synthesis.md` (one anchor).
 
 Read it as a reference when writing the next ADR.
 

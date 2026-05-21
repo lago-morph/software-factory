@@ -1,10 +1,10 @@
 # Report 15 — El Kaim Book Chapter 7: BMAD + Attractor + Dark Factory
 
 **Date:** 2026-05-11
-**Round:** 4, Cluster B (per `research/PLAN.md` §12.2)
+**Round:** 4, Cluster B (per [`PLAN`](PLAN.md) §12.2)
 **Primary source (load-bearing, full read):** `reference-only/el-kaim-book/Chapter 7 Automating Enterprise Arc.txt` — William El Kaim, "Chapter 7: Automating Enterprise Architecture Execution," ~32-minute Medium post, posted "5 days ago" relative to the manual capture; 445 lines / 446-line file with sources list.
 **Secondary source (skimmed, used for second worked example):** `reference-only/el-kaim-book/Chapter 5 Automating RISE with SAP.txt` — same author, Apr 28 2026, "29 min read," 662 lines. Sections 2–4 confirm SAP Activate as a DAG = attractor-phase-graph mapping; sections 5–6 reinforce the variability-spec-as-seed framing.
-**Context only:** `research/02-strongdm-attractor.md`, `research/07-dark-factory.md`, `architectures/0N-*.md`, `architectures/00-comparison.md`.
+**Context only:** [`02-strongdm-attractor`](02-strongdm-attractor.md), [`07-dark-factory`](07-dark-factory.md), `architectures/0N-*.md`, [`00-comparison`](../architectures/00-comparison.md).
 **Conventions:** El Kaim uses "RX Pharma" as his running pharmaceutical example. Quoted faithfully here, but treated as a generic regulated-industry illustration. All chapter section numbers (§1, §2.2 etc.) are El Kaim's, not mine.
 
 ---
@@ -345,7 +345,7 @@ Per PLAN.md §12.2, I flag implications and do *not* propose architecture change
 ## 13. Status
 
 - **Sub-branch:** `claude/parallelize-with-subagents-SO0nR--sub-17`
-- **Output file:** `research/15-el-kaim-book-bmad-attractor-dark-factory.md`
+- **Output file:** [`15-el-kaim-book-bmad-attractor-dark-factory`](15-el-kaim-book-bmad-attractor-dark-factory.md)
 - **Approximate word count:** ~3,200 words (target was 2500–3500)
 - **Divergences from Report 07 flagged:** 7 (D1–D7 in §10)
 - **Open follow-ups:** 5 (§12)

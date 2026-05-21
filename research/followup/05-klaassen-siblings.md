@@ -1,6 +1,6 @@
 # Klaassen's Chain-of-Thought Sibling Trilogy — Research Report
 
-**Round-3 Thread 5** per `research/PLAN.md` §11.5. Extends `research/03-every-compound-engineering.md` with three sibling Every.to pieces that add (a) "spec authorship as meta-skill" framing, (b) fidelity-tiered research strategies for "senior-engineer thinking," and (c) the Opus 4.5 "world-changing shift" architectural argument.
+**Round-3 Thread 5** per [`PLAN`](../PLAN.md) §11.5. Extends [`03-every-compound-engineering`](../03-every-compound-engineering.md) with three sibling Every.to pieces that add (a) "spec authorship as meta-skill" framing, (b) fidelity-tiered research strategies for "senior-engineer thinking," and (c) the Opus 4.5 "world-changing shift" architectural argument.
 
 **Date:** 2026-05-11 (originally drafted under fanout run 20260511-054258, sub-08; upgraded to primary-source-anchored 2026-05-11 under fanout run 20260511 sub-31 via `research/fetched/issue-23/`).
 
@@ -180,7 +180,7 @@ Compounding move: agent saves key findings to per-domain `docs/*.md` files in th
 
 Strategy 3's heading is visible: **"Ground in your codebase."** The preview lockup names Strategy 4 indirectly as *"turning git history into institutional memory that prevents repeated mistakes."* The remaining four are listed as *"the 4 other programming planning strategies that teach your AI how you think"* — no names, no specs.
 
-**Hypothesis carryover from the prior snippet-anchored version** (still hypothetical pending direct fetch of the subscriber tier): given Klaassen's plugin agent roster in `research/03-every-compound-engineering.md`, the remaining four likely include some of: framework-docs-researcher, repo-research-analyst, spec-flow-analyzer, learnings-researcher, issue-intelligence-analyst, session-historian, slack-researcher, web-researcher. None of those names appear in the article's free portion. Mark provisional.
+**Hypothesis carryover from the prior snippet-anchored version** (still hypothetical pending direct fetch of the subscriber tier): given Klaassen's plugin agent roster in [`03-every-compound-engineering`](../03-every-compound-engineering.md), the remaining four likely include some of: framework-docs-researcher, repo-research-analyst, spec-flow-analyzer, learnings-researcher, issue-intelligence-analyst, session-historian, slack-researcher, web-researcher. None of those names appear in the article's free portion. Mark provisional.
 
 ### Persona shape that produces senior-engineer thinking (free portion)
 
@@ -260,7 +260,7 @@ Worth lifting verbatim because the canonical guide doesn't carry these as quotes
 - **"Is planning still necessary with Opus?"** Klaassen: *"For exploratory work or personal projects, Opus is good enough that you can just start building. But if you're working on a team or building something complex, planning is more valuable than ever because Opus can execute much deeper, more sophisticated plans."* — i.e., model-floor improvement raises the *ceiling* of plan complexity, not just the floor of automation.
 - **"How many projects at once?"** Klaassen: *"However many your brain can handle. That's the actual bottleneck now."* Shipper: *"Three to five substantial things feels manageable for me. Beyond that, I start losing track."* — empirically-supported human-bottleneck claim; not "44 agents."
 - **"Fatigue?"** Klaassen: *"The fatigue isn't from the volume of work — the AI handles that. It's from switching between different ways of thinking about what you're asking the AI to do."* — context-switch as the binding constraint, not throughput.
-- **"Skills?"** Klaassen: *"Skills are bundles of knowledge you can load to perform dedicated tasks. Instead of cramming everything into your Claude.md file, you create skills for specific technologies that trigger only when you need them."* — connects to Skill libraries thread (`research/04-every-skill-libraries.md`).
+- **"Skills?"** Klaassen: *"Skills are bundles of knowledge you can load to perform dedicated tasks. Instead of cramming everything into your Claude.md file, you create skills for specific technologies that trigger only when you need them."* — connects to Skill libraries thread ([`04-every-skill-libraries`](../04-every-skill-libraries.md)).
 
 ### What about "44 agents," "11 projects in six hours," `/lfg`, "folder is the agent"?
 
@@ -293,7 +293,7 @@ The synthesis stands: **every compound-engineering architecture should declare a
 2. **Fidelity-tier-indexed strategy library** (Article 2). Plan-entry triage by fidelity; strategy library indexed by tier. **Reproduction-first** is canonical for F1/F2 bugs (Strategy 1). **Web grounding with local cache** (`docs/*.md`) is all-fidelity (Strategy 2). Strategies 3–8 are paywalled; Strategy 3 is "ground in your codebase," Strategy 4 mentions git history. Mark the remainder unfetched.
 3. **Model-floor architecture** (Article 3, partial primary-source support). Architectures should declare a model floor; above-floor capabilities include parallel-delegation (Klaassen, 10 projects), agent-native app architecture (Shipper), computer-use-for-testing (`/work` + Playwright), and agent-modifies-plugin during a feature build (`/modify-plugin`). Below-floor: degrade explicitly to the canonical three-lane setup.
 
-Most actionable for `architectures/02-compound-atelier.md`: adopt **fidelity-tiering as plan-entry triage**, declare a **model-floor preamble**, and name **Strategy 1 (Reproduce and document)** + **Strategy 2 (Ground in best practices with local cache)** as table-stakes strategies in the planning rubric.
+Most actionable for [`02-compound-atelier`](../../architectures/02-compound-atelier.md): adopt **fidelity-tiering as plan-entry triage**, declare a **model-floor preamble**, and name **Strategy 1 (Reproduce and document)** + **Strategy 2 (Ground in best practices with local cache)** as table-stakes strategies in the planning rubric.
 
 ---
 
@@ -301,7 +301,7 @@ Most actionable for `architectures/02-compound-atelier.md`: adopt **fidelity-tie
 
 1. **Adopt fidelity-tier triage as the first step of `/plan`.** Before any research agents fan out, the orchestrator classifies the task as F1/F2/F3 against the article-1 definitions. F1 → lightweight reproduce-and-confirm; F2 → full 4-clause plan prompt and N-approaches-with-tradeoffs; F3 → enter vibe-planning mode, build three ascending-complexity prototypes in a disposable workspace, then re-classify into multiple F2 plans.
 2. **Ship Strategy 1 and Strategy 2 as Day-1 agents.** Reproduction-first (write the failing reproduction before the plan) and best-practices grounding (with `docs/*.md` local cache that the next run consults first) are the two agents Klaassen has published openly. They are the floor of the strategy library; everything else can be drafted later. Cite [`every-marketplace`](https://github.com/EveryInc/every-marketplace) as the seed corpus.
-3. **Declare a model-floor preamble in `architectures/00-comparison.md`.** Each architecture states which model class it assumes (Opus 4.5+, Sonnet 4.5, etc.), and what degrades below the floor. The Compound Atelier should pin itself to Opus 4.5+ for the swarm modes and explicitly downgrade to ≤2 parallel lanes below that.
+3. **Declare a model-floor preamble in [`00-comparison`](../../architectures/00-comparison.md).** Each architecture states which model class it assumes (Opus 4.5+, Sonnet 4.5, etc.), and what degrades below the floor. The Compound Atelier should pin itself to Opus 4.5+ for the swarm modes and explicitly downgrade to ≤2 parallel lanes below that.
 
 ---
 
@@ -318,8 +318,8 @@ Most actionable for `architectures/02-compound-atelier.md`: adopt **fidelity-tie
 
 1. **Demote every.to from "Defer to user — Path B only" in `unfetched-sources.md`.** The GitHub Action successfully retrieves every.to article URLs. Re-test the other every.to URLs queued under that status before invoking the manual cookie-fetch workflow.
 2. **Re-test every.to subscriber-only content.** The Action retrieves the same HTML a logged-out browser sees, so paywalled content stays paywalled. The cookie-fetch workflow is still the right path for paywalled Every content (Article 2 Strategies 3–8; the four already-drained Every articles); the Action is the right path for free Every content.
-3. **Fold fidelity-tier triage and Strategies 1+2 into `architectures/02-compound-atelier.md` §Workflows.**
-4. **Add a model-floor preamble row to `architectures/00-comparison.md`** for all four candidate architectures.
+3. **Fold fidelity-tier triage and Strategies 1+2 into [`02-compound-atelier`](../../architectures/02-compound-atelier.md) §Workflows.**
+4. **Add a model-floor preamble row to [`00-comparison`](../../architectures/00-comparison.md)** for all four candidate architectures.
 5. **Open a follow-up issue to fetch the four still-paywalled Article 2 strategies** via the cookie-fetch path; track expected primitives (codebase grounding, git-history institutional memory, +4 unknowns).
 
 ---

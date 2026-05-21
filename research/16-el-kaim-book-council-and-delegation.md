@@ -1,10 +1,10 @@
 # El Kaim — The EA Council and the L1–L4 Delegation Classification
 
 **Source:** William El Kaim, *Continuous Enterprise Architecture* (Medium, 2026), Chapter 4 "Why AI and Automation Change the Stakes" (load-bearing); Chapter 6 "The Enterprise Architecture Codex" §§3.4 and 9 (Council-as-Codex-object).
-**Round / cluster:** Round 4, Cluster C, per `research/PLAN.md` §12.3.
+**Round / cluster:** Round 4, Cluster C, per [`PLAN`](PLAN.md) §12.3.
 **Stance:** *Council governance becomes operable only when delegation is a typed, named, evidenced classification — not a cultural posture.*
 
-This chapter substantially answers the Round-3 governance thread §11.10 in `research/PLAN.md`: where Round-3 left open "who is accountable when an agent approves," El Kaim names the principle ("an agent is not a legal actor") and gives an explicit failure-mode-by-level allocation. §5 records that answer; the rest is supporting structure. Pharma-specific examples (clinical operations, pharmacovigilance, GxP, PMDA) are renamed in this report to generic regulated-domain placeholders where the example matters; "EA Council" is preserved verbatim per brief.
+This chapter substantially answers the Round-3 governance thread §11.10 in [`PLAN`](PLAN.md): where Round-3 left open "who is accountable when an agent approves," El Kaim names the principle ("an agent is not a legal actor") and gives an explicit failure-mode-by-level allocation. §5 records that answer; the rest is supporting structure. Pharma-specific examples (clinical operations, pharmacovigilance, GxP, PMDA) are renamed in this report to generic regulated-domain placeholders where the example matters; "EA Council" is preserved verbatim per brief.
 
 ---
 
@@ -73,7 +73,7 @@ A pull request extends an onboarding service to a new jurisdiction (Domain-J): n
 
 ## 5. The accountability chain (Chapter 4 §5.7) — direct answer to §11.10
 
-This section answers `research/PLAN.md` §11.10 directly. The principle in one sentence:
+This section answers [`PLAN`](PLAN.md) §11.10 directly. The principle in one sentence:
 
 > "The answer cannot be 'the agent,' because an agent is not a legal or organizational actor. Accountability follows the delegation chain."
 
@@ -129,7 +129,7 @@ Atelier's severity (P0–P3) × autofix-class (`safe_auto` / `gated_auto` / `man
 
 ---
 
-## 8. Proposal: delegation-classification rows for `architectures/00-comparison.md`
+## 8. Proposal: delegation-classification rows for [`00-comparison`](../architectures/00-comparison.md)
 
 Proposal only; no edit to `00-comparison.md`. The proposed rows would sit in §2.1 (Methodology dimensions) or as a new §2.5 "Delegation typology."
 
@@ -173,8 +173,8 @@ Not yet borrowable: mid-flight re-classification (requires the routing layer to 
 
 - Compliance escalation triggers are domain-specific; generalizing what *we* would treat as "always escalate" finding types is unresolved.
 - Risk §7.3 (design-authority erosion) is named without mechanism; a periodic-audit-of-the-classification routine would be a Round-5 design topic.
-- The "agent is not a legal actor" framing is sharper than anything currently in `architectures/00-comparison.md` §5.2; revising that subsection to incorporate failure-by-level would tighten the comparison.
+- The "agent is not a legal actor" framing is sharper than anything currently in [`00-comparison`](../architectures/00-comparison.md) §5.2; revising that subsection to incorporate failure-by-level would tighten the comparison.
 
 ---
 
-*Sources: Chapter 4 §§1–8 (full); Chapter 6 §§3.4 and 9 (focused). Context: `architectures/02-compound-atelier.md`, `architectures/00-comparison.md`, `research/03-every-compound-engineering.md`.*
+*Sources: Chapter 4 §§1–8 (full); Chapter 6 §§3.4 and 9 (focused). Context: [`02-compound-atelier`](../architectures/02-compound-atelier.md), [`00-comparison`](../architectures/00-comparison.md), [`03-every-compound-engineering`](03-every-compound-engineering.md).*

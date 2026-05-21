@@ -8,13 +8,13 @@
 - **Affiliation note.** The two captures name two different employers (Tenex in the *How I AI* show-notes blog; "10X" in the Lenny intro narration). The transcripts are otherwise consistent — same engineer, same Flowy, same `kevin`/`carl` aliases, same Ralph-loop language, same X handle `@cy_hess`. Most likely explanation: one of the two pieces lags the other on employer state (likely Tenex is the more recent affiliation, as the Feb 9 *How I AI* show notes are the later capture by date, and "10X" may be a prior-job reference in the Lenny intro). **Treat as one engineer with two captures, flag affiliation for follow-up.**
 
 **Cross-refs:**
-- `research/23-anthropic-engineering-trilogy.md` (Anthropic's internal Claude-reviews-100%-of-PRs practice from Cherny — same-model self-review case to contrast with CJ's cross-model review).
-- `research/12-adjacent-ecosystem.md` (personal-harness / DIY-tooling ecosystem context).
-- `research/28-schillace-sunday-letters.md` §3.4 (Schillace's Amplifier internals — *Crusty Old Engineer* critic subagent is the closest sibling pattern to `carl`).
-- `research/27-dotfile-pipelines-as-product.md` §4 (dotpowers' four-model cross-critique pattern; loop-cap discipline).
-- `research/followup/03-cherny-interview.md` (Cherny's "build for the model six months from now" + Anthropic agent-review practice — Claude-reviewing-Claude is the same-model contrast).
-- `research/05-simon-willison.md`, `research/06-hn-and-lenny.md` (Willison agent definition; OpenClaw demand context).
-- `research/04-every-skill-libraries.md` (Skills convention — SKILL.md as the durable harness primitive).
+- [`23-anthropic-engineering-trilogy`](23-anthropic-engineering-trilogy.md) (Anthropic's internal Claude-reviews-100%-of-PRs practice from Cherny — same-model self-review case to contrast with CJ's cross-model review).
+- [`12-adjacent-ecosystem`](12-adjacent-ecosystem.md) (personal-harness / DIY-tooling ecosystem context).
+- [`28-schillace-sunday-letters`](28-schillace-sunday-letters.md) §3.4 (Schillace's Amplifier internals — *Crusty Old Engineer* critic subagent is the closest sibling pattern to `carl`).
+- [`27-dotfile-pipelines-as-product`](27-dotfile-pipelines-as-product.md) §4 (dotpowers' four-model cross-critique pattern; loop-cap discipline).
+- [`03-cherny-interview`](followup/03-cherny-interview.md) (Cherny's "build for the model six months from now" + Anthropic agent-review practice — Claude-reviewing-Claude is the same-model contrast).
+- [`05-simon-willison`](05-simon-willison.md), [`06-hn-and-lenny`](06-hn-and-lenny.md) (Willison agent definition; OpenClaw demand context).
+- [`04-every-skill-libraries`](04-every-skill-libraries.md) (Skills convention — SKILL.md as the durable harness primitive).
 
 ---
 

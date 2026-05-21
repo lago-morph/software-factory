@@ -8,7 +8,7 @@ based-on-date: 2026-05-10
 
 **Version:** 0.2
 **Status:** Draft architecture proposal
-**Lineage:** Inspired by Every.to's compound-engineering plugin and symphony-thumbtack orchestration model; refined with findings from `research/00-synthesis.md` (v2, post-primary-source-access)
+**Lineage:** Inspired by Every.to's compound-engineering plugin and symphony-thumbtack orchestration model; refined with findings from [`00-synthesis`](../research/synthesis/00-synthesis.md) (v2, post-primary-source-access)
 **Stance in one sentence:** *Each unit of work makes the next one easier — by passing through specialist hands and leaving its lessons behind.*
 
 ---

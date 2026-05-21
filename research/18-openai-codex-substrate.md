@@ -2,8 +2,8 @@
 
 **Date:** 2026-05-11 (drained 2026-05-13 against fetched primaries — see drain note below)
 **Author:** Round-5 subagent sub-20 (fanout 20260511-054258)
-**Cluster:** Round-5 13.1.1 per `research/PLAN.md` §13.1.1
-**Companion reports:** `research/11-openhands-substrate-audit.md` (OpenHands analog), `research/04-every-skill-libraries.md` (Every skill registry analog), `research/09-jaymin-book-harnesses-practices-mental-models.md` (harness terminology), `research/00-synthesis.md` (cross-substrate framing).
+**Cluster:** Round-5 13.1.1 per [`PLAN`](PLAN.md) §13.1.1
+**Companion reports:** [`11-openhands-substrate-audit`](11-openhands-substrate-audit.md) (OpenHands analog), [`04-every-skill-libraries`](04-every-skill-libraries.md) (Every skill registry analog), [`09-jaymin-book-harnesses-practices-mental-models`](09-jaymin-book-harnesses-practices-mental-models.md) (harness terminology), [`00-synthesis`](synthesis/00-synthesis.md) (cross-substrate framing).
 **Stance in one sentence:** Codex is *not* a model — it is a five-surface harness around a stable App Server protocol, with AGENTS.md as the spec-ingestion contract, Subagents as the orchestration primitive, and a layered sandbox/approval matrix as the trifecta defense.
 
 ---
@@ -228,7 +228,7 @@ This is the canonical "different-model-for-V&V" pattern made concrete at the sub
 
 ## 4. Approvals, sandbox, network — the lethal-trifecta defense
 
-Simon Willison's "lethal trifecta" (`research/05-simon-willison.md`): **untrusted input + private data + ability to exfiltrate**. Codex's defense is a *two-axis policy* — sandbox mode controls technical boundaries; approval mode controls when Codex stops at them. The two compose. [2026-05-13 primary fetch ✅] (`ed3b262d33_developers.openai.com__agent-approvals-security.md` lines 773-779, **verbatim**): *"Codex security controls come from two layers that work together: **Sandbox mode**: What Codex can do technically (for example, where it can write and whether it can reach the network) when it executes model-generated commands. **Approval policy**: When Codex must ask you before it executes an action (for example, leaving the sandbox, using the network, or running commands outside a trusted set)."*
+Simon Willison's "lethal trifecta" ([`05-simon-willison`](05-simon-willison.md)): **untrusted input + private data + ability to exfiltrate**. Codex's defense is a *two-axis policy* — sandbox mode controls technical boundaries; approval mode controls when Codex stops at them. The two compose. [2026-05-13 primary fetch ✅] (`ed3b262d33_developers.openai.com__agent-approvals-security.md` lines 773-779, **verbatim**): *"Codex security controls come from two layers that work together: **Sandbox mode**: What Codex can do technically (for example, where it can write and whether it can reach the network) when it executes model-generated commands. **Approval policy**: When Codex must ask you before it executes an action (for example, leaving the sandbox, using the network, or running commands outside a trusted set)."*
 
 **Sandbox modes** [2026-05-13 primary fetch ✅] (`ed3b262d33_*.md` lines 769, 782-787, 859):
 
@@ -524,7 +524,7 @@ The four canonical failure modes of the "one big AGENTS.md" anti-pattern (verbat
 
 **Application legibility for the agent (verbatim — NEW):** *"we made the app bootable per git worktree, so Codex could launch and drive one instance per change. We also wired the Chrome DevTools Protocol into the agent runtime and created skills for working with DOM snapshots, screenshots, and navigation."* Observability is similarly agent-facing: *"Logs, metrics, and traces are exposed to Codex via a local observability stack that's ephemeral for any given worktree… Agents can query logs with LogQL and metrics with PromQL."* With this surface available, prompts like *"ensure service startup completes in under 800ms"* or *"no span in these four critical user journeys exceeds two seconds"* are tractable.
 
-**Long-run autonomy (verbatim):** *"We regularly see single Codex runs work on a single task for upwards of **six hours** (often while the humans are sleeping)."* This is the canonical anchor for the "overnight agent" pattern Cherny references (followup/03 §"Overnight agent") and Willison sketches (`research/05-simon-willison.md`).
+**Long-run autonomy (verbatim):** *"We regularly see single Codex runs work on a single task for upwards of **six hours** (often while the humans are sleeping)."* This is the canonical anchor for the "overnight agent" pattern Cherny references (followup/03 §"Overnight agent") and Willison sketches ([`05-simon-willison`](05-simon-willison.md)).
 
 **End-to-end feature autonomy threshold (verbatim ten-step list — NEW):** Lopopolo claims the team *"recently crossed a meaningful threshold where Codex can end-to-end drive a new feature."* Given a single prompt, the agent now: (1) validates the current state of the codebase, (2) reproduces a reported bug, (3) records a video demonstrating the failure, (4) implements a fix, (5) validates the fix by driving the application, (6) records a second video demonstrating the resolution, (7) opens a pull request, (8) responds to agent and human feedback, (9) detects and remediates build failures, (10) escalates to a human *"only when judgment is required,"* and finally merges the change. Lopopolo's own caveat: *"This behavior depends heavily on the specific structure and tooling of this repository and should not be assumed to generalize without similar investment — at least, not yet."*
 

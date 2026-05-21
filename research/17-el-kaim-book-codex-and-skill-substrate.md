@@ -5,9 +5,9 @@
 - `reference-only/el-kaim-book/Chapter 4 Why AI and Automation Cha.txt` §3 (MCP, architecture-as-code, named skills, coding agents in the delivery flow)
 
 **Cross-references in this repo:**
-- `research/04-every-skill-libraries.md` (Every.to skill-library taxonomy, frontmatter conventions, marketplace pattern)
+- [`04-every-skill-libraries`](04-every-skill-libraries.md) (Every.to skill-library taxonomy, frontmatter conventions, marketplace pattern)
 - `.claude/skills/` (current local skill set: `adr`, `always-commit-skill-to-repo`, `fetch-blocked-urls`, `in-flight-workflow-tracking`, `parallel-subagent-fanout`, `research-pipeline`, `self-retrospective`, `subagent-prompting`)
-- `architectures/00-comparison.md` §4.2 (shared role primitives across the four factory architectures)
+- [`00-comparison`](../architectures/00-comparison.md) §4.2 (shared role primitives across the four factory architectures)
 
 ---
 
@@ -179,7 +179,7 @@ Today our `.claude/skills/` carries eight procedural skills. None of them carry 
 - **Evaluation harness against model drift** (the §11 mitigation): a `tests/scenarios/` directory where each typed object has at least one scenario the harness runs at each model upgrade, asserting the model's interpretation of the principle still produces the expected `deny` / `allow` / `flag` outcome. This is the *only* defence against the Codex-as-prompts failure mode and should be added alongside the typed-artefact skills, not after them.
 
 **What this unlocks for the factory:**
-- The four architectures compared in `architectures/00-comparison.md` §4.2 share role primitives (Strategist, Spec Author, Judge, Reviewer, Knowledge Curator, Manager, Operator). Today those primitives live in narrative comparison tables. As typed `roles/*.yaml` objects with `delegationLevel`, `requiresHumanApproval`, `outputs`, `dependencies` fields, they become loadable into any subagent prompt and validatable against a chosen architecture's required role-set.
+- The four architectures compared in [`00-comparison`](../architectures/00-comparison.md) §4.2 share role primitives (Strategist, Spec Author, Judge, Reviewer, Knowledge Curator, Manager, Operator). Today those primitives live in narrative comparison tables. As typed `roles/*.yaml` objects with `delegationLevel`, `requiresHumanApproval`, `outputs`, `dependencies` fields, they become loadable into any subagent prompt and validatable against a chosen architecture's required role-set.
 - The compound-knowledge thread (§11.11 in PLAN.md) can be made concrete: each architecture decision in `docs/adr/` references the principle objects it depends on, and a change to a principle surfaces every ADR that cites it — the §5.2 "relations form a graph" invariant applied to our own decision history.
 - Report 04's *symphony-thumbtack* five-skill git-flow set (`commit`, `pull`, `push`, `land`, `tasks`) stays procedural and unchanged. The new typed-artefact skills sit alongside it; the two kinds compose, with the procedural skill calling the typed-artefact skill for normative context ("when running `land`, load `factory-principles` to verify the merge does not violate F-PRIN-002").
 
@@ -189,7 +189,7 @@ Today our `.claude/skills/` carries eight procedural skills. None of them carry 
 
 ## 9. Follow-ups for later rounds
 
-- A worked draft of `factory-principles/catalog/` extracting concrete principle objects from `architectures/00-comparison.md` and the four-architecture analyses (e.g. *spec-before-code*, *judge-is-model-family-independent*, *trajectory-is-recorded*, *human-approves-at-named-gate*).
+- A worked draft of `factory-principles/catalog/` extracting concrete principle objects from [`00-comparison`](../architectures/00-comparison.md) and the four-architecture analyses (e.g. *spec-before-code*, *judge-is-model-family-independent*, *trajectory-is-recorded*, *human-approves-at-named-gate*).
 - A worked draft of `factory-roles/roles/*.yaml` carrying the §4.2 shared-role rows as typed objects with required-tool and required-context fields.
 - A choice between Rego (matches El Kaim's chain exactly) and a simpler Python-driven cross-field validator (fewer moving parts; adequate for our scale).
 - Specification of the model-drift evaluation harness against the §11 failure mode — likely a `tests/scenarios/` directory plus a CI job triggered on Anthropic model-version bumps.

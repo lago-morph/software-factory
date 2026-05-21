@@ -1,7 +1,7 @@
 # Research Report 11 — OpenHands Substrate Audit
 
 **Date:** 2026-05-11 (revised same day after full paper became reachable)
-**Author:** Lead agent (not a subagent dispatch — see `research/PLAN.md` §3.4 for the originally-planned subagent prompt; this lead-agent pass covers most of it)
+**Author:** Lead agent (not a subagent dispatch — see [`PLAN`](PLAN.md) §3.4 for the originally-planned subagent prompt; this lead-agent pass covers most of it)
 **Status:** Substantive on the CI/CD-relevant surfaces. The previously-open follow-up (full SDK paper text) has now been incorporated.
 
 ## Revision notes (2026-05-11, v0.2)
@@ -37,7 +37,7 @@ Status legend: ✅ full review (read end-to-end) · 🟡 reconstructed from sear
 | `skills/` directory in `All-Hands-AI/OpenHands` | ❌ | Not read in this session — §5 explicitly notes this and defers to a second pass. |
 | https://github.com/All-Hands-AI/OpenHands `openhands/` package source | ❌ | Code-walking not done in this session. §4 relies on DeepWiki's TOC as a proxy for the in-repo organization. |
 
-**Primary sources** for the substantive conclusions are all ✅. The 🟡 items affect detail depth in specific sections (called out in those sections); the ❌ items are deferred to the subagent 11 deepening pass tracked in `research/PLAN.md` §10.4.
+**Primary sources** for the substantive conclusions are all ✅. The 🟡 items affect detail depth in specific sections (called out in those sections); the ❌ items are deferred to the subagent 11 deepening pass tracked in [`PLAN`](PLAN.md) §10.4.
 
 ---
 
@@ -55,7 +55,7 @@ OpenHands is an MIT-licensed (with an `enterprise/` source-available exception) 
 | **Cloud (`app.all-hands.dev`)** | Hosted by All-Hands-AI | Anyone who wants managed infra | Possible but pulls our orchestration off-platform; opaque cost shape. |
 | **Enterprise (self-hosted)** | `enterprise/` directory, source-available, separately licensed | Companies | Plausible if we ever need on-prem. Out of scope for our solo-to-small-team starting context. |
 
-**Reusability verdict for our software factory:** the SDK + CLI binary are the two surfaces that map to our `architectures/00-comparison.md` §4.1 "shared infrastructure." Either can serve as the per-cycle agent runtime under any of the four architectures.
+**Reusability verdict for our software factory:** the SDK + CLI binary are the two surfaces that map to our [`00-comparison`](../architectures/00-comparison.md) §4.1 "shared infrastructure." Either can serve as the per-cycle agent runtime under any of the four architectures.
 
 ## 3. Headless mode — the actual contract
 
@@ -110,7 +110,7 @@ The paper's §3 names four V0-vs-V1 tensions. Each principle is given verbatim f
 
 > *V1 Design Principle — Everything should be composable and safe to extend. V1 makes composability a first-class design goal at two levels. At the deployment level, its four modular packages — SDK, Tools, Workspace, and Agent Server — combine flexibly to support local, hosted, or containerized execution. At the capability level, the SDK exposes a typed component model — tools, LLMs, contexts, etc — so developers can extend or reconfigure agents declaratively without touching the core.*
 
-**Implication for our factory:** The V0→V1 story is exactly the lesson `research/00-synthesis.md` keeps re-discovering: monolithic agent codebases collapse under their own configuration weight; the answer is a *typed, immutable, event-sourced* core with composable extension points. We should treat OpenHands V1 as a reference implementation of this pattern, not just a substrate. In particular, the "stateless by default, one source of truth for state" principle is the architectural counterpart to our spec-driven decision-log requirement.
+**Implication for our factory:** The V0→V1 story is exactly the lesson [`00-synthesis`](synthesis/00-synthesis.md) keeps re-discovering: monolithic agent codebases collapse under their own configuration weight; the answer is a *typed, immutable, event-sourced* core with composable extension points. We should treat OpenHands V1 as a reference implementation of this pattern, not just a substrate. In particular, the "stateless by default, one source of truth for state" principle is the architectural counterpart to our spec-driven decision-log requirement.
 
 ### 4b. The four packages
 
@@ -132,7 +132,7 @@ The workspace contract is a `BaseWorkspace` ABC with three operations: `execute_
 
 The selector is a `Conversation` factory: when given a string path or `LocalWorkspace`, you get a `LocalConversation`; when given a `RemoteWorkspace`, you get a `RemoteConversation` that serializes the agent config and runs it inside a container, streaming events back over WebSocket. The paper's Fig. 5 shows the local→remote diff is **a single import + a `with DockerWorkspace(...) as workspace:` block** — agent code is unchanged.
 
-This is the cleanest workspace contract in the open-source corpus we have seen so far. It satisfies our `architectures/00-comparison.md` §4.1 primitives (worktree-per-unit, sandbox, network restrictions) with a standardized interface.
+This is the cleanest workspace contract in the open-source corpus we have seen so far. It satisfies our [`00-comparison`](../architectures/00-comparison.md) §4.1 primitives (worktree-per-unit, sandbox, network restrictions) with a standardized interface.
 
 ### 4d. Event-sourced state management
 
@@ -173,7 +173,7 @@ The paper makes the skill model concrete:
 Three salient properties:
 
 1. **Persona-shaped *or* tool-shaped — not exclusively either.** A Skill can be a system-prompt augment (persona-flavoured), or a bundle that includes MCP tools (tool-flavoured), or both. This is *less* opinionated than I previously characterized it; the paper's design accommodates both styles.
-2. **Trigger semantics are first-class.** `trigger=None` means always-on; otherwise a keyword match against user input gates activation. This is the "conditional persona injection" pattern from `research/00-synthesis.md` §3.2 — OpenHands implements it natively.
+2. **Trigger semantics are first-class.** `trigger=None` means always-on; otherwise a keyword match against user input gates activation. This is the "conditional persona injection" pattern from [`00-synthesis`](synthesis/00-synthesis.md) §3.2 — OpenHands implements it natively.
 3. **Cross-tool-ecosystem compatibility.** Loading from `.cursorrules` and `agents.md` (the same `AGENTS.md` convention surfaced in the GitHub Action ecosystem) means a Skill written for Cursor or for the bare AGENTS.md convention can be reused under OpenHands without translation.
 
 Feature-comparison table (§5.4 / Tab. 6) confirms OpenHands and Claude Agent SDK are the only two of five surveyed SDKs to support "Agent Skills" as a first-class concept. The others (OpenAI Agents SDK, Google ADK, LangChain/LangGraph) require significant external setup.
@@ -264,7 +264,7 @@ The four signals are aligned, and the paper's §4.8–4.9 puts mechanism behind 
 
 So `LLMSecurityAnalyzer` is a *probabilistic* defence layered on top of process isolation, not a proof of safety. For our factory this means: keep the deterministic perimeter (egress allowlist, container-level capability dropping, no host network) doing the heavy lifting; treat the LLM-based analyzer as a defence-in-depth check, not as the primary line. The lethal trifecta is *not* fully closed, just narrower than V0's.
 
-## 9. Diff against `architectures/00-comparison.md` §4.1 (shared-infrastructure list)
+## 9. Diff against [`00-comparison`](../architectures/00-comparison.md) §4.1 (shared-infrastructure list)
 
 | Shared infrastructure primitive | OpenHands provides? | Notes |
 |---|---|---|
@@ -299,8 +299,8 @@ The arxiv PDF unreadability follow-up is now closed: the v2 HTML render was retr
 
 ### New follow-ups
 
-- **Sub-Agent Delegation tool deep-dive.** §4.5 (paper) and §4e (this report) describe a `delegate` tool in `openhands.tools` that supports *blocking parallel* sub-agent execution. For Architecture-2 (Atelier) and Architecture-4 (Tournament) we need to characterize: max fan-out, fault-tolerance behaviour when one sub-agent crashes, whether sub-agent event logs are merged into the parent EventLog or kept separate, and whether the tool can be extended to non-blocking patterns. Track in `research/PLAN.md` §10.
-- **`LLMSecurityAnalyzer` adversarial-prompt evaluation.** The paper acknowledges the LLM-based analyzer is fooled by adversarial prompts. Before we depend on it in CI, we should run a small red-team pass with the prompt-injection corpus from `research/00-synthesis.md` F12.
+- **Sub-Agent Delegation tool deep-dive.** §4.5 (paper) and §4e (this report) describe a `delegate` tool in `openhands.tools` that supports *blocking parallel* sub-agent execution. For Architecture-2 (Atelier) and Architecture-4 (Tournament) we need to characterize: max fan-out, fault-tolerance behaviour when one sub-agent crashes, whether sub-agent event logs are merged into the parent EventLog or kept separate, and whether the tool can be extended to non-blocking patterns. Track in [`PLAN`](PLAN.md) §10.
+- **`LLMSecurityAnalyzer` adversarial-prompt evaluation.** The paper acknowledges the LLM-based analyzer is fooled by adversarial prompts. Before we depend on it in CI, we should run a small red-team pass with the prompt-injection corpus from [`00-synthesis`](synthesis/00-synthesis.md) F12.
 
 ---
 
@@ -318,4 +318,4 @@ The MCP server integration is a notable feature: tools delivered as MCP servers 
 
 ---
 
-*End of report 11 — `research/11-openhands-substrate-audit.md` v0.2 (2026-05-11, full SDK paper incorporated)*
+*End of report 11 — [`11-openhands-substrate-audit`](11-openhands-substrate-audit.md) v0.2 (2026-05-11, full SDK paper incorporated)*

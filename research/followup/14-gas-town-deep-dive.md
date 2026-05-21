@@ -6,9 +6,9 @@
 
 **Companion documents:**
 
-- `research/followup/13-gas-city-deep-dive.md` — sibling deep-dive on Gas City, the SDK Gas Town's reusable infrastructure was extracted into.
-- `research/38-gas-systems-substrate.md` — synthesis report: how Gas City + Gas Town map to StrongDM Dark Factory and Every.to Compound Engineering, with concrete deployment sketches.
-- `research/followup/04-gastown-beads.md` — earlier (Round-3) comparison report from before the deep walk; this document supersedes it on internal-package structure and design-doc coverage, and reaches additional subsystems (Boot, Dogs, `gt feed`, `gt seance`, proxy server, OTEL data model, `gt-model-eval/`, CHANGELOG architectural milestones).
+- [`13-gas-city-deep-dive`](13-gas-city-deep-dive.md) — sibling deep-dive on Gas City, the SDK Gas Town's reusable infrastructure was extracted into.
+- [`38-gas-systems-substrate`](../38-gas-systems-substrate.md) — synthesis report: how Gas City + Gas Town map to StrongDM Dark Factory and Every.to Compound Engineering, with concrete deployment sketches.
+- [`04-gastown-beads`](04-gastown-beads.md) — earlier (Round-3) comparison report from before the deep walk; this document supersedes it on internal-package structure and design-doc coverage, and reaches additional subsystems (Boot, Dogs, `gt feed`, `gt seance`, proxy server, OTEL data model, `gt-model-eval/`, CHANGELOG architectural milestones).
 
 ---
 

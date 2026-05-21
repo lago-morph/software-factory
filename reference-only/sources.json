@@ -2959,6 +2959,24 @@
         "format": "md",
         "ingestion_status": "have",
         "sha256": "faa33a8fef4084456b5977ae90b3ffc47c0a9dbf7687953c434e2a941c64ba18"
+      },
+      {
+        "filename": null,
+        "format": "youtube-transcript",
+        "ingestion_status": "want",
+        "youtube_url": "https://www.youtube.com/watch?v=K7nY3MUzDuk"
+      },
+      {
+        "filename": null,
+        "format": "youtube-transcript",
+        "ingestion_status": "want",
+        "youtube_url": "https://www.youtube.com/watch?v=njRAmppPvFk"
+      },
+      {
+        "filename": null,
+        "format": "youtube-transcript",
+        "ingestion_status": "want",
+        "youtube_url": "https://www.youtube.com/watch?v=95TEFWdo6Mw"
       }
     ],
     "id": "992e4f88b6",

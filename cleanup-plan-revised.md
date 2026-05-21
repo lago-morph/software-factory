@@ -132,13 +132,13 @@ Numbering matches v1 where the change still applies; revised items are marked **
 
 #### B.11 Future research
 
-35. **[REVISED — v3]** Apply the concrete-task criterion:
+35. **[REVISED — v4]** Apply the concrete-task criterion:
     - **"El Kaim Medium corpus"** — requires URL harvesting first; not a concrete task → DELETE.
     - **"Noah Radford road runner economy"** — one URL, action-fetchable → move to `sources.json` as a `wanted (URL known)` record per N6 below. Delete the prose section.
     - **"platform.claude.com Agent Skills 2-of-3"** — both URLs now in catalog as `have+complete` → DELETE.
     - **"residuals — LukePM, Schillace compounding teams"** — both drained → DELETE.
-    - **"residuals — 3 jaymin YouTube URLs (K7nY3MUzDuk / njRAmppPvFk / 95TEFWdo6Mw)"** — **KEEP as a concrete task** per user recollection of having provided a transcript. The task: confirm whether the transcript is already present somewhere or was at any point. Searched in this session: not in `sources.json`, no `youtube-transcript`-format records in catalog at all, not in git history under `research/manual/` / `reference-only/`, not in reflog. Resolution: either the user finds it locally and we ingest it, or we mark it confirmed-not-present and drop it. The task lives in PLAN.md §5 as one item with a one-paragraph description of what was searched.
-    - Result: the `## Future research` section collapses to (at most) the jaymin-transcript-confirm task — if even that lives in §5 directly, the whole `Future research` section disappears.
+    - **"residuals — 3 jaymin YouTube URLs (K7nY3MUzDuk / njRAmppPvFk / 95TEFWdo6Mw)"** — **KEEP on plan** per user recollection of having provided transcripts (likely on their laptop). **Added to `sources.json` in this same commit** as three `youtube-transcript` wanted entries on the embedding record `992e4f88b6` (Jaymin West "Agentic Engineering Book") per the convention in `_drain/youtube-transcripts.md` — `format: youtube-transcript`, `ingestion_status: want`, `filename: null`, `youtube_url` set to canonical form. When the user drops the `.txt` transcripts into `research/manual/`, the drain pipeline will auto-promote them to `have`. The PLAN.md task description: "User believes the three jaymin YouTube transcripts are on their laptop — find and drop into `research/manual/`, or confirm not-present and mark `skip-not-necessary`."
+    - Result: the `## Future research` section disappears. All wanted-source tracking is now in `sources.json`; the jaymin-transcript-locate task lives in PLAN.md §5 because the action (search the user's laptop) sits with the user, not with the catalog pipeline.
 
 ### C. `/reference-only/reorg-plan.md`
 
@@ -215,7 +215,13 @@ Numbering matches v1 where the change still applies; revised items are marked **
 
 #### N6. Add Noah Radford as a wanted source
 
-50. Add `https://nraford7.github.io/road-runner-economy/` to `sources.json` as a `wanted (URL known)` record per `_catalog/edit.md` patterns. Tag with `compound-engineering` or `dark-factory` category (user pick at edit time). This is the only Future-research item that survives the concrete-task filter and isn't already in the catalog.
+50. Add `https://nraford7.github.io/road-runner-economy/` to `sources.json` as a `wanted (URL known)` record per `_catalog/edit.md` patterns. Tag with `compound-engineering` or `dark-factory` category (user pick at edit time). This is the only **wanted-source** future-research item that survives the concrete-task filter as a new catalog record.
+
+51. **[ADDED v4 — already executed in the current branch's HEAD commit]** Three jaymin YouTube URLs added as `youtube-transcript` wanted entries on the Jaymin West Agentic Engineering Book record `992e4f88b6`. Canonical YouTube URLs:
+    - `https://www.youtube.com/watch?v=K7nY3MUzDuk` (The Agentic Engineering Meta)
+    - `https://www.youtube.com/watch?v=njRAmppPvFk` (Six Levels of Agentic Engineering)
+    - `https://www.youtube.com/watch?v=95TEFWdo6Mw` (I'm Open Sourcing The Cutting Edge)
+    Schema-validated (209 records valid). When user drops `.txt` transcript files with the canonical URL on the first line into `research/manual/` (or the record's `<id>/` dir), drain auto-promotes them to `have`.
 
 ---
 

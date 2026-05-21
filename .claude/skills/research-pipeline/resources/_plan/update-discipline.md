@@ -13,47 +13,36 @@ Any of:
 
 Read-only operations (query.md, audit-records.py, lint-sources.sh on its own) do **not** require a PLAN.md edit.
 
-## Minimum footprint — a new Session bullet
+## Session bullet format
 
-Every catalog-mutating commit gets at least a Session bullet under §1 (Current state TL;DR). The bullet replaces nothing — it accretes. Template:
+Every catalog-mutating commit gets one Session bullet under §1. Strictest possible short form — three components only: date + 24-hour time, the run's short name, the PR link. No prose, no semicolons-as-cheat, no content summary.
 
-```markdown
-- **Session YYYY-MM-DD — <one-line topic>** — <one to three sentences describing the change>. <Important records added by id>. <Anything follow-up-worthy>.
-```
-
-Concrete example (the Round-11 drain that landed in PR #93):
+Template:
 
 ```markdown
-- **Session 2026-05-17 — Round-11 manual drain (16 files; ingestion only, stage 5 deferred)** — User dropped 17 files into `research/manual/` (15 MHTML + 2 PDFs); one PDF shipped with a companion `URL of <name>.txt` because its bytes carry no URL metadata. Used this PR to teach extract_url.py the companion-URL pattern. **Drain output:** 5 new catalog records (...) + 11 attachments to existing records. Audit clean. **Outstanding for follow-up:** README.md skip-list, PDF /URL annotation ordering, MIME-encoded MHTML titles, stage 5 deferred.
+- **YYYY-MM-DD HH:MM <short-name>** [#nn](https://github.com/lago-morph/software-factory/pull/nn)
 ```
 
-## When to do MORE than the minimum
-
-Bump `**Version:** vX.Y (YYYY-MM-DD)` on the second line if **any** of these are true for the work in the PR:
-
-- It's a new drain round (Round-N)
-- It introduces a new failure mode (F-number)
-- It promotes a report from 🟡 partial to ✅ FULL
-- It changes the §3 bottleneck list, §4 fetch-priority list, or §5 work-remaining list
-- It removes or relocates a section of the file
-
-Also add an `**Earlier versions:**` paragraph line summarising the new version, **after** the existing earlier-versions paragraph.
-
-Add a §10 lookup-table row when, **and only when**, this PR completes a numbered drain round (a row identifies "where did the work of this round live?", which means the round is over). Template:
+Example:
 
 ```markdown
-| N | Round name | Status | One-sentence summary + links. |
+- **2026-05-17 18:42 Round-11 manual drain** [#93](https://github.com/lago-morph/software-factory/pull/93)
 ```
 
-Statuses we've used: `✅ Complete`, `🟡 Ingestion complete, stage 5 deferred`, `🟡 Partial`.
+Hyperlink rules:
+- PR link display = `#nn`
+- Rare commit link display = `abcd1234` (first 8 hex), used only when the commit message carries info not in the PR description
+- Time comes from the merge-commit timestamp
 
-## When NOT to bump the Version
+The bullet says when it happened, what it was, and where to read about it. Anyone who needs the content reads the PR. Same format applies always — no tiers, no version bumps, no earlier-versions paragraph.
 
-- Trivial typo fixes
-- Filling in titles or tags on already-existing records when the underlying drain bullet is already in place
-- Refactoring of `plan-sync.md` or another non-PLAN file
+## §10 lookup-table row
 
-In these cases the Session bullet alone is enough.
+Add a §10 lookup-table row when, **and only when**, this PR completes a numbered drain round (a row identifies "where did the work of this round live?", which means the round is over). One sentence + PR/commit hyperlinks — no prose summary of contents. Template:
+
+```markdown
+| N | Round name | ✅ Complete | One sentence + [#nn](https://github.com/lago-morph/software-factory/pull/nn). |
+```
 
 ## Running the consistency check before commit
 

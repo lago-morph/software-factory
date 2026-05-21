@@ -163,14 +163,26 @@
     ],
     "id": "10b59b402b",
     "references_from": [
-      "research/22-academic-foundations.md",
-      "research/plan-sync.md"
+      "research/22-academic-foundations.md"
     ],
     "tags": [
       "evals-and-benchmarks",
       "openai-substrate"
     ],
     "title": "Introducing SWE-bench Verified"
+  },
+  "11086c2305": {
+    "canonical_url": "https://nraford7.github.io/road-runner-economy",
+    "comments": "Surfaced as drafting-readers acknowledgement in Shapiro Five Levels post. Wanted source per cleanup-plan-revised.md item 50 (N6).",
+    "files": [],
+    "id": "11086c2305",
+    "references_from": [
+      "research/followup/01-shapiro-five-levels.md"
+    ],
+    "tags": [
+      "dark-factory"
+    ],
+    "title": "The Road Runner Economy (Noah Radford)"
   },
   "1175dde05f": {
     "canonical_url": "https://arxiv.org/pdf/2511.03690",
@@ -326,8 +338,7 @@
     ],
     "id": "175cba9347",
     "references_from": [
-      "research/18-openai-codex-substrate.md",
-      "research/plan-sync.md"
+      "research/18-openai-codex-substrate.md"
     ],
     "tags": [
       "openai-substrate"
@@ -1844,9 +1855,7 @@
       }
     ],
     "id": "5a9f63821f",
-    "references_from": [
-      "research/PLAN.md"
-    ],
+    "references_from": [],
     "tags": [
       "skills-composition"
     ],
@@ -1943,8 +1952,7 @@
     ],
     "id": "5cc5a296b6",
     "references_from": [
-      "research/20-replit-agent.md",
-      "research/plan-sync.md"
+      "research/20-replit-agent.md"
     ],
     "tags": [
       "other-vendor-substrate"
@@ -2261,8 +2269,7 @@
     ],
     "id": "73dc7199ce",
     "references_from": [
-      "research/20-replit-agent.md",
-      "research/plan-sync.md"
+      "research/20-replit-agent.md"
     ],
     "tags": [
       "other-vendor-substrate"
@@ -2522,8 +2529,7 @@
     ],
     "id": "8334be0240",
     "references_from": [
-      "research/18-openai-codex-substrate.md",
-      "research/plan-sync.md"
+      "research/18-openai-codex-substrate.md"
     ],
     "tags": [
       "openai-substrate"
@@ -2899,6 +2905,19 @@
       "willison-canon"
     ],
     "title": "I think \"agent\" may finally have a widely enough agreed upon definition to be useful jargon now"
+  },
+  "974abcda96": {
+    "canonical_url": "https://github.com/gastownhall/gascity/issues/586",
+    "comments": "Specific issue cited in research/followup/13-gas-city-deep-dive.md (Round-12, PR #101).",
+    "files": [],
+    "id": "974abcda96",
+    "references_from": [
+      "research/followup/13-gas-city-deep-dive.md"
+    ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "gastownhall/gascity issue #586"
   },
   "97f2036966": {
     "canonical_url": "https://cdn.prod.website-files.com/655cded084fee2e958faaffc/69b8331d6141dc7278866f9c_D",
@@ -3647,9 +3666,7 @@
       }
     ],
     "id": "bdba59d7ee",
-    "references_from": [
-      "research/PLAN.md"
-    ],
+    "references_from": [],
     "tags": [
       "anthropic-substrate",
       "skills-composition"
@@ -3787,6 +3804,20 @@
       "willison-canon"
     ],
     "title": "First run the tests - Agentic Engineering Patterns - Simon Willison's Weblog"
+  },
+  "c6f235b88d": {
+    "canonical_url": "https://github.com/gastownhall/gascity",
+    "comments": "Primary GitHub repo for Gas City — walked by Round-12 (PR #101) subagents. Working clone lived in /tmp and was not preserved; marked wanted for future re-clone if needed.",
+    "files": [],
+    "id": "c6f235b88d",
+    "references_from": [
+      "research/38-gas-systems-substrate.md",
+      "research/followup/13-gas-city-deep-dive.md"
+    ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "gascity (gastownhall) — Gas City repository"
   },
   "c94a94f2d3": {
     "files": [
@@ -3950,6 +3981,20 @@
       "other-vendor-substrate"
     ],
     "title": "Privacy | Tabnine Docs"
+  },
+  "d7921179bf": {
+    "canonical_url": "https://github.com/gastownhall/gastown",
+    "comments": "Primary GitHub repo for Gas Town — walked by Round-12 (PR #101) subagents. Working clone lived in /tmp and was not preserved; marked wanted for future re-clone if needed.",
+    "files": [],
+    "id": "d7921179bf",
+    "references_from": [
+      "research/38-gas-systems-substrate.md",
+      "research/followup/14-gas-town-deep-dive.md"
+    ],
+    "tags": [
+      "other-vendor-substrate"
+    ],
+    "title": "gastown (gastownhall) — Gas Town repository"
   },
   "d93e59de67": {
     "canonical_url": "https://factory.strongdm.ai/products/cxdb",
@@ -4128,8 +4173,7 @@
     ],
     "id": "dccefbfc62",
     "references_from": [
-      "research/18-openai-codex-substrate.md",
-      "research/plan-sync.md"
+      "research/18-openai-codex-substrate.md"
     ],
     "tags": [
       "openai-substrate"
@@ -4149,8 +4193,7 @@
     ],
     "id": "e205ffac9d",
     "references_from": [
-      "research/18-openai-codex-substrate.md",
-      "research/plan-sync.md"
+      "research/18-openai-codex-substrate.md"
     ],
     "tags": [
       "ai-engineering-culture",
@@ -4180,6 +4223,9 @@
     "files": [],
     "id": "e588b9bb1a",
     "pointer_to": "24ca29ee98",
+    "references_from": [
+      "research/followup/08-security-primitives.md"
+    ],
     "tags": [
       "security-primitives",
       "academic-foundations"
@@ -4473,8 +4519,7 @@
     ],
     "id": "f6b9330226",
     "references_from": [
-      "research/18-openai-codex-substrate.md",
-      "research/plan-sync.md"
+      "research/18-openai-codex-substrate.md"
     ],
     "tags": [
       "ai-engineering-culture",
@@ -4595,8 +4640,7 @@
     ],
     "id": "f9d207b032",
     "references_from": [
-      "research/22-academic-foundations.md",
-      "research/plan-sync.md"
+      "research/22-academic-foundations.md"
     ],
     "tags": [
       "evals-and-benchmarks"

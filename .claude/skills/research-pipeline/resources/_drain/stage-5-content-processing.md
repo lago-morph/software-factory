@@ -71,6 +71,21 @@ When multiple records contribute to the same section of a report, the drain agen
 
 The output is a cohesive report section, with footnote-style citations to each source's URL.
 
+## Synthesis docs — where they live and how they're versioned
+
+Cross-report synthesis documents live in `research/synthesis/` (not at the top of `research/`). Both the existing syntheses (`00-synthesis.md`, `13-round-2-synthesis.md`) and any new ones go there.
+
+Every synthesis doc carries a YAML frontmatter header identifying the corpus state it was authored against:
+
+```yaml
+---
+based-on-commit: <short-sha>
+based-on-date: YYYY-MM-DD
+---
+```
+
+The same header convention applies to architecture docs under `architectures/`. This skill does not own that directory, but the rule is shared so future readers can always tell what evidence base a synthesis or architecture decision sits on.
+
 ## Report structure conventions
 
 (Inherited from the legacy SKILL.old.md; preserved here for continuity)

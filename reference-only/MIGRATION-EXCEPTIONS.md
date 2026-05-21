@@ -33,6 +33,13 @@ If you want any of these in the catalog after all, add them via `process-url-lis
 - `8b35ef73d9` — [(unknown)](https://youtu.be/We7BZVKbCVw) — cited in research/06-hn-and-lenny.md, research/PLAN.md, research/followup/03-cherny-interview.md
 - `b4d0ca6c40` — [(unknown)](https://youtu.be/wc8FBhQtdsA) — cited in research/05-simon-willison.md, research/06-hn-and-lenny.md, research/PLAN.md
 
+## casual host: localhost (2 record(s))
+
+Config-illustration URLs cited inside source code samples in research/followup/14-gas-town-deep-dive.md (Gas Town config examples). Not substantive external sources.
+
+- (no id) — http://localhost:8428/api/v1/write — cited in research/followup/14-gas-town-deep-dive.md
+- (no id) — http://localhost:9428/insert/jsonline — cited in research/followup/14-gas-town-deep-dive.md
+
 ## homepage-only (no path) (23 record(s))
 
 - `6c1d928c53` — [(unknown)](http://www.afis.fr/) — cited in research/25-requirements-engineering-foundations.md

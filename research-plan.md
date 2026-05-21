@@ -26,7 +26,7 @@ When we decide to stop fetching, the condensation flow is:
 - **Reports + followups: stay individual.** They are evidence; they age but do not expire.
 - **Failure modes: get consolidated** into the unified synthesis. Right now they are scattered across the two existing syntheses, individual followup reports, and many of the round-9 and round-10 numbered reports — that should hurt.
 - **Architecture specs: probably consolidate** down from four to one (or one-plus-extensions) once we commit. The other three become "alternatives considered" in an ADR.
-- **`spec-driven-ai-dev.md`**: pending update per `research/PLAN.md` §3.2. Once v3 architectures land, this should be rewritten as the methodology document for the chosen architecture, not as a fifth competing view.
+- **`spec-driven-ai-dev.md`**: ingested as a cataloged source (record [`3592091691`](reference-only/3592091691/spec-driven-ai-dev.md)) per issue [#105](https://github.com/lago-morph/software-factory/issues/105). It is a user-authored input that seeded Architecture 1's lineage; the v3 methodology document for the chosen architecture is authored separately rather than by rewriting this source.
 
 ## One specific risk for the greenfield mandate
 

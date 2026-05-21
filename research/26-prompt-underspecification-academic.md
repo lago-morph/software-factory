@@ -276,6 +276,8 @@ The three papers also surface **two candidate proposals for the F-mode catalog**
 
 ### 5.2 Concrete changes for `spec-driven-ai-dev.md` and friends
 
+> **Status note (2026-05-21, issue [#105](https://github.com/lago-morph/software-factory/issues/105)):** `spec-driven-ai-dev.md` is a cataloged source (record [`3592091691`](../reference-only/3592091691/spec-driven-ai-dev.md)), not a mutable internal artifact. The proposals below are research findings that can inform a v3 methodology document authored separately; they are not pending edits against the source file.
+
 Five concrete proposals, each grounded in a numbered claim above:
 
 1. **Adopt Yang et al.'s definition of underspecification verbatim** in the spec-authorship doc. The current corpus uses "vague," "incomplete," "spec overfitting" inconsistently. Replace with: *"underspecification = omission of essential requirements such that multiple valid but inconsistent behaviors remain possible"* (Yang §1).

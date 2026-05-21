@@ -31,6 +31,7 @@ Rounds 1–12 complete (see §10 for the round-by-round lookup). What's left is 
 - **2026-05-17 20:54 single-source normalize for `sources.json`** [#97](https://github.com/lago-morph/software-factory/pull/97)
 - **2026-05-17 21:47 PLAN.md audit + back-fill pass** [#98](https://github.com/lago-morph/software-factory/pull/98)
 - **2026-05-20 18:01 Round-12 gas-systems substrate analysis** [#101](https://github.com/lago-morph/software-factory/pull/101)
+- **2026-05-21 spec-driven-ai-dev.md → source catalog (record `3592091691`)** — issue [#105](https://github.com/lago-morph/software-factory/issues/105)
 
 ### Open items live in
 
@@ -62,7 +63,6 @@ Rounds 1–12 complete (see §10 for the round-by-round lookup). What's left is 
 /retrospective/         → retrospectives + sibling skill specs / AGENTS-MD rule files / ADR draft files
 /.claude/skills/        → installed skills
 /.github/               → fetch-blocked-urls action + research-pipeline auto-regen workflows
-spec-driven-ai-dev.md   → root-level methodology doc (pending update; see §3.2 task 2)
 initial-sources.md      → original Round-1 seed list (frozen)
 ```
 
@@ -77,8 +77,9 @@ These three tasks were explicitly excluded from subagent dispatch in the origina
 | Task | What | Source of the proposed change | Risk if skipped |
 |---|---|---|---|
 | **Update `architectures/00-comparison.md`** | (a) Replace §7 with the substrate-stack recommendation from `research/synthesis/13-round-2-synthesis.md` §6 (preserve original §7 as "§7 (Round 1)"). (b) Extend §2.4 with F21–F33 from report 09 + report 13 + G12/G13/G14 from drained report 10. | Round-2 synthesis report 13 §6; Round-2 failure-mode extension in report 09 §6 + report 13 §3 + governance drain in report 10 | The canonical comparison doc lags 4 rounds of synthesis. New readers see a 2025-era comparison; they don't see "harness" vocabulary, substrate-stack recommendation, or failure modes F21–F33. |
-| **Update `spec-driven-ai-dev.md`** | Add 4 new fields proposed by Round-4 report 14 (cluster A): non-goals; decision-seeds; invariant-with-bindingHint; explicit Intent section. | `research/14-el-kaim-book-intent-and-spec-authorship.md` §"Recommendation" | Spec template ships without the El Kaim 9-field discipline. Generated specs continue to omit non-goals, which is the single highest-leverage of the four. |
 | **Round 2 complete stanza** | Append a "Round 2 complete" stanza to the §10 lookup row with the drain merge commit hash `423940f`. | Bookkeeping. | Audit trail is incomplete. |
+
+The original §3.2 carried a third task — "Update `spec-driven-ai-dev.md`" with the 4-field El Kaim extension from `research/14-el-kaim-book-intent-and-spec-authorship.md`. **Retired 2026-05-21** (issue [#105](https://github.com/lago-morph/software-factory/issues/105)): `spec-driven-ai-dev.md` was reframed as a cataloged source (record [`3592091691`](../reference-only/3592091691/spec-driven-ai-dev.md)) and is no longer treated as a mutable internal artifact. The 4-field discipline from Report 14 lives on as a research finding that informs the v3 architecture choice (see `research-plan.md`); it does not amend the source document.
 
 ### 3.6 Failure-mode numbering collision — F36/F37 dual-proposed by reports 25 and 26
 
@@ -109,7 +110,7 @@ The research phase is complete when **all** of the following hold:
 ### 5.1 Concrete tasks
 
 - **Decide on `research-plan.md` direction.** Two coupled questions: (a) cut a single unified Round-1–N synthesis, or keep the current two-synthesis-plus-followups state; (b) collapse the four architectures to one chosen path (likely Atelier + Refinery layered-spec discipline) + "rejected alternatives" appendix, or keep all four.
-- **§3.2 curated human-review tasks.** Update `architectures/00-comparison.md` §7 + §2.4; update `spec-driven-ai-dev.md` with the 4-field extension; add the Round-2-complete stanza.
+- **§3.2 curated human-review tasks.** Update `architectures/00-comparison.md` §7 + §2.4; add the Round-2-complete stanza. (The §3.2 task to amend `spec-driven-ai-dev.md` with the 4-field El Kaim extension was retired 2026-05-21 when the file was reframed as a cataloged source — issue [#105](https://github.com/lago-morph/software-factory/issues/105).)
 - **Cross-corpus propagation sweep (§6.1).** Mechanical grep + small subagent dispatch.
 - **F36/F37 triage decision (§3.6).** Lead-agent call on numbering.
 - **Locate the three jaymin YouTube transcripts.** User believes the three jaymin YouTube transcripts are on their laptop — find and drop into `research/manual/`, or confirm not-present and mark `skip-not-necessary`. (The three wanted-transcript records are already in `sources.json` on the Jaymin West Agentic Engineering Book record `992e4f88b6`.)

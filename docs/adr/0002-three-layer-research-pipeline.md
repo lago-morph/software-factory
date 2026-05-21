@@ -140,8 +140,11 @@ What this is explicitly **not** promising:
   See [`research-plan.md`](../../research-plan.md) [§what-enough-research-should-trigger](../../research-plan.md#what-enough-research-should-trigger).
 
 - It does not commit `spec-driven-ai-dev.md` to any specific layer. That
-  document predates the three-layer split and its placement is an open
-  question (see [`research-plan.md` §what-stays-as-individual-documents-vs-gets-folded](../../research-plan.md#what-stays-as-individual-documents-vs-gets-folded)).
+  document predates the three-layer split; resolved 2026-05-21 (issue
+  [#105](https://github.com/lago-morph/software-factory/issues/105)) by
+  ingesting it as a cataloged source in the **provenance layer** (record
+  [`3592091691`](../../reference-only/3592091691/spec-driven-ai-dev.md)),
+  on the same footing as any other user-uploaded input.
 
 ## References
 

@@ -3,7 +3,7 @@
 Auto-generated from `reference-only/sources.json` by `.claude/skills/research-pipeline/scripts/render-sources-md.py`.
 Do not edit by hand — your changes will be overwritten on next push to `main`.
 
-**Records:** 213 · **Generated:** 2026-05-21 03:44 UTC
+**Records:** 214 · **Generated:** 2026-05-21 05:47 UTC
 
 ## Table of contents
 
@@ -11,7 +11,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [By category](#by-category)
   - [dark-factory](#cat-dark-factory) *(39)*
   - [intent-driven-architecture](#cat-intent-driven-architecture) *(9)*
-  - [spec-authorship](#cat-spec-authorship) *(3)*
+  - [spec-authorship](#cat-spec-authorship) *(4)*
   - [willison-canon](#cat-willison-canon) *(26)*
   - [compound-engineering](#cat-compound-engineering) *(11)*
   - [anthropic-substrate](#cat-anthropic-substrate) *(10)*
@@ -25,7 +25,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
   - [ai-engineering-culture](#cat-ai-engineering-culture) *(23)*
   - [meta-synthesis](#cat-meta-synthesis) *(2)*
 - [By status (cross-cutting view)](#by-status)
-  - [§ 1 — Complete](#status-complete) *(195)*
+  - [§ 1 — Complete](#status-complete) *(196)*
   - [§ 2 — Partial](#status-partial) *(11)*
   - [§ 3a — Wanted (URL known)](#status-wanted-url) *(5)*
   - [§ 3b — Wanted (title only)](#status-wanted-title) *(0)*
@@ -128,12 +128,13 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 <a id="cat-spec-authorship"></a>
 
 <details>
-<summary><b>spec-authorship</b> — 3 records — <em>Requirements engineering, BMAD, scenario testing, INCOSE primer, spec-as-prompt practice.</em></summary>
+<summary><b>spec-authorship</b> — 4 records — <em>Requirements engineering, BMAD, scenario testing, INCOSE primer, spec-as-prompt practice.</em></summary>
 
 | ID | Title / Summary | Source URL | Local Source | Files | Cited in |
 |---|---|---|---|---|---|
 | <a id="34b7fdd99d"></a>[`34b7fdd99d`](34b7fdd99d/) | **Requirements Writing Guide \| Docs \| 8090** | [Source URL](https://www.8090.ai/docs/opinions/requirements-writing-guide) | [Local Source](34b7fdd99d/Requirements%20Writing%20Guide%20_%20Docs%20_%208090.mhtml) | mhtml ✓ | — |
 | <a id="95265c651d"></a>[`95265c651d`](95265c651d/) | **Spec-driven development: The AI engineering workflow (Lenny's Newsletter)** | [Source URL](https://www.lennysnewsletter.com/p/spec-driven-development-the-ai-engineering) | [Local Source](95265c651d/lenny-spec-driven-development.txt) | txt ✓ | [`research/35-lenny-howiai-spec-driven-and-team-ops.md`](../research/35-lenny-howiai-spec-driven-and-team-ops.md) *(1)* |
+| <a id="3592091691"></a>[`3592091691`](3592091691/) | **Specification-Driven Agentic Development System: A Methodology for Iterative Specification Refinement Using AI Agents**<br><em>User-authored layered-spec / 5-failure-mode / revelation-cycle methodology</em> | [Source URL](https://github.com/jonathanmanton) | [Local Source](3592091691/spec-driven-ai-dev.md) | md ✓ | — |
 | <a id="292ea05299"></a>[`292ea05299`](292ea05299/) | **Work Order Writing Guide \| Docs \| 8090** | [Source URL](https://www.8090.ai/docs/opinions/work-order-writing-guide) | [Local Source](292ea05299/Work%20Order%20Writing%20Guide%20_%20Docs%20_%208090.mhtml) | mhtml ✓ | — |
 
 </details>
@@ -475,7 +476,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 ## By status (cross-cutting view)
 
 <a id="status-complete"></a>
-### § 1 — Complete *(195 records)*
+### § 1 — Complete *(196 records)*
 
 *Every registered file is present and complete.*
 
@@ -630,6 +631,7 @@ Do not edit by hand — your changes will be overwritten on next push to `main`.
 - [`a03c2b3502` — Software Factory Roadmap 2026 — 8090](#a03c2b3502)
 - [`95265c651d` — Spec-driven development: The AI engineering workflow (Lenny's Newsletter)](#95265c651d)
 - [`5b2ed8c57e` — Spec-driven development: The AI engineering workflow at Notion | Ryan Nystrom](#5b2ed8c57e)
+- [`3592091691` — Specification-Driven Agentic Development System: A Methodology for Iterative Specification Refinement Using AI Agents](#3592091691)
 - [`e951bbc27e` — strongdm/attractorbench: NLSpec instruction following benchmark](#e951bbc27e)
 - [`3262892c6c` — Subagents - Agentic Engineering Patterns - Simon Willison's Weblog](#3262892c6c)
 - [`b5fc7f9df9` — Superconductor](#b5fc7f9df9)

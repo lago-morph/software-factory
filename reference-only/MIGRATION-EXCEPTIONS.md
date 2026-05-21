@@ -161,6 +161,7 @@ If any of these should actually be in the catalog, move them via `python scripts
 - https://github.com/jayminwest/agentic-engineering-book/tree/main/appendices/examples/pi-mono
 - https://github.com/jayminwest/agentic-engineering-book/tree/main/chapters/10-practitioner-toolkit
 - https://github.com/joyrexus/software-factory
+- https://github.com/lago-morph/software-factory/issues/105
 - https://github.com/lago-morph/software-factory/issues/8
 - https://github.com/malusamayo/underspec-analysis
 - https://github.com/obra/superpowers

@@ -4,9 +4,11 @@
 
 **Provenance convention.** Every constraint cites where the user said it. If a constraint cannot be cited to user-authored text, it does not belong here.
 
+**Naming convention.** User constraints are tagged `UC1` through `UC8` (UC = *User Constraint*). The `UC` prefix is deliberate — it disambiguates user constraints from the `C10–C16` Round-2 *consensus* tags that appear in [[`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md)](../../research/synthesis/13-round-2-synthesis.md) §1.1 (which `UC9` would have collided with). Anywhere downstream synthesis cites a `C`-tag without the `UC` prefix, the reference is to the Round-2 consensus catalog, not this file.
+
 ---
 
-## C1 — The artifact being built
+## UC1 — The artifact being built
 
 > *"a running lights-out software factory for greenfield applications."*
 
@@ -19,7 +21,7 @@
 
 ---
 
-## C2 — Brownfield added as a co-equal mandate
+## UC2 — Brownfield added as a co-equal mandate
 
 > *"I want to add one complication. I eventually want to have something that also works with existing systems. Greenfield and brownfield can be totally different solutions."*
 
@@ -31,7 +33,7 @@
 
 ---
 
-## C3 — Mandate-fit must be explicit in the final recommendations
+## UC3 — Mandate-fit must be explicit in the final recommendations
 
 > *"when creating the final recommendations, it should explicitly say which solutions are strong for greenfield, brownfield, or both."*
 
@@ -43,7 +45,7 @@
 
 ---
 
-## C4 — User's working hypothesis (treated as falsifiable, not assumed)
+## UC4 — User's working hypothesis (treated as falsifiable, not assumed)
 
 > *"My suspicion is that we won't find one that works best with both, because a brownfield one will focus on analyzing what is there and growing it, whereas a greenfield approach is going to strongly depend on the spec, and will have a malleable architecture during refinement of the spec, whereas brownfield will not."*
 
@@ -55,7 +57,7 @@
 
 ---
 
-## C5 — Accuracy ranks above speed and tokens
+## UC5 — Accuracy ranks above speed and tokens
 
 > *"accuracy >> speed >> tokens. I have more tokens than I know what to do with, and I can wait for the results. But it has to be right."*
 
@@ -71,7 +73,7 @@
 
 ---
 
-## C6 — The corpus is the post-Round-12 corpus
+## UC6 — The corpus is the post-Round-12 corpus
 
 > *"I expect MAJOR changes to both the suggestions and the number and content of all the specific architecture recommendations."*
 
@@ -92,7 +94,7 @@
 
 ---
 
-## C7 — Seed source list (frozen, primary research input)
+## UC7 — Seed source list (frozen, primary research input)
 
 > The 17-URL list in [`initial-sources.md`](../../initial-sources.md) — user-authored, Round-1 seed.
 
@@ -101,7 +103,7 @@
 
 ---
 
-## C8 — Process constraints from AGENTS.md (binding)
+## UC8 — Process constraints from AGENTS.md (binding)
 
 > [`AGENTS.md`](../../AGENTS.md) — user-authored project conventions.
 
@@ -117,10 +119,10 @@
 
 The following appear in prior documents but are **lead-agent or prior-synthesis recommendations**, not user constraints. They do *not* anchor v3:
 
-- ❌ "Compound Atelier as baseline" ([`architectures/00-comparison.md`](../00-comparison.md) §7.1).
+- ❌ "Compound Atelier as baseline" ([[`00-comparison`](../00-comparison.md)](../00-comparison.md) §7.1).
 - ❌ "Atelier + Refinery's layered-spec discipline on top" ([`research-plan.md`](../../research-plan.md) §"What 'enough research' should trigger" item 2).
 - ❌ "OpenHands SDK + Overstory-design-in-Python as substrate stack" ([`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md) §6.2, §8).
-- ❌ "Four architectures" as a count ([`architectures/00-comparison.md`](../00-comparison.md) §1).
+- ❌ "Four architectures" as a count ([[`00-comparison`](../00-comparison.md)](../00-comparison.md) §1).
 - ❌ "L3 Augmentation as the empirical 2026 ceiling" ([`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md) §2.1) — this is a corpus claim worth testing against the lights-out mandate, not a user constraint.
 
 These items live in the archive after Phase 0.4–0.6; they re-enter the v3 process as Phase-7 back-fill candidates, judged against the v3-from-scratch output.

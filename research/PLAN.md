@@ -35,10 +35,10 @@ Rounds 1–12 complete (see §10 for the round-by-round lookup). What's left is 
 
 ### Open items live in
 
-- §3 Bottlenecks (§3.2 curated human-review backlog; §3.6 F36/F37 numbering collision).
+- §3 Bottlenecks (§3.2 ~~curated human-review backlog~~ **superseded by v3 synthesis path 2026-05-23**; §3.6 F36/F37 numbering collision — now scheduled for [v3 Phase 1B](../ARCHITECTURE-V3-SYNTHESIS-PLAN.md)).
 - §5 Work remaining.
 - §6.1 Cross-corpus propagation flags.
-- `research-plan.md` (root) — the structural pivot proposal. Decision pending.
+- ~~`research-plan.md` (root) — the structural pivot proposal. Decision pending.~~ **2026-05-23: Resolved.** User decided in favor of v3 synthesis path; [`research-plan.md`](../archive/research-plan.md) archived, constraints extracted to [`constraints-extracted`](../architectures/v3/constraints-extracted.md), execution plan in [`ARCHITECTURE-V3-SYNTHESIS-PLAN`](../ARCHITECTURE-V3-SYNTHESIS-PLAN.md).
 
 ---
 
@@ -70,7 +70,12 @@ initial-sources.md      → original Round-1 seed list (frozen)
 
 ## 3. Bottlenecks
 
-### 3.2 Curated human-review backlog (the original §14.4 tasks 2, 3, 5)
+### 3.2 Curated human-review backlog — **SUPERSEDED 2026-05-23 by v3 synthesis path**
+
+**Status update.** The tasks in this section were defined against the four-architecture v2 set. Per [`ARCHITECTURE-V3-SYNTHESIS-PLAN`](../ARCHITECTURE-V3-SYNTHESIS-PLAN.md) Phase 0.4, the v2 architectures (including `00-comparison.md`) and v1/v2 syntheses have been archived to [`archive/architectures-v2/`](../archive/architectures-v2/) and [`archive/synthesis-v1-v2/`](../archive/synthesis-v1-v2/). The tasks below are preserved for historical context but are **not** the path forward — v3's Phase 1-7 work delivers the equivalent (and more, against the full post-Round-12 corpus) via a different mechanism.
+
+**Original section (preserved verbatim for archaeology, no longer actionable):**
+
 
 These three tasks were explicitly excluded from subagent dispatch in the original brief and are still outstanding:
 

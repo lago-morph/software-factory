@@ -29,9 +29,9 @@ the target moves.
 The rules:
 
 1. **Always use a relative link.** Compute the path relative to the file that
-   contains the reference, not the repo root. From [`00-comparison`](architectures/00-comparison.md),
-   a link to [`PLAN`](research/PLAN.md) is `../research/PLAN.md`; from
-   [`00-synthesis`](research/synthesis/00-synthesis.md), it is `../PLAN.md`. Absolute paths
+   contains the reference, not the repo root. From [`00-brief-v3`](architectures/v3/00-brief-v3.md),
+   a link to [`PLAN`](research/PLAN.md) is `../../research/PLAN.md`; from a
+   `research/NN-*` report to [`PLAN`](research/PLAN.md), it is `PLAN.md`. Absolute paths
    (`/research/PLAN.md`) and `github.com/...` URLs pointing at our own files
    break under forks, branch renames, and local clones.
 2. **Descriptive link text, not the URL.** The visible text should describe the
@@ -40,7 +40,7 @@ The rules:
    differ. When a code-styled silhouette is helpful (e.g. you really do mean
    "the file at this path"), wrap the descriptive text in backticks inside the
    link: ``[`PLAN.md`](../research/PLAN.md)`` or
-   ``[`failure-modes.md`](../architectures/failure-modes.md)``.
+   ``[`00-brief-v3.md`](../architectures/v3/00-brief-v3.md)``.
 3. **No stale paths.** Before adding or keeping a link, confirm the target file
    exists. When you move a file, grep the repo for the old path and fix every
    reference in the same commit.

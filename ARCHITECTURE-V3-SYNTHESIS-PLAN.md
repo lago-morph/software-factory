@@ -1,9 +1,9 @@
 # Architecture v3 Synthesis Plan
 
 **Status:** Active execution plan. Will be converted to a reusable skill after v3 completes.
-**Revision history.** v1.0 — initial 8-phase plan with 6 Phase-2 tracks (committed in PR #124, merged 2026-05-23). v1.1 — Phase-0 bias-guard pass produced [[`decisions-captured`](architectures/v3/decisions-captured.md)](architectures/v3/decisions-captured.md) with D1 (Phase 2 expands to 9 tracks: 3+3+3), D2 (mandate-fit matrix is per-(architecture × work-unit-class)), D3 (§4 brief invariants relaxed to "defaults with explicit accept/challenge"), and D4 (lead-agent-authorized vocabulary / citation / definition fixes). This file reflects v1.1.
+**Revision history.** v1.0 — initial 8-phase plan with 6 Phase-2 tracks (committed in PR #124, merged 2026-05-23). v1.1 — Phase-0 bias-guard pass produced [`decisions-captured`](architectures/v3/decisions-captured.md) with D1 (Phase 2 expands to 9 tracks: 3+3+3), D2 (mandate-fit matrix is per-(architecture × work-unit-class)), D3 (§4 brief invariants relaxed to "defaults with explicit accept/challenge"), and D4 (lead-agent-authorized vocabulary / citation / definition fixes). This file reflects v1.1.
 **Owner:** lead agent (this file is the canonical execution doc; PLAN.md tracks the research-corpus drain; this plan tracks the synthesis-and-architecture-redesign work that follows).
-**Companion docs:** [`research-plan.md`](research-plan.md) (proposal), [`AGENTS.md`](AGENTS.md) (conventions), [`PLAN`](research/PLAN.md) (corpus state).
+**Companion docs:** [`research-plan.md`](archive/research-plan.md) (archived proposal), [`AGENTS.md`](AGENTS.md) (conventions), [`PLAN`](research/PLAN.md) (corpus state).
 
 ---
 
@@ -86,12 +86,12 @@ Each phase below: **goal**, **steps**, **bias guards**, **checkpoint** (where to
 **Goal.** Lock down the v3 brief; remove anchoring documents from the active tree.
 
 **Steps:**
-- 0.1 Extract user-given constraints from [`research-plan.md`](research-plan.md), [`AGENTS.md`](AGENTS.md), [`initial-sources.md`](initial-sources.md), and PR discussion history. Constraints only — *not* recommendations. → [`constraints-extracted`](architectures/v3/constraints-extracted.md).
+- 0.1 ✅ Extract user-given constraints from [`research-plan.md`](archive/research-plan.md), [`AGENTS.md`](AGENTS.md), [`initial-sources.md`](initial-sources.md), and PR discussion history. Constraints only — *not* recommendations. → [`constraints-extracted`](architectures/v3/constraints-extracted.md).
 - 0.2 Draft the reframed brief. → [`00-brief-v3`](architectures/v3/00-brief-v3.md). Carries: lights-out + greenfield + brownfield mandates, L5-vs-lights-out tension named openly, the user's working hypothesis (§2 above), explicit out-of-scope statements.
 - 0.3 **[CHECKPOINT — user review of brief before archival]**
-- 0.4 Archive existing 4 architectures → `archive/architectures-v2/` + [`ARCHIVE`](archive/architectures-v2/ARCHIVE.md) (one-paragraph why-archived per file).
-- 0.5 Archive existing syntheses → `archive/synthesis-v1-v2/` + sibling `ARCHIVE.md`.
-- 0.6 Archive [`research-plan.md`](research-plan.md) — its conclusions, not its constraints (those were extracted in 0.1).
+- 0.4 ✅ Archive existing 4 architectures → [`archive/architectures-v2/`](archive/architectures-v2/) + [`ARCHIVE`](archive/architectures-v2/ARCHIVE.md) (one-paragraph why-archived per file).
+- 0.5 ✅ Archive existing syntheses → [`archive/synthesis-v1-v2/`](archive/synthesis-v1-v2/) + sibling [`ARCHIVE.md`](archive/synthesis-v1-v2/ARCHIVE.md).
+- 0.6 ✅ Archive [`research-plan.md`](archive/research-plan.md) — its conclusions, not its constraints (those were extracted in 0.1).
 
 **Bias guards:**
 - After 0.2: dispatch **Skeptic** + **Naive newcomer** subagents to read the brief. Skeptic looks for buried assumptions; newcomer looks for jargon and hidden anchors. Both produce written critiques; brief revised before checkpoint.
@@ -116,7 +116,7 @@ flowchart LR
 
 **Steps:**
 - 1A Contradictions register. Pairwise contradictions in the corpus, both sources cited, **no resolution attempted**. → [`contradictions`](architectures/v3/contradictions.md).
-- 1B Failure-mode consolidation. Canonical F1–F49+ catalog; F36/F37 collision resolved per [`PLAN`](research/PLAN.md) §3.6 (lead-agent judgment, not subagent); severity ranking columns added for greenfield and brownfield separately. → [`failure-modes-v3`](architectures/v3/failure-modes-v3.md) + supersede [`failure-modes`](architectures/failure-modes.md).
+- 1B Failure-mode consolidation. Canonical F1–F49+ catalog; F36/F37 collision resolved per [`PLAN`](research/PLAN.md) §3.6 (lead-agent judgment, not subagent); severity ranking columns added for greenfield and brownfield separately. → [`failure-modes-v3`](architectures/v3/failure-modes-v3.md) + supersede the archived [`failure-modes`](archive/architectures-v2/failure-modes.md).
 - 1C Corpus inventory. One-paragraph anchor per report (01–38) + per followup (01–14); each tagged `greenfield` / `brownfield` / `both`. → [`corpus-inventory`](architectures/v3/corpus-inventory.md).
 
 **Bias guards:**
@@ -383,7 +383,7 @@ flowchart LR
 
 ### Phase 8 — Lean eval design
 
-**Goal.** Per [`research-plan`](research-plan.md) §6 (and v3's equivalent), design the 1-day manual evaluation for each chosen architecture *before* infrastructure work begins.
+**Goal.** Per [`research-plan`](archive/research-plan.md) §6 (and v3's equivalent), design the 1-day manual evaluation for each chosen architecture *before* infrastructure work begins.
 
 **Steps:**
 - 8.1 One lean-eval brief per architecture in the v3 set. → `architectures/v3/lean-evals/<arch>.md`.
@@ -423,7 +423,7 @@ archive/synthesis-v1-v2/
 docs/adr/NNNN-*.md                 ← Phase-5 ADRs (existing convention)
 ```
 
-After v3 lands, the v2 `architectures/0N-*.md` and [`failure-modes`](architectures/failure-modes.md) are deleted from the live tree (preserved in `archive/`). The v3 specs become the canonical set.
+v2 architectures and failure-modes coverage matrix have been moved to [`archive/architectures-v2/`](archive/architectures-v2/) in Phase 0.4. The v3 specs (Phase 6 output) become the canonical set.
 
 ---
 

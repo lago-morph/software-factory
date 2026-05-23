@@ -4,7 +4,7 @@
 
 **Provenance convention.** Every constraint cites where the user said it. If a constraint cannot be cited to user-authored text, it does not belong here.
 
-**Naming convention.** User constraints are tagged `UC1` through `UC8` (UC = *User Constraint*). The `UC` prefix is deliberate — it disambiguates user constraints from the `C10–C16` Round-2 *consensus* tags that appear in [[`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md)](../../research/synthesis/13-round-2-synthesis.md) §1.1 (which `UC9` would have collided with). Anywhere downstream synthesis cites a `C`-tag without the `UC` prefix, the reference is to the Round-2 consensus catalog, not this file.
+**Naming convention.** User constraints are tagged `UC1` through `UC8` (UC = *User Constraint*). The `UC` prefix is deliberate — it disambiguates user constraints from the `C10–C16` Round-2 *consensus* tags that appear in [`13-round-2-synthesis`](../../archive/synthesis-v1-v2/13-round-2-synthesis.md) §1.1 (which `UC9` would have collided with). Anywhere downstream synthesis cites a `C`-tag without the `UC` prefix, the reference is to the Round-2 consensus catalog, not this file.
 
 ---
 
@@ -12,7 +12,7 @@
 
 > *"a running lights-out software factory for greenfield applications."*
 
-— [`research-plan.md`](../../research-plan.md) opening sentence (user-authored).
+— [`research-plan.md`](../../archive/research-plan.md) opening sentence (user-authored).
 
 **Extracted as constraint:**
 - **The artifact is a software factory** (not a coding assistant, not a chatbot, not an IDE plugin).
@@ -119,11 +119,11 @@
 
 The following appear in prior documents but are **lead-agent or prior-synthesis recommendations**, not user constraints. They do *not* anchor v3:
 
-- ❌ "Compound Atelier as baseline" ([[`00-comparison`](../00-comparison.md)](../00-comparison.md) §7.1).
-- ❌ "Atelier + Refinery's layered-spec discipline on top" ([`research-plan.md`](../../research-plan.md) §"What 'enough research' should trigger" item 2).
-- ❌ "OpenHands SDK + Overstory-design-in-Python as substrate stack" ([`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md) §6.2, §8).
-- ❌ "Four architectures" as a count ([[`00-comparison`](../00-comparison.md)](../00-comparison.md) §1).
-- ❌ "L3 Augmentation as the empirical 2026 ceiling" ([`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md) §2.1) — this is a corpus claim worth testing against the lights-out mandate, not a user constraint.
+- ❌ "Compound Atelier as baseline" ([[`00-comparison`](../../archive/architectures-v2/00-comparison.md)](../00-comparison.md) §7.1).
+- ❌ "Atelier + Refinery's layered-spec discipline on top" ([`research-plan.md`](../../archive/research-plan.md) §"What 'enough research' should trigger" item 2).
+- ❌ "OpenHands SDK + Overstory-design-in-Python as substrate stack" ([`13-round-2-synthesis`](../../archive/synthesis-v1-v2/13-round-2-synthesis.md) §6.2, §8).
+- ❌ "Four architectures" as a count ([[`00-comparison`](../../archive/architectures-v2/00-comparison.md)](../00-comparison.md) §1).
+- ❌ "L3 Augmentation as the empirical 2026 ceiling" ([`13-round-2-synthesis`](../../archive/synthesis-v1-v2/13-round-2-synthesis.md) §2.1) — this is a corpus claim worth testing against the lights-out mandate, not a user constraint.
 
 These items live in the archive after Phase 0.4–0.6; they re-enter the v3 process as Phase-7 back-fill candidates, judged against the v3-from-scratch output.
 

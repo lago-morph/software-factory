@@ -5,7 +5,7 @@ based-on-date: 2026-05-23
 
 # Software Factory — v3 Brief (post-bias-guard revision)
 
-**Status:** Active brief for the v3 architecture synthesis. Revised 2026-05-23 to absorb Phase-0 bias-guard findings (Skeptic + Naive newcomer + Historian) and the user decisions captured in [`decisions-captured.md`](decisions-captured.md). Supersedes the implicit Round-1 brief (which targeted "general execution environment, solo→small team") and the [`research-plan.md`](../../research-plan.md) "lights-out greenfield" framing (now expanded to brownfield as a co-equal mandate).
+**Status:** Active brief for the v3 architecture synthesis. Revised 2026-05-23 to absorb Phase-0 bias-guard findings (Skeptic + Naive newcomer + Historian) and the user decisions captured in [`decisions-captured.md`](decisions-captured.md). Supersedes the implicit Round-1 brief (which targeted "general execution environment, solo→small team") and the [`research-plan.md`](../../archive/research-plan.md) "lights-out greenfield" framing (now expanded to brownfield as a co-equal mandate).
 
 **Authoritative on:** what the v3 architecture set must address; the operating discipline for the synthesis process; the load-bearing tensions the synthesis must surface.
 **Not authoritative on:** how those things get addressed. The 9 Phase-2 tracks, the Phase-3 merge, and the Phase-6 architecture specs decide that.
@@ -125,19 +125,19 @@ Phase 3's merge step surfaces challenges as DECISIONS-PENDING items for user rev
 
 ### 4.1 The defaults
 
-D-1. **Specs are the durable, version-controlled, human-curated artifact** ([`00-synthesis`](../../research/synthesis/00-synthesis.md) §2.1, *Round-1 synthesis*; report [`09`](../../research/09-jaymin-book-harnesses-practices-mental-models.md) §3 attributes Sean Grove). True for both mandates, though the *content* and *malleability* of the spec differ.
-D-2. **Scenarios live outside the codebase as a holdout set** ([`00-synthesis`](../../research/synthesis/00-synthesis.md) §2.2, *Round-1 synthesis*). **Flagged fragile for brownfield.**
-D-3. **Agent = Model + Harness** ([`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md) §1.1 C10, *Round-2 synthesis*). Harness and scaffold are distinct layers (C11). **Flagged fragile for graph-node and population architectures.**
-D-4. **Holdout discipline** (acceptance criteria withheld from builder agents) is substrate-enforced, not methodology-optional ([`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md) §1.1 C13, *Round-2 synthesis*).
-D-5. **Hard cost ceilings are non-optional in CI** ([`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md) §1.1 C15, *Round-2 synthesis*).
-D-6. **Tiered watchdog (Daemon / Triage / Patrol) is a substrate primitive** ([`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md) §1.1 C14, *Round-2 synthesis*). See glossary §0 for cadences.
-D-7. **Trajectory capture is cheap and production-tested** ([`13-round-2-synthesis`](../../research/synthesis/13-round-2-synthesis.md) §1.1 C16, *Round-2 synthesis*; OpenHands V1 sub-ms per-event persist, 7.4ms median crash recovery — *measurement context: OpenHands' own benchmark across 433 SWE-Bench Verified replays; generalizes to other substrates only insofar as event-sourced persistence layers are comparable*).
+D-1. **Specs are the durable, version-controlled, human-curated artifact** ([`00-synthesis`](../../archive/synthesis-v1-v2/00-synthesis.md) §2.1, *Round-1 synthesis*; report [`09`](../../research/09-jaymin-book-harnesses-practices-mental-models.md) §3 attributes Sean Grove). True for both mandates, though the *content* and *malleability* of the spec differ.
+D-2. **Scenarios live outside the codebase as a holdout set** ([`00-synthesis`](../../archive/synthesis-v1-v2/00-synthesis.md) §2.2, *Round-1 synthesis*). **Flagged fragile for brownfield.**
+D-3. **Agent = Model + Harness** ([`13-round-2-synthesis`](../../archive/synthesis-v1-v2/13-round-2-synthesis.md) §1.1 C10, *Round-2 synthesis*). Harness and scaffold are distinct layers (C11). **Flagged fragile for graph-node and population architectures.**
+D-4. **Holdout discipline** (acceptance criteria withheld from builder agents) is substrate-enforced, not methodology-optional ([`13-round-2-synthesis`](../../archive/synthesis-v1-v2/13-round-2-synthesis.md) §1.1 C13, *Round-2 synthesis*).
+D-5. **Hard cost ceilings are non-optional in CI** ([`13-round-2-synthesis`](../../archive/synthesis-v1-v2/13-round-2-synthesis.md) §1.1 C15, *Round-2 synthesis*).
+D-6. **Tiered watchdog (Daemon / Triage / Patrol) is a substrate primitive** ([`13-round-2-synthesis`](../../archive/synthesis-v1-v2/13-round-2-synthesis.md) §1.1 C14, *Round-2 synthesis*). See glossary §0 for cadences.
+D-7. **Trajectory capture is cheap and production-tested** ([`13-round-2-synthesis`](../../archive/synthesis-v1-v2/13-round-2-synthesis.md) §1.1 C16, *Round-2 synthesis*; OpenHands V1 sub-ms per-event persist, 7.4ms median crash recovery — *measurement context: OpenHands' own benchmark across 433 SWE-Bench Verified replays; generalizes to other substrates only insofar as event-sourced persistence layers are comparable*).
 
 ---
 
 ## 5. Greenfield cold-start — mandatory dedicated synthesis section (per Historian M4/M5)
 
-**Promoted from open question to mandatory section.** The cold-start problem for greenfield was originally OQ-B5 in the earlier brief draft. Historian M4 surfaced that the user-authored language in [`research-plan.md`](../../research-plan.md) §"One specific risk for the greenfield mandate" ranks cold-start as **the load-bearing risk** of the greenfield mandate, deserving a dedicated synthesis section before v3 architectures land. Per D4, this is promoted.
+**Promoted from open question to mandatory section.** The cold-start problem for greenfield was originally OQ-B5 in the earlier brief draft. Historian M4 surfaced that the user-authored language in [`research-plan.md`](../../archive/research-plan.md) §"One specific risk for the greenfield mandate" ranks cold-start as **the load-bearing risk** of the greenfield mandate, deserving a dedicated synthesis section before v3 architectures land. Per D4, this is promoted.
 
 Every Phase-2 greenfield track (3 tracks) and every Phase-2 both-mandates track that addresses greenfield (at least 1 of the 3, possibly all 3) **must** carry an explicit `## Cold-start` section in its output.
 

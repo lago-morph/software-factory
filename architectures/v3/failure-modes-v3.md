@@ -7,7 +7,7 @@ based-on-date: 2026-05-23
 
 **Status:** Canonical consolidated F-mode catalog for the v3 synthesis. Supersedes the archived [`failure-modes`](../../archive/architectures-v2/failure-modes.md) coverage matrix (F1-F20 only) and the scattered F21-F49+ promotions across the corpus.
 
-**F36/F37 numbering collision:** **NOT YET RESOLVED.** Surfaced as DECISIONS-PENDING for lead-agent triage per [`PLAN`](../../research/PLAN.md) §3.6. See §6 of this file. Until the triage call lands, the F36 / F37 / F38 / F39 numbers are **reserved** and not assigned in §1–§5 of this catalog. All four proposed phenomena are documented in §6 with their verbatim source language.
+**F36/F37 numbering collision:** **RESOLVED 2026-05-23.** Lead agent accepted the [`PLAN`](../../research/PLAN.md) §3.6 suggested triage verbatim: F36 → Yang instruction-following ceiling; F37 → Larbi silent contradictory-prompt collapse; F38 → vocabulary lint debt; F39 → point-spec/region-mismatch. The two report-25 secondary proposals promoted as F50 and F51. Audit trail in §6.
 
 **How to read.** Each entry: ID, name, one-paragraph definition (verbatim from the canonical source where possible), source citation, mechanism (how the failure happens), greenfield-severity, brownfield-severity, severity rationale. Severity scale:
 
@@ -317,9 +317,64 @@ Definitions carried forward verbatim from [`13-round-2-synthesis`](../../archive
 
 ---
 
-## 4. F36-F39 — DEFERRED PENDING COLLISION TRIAGE
+## 4. F36-F39 — Round-9 promotions (lead-agent triage 2026-05-23, per §6)
 
-**See §6 of this file.** The numbers F36, F37, F38, F39 are **reserved** and not assigned in this section pending the lead-agent triage call per [`PLAN`](../../research/PLAN.md) §3.6. Both proposed pairs (reports 25 and 26) are documented verbatim in §6 with the suggested triage assignment.
+The F36/F37 numbering collision (reports 25 and 26 each proposing different phenomena) was resolved on 2026-05-23 by the lead agent accepting the [`PLAN`](../../research/PLAN.md) §3.6 suggested triage verbatim. Audit trail preserved in §6.
+
+### F36 — Instruction-following ceiling
+
+- **Definition:** LLMs cannot reliably follow >10–20 specified requirements simultaneously, regardless of spec quality. The naïve fix to underspecification ("spec everything") fails for an independently measurable reason: budget exhaustion under a complete spec.
+- **Source:** [`26-prompt-underspecification-academic`](../../research/26-prompt-underspecification-academic.md) §3.4 (Yang et al. arXiv:2505.13360v3); promoted via Round 9.
+- **Mechanism:** Empirical anchor — gpt-4o drops 98.7% → 85.0% as specified requirements grow 1 → 19; Llama-3.3-70B drops to 79.7%. Distinct from F18 (prose specs lack rigor) because the failure persists *even when the spec is rigorous*; distinct from F3 (spec-completeness fallacy) because it persists *even when the spec is complete*.
+- **Greenfield severity:** **critical** — greenfield specs are constitutively long and growing; the architecture cannot avoid the regime where this F-mode bites. Mitigation requires spec-chunking + per-chunk verification, which interacts with UC4 spec-malleability in complex ways.
+- **Brownfield severity:** **high** — brownfield specs can often be partitioned along existing module boundaries, reducing simultaneous-requirement load; but cross-cutting changes still hit the ceiling.
+
+### F37 — Silent contradictory-prompt collapse
+
+- **Definition:** LLMs do not reliably flag contradictory prompts and instead produce dramatically wrong output that *runs*. The model fails upstream of execution; downstream tests pass because the wrong code is well-formed.
+- **Source:** [`26-prompt-underspecification-academic`](../../research/26-prompt-underspecification-academic.md) §6.1–6.2 (Larbi et al. arXiv:2507.20439v1); promoted via Round 9.
+- **Mechanism:** Empirical anchors — GPT-4 Pass@1 drops from 73.8% to 6.7% on contradictory HumanEval prompts; RIR climbs to 89%; LLM-as-judge MCC ≤ 0.55 for contradiction detection. Distinct from F1 because the failure is *upstream* of the model (in the prompt). Distinct from F18 because the prompt may be syntactically rigorous yet contain contradictions only a domain-aware reviewer would catch.
+- **Greenfield severity:** **critical** — greenfield spec authorship is the regime most likely to produce internally contradictory prompts (the spec is still being discovered; UC4 malleability). LLM-judge mitigation (MCC ≤ 0.55) is structurally insufficient.
+- **Brownfield severity:** **high** — brownfield prompts can lean on existing code structure to disambiguate intent, reducing (not eliminating) contradiction risk.
+
+### F38 — Vocabulary lint debt
+
+- **Definition:** AI-authored specs accumulate INCOSE GtWR R7/R8/R9 violations (vague terms, escape clauses, open-ended clauses) at rates well above human-authored specs because LLMs default to hedging language. Specs read clearly but cannot be verified; downstream evaluators silently substitute their own interpretation.
+- **Source:** [`25-requirements-engineering-foundations`](../../research/25-requirements-engineering-foundations.md) §"Implications" (INCOSE Guide to Writing Requirements R7-R35); promoted via Round 9.
+- **Mechanism:** LLM training-data bias toward natural-sounding prose surfaces as systematic violation of formal-requirement criteria. Failure is *authoring-side* and *deterministically detectable* (unlike F36/F37 which are model-capability limits).
+- **Greenfield severity:** **high** — greenfield authoring is the dominant LLM-prose-generation regime; vocabulary debt compounds across spec iterations.
+- **Brownfield severity:** **medium** — brownfield specs are constrained by existing-system vocabulary (function names, schema field names); vocabulary debt accumulates more slowly but is harder to retrofit clean.
+
+### F39 — Point-spec / region-mismatch
+
+- **Definition:** Spec written as a point requirement (`the system shall do X`) for a complex-system context where the appropriate spec shape is a region of acceptable outcome. Every implementation satisfies the spec literally but none satisfy stakeholder intent.
+- **Source:** [`25-requirements-engineering-foundations`](../../research/25-requirements-engineering-foundations.md) §"Implications" (INCOSE Complexity Primer principle 12); promoted via Round 9.
+- **Mechanism:** Mis-shape of spec: outcome-space is a region, spec is a point; reviewer panels keep finding "this is technically correct but…". Distinct from F3 (incompleteness, where the spec is missing parts) — F39 is a complete spec of *the wrong shape*.
+- **Greenfield severity:** **critical** — greenfield is precisely the regime where complex-system outcome-regions dominate (no existing system constrains the shape). Mitigation requires complexity-diagnosis tooling that may not exist in the architecture's substrate.
+- **Brownfield severity:** **medium** — brownfield's existing system supplies the region implicitly (the new code must fit the existing region); point-spec mismatch is detectable via integration testing earlier in the cycle.
+
+---
+
+## 4a. F50-F51 — Round-9 secondary promotions (lead-agent triage 2026-05-23, per §6)
+
+Per [`PLAN`](../../research/PLAN.md) §3.6, the two secondary report-25 proposals were assigned numbers above F49 to avoid further collision. The Ashby-deficient guard (F51) is a broader framing of F33, not a replacement — cross-referenced below.
+
+### F50 — Architecture/specification confusion in typed objects
+
+- **Definition:** When the spec graph and the architecture graph live in the same tool (AFIS strategy-3 endpoint), distinguishing requirement elements from context/glue elements becomes a "blocking point." Spec exports balloon with implementation detail; spec deltas appear with architecture changes that should not have touched the spec.
+- **Source:** [`25-requirements-engineering-foundations`](../../research/25-requirements-engineering-foundations.md) §2.4.2 (AFIS strategy-3 boundary collapse).
+- **Mechanism:** Tooling artifact: when a single artifact store hosts both spec and architecture, viewpoint discipline breaks down without explicit per-object tagging.
+- **Greenfield severity:** **medium** — greenfield tooling can be designed with viewpoint separation from the start; risk emerges only when spec-as-code platforms unify storage.
+- **Brownfield severity:** **medium** — same shape, but pre-existing unified stores (Confluence, Jira, monorepo specs) inherit the failure on day 0.
+
+### F51 — Ashby-deficient probabilistic guard
+
+- **Definition:** A probabilistic guard (LLM-as-judge, LLM-as-security-analyzer) is deployed against a probabilistic agent in a high-variety environment. By Ashby's Law of Requisite Variety, the guard has insufficient variety to constrain the agent. Rare-event failures slip through; the guard reports green; deterministic post-hoc audit finds violations.
+- **Source:** [`25-requirements-engineering-foundations`](../../research/25-requirements-engineering-foundations.md) §"Implications" (Ashby's Law applied to LLM judges).
+- **Mechanism:** Cybernetic argument: the guard's regulator-variety must equal or exceed the regulated system's disturbance-variety. Probabilistic guard + probabilistic agent + high-variety environment fails this inequality.
+- **Greenfield severity:** **high** — greenfield's outcome region is largest (per F39); guard variety is most stressed.
+- **Brownfield severity:** **critical** — brownfield's deterministic perimeter (existing tests, schemas, runtime traces) is the only adequate-variety guard; relying on LLM-judge alone is structurally Ashby-deficient.
+- **Cross-reference:** F33 (adversarial-prompt defeat of LLM-based security analysis) is a *specific instance* of F51 (the adversarial-prompt class is one disturbance type). F33 stays separate because the adversarial-prompt mechanism has its own mitigation (deterministic perimeter); F51 is the broader framing for non-adversarial high-variety regimes.
 
 ---
 
@@ -407,7 +462,17 @@ Definitions carried forward verbatim from [`13-round-2-synthesis`](../../archive
 
 ---
 
-## 6. F36/F37 numbering collision — DECISIONS-PENDING for lead agent
+## 6. F36/F37 numbering collision — RESOLVED 2026-05-23
+
+**Resolution:** Lead agent accepted the [`PLAN`](../../research/PLAN.md) §3.6 suggested triage verbatim. Canonical entries are now in §4 (F36-F39) and §4a (F50-F51). The original collision documentation is preserved below as historical record.
+
+**Rationale.** The two report-26 (academic) F-modes (instruction-following ceiling; silent contradictory-prompt collapse) are *empirical model-capability limits* that affect any architecture delegating spec-following to an LLM — more primal failures, deserving the lower F-numbers. The two report-25 (RE/SE) F-modes (vocabulary lint debt; point-spec/region-mismatch) are *methodological* failures of how specs get authored — one step removed, fitting F38/F39. The two report-25 secondary proposals (architecture/spec confusion in typed objects; Ashby-deficient probabilistic guard) are genuinely distinct phenomena worth catalog inclusion at F50/F51; the Ashby-deficient guard (F51) is broader than F33 and the two are cross-referenced rather than merged.
+
+**No corpus references to the unresolved F36-F39 numbers exist** at resolution time (all prior catalog references were to the placeholder text in §4), so no downstream artifacts need updating.
+
+---
+
+### 6.1 Original collision documentation (historical record)
 
 Per [`PLAN`](../../research/PLAN.md) §3.6, two parallel report dispatches in Round 9 (reports 25 and 26) each independently proposed F36 and F37 with **different phenomena**. This catalog **does not resolve the collision** — per brief §0 glossary and §6 item 1, the triage is a lead-agent call, not a subagent call.
 
@@ -438,12 +503,12 @@ So the suggested assignment is:
 
 **This file does NOT assert the triage.** It is a DECISIONS-PENDING surface for the lead agent's call per ADR-0005 concrete-task discipline.
 
-### 6.3 Concrete next action
+### 6.3 Resolution (2026-05-23)
 
 **Who:** Lead agent (per brief §0 glossary "F36/F37 collision" and §6 item 1).
-**Does what:** Reviews §6.1 of this file + [`PLAN`](../../research/PLAN.md) §3.6 + reports 25/26; either accepts the suggested triage in §6.2 verbatim or assigns alternative numbers.
-**To which file:** Updates this file's §4 (currently a deferral placeholder) with the four canonical entries in the same format as §1–§3 + §5; updates §6 to a "RESOLVED" status and preserves §6.1 + §6.2 as historical record.
-**Trigger:** Before any Phase-2 track output cites F36, F37, F38, or F39 by number.
+**Decision:** Accept PLAN.md §3.6 suggested triage verbatim. Promote secondary report-25 proposals as F50 (typed-object architecture/spec confusion) and F51 (Ashby-deficient probabilistic guard, with F33 cross-reference).
+**Files updated:** §4 (now carries the four canonical F36-F39 entries); §4a (new section with F50-F51); §6 header (status: RESOLVED + rationale); top-of-file F36/F37 status note.
+**Resolved before:** Phase 2 track dispatch — no Phase-2 output yet cites these F-numbers.
 
 ---
 
@@ -465,9 +530,7 @@ The two-column approach lets architectures specialize their mitigation budget pe
 
 ## 8. Coverage notes
 
-**Total F-modes catalogued (with numbers assigned):** 45 — F1 through F35, F40 through F49. F36–F39 are reserved pending the lead-agent triage in §6.
-
-**Plus reserved / pending:** F36, F37, F38, F39 (one collision pair documented in §6, requires lead-agent triage). On triage acceptance per §6.2, the four numbers are filled; on triage of report 25's secondary proposals, F50 + F51 would be added.
+**Total F-modes catalogued (with numbers assigned):** 51 — F1 through F51 with F38 and F39 occupying the secondary Round-9 slots per the 2026-05-23 lead-agent triage (§6). F50 and F51 added from the report-25 secondary proposals in the same triage.
 
 ### 8.1 Candidate F-modes found in corpus but never formally promoted with an F-number
 

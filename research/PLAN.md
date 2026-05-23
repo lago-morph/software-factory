@@ -35,7 +35,7 @@ Rounds 1–12 complete (see §10 for the round-by-round lookup). What's left is 
 
 ### Open items live in
 
-- §3 Bottlenecks (§3.2 ~~curated human-review backlog~~ **superseded by v3 synthesis path 2026-05-23**; §3.6 F36/F37 numbering collision — now scheduled for [v3 Phase 1B](../ARCHITECTURE-V3-SYNTHESIS-PLAN.md)).
+- §3 Bottlenecks (§3.2 ~~curated human-review backlog~~ **superseded by v3 synthesis path 2026-05-23**; §3.6 ~~F36/F37 numbering collision~~ **resolved 2026-05-23 in v3 Phase 1B**).
 - §5 Work remaining.
 - §6.1 Cross-corpus propagation flags.
 - ~~`research-plan.md` (root) — the structural pivot proposal. Decision pending.~~ **2026-05-23: Resolved.** User decided in favor of v3 synthesis path; [`research-plan.md`](../archive/research-plan.md) archived, constraints extracted to [`constraints-extracted`](../architectures/v3/constraints-extracted.md), execution plan in [`ARCHITECTURE-V3-SYNTHESIS-PLAN`](../ARCHITECTURE-V3-SYNTHESIS-PLAN.md).
@@ -86,7 +86,12 @@ These three tasks were explicitly excluded from subagent dispatch in the origina
 
 The original §3.2 carried a third task — "Update `spec-driven-ai-dev.md`" with the 4-field El Kaim extension from [`14-el-kaim-book-intent-and-spec-authorship`](14-el-kaim-book-intent-and-spec-authorship.md). **Retired 2026-05-21** (issue [#105](https://github.com/lago-morph/software-factory/issues/105)): `spec-driven-ai-dev.md` was reframed as a cataloged source (record [`3592091691`](../reference-only/3592091691/spec-driven-ai-dev.md)) and is no longer treated as a mutable internal artifact. The 4-field discipline from Report 14 lives on as a research finding that informs the v3 architecture choice (see `research-plan.md`); it does not amend the source document.
 
-### 3.6 Failure-mode numbering collision — F36/F37 dual-proposed by reports 25 and 26
+### 3.6 Failure-mode numbering collision — **RESOLVED 2026-05-23 in v3 Phase 1B**
+
+**Resolution.** Lead agent accepted the suggested triage verbatim during v3 Phase-1B failure-mode consolidation. Canonical entries are in [`failure-modes-v3` §4](../architectures/v3/failure-modes-v3.md) (F36-F39) and §4a (F50-F51 for the report-25 secondary proposals). Resolution audit trail preserved in §6 of that file.
+
+**Original section** (preserved for historical context):
+
 
 Reports 25 and 26, dispatched in parallel as part of the Round-9 manual drain, each independently proposed candidate failure modes F36 and F37. The two pairs name **different phenomena**:
 
@@ -110,7 +115,7 @@ The research phase is complete when **all** of the following hold:
 - Cross-corpus propagation sweep complete (§6.1).
 - §3.2 curated-human-review backlog resolved one way or the other (update or won't-fix).
 - Either a unified synthesis exists at `research/synthesis/final.md` (or equivalent) or the user has explicitly decided not to write one (per `research-plan.md`).
-- F36/F37 numbering collision triaged (§3.6).
+- ~~F36/F37 numbering collision triaged (§3.6)~~ **resolved 2026-05-23 in v3 Phase 1B; canonical entries in [`failure-modes-v3` §4](../architectures/v3/failure-modes-v3.md) + §4a**.
 
 ### 5.1 Concrete tasks
 
@@ -190,7 +195,7 @@ Each row is an open thread; the third column states the explicit trigger that mo
 | **`research-plan.md` direction** | User decision pending | User picks: unified synthesis (yes / no); v3 single architecture (yes / no) — see §5 |
 | **§3.2 curated tasks** | User decision; likely folded into the v3 architecture step | Decision on `research-plan.md` direction (above) |
 | **§6.1 cross-corpus sweep** | Mechanical, ~30 min via single `Grep` pass + small subagent dispatch | User says "do the sweep" |
-| **F36/F37 numbering collision (§3.6)** | Collision documented; not yet resolved | Lead agent triage decision |
+| **F36/F37 numbering collision (§3.6)** | ✅ Resolved 2026-05-23 in v3 Phase 1B | n/a |
 
 ---
 

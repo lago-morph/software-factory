@@ -8,11 +8,9 @@
 
 ## 0. Operating rule
 
-Execute this plan step by step. Each step has a built-in stop-and-ask checkpoint at the end — surface what + why, wait for the user's go-ahead, then do exactly that step.
+If you're in an interactive conversation with the user, do not go off on your own. Follow this plan. Don't do side work outside it. If the user asks for something the plan does not cover, stop and ask.
 
-**Do not do side work outside this plan.** If the user is in interactive dialog with you (sending messages, replying turn-by-turn) and asks for or implies something the plan does not cover, stop and ask before starting.
-
-For the global form of this rule, see [`AGENTS.md`](../../AGENTS.md) section *"Interactive operation."*
+Each step in §3 is a separate decision point. Surface what + why and wait for go-ahead before executing it. See [`AGENTS.md`](../../AGENTS.md) "Interactive operation" for the global form of this rule.
 
 ---
 
@@ -31,7 +29,7 @@ For the global form of this rule, see [`AGENTS.md`](../../AGENTS.md) section *"I
 **What survives from the previous Phase-2 dispatch.**
 
 - The 3 diagnostic follow-up tracks (`unified-A-prime`, `unified-C-prime`, `unified-D-off-list`) and the 4 Phase-2 bias-guard audits live in [`tracks/`](tracks/) and [`bias-guards/phase-2/`](bias-guards/phase-2/). They were dispatched *after* the contamination was identified, with explicit contamination context in their prompts. They remain valuable: they are the evidence that drove the cleanup decision, and they are supplementary unified-architecture candidates alongside the clean re-runs.
-- The 9 original (contaminated) tracks in [`tracks/`](tracks/) are currently still in the live tree because the previous session's cleanup commit (`eb8aab4`) was reverted at the user's instruction. **They need to be moved out of `tracks/` before the re-run, otherwise the re-run will overwrite them and we'll lose the historical evidence.**
+- The 9 original (contaminated) tracks remain in `tracks/`. Step 3.1 of this plan moves them out under explicit user approval. Step 3.2 deletes them, keeping only a history-index file. The previous session attempted this same move in commit `eb8aab4` without authorization; the user reverted it. The move is still the right action — the revert was about who authorized it, not whether it should happen.
 
 ---
 
@@ -96,7 +94,6 @@ Each step below has:
 
 **Expected outcome.** Live `tracks/` directory contains only the 3 diagnostic tracks. `tracks-superseded/` contains the 9 contaminated tracks + an `ARCHIVE.md`. One commit.
 
-**Stop-and-ask point.** Before executing the `git mv` operations, surface this step + intent to the user; wait for explicit "yes do step 3.1."
 
 ### Step 3.2 — Delete the contaminated tracks from the live tree, keep only the index
 
@@ -106,7 +103,6 @@ Each step below has:
 
 **Expected outcome.** Live tree has no contaminated track files. The index file exists, names the 9 superseded tracks, and points to the git commit hash where they were last visible. One commit.
 
-**Stop-and-ask point.** Before deleting, surface this step + intent; wait for explicit "yes do step 3.2."
 
 ### Step 3.3 — Clean `failure-modes-v3.md` (F57 wording fix)
 
@@ -116,7 +112,6 @@ Each step below has:
 
 **Expected outcome.** F57 reads as a phenomenon-description, not as an architectural commitment. One commit with the edit + the bias-guard note inline.
 
-**Stop-and-ask point.** Before editing, surface the proposed wording change side-by-side (old vs new) and ask the user to approve the exact new wording.
 
 ### Step 3.4 — Clean `contradictions.md` (WEAK-5 + bias-guard-sharpening citation discipline)
 
@@ -126,7 +121,6 @@ Each step below has:
 
 **Expected outcome.** A header note in `contradictions.md` that tells re-run subagents how to treat bias-guard sharpenings. One commit.
 
-**Stop-and-ask point.** Before editing, surface the proposed header-note wording; ask the user to approve.
 
 ### Step 3.5 — Document D5, D6, D7 in `decisions-captured.md`
 
@@ -140,7 +134,6 @@ Each step below has:
 
 **Expected outcome.** Three new D-entries in `decisions-captured.md`. One commit. The previous session drafted text for these three entries (since reverted); fresh-session reviewers can re-draft from scratch or recover the prior draft from commit `eb8aab4`.
 
-**Stop-and-ask point.** Before editing, surface the proposed D5/D6/D7 text; ask the user to approve.
 
 ### Step 3.6 — Re-dispatch all 9 Phase-2 tracks against clean sources
 
@@ -166,7 +159,6 @@ The 9 tracks:
 
 **Expected outcome.** 9 new track files in `tracks/`, plus 3 existing diagnostic tracks (`A-prime`, `C-prime`, `D-off-list`) untouched. Commits as each subagent reports back, per the previous session's pattern.
 
-**Stop-and-ask point.** Before dispatching, surface the dispatch plan — show the 9 tracks list and confirm the user wants all 9 dispatched in parallel (vs in batches of 3 if rate limits become a concern, per the user's earlier preference). Ask for the explicit go-ahead. After dispatch, the subagents run in the background; further user approval not needed for committing each result as it returns.
 
 ### Step 3.7 — Re-run the Phase-2 bias guards on the clean re-dispatch outputs
 
@@ -176,7 +168,6 @@ The 9 tracks:
 
 **Expected outcome.** 4 new bias-guard reports. Commits as they land.
 
-**Stop-and-ask point.** Before dispatching, surface the plan to re-run the bias guards. Ask the user whether to overwrite the previous reports or write fresh files (e.g., `anchor-detector-v2.md`). The cleanest choice is fresh files so the previous contamination-diagnosis reports remain visible.
 
 ### Step 3.8 — Open the Phase-2 PR
 
@@ -186,22 +177,18 @@ The 9 tracks:
 
 **Expected outcome.** One PR, ready-for-review (not draft, per AGENTS.md convention).
 
-**Stop-and-ask point.** Before opening, surface the proposed PR title and body for the user to review.
 
-### Step 3.9 — Clean up this plan file
+### Step 3.9 — Clean up transient artifacts
 
-**What.** After the Phase-2 PR (from step 3.8) merges to `main`, remove `architectures/v3/PHASE-2-RERUN-PLAN.md` from the live tree. The user explicitly authorized either of two cleanup modes; pick one and surface it for confirmation:
+**What.** After the Phase-2 PR (from step 3.8) merges to `main`, do all of the following in one commit:
 
-- **Delete entirely.** `git rm architectures/v3/PHASE-2-RERUN-PLAN.md`. The file remains accessible in git history.
-- **Archive.** Move to `archive/v3-phase-2-rerun-plan.md` (or similar) with a brief "this was a transient takeover plan; preserved for archaeology" header. Use this mode if you think future archaeology is likely.
+1. Remove `architectures/v3/PHASE-2-RERUN-PLAN.md` from the live tree. Either `git rm` it entirely (preferred — git history retains it) or move it to `archive/v3-phase-2-rerun-plan.md` with a brief status header (use if future archaeology is likely). Surface the choice for confirmation.
+2. Revert the top-of-file pointer block in `research/PLAN.md` (the "⚠ Are you picking up v3 architecture work?" section, plus any companion paragraph). That block was added solely to redirect agents away from `research/PLAN.md` and into this plan during the bridge. With the bridge done, the block becomes confusing noise.
 
-Either way, the file must not remain in the live tree.
+**Why (intent).** Both artifacts are transient bridge devices for one session-to-session handoff. Leaving them in the live tree after Phase 2 lands creates ambiguity ("is this still active? did this happen?") and burns tokens on every future agent that reads them. Cleanup is the discipline transient documents require.
 
-**Why (intent).** This plan is a transient bridge artifact — it exists for exactly one session-to-session handoff. Once Phase 2 is complete and the PR has merged, the plan's purpose is served. Leaving it in the live tree creates ambiguity (future readers will wonder "is this still active? did this happen?") and risks future sessions following stale instructions. Cleanup is the discipline transient documents require. Per the user's explicit instruction: *"your phase 2 rerun plan should have as a last step to clean up when done, including deleting the file. If you want to archive it or something that's ok too."*
+**Expected outcome.** No `PHASE-2-RERUN-PLAN.md` in `architectures/v3/`. No "⚠ Are you picking up v3 architecture work?" block in `research/PLAN.md`. One commit; either include in the Phase-2 PR if still open, or open a small follow-up PR.
 
-**Expected outcome.** No `PHASE-2-RERUN-PLAN.md` in `architectures/v3/`. Either deleted entirely (preferred default — git history is sufficient) or archived under `archive/` with a status header. One commit. Either include this commit in the Phase-2 PR (if the PR is still open) or open a small follow-up PR for the cleanup.
-
-**Stop-and-ask point.** Before deleting/archiving, surface the choice (delete vs archive) to the user; wait for explicit approval. This is the last step of the re-run; do not skip it.
 
 ---
 

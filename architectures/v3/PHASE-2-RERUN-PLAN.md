@@ -14,6 +14,8 @@ Follow this plan step by step. Don't do side work outside it. Stop and ask befor
 
 Re-execute Phase 2 of the v3 architecture-synthesis plan: 9 parallel mandate-and-axis-specific tracks producing architecture sketches, against cleaned source files. A prior Phase-2 dispatch was contaminated; the contaminated artifacts and the contamination diagnosis are preserved as permalinks in [`history/HISTORICAL-RECORD.md`](history/HISTORICAL-RECORD.md) — do not read them into context.
 
+Source-file cleanup and contaminated-artifact relocation were already completed earlier on this branch (the source files in `architectures/v3/` are clean as listed in §2). The next session starts directly at the dispatch step.
+
 ---
 
 ## 2. Pre-flight: where everything is
@@ -28,40 +30,20 @@ Re-execute Phase 2 of the v3 architecture-synthesis plan: 9 parallel mandate-and
 | [`contradictions.md`](contradictions.md) | clean | carries bias-guard-sharpening citation discipline note |
 | [`failure-modes-v3.md`](failure-modes-v3.md) | clean | one prior contamination resolved in commit `3ba0085` |
 | [`corpus-inventory.md`](corpus-inventory.md) | clean | post-Phase-1 bias-guard re-tags landed |
-| `tracks/` | empty | populated by step 3.6 |
+| `tracks/` | empty | populated by step 3.1 |
 | [`bias-guards/phase-1/`](bias-guards/phase-1/) | clean | Phase-1 inputs |
-| `bias-guards/phase-2/` | empty | populated by step 3.7 |
+| `bias-guards/phase-2/` | empty | populated by step 3.2 |
 | [`history/HISTORICAL-RECORD.md`](history/HISTORICAL-RECORD.md) | preserved | permalinks to past contaminated artifacts; **do not read** |
 
-**Open PR for Phase 2:** none currently. PR opens at step 3.8.
+**Open PR for Phase 2:** none currently. PR opens at step 3.3.
 
 ---
 
-## 3. The 9 substantive steps
+## 3. The 4 substantive steps
 
 Each step has: **What** (concrete action), **Why (intent)** (the goal), **Expected outcome**. Steps with a **Stop-and-ask** line require explicit user go-ahead before executing.
 
-### Step 3.1 — Move contaminated tracks out of the live tree
-
-**Status:** ✅ DONE (commit `d408716`). 9 contaminated tracks + 3 diagnostic tracks + 4 Phase-2 bias-guard audits removed from active tree; permalinks recorded in [`history/HISTORICAL-RECORD.md`](history/HISTORICAL-RECORD.md).
-
-### Step 3.2 — Delete the contaminated tracks, keep only the index
-
-**Status:** ✅ DONE (folded into commit `d408716`).
-
-### Step 3.3 — Clean `failure-modes-v3.md`
-
-**Status:** ✅ DONE (commit `3ba0085`). An F-mode entry whose mechanism field carried an architectural presupposition was rewritten to a neutral phenomenon-description.
-
-### Step 3.4 — Clean `contradictions.md`
-
-**Status:** ✅ DONE (commit `3ba0085`). One-paragraph citation-discipline note added at the top, instructing readers to cite the underlying corpus material referenced inside the bias-guard sharpening paragraphs rather than the sharpening's own ID.
-
-### Step 3.5 — Document D5, D6, D7 in `decisions-captured.md`
-
-**Status:** ✅ DONE (commit `3ba0085`). D5 (bias-guard integration discipline), D6 (full re-run after contamination), D7 (off-list / blind-axis test) added with sanitized fictitious-vocabulary examples.
-
-### Step 3.6 — Re-dispatch all 9 Phase-2 tracks against the clean sources
+### Step 3.1 — Re-dispatch all 9 Phase-2 tracks against the clean sources
 
 **What.** Dispatch 9 Opus subagents in parallel (one Agent tool call per subagent, all in one assistant message). Each writes its output to `architectures/v3/tracks/<track-name>.md`. The dispatch prompts are embedded below.
 
@@ -186,7 +168,7 @@ open question surfaced.
 
 **Track 9 — `unified-no-axis-C`** (output: `tracks/unified-C.md`): same instruction as Track 7.
 
-### Step 3.7 — Re-run the Phase-2 bias guards on the new tracks
+### Step 3.2 — Re-run the Phase-2 bias guards on the new tracks
 
 **What.** After all 9 tracks return and are committed, dispatch 4 Phase-2 bias-guard subagents in parallel: anchor-detector, splitter, lumper, axis-divergence auditor. Outputs go to `architectures/v3/bias-guards/phase-2/`. The bias-guard briefs are recoverable from earlier dispatches in this branch's git history if needed.
 
@@ -196,9 +178,9 @@ open question surfaced.
 
 **Stop-and-ask:** before dispatching, surface the bias-guard plan and confirm the briefs; wait for user go-ahead.
 
-### Step 3.8 — Open the Phase-2 PR
+### Step 3.3 — Open the Phase-2 PR
 
-**What.** Open a PR for the Phase-2 work — clean source files (3.3–3.5), 9 re-dispatched tracks (3.6), bias-guard re-runs (3.7). Ready-for-review (not draft) per AGENTS.md.
+**What.** Open a PR for the Phase-2 work — 9 re-dispatched tracks (step 3.1), bias-guard re-runs (step 3.2), and any prior commits on this branch not yet on `main`. Ready-for-review (not draft) per AGENTS.md.
 
 **Why (intent).** The PR is the user's review surface and the audit trail for the contamination-fix discipline.
 
@@ -206,16 +188,18 @@ open question surfaced.
 
 **Stop-and-ask:** before opening, surface the proposed PR title and body; wait for user go-ahead.
 
-### Step 3.9 — Clean up transient artifacts
+### Step 3.4 — Clean up transient artifacts and update the master plan's pointer
 
 **What.** After the Phase-2 PR merges to `main`:
 
 1. Remove `architectures/v3/PHASE-2-RERUN-PLAN.md` from the live tree (preferred: `git rm`; alternative: move to `archive/` with a status header).
-2. Revert the top-of-file pointer block in `research/PLAN.md` (the "⚠ Picking up work?" banner added during this bridge).
+2. Update the current-state pointer at the top of [`ARCHITECTURE-V3-SYNTHESIS-PLAN.md`](../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md) from "in Phase 2" to "in Phase 3" — and remove the line referencing the takeover plan (which no longer exists).
 
-**Why (intent).** Both artifacts are transient. Leaving them in the live tree burns tokens on every future agent reading them.
+The banner at the top of [`research/PLAN.md`](../../research/PLAN.md) stays as-is. It points at the master synthesis plan, which is durable.
 
-**Expected outcome.** Neither artifact in the live tree.
+**Why (intent).** The takeover plan is transient — exists only for this one session-to-session handoff. The master plan is durable and continues through Phases 3-8. Updating its current-state pointer keeps the chain to subsequent phases intact.
+
+**Expected outcome.** No takeover plan in the live tree. Master plan's pointer reflects current phase.
 
 ---
 

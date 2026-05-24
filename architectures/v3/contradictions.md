@@ -1,5 +1,5 @@
 ---
-based-on-commit: d1a60c0
+based-on-commit: d430aeb
 based-on-date: 2026-05-23
 ---
 
@@ -22,6 +22,7 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** OQ-B1 (lights-out / L5 / regime), §2.1 of brief.
 - **Mandate relevance:** both
 - **Load-bearing impact (high):** Decides whether v3's lights-out mandate (UC1) requires defending against an empirical anti-pattern claim or inherits an aspirational frame.
+- **Phase-1 bias-guard sharpening (WEAK-1):** Sharper framing: Jaymin's Ch 9 §7 is itself a **two-sided text** — it names L5 as anti-pattern *and* frames 2026 as *"the third historical attempt"* at the factory concept with *"LLMs dissolving the flexibility problem that killed both prior attempts"* (report 09 §7 paraphrase). Jaymin is simultaneously the source of the strongest anti-L5 claim *and* a source of the strongest "this time it works" framing. The contradiction is not merely between Shapiro-and-Jaymin; it is internal to Jaymin Ch 9 §7 and parallel to CTR-C6's Jaymin-vs-Jaymin scaffold contradiction. Why the sharpening matters: CTR-A1 is currently the headline lights-out contradiction. The register treats it as Shapiro-vs-Jaymin. The internal Jaymin-vs-Jaymin reading suggests Jaymin's threshold framework is itself unstable; OQ-B6 cannot just default to "Jaymin's bars" as one credible option without engaging this instability.
 
 ### CTR-A2 — Shapiro's self-position vs. corpus-propagated "Shapiro as L5"
 - **Claim 1 (Shapiro, Five Levels post, followup [`01`](../../research/followup/01-shapiro-five-levels.md), §"Where Shapiro positions his own work"):** Shapiro positions himself **at L4**, verbatim: *"I'm here."* L5 is described as *other* people: *"I know a handful of people who are doing this. They're small teams, less than five people."*
@@ -84,6 +85,7 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** UC4 working hypothesis; per-work-unit-class mandate-fit.
 - **Mandate relevance:** greenfield
 - **Load-bearing impact (medium):** Determines whether the greenfield architecture treats the spec as an in-flight artifact or a versioned source.
+- **Phase-1 bias-guard sharpening (MISSED-6):** Brier puts specs in pace-layer 3 above code (followup [`12`](../../research/followup/12-brier-pace-layers.md), pace-layer 1: *"in a world of AI, code is free to produce and reproduce."*); Nystrom puts the **spec's version-control history** at the heart of the methodology (report [`35`](../../research/35-lenny-howiai-spec-driven-and-team-ops.md)). Both agree spec > code, but disagree on whether the spec itself moves slowly (Brier: stable mid-layer) or *needs an entire revision-tracked change discipline because it moves fast enough that the deltas are the project narrative* (Nystrom). CTR-B2 (greenfield-fluid vs. fixed-once-mature) misses this sharper **spec-velocity** disagreement: Brier predicts spec stability; Nystrom predicts spec churn rich enough to function as changelog. See also CTR-B7 (new entry).
 
 ### CTR-B3 — "Spec is the most valuable thing you produce" (El Kaim) vs. spec-third under pace layers (Brier)
 - **Claim 1 (El Kaim restatement of Shapiro L4, followup [`01`](../../research/followup/01-shapiro-five-levels.md)):** *"The primary skill at this level is spec-writing… The spec is now the most valuable thing you produce."* (Per followup/01: this is El Kaim's editorialisation; Shapiro himself does not say this.)
@@ -92,6 +94,7 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** Artifact-stack ordering; spec-driven vs. layered-culture architectures.
 - **Mandate relevance:** both
 - **Load-bearing impact (high):** Architecture 1 (Refinery)'s entire pitch — *"the specification is the product"* — is contradicted by Brier's spec-third framing (followup/12 §6: *"Arch 1 (spec-primary contradicted by spec-third)"*).
+- **Phase-1 bias-guard sharpening (MISSED-6):** Brier's pace-layer-3 framing predicts spec stability while Nystrom's spec-git-history-as-changelog framing predicts spec churn rich enough to function as changelog. The two corpus-popular voices on spec primacy disagree at the spec-velocity level, not merely the spec-stack-position level. See also CTR-B7 (new entry) for the standalone spec-velocity contradiction.
 
 ### CTR-B4 — "Specs as source code" (Grove/Jaymin) vs. "checked-in compiled binaries are also valuable" (implicit Willison)
 - **Claim 1 (Sean Grove, per Jaymin, report [`09`](../../research/09-jaymin-book-harnesses-practices-mental-models.md) §3; promoted to Round-2 C12):** *"throwing away prompts after generating code is like checking in compiled binaries while discarding source."*
@@ -108,6 +111,23 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** D-2 default; brownfield substrate divergence.
 - **Mandate relevance:** brownfield
 - **Load-bearing impact (high):** Substrate-level decision (where scenarios live; who can read them). Substrate-vs-methodology layer placement (Phase 4).
+- **Phase-1 bias-guard sharpening (WEAK-3):** Sharper framing: StrongDM's own primary pages contain both *"end-to-end 'user story', often stored outside the codebase"* (scenarios out-of-tree) AND *"Tokens are the fuel"* page enumerating *"traces, screen capture, transcripts, **incident replays**, adversarial use, **agentic simulation**"* (report [`01`](../../research/01-strongdm-factory.md) §1) — many of which are **necessarily inside or generated from the running codebase/runtime**. StrongDM's own discipline already permits scenario-equivalents to live inside the running system; the D-2 default ("outside the codebase") is a simplification of StrongDM's actual practice. Why the sharpening matters: The register's framing makes brownfield look like the awkward case requiring D-2 inversion. The sharper framing shows the **D-2 default itself oversimplifies its primary source**; brownfield is not inverting anything novel — it is closer to StrongDM's actual practice than D-2's stated default is.
+
+### CTR-B6 — El Kaim 9-field intent block vs. UC4 spec-malleable hypothesis (MISSED-3)
+- **Claim 1 (El Kaim Ch 3 §4.1, report [`14`](../../research/14-el-kaim-book-intent-and-spec-authorship.md)):** Intent block is a Kubernetes-shaped typed object with `invariants` defined as *"Non-negotiable conditions that any valid realization of the intent must preserve"* — explicitly designed as the **stable upstream** anchor that protects against confabulation when an LLM drafts a spec.
+- **Claim 2 (UC4 / glossary §0 [`constraints-extracted`](constraints-extracted.md)):** Greenfield is **spec-malleable** — *"the system's architecture is still moving during spec refinement; commitments are reversible."*
+- **The contradiction:** El Kaim's intent → decision → spec → control → feedback chain *requires* non-negotiable invariants at the top; UC4's spec-malleable framing makes everything reversible. The register has CTR-B2 (greenfield-fluid vs. fixed-once-mature) but does **not** surface that El Kaim's deepest spec-authorship primary anchor structurally rejects the spec-malleable framing as an *upstream* practice.
+- **Design question this sits on:** UC4 working hypothesis falsifiability (D1 motivation).
+- **Mandate relevance:** greenfield
+- **Load-bearing impact (high):** UC4 hypothesis falsifiability — the strongest spec-authorship primary anchor in the corpus prescribes upstream stability, not malleability.
+
+### CTR-B7 — Brier "code is fashion / free to reproduce" vs. Nystrom "spec git-history IS the changelog" (MISSED-6)
+- **Claim 1 (Brier, followup [`12`](../../research/followup/12-brier-pace-layers.md), pace-layer 1):** *"in a world of AI, code is free to produce and reproduce."*
+- **Claim 2 (Nystrom / Notion, report [`35`](../../research/35-lenny-howiai-spec-driven-and-team-ops.md)):** **The spec git-history is the project changelog**; Markdown specs in `agent specs/` subfolder are the **AFIS strategy-3 industrial anchor** — load-bearing durable artifact.
+- **The contradiction:** Brier puts specs in pace-layer 3 above code; Nystrom puts the **spec's version-control history** at the heart of the methodology. Both agree spec > code, but disagree on whether the spec itself moves slowly (Brier: stable mid-layer) or *needs an entire revision-tracked change discipline because it moves fast enough that the deltas are the project narrative* (Nystrom). Sharper than CTR-B3 (El Kaim spec-primary vs. Brier spec-third): a **spec-velocity** disagreement between two corpus-popular voices.
+- **Design question this sits on:** Spec-velocity (D-1 default).
+- **Mandate relevance:** both
+- **Load-bearing impact (medium-high):** Affects whether spec change discipline is itself a load-bearing methodology layer (Nystrom) or implicit pace-layer slow (Brier).
 
 ---
 
@@ -160,6 +180,7 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** Scaffold ADR; AGENTS.md / CLAUDE.md discoverability primitive (Round-2 substrate primitive #9).
 - **Mandate relevance:** both
 - **Load-bearing impact (high):** Per report 09 itself: *"the scaffold-vs-harness distinction is not a settled doctrine even within Jaymin's own writing."*
+- **Phase-1 bias-guard sharpening (WEAK-2):** Sharper framing: The manifesto frames documentation/scaffold as *"the bitter lesson in action"* — i.e., grounded in the same principle Gas City's "Bitter Lesson" design mantra (report [`38`](../../research/38-gas-systems-substrate.md) §3) anchors its substrate exclusion list on. This puts Jaymin's manifesto on the **same intellectual side as the Gas City substrate** and against the Anthropic Skills / SKILL.md convention, the AGENTS.md discoverability primitive (Round-2 substrate primitive #9), and the Compound Engineering knowledge-store. The contradiction is not isolated to Jaymin: it is a **bitter-lesson vs. scaffold-substrate** cross-corpus cleavage. Why the sharpening matters: Re-frames CTR-C6 as a corpus-wide split (bitter-lesson camp: Jaymin manifesto + Gas City; scaffold-substrate camp: Anthropic Skills + Every SKILL.md + El Kaim Codex + Round-2 C11). The Phase-5 ADR on scaffold cannot be drafted without naming the bitter-lesson side as a coherent corpus position rather than a single-author quirk.
 
 ### CTR-C7 — Coordination medium: mail bus (Overstory) vs. GitHub-issues-as-coordination (CI-friendly translation)
 - **Claim 1 (Overstory, report [`10`](../../research/10-overstory-substrate-audit.md) §5):** Mail bus is the coordination primitive (`src/mail/`).
@@ -168,6 +189,30 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** Substrate-vs-methodology coordination layer.
 - **Mandate relevance:** both
 - **Load-bearing impact (medium):** Affects which substrate primitives the v3 set inherits without translation.
+
+### CTR-C9 — Anthropic Skills "no network access" vs. "dreaming" overnight research Claws (MISSED-5)
+- **Claim 1 (report [`23`](../../research/23-anthropic-engineering-trilogy.md) §3.5, anchored on platform.claude.com docs):** Anthropic API-surface Skills have **zero network access by runtime fiat** — *"No network access, No runtime package installation, Pre-configured dependencies only."* This is the substrate-level closure rule.
+- **Claim 2 (Shapiro Claw post / report [`32`](../../research/32-shapiro-completion-chat-agent-claw.md), Jesse Vincent's assistant exemplar):** Corpus-canonical "dreaming" primitive — *"every night research things that might help it do its job"* — explicitly requires network access (web search, external research) overnight.
+- **The contradiction:** Anthropic's substrate closes the network at the Skill-layer for safety; Shapiro's Claw-as-substrate-template requires nighttime network research to deliver the *dreaming* primitive (Round-2 referenced as a Claw-class capability).
+- **Design question this sits on:** Substrate-primitive ADR — which closure rule wins.
+- **Mandate relevance:** both
+- **Load-bearing impact (medium-high):** Forces resolution of which closure rule wins for the substrate-primitive ADR.
+
+### CTR-C10 — Report 37 Portuguese-vs-English language effect on policy vs. RouterLLM provider-agnosticism (MISSED-8)
+- **Claim 1 (report [`37`](../../research/37-academic-llm-agent-collusion.md) §5 verbatim):** *"The Portuguese-prompted agents are uniformly more collusive and more stably so across both persona conditions"* — natural-language-of-prompt produces a measurable behavioural-drift signal at the **policy/decision layer**, not just the code-generation layer.
+- **Claim 2 (OpenHands V1 RouterLLM, report [`11`](../../research/11-openhands-substrate-audit.md); D-3 / Round-2 C10 "Agent = Model + Harness"):** The substrate-level routing abstraction treats the model+harness as a swappable unit. The substrate has no first-class abstraction for "prompt natural language" as a behaviour-influencing harness parameter.
+- **The contradiction:** Report 37 supplies the **first empirical anchor** that a *harness parameter the substrate doesn't model* (natural language of the prompt) materially shifts agent behaviour at the policy layer. If true, "Agent = Model + Harness" is incomplete: it's "Agent = Model + Harness + Natural-Language-Register."
+- **Design question this sits on:** Substrate vocabulary completeness (D-3).
+- **Mandate relevance:** both
+- **Load-bearing impact (medium-high):** Forces re-opening of D-3 (Agent = Model + Harness) on grounds the brief flags as already-fragile, but adds an unfamiliar axis to the fragility argument.
+
+### CTR-C11 — Anthropic Skills "open standard / agentskills.io" vs. Skills "do not sync across surfaces" (MISSED-11)
+- **Claim 1 (report [`23`](../../research/23-anthropic-engineering-trilogy.md) §3.5, Dec 18 2025 update):** *"We've published Agent Skills as an open standard for cross-platform portability"* at agentskills.io.
+- **Claim 2 (report [`23`](../../research/23-anthropic-engineering-trilogy.md) §3.5, REFUTED-line):** *"Custom Skills do not sync across surfaces"* — claude.ai / API / Claude Code each maintain separate Skill stores; explicit portability gap.
+- **The contradiction:** Skills are simultaneously promoted as a portable open standard and shipped with a per-surface portability barrier. Affects the scaffold-as-substrate-primitive ADR (CTR-C6 scaffold-vs-anti-pattern adjacent) — corpus is endorsing a substrate primitive whose own primary docs flag is not actually portable today.
+- **Design question this sits on:** Scaffold/substrate ADR (Phase 5).
+- **Mandate relevance:** both
+- **Load-bearing impact (medium):** Anthropic Skills is the closest the corpus has to a cross-vendor scaffold standard; the portability gap is awkward.
 
 ---
 
@@ -204,6 +249,7 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** Substrate-vs-methodology boundary (Phase 4).
 - **Mandate relevance:** both
 - **Load-bearing impact (medium):** Affects whether judge-independence is enforced at the router or at the orchestration layer.
+- **Phase-1 bias-guard sharpening (WEAK-5):** Sharper framing: Anthropic's Auto-Review subagent (report 23 §3.5, five named specialist critics) is a **third position**: F1 is mitigated by same-model-different-role specialization, neither substrate routing nor cross-model topology. This is the position the largest model vendor ships in its own published doctrine. The register treats F1 mitigation as a two-position split; it is a three-position split, and the third position is the one the corpus' deepest substrate-vendor (Anthropic) actually deploys. Why the sharpening matters: Phase-4 substrate-vs-methodology boundary cannot be drawn cleanly between just two F1-mitigation positions. The same-model-different-role position belongs in the register.
 
 ### CTR-D5 — F48/F49 (tacit-collusion / discussion-as-amplification) — multi-agent CaMeL closure unknown
 - **Claim 1 (Followup [`08`](../../research/followup/08-security-primitives.md) §3):** CaMeL closes the Lethal Trifecta (F12) via typed-interpreter boundary in a **single-agent setting**.
@@ -220,6 +266,22 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** Substrate-level guard prompts; F12 mitigation pattern.
 - **Mandate relevance:** both
 - **Load-bearing impact (medium):** Affects every architecture's security wrapper design.
+
+### CTR-D7 — Anthropic single-judge finding vs. CTR-D4 cross-model-critic framing (MISSED-1)
+- **Claim 1 (Anthropic multi-agent research-system post, via followup [`07`](../../research/followup/07-evals-deepdive.md) §2.3 and §3.6 verbatim):** *"a single LLM call with a single prompt outputting scores from 0.0-1.0 and a pass-fail grade was the most consistent and aligned with human judgements"* — and explicitly: *"For LLM-as-Judge selection, using the same model is usually fine because the judge is doing a different task than your main LLM pipeline."*
+- **Claim 2 (CJ Hess `kevin`/`carl`, report [`34`](../../research/34-lenny-howiai-personal-harnesses.md); F46 single-model-review-blindspot; OpenHands RouterLLM mitigation per report [`11`](../../research/11-openhands-substrate-audit.md)):** Same-model self-review is the failure pattern; cross-model critic (carl = Codex/GPT-5.2 reviewing Claude Code) catches what same-model review misses.
+- **The contradiction:** Anthropic (the corpus' deepest evals primary) says **same-model judging is fine when the task is different**; CJ Hess/Round-2 say same-model judging is structurally blind. CTR-D4 only captures the substrate-vs-architecture cut of this; it does not register that the corpus is split on whether *judge-model-family independence is even a necessary condition* for the F1/F27 fix.
+- **Design question this sits on:** Whether judge-diversity is a substrate primitive (D-7-adjacent) or a methodology preference.
+- **Mandate relevance:** both
+- **Load-bearing impact (high):** Directly contests whether judge-diversity is a substrate primitive or a methodology preference.
+
+### CTR-D8 — Same-model judge legitimacy vs. F46 / Tournament model-family-diversity (MISSED-2)
+- **Claim 1 (followup [`07`](../../research/followup/07-evals-deepdive.md) §3.6 quoting the Husain/Shankar FAQ verbatim):** *"using the same model is usually fine because the judge is doing a different task than your main LLM pipeline. While research has shown that models can exhibit bias when evaluating their own outputs, what ultimately matters is how well your judge aligns with human judgments."*
+- **Claim 2 (Tournament spec via archived [`00-synthesis`](../../archive/synthesis-v1-v2/00-synthesis.md) Appendix; CTR-D3):** *"explicit model-family diversity to defeat the Hallucination Loop"* — model-family diversity is named as a *necessary* defense.
+- **The contradiction:** Husain/Shankar empirically and operationally argue same-model judging is fine if alignment-with-human is measured; Tournament treats model-family diversity as load-bearing. The register flags Tournament-vs-Round-2 (CTR-D3) but not Tournament-vs-Husain/Shankar.
+- **Design question this sits on:** F1/F27 mitigation primitive; whether model-family diversity is necessary or contingent.
+- **Mandate relevance:** both
+- **Load-bearing impact (high):** Sibling to CTR-D4; cleaves the Tournament-design assumption.
 
 ---
 
@@ -265,6 +327,14 @@ based-on-date: 2026-05-23
 - **Mandate relevance:** both
 - **Load-bearing impact (medium):** Affects whether language choice rises to an ADR-level decision.
 
+### CTR-E6 — CaMeL "~7-point utility tax" empirics vs. lights-out cost / output framing (MISSED-9)
+- **Claim 1 (followup [`08`](../../research/followup/08-security-primitives.md) §3, paper-body anchored):** *"77% of tasks with provable security vs. 84% with an undefended system"* — CaMeL imposes a measurable utility tax for substrate-level Trifecta closure.
+- **Claim 2 (UC1 lights-out factory + Round-2 §1.1 C13 holdout-discipline-as-substrate; throughput-multiplier framing in report [`35`](../../research/35-lenny-howiai-spec-driven-and-team-ops.md)):** The substrate-investment thesis is that primitive-level safety is **net-positive** (throughput multiplier). No corpus discussion of the empirical CaMeL utility tax against throughput targets.
+- **The contradiction:** The corpus assumes substrate-safety primitives are free or near-free; CaMeL's primary numbers show a 7-point single-pass utility tax (with high per-suite variance per the v2 paper-body fetch). Round-2 elevates substrate-as-cheap; CaMeL is the one substrate-anchored measurement that says **safety has a measurable cost**. (Note: this entry was specified as `CTR-E5` in the bias-guard report; assigned CTR-E6 here because CTR-E5 is already occupied by the language-as-harness entry.)
+- **Design question this sits on:** Substrate-cheap thesis (Round-2); D-5 cost ceilings.
+- **Mandate relevance:** both
+- **Load-bearing impact (medium):** Empirical anchor contesting Round-2's "substrate is cheap" thesis.
+
 ---
 
 ## F. Vocabulary / framing contradictions
@@ -276,6 +346,7 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** Whether the v3 artifact name itself is correct; what UC1's *"lights-out software factory"* claim commits to metaphorically.
 - **Mandate relevance:** both
 - **Load-bearing impact (medium):** Reframes Brier's pace-layer alternative; per followup/12 §6 *"Arch 1 (spec-primary contradicted by spec-third) and Arch 4 (selection-without-vision-anchor contradicted by vision-aligned-variance)."*
+- **Phase-1 bias-guard sharpening (MISSED-10 — Notion ratification angle):** Nystrom transcript via report [`35`](../../research/35-lenny-howiai-spec-driven-and-team-ops.md) §3 has Notion engineers calling Boxy *"both software factory… but I like its internal project name is uh Boxy."* — the most-cited industrial AFIS strategy-3 deployment **adopts the "software factory" framing internally** even while Boxy is the day-to-day name. CTR-F1 omits that the corpus' single strongest industrial primary anchor (Notion/Nystrom) ratifies the factory framing in its own internal vocabulary. This strengthens the factory side of CTR-F1 in a way the register elided.
 
 ### CTR-F2 — "Orchestration is the easy part" vs. Round-2 falsification
 - **Claim 1 (archived [`00-synthesis`](../../archive/synthesis-v1-v2/00-synthesis.md) §2.3):** *"orchestration is the easy part; validation is the hard part."*
@@ -369,6 +440,7 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** Org-design primitive vs. F5 mitigation.
 - **Mandate relevance:** both
 - **Load-bearing impact (medium):** Affects substrate's per-human parallelism caps.
+- **Phase-1 bias-guard sharpening (MISSED-7):** Report [`36`](../../research/36-sendbird-quests-token-tiers.md) §3 has already crossed the threshold from "fleet of N per human" to "human is graded on aggregate fleet output (tokens) with smoothness as the autonomy proxy" — six-tier daily-token leaderboard *"Beginner (<1M tokens/day) → AI God (>100M/day)"*; goal is curve-smoothness (smooth = AI works 24/7); the *executives should be top token consumers*. Sendbird operationalizes **token-spend-per-person as a positive-direction org metric** while CTR-E1 frames Cherny's number as a cost ceiling and F5 frames per-human attention as a hard scarce resource. This inverts F5's framing. See CTR-H12 (new entry).
 
 ### CTR-H5 — BCG ("structurally easier to audit") vs. Kahana ("tracing difficult by design")
 - **Claim 1 (BCG, followup [`10`](../../research/followup/10-governance.md) §6):** Agentic-coded artifact production is *structurally easier to audit* (versioned audit trail, scenarios outside tree, per-action logs).
@@ -392,7 +464,8 @@ based-on-date: 2026-05-23
 - **The contradiction:** Schillace's stance (review-as-firing-offense) is at the far end of a corpus spectrum that has Willison naming unreviewed code as the anti-pattern.
 - **Design question this sits on:** Where review sits in regime classification (L3 vs. L4 vs. L5).
 - **Mandate relevance:** both
-- **Load-bearing impact (medium):** Augments CTR-A3 with a third stance (Schillace).
+- **Load-bearing impact (high)** (raised from medium per Phase-1 bias-guard MISSED-4)**:** Augments CTR-A3 with a third stance (Schillace).
+- **Phase-1 bias-guard sharpening (MISSED-4):** CTR-H7 omits **the most-load-bearing counter-claim**: the two largest substrate vendors have made automated code-review-by-a-distinct-agent a *first-class substrate primitive*. Anthropic S15 (report [`23`](../../research/23-anthropic-engineering-trilogy.md) §3.5) ships five specialized critics (duplicate-code coalescer / compiler-performance / efficiency / Rust code-quality critic / documentation); OpenAI ships a substrate-resident Auto-Review subagent (report [`18`](../../research/18-openai-codex-substrate.md)). Schillace's framing is not just at odds with practice — it is at odds with substrate. See CTR-H13 (new entry) for the substrate-vendor angle as a distinct contradiction.
 
 ### CTR-H8 — Brief §4.1 D-2 ("scenarios outside codebase") fragility — universal vs. brownfield-inverted
 - (See CTR-B5; cross-listed.)
@@ -412,6 +485,23 @@ based-on-date: 2026-05-23
 - **Design question this sits on:** Direct restatement of OQ-B1.
 - **Mandate relevance:** both
 - **Load-bearing impact (high):** The mandate itself is at stake.
+- **Phase-1 bias-guard sharpening (WEAK-4):** Sharper framing: Round-2 §7.6 actually classifies architectures across L3 and L4 (not "all at L3"); the contradiction is more precisely *"nothing in 2026 evidence supports L5 anywhere except as a research aspiration"* — which means Round-2's ceiling claim is **L5-anti**, not **L3-only**. If UC1 lights-out maps to L4 (per glossary §0), the Round-2 ceiling is **compatible** with UC1 lights-out. CTR-H10 conflates "ceiling is L3" with "ceiling excludes L5," and these have different downstream implications. Why the sharpening matters: The contradiction may dissolve at the L4-vs-L5 mapping rather than at the L3-vs-L4 mapping. CTR-A4 (vocabulary mapping) is the actual decisive contradiction; CTR-H10 should be subordinate to CTR-A4, not parallel to it.
+
+### CTR-H12 — Sendbird per-employee token-tier visibility vs. F47 Goodhart + Cherny per-engineer $100K (MISSED-7)
+- **Claim 1 (report [`36`](../../research/36-sendbird-quests-token-tiers.md) §3 verbatim):** Six-tier daily-token leaderboard *"Beginner (<1M tokens/day) → AI God (>100M/day)"*; **goal is curve-smoothness (smooth = AI works 24/7)**; the *executives should be top token consumers*.
+- **Claim 2 (CTR-E1 Cherny $100K+/month token spend; F5 cognitive ceiling — archived synthesis §4):** Cherny's industrial-grade token spend per engineer (~$100K+/month); Willison's exhaustion-by-11am cognitive ceiling at 4 agents.
+- **The contradiction:** Sendbird operationalizes **token-spend-per-person as a positive-direction org metric** (smoother curve = better) while CTR-E1 frames Cherny's number as a cost ceiling and F5 frames per-human attention as a hard scarce resource. The contradictions register notes CTR-H4 ("Per-employee Claw fleets vs. cognitive-ceiling caps") but **fails to register that report 36 has already crossed the threshold from "fleet of N per human" to "human is graded on aggregate fleet output (tokens) with smoothness as the autonomy proxy."** This inverts F5's framing.
+- **Design question this sits on:** Org-design first-principle (CTR-H4 + CTR-E1 cluster); F5 (cognitive ceiling) reframing.
+- **Mandate relevance:** both
+- **Load-bearing impact (medium-high):** Surfaces that the corpus' Theme-5 measurement primitive (curve-smoothness) directly competes with F5 (cognitive ceiling) as the org-design first-principle.
+
+### CTR-H13 — Schillace's "code review as firing offense" vs. Anthropic Auto-Review + Codex Auto-Review substrate primitive (MISSED-4)
+- **Claim 1 (Schillace, report [`28`](../../research/28-schillace-sunday-letters.md) §"Surprises and contradictions"; restated as CTR-H7):** *"code review as firing offense"* — code review treated as anti-pattern at the team-shape layer.
+- **Claim 2 (Anthropic S15 / report [`23`](../../research/23-anthropic-engineering-trilogy.md) §3.5; Codex Auto-Review subagent, report [`18`](../../research/18-openai-codex-substrate.md)):** Both Anthropic and OpenAI ship **named substrate-level Auto-Review agents** — Anthropic's five specialized critics (duplicate-code coalescer / compiler-performance / efficiency / Rust code-quality critic / documentation), OpenAI's substrate-resident Auto-Review subagent.
+- **The contradiction:** The two largest substrate vendors have made automated code-review-by-a-distinct-agent a *first-class substrate primitive*. Schillace's framing is not just at odds with practice — it is at odds with substrate. (Note: this entry was specified as `CTR-H11` in the bias-guard report; assigned CTR-H13 here because CTR-H11 is already occupied by "Code is fashion now" vs "low-background steel" entry.)
+- **Design question this sits on:** Substrate-vs-methodology boundary on the review primitive.
+- **Mandate relevance:** both
+- **Load-bearing impact (high):** Forces the v3 set to choose between two corpus-popular positions (Schillace's team-shape doctrine vs. substrate-resident auto-review).
 
 ### CTR-H11 — "Code is fashion now" (Brier) vs. "low-background steel" (Willison)
 - **Claim 1 (Brier pace layer 1, followup [`12`](../../research/followup/12-brier-pace-layers.md)):** *"in a world of AI, code is free to produce and reproduce."* Fastest layer; high churn expected.
@@ -434,7 +524,7 @@ based-on-date: 2026-05-23
 
 ## Coverage notes
 
-- **Total contradictions registered:** 38 (CTR-A1–A6, CTR-B1–B5, CTR-C1–C7, CTR-D1–D6, CTR-E1–E5, CTR-F1–F4, CTR-G1–G4, CTR-H1–H11; plus 4 soft candidates).
+- **Total contradictions registered:** 49 (CTR-A1–A6, CTR-B1–B7, CTR-C1–C7 + C9–C11, CTR-D1–D8, CTR-E1–E6, CTR-F1–F4, CTR-G1–G4, CTR-H1–H13; plus 4 soft candidates). Phase-1 bias-guard integration 2026-05-23 added 11 MISSED contradictions (mostly Section C/D/H), sharpened 5 WEAK entries, and surfaced two diagnostic patterns: post-Round-9 reports were systematically under-mined in the original register; contradictions weakening Round-2's substrate-cheap thesis were absent. Both patterns are now addressed by the new entries. Two MISSED entries (MISSED-4, MISSED-9) were assigned different CTR-IDs than the bias-guard report's recommendation because the recommended IDs (CTR-H11, CTR-E5) were already occupied; reassigned to CTR-H13 and CTR-E6.
 - **Coverage gaps (areas where more contradictions likely exist but were not exhaustively chased):**
   - **El Kaim book corpus (reports 14–17, 24).** Read only at INDEX-anchor depth. The corpus has flagged 8 El Kaim-vs-Shapiro divergences via PLAN.md §6.1; only 2–3 are explicitly registered here (CTR-A2, CTR-B3). The other 5+ specific paraphrase divergences (L0 outrun-by-people, L1 speedup line, L2 90%-vs-most, NHTSA framing gloss, StrongDM team-size attribution) are listed verbatim in followup/01 §"El Kaim vs. Shapiro discrepancies" but not all individually registered here as they are largely textual fidelity issues rather than architectural contradictions.
   - **Cisco/LangChain pilot data (report 12 §2.2)** — numbers cited by Round-2 as validation; not stress-tested for contradiction against other pilots.

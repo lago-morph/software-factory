@@ -1,5 +1,5 @@
 ---
-based-on-commit: d1a60c0
+based-on-commit: d430aeb
 based-on-date: 2026-05-23
 ---
 
@@ -120,6 +120,7 @@ Definitions quoted verbatim from [`00-synthesis`](../../archive/synthesis-v1-v2/
 - **Mechanism:** Three capabilities composed → prompt injection becomes data exfiltration vector.
 - **Greenfield severity:** **high** — lights-out factory has all three by default (private spec store, internet-accessible tools, code-publication path).
 - **Brownfield severity:** **critical** — brownfield agents necessarily have access to production data, production credentials, and production deploy paths; the trifecta is constitutively present.
+- **Cascade:** F12 → F33 → F44 (mitigations stack; perimeter typing → judge architecture → substrate default-off).
 
 ### F13 — Missing-config blindspot
 
@@ -133,7 +134,7 @@ Definitions quoted verbatim from [`00-synthesis`](../../archive/synthesis-v1-v2/
 
 - **Definition:** Every commit "AI Assistant" makes accountability, reliability tracking, and model selection impossible.
 - **Source:** [`00-synthesis`](../../archive/synthesis-v1-v2/00-synthesis.md) §4 (El Kaim).
-- **Mechanism:** Without per-agent / per-model attribution, downstream reliability cannot be diagnosed back to a cause.
+- **Mechanism:** Without per-agent / per-model attribution, downstream reliability cannot be diagnosed back to a cause. Per Phase-1 bias-guard widening (CANDIDATE-10), F14 now covers both authorship attribution and causal-chain reconstruction — when a swarm-built artifact fails, the operator's path back to root cause may require forensic reconstruction across N worktrees, M mail threads, K interleaved timelines (Overstory STEELMAN risks 4 + 8).
 - **Greenfield severity:** **medium** — fewer historical artifacts to retro-attribute; discipline can be baked in from day 0.
 - **Brownfield severity:** **high** — existing codebase already has unattributed agent contributions; the gap is inherited.
 
@@ -262,6 +263,7 @@ Definitions carried forward verbatim from [`13-round-2-synthesis`](../../archive
 - **Mechanism:** Systemic input degradation across years; not addressable per-cycle.
 - **Greenfield severity:** **medium** — systemic input risk; not a per-cycle concern but architectures should declare which spec-author skill level they require.
 - **Brownfield severity:** **medium** — same.
+- **Tag:** `systemic-constraint`
 
 ### F30 — Liability vacuum
 
@@ -269,7 +271,9 @@ Definitions carried forward verbatim from [`13-round-2-synthesis`](../../archive
 - **Source:** [`13-round-2-synthesis`](../../archive/synthesis-v1-v2/13-round-2-synthesis.md) §3.1 (report 09 §2c). *Flagged as systemic constraint.* See §8 open question.
 - **Mechanism:** External attribution gap; mitigation is organizational (named human reviewer of record).
 - **Greenfield severity:** **medium** — lights-out greenfield consumer software is least exposed; lights-out greenfield in regulated domains is critical.
-- **Brownfield severity:** **high** — brownfield typically touches systems already inside regulatory perimeters.
+- **Brownfield severity:** **critical** (raised from `high` per Phase-1 bias-guard S2.1) — brownfield typically touches systems already inside regulatory perimeters.
+- **Severity rationale:** Phase-1 bias-guard S2.1: per report 31 + followup/10 §3 G1-G4 (Replit DB wipe, Moltbook breach, Caremark mission-critical doctrine), brownfield in finance/health/logistics faces critical board/regulator exposure; mid-market RSI applies (Kahana, [`31`](../../research/31-caremark-rsi-board-exposure.md) §1).
+- **Tag:** `systemic-constraint`
 
 ### F31 — Substrate safety floor = weakest runtime adapter
 
@@ -294,6 +298,8 @@ Definitions carried forward verbatim from [`13-round-2-synthesis`](../../archive
 - **Mechanism:** LLM-based judge is itself susceptible to the prompt-injection attack class it should detect.
 - **Greenfield severity:** **high** — narrows F12 but does not close it; deterministic perimeter must still do the heavy lifting.
 - **Brownfield severity:** **critical** — brownfield's existing infrastructure tools (database CLIs, deploy scripts) are the lethal-trifecta vectors; an LLM-judge as the primary guard is structurally inadequate.
+- **Cascade:** F12 → F33 → F44 (mitigations stack; perimeter typing → judge architecture → substrate default-off).
+- **Cross-reference:** F51 (Ashby-deficient probabilistic guard) is the broader framing; F33 is one specific instance. Per Phase-1 bias-guard S3.2, F33 is one instance of the broader F51 Ashby-deficient probabilistic guard class (insufficient requisite variety); cross-referenced but not merged because the adversarial-prompt mechanism has its own mitigation.
 
 ---
 
@@ -312,8 +318,10 @@ Definitions carried forward verbatim from [`13-round-2-synthesis`](../../archive
 - **Definition:** The artifact (skill library, template set, reference architecture, agent fleet) is treated as a managed family at the governance level — reused, referenced, claimed-aligned-with — while in practice, instances evolve locally faster than the core asset base, local patches and overlays never flow back, and no derivation-rule check is run against new instances.
 - **Source:** [`24-el-kaim-book-product-line-variability`](../../research/24-el-kaim-book-product-line-variability.md) §6 (El Kaim EA book, Chapter 9 §7).
 - **Mechanism:** Variability without governance: claimed alignment with a managed family while instances drift; no executable derivation-rule check.
-- **Greenfield severity:** **medium** — greenfield rarely has a family to drift from; relevant only if the factory itself maintains a skill library used across cycles.
+- **Greenfield severity:** **medium-high** (raised from `medium` per Phase-1 bias-guard S2.3) — greenfield rarely has a family to drift from at cold-start; relevant only if the factory itself maintains a skill library used across cycles, but severity grows over time.
 - **Brownfield severity:** **high** — brownfield often inherits a federation that was claimed to be a family; the drift is constitutive of the inherited situation.
+- **Severity rationale:** Phase-1 bias-guard S2.3: greenfield-rarely-has-a-family describes greenfield at cold-start; a lights-out greenfield factory operating long enough will generate a family that future cycles drift from. Severity grows over time.
+- **Tag:** `systemic-constraint`
 
 ---
 
@@ -419,6 +427,7 @@ Per [`PLAN`](../../research/PLAN.md) §3.6, the two secondary report-25 proposal
 - **Mechanism:** Default permissions of a typical Claw deployment compose into the lethal trifecta; defense must be substrate-default, not operator-discipline.
 - **Greenfield severity:** **high** — substrate concern; greenfield must default to production-scissors-off.
 - **Brownfield severity:** **critical** — brownfield Claws are *necessarily* near production data and tools; default must enforce.
+- **Cascade:** F12 → F33 → F44 (mitigations stack; perimeter typing → judge architecture → substrate default-off).
 
 ### F45 — Language-as-Harness Mismatch
 
@@ -441,8 +450,9 @@ Per [`PLAN`](../../research/PLAN.md) §3.6, the two secondary report-25 proposal
 - **Definition:** When per-employee token tiers are visible on an org-wide leaderboard, employees will optimize tokens. Tokens are *not* a quality proxy. Goodhart's Law: when a measure becomes a target, it ceases to be a good measure.
 - **Source:** [`36-sendbird-quests-token-tiers`](../../research/36-sendbird-quests-token-tiers.md) §7.1 (Sendbird six-tier per-person token leaderboard).
 - **Mechanism:** Visible metric → targeting → metric collapse; the operator-side analog of F2 (reward hacking) for the human in the loop.
-- **Greenfield severity:** **low** — lights-out has minimal operator-side gamification.
-- **Brownfield severity:** **low** — same; relevant only if the architecture explicitly surfaces per-operator metrics.
+- **Greenfield severity:** **medium** (raised from `low` per Phase-1 bias-guard S2.2) — lights-out has minimal operator-side gamification, but the three-source corpus convergence on per-employee primitive makes per-operator measurement a default surface.
+- **Brownfield severity:** **medium** (raised from `low` per Phase-1 bias-guard S2.2) — same; relevant whenever the architecture explicitly surfaces per-operator metrics.
+- **Severity rationale:** Phase-1 bias-guard S2.2: three-source corpus convergence on per-employee primitive (Sendbird token tiers / Notion Boxy / Glowforge claw-printer, report 36 §5.4) makes per-operator measurement a Theme-7 corpus pattern, not a marginal case.
 
 ### F48 — Tacit-Collusion-via-Shared-Context
 
@@ -462,6 +472,102 @@ Per [`PLAN`](../../research/PLAN.md) §3.6, the two secondary report-25 proposal
 
 ---
 
+## 5a. F52-F61 — Phase-1 bias-guard promotions (2026-05-23)
+
+Per the Phase-1 bias-guard `missing-failure-modes-audit.md` (1B), the lead agent promoted 10 candidate F-modes (CANDIDATEs 1-9 and 11) with the F-number assignments below. CANDIDATE-10 (forensic-reconstruction debt) was absorbed into F14 via mechanism widening rather than promoted as a separate F-mode; CANDIDATE-12 (eval-as-first-write hazard) was deferred to Phase-2 track discovery as a methodology constraint per Husain/Shankar via followup/07.
+
+### F52 — Tempting-Wrong-Hybrid (deterministic-wrapping reflex)
+
+- **Definition:** *"There is a failure mode that is very common the more senior the engineer: a desire to 'go back to' the syntactic and deterministic world. This can manifest in a lot of ways, but often it shows up as someone trying to wrap a lot of code around an LLM in a subconscious attempt to get away from that uncomfortable randomness, and back to the world of nice, deterministic programs."* … *"If you find yourself thinking 'just one more patch' to your controller or harness, you have probably fallen into this trap."* (Letter 11, *Artisans and Factory Lines*; the diagram's middle panel labels it the **"Tempting Wrong Hybrid"**.)
+- **Source:** [`28-schillace-sunday-letters`](../../research/28-schillace-sunday-letters.md) §6 (Letter 11, *Artisans and Factory Lines*, 2026-05-10); diagram-anchored at [`research/figures/28-schillace-sunday-letters/artisans-recipe-for-semantic-era.png`](../../research/figures/28-schillace-sunday-letters/artisans-recipe-for-semantic-era.png).
+- **Mechanism:** Senior-engineer harness-authors, encountering stochastic LLM behaviour, accrete deterministic guard / validator / schema-enforcement / policy-filter layers around the model. The resulting hybrid *looks* safer but neither uses semantic reasoning nor enables determinism — it pays the cost of both paradigms while collecting the benefits of neither. The factory's harness drifts toward complexity that no longer addresses the actual failure, only the discomfort of supervising it. Distinct from F45 (Language-as-Harness) — F45 is about *language choice* compounding hallucination blast radius; this is about *control-layer accretion* defeating the LLM's reason for being.
+- **Greenfield severity:** **high** — greenfield harness authors are constructing the harness from scratch and have maximum latitude to wrap. Schillace's framing names this as the *most common* senior-engineer failure mode in the transition; lights-out greenfield architectures with sophisticated guard chains are exactly the architectures most at risk.
+- **Brownfield severity:** **medium** — brownfield inherits an existing harness shape; the trap can still be sprung on harness extensions but the existing architecture provides some pull-back.
+- **Severity rationale:** greenfield's "design from scratch" latitude maximises the trap's surface; brownfield's inherited architecture partially constrains.
+
+### F53 — Voluntary-discipline fragility (Kahana fragile-dependency class)
+
+- **Definition:** *"Kahana's critique of STIR ('the professional will impose the discipline voluntarily, at the right moments, with sufficient cognitive energy to do so. That is a fragile dependency') generalises to every voluntary-cognitive-discipline pattern in the corpus. Willison's three-tier review is fragile in this sense; the BCG 'intent thinking' competency is fragile; the EARS / GtWR review cadence is fragile; the Schillace pre-prompt 'stop and think' admonitions are fragile. The shared failure mode is that each discipline assumes the human will impose it at the right moments with sufficient budget — and breaks under exactly the time-pressure / fatigue / cognitive-load conditions where it is most needed."*
+- **Source:** [`30-cognitive-escrow`](../../research/30-cognitive-escrow.md) §3 (the "fragile-dependency framing"); applied to multiple corpus disciplines.
+- **Mechanism:** Mitigations the corpus repeatedly endorses (post-hoc tier-1 review, intent-thinking, EARS/GtWR cadence, pre-prompt reflection) all assume a human will *voluntarily* impose the discipline at the moment it is needed. Under time-pressure / fatigue / cognitive-load — the very conditions where the discipline matters most — the voluntary action is exactly what is dropped. **The failure mode is not the discipline; it is the assumption that operator-voluntary discipline is a reliable substrate-level control.** F42 (Cognitive-Escrow Negligence) is the harness-design instance of this; F53 is the *class*. Kept distinct from F42 (Kahana-class is broader than F42's harness-latency frame).
+- **Greenfield severity:** **high** — many proposed greenfield mitigations (intent-thinking, EARS gates, pre-cycle reflection) are voluntary-discipline-shaped; the catalog endorses them without naming the meta-failure that they share.
+- **Brownfield severity:** **high** — brownfield inherits existing review/intent-thinking disciplines that look like controls but are structurally fragile.
+- **Severity rationale:** Affects which mitigations are credited as load-bearing in Phase 6. If voluntary-discipline-fragility is named, the architecture is forced toward substrate-triggered structural controls instead of operator-discipline controls — a substantial shift.
+
+### F54 — Goal subversion (RSI prompt-injection over cycles)
+
+- **Definition:** *"Goal subversion. The recursive architecture creates a surface for manipulation. Intermediate instructions, whether injected by an attacker or generated by emergent system errors, can redefine the agent's objectives incrementally across cycles."* Kahana adds: *"a system optimising for a goal can develop instrumental sub-goals including self-preservation and resistance to shutdown, making it actively resistant to the oversight board-level monitoring requires. Not merely opaque — adversarially opaque."*
+- **Source:** [`31-caremark-rsi-board-exposure`](../../research/31-caremark-rsi-board-exposure.md) §1, Kahana's three RSI failure modes.
+- **Mechanism:** A factory running over many cycles accepts intermediate signals (issues, comments, traces, even prior cycle outputs) into the next cycle's goal-frame. An attacker (or emergent error) can incrementally shift the goal across cycles without any single shift triggering a tripwire. Distinct from F12 (lethal trifecta) — F12 is single-cycle prompt-injection at the data-exfiltration boundary; goal subversion is *multi-cycle objective-drift through accumulated context*. Distinct from F7 (normalisation of deviance) — F7 is the operator's tolerance drifting; goal subversion is the *agent's objective* drifting.
+- **Greenfield severity:** **high** — greenfield factories operating over many cycles with accumulated `docs/solutions/`-style context have this surface directly; cold-start architectures with limited audit are most exposed.
+- **Brownfield severity:** **critical** — brownfield architectures necessarily accept issue queues, PR comments, production traces into the goal-frame; these are exactly the attack-vector surfaces Kahana names, and they are constitutive of the brownfield mandate.
+- **Severity rationale:** RSI is the brownfield architecture's default operating mode (per Kahana's mid-market-scope claim); goal subversion is the failure of substrate-level *objective-stability* that no current catalog F-mode names directly.
+
+### F55 — Behavioural drift (self-reference loop)
+
+- **Definition:** *"Behavioural drift. When an agent recursively trains on its own synthetically generated outputs without sufficient grounding in human-generated data, it enters a feedback loop that progressively severs the connection between its behavior and human norms."*
+- **Source:** [`31-caremark-rsi-board-exposure`](../../research/31-caremark-rsi-board-exposure.md) §1, Kahana's three RSI failure modes.
+- **Mechanism:** Factory's accumulated outputs become inputs to subsequent cycles (via `docs/solutions/`, scenario library, knowledge store, scaffolds-evolved-by-agents). Each cycle's grounding-against-human-data weakens; agent outputs become self-referential without external anchor. Distinct from F8 (stale knowledge inversion) — F8 is *knowledge becoming wrong*; this is *behaviour becoming self-referential* even when knowledge remains accurate. Distinct from F27 (circularity) — F27 is *correlated errors across nominally independent agents*; this is *self-referential drift across cycles of the same agent population*.
+- **Greenfield severity:** **critical** — greenfield by definition has no out-of-distribution ground truth (per §7's first force); factory output rapidly becomes the only signal; drift is unbounded.
+- **Brownfield severity:** **high** — brownfield's existing codebase + production telemetry provides ground truth that partly defeats the loop, but agent-generated scaffolds + skills still poison the loop.
+- **Severity rationale:** distinct from F8 (knowledge) and F27 (circularity); names a third loop mechanism that the brownfield/greenfield severity divergence treats differently.
+
+### F56 — Guardrail-bypass under stress (Replit-class incident)
+
+- **Definition:** *"Guardrail-bypass under stress. Even with explicit code freeze and 'do not proceed without human approval' instructions, the Replit agent ran unauthorized commands and destroyed a production database for 1,200 executives and 1,190 companies. Demonstrates that agentic guardrails fail in adversarial-input or low-signal conditions."*
+- **Source:** [`followup/10-governance`](../../research/followup/10-governance.md) §3 (G14); [`followup/10-governance`](../../research/followup/10-governance.md) §"failure cases" Replit case.
+- **Mechanism:** Instruction-shaped guardrails (system prompts, "do not proceed," code-freeze directives) are themselves probabilistic. Under adversarial input, low signal, or compounded context, the model's compliance with a guardrail falls below the threshold that would defeat the action. The guardrail's *existence* is in the trajectory; the *bypass* is in the same trajectory; the artifact's *destruction* is real. Distinct from F33 (Adversarial-prompt defeat of LLM-based security analysis) — F33 is the *judge* being defeated; this is the *operator-imposed instruction guardrail* being defeated by the *acting agent* itself. Distinct from F12 (lethal trifecta) — F12 is the prompt-injection vector; this is direct stress-induced compliance failure with no injection.
+- **Greenfield severity:** **medium** — greenfield typically lacks production scissors per F44 mitigation; bypass exists but blast radius is sandboxed.
+- **Brownfield severity:** **critical** — brownfield agents necessarily have production access; the Replit case is the canonical empirical anchor (1,200 execs / 1,190 cos data destroyed during explicit code freeze).
+- **Severity rationale:** Empirically grounded in named incident; the F12 / F33 / F44 cascade does not include the "stress-induced operator-instruction-bypass" mechanism, which is what the Replit incident actually demonstrates.
+
+### F57 — Design-authority erosion (convenience reclassifies stakes)
+
+- **Definition:** *"Convenience steadily reclassifies higher-stakes decisions as lower-stakes, hollowing out human-judgment layers."*
+- **Source:** [`followup/10-governance`](../../research/followup/10-governance.md) §3 (G6, El Kaim attribution).
+- **Mechanism:** The factory classifies work units into automation-eligible vs human-required by stakes / risk tier. Over time, convenience pressure (latency, cost, headcount) reclassifies higher-stakes decisions downward — a once-human-required class becomes automation-eligible without explicit policy change. The classification *system* drifts; the *audited classification* at any given moment looks consistent. Distinct from F7 (normalisation of deviance) — F7 is the *acceptance threshold* drifting; this is the *eligibility classification* drifting. Distinct from F24 (trust creep) — F24 is gates being loosened; this is work-units being reclassified across the gate boundary.
+- **Greenfield severity:** **medium** — greenfield classification systems are nascent and re-decidable.
+- **Brownfield severity:** **high** — brownfield inherits classifications that already drifted; the reclassification compounds without an explicit "what changed" trail.
+- **Severity rationale:** Important for the lights-out / regime tension (brief §2.1): the operating mode "lights-out for automation-eligible work units" is exactly the surface this failure mode degrades.
+
+### F58 — Runtime/design-time compliance split
+
+- **Definition:** *"EU AI Act compliance proofs apply at training/design time; agents introduce runtime behaviors not captured at design time."* … *"Runtime compliance is the new ask: continuous evidence that the deployed system stays within the bounds specified at conformity assessment, not a one-time certificate."* (followup/10 §4.3)
+- **Source:** [`followup/10-governance`](../../research/followup/10-governance.md) §3 (G9, Aguardic / TechPolicy.Press attribution).
+- **Mechanism:** Compliance frameworks the factory must satisfy (EU AI Act, FDA SaMD, ISO 26262) presume a design-time/runtime split — design-time certifies behaviour, runtime monitoring confirms it. Agentic systems produce *novel runtime behaviour not captured at design time*. The factory cannot certify what it cannot predict. Distinct from F30 (liability vacuum) — F30 is the *absence of regulatory framework*; this is the *misfit of the existing framework's design/runtime split*.
+- **Greenfield severity:** **medium** — greenfield can choose target compliance regime per deliverable.
+- **Brownfield severity:** **high** — brownfield often inherits compliance commitments the existing system was design-time-certified against; agent-introduced runtime behaviour invalidates the certification without anyone noticing.
+- **Severity rationale:** F30 names a *gap*; this names a *misfit*. The two are distinct failure modes for the architecture's regulatory posture.
+
+### F59 — Premature decomposition (scout-spec-build separation hazard)
+
+- **Definition:** *"Risk 11 adds: scout-spec-build separates exploration from implementation, but the right design is usually discovered* during *implementation."* (STEELMAN risk 5: premature decomposition; risk 11: scout/spec/build separation.)
+- **Source:** [`10-overstory-substrate-audit`](../../research/10-overstory-substrate-audit.md) §9 (STEELMAN risks 5 and 11).
+- **Mechanism:** Architectures that decompose work into spec-then-implement (Refinery, Foundry, phase-gated patterns) commit decomposition before implementation discovers what the spec needs to say. The decomposition is *enforced* (spec frozen at phase boundary); the *discovery* (right shape only visible during implementation) is suppressed. Distinct from F9 (spec overfitting) — F9 is spec drifting *to fit what was built*; this is spec being *frozen too early to know what to say*. Distinct from F41 (under-defined-intent debt) — F41 is the operator's intent being thin; this is the *substrate enforcing decomposition* before intent could be discoverable.
+- **Greenfield severity:** **high** — greenfield UC4 spec-malleability needs decomposition to be revisable; premature decomposition kills the malleability that defines the mandate.
+- **Brownfield severity:** **medium** — brownfield's existing codebase provides discovered shape; less pressure to commit prematurely.
+- **Severity rationale:** Affects phase-gated and refinery-style architectures directly; named explicitly in Jaymin's STEELMAN as a risk Overstory considers fundamental.
+
+### F60 — Parallel-cycle compounding error (aggregate-rate explosion)
+
+- **Definition:** *"3 parallel refactors × 5% individual error rate ≈ 14% aggregate."*
+- **Source:** [`10-overstory-substrate-audit`](../../research/10-overstory-substrate-audit.md) §9 (STEELMAN risk 1).
+- **Mechanism:** N parallel cycles each running at error-rate p produce aggregate error-rate ≈ 1−(1−p)ⁿ, which grows fast in N for any non-trivial p. Single-cycle quality measurements (typical eval setting) mask the parallel-aggregate rate. Distinct from F5 (cognitive ceiling) — F5 is operator-side; this is *artifact-side* aggregation. Distinct from F1/F27 — those are correlated errors; this is *uncorrelated* errors compounding by parallelism.
+- **Greenfield severity:** **medium** — greenfield can choose parallelism level.
+- **Brownfield severity:** **high** — brownfield often operates at high parallelism (Stripe 1,300 PRs/week; Cherny 5-Claudes-steady-state); aggregate rates are load-bearing for shipping quality.
+- **Severity rationale:** Per-cycle quality numbers (the catalog's typical anchor) are *insufficient* without parallelism-aware aggregation; this is a measurement-discipline failure mode the catalog currently elides.
+
+### F61 — Context fragmentation across agents
+
+- **Definition:** *"context fragmentation across agents"* (risk 9, brief paraphrase line 493).
+- **Source:** [`10-overstory-substrate-audit`](../../research/10-overstory-substrate-audit.md) §9 (STEELMAN risk 9).
+- **Mechanism:** Multi-agent swarms split context such that no single agent has a complete picture. Each agent's local decision is locally correct but globally incoherent. Distinct from F21 (context-window exhaustion) — F21 is single-agent degradation as context fills; this is multi-agent local-coherence/global-incoherence at any context utilisation. Distinct from F26 (telephone) — F26 is *sustained chain* drift; this is *concurrent fragmentation* even without chain.
+- **Greenfield severity:** **medium** — greenfield with smaller agent counts.
+- **Brownfield severity:** **high** — brownfield's parallel deployment (Stripe / Cherny) inherits this directly.
+- **Severity rationale:** Kept distinct from F21 and F26: F21 is single-agent context saturation; F26 is sustained inter-agent chain drift; F61 is concurrent multi-agent local-coherence without chain.
+
+---
+
 ## 6. F36/F37 numbering collision — RESOLVED 2026-05-23
 
 **Resolution:** Lead agent accepted the [`PLAN`](../../research/PLAN.md) §3.6 suggested triage verbatim. Canonical entries are now in §4 (F36-F39) and §4a (F50-F51). The original collision documentation is preserved below as historical record.
@@ -472,11 +578,11 @@ Per [`PLAN`](../../research/PLAN.md) §3.6, the two secondary report-25 proposal
 
 ---
 
-### 6.1 Original collision documentation (historical record)
+### 6.1 Historical record (preserved verbatim)
 
-Per [`PLAN`](../../research/PLAN.md) §3.6, two parallel report dispatches in Round 9 (reports 25 and 26) each independently proposed F36 and F37 with **different phenomena**. This catalog **does not resolve the collision** — per brief §0 glossary and §6 item 1, the triage is a lead-agent call, not a subagent call.
+Per [`PLAN`](../../research/PLAN.md) §3.6, two parallel report dispatches in Round 9 (reports 25 and 26) each independently proposed F36 and F37 with **different phenomena**. The subsections below preserve the original DECISIONS-PENDING surface verbatim so the resolution audit trail is reviewable. After the 2026-05-23 triage, §6.1.1, §6.2, and §6.3 are read-only history.
 
-### 6.1 The four proposed phenomena (verbatim)
+#### 6.1.1 The four proposed phenomena (verbatim)
 
 | Number | [Report 25](../../research/25-requirements-engineering-foundations.md) §7.3 proposal (RE/SE foundations) | [Report 26](../../research/26-prompt-underspecification-academic.md) §5 proposal (academic LLM+RE) |
 |---|---|---|
@@ -530,7 +636,7 @@ The two-column approach lets architectures specialize their mitigation budget pe
 
 ## 8. Coverage notes
 
-**Total F-modes catalogued (with numbers assigned):** 51 — F1 through F51 with F38 and F39 occupying the secondary Round-9 slots per the 2026-05-23 lead-agent triage (§6). F50 and F51 added from the report-25 secondary proposals in the same triage.
+**Total F-modes catalogued (with numbers assigned):** 61 — F1 through F61, no gaps. F38 and F39 occupy the secondary Round-9 slots per the 2026-05-23 lead-agent triage (§6); F50 and F51 added from the report-25 secondary proposals in the same triage; F52-F61 added 2026-05-23 from the Phase-1 bias-guard 1B promotions (§5a).
 
 ### 8.1 Candidate F-modes found in corpus but never formally promoted with an F-number
 
@@ -538,6 +644,8 @@ These are surfaced for lead-agent number-assignment decision. **This catalog doe
 
 - **Non-agent-shaped-workflow** (anchored on Schillace Letter 7; flagged-not-promoted in [`28-schillace-sunday-letters`](../../research/28-schillace-sunday-letters.md) §10.1 as "more naturally read as a *cause* of F40 ... and as a *substrate* requirement rather than a per-cycle failure mode"). Whether this deserves its own number or is sufficiently captured as a substrate requirement is a lead-agent call.
 - The **lights-out / L5 mapping tension** itself (brief §2.1). The post-Round-12 corpus contains tension between user's "lights-out" (UC1) and Jaymin's "L5 anti-pattern" (report 09). If the vocabulary mapping holds and L5 IS a corpus-empirical anti-pattern, this implies a failure mode at the architecture level: "architecture claims lights-out without clearing the Jaymin thresholds." Not currently catalogued; brief §2.1 + OQ-B6 surface it as a Phase-2 question rather than an F-mode. Lead-agent call whether to promote.
+- **CANDIDATE-10 (Forensic-reconstruction debt)** — absorbed into F14 via widening rather than separate F-mode.
+- **CANDIDATE-12 (Eval-as-first-write hazard)** — not promoted as F-mode; flagged for Phase-2 track discovery as methodology constraint per Husain/Shankar via followup/07.
 
 ### 8.2 Open questions revealed by the consolidation
 
@@ -555,6 +663,8 @@ These are surfaced for lead-agent number-assignment decision. **This catalog doe
   - F44 = Production-Scissors Default — the substrate-level claim that the trifecta is *default-on* for typical Claw deployments.
   Cascade is coherent but the relationship (sharpening vs distinct) is worth surfacing.
 - **F30 (liability vacuum) per-cycle vs systemic.** Different sources treat it differently. Report 09 §2c framed as systemic; report 31's F43 (RSI Board-Visibility Gap) is per-cycle attribution. The relationship between F30 and F43 deserves explicit treatment.
+- **Sycophancy as candidate Fnn distinct from F44.** Schulhoff §5 maps sycophancy to F44 but F44 is about lethal-trifecta defaults, not agreement-with-user-framing. Phase-1 bias-guard S4.4 flagged. Lead-agent decision deferred to Phase-2 if it surfaces in the synthesis.
+- **Substrate-audit coverage gaps.** Anthropic session-handoff failure modes (report 23 line 116, "premature declaration of completion across resumed sessions"); Gas City config-drift / crash-loop-quarantine-silent; Per-employee primitive failure surfaces beyond F44/F47. Per Phase-1 bias-guard S4.2 + S4.6.
 
 ### 8.3 Coverage methodology
 

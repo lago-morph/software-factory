@@ -1,5 +1,5 @@
 ---
-based-on-commit: d1a60c0
+based-on-commit: d430aeb
 based-on-date: 2026-05-23
 ---
 
@@ -39,9 +39,9 @@ based-on-date: 2026-05-23
 ### Report 03 — every-compound-engineering
 - **Subject:** Every's compound-engineering guide + Klaassen's *"My AI had already fixed"* (Cora playbook).
 - **Anchor:** Source of the **Compound Engineering** methodology (plan → work → review → compound) and the `docs/solutions/` knowledge-accumulation directory — the other pole to StrongDM Attractor's graph orchestration. The "queue of issues + accumulating skills + agent panel review" shape that anchored v2's Compound Atelier architecture. Load-bearing for any methodology track that treats the unit of work as an issue against an evolving knowledge base; the Compound loop is one of the two canonical methodology shapes in the corpus.
-- **Mandate-relevance:** `both-primary`
+- **Mandate-relevance:** `brownfield-primary` (re-tagged from `both-primary` per Phase-1 bias-guard CHALLENGE-6; greenfield as secondary)
 - **Supporting tags:** `methodology-shape`, `knowledge-accumulation`, `queue-as-unit-of-work`, `plugin-architecture`
-- **Notes:** Companion to followup/11 (Compound Knowledge plugin) and followup/05 (Klaassen siblings).
+- **Notes:** Companion to followup/11 (Compound Knowledge plugin) and followup/05 (Klaassen siblings). Phase-1 bias-guard re-tag (CHALLENGE-6): the "queue of issues + accumulating skills" shape presupposes a pre-existing system that has issues — native brownfield habitat. OQ-B4 explicitly tags Atelier-style "issue from a queue" as a brownfield work-unit option.
 
 ### Report 04 — every-skill-libraries
 - **Subject:** Every's `SKILL.md` convention; Compound Knowledge plugin's skill-library structure.
@@ -145,15 +145,16 @@ based-on-date: 2026-05-23
 ### Report 21 — tabnine-enterprise
 - **Subject:** Tabnine enterprise substrate.
 - **Anchor:** Vendor audit; enterprise context isolation, on-prem deploy, model-routing posture. Narrow-scope; useful as one data point in vendor-substrate comparison.
-- **Mandate-relevance:** `tangential`
-- **Supporting tags:** `substrate-audit`, `vendor`, `enterprise`
+- **Mandate-relevance:** `both-secondary` (re-tagged from `tangential` per Phase-1 bias-guard CHALLENGE-10 / §D-2 resolution)
+- **Supporting tags:** `substrate-audit`, `vendor`, `enterprise`, `brownfield-context`
+- **Notes:** Phase-1 bias-guard re-tag (CHALLENGE-10): on-prem deploy + context isolation are the substrate concerns of a brownfield factory operating on a regulated enterprise codebase; tangential was too dismissive when the substrate posture has direct brownfield relevance.
 
 ### Report 22 — academic-foundations
 - **Subject:** Academic foundations across SE research; SWE-bench Verified; nutshell-bench Princeton PLI diagram; OpenAI Verified construction pipeline.
 - **Anchor:** SE-research foundations + benchmark provenance. Notable: SWE-bench Verified's 93-developer / 1,699-sample / 4-level-severity / ensemble-3 annotation methodology and the 16% → 33.2% GPT-4o lift the public proxy did not surface; the **canonical "nutshell-bench" diagram** (Issue + Codebase → LM → PR → Tests). Load-bearing for tracks that ground V&V in benchmark methodology or that need a published-evaluation baseline for the architectures.
-- **Mandate-relevance:** `both-primary`
+- **Mandate-relevance:** `brownfield-primary` (re-tagged from `both-primary` per Phase-1 bias-guard CHALLENGE-8; greenfield as secondary, for V&V baseline only)
 - **Supporting tags:** `academic`, `benchmark-methodology`, `V&V-baseline`
-- **Notes:** Nutshell-bench diagram updated 2026-05-16 (Cluster F drain); previously partial.
+- **Notes:** Nutshell-bench diagram updated 2026-05-16 (Cluster F drain); previously partial. Phase-1 bias-guard re-tag (CHALLENGE-8): SWE-bench Verified is structurally a brownfield benchmark — Issue + Codebase → PR is the prototypical brownfield work cycle and cannot be applied to greenfield day-0. Greenfield tracks can borrow the V&V annotation discipline but the load-bearing content is brownfield-shaped.
 
 ### Report 23 — anthropic-engineering-trilogy
 - **Subject:** Anthropic engineering posts S12–S15 + Claude Code sandboxing post + Agent Skills primary docs + 3 cookbook notebooks.
@@ -170,16 +171,16 @@ based-on-date: 2026-05-23
 ### Report 25 — requirements-engineering-foundations
 - **Subject:** RE/SE primary methodology — EARS canonical guide (5 patterns); INCOSE TP-2020-002-06; INCOSE GtWR v4 (15 chars + 42 rules + 49 attrs); INCOSE Complexity Primer; AFIS/INCOSE-FR strategy-3 (models-as-spec).
 - **Anchor:** **Cold-start required reading per brief §5.1 (Historian M5).** The RE/SE counterpart to report 14 (El Kaim). Demonstrates El Kaim ↔ GtWR C1–C15 1:1 mapping (corpus has been treating El Kaim as novel — best read as a domain instantiation of GtWR). Proposes candidate F36–F39 (vocabulary-lint debt; point-spec/region-mismatch; architecture/spec confusion; Ashby-deficient probabilistic guard). The **strategy-3 models-as-spec** framing is the corpus' canonical name for what Notion/Nystrom (report 35) implements industrially.
-- **Mandate-relevance:** `both-primary`
+- **Mandate-relevance:** `greenfield-primary` (re-tagged from `both-primary` per Phase-1 bias-guard CHALLENGE-1; brownfield as secondary use)
 - **Supporting tags:** `cold-start-input`, `RE-foundations`, `EARS`, `GtWR`, `F36-F39`
-- **Notes:** F36/F37 number collision with report 26 — lead-agent triage required per brief glossary.
+- **Notes:** F36/F37 number collision with report 26 — lead-agent triage required per brief glossary. Phase-1 bias-guard re-tag (CHALLENGE-1): brief §5.1 explicitly designates this as required reading for greenfield cold-start tracks; brownfield's primary spec source is the existing codebase rather than EARS/GtWR bootstrap.
 
 ### Report 26 — prompt-underspecification-academic
 - **Subject:** Academic LLM+RE empirical — Norheim et al. (Cambridge / *Design Science* 2024, five-task taxonomy); Yang et al. (CMU + Google DeepMind, "What Prompts Don't Say": Pass@1 98.7%→85.0%; 41.1% guess-correctly baseline; 65.2% redundancy); Larbi et al. (U. Luxembourg + UCL, "When Prompts Go Wrong": GPT-4 73.8%→6.7% on contradictory HumanEval, RIR 89%, MCC ≤0.55).
 - **Anchor:** **Cold-start required reading per brief §5.1 (Historian M5).** The corpus' academic-empirical anchor for the "spec → code gap" intuition. Yang et al.'s **same-model-different-prompt spread** is the academic instantiation of Theme-6 (followed by Schulhoff DSPy in report 29). Larbi et al.'s **silent contradictory-prompt collapse** (73.8%→6.7%) directly motivates the substrate-level need for prompt-contradiction detection. Proposes candidate F36/F37 — **number collision** with report 25 (lead-agent triage).
-- **Mandate-relevance:** `both-primary`
+- **Mandate-relevance:** `greenfield-primary` (re-tagged from `both-primary` per Phase-1 bias-guard CHALLENGE-2; brownfield as secondary use)
 - **Supporting tags:** `cold-start-input`, `academic`, `prompt-fragility`, `F36-F37-collision`
-- **Notes:** F36/F37 number collision flagged in brief §0; lead-agent call.
+- **Notes:** F36/F37 number collision flagged in brief §0; lead-agent call. Phase-1 bias-guard re-tag (CHALLENGE-2): the specs-as-the-only-input failure-mode framing is the greenfield cold-start regime; brownfield's existing-code anchor partly catches the contradiction at compile/test time.
 
 ### Report 27 — dotfile-pipelines-as-product
 - **Subject:** Harper Reed's *"The Dark Factory Is a .dot file"* essay; `dotpowers.dot` blob (~1,300 lines, 6-phase pipeline, four-model assignment via CSS); `danshapiro/kilroy` re-capture; `strongdm/attractorbench` (Apache-2.0, 17 stars, four tiers).
@@ -245,8 +246,9 @@ based-on-date: 2026-05-23
 ### Report 37 — academic-llm-agent-collusion
 - **Subject:** Neves & Bussmann, *Smart Agent-Based Modelling with LLMs* (Stanford Computational Antitrust Vol. 6, 2026; CADE / Cerebro Project, Brasil) — Bertrand-duopoly LLM agents reach tacit collusion ($7.30–$8.30 median vs $6.00 Bertrand-Nash; up to 100% supra-competitive); Portuguese-prompted agents systematically more collusive than English; *"mimicking concerns about collusion"* sub-effect.
 - **Anchor:** **First academic-empirical anchor for Theme-2 alignment-drift / collusion in a market setting at LLM scale.** Tacit collusion without instruction; **language-effect on policy** extends report 33 (language-as-harness) from code-generation layer to decision/policy layer (corpus-novel); discussion-as-amplification (agents discuss collusion, recognise it as failure mode, then implement softer/deniable version) is multi-agent instantiation of Schulhoff §5 sycophancy paradox. Proposes F48 (Tacit-Collusion-via-Shared-Context) + F49 (Discussion-as-Amplification). Second Stanford Law venue in the corpus (Computational Antitrust paired with CodeX). Relevant to multi-agent-substrate tracks and any unified architecture using inter-agent communication.
-- **Mandate-relevance:** `both-primary`
+- **Mandate-relevance:** `both-secondary` (re-tagged from `both-primary` per Phase-1 bias-guard CHALLENGE-15 / §D-4 resolution)
 - **Supporting tags:** `academic`, `multi-agent`, `collusion`, `F48-F49`, `Stanford-Computational-Antitrust`, `language-as-harness-extension`
+- **Notes:** Phase-1 bias-guard re-tag (CHALLENGE-15): the empirical setting is market pricing of a duopoly, not software production. Novelty is not load-bearingness; multi-agent tracks should read it but single-agent tracks safely skip.
 
 ### Report 38 — gas-systems-substrate
 - **Subject:** Gas City SDK (`github.com/gastownhall/gascity`, v1.0.0+) + Gas Town workspace OS — mapping onto Dark Factory + Compound Engineering as candidate execution substrate. Nine Concepts (5 primitives + 4 derived); Beads' `discovered-from` edge.
@@ -322,14 +324,15 @@ based-on-date: 2026-05-23
 ### Followup 11 — compound-knowledge
 - **Subject:** Every's Compound Knowledge plugin (CK) v1.0.0; four-way classification (insight / playbook / correction / pattern); `kw:confidence` first-class skill; no-silent-overwrites rule.
 - **Anchor:** Companion to report 03 (Compound Engineering). CK is the knowledge-work twin of CE — same loop, same Git-tracked Markdown substrate. **Two CK additions to CE: typed four-way classification + first-class confidence-check primitive.** CK folds staleness check inline into every `kw:compound` invocation (vs CE's separate `ce-compound-refresh` cadence). Sharpens v2 Architecture-2's knowledge-document shape (§3.2), Curator role (§3.4), and knowledge architecture (§7).
-- **Mandate-relevance:** `both-primary`
+- **Mandate-relevance:** `brownfield-primary` (re-tagged from `both-primary` per Phase-1 bias-guard CHALLENGE-7; greenfield as secondary)
 - **Supporting tags:** `knowledge-accumulation`, `Compound-Knowledge`, `typed-learnings`, `kw-confidence`
+- **Notes:** Phase-1 bias-guard re-tag (CHALLENGE-7): accumulating typed learnings (insight/playbook/correction/pattern) presupposes a queue of prior cycles to compound from. A greenfield day-0 factory has nothing to compound yet — brownfield-native.
 
 ### Followup 12 — brier-pace-layers
 - **Subject:** Noah Brier (Alephic, ex-Percolate) — *"The Culture of AI Engineering"* (every.to Thesis, 2026-05-08); five-layer pace-layer stack (Code / Plans / Specs / Architecture / Standards); Brand-pace-layers ancestor; *"software company, not software factory"* counter-metaphor; proposes F34 (cross-layer drift).
 - **Anchor:** **The corpus' single explicit public counter-metaphor to the software-factory framing.** Brier is the only voice in the corpus who has used the StrongDM framework in production and publicly disagrees with its central metaphor. Five-layer stack with **patterns sift downward** (project doc → Skill → enforced standard) operationalises Brand's pace-layers at AI-engineering scale. Names StrongDM, Shapiro, Factory.ai as targets. ARCHITECTURE.md per repo (Naur "real program is the mental model"). Load-bearing for tracks positioning against UC1 factory-metaphor — at minimum, must be named and engaged.
 - **Mandate-relevance:** `both-primary`
-- **Supporting tags:** `counter-metaphor`, `pace-layers`, `F34`, `ARCHITECTURE.md`
+- **Supporting tags:** `counter-metaphor`, `pace-layers`, `F34`, `ARCHITECTURE.md`; `counter-metaphor` (every track must engage dialectically — read to position against, not for substantive design input) per Phase-1 bias-guard CHALLENGE-14.
 
 ### Followup 13 — gas-city-deep-dive
 - **Subject:** ~10.2k-word architecture reference for Gas City SDK (`github.com/gastownhall/gascity`, v1.0.0+); Nine Concepts (5 primitives + 4 derived); ~55 internal packages; ~45-command `gc` CLI; PackV2 + progressive activation Levels 0–8; runtime.Provider interface; formula/molecule/order/convergence/sling primitives; K8s-style reconciler with Erlang/OTP mapping; HTTP+SSE embedding story (no Go library yet); five bundled packs (core/bd/dolt/maintenance/gastown).
@@ -358,6 +361,27 @@ Per [`00-brief-v3` §5.1](00-brief-v3.md), these reports must be read by every g
 
 ---
 
+## C-bis. Unified-mandate track must-read (per D1)
+
+Per Phase-1 bias-guard 1C §3, the 3 D1 unified-mandate tracks (tasked to find ONE architecture covering both mandates) need a different reading list than the 6 mandate-specific tracks. These 12 entries are the sources that suggest cross-mandate primitives or directly speak to the unified case:
+
+1. Followup [`12`](../../research/followup/12-brier-pace-layers.md) (brier-pace-layers) — the counter-metaphor + pace-layers stack (Code / Plans / Specs / Architecture / Standards) is a candidate unified primitive: a layered substrate spanning both mandates with different lifecycle cadences.
+2. Report [`27`](../../research/27-dotfile-pipelines-as-product.md) (dotfile-pipelines-as-product) — `.dot` file as the durable artifact + engines as commodity reframes methodology as data; the same `.dot` pipeline could serve greenfield bootstrap and brownfield refactor as different rigs.
+3. Report [`38`](../../research/38-gas-systems-substrate.md) (gas-systems-substrate) — substrate-vs-application split (Gas City SDK vs Gastown pack) is the corpus' most explicit unified-substrate candidate; both deployment sketches (`darkfactory` pack + `compound` pack on Gas City) live on the same engine.
+4. Followup [`13`](../../research/followup/13-gas-city-deep-dive.md) (gas-city-deep-dive) — engine-level depth source for #3.
+5. Report [`28`](../../research/28-schillace-sunday-letters.md) (schillace-sunday-letters) — agent-OS building-block list + Amplifier internals (Dev Foundry / session analyst / Crusty Old Engineer) suggest a unified substrate stack independent of mandate.
+6. Report [`14`](../../research/14-el-kaim-book-intent-and-spec-authorship.md) (el-kaim-spec-and-intent) — typed spec objects + intent-block discipline operate identically on greenfield (spec creates the system) and brownfield (spec constrains refactor); the 1:1 GtWR mapping makes it a unified substrate candidate for the spec layer.
+7. Report [`18`](../../research/18-openai-codex-substrate.md) (openai-codex-substrate) — `.rules` DSL + OTEL five-event export are mandate-agnostic substrate primitives — strongest commercial substrate exemplar for the unified case.
+8. Report [`11`](../../research/11-openhands-substrate-audit.md) (openhands-substrate-audit) — trajectory capture + RouterLLM as mandate-agnostic measurement substrate.
+9. Followup [`07`](../../research/followup/07-evals-deepdive.md) (evals-deepdive) — orchestrator-worker + filesystem-as-shared-artifact + binary-judge findings are V&V primitives that apply to either mandate without modification.
+10. Followup [`08`](../../research/followup/08-security-primitives.md) (security-primitives) — CaMeL + sandboxing are substrate-layer security; mandate-agnostic.
+11. Report [`30`](../../research/30-cognitive-escrow.md) (cognitive-escrow) — interval-as-design-surface is mandate-agnostic (humans wait for AI in both greenfield and brownfield cycles).
+12. Report [`09`](../../research/09-jaymin-book-harnesses-practices-mental-models.md) (jaymin-harnesses) — regime / threshold-bars apply to both mandates; load-bearing for OQ-B6 in both cases.
+
+**Coverage observation:** the unified-track must-read list skews toward **substrate** reports rather than methodology reports. This is consistent with the lead-agent working stance that "substrate-heavy + thin-methodology" may be how a unified architecture emerges. The 3 unified tracks should be warned that the corpus' methodology reports tend to be **single-mandate-shaped** (Compound = brownfield; cold-start = greenfield) and unified architectures will have to invent or borrow methodology cross-cuts.
+
+---
+
 ## D. Disputed tags (lead-agent attention)
 
 Items the 1C-bias miscategorization auditor (per the plan) should pressure-test:
@@ -372,7 +396,14 @@ Items the 1C-bias miscategorization auditor (per the plan) should pressure-test:
 
 ## E. Coverage notes
 
-- **Total reports inventoried: 36 numbered (01–12, 14–38) + 14 followups = 50 anchors.** Brief language ("38 + 14 = 52") includes reports 00 and 13 in the range but excludes them explicitly as archived syntheses; actual count is 50.
+- **Total reports inventoried: 37 numbered (01–12, 14–38) + 14 followups = 51 anchors.** Brief language ("38 + 14 = 52") includes reports 00 and 13 in the range; report 00 is the archived Round-1 synthesis (excluded), report 13 is the archived Round-2 synthesis (excluded). Numbered reports actually in scope: 12 (reports 01–12) + 25 (reports 14–38) = 37. The earlier "50" figure was an off-by-one arithmetic error caught during Phase-1 integration.
+- **Post-Phase-1-bias-guard tag distribution (2026-05-23):**
+  - `greenfield-primary`: 2 (reports 25, 26)
+  - `brownfield-primary`: 3 (reports 03, 22, followup 11)
+  - `both-primary`: ~26 (was 30; reports 25/26/03/22/followup-11 retagged single-mandate; report 37 demoted)
+  - `both-secondary`: ~17 (was 14; +report 21 promoted, +report 37 demoted in)
+  - `tangential`: 0 (was 1; report 21 promoted)
+- **Structural finding:** Phase-1 bias-guard 1C surfaced that the original 0% single-mandate tagging was structurally wrong — pre-empted D1 falsification work. The 6 re-tags restore asymmetry signal; both-primary remains plurality (~52%) which is corpus-accurate.
 - **Reports with brief anchors (short/partial/mostly-attribution):**
   - Report 01 footnote-1 attribution (Luke PM): provenance closure, not substrate claim.
   - Report 21 (tabnine-enterprise): narrow-scope vendor audit.

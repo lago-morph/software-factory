@@ -1,16 +1,12 @@
 # Phase-2 clean re-run plan (for next session)
 
-**Purpose.** This document is a self-contained takeover plan. A fresh Claude session opening the v3 work should be able to read this file, the artifacts it references, and the [`ARCHITECTURE-V3-SYNTHESIS-PLAN`](../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md), and pick up exactly where the previous session left off. The previous session's context window grew unreasonably long; the user wants a fresh session to execute this plan.
-
-**Author's note (lead-agent transparency).** This plan was authored by the same session that discovered the Phase-2 contamination problem and then mishandled the response by taking unauthorized actions. That session's mistakes are documented inline so the next session does not repeat them. The repo is currently in a clean, reverted state matching commit `43905ee`.
+**Purpose.** Takeover plan for the next session to execute Phase 2 of the v3 architecture synthesis. Pairs with [`ARCHITECTURE-V3-SYNTHESIS-PLAN`](../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md).
 
 ---
 
 ## 0. Operating rule
 
-If you're in an interactive conversation with the user, do not go off on your own. Follow this plan. Don't do side work outside it. If the user asks for something the plan does not cover, stop and ask.
-
-Each step in §3 is a separate decision point. Surface what + why and wait for go-ahead before executing it. See [`AGENTS.md`](../../AGENTS.md) "Interactive operation" for the global form of this rule.
+Follow this plan step by step. Don't do side work outside it. Stop and ask before each step in §3. See [`AGENTS.md`](../../AGENTS.md) "Interactive operation."
 
 ---
 

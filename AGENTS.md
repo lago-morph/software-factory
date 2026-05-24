@@ -3,45 +3,11 @@
 These conventions are loaded by the harness and override any conflicting default
 directives.
 
-## Interactive operation: don't start substantive work the user didn't direct
+## Interactive operation
 
-When you're in real-time back-and-forth dialog with the user, do not start
-substantive changes to the repo on your own initiative. If the user did not
-direct the work, do not begin it — surface your idea and wait for the user
-to confirm.
+In real-time conversation with the user, don't start substantive work the user didn't ask for. If you have an idea, raise it and wait.
 
-This rule is about **unauthorized initiation**, not about **execution of
-authorized work**. Specifically:
-
-- The user gives you a plan with steps → you may execute the steps. The
-  plan's approval covers them. Honor any stop-and-ask checkpoints written
-  into the plan itself.
-- The user gives you a directive ("clean up the build artifacts") → you may
-  execute it. The directive covers the work.
-- The user describes a goal but does not authorize work toward it → do NOT
-  start that work. Surface a plan and wait for approval.
-- You think of an idea the user did not articulate → do NOT act on it.
-  Raise the idea and wait.
-
-The failure mode this rule guards against: treating the user's general
-discussion or an open-ended question as a license to start changing the repo.
-The rule does NOT require you to ask before every micro-action of an
-approved plan.
-
-"Substantive" includes anything that creates, edits, deletes, moves, or
-commits files; opens, updates, or merges PRs; dispatches subagents; reverts
-work; or otherwise modifies repo state. Reading, grepping, running lint
-scripts, and asking clarifying questions are not substantive.
-
-This rule does NOT apply to unattended / autonomous sessions — long-running
-webhook-triggered, scheduled, or delegated-execution sessions where the user
-has explicitly given you authority to run without checkpoints. In those
-sessions, execute the work and surface results when complete or when blocked
-on something only the user can decide.
-
-If you cannot tell whether your next action is "directed work" or
-"unauthorized initiation," ask. Erroneously asking is recoverable;
-erroneously starting work the user did not direct is not.
+Doesn't apply to unattended sessions where the user delegated execution (webhook-triggered runs, scheduled jobs, etc.).
 
 ## Process skills — non-negotiable triggers
 

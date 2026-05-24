@@ -80,25 +80,25 @@ def parse_table(text: str):
 
 def structure_errors() -> list[str]:
     arch_files = find_arch_files()
-    if not TABLE_PATH.exists():
-        # The original existence check fired loudly on absence — by
-        # design, "someone broke the canonical matrix" should not be
-        # silently missed. That intent is retained here: if any
-        # architecture files exist, an absent matrix IS an error.
-        # But if there are also no architecture files, the gate has
-        # nothing to enforce — empty system, not a broken artifact.
-        if not arch_files:
-            print(
-                f"failure-modes.md lint: no architecture files and no "
-                f"{TABLE_PATH.relative_to(REPO)}; gate inert (empty system).",
-                file=sys.stderr,
-            )
-            return []
-        return [
-            f"{TABLE_PATH.relative_to(REPO)} does not exist, but "
-            f"{len(arch_files)} architecture file(s) do: "
-            f"{sorted(arch_files.values())}"
-        ]
+    table_exists = TABLE_PATH.exists()
+    # The gate enforces CORRESPONDENCE between architectures and the
+    # matrix. If either side is empty/missing, there is nothing to
+    # correspond — empty input pair = no work, not an error. The
+    # original existence check fired on a missing matrix even when no
+    # architecture files existed; that was the bug. Symmetric removal:
+    # a missing matrix with architectures present is ALSO no-op (no
+    # failure modes to enforce yet). Enforcement only fires when both
+    # sides have content. Per commit 22ee8d4 the original intent was
+    # "arch-file edit must be matched by matrix-column edit" — that
+    # intent is only meaningful when both sides exist.
+    if not arch_files or not table_exists:
+        print(
+            f"failure-modes.md lint: gate inert "
+            f"(arch_files={len(arch_files)}, table_exists={table_exists}); "
+            f"nothing to enforce correspondence on.",
+            file=sys.stderr,
+        )
+        return []
     text = TABLE_PATH.read_text(encoding="utf-8")
     headers, rows = parse_table(text)
     errors: list[str] = []

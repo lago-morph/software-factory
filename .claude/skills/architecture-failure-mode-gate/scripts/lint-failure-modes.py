@@ -79,28 +79,31 @@ def parse_table(text: str):
 
 
 def structure_errors() -> list[str]:
+    arch_files = find_arch_files()
     if not TABLE_PATH.exists():
-        # Transition state: the canonical matrix has been deliberately
-        # removed (e.g., archived during a schema-redesign phase). The
-        # gate has nothing to enforce until a new matrix lands. Pass
-        # silently rather than reporting the absence as an error — the
-        # original existence check was for "someone broke the canonical
-        # artifact" detection, not for the deliberate-removal case.
-        # When a v3-shaped matrix lands, the gate will need to be
-        # redesigned against the new schema; see architectures/v3/
-        # ARCHITECTURE-V3-SYNTHESIS-PLAN.md Phase 6.4.
-        print(
-            f"failure-modes.md lint: {TABLE_PATH.relative_to(REPO)} "
-            "is absent; gate inert (transition state).",
-            file=sys.stderr,
-        )
-        return []
+        # The original existence check fired loudly on absence — by
+        # design, "someone broke the canonical matrix" should not be
+        # silently missed. That intent is retained here: if any
+        # architecture files exist, an absent matrix IS an error.
+        # But if there are also no architecture files, the gate has
+        # nothing to enforce — empty system, not a broken artifact.
+        if not arch_files:
+            print(
+                f"failure-modes.md lint: no architecture files and no "
+                f"{TABLE_PATH.relative_to(REPO)}; gate inert (empty system).",
+                file=sys.stderr,
+            )
+            return []
+        return [
+            f"{TABLE_PATH.relative_to(REPO)} does not exist, but "
+            f"{len(arch_files)} architecture file(s) do: "
+            f"{sorted(arch_files.values())}"
+        ]
     text = TABLE_PATH.read_text(encoding="utf-8")
     headers, rows = parse_table(text)
     errors: list[str] = []
     if not headers:
         return [f"§2.4 table not found in {TABLE_PATH.relative_to(REPO)}"]
-    arch_files = find_arch_files()
     if len(headers) != len(arch_files):
         errors.append(
             f"header count {len(headers)} != alternative count {len(arch_files)} "

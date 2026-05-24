@@ -24,8 +24,16 @@ name: Failure-mode table gate
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
+    # Trigger paths are intentionally narrow: only files this gate
+    # actually owns. Earlier `architectures/**` was too broad — it
+    # fired on every PR touching any architectures subdirectory
+    # (including transition / staging directories like architectures/v3/
+    # that the gate does not validate), producing false-positive
+    # REQUEST_CHANGES reviews. Domain of this gate = top-level
+    # 0[1-9]-*.md architecture spec files + the canonical matrix.
     paths:
-      - 'architectures/**'
+      - 'architectures/0[1-9]-*.md'
+      - 'architectures/failure-modes.md'
       - '__SKILL_PATH__/**'
       - '.github/workflows/failure-modes-gate.yml'
 

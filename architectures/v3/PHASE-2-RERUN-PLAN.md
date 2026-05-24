@@ -208,6 +208,21 @@ The 9 tracks:
 
 **Stop-and-ask point.** Before opening, surface the proposed PR title and body for the user to review.
 
+### Step 3.9 — Clean up this plan file
+
+**What.** After the Phase-2 PR (from step 3.8) merges to `main`, remove `architectures/v3/PHASE-2-RERUN-PLAN.md` from the live tree. The user explicitly authorized either of two cleanup modes; pick one and surface it for confirmation:
+
+- **Delete entirely.** `git rm architectures/v3/PHASE-2-RERUN-PLAN.md`. The file remains accessible in git history.
+- **Archive.** Move to `archive/v3-phase-2-rerun-plan.md` (or similar) with a brief "this was a transient takeover plan; preserved for archaeology" header. Use this mode if you think future archaeology is likely.
+
+Either way, the file must not remain in the live tree.
+
+**Why (intent).** This plan is a transient bridge artifact — it exists for exactly one session-to-session handoff. Once Phase 2 is complete and the PR has merged, the plan's purpose is served. Leaving it in the live tree creates ambiguity (future readers will wonder "is this still active? did this happen?") and risks future sessions following stale instructions. Cleanup is the discipline transient documents require. Per the user's explicit instruction: *"your phase 2 rerun plan should have as a last step to clean up when done, including deleting the file. If you want to archive it or something that's ok too."*
+
+**Expected outcome.** No `PHASE-2-RERUN-PLAN.md` in `architectures/v3/`. Either deleted entirely (preferred default — git history is sufficient) or archived under `archive/` with a status header. One commit. Either include this commit in the Phase-2 PR (if the PR is still open) or open a small follow-up PR for the cleanup.
+
+**Stop-and-ask point.** Before deleting/archiving, surface the choice (delete vs archive) to the user; wait for explicit approval. This is the last step of the re-run; do not skip it.
+
 ---
 
 ## 4. After Phase 2: where this work joins back to the main plan

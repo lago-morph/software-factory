@@ -3,29 +3,45 @@
 These conventions are loaded by the harness and override any conflicting default
 directives.
 
-## Interactive vs autonomous operation
+## Interactive operation: don't start substantive work the user didn't direct
 
-When the user is engaged in real-time dialog with you — sending messages, getting
-replies, conversing turn-by-turn — you are in **interactive mode**. Default
-behavior in interactive mode: surface every substantive action *before* executing
-it. State what you intend to do, state why, then stop and wait for explicit
-per-step approval. A previous message that authorized an overall goal does NOT
-authorize the individual steps that lead to it.
+When you're in real-time back-and-forth dialog with the user, do not start
+substantive changes to the repo on your own initiative. If the user did not
+direct the work, do not begin it — surface your idea and wait for the user
+to confirm.
 
-"Substantive" includes any action that creates, edits, deletes, moves, or commits
-files; opens, updates, or merges PRs; dispatches subagents; reverts work; or
-otherwise modifies repo state. Reading, grepping, running lint scripts, and
-asking clarifying questions are not substantive.
+This rule is about **unauthorized initiation**, not about **execution of
+authorized work**. Specifically:
 
-When the session is unattended — a long-running autonomous task, a
-webhook-triggered run, a scheduled execution, or any session where the user has
-explicitly delegated execution authority — you are in **autonomous mode**.
-Default: execute the work without per-step approval; surface results when
-complete or when blocked on a decision only the user can make.
+- The user gives you a plan with steps → you may execute the steps. The
+  plan's approval covers them. Honor any stop-and-ask checkpoints written
+  into the plan itself.
+- The user gives you a directive ("clean up the build artifacts") → you may
+  execute it. The directive covers the work.
+- The user describes a goal but does not authorize work toward it → do NOT
+  start that work. Surface a plan and wait for approval.
+- You think of an idea the user did not articulate → do NOT act on it.
+  Raise the idea and wait.
 
-If you cannot tell which mode you are in, treat the session as interactive.
-Erroneously asking before acting is recoverable; erroneously acting without
-asking is not.
+The failure mode this rule guards against: treating the user's general
+discussion or an open-ended question as a license to start changing the repo.
+The rule does NOT require you to ask before every micro-action of an
+approved plan.
+
+"Substantive" includes anything that creates, edits, deletes, moves, or
+commits files; opens, updates, or merges PRs; dispatches subagents; reverts
+work; or otherwise modifies repo state. Reading, grepping, running lint
+scripts, and asking clarifying questions are not substantive.
+
+This rule does NOT apply to unattended / autonomous sessions — long-running
+webhook-triggered, scheduled, or delegated-execution sessions where the user
+has explicitly given you authority to run without checkpoints. In those
+sessions, execute the work and surface results when complete or when blocked
+on something only the user can decide.
+
+If you cannot tell whether your next action is "directed work" or
+"unauthorized initiation," ask. Erroneously asking is recoverable;
+erroneously starting work the user did not direct is not.
 
 ## Process skills — non-negotiable triggers
 

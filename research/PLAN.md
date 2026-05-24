@@ -1,5 +1,13 @@
 # Software Factory Research — PLAN.md
 
+## ⚠ Are you picking up v3 architecture work?
+
+**If yes, start at [`architectures/v3/PHASE-2-RERUN-PLAN.md`](../architectures/v3/PHASE-2-RERUN-PLAN.md), not this file.** The v3 work (architectures, syntheses, ADRs) is governed by [`ARCHITECTURE-V3-SYNTHESIS-PLAN.md`](../ARCHITECTURE-V3-SYNTHESIS-PLAN.md) at the repo root plus the Phase-2 takeover plan above. This file (research/PLAN.md) is the *research-drain pipeline* state — it tracks rounds of corpus ingestion, source-catalog maintenance, and pipeline mechanics. It is not the v3 architecture-synthesis entry point.
+
+If you're picking up research-drain work (ingesting new sources into the catalog; fetching blocked URLs; processing manual file drops; advancing the round-by-round corpus state), this file IS the right entry point — see §3 (bottlenecks), §5 (work remaining), §6.1 (cross-corpus propagation flags).
+
+---
+
 ## 1. Current state (TL;DR)
 
 Rounds 1–12 complete (see §10 for the round-by-round lookup). What's left is the §3 and §5 items plus the `research-plan.md` direction decision.

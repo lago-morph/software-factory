@@ -11,6 +11,8 @@ based-on-date: 2026-05-23
 
 **Provenance discipline.** Quotes are verbatim or near-verbatim with section references. Where a quote is paraphrased, it is flagged as such. The register draws on the ~16 tensions surfaced in the two archived syntheses (`archive/synthesis-v1-v2/00-synthesis.md` §3, `archive/synthesis-v1-v2/13-round-2-synthesis.md` §2), then extends with material from Round-3–12 reports and followups.
 
+**Citation discipline for "Phase-1 bias-guard sharpening" paragraphs (added 2026-05-24, per [decisions-captured](decisions-captured.md) D5).** Each CTR entry's bias-guard sharpening paragraph (WEAK-1 through WEAK-5) was authored by the Phase-1 uncomfortable-contradictions auditor and integrated by the lead agent. The Phase-2 anchor-detector audit flagged that **bias-guard-coined framings are not corpus references**, and several of these sharpenings (notably WEAK-5) primed downstream Phase-2 subagents to cite the framing by ID as if it were a stable corpus claim. **Subagent outputs must cite the underlying corpus material (the reports / followups / sections referenced *inside* the sharpening), not the WEAK-N ID itself.** WEAK-5 in particular ("Anthropic same-model-different-role as a third position") was singled out by the Phase-2 anchor-detector as the most contamination-suspect single sharpening — read it as one critic's framing, not as a corpus fact.
+
 ---
 
 ## A. Operating-mode contradictions (lights-out / regime)

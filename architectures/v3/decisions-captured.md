@@ -106,6 +106,41 @@ The user authorized **"ask the rest fresh"** for items beyond the 9-track decisi
 
 ---
 
+## D5 — Bias-guard-finding integration discipline (added 2026-05-24)
+
+**Decision.** When the lead agent integrates a bias-guard finding (CANDIDATE / MISSED / WEAK) into a primary artifact (`failure-modes-v3.md`, `contradictions.md`, `corpus-inventory.md`, `00-brief-v3.md`), the integration must:
+
+1. **Describe the phenomenon, not the architectural commitment.** F-mode mechanisms describe how something fails, not which architecture-shaped solution the failure presupposes.
+2. **Avoid framing language that smuggles in candidate solutions.** Phrases like "by tier", "via X-pattern", "through Y-primitive" embed an architectural choice into a finding that should be axis-agnostic.
+3. **Pass the neutralization self-check.** If the lead agent removes the bias-guard finding's framing language and the integration still conveys the underlying phenomenon, the wording is neutral. If removing the framing erases the integration, rewrite.
+4. **Quarantine bias-guard IDs.** Bias-guard findings keep their `MISSED-N` / `WEAK-N` / `CANDIDATE-N` IDs inside the bias-guard report files. Downstream artifacts that absorb the findings cite the *underlying corpus material* (reports, sections) — not the bias-guard ID.
+
+**Why.** Phase-2 produced a clear contamination case: F57 (promoted from CANDIDATE-6) was integrated with the wording *"the factory classifies work units into automation-eligible vs human-required by stakes / risk tier"*, which presupposed tier-classification as the factory's mechanism. Two of three unified Phase-2 tracks then independently converged on tier-axis. The Phase-2 axis-divergence audit caught the smoking gun. WEAK-5 (Anthropic same-model-different-role as "third position") was a smaller case of the same shape — five Phase-2 tracks cited WEAK-5 by ID, lending a critic's framing the same weight as a corpus reference.
+
+**Effect now (2026-05-24).** F57's wording in `failure-modes-v3.md` rewritten to neutralize the tier-presupposition; contradictions register `contradictions.md` carries a header note flagging bias-guard sharpenings as critic framings rather than corpus facts. The original 9 Phase-2 tracks (which read the contaminated F57 + WEAK-5 framings) are being re-dispatched against the clean sources; the originals are preserved in `architectures/v3/tracks-contaminated/` as historical record.
+
+---
+
+## D6 — Phase-2 full re-run after contamination discovery (added 2026-05-24)
+
+**Decision.** Re-dispatch all 9 original Phase-2 tracks against the cleaned source artifacts (per D5) rather than attempting to surgically clean the existing outputs. Original outputs preserved in `architectures/v3/tracks-contaminated/`; the live `architectures/v3/tracks/` directory will hold the re-runs.
+
+**Why.** Half-measures (rewording sources but keeping the original tracks; running amplifier tests in Phase 3; lead-agent weighting of contaminated tracks) all leave traces of the contamination in the Phase-3 merge inputs. The user's preference is "maximum rigor when stakes are high"; this PR is high-stakes; budget headroom supports the full re-run. The diagnostic re-runs (unified-A-prime, unified-C-prime, unified-D-off-list) are preserved as the evidence that drove the cleanup decision — they remain in `architectures/v3/tracks/` as supplementary unified-architecture candidates alongside the re-dispatched 9.
+
+**Effect.** The re-run dispatches identical track-specific framings as the original 9 dispatches, against the source files cleaned per D5. The Phase-2 bias guards (anchor-detector, splitter, lumper, axis-divergence auditor) are re-run on the clean 9 outputs. Phase 3 then merges from clean inputs.
+
+---
+
+## D7 — Off-list / blind-axis test as a standing safeguard (added 2026-05-24)
+
+**Decision.** Whenever two or more parallel subagents converge on the same axis / framing for an open-ended decision (Phase 2 unified-track axis selection; Phase 3 cross-mandate-survivor argument; Phase 5 ADR alternative-considered analysis), the lead agent must dispatch one supplementary subagent with the converged choice **explicitly prohibited** before locking the convergence in.
+
+**Why.** Per the Phase-2 axis-divergence audit + D5: when independent subagents converge on the same answer, the lead agent cannot distinguish honest corpus signal from prompt-anchoring without an explicit test. The blind-axis test is that test. Cost: one subagent. Value: a definitive answer on whether the convergence reflects corpus or prompt.
+
+**Effect.** The first instance was unified-D-off-list (Phase 2). The rule applies going forward at every phase boundary where parallel subagent convergence occurs.
+
+---
+
 ## What this file does NOT change
 
 - Anything in [`ARCHITECTURE-V3-SYNTHESIS-PLAN.md`](../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md) beyond Phase 2 (9 tracks not 6) and Phase 3 (3 syntheses not 2). The phase structure (0 → 8) survives.

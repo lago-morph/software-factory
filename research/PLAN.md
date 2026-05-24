@@ -1,5 +1,11 @@
 # Software Factory Research — PLAN.md
 
+## ⚠ Picking up work? Start at the v3 synthesis plan, not here.
+
+The active work right now is the v3 architecture synthesis. The entry point is [`ARCHITECTURE-V3-SYNTHESIS-PLAN.md`](../ARCHITECTURE-V3-SYNTHESIS-PLAN.md) at the repo root — it carries a current-state pointer that names whichever phase is active. This file is the research-drain pipeline state and is not the entry point for current work.
+
+---
+
 ## 1. Current state (TL;DR)
 
 Rounds 1–12 complete (see §10 for the round-by-round lookup). What's left is the §3 and §5 items plus the `research-plan.md` direction decision.

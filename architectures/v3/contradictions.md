@@ -11,6 +11,8 @@ based-on-date: 2026-05-23
 
 **Provenance discipline.** Quotes are verbatim or near-verbatim with section references. Where a quote is paraphrased, it is flagged as such. The register draws on the ~16 tensions surfaced in the two archived syntheses (`archive/synthesis-v1-v2/00-synthesis.md` §3, `archive/synthesis-v1-v2/13-round-2-synthesis.md` §2), then extends with material from Round-3–12 reports and followups.
 
+**Bias-guard-sharpening citation discipline.** Each CTR entry's "Phase-1 bias-guard sharpening" paragraphs (WEAK-1 through WEAK-5) were authored by an auditor and are critic framings, not corpus references. Cite the underlying corpus material (the reports, followups, sections referenced *inside* the sharpening), not the `WEAK-N` ID itself.
+
 ---
 
 ## A. Operating-mode contradictions (lights-out / regime)

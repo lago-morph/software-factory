@@ -115,4 +115,41 @@ The user authorized **"ask the rest fresh"** for items beyond the 9-track decisi
 
 ---
 
+## D5 — Bias-guard-finding integration discipline (added 2026-05-24)
+
+**Decision.** When the lead agent integrates a bias-guard finding (`EXAMPLE-FINDING-N` of any class) into a primary artifact (`widgets/example-catalog.md`, `widgets/example-register.md`, or any equivalent canonical reference), the integration must:
+
+1. **Describe the phenomenon, not the architectural commitment.** Entry mechanisms describe how something fails, not which architecture-shaped solution the failure presupposes.
+2. **Avoid framing language that smuggles in candidate solutions.** Phrases like "by pattern-Q", "via mechanism-R", "through scheme-Z" embed an architectural choice into a finding that should be axis-agnostic.
+3. **Pass the neutralization self-check.** If the lead agent removes the bias-guard finding's framing language and the integration still conveys the underlying phenomenon, the wording is neutral. If removing the framing erases the integration, rewrite.
+4. **Quarantine bias-guard IDs.** Bias-guard findings keep their IDs inside the bias-guard report files. Downstream artifacts that absorb the findings cite the *underlying corpus material* (specific reports and sections) — not the bias-guard ID.
+
+**Illustrative example (fictitious).** Suppose a bias-guard report surfaces `EXAMPLE-FINDING-7` describing the phenomenon "operators stop noticing slow degradation in a measurement system." The lead agent should integrate this into a primary failure-mode entry whose mechanism field says something like *"a measurement system's accuracy degrades silently over time without an explicit trigger"* — not *"the dashboard's pattern-Q sampler drifts in its calibration."* The first wording names the phenomenon; the second wording embeds an architectural commitment (the system uses a pattern-Q sampler) that any downstream architecture reader will inherit as a given.
+
+**Why.** The Phase-2 contamination episode demonstrated that integration wording leaks downstream: subagents reading a primary artifact treat its embedded architectural commitments as corpus material, then converge on architectures consistent with those commitments. The neutralization self-check + ID quarantine together prevent both leak paths.
+
+---
+
+## D6 — Full re-run after contamination discovery (added 2026-05-24)
+
+**Decision.** When a contamination episode is identified after a parallel subagent dispatch has produced outputs, re-dispatch all affected subagents against cleaned source files rather than attempt to surgically clean the existing outputs. Original outputs are preserved in git history; the live tree replaces them with the re-run results.
+
+**Why.** Half-measures (rewording sources but keeping the original outputs; running amplifier tests on existing outputs; lead-agent weighting of contaminated outputs as secondary) all leave traces of the contamination in subsequent merge inputs. The full re-run is the only intervention that produces a Phase-3 merge input set free of the original framing.
+
+**When this rule fires.** Two preconditions: (a) the contamination has been documented by a bias-guard audit, and (b) the user has the token budget and time for the re-run. Otherwise the lead agent surfaces the contamination as a Phase-3 DECISIONS-PENDING item.
+
+---
+
+## D7 — Off-list / blind-axis test as a standing safeguard (added 2026-05-24)
+
+**Decision.** Whenever two or more parallel subagents converge on the same axis / framing / pattern-name for an open-ended decision (Phase-2 unified-track axis selection; Phase-3 cross-mandate-survivor argument; Phase-5 ADR alternative-considered analysis), the lead agent must dispatch one supplementary subagent with the converged choice **explicitly prohibited** before locking the convergence in.
+
+**Illustrative example (fictitious).** Suppose three parallel subagents are asked to pick an organizing principle for a unified design and two of them independently land on `pattern-Q`. Before merging, dispatch a fourth subagent with the brief "pick an organizing principle, but `pattern-Q` is prohibited." If the fourth subagent finds a defensible alternative, the original convergence was at least partially anchored on prompt or source-file language pointing at `pattern-Q` — not pure corpus signal. If the fourth subagent struggles and concedes `pattern-Q` is the corpus's strongest answer, the convergence is genuine.
+
+**Why.** When independent subagents converge on the same answer, the lead agent cannot distinguish honest corpus signal from prompt-anchoring without an explicit test. The blind-axis test is that test. Cost: one subagent. Value: a definitive answer on whether the convergence reflects the corpus or the prompt.
+
+**Effect.** The rule applies at every phase boundary where parallel subagent convergence occurs.
+
+---
+
 *End of decisions-captured.md.*

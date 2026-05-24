@@ -3,6 +3,12 @@
 These conventions are loaded by the harness and override any conflicting default
 directives.
 
+## Interactive operation
+
+In real-time conversation with the user, don't start substantive work the user didn't ask for. If you have an idea, raise it and wait.
+
+Doesn't apply to unattended sessions where the user delegated execution (webhook-triggered runs, scheduled jobs, etc.).
+
 ## Process skills — non-negotiable triggers
 
 <!-- AGENTS-MD-9573ff5b60 -->

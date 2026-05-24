@@ -1,5 +1,7 @@
 # Architecture v3 Synthesis Plan
 
+**Current state:** in Phase 2. Active takeover plan: [`architectures/v3/PHASE-2-RERUN-PLAN.md`](architectures/v3/PHASE-2-RERUN-PLAN.md). When Phase 2 completes, this line updates to the next active phase (Phase 3 — Merge + adversarial passes), and the takeover plan is removed.
+
 **Status:** Active execution plan. Will be converted to a reusable skill after v3 completes.
 **Revision history.** v1.0 — initial 8-phase plan with 6 Phase-2 tracks (committed in PR #124, merged 2026-05-23). v1.1 — Phase-0 bias-guard pass produced [`decisions-captured`](architectures/v3/decisions-captured.md) with D1 (Phase 2 expands to 9 tracks: 3+3+3), D2 (mandate-fit matrix is per-(architecture × work-unit-class)), D3 (§4 brief invariants relaxed to "defaults with explicit accept/challenge"), and D4 (lead-agent-authorized vocabulary / citation / definition fixes). This file reflects v1.1.
 **Owner:** lead agent (this file is the canonical execution doc; PLAN.md tracks the research-corpus drain; this plan tracks the synthesis-and-architecture-redesign work that follows).

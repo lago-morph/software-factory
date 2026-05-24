@@ -35,8 +35,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[4]
 ARCH_DIR = REPO / "architectures"
 TABLE_PATH = ARCH_DIR / "failure-modes.md"
-ARCH_PATTERN = re.compile(r"^0([1-9])-.*\.md$")
-ARCH_PATH_PATTERN = re.compile(r"^architectures/0([1-9])-.*\.md$")
+ARCH_PATTERN = re.compile(r"^([0-9][0-9])-.*\.md$")
+ARCH_PATH_PATTERN = re.compile(r"^architectures/([0-9][0-9])-.*\.md$")
 HEADER_PATTERN = re.compile(r"^(\d+):\s*\S+")
 SECTION_MARKER = "### 2.4 Failure mode coverage"
 SECTION_END = "**Coverage column scores"

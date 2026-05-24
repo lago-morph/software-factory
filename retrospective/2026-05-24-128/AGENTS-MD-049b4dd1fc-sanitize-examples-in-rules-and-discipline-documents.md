@@ -1,0 +1,9 @@
+# agent instruction
+
+**Sanitize examples in rules and discipline documents.** When writing rules, ADRs, or discipline docs that include illustrative examples, never use real file paths, real IDs, or real project-specific terms in the example. The downstream agent treats the real artifact as relevant and behaves toward it accordingly. Use obviously fictitious placeholders (e.g., `widgets/example-catalog.md`, `pattern-Q`, `EXAMPLE-FINDING-7`). Run a sanitization audit (a small subagent scan for real-repo references) before committing the rule.
+
+*Grounded in: an F-mode entry's mechanism field was written with wording that named one specific architectural pattern as the factory's mechanism; the wording then propagated through 7+ downstream subagents and biased their independent architecture proposals.*
+
+# justification
+
+The Phase-1 lead-agent integration that promoted CANDIDATE-6 from a bias-guard report into a primary F-mode entry used the wording "the factory classifies work units into automation-eligible vs human-required by stakes / risk tier." That single sentence — written as illustration of how the failure mode manifests — embedded an architectural commitment (tier-classification as the factory's mechanism). All 9 Phase-2 subagents then read the F-mode catalog as part of their corpus inputs. Two of three unified-mandate tracks independently converged on tier-based axes. The axis-divergence auditor identified the F-mode wording as the smoking-gun source. The cost of the bias: a full Phase-2 dispatch had to be discarded and re-run from cleaned source files (~9 Opus subagents + ~4 bias guards × ~30 minutes each, plus debug/cleanup overhead). The marginal cost of the sanitization audit: one ~10-second subagent pass per primary-artifact integration. Asymmetry: 10 seconds vs. hours of re-work.

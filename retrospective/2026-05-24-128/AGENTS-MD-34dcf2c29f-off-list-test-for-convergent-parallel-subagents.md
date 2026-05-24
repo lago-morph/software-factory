@@ -1,0 +1,9 @@
+# agent instruction
+
+**Off-list test for convergent parallel subagents.** When two or more parallel subagents converge on the same axis, framing, or pattern-name for an open-ended decision, dispatch one supplementary subagent with the converged choice explicitly prohibited before locking the convergence in. The test is cheap (one subagent) and decisive: if the supplementary subagent finds a defensible alternative under the prohibition, the original convergence was at least partly prompt-anchoring rather than corpus signal; if the supplementary subagent struggles and concedes the original choice was strongest, the convergence is honest.
+
+*Grounded in: two of three unified-mandate subagents converged on the same axis; the off-list supplement found two additional defensible axes, confirming partial prompt-anchoring.*
+
+# justification
+
+D1 of the v3 work dispatched 3 unified-mandate tracks on identical "pick your own axis" briefs. The expected design signal was divergence-vs-convergence: 3 subagents independently landing on the same axis would have been strong corpus evidence; landing on different axes would have been evidence of multiple defensible architectures. In practice, 2 of 3 converged on a tier-based axis. The convergence was treated as signal until the axis-divergence auditor traced it to F-mode wording in a primary artifact — the convergence was at least partly bias-amplification, not pure corpus signal. The off-list test was the user-recommended falsification: dispatch a 4th subagent with the tier axis prohibited. The 4th found a defensible alternative (verification-topology), which retroactively proved the convergence had been prompt-anchored. Cost of the test: one Opus subagent, ~10 minutes. Cost of skipping the test: an entire Phase-2 dispatch (9 subagents + 4 bias guards) had to be discarded. The asymmetry makes the test mandatory whenever parallel subagents converge.

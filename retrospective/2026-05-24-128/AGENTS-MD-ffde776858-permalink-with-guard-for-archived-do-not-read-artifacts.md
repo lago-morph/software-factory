@@ -1,0 +1,9 @@
+# agent instruction
+
+**Permalink-with-guard for archived-do-not-read artifacts.** When removing artifacts from active use because they carry contamination risk or stale framing that should not seed the next agent's context, use the permalink-with-guard pattern: create one reference document under a `history/` directory with a `⚠ STOP — do not read these into your context window` header at the top, followed by per-artifact entries giving the original path, a one-line description, and a `git show <commit>:<path>` retrieval command. Delete the artifacts from the active tree. Do not leave artifacts in a moved-but-visible directory (creates forbidden-fruit curiosity); do not attempt in-place sanitization unless the value-to-risk ratio is clearly favorable.
+
+*Grounded in: an earlier attempt to move contaminated tracks to `tracks-superseded/` was rejected as still-too-tempting; the permalink-with-guard pattern was the user-mandated fix.*
+
+# justification
+
+The lead agent's first attempt at fencing off contaminated artifacts was to move them to `tracks-superseded/` with a sibling ARCHIVE.md. The user explicitly rejected that design: "you are just hanging out in front of a curious agent the forbidden fruit." A moved-but-visible directory advertises the artifacts to any agent that lists the tree; the curious-agent failure mode is exactly what the cleanup was supposed to prevent. The permalink-with-guard pattern removes the artifacts from the live tree entirely (the next agent never sees them) while preserving archaeological access (a human reviewer can `git show <commit>:<path>` on demand). The guard header at the top of the reference doc explicitly tells any agent that *does* find the file "do not read these into your context window" — turning the forbidden-fruit dynamic into an explicit rule the next agent can obey. Cost of adopting: one extra file per archival event. Cost of not adopting: contamination leaks into the next session's work.

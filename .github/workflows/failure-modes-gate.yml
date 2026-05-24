@@ -32,7 +32,7 @@ on:
     # REQUEST_CHANGES reviews. Domain of this gate = top-level
     # 0[1-9]-*.md architecture spec files + the canonical matrix.
     paths:
-      - 'architectures/0[1-9]-*.md'
+      - 'architectures/[0-9][0-9]-*.md'
       - 'architectures/failure-modes.md'
       - '.claude/skills/architecture-failure-mode-gate/**'
       - '.github/workflows/failure-modes-gate.yml'

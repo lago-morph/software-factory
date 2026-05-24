@@ -6,42 +6,13 @@
 
 ---
 
-## 0. The single most important operating rule for the next session
+## 0. Operating rule
 
-**Follow this plan; do not initiate side work the plan does not cover.** The user's approval of this plan is your authorization to execute the steps in §3. The plan itself contains explicit stop-and-ask checkpoints at each step (3.1 through 3.9) — those are the deliberate review points; honor them. They exist because the steps are individually high-stakes (rewriting source files, moving contaminated artifacts, dispatching 9 subagents) and the user wants visibility *between* steps.
+Execute this plan step by step. Each step has a built-in stop-and-ask checkpoint at the end — surface what + why, wait for the user's go-ahead, then do exactly that step.
 
-This is NOT "ask before every micro-action." Within a step, if the step says "delete file X and write file Y per this template," you do that work without re-asking inside the step. The stop-and-ask is *between* steps, not inside them.
+**Do not do side work outside this plan.** If the user is in interactive dialog with you (sending messages, replying turn-by-turn) and asks for or implies something the plan does not cover, stop and ask before starting.
 
-What you SHOULD do:
-- Execute the plan as written, step by step.
-- At each step's stop-and-ask checkpoint, surface concisely (what + why) and wait for explicit per-step approval.
-- After approval, do exactly what the step describes.
-- Report results.
-- Surface the next step's checkpoint.
-
-What you must NOT do:
-- Take the plan as a license to start side work the plan does not cover.
-- Skip the stop-and-ask checkpoints embedded between steps.
-- Decide on your own that a step's "intent" justifies a different action than the step describes.
-- Bundle multiple step-checkpoints into a single go-ahead request — if the user approves step 3.1, that is approval for step 3.1 only.
-
-For the global rule (when this rule applies and when it doesn't), see [`AGENTS.md`](../../AGENTS.md) section *"Interactive operation: don't start substantive work the user didn't direct."* In short: this plan is approved work, so executing it is fine; what the global rule prohibits is initiating *other* substantive work the user did not direct.
-
-The user's exact statement that triggered both this plan and the AGENTS.md rule:
-
-> **YOU DO NOT EVER START A SUBSTANTIVE PATH THAT HAS BIG CONSEQUENCES UNTIL I EXPLICITLY SAY IT IS OK**
-
-That statement is about unauthorized initiation. This plan is authorized; executing it does not violate the statement. Initiating *additional* substantive work outside this plan would.
-
-What counts as substantive (non-exhaustive):
-- Editing primary v3 artifacts (`00-brief-v3.md`, `failure-modes-v3.md`, `contradictions.md`, `corpus-inventory.md`, `decisions-captured.md`)
-- Editing the synthesis plan
-- Moving, renaming, or deleting any tracked file
-- Dispatching subagents
-- Opening, merging, or closing PRs
-- Reverting commits
-
-Reading, grepping, running lint scripts, asking the user clarifying questions — these are NOT substantive and do not need per-step approval.
+For the global form of this rule, see [`AGENTS.md`](../../AGENTS.md) section *"Interactive operation."*
 
 ---
 

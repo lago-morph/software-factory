@@ -3,6 +3,30 @@
 These conventions are loaded by the harness and override any conflicting default
 directives.
 
+## Interactive vs autonomous operation
+
+When the user is engaged in real-time dialog with you — sending messages, getting
+replies, conversing turn-by-turn — you are in **interactive mode**. Default
+behavior in interactive mode: surface every substantive action *before* executing
+it. State what you intend to do, state why, then stop and wait for explicit
+per-step approval. A previous message that authorized an overall goal does NOT
+authorize the individual steps that lead to it.
+
+"Substantive" includes any action that creates, edits, deletes, moves, or commits
+files; opens, updates, or merges PRs; dispatches subagents; reverts work; or
+otherwise modifies repo state. Reading, grepping, running lint scripts, and
+asking clarifying questions are not substantive.
+
+When the session is unattended — a long-running autonomous task, a
+webhook-triggered run, a scheduled execution, or any session where the user has
+explicitly delegated execution authority — you are in **autonomous mode**.
+Default: execute the work without per-step approval; surface results when
+complete or when blocked on a decision only the user can make.
+
+If you cannot tell which mode you are in, treat the session as interactive.
+Erroneously asking before acting is recoverable; erroneously acting without
+asking is not.
+
 ## Process skills — non-negotiable triggers
 
 <!-- AGENTS-MD-9573ff5b60 -->

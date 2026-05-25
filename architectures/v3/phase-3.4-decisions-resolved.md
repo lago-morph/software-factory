@@ -4,6 +4,71 @@ This file records user decisions made at the Phase-3.4 checkpoint as they are ma
 
 ---
 
+## Working definitions: architecture, substrate, methodology
+
+These three terms are used throughout the synthesis. They overlap in the corpus and are used differently by different sources; this section is the project's binding definition.
+
+### Substrate
+
+The set of **platform primitives** the factory consumes during operation. Each primitive is a named, typed thing with:
+
+- **A contract.** The primitive's role, API surface, and partition discipline (what it does, how callers interact with it, what isolation it enforces).
+- **A construction path.** How this primitive gets built — concrete existing tools, libraries, techniques, with corpus references to others who have built something in this shape. *Research-grade-uncertainty primitives must be flagged as such.*
+- **A corpus justification (the *why*).** What problem in the corpus this primitive solves, with citations.
+- **At least one methodology that uses it.** Substrate primitives are not built for their own sake; an orphan primitive is removed.
+
+Examples: sandbox runtime, trajectory capture, cost-ceiling enforcement, watchdog tiers (Daemon / Triage / Patrol), holdout-partition enforcement, judge router with model-family-diversity routing. Some primitives are commodity (a deny-by-default sandbox is essentially Terraform + bwrap); others are designed systems with non-trivial buildability (a polyglot codebase index with role-based read partitioning).
+
+### Methodology
+
+The **per-cycle process** the factory runs *against* the substrate. Specifies:
+
+- The **unit of work** (issue from a queue; change-request against a spec; codebase-evolution proposal; reversible commitment; etc.)
+- The **cycle shape** — stages, regimes, gates, when each fires
+- The **knowledge-accumulation pattern** — what gets stored, when, and how it's retrieved
+- The **error-handling protocol** — escalation triggers, re-entry mechanisms
+- The **substrate primitives the cycle requires** — by contract reference, not by construction
+
+A methodology is *how the factory uses* the substrate to produce software. Same substrate can host different methodologies; same methodology can run on different substrates (provided the substrate primitives meet the contracts).
+
+### Architecture
+
+A **named composition** of:
+
+- A methodology (or a graph of methodology variants per work-unit-class)
+- The substrate primitives that methodology requires (with construction paths and corpus justifications)
+- The **discipline that binds them** — how the methodology calls into the substrate, what invariants are maintained at boundaries, what happens at transitions.
+
+An architecture is a *proposal*. A deployed factory is a *realization* of an architecture (with specific tools, vendors, deployment configurations).
+
+### Relationships
+
+```mermaid
+flowchart TB
+    A["Architecture<br/>(named composition;<br/>proposal or deployment)"]
+    M["Methodology<br/>(per-cycle process)"]
+    S["Substrate<br/>(platform primitives)"]
+    D["Discipline<br/>(how M calls into S;<br/>boundary invariants)"]
+
+    A --- M
+    A --- S
+    A --- D
+    M -->|requires| S
+    D -->|governs| M
+    D -->|governs| S
+```
+
+### Operating rules (informed by user direction)
+
+1. **Methodologies drive.** The synthesis is fundamentally hunting for methodologies. Substrate requirements fall out per methodology.
+2. **No orphan substrate.** A substrate primitive cannot enter an architecture without being claimed by at least one methodology. Substrate tracks that surface primitives no methodology uses lose those primitives.
+3. **Buildability is mandatory.** A substrate primitive cannot enter an architecture without a construction path. "Just assume `CodebaseModel` exists" is handwaving and is rejected.
+4. **Most-likely-commodity substrates are still substrate.** Sandbox, cost ceiling, log sink — these are substrate even though their construction is cloud-engineering trivial. The split is about *role*, not about engineering effort.
+5. **Designed-system substrates get the same treatment but heavier scrutiny.** When a substrate primitive is itself a non-trivial designed system (e.g., a polyglot code index), the construction path must be more detailed (named tools, named techniques, named prior-art references). The buildability bar is higher in absolute terms but is the same in kind: produce evidence the thing can be built.
+6. **Architecture-level disciplines are separate.** Things like the three-layer citation discipline, concrete-task discipline, bias-guard discipline are *not* substrate primitives or methodology choices — they are meta-disciplines that govern how the architecture's artifacts are produced. They live at the architecture level.
+
+---
+
 ## Scoping principle (immutable, overrides any conflicting framing in the integration brief)
 
 **Carry forward every candidate methodology / architecture that has defensible supporting arguments and that successfully addressed Phase-3.2 / Phase-3.3 criticism. Do not eliminate at end-of-Phase-3.**
@@ -58,19 +123,38 @@ See [`dec-1-unification-verdict.md`](decisions/dec-1-unification-verdict.md). No
 
 ---
 
-## Cross-cutting orientation: methodology drives; substrate requirements fall out
+## Cross-cutting orientation: methodology drives; substrate requirements fall out (refined per user's follow-up)
 
-The user named a broader concern (paraphrase): the synthesis should be trying to find **methodologies**, not substrates. Methodologies should *issue requirements* for a substrate. Substrate requirements, if sufficiently detailed, will likely be implementable on any cloud platform.
+The user's framing: methodology drives; substrate requirements should fall out per methodology; substrate requirements (when sufficiently detailed) will likely be implementable on any cloud platform.
 
-**Recorded as orientation, with one substantive caveat:**
+Lead-agent's first pushback: some primitives the corpus called "substrate" are not commodity (e.g., `CodebaseModel` — a knowledge-graph / code-analysis system with five sub-stores).
 
-This reorientation is correct for the bulk of substrate primitives — sandbox, trajectory capture, cost ceilings, watchdog tiers, coordination medium, perimeter closure, event sinks, alerting — these are cloud-engineering-once-specified.
+**User's response, which sharpens the rule:** "It is handwaving to just assume something like `CodebaseModel` just exists. You have to say *how* it will be constructed... However, it is likely that some substrate-focused tracks will surface individual items that have incredible crossover. I just don't want the substrate tracks to get sidetracked building things that no methodology will use. The substrate has to justify *why* they are building it, with references to sources."
 
-**Caveat:** some primitives the corpus called "substrate" are not commodity infrastructure and should not be dismissed as such. The clearest example is `CodebaseModel` (the brownfield-side queryable artifact with five sub-stores — symbol index, dependency-and-impact graph with blast-radius compute, runtime/telemetry view with role-based partitioning, change-history-with-symbol-level-attribution, invariant/debt view). For a polyglot codebase that has been through acquisitions, this is a knowledge-graph / code-analysis system in its own right. If a methodology "issues a requirement" for `CodebaseModel`, that requirement is "we need a tool that does X" rather than "we need a 3-line Terraform module" — and *the choice of what X is* is methodology-load-bearing.
+**Lead-agent honest assessment:** substrate-track Phase-2 agents (`greenfield-substrate-first`, `brownfield-substrate-first`, `brownfield-legacy-ingestion-first`) named substrate primitives at the **contract level** (role, API surface, partition discipline) — they did *not* produce construction paths. The HOW was deferred to Phase 5 ADRs (alternatives-considered) and Phase 6 architecture specs. The user's filter wants construction-path discipline *upstream* of Phase 4 dispatch.
 
-Similar caveats apply, in milder form, to: cross-family judge routing with TPR/TNR-aligned evaluations; per-cycle holdout enforcement with role-partitioned views; AILCCP-grade immutable attribution at industrial scale.
+### Refined three-part rule for accepting a substrate primitive
 
-**Refined orientation:** methodologies drive; substrate requirements fall out per methodology; *but* when a methodology requires a primitive that is itself a designed system (not a configuration), name the primitive explicitly and don't pretend it's commodity. Most Phase-4/5 work survives the reframe by changing framing (from "pick shared substrate" to "what does each methodology require of infrastructure?"); some substrate primitives that are themselves designed systems get their own ADRs.
+1. **Construction path.** Each substrate primitive named in a surviving candidate must ship with a buildability sketch: existing tools / libraries / techniques that construct it; concrete corpus references of others who have built something in this shape; research-grade-uncertainty flag if no plausible construction path is known.
+2. **Methodology-justifies-substrate attestation.** Each primitive must be paired with at least one surviving methodology candidate that uses it. Orphan primitives ("substrate built for its own sake") are removed.
+3. **Corpus citation for the *why*.** Each primitive's justification must cite the corpus sources that motivate its existence — why this primitive solves a problem the corpus has identified.
+
+With these three conditions, the substrate / methodology split *is* a valid separating principle.
+
+### Proposed methodology change: insert a buildability check per candidate
+
+Add a sub-phase **Phase 3.5 (substrate buildability addendum per candidate)** between Phase 3.4 (decisions) and Phase 4 (substrate-requirements extraction), or fold the same work into Phase 4 as a precondition. For each surviving candidate:
+
+- **Enumerate** the substrate primitives the candidate requires.
+- For each primitive, **produce a buildability sketch** per the rule above.
+- For each primitive, **attest a methodology that uses it.**
+- **Flag primitives** whose construction is research-grade — these are important risk markers for the candidate.
+
+A primitive without buildability + methodology-attestation + corpus-why is removed from its candidate's substrate requirement set. The candidate may still survive; it just shrinks.
+
+**Effect on prior work.** The Phase-2 substrate-track outputs survive but get a buildability addendum attached per primitive. The Phase-3.2 critique pass did not include a "builder / implementer" persona; this is a gap in the original methodology that the buildability sub-phase corrects.
+
+**Effect on future work.** Phase 4 substrate-requirements extraction now consumes buildability-confirmed primitives only. Phase 5 ADRs are no longer the first place construction paths land; they refine and finalise paths already sketched.
 
 ---
 

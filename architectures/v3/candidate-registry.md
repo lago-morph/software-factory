@@ -162,7 +162,7 @@ Phase 3.5 ([sketches in `primitives/`](primitives/)) produced buildability sketc
 | GF-C | **survives** with two partial-RG flags (P-17 substance-check on 2 fields) | Articulate Phase-4 plan for `business_outcomes` and `capability_scope` substance gating |
 | BF-S | **survives with downgraded B7 claim** (P-23 partition-leakage is structural) | Rephrase B7 from "substrate-enforced role partition" to "rate-limited side-channel mitigation"; surface remaining leakage as accepted-open |
 | BF-M | **survives** | Brief-quality calibration (P-27) carried to Phase 5/8 |
-| BF-L | **survives with research-grade-uncertainty flag on Codebase Model** (P-26: 2 of 6 views are RG; 9–18 engineer-months realistic) | Articulate Phase-4 plan for the conventional + invariant views or accept them as research-grade |
+| BF-L | **survives with research-grade-uncertainty flag on Codebase Model** (P-26: 2 of 6 views are RG; 9–18 engineer-months realistic) | Per [Phase-3.5.5 RG-primitive rule](#phase-355-rule-on-load-bearing-rg-primitives-binding-user-approved-2026-05-25): pick option (a) bounded sub-track per RG view (conventional / invariant) or option (b) accept-as-RG (default if no choice declared at Phase 4 entry) |
 | U-A | **survives** | Same-vs-distinct verdicts on P-28/P-29/P-30 variants are Phase-4.2 work |
 | U-B | **survives with deferred-defense flag** (smoke-test produced 5/5 non-trivial cross-layer invariants per auto-002 Round 2) | Full Phase-4 invariant-authoring sub-track authorized (scale smoke-test from 1-per-pair to ≥3-per-pair) |
 | U-C | **survives** with partial-RG on distance-estimator calibration + Goodhart-resistance | Calibration recipe + Goodhart-resistance evidence owed at Phase 5/8 |
@@ -320,3 +320,26 @@ The X_UNM_B cross-mandate finding (CodebaseModel is the load-bearing brownfield 
 - Candidates with partial-RG flags on specific sub-components or calibration: **5** (GF-S contradiction-detector reliability; GF-C 2-field substance-check; BF-M brief-quality calibration; U-C distance-estimator calibration + Goodhart-resistance; D7-U-1 already counted).
 
 **All 10 candidates carry forward into Phase 4.** Phase 4 dispatches per-candidate substrate-requirements summaries + shared-discipline extraction + primitive-overlap analysis per the v1.2 plan revision.
+
+### Phase-3.5.5 rule on load-bearing RG primitives (binding, user-approved 2026-05-25)
+
+**Rule.** Any candidate with a load-bearing primitive that lands `research-grade-uncertainty` at Phase 3.5 close may either:
+
+- **(a) Commit to a bounded authoring / specification sub-track at Phase 4** to convert the primitive's RG portion into designed-system content (with explicit scope, deliverable, and Phase-4-close go/no-go gate). Examples: U-B's invariant-authoring sub-track per [`auto-002` Round 2](decisions/auto-002-ub-path.md); BF-L's conventional-view authoring sub-track (LLM-with-structured-output + golden corpus of N idiomatic patterns per language) or invariant-view authoring sub-track (Daikon-style runtime inference + ≥N invariants per language); D7-U-1's A+C hybrid (deterministic + named-human backstop) per [`P-34`](primitives/P-34-independence-auditor.md).
+- **(b) Downgrade the dependent contract to accept-as-RG** with the substrate documenting the gap. The candidate's methodology then specifies how it degrades gracefully when the RG portion is unreliable / unavailable. Phase-5 ADRs land with `accepted-with-RG-flag` status; Phase-6 architecture specs include the accept-as-RG note in their YAML header; Phase-8 lean-evals must include a pressure-test of the degradation pattern.
+
+Per-candidate choices may be option (a) on some RG portions and option (b) on others — the rule applies per-RG-portion, not per-candidate.
+
+**Rationale (per the user's response to the scoping-principle skeptic's flag on the BF-L / U-B asymmetry):** without the rule, the registry treats candidates inconsistently — U-B got a bounded sub-track via the auto-002 smoke-test, while BF-L's RG views were treated as accept-as-RG without explicit choice. Lifting the rule to apply uniformly resolves the asymmetry and gives each candidate the same toolkit for defending an RG primitive.
+
+**Application to current candidates:**
+
+| Candidate | RG-portion | Choice | Notes |
+|---|---|---|---|
+| U-B | P-31 (full primitive) | (a) bounded sub-track | Smoke-test passed; full sub-track authorized at Phase 4 (scale 1-per-pair to ≥3-per-pair, ≥15 total) |
+| BF-L | P-26 conventional view | **candidate's choice at Phase 4 entry** | Default if no choice declared: (b) accept-as-RG. BF-L may opt-in to (a) bounded sub-track for some or all of: LLM-with-structured-output + golden corpus of ≥20 idiomatic patterns per supported language. |
+| BF-L | P-26 invariant view | **candidate's choice at Phase 4 entry** | Default if no choice declared: (b) accept-as-RG. BF-L may opt-in to (a) bounded sub-track: Daikon-style runtime inference + ≥5 invariants per language. |
+| D7-U-1 | P-34 (structural recursion) | (a) bounded sub-track, partial | A+C hybrid (deterministic primary + named-human backstop at low cadence) is the bounded sub-track; structural recursion concern accepts-as-RG as the residual. Combined option (a)+(b). |
+| U-B | P-31 long-distance pair (L0↔L4 judge-arm) | (b) accept-as-RG (carry-from-smoke-test caveat) | The smoke-test's L0↔L4 invariant depends on LLM-judge for substance check; treated as accept-as-RG per the smoke-test's own caveat. Full sub-track explores whether deterministic alternatives exist; falls back to accept-as-RG if not. |
+
+Per the user's approval 2026-05-25, the rule is binding for the rest of the synthesis pipeline. Any future candidate with a load-bearing RG primitive (e.g., if a Phase-4 ADR surfaces a new RG primitive) is governed by the same (a)/(b) choice with the same defaults.

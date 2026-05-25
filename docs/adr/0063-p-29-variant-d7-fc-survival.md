@@ -18,30 +18,23 @@ The DSL consumes the FC envelope shape specified by [ADR 0062 (D7-U-1 P-28 varia
 
 ## Decision
 
-**Adopt a Rego policy bundle in the `d7_u_1` namespace of the [ADR 0030](0030-p-29-policy-mediator.md) mediator with the core predicate `fc_survival(fc_id)` as the closure-condition vocabulary.** The bundle declares a top-level rule `allow_compound[artifact_b]` invoked by any boundary primitive about to expose an upstream artifact A to a downstream artifact B; the rule conjoins survived-FC checks over the FC graph for A by walking `data.fc_ledger` — the chain of FC envelopes from [ADR 0062](0062-p-28-variant-d7-fc-envelope.md) loaded into the policy `data` document via the bundle's data-source binding.
-
-Rule shape:
+**Adopt a Rego policy bundle in the `d7_u_1` namespace of the [ADR 0030](0030-p-29-policy-mediator.md) mediator with `fc_survival(fc_id)` as the closure-condition vocabulary.** The top-level rule `allow_compound[artifact_b]` is invoked by any boundary primitive about to expose upstream artifact A to downstream artifact B; it conjoins survived-FC checks over A's FC graph by walking `data.fc_ledger` — the chain of FC envelopes from [ADR 0062](0062-p-28-variant-d7-fc-envelope.md) loaded via the bundle's data-source binding.
 
 ```rego
 package d7_u_1
 
-# Survival predicate: an FC has survived iff its verdict outcome is survived,
-# or it is conditionally-survived-with-window and the current cycle is inside
-# the declared survival-window.
 fc_survival(fc_id) {
     fc := data.fc_ledger[fc_id]
     fc.verdict.outcome == "survived"
 }
-
 fc_survival(fc_id) {
     fc := data.fc_ledger[fc_id]
     fc.verdict.outcome == "conditionally-survived-with-window"
-    now := time.now_ns()
-    now <= fc.verdict.survival_window.expires_at_ns
+    time.now_ns() <= fc.verdict.survival_window.expires_at_ns
 }
 
-# Ledger walk: artifact A is gate-eligible iff every FC declared about A has
-# survived, AND every upstream FC the ledger references has survived.
+# Ledger walk: artifact gate-eligible iff every FC about it survived,
+# AND every upstream FC the ledger references survived.
 artifact_survival(artifact_id) {
     fcs := [fc_id | fc := data.fc_ledger[fc_id]; fc.artifact == artifact_id]
     count(fcs) > 0
@@ -60,11 +53,11 @@ allow_compound[artifact_b] {
 }
 ```
 
-**Boundary contract.** The compounding-gate boundary primitive serialises `{boundary: "compounding-gate", downstream_artifact, upstream_artifacts[]}` as the mediator `input`, calls `data.d7_u_1.allow_compound`, and refuses the write on any `allow == false`. `reasons[]` enumerates failing upstream FCs (`fc_id`, `outcome`, and on conditional-survival the window expiry). The bundle hash is captured in `audit_envelope` per ADR 0030.
+**Boundary contract.** The compounding-gate boundary serialises `{boundary: "compounding-gate", downstream_artifact, upstream_artifacts[]}` as `input`, calls `data.d7_u_1.allow_compound`, and refuses on any `allow == false`. `reasons[]` enumerates failing upstream FCs (`fc_id`, `outcome`, window expiry on conditional-survival). Bundle hash is captured in `audit_envelope` per ADR 0030.
 
-**Conditional-survival window interaction.** When an FC has `verdict.outcome == "conditionally-survived-with-window"`, the policy admits compounding **only** while the cycle is inside `verdict.survival-window`. The [P-30 D7-U-1 survival-window registrar (ADR 0064)](0064-p-30-variant-d7-survival-window.md) emits a `window-expired` event; the policy needs no separate predicate for expiry — the `time.now_ns() <= expires_at_ns` clause fails after the deadline. On expiry, the registrar cascades `re-falsification-required` to dependent FCs; downstream boundary checks then deny until a fresh refutation attempt yields a new `survived` verdict.
+**Conditional-survival window interaction.** When `verdict.outcome == "conditionally-survived-with-window"`, the policy admits compounding only while the cycle is inside `verdict.survival-window`; the `time.now_ns() <= expires_at_ns` clause fails after the deadline, so no separate expiry predicate is needed. The [P-30 D7-U-1 survival-window registrar (ADR 0064)](0064-p-30-variant-d7-survival-window.md) cascades `re-falsification-required` to dependent FCs on `window-expired`; downstream checks then deny until a fresh refutation yields a new `survived` verdict.
 
-**Ledger-walk semantics.** `data.fc_ledger` is loaded from the [ADR 0062 FC envelope store](0062-p-28-variant-d7-fc-envelope.md) under `refs/notes/falsification-commitment` (libgit2 path) or `envelope_kind = 'falsification-commitment'` rows (Postgres path) via the bundle's data-source binding. The recursive walk over `ledger.upstream_fcs` is bounded by the FC graph's depth (corpus-unmeasured per D7-U-1 OQ-2); Rego's incremental evaluation memoises `fc_survival` per `fc_id` within a pass.
+**Ledger-walk semantics.** `data.fc_ledger` is loaded from the [ADR 0062 FC envelope store](0062-p-28-variant-d7-fc-envelope.md) — `refs/notes/falsification-commitment` (libgit2) or `envelope_kind = 'falsification-commitment'` rows (Postgres). Recursive walk over `ledger.upstream_fcs` is bounded by FC-graph depth (D7-U-1 OQ-2, corpus-unmeasured); Rego memoises `fc_survival` per `fc_id` within a pass.
 
 ## Alternatives considered
 
@@ -82,12 +75,12 @@ allow_compound[artifact_b] {
 
 ## References
 
-- [ADR 0030: P-29 policy mediator framework](0030-p-29-policy-mediator.md) — PARENT common ADR; engine substrate, bundle-API, and audit-envelope contract this variant plugs into
-- [Phase-4.2 overlap verdict on P-29 three contested variants](../../architectures/v3/primitives/overlap.md#p-29-policy-mediator--compounding-gate--three-contested-variants) — `SAME primitive, DISTINCT policy DSLs` verdict and the FC-survival row this ADR instantiates
-- [D7-U-1 substrate-requirements § P-29 compounding gate](../../architectures/v3/substrate-requirements/d7-u-1.md) — FC-survival vocabulary, ledger-walk semantics, conditional-survival window interaction
-- [P-29 buildability sketch — D7-U-1 compounding gate](../../architectures/v3/primitives/P-29-policy-mediator.md) — engine choice corpus citation and `designed-system` buildability verdict
-- [ADR 0062: D7-U-1 P-28 variant — FC envelope](0062-p-28-variant-d7-fc-envelope.md) — envelope shape this DSL consumes; chain of FC envelopes walked by `data.fc_ledger`
-- [ADR 0064: D7-U-1 P-30 variant — survival-window registrar](0064-p-30-variant-d7-survival-window.md) — sibling ADR; timer cascade that drives re-falsification on window expiry
-- [ADR 0052: U-A P-29 variant — interval-policy DSL](0052-p-29-variant-u-a-interval-policy.md), [ADR 0056: U-B P-29 variant — layer-boundary DSL](0056-p-29-variant-u-b-layer-boundary.md) — sibling variant ADRs (rejected vocabularies here)
-- [F53 voluntary-discipline fragility](../../architectures/v3/failure-modes-v3.md#f53--voluntary-discipline-fragility-kahana-fragile-dependency-class), [F28 holdout leakage](../../architectures/v3/failure-modes-v3.md#f28--holdout-leakage--acceptance-criteria-seen-by-builders) — forcing failure modes
-- [auto-005 Round 2 Phase-5 dispatch shape](../../architectures/v3/decisions/auto-005-phase-5-dispatch-shape.md#decision-round-2) — Wave-5.3 per-variant ADR scope
+- [ADR 0030: P-29 policy mediator framework](0030-p-29-policy-mediator.md) — PARENT common ADR; engine substrate, bundle-API, audit-envelope contract
+- [Phase-4.2 overlap verdict on P-29 three contested variants](../../architectures/v3/primitives/overlap.md#p-29-policy-mediator--compounding-gate--three-contested-variants) — SAME-primitive-DISTINCT-DSLs verdict; FC-survival row
+- [D7-U-1 substrate-requirements § P-29 compounding gate](../../architectures/v3/substrate-requirements/d7-u-1.md) — FC-survival vocabulary, ledger-walk semantics, window interaction
+- [P-29 buildability sketch — D7-U-1 compounding gate](../../architectures/v3/primitives/P-29-policy-mediator.md) — engine corpus citation; `designed-system` verdict
+- [ADR 0062: D7-U-1 P-28 variant — FC envelope](0062-p-28-variant-d7-fc-envelope.md) — envelope this DSL consumes; ledger chain walked by `data.fc_ledger`
+- [ADR 0064: D7-U-1 P-30 variant — survival-window registrar](0064-p-30-variant-d7-survival-window.md) — sibling timer cascade for re-falsification on expiry
+- [ADR 0052: U-A P-29 — interval-policy](0052-p-29-variant-u-a-interval-policy.md), [ADR 0056: U-B P-29 — layer-boundary](0056-p-29-variant-u-b-layer-boundary.md) — sibling variant ADRs
+- [F53 voluntary-discipline fragility](../../architectures/v3/failure-modes-v3.md#f53--voluntary-discipline-fragility-kahana-fragile-dependency-class), [F28 holdout leakage](../../architectures/v3/failure-modes-v3.md#f28--holdout-leakage--acceptance-criteria-seen-by-builders) — forcing F-modes
+- [auto-005 Round 2 Phase-5 dispatch shape](../../architectures/v3/decisions/auto-005-phase-5-dispatch-shape.md#decision-round-2) — Wave-5.3 scope

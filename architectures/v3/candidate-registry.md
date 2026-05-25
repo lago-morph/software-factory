@@ -8,7 +8,7 @@ Registry of 10 methodology candidates carried forward from Phase 3.4. **Three ma
 
 A separate **Phase-3.5.5 RG-primitive application table** tracks which RG-flagged primitives apply to which candidates and records each candidate's bounded sub-track smoke-test outcome from Wave 4.5. A **Phase-4 close summary** section records per-candidate Phase-5 entry posture.
 
-The previously-proposed **GF → BF continuity matrix is withdrawn** per [DEC-1.b](phase-3.4-decisions-resolved.md): greenfield-vs-brownfield is entry-mode, not temporal. Long-run drift concerns are addressed within each candidate's own methodology, not via cross-candidate continuity.
+Carries a strikethrough-marked **"Greenfield → brownfield continuity"** section near the top (WITHDRAWN per [DEC-1.b](phase-3.4-decisions-resolved.md)). Its presence in the file marks the structural commitment that drift concerns live within each candidate's methodology, not in a cross-candidate matrix; see the body for the binding rationale.
 
 *Regenerated at end-of-run by the [autonomous-run](../../.claude/skills/autonomous-run/SKILL.md) skill; body below is the source of truth.*
 

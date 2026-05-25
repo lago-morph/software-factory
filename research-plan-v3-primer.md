@@ -32,7 +32,7 @@ Three reasons:
 
 1. **Asymmetric stakes.** Architecture choices set direction for hundreds or thousands of hours of downstream implementation, testing, and operation. A wrong architecture costs enormously; an over-careful synthesis only costs tokens and clock time. The methodology declares **accuracy ≫ speed ≫ tokens** as its operating principle.
 
-2. **Bias resistance.** A single architect picking primitives will inherit framing from whatever they read most recently. Research corpora that feed factory-architecture work are large (v3's was ~38 research reports plus ~14 follow-ups), and the bias surface is significant. The methodology responds with three things: deliberate divergence (multiple independent tracks at each fanout phase), [bias-guard](https://en.wikipedia.org/wiki/Cognitive_bias) subagents at every phase (not just at the explicitly adversarial passes), and "blind-axis tests" — essentially [key-assumptions checks](https://en.wikipedia.org/wiki/Structured_analytic_techniques) — that prohibit converged-on framings to test whether the convergence is genuine or [anchoring](https://en.wikipedia.org/wiki/Anchoring_effect) contamination.
+2. **Bias resistance.** A single architect picking primitives will inherit framing from whatever they read most recently. Research corpora that feed factory-architecture work are large (v3's was ~38 research reports plus ~14 follow-ups), and the bias surface is significant. The methodology responds with three things: deliberate divergence (multiple independent tracks at each fanout phase), [bias-guard](https://en.wikipedia.org/wiki/Cognitive_bias) subagents at every phase (not just at the explicitly adversarial passes), and "blind-axis tests" — essentially [key-assumptions checks](https://en.wikipedia.org/wiki/Structured_analytic_techniques) where a subagent is dispatched to re-do the analysis with the framings that previous tracks converged on explicitly forbidden, to see whether the convergence reproduces or whether it traced to [anchoring](https://en.wikipedia.org/wiki/Anchoring_effect) on the brief.
 
 3. **Falsification over confirmation.** The methodology structures itself so it can find out that its output is wrong, not just confirm that it is right — a [Popperian](https://en.wikipedia.org/wiki/Falsifiability) disposition. A late "back-fill audit" phase deliberately re-reads any prior-version material that was archived at the start of the run, looking specifically for what got dropped. Cross-mandate falsification tests in the middle phase attack any "one architecture for both" claim from both mandate sides, looking for the case where the unified design cannot work for one mandate or the other.
 
@@ -55,7 +55,7 @@ flowchart TB
 
 ### What each phase does, in one paragraph
 
-- **Phase 0** (Brief + archival). Lock the brief that the rest of the pipeline will read. Archive any existing version's architectures and syntheses so they cannot anchor the new work. The brief carries the operating-mode mandate (lights-out per the operator's definition), the two mandate scopes (greenfield and brownfield), the user-stated working hypothesis (if any), and any explicit out-of-scope statements.
+- **Phase 0** (Brief + archival). Lock the brief that the rest of the pipeline will read. Archive any existing version's architectures and syntheses so they cannot anchor the new work. The brief carries the operating-mode mandate (lights-out per the operator's definition), the two mandate scopes (greenfield and brownfield), the working hypothesis to be tested (e.g., the user's claim that no single architecture serves both mandates), and any explicit out-of-scope statements.
 - **Phase 1** (Pre-synthesis substrate). Build inputs every Phase-2 track will read identically. Three products:
   - a **contradictions register** (pairwise tensions in the corpus, both sources cited, *no resolution attempted* at this stage),
   - a **failure-mode catalog** (enumerated risks with greenfield- and brownfield-specific severity ratings),
@@ -105,7 +105,7 @@ flowchart TB
     TRACKS["9 Phase-2 tracks"]
     DRAFTS["3 Phase-3.1 drafts"]
     CRITIQUES["~24 Phase-3.2/3.3 critiques"]
-    SV1["surviving synthesis-v1 files<br/>(count depends on Phase-3.4 decisions)"]
+    SV1["surviving post-adversarial syntheses<br/>(count depends on Phase-3.4 decisions)"]
     P4OUT["Phase 4 outputs<br/>shared-substrate + divergence"]
     ADRS["~14 ADRs"]
     SPECS["N architecture specs<br/>(emergent count)"]
@@ -124,15 +124,15 @@ Phase 3 has four sub-phases. The first three are mechanical — they fan out sub
 ```mermaid
 flowchart TB
     P31["3.1 Merge<br/>(lead agent)<br/>9 tracks → 3 drafts"] --> P32
-    P32["3.2 Adversarial<br/>parallel × 18 + 2 blind-axis"] --> P33
+    P32["3.2 Adversarial<br/>parallel × 18 + N blind-axis<br/>(N = mandates flagged by anchor-detector;<br/>N = 2 in the v3 run)"] --> P33
     P33["3.3 Cross-mandate<br/>parallel × 4 falsification tests"] --> P34
     P34["3.4 Integrate<br/>+ USER CHECKPOINT"] --> P4
     P4["Phase 4"]
 ```
 
-- **3.1 (lead-agent work).** Read all 9 Phase-2 tracks and produce 3 pre-adversarial drafts — one per mandate plus one unified-candidate draft. Each draft marks each claim as either **ROBUST** (all 3 contributing tracks agree, with corpus grounding) or **DECISIONS-PENDING** (tracks diverge in a way that requires user resolution). The ROBUST/DECISIONS-PENDING distinction is the central data structure of Phase 3.
+- **Phase 3.1 (merge — lead-agent work).** Read all 9 Phase-2 tracks and produce 3 pre-adversarial drafts — one per mandate plus one unified-candidate draft. Each draft marks each claim as either **ROBUST** (all 3 contributing tracks agree, with corpus grounding) or **DECISIONS-PENDING** (tracks diverge in a way that requires user resolution). The ROBUST/DECISIONS-PENDING distinction is the central data structure of Phase 3.
 
-- **3.2 (parallel adversarial dispatch).** 18 subagents attack the drafts — 6 personas × 3 drafts. The persona set is drawn from a bias-guard catalog. Plus 2 mandatory "blind-axis" tests dispatched with the most-converged-on framings explicitly prohibited — an anti-anchoring discipline that asks whether the convergence among the Phase-2 tracks reflected real corpus signal or shared inheritance from the brief.
+- **Phase 3.2 (parallel adversarial dispatch).** 18 subagents attack the drafts — 6 personas × 3 drafts. The persona set is drawn from a bias-guard catalog. Plus a small number of mandatory "blind-axis" tests (typically one per mandate that exhibited suspect convergence — 2 in the v3 run), dispatched with the most-converged-on framings explicitly prohibited. The discipline asks whether the convergence among the Phase-2 tracks reflected real corpus signal or shared inheritance from the brief.
 
 ```mermaid
 flowchart LR
@@ -148,7 +148,7 @@ flowchart LR
     DU -.->|"blind-axis"| D7U["(typically one for greenfield<br/>+ one for unified)"]
 ```
 
-- **3.3 (cross-mandate falsification).** 4 cross-mandate subagents (an [adversarial-collaboration](https://en.wikipedia.org/wiki/Adversarial_collaboration)-shaped grid) test the unification hypothesis from four angles — two arguing the unified architecture *cannot* work for one mandate or the other, and a third/fourth arguing whether the two separate mandate-drafts *can* or *cannot* collapse into a single architecture.
+- **Phase 3.3 (cross-mandate falsification).** 4 cross-mandate subagents (an [adversarial-collaboration](https://en.wikipedia.org/wiki/Adversarial_collaboration)-shaped grid) test the unification hypothesis from four angles — two arguing the unified architecture *cannot* work for one mandate or the other, a third arguing the two separate mandate-drafts *can* collapse into a single architecture, and a fourth arguing they *cannot*.
 
 ```mermaid
 flowchart TB
@@ -170,19 +170,13 @@ flowchart TB
     X4 --> V
 ```
 
-- **3.4 (lead-agent integration + user checkpoint).** Lead agent compiles all critiques into an integration brief and surfaces the load-bearing decisions for user resolution. The methodology designates this as a checkpoint: **before integration writes the final post-adversarial synthesis files, every architecturally-load-bearing DECISIONS-PENDING item is surfaced to the user**.
-
-The plan's checkpoint table calls this out explicitly:
-
-| Phase | What user reviews |
-|---|---|
-| 3.4 | Every divergence between tracks; whether the unified synthesis survives the cross-mandate attacks |
+- **Phase 3.4 (lead-agent integration + user checkpoint).** Lead agent compiles all critiques into an integration brief and surfaces the load-bearing decisions for user resolution. The methodology designates this as a checkpoint: **before integration writes the final post-adversarial synthesis files, every architecturally-load-bearing DECISIONS-PENDING item is surfaced to the user**. The synthesis plan that drives a specific instantiation of this methodology codifies the checkpoint with a single-row entry: *"Phase 3.4 — user reviews every divergence between tracks and the verdict on whether any unified synthesis survives the cross-mandate attacks."*
 
 ---
 
 ## The ROBUST / DECISIONS-PENDING data structure
 
-Every claim in a synthesis draft is classified by the lead agent during the Phase-3.1 merge:
+Every claim in a synthesis draft is classified by the lead agent during the Phase-3.1 merge step:
 
 ```mermaid
 flowchart TB
@@ -231,9 +225,9 @@ flowchart TB
 
 ---
 
-## What happens after Tier-1 resolves
+## What happens after the Tier-1 (architectural-shape) decisions resolve
 
-1. **Integration writes post-adversarial synthesis files.** One per surviving architecture — the count depends on how the Tier-1 unification decision resolves; see diagram below. Each is the corresponding pre-adversarial draft after applying Phase-3.2 critique demotions, with an objections-and-responses appendix pointing at the relevant critiques. ROBUST claims that were demoted by critique move down; DECISIONS-PENDING items with resolutions become DECISIONS-RESOLVED.
+1. **Integration writes post-adversarial syntheses.** One per surviving architecture — the count depends on how the Tier-1 unification decision resolves; see diagram below. Each is the corresponding pre-adversarial draft after applying Phase-3.2 critique demotions, with an objections-and-responses appendix pointing at the relevant critiques. ROBUST claims that were demoted by critique move down; DECISIONS-PENDING items with resolutions become DECISIONS-RESOLVED.
 2. **Phase 4 dispatches.** Lead agent reads the surviving syntheses and produces a shared-substrate document and a divergence document. Bias guards at this phase: a [splitter/lumper](https://en.wikipedia.org/wiki/Lumpers_and_splitters)-style debate pair plus a substrate-vs-methodology classifier subagent.
 3. **Phase 5 starts.** ~14 ADRs in two waves. Each ADR has an "Alternatives considered" section that must engage with the archived prior-version content (this is where the Phase-7 back-fill audit starts naturally).
 
@@ -245,7 +239,7 @@ flowchart TB
 
     DEC1 -->|"two architectures<br/>+ shared tactical substrate"| A["Phase 4 produces:<br/>shared-tactical-substrate doc<br/>+ greenfield-architecture doc<br/>+ brownfield-architecture doc"]
 
-    DEC1 -->|"one unified architecture<br/>+ parameter atlas"| B["Phase 4 produces:<br/>unified-architecture doc<br/>+ parameter-atlas doc"]
+    DEC1 -->|"one unified architecture<br/>+ parameter atlas"| B["Phase 4 produces:<br/>unified-architecture doc<br/>+ parameter-atlas doc<br/>(parameter atlas = enumeration<br/>of how the single architecture<br/>specializes per mandate)"]
 
     DEC1 -->|"multiple competing<br/>unified candidates"| C["Phase 4 produces:<br/>one document per candidate;<br/>comparison matrix picks<br/>per work-unit-class"]
 
@@ -280,7 +274,7 @@ flowchart BT
 ```
 
 - **Bias-guard sharpening separated from corpus.** Bias-guard outputs are findings, not corpus. Downstream artifacts cite the underlying corpus material the bias-guard pointed at, not the bias-guard finding ID. Bias-guard reports stay in their own directory tree.
-- **Cross-session resumption.** Every artifact committed and pushed; every phase ends with a commit; the methodology's resumption protocol is "read the plan, read the corpus-state doc, `git log` to see what's landed, identify the current phase from the checkpoint table, continue."
+- **Cross-session resumption.** Every artifact committed and pushed; every phase ends with a commit; the methodology's resumption protocol is "read the synthesis plan, read the Phase-1 corpus inventory (which tracks corpus-ingestion state), `git log` to see what's landed, identify the current phase from the checkpoint table in the plan, continue."
 
 ---
 
@@ -303,11 +297,11 @@ The pipeline is a bricolage of established techniques rather than a single metho
 
 ### Most directly in use
 
-- **[Architecture Decision Records (ADR)](https://en.wikipedia.org/wiki/Architectural_decision)** — Michael Nygard's pattern for capturing binding architectural choices as numbered, immutable, context-decision-consequences records. The Phase-5 ADRs follow this pattern almost literally. The methodology's "concrete-task discipline" and "three-layer citation discipline" (specs cite synthesis; ADRs cite neither) are themselves codified as foundational ADRs that the rest of the pipeline inherits.
+- **[Architecture Decision Records (ADR)](https://en.wikipedia.org/wiki/Architectural_decision)** — Michael Nygard's pattern for capturing binding architectural choices as numbered, immutable, context-decision-consequences records. The Phase-5 ADRs follow this pattern almost literally. The pipeline also uses the same ADR pattern at the methodology level: the "concrete-task discipline" and "three-layer citation discipline" called out in the body are themselves captured as methodology-level ADRs (i.e., the methodology eats its own dog food on the decision-record discipline).
 - **[Pre-mortem analysis](https://en.wikipedia.org/wiki/Pre-mortem)** — Gary Klein's "imagine it failed; tell the story" exercise. One of the six adversarial personas per draft is literally a pre-mortem.
 - **[Red team](https://en.wikipedia.org/wiki/Red_team)** — adversarial position-taking originating in military planning. Another named persona; same role as the security-research red team but applied to architecture claims.
 - **[Falsifiability](https://en.wikipedia.org/wiki/Falsifiability)** — Popper's criterion. The unification hypothesis is structured as falsifiable, and Phase 3.3 dispatches subagents whose job is to falsify it. The blind-axis tests in Phase 3.2 are a second falsification surface — they ask whether convergence among independent tracks reflected corpus signal or shared anchoring.
-- **[Anchoring effect](https://en.wikipedia.org/wiki/Anchoring_effect)** — Tversky/Kahneman. The Phase-2 anchor-detector bias guard is literally an anchoring-bias detector running over the Phase-2 outputs; the blind-axis tests in Phase 3.2 are the falsifying complement.
+- **[Anchoring effect](https://en.wikipedia.org/wiki/Anchoring_effect)** — Tversky/Kahneman. One of the bias-guard catalog members is an *anchor-detector* subagent that runs after each fanout phase, scanning for places where multiple independent tracks landed on the same framing in a way that traces back to the brief rather than to the corpus. The blind-axis tests in Phase 3.2 are the falsifying complement — they actively prohibit suspected anchors and re-do the analysis.
 - **[Cognitive bias mitigation](https://en.wikipedia.org/wiki/Cognitive_bias)** — the bias-guard catalog (skeptic, naive newcomer, anchor-detector, splitter, lumper, etc.) is a working subset of the standard biases-and-debiasing literature.
 
 ### Patterns borrowed in pieces

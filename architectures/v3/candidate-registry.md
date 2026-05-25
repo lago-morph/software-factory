@@ -336,20 +336,10 @@ Per-candidate choices may be option (a) on some RG portions and option (b) on ot
 
 | Candidate | RG-portion | Choice | Notes |
 |---|---|---|---|
-| U-B | P-31 (full primitive) | (a) bounded sub-track — **WAVE 4.5 PASS** | Smoke-test passed; full sub-track authorized at Phase 4. **Phase-4 result:** Wave-4.5 [u-b-invariant-authoring](sub-tracks/u-b-invariant-authoring.md) produced 20 invariants across 5 layer-pairs (vs ≥15 target); all 5 pairs scaled to ≥3; no fallback needed. 10+ new corpus citations beyond smoke-test base. U-B `survives with deferred-defense flag` Phase-3.5.5 status converts to `survives` post Phase-4-close. |
-| BF-L | P-26 conventional view | (a) bounded sub-track — **WAVE 4.5 PASS** | Per [auto-003 Round 2](decisions/auto-003-bfl-rg-view-choice.md) (option A′ smoke-test-first). **Phase-4 result:** Wave-4.5 [bfl-conventional-smoke-test](sub-tracks/bfl-conventional-smoke-test.md) passed 3/3 languages (Python Django 5.0 / TypeScript VS Code 1.95.0 / Java Spring 6.1.0); 9 non-trivial conventions produced. Full Phase-4 sub-track authorized; methodology-degradation clause NOT activated. Wave 4.5b owed at Phase 5/6 to scale 3-per-language to ≥10-per-language. |
-| BF-L | P-26 invariant view | (a) bounded sub-track — **WAVE 4.5 PASS** | Per [auto-003 Round 2](decisions/auto-003-bfl-rg-view-choice.md). **Phase-4 result:** Wave-4.5 [bfl-invariant-smoke-test](sub-tracks/bfl-invariant-smoke-test.md) passed 3/3 languages (Django 4.2.11 / TanStack Query 5.28.0 / Spring 6.1.5); 12 non-trivial invariants. Tier distribution T1+T2+T3 preferred; T4 Daikon-style runtime deferred per research-notes recommendation. Methodology-degradation clause NOT activated. Wave 4.5b owed at Phase 5/6. |
-| D7-U-1 | P-34 (structural recursion) | (a) bounded sub-track, partial — A+C hybrid (no Wave 4.5 needed) | A+C hybrid (deterministic primary + named-human backstop at low cadence) is the bounded sub-track; structural recursion concern accepts-as-RG as the residual. Combined option (a)+(b). A+C hybrid lands as Phase-5 ADR. |
-| U-B | P-31 long-distance pair (L0↔L4 judge-arm) | (b) accept-as-RG (partially mitigated by Wave 4.5) | The smoke-test's L0↔L4 invariant depends on LLM-judge for substance check; Wave 4.5 surfaced two deterministic backstops (L0-L4-2 five-category Intervention Audit Trail; L0-L4-4 SB 53 framework-publication evidence) that partially mitigate the judge-arm dependency. Remainder accepts-as-RG. |
+| U-B | P-31 (full primitive) | (a) bounded sub-track | Smoke-test passed; full sub-track authorized at Phase 4 (scale 1-per-pair to ≥3-per-pair, ≥15 total) |
+| BF-L | P-26 conventional view | **candidate's choice at Phase 4 entry** | Default if no choice declared: (b) accept-as-RG. BF-L may opt-in to (a) bounded sub-track for some or all of: LLM-with-structured-output + golden corpus of ≥20 idiomatic patterns per supported language. |
+| BF-L | P-26 invariant view | **candidate's choice at Phase 4 entry** | Default if no choice declared: (b) accept-as-RG. BF-L may opt-in to (a) bounded sub-track: Daikon-style runtime inference + ≥5 invariants per language. |
+| D7-U-1 | P-34 (structural recursion) | (a) bounded sub-track, partial | A+C hybrid (deterministic primary + named-human backstop at low cadence) is the bounded sub-track; structural recursion concern accepts-as-RG as the residual. Combined option (a)+(b). |
+| U-B | P-31 long-distance pair (L0↔L4 judge-arm) | (b) accept-as-RG (carry-from-smoke-test caveat) | The smoke-test's L0↔L4 invariant depends on LLM-judge for substance check; treated as accept-as-RG per the smoke-test's own caveat. Full sub-track explores whether deterministic alternatives exist; falls back to accept-as-RG if not. |
 
 Per the user's approval 2026-05-25, the rule is binding for the rest of the synthesis pipeline. Any future candidate with a load-bearing RG primitive (e.g., if a Phase-4 ADR surfaces a new RG primitive) is governed by the same (a)/(b) choice with the same defaults.
-
-### Phase 4 close — Wave 4.5 outcomes summary (added 2026-05-25)
-
-| Wave-4.5 sub-track | Verdict | Methodology-degradation clause |
-|---|---|---|
-| U-B P-31 invariant authoring (scaled smoke-test) | **PASS** (20 invariants vs ≥15 target; 5/5 pairs scaled to ≥3) | N/A — full sub-track delivered |
-| BF-L P-26 conventional-view smoke-test | **PASS** (3/3 languages; 9 conventions) | NOT activated — full Wave 4.5b authorized |
-| BF-L P-26 invariant-view smoke-test | **PASS** (3/3 languages; 12 invariants) | NOT activated — full Wave 4.5b authorized |
-
-All three Wave-4.5 sub-tracks converged on PASS. No candidate's Phase-3.5.5 status downgraded at Phase-4 close. Wave 4.5b scaling (conventions/invariants from 3-per-language to ≥10-per-language) is owed at Phase 5/6 for both BF-L views.

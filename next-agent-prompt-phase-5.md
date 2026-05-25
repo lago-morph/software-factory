@@ -87,12 +87,29 @@ If you don't find any startup-prompt templates outside what A3 already updated, 
 
 Stacked on PR A3. Open PR + subscribe.
 
+### Final Phase A step — Fresh-context verification review (real subagents)
+
+After PRs A1-A4 are open (do not wait for merge), dispatch **real subagents with fresh context** (per the AGENTS.md adversarial-review-MUST-be-real-subagents rule — these are verification subagents, not adversarial reviewers, but the same "real dispatch, no inline simulation" discipline applies) to verify the Phase A changes did not silently break anything. This is the last gate before declaring Phase A closed.
+
+Dispatch shape — one subagent per concern, in parallel (single message, multiple `Agent` tool calls):
+
+1. **Semantic-preservation reviewer** (one per file modified in PR A2 — currently `ARCHITECTURE-V3-SYNTHESIS-PLAN.md` and `architectures/v3/candidate-registry.md`). Brief: read the pre-PR version (via `git show origin/main:<path>`) and the post-PR version side-by-side; confirm that the only changes are (a) the added `## TL;DR (≤200 words)` block and (b) any necessary heading-anchor adjustments; report any change that removes, reorders, or rewords substantive content outside the TL;DR block. Also confirm the TL;DR summarizes **structure, not conclusions** per the rule in PR A2.
+
+2. **Cross-document linkage reviewer.** Brief: enumerate every internal markdown link in (i) `AGENT-ENTRY.md`, (ii) `ARCHITECTURE-V3-SYNTHESIS-PLAN.md`, (iii) `architectures/v3/candidate-registry.md`, (iv) `AGENTS.md`, (v) every file under `.claude/skills/autonomous-run/` that was touched in PR A3 or PR A4, and (vi) every file under `.claude/skills/<name>/SKILL.md` or `.claude/skills/<name>/resources/*` that still references any document whose role changed in Phase A (the plan, the registry, the SESSION-HANDOFF, the disciplines index, the primitives index, the candidate-registry, or any task-aware reading list). For each link, confirm the relative path resolves (file exists, anchor exists if present). Report broken links and stale references.
+
+3. **Pointer-staleness reviewer.** Brief: `grep` the entire repo (excluding `.git/`, `node_modules/`, `research/manual/`, `research/fetched/`) for bare-text or stale-path references to any file whose canonical role shifted in Phase A — in particular references that should now point at `AGENT-ENTRY.md` instead of an older "read these N files in order" list, references to the previous SESSION-HANDOFF, and any references inside `AGENTS.md` or skill SKILL.md files that still name an old file path. Report each finding with file:line and a recommended fix.
+
+Each subagent reports back inline (no separate PR). The lead agent reads all three reports, opens **one consolidated fix PR (PR A5)** stacked on PR A4 (or on PR A3 if A4 was empty) addressing any findings. If all three subagents report clean, write a short "verification clean — no fixes required" note in the next handoff and skip PR A5.
+
+Phase A is **not** closed until either (a) every verification finding is addressed in PR A5 and PR A5 is merged, or (b) all three subagents reported clean.
+
 ## Phase A completion criteria
 
-- PRs A1, A2, A3, (A4 if non-empty) all merged into main.
+- PRs A1, A2, A3, (A4 if non-empty), (A5 if verification surfaced findings) all merged into main.
 - `AGENT-ENTRY.md` exists at repo root and passes internal-refs check.
 - The plan + registry both carry a `## TL;DR (≤200 words)` section at the top.
 - The autonomous-run skill carries the TL;DR-regeneration sub-step.
+- All three fresh-context verification subagents (semantic-preservation, cross-document linkage, pointer-staleness) ran and either reported clean or had every finding resolved.
 - A fresh agent given just `AGENTS.md` + `AGENT-ENTRY.md` + the active SESSION-HANDOFF can navigate to any Phase-5 dispatch task.
 
 When all of the above are true, Phase A is closed. Begin Phase B.

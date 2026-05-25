@@ -61,7 +61,7 @@ flowchart TB
 ### Operating rules (informed by user direction)
 
 1. **Methodologies drive.** The synthesis is fundamentally hunting for methodologies. Substrate requirements fall out per methodology.
-2. **No orphan substrate.** A substrate primitive cannot enter an architecture without being claimed by at least one methodology. Substrate tracks that surface primitives no methodology uses lose those primitives.
+2. **Orphan substrate is preserved through the catalog stage.** A substrate primitive *with buildability + corpus-why* enters the catalog even if no current methodology candidate claims it. The methodology-to-substrate matching happens later; orphan primitives at the matching stage are not used by chosen combinations but remain in the catalog as cross-pollination fuel for reviewers and downstream methodology refinement.
 3. **Buildability is mandatory.** A substrate primitive cannot enter an architecture without a construction path. "Just assume `CodebaseModel` exists" is handwaving and is rejected.
 4. **Most-likely-commodity substrates are still substrate.** Sandbox, cost ceiling, log sink — these are substrate even though their construction is cloud-engineering trivial. The split is about *role*, not about engineering effort.
 5. **Designed-system substrates get the same treatment but heavier scrutiny.** When a substrate primitive is itself a non-trivial designed system (e.g., a polyglot code index), the construction path must be more detailed (named tools, named techniques, named prior-art references). The buildability bar is higher in absolute terms but is the same in kind: produce evidence the thing can be built.
@@ -133,24 +133,24 @@ Lead-agent's first pushback: some primitives the corpus called "substrate" are n
 
 **Lead-agent honest assessment:** substrate-track Phase-2 agents (`greenfield-substrate-first`, `brownfield-substrate-first`, `brownfield-legacy-ingestion-first`) named substrate primitives at the **contract level** (role, API surface, partition discipline) — they did *not* produce construction paths. The HOW was deferred to Phase 5 ADRs (alternatives-considered) and Phase 6 architecture specs. The user's filter wants construction-path discipline *upstream* of Phase 4 dispatch.
 
-### Refined three-part rule for accepting a substrate primitive
+### Refined two-part rule for accepting a substrate primitive
 
 1. **Construction path.** Each substrate primitive named in a surviving candidate must ship with a buildability sketch: existing tools / libraries / techniques that construct it; concrete corpus references of others who have built something in this shape; research-grade-uncertainty flag if no plausible construction path is known.
-2. **Methodology-justifies-substrate attestation.** Each primitive must be paired with at least one surviving methodology candidate that uses it. Orphan primitives ("substrate built for its own sake") are removed.
-3. **Corpus citation for the *why*.** Each primitive's justification must cite the corpus sources that motivate its existence — why this primitive solves a problem the corpus has identified.
+2. **Corpus citation for the *why*.** Each primitive's justification must cite the corpus sources that motivate its existence — why this primitive solves a problem the corpus has identified.
 
-With these three conditions, the substrate / methodology split *is* a valid separating principle.
+**A methodology-uses-this-primitive attestation is *not* required at the Phase 3.5 buildability stage.** Orphan primitives — those that no current methodology candidate claims — are deliberately preserved through the buildability stage and onward. The justification + construction path can themselves stimulate reviewers to recognise that a primitive is powerful enough to enable an alternative a methodology proposer didn't think was practical (or had proposed in a more awkward way). The methodology-to-substrate matching happens *later* (when methodologies and substrate primitives are combined). Pieces that turn out to be orphans at that later stage are simply not used by the chosen combinations — but they remain in the catalog as cross-pollination fuel.
+
+With these two conditions (and the deferred methodology-match), the substrate / methodology split *is* a valid separating principle.
 
 ### Proposed methodology change: insert a buildability check per candidate
 
 Add a sub-phase **Phase 3.5 (substrate buildability addendum per candidate)** between Phase 3.4 (decisions) and Phase 4 (substrate-requirements extraction), or fold the same work into Phase 4 as a precondition. For each surviving candidate:
 
 - **Enumerate** the substrate primitives the candidate requires.
-- For each primitive, **produce a buildability sketch** per the rule above.
-- For each primitive, **attest a methodology that uses it.**
+- For each primitive, **produce a buildability sketch** per the two-part rule above.
 - **Flag primitives** whose construction is research-grade — these are important risk markers for the candidate.
 
-A primitive without buildability + methodology-attestation + corpus-why is removed from its candidate's substrate requirement set. The candidate may still survive; it just shrinks.
+A primitive without buildability + corpus-why is removed from its candidate's substrate requirement set. The candidate may still survive; it just shrinks. **Methodology-to-substrate matching is deferred** to the later stage where methodologies and substrate primitives are combined; orphan primitives identified at that stage are not used by the chosen combinations but remain available in the catalog.
 
 **Effect on prior work.** The Phase-2 substrate-track outputs survive but get a buildability addendum attached per primitive. The Phase-3.2 critique pass did not include a "builder / implementer" persona; this is a gap in the original methodology that the buildability sub-phase corrects.
 

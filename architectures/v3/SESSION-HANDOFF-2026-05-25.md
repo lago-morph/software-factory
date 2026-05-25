@@ -45,15 +45,38 @@ The user did not yet acknowledge this pushback before the session-handoff reques
 
 ## Open questions for the next agent
 
-1. **DEC-1 resolution.** Likely "carry all unified candidates that defended themselves alongside the mandate-specific candidates," in line with the scoping principle. Possible candidates include U-A (Escrow-Graph Factory), U-B (Pace-Layered Escrow Factory), U-C (Anchor-Distance Factory), and the D7-U-1 alternative (Adversarial-Falsification Topology / Falsification-Topology Factory). User to confirm.
+1. **DEC-1 resolution — user reframed; do NOT use the original DEC-1 options directly.** The original integration brief's DEC-1 ("pick one of: 1 unified arch / 2 separate archs / 2 unified candidates / defer") is superseded by the user's reframe in the final message of this session. The user's hypothesis (paraphrased):
+   - There is likely **no methodology** that serves both greenfield and brownfield together.
+   - But there are **substrates and disciplines/philosophy** that *do* fit both mandates.
+   - The differentiator is the **methodology layer**.
+   - **Greenfield → brownfield continuity matters.** Greenfield factories eventually turn into brownfield work as the codebase matures. A greenfield methodology that produces the right artifacts (specs in a particular format, etc.) makes the subsequent brownfield methodology easier — using the same principles as building the system in the first place.
+   - So the reframed DEC-1 question is something like: *"What substrates and disciplines apply across both mandates? What methodology layer differs per mandate? What artifacts does a greenfield methodology need to produce to support the brownfield methodology that eventually takes over the same codebase?"*
+   - The user explicitly noted: this hypothesis may be wrong; the next session may surface a single architecture (substrate + methodology + discipline) that serves both. But the hypothesis is the *starting* frame.
+
+   **Concrete next-session work on DEC-1:**
+   - Re-author [`decisions/dec-1-unification-verdict.md`](decisions/dec-1-unification-verdict.md) with the reframed question.
+   - Carry **all unified-methodology candidates that defended themselves** forward into the catalog (per the scoping principle): U-A (Escrow-Graph Factory), U-B (Pace-Layered Escrow Factory), U-C (Anchor-Distance Factory), and the D7-U-1 alternative (Adversarial-Falsification Topology). These remain candidate *methodologies* in the catalog. The unification claim moves from "this architecture serves both mandates" to a more granular question per the user's hypothesis.
+   - The Phase-4 work changes shape: it now produces (a) a shared-substrate inventory with buildability per primitive (regardless of which methodologies claim each primitive at this stage); (b) a shared-discipline inventory; (c) per-mandate methodology candidates; (d) explicit greenfield → brownfield continuity analysis (which greenfield methodology outputs become brownfield methodology inputs).
 
 2. **`X_UNM_B`'s CodebaseModel finding** under DEC-1 multi-candidate disposition. If a unified candidate carries forward without a CodebaseModel primitive equivalent, the brownfield-critical F-modes (F21, F28, F34) remain unmitigated for that candidate. Does this disqualify it (per "successfully defended itself") or does the candidate get a CodebaseModel addition?
 
 3. **DEC-2 ripple.** Demoting cognitive escrow from substrate primitive to methodology pattern means each surviving candidate must articulate its own F42/F53 (cognitive-escrow / voluntary-discipline-fragility) mitigation. This becomes an addendum each carrying-forward draft must include.
 
-4. **Methodology-over-substrate reframe** — the next agent should surface to the user that the lead-agent pushback is in [`phase-3.4-decisions-resolved.md`](phase-3.4-decisions-resolved.md) and confirm whether the user accepts the refined orientation or wants their original framing.
+4. **Methodology-over-substrate reframe — user accepted, then sharpened.** The user accepted the refined "methodology drives, designed-system substrates get extra scrutiny" framing. They then sharpened it further: a substrate primitive without a construction path is handwaving. See [`phase-3.4-decisions-resolved.md`](phase-3.4-decisions-resolved.md) "Working definitions" + "Refined two-part rule" sections for the resulting buildability rule. Confirmed user position is recorded; the next agent does not need to re-confirm.
 
-5. **Phase 4 dispatch shape under the new scoping principle.** The Phase 4 step in the synthesis plan presupposes 3 surviving syntheses (greenfield + brownfield + unified). Under "carry all candidates," Phase 4 has potentially 9 surviving candidates (3 greenfield + 3 brownfield + 3 unified) plus the D7-U-1 alternative = up to 10. The Phase 4 dispatch shape needs to be reconsidered — does it run per candidate? Per mandate-group? How does it produce a useful comparison?
+5. **Buildability rule applies at Phase 3.5 with a two-part test (NOT three).** The user *removed* the "methodology-justifies-substrate attestation" criterion from the Phase 3.5 buildability check. Final rule:
+   - Construction path (existing tools, named techniques, prior-art references; research-grade flag if uncertain)
+   - Corpus citation for the *why*
+
+   Methodology-to-substrate matching is **deferred** to the later stage where methodologies and substrate primitives are combined. Orphan primitives (those with no current methodology claimant) are deliberately preserved through the buildability stage as cross-pollination fuel — the justification + construction path can stimulate reviewers to recognise that a primitive enables alternatives a methodology proposer hadn't considered (or had proposed in a more awkward way). At the matching stage, orphans simply don't get used by the chosen combinations, but they stay in the catalog.
+
+6. **Phase 4 dispatch shape under the scoping principle + DEC-1 reframe.** The Phase 4 step in the synthesis plan presupposes 3 surviving syntheses. Under "carry all candidates" + the DEC-1 reframe, Phase 4 produces:
+   - One shared-substrate inventory (with buildability per primitive, including orphans).
+   - One shared-discipline inventory.
+   - Per-mandate methodology candidate set (3 greenfield methodologies surviving from GF-S/GF-M/GF-C; 3 brownfield from BF-S/BF-M/BF-L; up-to-4 unified-mandate-attempt methodologies from U-A/U-B/U-C/D7-U-1).
+   - An explicit greenfield → brownfield continuity analysis (which greenfield-methodology outputs become brownfield-methodology inputs).
+
+   This is a different shape than the original Phase 4. The synthesis plan's Phase 4 description ([`ARCHITECTURE-V3-SYNTHESIS-PLAN.md`](../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md) §Phase-4) needs revision to match.
 
 ## Concrete pickup steps for the next agent
 

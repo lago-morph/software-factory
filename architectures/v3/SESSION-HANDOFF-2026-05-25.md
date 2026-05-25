@@ -58,6 +58,50 @@ The user did not yet acknowledge this pushback before the session-handoff reques
    - Carry **all unified-methodology candidates that defended themselves** forward into the catalog (per the scoping principle): U-A (Escrow-Graph Factory), U-B (Pace-Layered Escrow Factory), U-C (Anchor-Distance Factory), and the D7-U-1 alternative (Adversarial-Falsification Topology). These remain candidate *methodologies* in the catalog. The unification claim moves from "this architecture serves both mandates" to a more granular question per the user's hypothesis.
    - The Phase-4 work changes shape: it now produces (a) a shared-substrate inventory with buildability per primitive (regardless of which methodologies claim each primitive at this stage); (b) a shared-discipline inventory; (c) per-mandate methodology candidates; (d) explicit greenfield → brownfield continuity analysis (which greenfield methodology outputs become brownfield methodology inputs).
 
+   **What "successfully defended itself" means concretely (per-candidate defense criterion):**
+
+   A candidate is "carried forward" when it satisfies all three:
+
+   (i) **Critique-finding response.** Each Phase-3.2 critique finding against the candidate is either (a) addressed by content already in the candidate's Phase-2 track, (b) addressed by content in the Phase-3.1 draft that merged the candidate's track group, or (c) noted as an open concern the candidate accepts. If (c), the candidate carries forward as a *placeholder pending defense* — preserved in the catalog but cannot proceed to Phase 5/6 until the defense is authored.
+
+   (ii) **Buildability sketch per substrate primitive.** Per Phase 3.5 (the new sub-phase), each substrate primitive the candidate requires has a buildability sketch — construction path + corpus-why. Candidates whose primitives lack buildability sketches are placeholders pending Phase-3.5 work.
+
+   (iii) **Corpus-grounded justification.** Each load-bearing claim cites the corpus, not just other Phase-3 artifacts.
+
+   **Per-candidate defense status (lead-agent quick assessment for the next agent to verify):**
+
+   - **U-A (Escrow-Graph Factory).** Largely defended after DEC-2 demotes EscrowSurface to methodology. Open: DPU-1 typed-object granularity (process-state node, many per cycle); X_UNM_B CodebaseModel gap if applied to brownfield; X_UNM_G graduation-criteria-not-measurable-across-mandates. Carries forward; defense placeholder on those three.
+   - **U-B (Pace-Layered Escrow Factory).** Similar status. Pace-layer framing as methodology survives DEC-2. Open: same CodebaseModel and cross-mandate-measurability concerns; OQ-PLEF-5 (operator engagement with substrate-fired prompts is itself voluntary — now moot since escrow moves to methodology). Carries forward.
+   - **U-C (Anchor-Distance Factory).** Anchor + distance estimator survives as methodology pattern. Open: F47 Goodhart on distance estimator (agents game distance scoring); distance-estimator buildability path needed at Phase 3.5. Carries forward; defense placeholder on Goodhart and buildability.
+   - **D7-U-1 (Adversarial-Falsification Topology).** Falsification Commitment (FC) primitive survives as methodology pattern. Own honest concession (F42 not closed at substrate) is moot under DEC-2. Open: FC buildability path; independence-auditor recursion (who audits the auditor). Carries forward; defense placeholder on both.
+   - **GF-S / GF-M / GF-C, BF-S / BF-M / BF-L (mandate-specific).** Per DEC-3/4, all six carry forward. Same defense criterion applies — Phase-3.2 persona critiques against each draft become per-candidate defense placeholders. The next session should produce a "defense status" addendum per candidate listing open critique findings.
+
+   **DEC-1 vs Phase 4 scope split:**
+
+   The user's reframe shifts most of what the original DEC-1 asked into Phase 4 normal work. What's *left* for the user to decide at the new DEC-1:
+
+   - **Decision DEC-1.a: confirm the working hypothesis.** Synthesis proceeds under the user's stated hypothesis — no methodology serves both mandates; substrates and disciplines do. This is the orienting commitment for Phase 4.
+   - **Decision DEC-1.b: confirm the greenfield → brownfield continuity is a primary design concern.** Phase 4 must explicitly extract which greenfield-methodology outputs become brownfield-methodology inputs. This is *not* in the original Phase-4 plan and needs the user to confirm it as additional Phase-4 scope.
+   - **Decision DEC-1.c: confirm the candidate set.** The lead agent will produce a candidate list (3 greenfield + 3 brownfield + 4 unified-attempt = 10 methodology candidates) with defense status per candidate. The user confirms — or strikes any specific candidate they want removed despite the scoping principle.
+
+   What's *no longer* a DEC-1 decision (now Phase 4 normal work):
+   - Substrate-inventory extraction (with buildability per primitive, including orphans)
+   - Discipline-inventory extraction
+   - Methodology-candidate listing
+   - Greenfield → brownfield continuity analysis (per DEC-1.b confirmation)
+   - Cross-reference matrix (which methodology requires which substrate primitives)
+
+   What's *no longer* a DEC-1 decision (now Phase 5 normal work):
+   - ADRs per primitive (constrained by Phase-3.5 buildability sketches)
+   - ADRs per methodology choice
+   - ADRs per discipline
+
+   What's *no longer* a DEC-1 decision (now Phase 6 normal work):
+   - Architecture spec per surviving candidate
+   - Mandate-fit matrix (with one row per surviving candidate)
+
+   The new DEC-1 brief should therefore be much *shorter* than the original — three confirmations (DEC-1.a, DEC-1.b, DEC-1.c) plus the per-candidate defense-status addendum, not a binary architecture pick.
+
 2. **`X_UNM_B`'s CodebaseModel finding** under DEC-1 multi-candidate disposition. If a unified candidate carries forward without a CodebaseModel primitive equivalent, the brownfield-critical F-modes (F21, F28, F34) remain unmitigated for that candidate. Does this disqualify it (per "successfully defended itself") or does the candidate get a CodebaseModel addition?
 
 3. **DEC-2 ripple.** Demoting cognitive escrow from substrate primitive to methodology pattern means each surviving candidate must articulate its own F42/F53 (cognitive-escrow / voluntary-discipline-fragility) mitigation. This becomes an addendum each carrying-forward draft must include.

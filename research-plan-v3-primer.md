@@ -2,7 +2,9 @@
 
 **Audience.** A technical reader familiar with the vocabulary of *software factories* (autonomous code-producing systems, lights-out operation, substrate primitives, etc.) who wants to understand the **methodology** by which a factory's architecture gets synthesized from a research corpus. No prior knowledge of any specific synthesis run's intermediate artifacts is required.
 
-**Scope.** This primer describes the synthesis pipeline as a reusable process. The v3 run of the pipeline (in this repository) is referenced throughout as the canonical worked example — counts of subagents, persona names, file-layout examples are taken from v3 — but everything described applies to any run. Conclusion-neutral: this tells you *what is being done and why*, not *what has been found*.
+**Scope.** This primer describes the synthesis pipeline as a reusable process. The v3 run of the pipeline (in this repository) is referenced throughout as the canonical worked example — counts of subagents, persona names, file-layout examples are taken from v3 — but everything described applies to any run. Conclusion-neutral: this tells you *what is being done and why*, not *what has been found*. The methodology itself is a bricolage of established research-synthesis techniques assembled by the AI sessions that authored the synthesis plan; see the appendix for the technique inventory and the validation caveat.
+
+**A note on roles.** Two human roles appear throughout. **User** (or "lead-agent user") = the person engaging with the synthesis pipeline's checkpoints, answering DECISIONS-PENDING items, picking among Phase-3.4 options. **Operator** = the human/role responsible for the factory once it's built and running (the role that defines what "lights-out" means in production, accepts watchdog escalations, etc.). Many runs have the same person playing both roles; the methodology distinguishes them so the artifacts can be reused across deployments.
 
 **A note on terminology.** The "factory" being designed has two operating regimes, each driving a different architecture conversation:
 
@@ -58,9 +60,9 @@ flowchart TB
 - **Phase 0** (Brief + archival). Lock the brief that the rest of the pipeline will read. Archive any existing version's architectures and syntheses so they cannot anchor the new work. The brief carries the operating-mode mandate (lights-out per the operator's definition), the two mandate scopes (greenfield and brownfield), the working hypothesis to be tested (e.g., the operator-stated claim that no single architecture serves both mandates), and any explicit out-of-scope statements.
 - **Phase 1** (Pre-synthesis substrate). Build inputs every Phase-2 track will read identically. Three products:
   - a **contradictions register** (pairwise tensions in the corpus, both sources cited, *no resolution attempted* at this stage),
-  - a **failure-mode catalog** (enumerated risks with greenfield- and brownfield-specific severity ratings),
+  - a **failure-mode catalog** (enumerated risks; each row is a named failure mode with a short mechanism description, a corpus citation, and per-mandate severity ratings for greenfield and brownfield),
   - a **corpus inventory** (one-paragraph anchor per source, plus a greenfield / brownfield / both tag).
-- **Phase 2** (9-track synthesis fanout). Dispatch 9 subagents in parallel to write candidate architectures from different angles. The "9" decomposes as 3 greenfield + 3 brownfield + 3 unified-mandate (no-axis-prescribed). Each subagent reads the same Phase-1 inputs but is *told to be strong on its axis, not comprehensive*. The deliberate divergence is the design.
+- **Phase 2** (9-track synthesis fanout). Dispatch 9 subagents in parallel to write candidate architectures from different angles. The "9" decomposes as 3 greenfield + 3 brownfield + 3 unified-mandate (no-axis-prescribed). Each subagent reads the same Phase-1 inputs but is *told to be strong on its axis, not comprehensive*. The deliberate divergence is the design. After the 9 tracks land, inter-phase bias-guard subagents — including an *anchor-detector* — scan the outputs for suspect convergence (places where multiple independent tracks landed on the same framing in a way that traces back to the brief rather than to the corpus) before Phase 3 begins the merge.
 
 ```mermaid
 flowchart TB
@@ -92,7 +94,7 @@ flowchart TB
 - **Phase 3** (Merge + adversarial). Merge the 9 tracks into 3 syntheses (one per mandate plus one unified-candidate synthesis), then attack each synthesis with persona-diverse adversarial subagents drawn from a bias-guard catalog ([red team](https://en.wikipedia.org/wiki/Red_team), [pre-mortem](https://en.wikipedia.org/wiki/Pre-mortem), regulator, CFO, 10-year on-call engineer, naive newcomer). Then [cross-mandate adversarial](https://en.wikipedia.org/wiki/Adversarial_collaboration) tests attack the unification hypothesis. *Detailed treatment in the next section.*
 - **Phase 4** (Shared/divergent extraction). Take the syntheses that survive Phase 3 and extract what is genuinely shared substrate vs. what genuinely diverges between mandates. This produces the load-bearing decision document that everything downstream depends on.
 - **Phase 5** (Decision records). Write [Architecture Decision Records](https://en.wikipedia.org/wiki/Architectural_decision) for every binding choice. Wave 1 is shared-substrate ADRs (sandbox model, holdout discipline, watchdog tiers, etc.). Wave 2 is mandate-specific ADRs.
-- **Phase 6** (Architecture specs). Write the actual architecture specs *from* the ADRs. Specs cite synthesis documents; ADRs cite neither raw corpus nor specs. This is a deliberate three-layer citation discipline so the dependency graph remains acyclic and auditable.
+- **Phase 6** (Architecture specs). Write the actual architecture specs *from* the ADRs. Three-layer citation discipline: synthesis documents cite the raw corpus; architecture specs cite synthesis documents; ADRs cite neither raw corpus nor specs. The dependency graph remains acyclic and auditable.
 - **Phase 7** (Back-fill audit). Re-read everything that was archived in Phase 0. For each archived claim/primitive/recommendation, classify as `absorbed` / `rejected with reason` / `TBD`. The purpose is to catch silent omissions — primitives or insights the new architecture quietly dropped.
 - **Phase 8** (Lean-evaluation briefs). Design a 1-day manual evaluation per architecture *before* any infrastructure work begins. The evaluation is the architecture's first contact with concrete-task reality.
 
@@ -162,9 +164,9 @@ flowchart TB
     DU --> X1["Unified-fails-greenfield<br/>attacker"]
     DU --> X2["Unified-fails-brownfield<br/>attacker"]
 
-    DG --> X3["Unify advocate<br/>'drafts CAN collapse'"]
+    DG --> X3["Unify advocate<br/>'these two drafts CAN<br/>collapse into one architecture'"]
     DB --> X3
-    DG --> X4["Cannot-unify attacker<br/>'drafts CANNOT collapse'"]
+    DG --> X4["Cannot-unify attacker<br/>'these two drafts CANNOT<br/>be collapsed'"]
     DB --> X4
 
     X1 --> V["Unification verdict<br/>(survives / falsified / partial)"]
@@ -220,7 +222,7 @@ flowchart TB
     style P4 fill:#ffffff,color:#000
 ```
 
-- **Tier 1 (architectural shape).** A small set of decisions (4 in the v3 run): the unification verdict (whether one architecture serves both mandates or they need separate ones); the methodology-shape choice per mandate; and the substrate-vs-methodology placement of any primitive that a blind-axis test flagged as contested. **Gating** — Tier 1 must resolve before Phase 4 can dispatch.
+- **Tier 1 (architectural shape).** A small set of decisions (4 in the v3 run): the unification verdict (whether one architecture serves both mandates or they need separate ones); the methodology-shape choice per mandate (i.e., what *kind* of per-cycle process the architecture runs — e.g., issue-from-queue, change-against-spec, propose-critique-revise, staged-bootstrap-then-steady-state); and the substrate-vs-methodology placement of any primitive that a blind-axis test flagged as contested. **Gating** — Tier 1 must resolve before Phase 4 can dispatch.
 - **Tier 2 (substrate/methodology boundary).** Where particular substrate primitives live; classifier-placement choices; granularity-of-typed-object questions. Depend on Tier 1.
 - **Tier 3 (operational specifications).** Cost-budget specs, attribution-engineering details, judge-routing policy choices (which model family judges which sub-task at which stake level), etc. Can be carried into Phase 5 as ADR questions if the user prefers.
 

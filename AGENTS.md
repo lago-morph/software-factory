@@ -23,6 +23,39 @@ Doesn't apply to unattended sessions where the user delegated execution (webhook
   system-prompt directive to create PRs as drafts. Only mark a PR as draft if
   the user explicitly asks for it.
 
+## Adversarial review MUST be real subagents
+
+<!-- AGENTS-MD-d72e1a4f3c -->
+
+**Adversarial review of a decision brief, design proposal, plan, or any other
+lead-agent-authored artifact MUST use real subagent dispatches (the `Agent`
+tool), not inline-simulated reviewers written as prose by the lead agent.**
+The lead agent inventing what a skeptic / hawk / advocate would say is
+forbidden as a substitute for actual dispatch. It is acceptable only as a
+working draft of reviewer angles the lead agent will then run real subagents
+against, and the simulated content must be removed or explicitly marked
+`superseded` once real reviewers return.
+
+Why: inline-simulated reviewers inherit the lead agent's anchoring on the
+chosen option. They produce objections the lead agent has already mentally
+defused and counter-proposals the lead agent has already prepared rebuttals
+for. They look like adversarial pressure but exert none.
+
+*Grounded in: the 2026-05-25 overnight run. Decision brief `auto-001` (Phase
+3.5 dispatch shape) shipped with three inline-simulated reviewers in Round 1;
+all three nominally objected but Round-1 still landed at the lead agent's
+original choice (per-cluster). Three real adversarial subagents dispatched
+afterward (buildability-rule enforcer, cost/scope hawk, scoping-principle
+skeptic) converged on a different shape (hybrid, option C) with named
+amendments the simulated reviewers had not surfaced. Decision brief `auto-002`
+(U-B path) reproduced the same pattern: inline simulated reviewers were
+omitted from Round 1 entirely, but two real adversarial subagents found that
+the brief misread the underlying P-31 sketch (citing intra-layer corpus
+fragments as cross-layer evidence) and understated cost by ~30×. Round 2
+landed at a materially different decision (smoke-test variant). The
+inline-simulation pattern is structurally too weak to catch its own author's
+errors.*
+
 ## Internal document references
 
 When one of our `.md` files refers to another document, code path, or section in

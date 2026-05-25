@@ -1,0 +1,34 @@
+# P-33 — Opposing-side router
+
+**Dispatch tier.** per-primitive (designed-system).
+**Claimed by.** [D7-U-1 opposing-side router](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md).
+
+## Contract restatement
+
+The opposing-side router consumes a **Falsification Commitment (FC)** plus a content-addressed handle to the **artifact-to-be-falsified**, and returns the **resolved opposing-side handler** — a `(model-family, role)` LLM-judge, a named deterministic-checker, a named human-of-record, or a population-vote pool — contractually responsible for *trying to falsify* the artifact before the compounding gate (P-29 variant) propagates it. Per [D7-U-1 §1](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md#1-architecture-sketch), inputs: (a) FC `artifact-kind` (spec/plan/code-change/eval/adr/skill/classifier-decision/scaffold-edit); (b) FC `refutation-attempt.method` (cross-model-judge/live-test/type-check/property-test/replay-trace/adversarial-paraphrase/red-team); (c) **builder identity** (model-family tag, role); (d) a **capability registry** mapping `(artifact-kind × method) → eligible handler classes`; (e) a **family-denylist** mechanically excluding the builder's family from any LLM-judge return. **Partition discipline:** refuses any handler overlapping the builder's `(family, role)`; refuses return when FC declares `independence-evidence: none` for the only eligible class; emits `independence-evidence` that the FC store (P-28 variant) persists with the verdict.
+
+## Construction path
+
+**Primary tool: LiteLLM Router (open-source) extended with an FC-typed dispatch layer, sharing provider abstraction with [P-14 judge router](P-14-judge-router.md).** The base `Router` carries `model_list` + `model_group_alias` + tag-based routing; P-33 adds a **capability registry** (YAML/SQLite) mapping `FC.method → eligible-handler-class` (e.g. `property-test → [pytest-hypothesis]`, `semantic-meaning → [cross-family-llm-judge]`, `safety-critical → [named-human:operator-of-record]`). The substrate exposes `resolve_opposing_side(fc, artifact) -> Handler` which (1) reads FC `artifact-kind` + `method`; (2) queries the registry; (3) for LLM-judge classes calls LiteLLM with `tags=["exclude:" + builder.family]` so tag-matching mechanically refuses any model whose tags overlap the builder family; (4) for deterministic/human/vote classes returns the registered binary/identity/pool ID. **Integration sentence:** LiteLLM's `Router.get_available_deployment(model, request_kwargs={"tags": ["exclude:anthropic"]})` is the policy-enforcement surface — combined with the per-FC-type capability registry and a dispatch-time builder-family denylist, the substrate mechanically realises Attractor's *do-not-unify* discipline, the F46/F48/F27 mechanism the FC contract requires.
+
+**Prior art.** Cross-family adversarial dispatch: [report 34 §6.2](../../../research/34-lenny-howiai-personal-harnesses.md) (CJ Hess `kevin`/`carl`), [report 23 §3.5](../../../research/23-anthropic-engineering-trilogy.md) (Anthropic Auto-Review critics), [followup 07 §3.6](../../../research/followup/07-husain-shankar.md) (Husain/Shankar "different task"). Capability-registry-as-router: OPA/Cedar pattern applied to handler-class.
+
+## Relationship to P-14 judge router
+
+**Honest evidence (NOT a same-vs-distinct verdict — that's Phase 4.2).** P-33 and P-14 share substrate: LiteLLM `Router`, model-family taxonomy, tag-based cross-family routing. Differences: **(a)** P-14's input is a `judge_shape` chosen by methodology; P-33's input is a typed FC, handler derived from FC `method` × `artifact-kind` via capability registry — FC-shaped, not shape-shaped. **(b)** P-14 enforces family-distinctness only when methodology declares `cross-family`; P-33 enforces builder-family exclusion **unconditionally** as a partition invariant (D7-U-1 §1 primitive 2), not a configurable policy. **(c)** P-14's handler universe is LLM-judges only; P-33's includes deterministic checkers, named humans, and population-vote pools as first-class registry-typed classes. Whether P-33 is best constructed as a *specialization* of P-14 (thin FC-typed wrapper + capability registry) or a *distinct primitive* with overlapping construction is deferred to Phase 4.2 per the [scoping principle](../phase-3.4-decisions-resolved.md#scoping-principle-immutable-overrides-any-conflicting-framing-in-the-integration-brief).
+
+## Attractor "do-not-unify" discipline — construction-time enforcement
+
+D7-U-1 requires the router NEVER pick the builder's family ([§1 primitive 2](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md#1-architecture-sketch)). Three layers: **(1)** the **family-denylist** is computed each call from `artifact.builder.family` — not from methodology config, so methodology cannot weaken it; **(2)** the LiteLLM `Router` call carries `tags=["exclude:" + builder.family]` and raises if no eligible deployment survives — substrate escalates to named-human rather than weakening the denylist; **(3)** registry LLM-judge entries are *family-allowlisted* per builder family, so the registry cannot list a re-introducing handler. The compounding gate (P-29 variant) refuses the verdict if `Handler.family == artifact.builder.family` — a fourth post-hoc check.
+
+## Corpus-why citation
+
+Load-bearing: the **F1 / F27 / F46 / F48 correlated-error cascade** ([F46](../failure-modes-v3.md#f46--single-model-review-blindspot), [F48](../failure-modes-v3.md#f48--tacit-collusion-via-shared-context)). D7-U-1 [§0](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md#0-axis-declaration-and-defense) names this cascade as the single mechanism the FC primitive addresses; P-33 operationalises it. Secondary: **[F47 — Goodhart-on-Tokens](../failure-modes-v3.md#f47--visible-metric-drift-goodhart-on-tokens)** — once "survived" is a visible metric, handlers are gameable; the registry's per-method eligibility list bounds the gameable surface.
+
+## Research-grade-uncertainty flag
+
+**`none` for routing logic** — provider abstraction + registry + denylist are commodity engineering on the same designed-system spine as P-14. **Open calibration question** as risk marker: *what counts as "opposing-enough"?* Whether two open-weights families fine-tuned from the same base are distinct, or whether a deterministic checker generated by the builder model counts as opposing, is not corpus-resolved. D7-U-1 §7 OQ 1 names the same gap. Construction is unblocked; eligibility-predicate calibration is a Phase-4+/Phase-8 question.
+
+## Buildability verdict
+
+**`designed-system`.** Concrete path (LiteLLM `Router` + capability registry + denylist from `FC.builder.family`). Designed-system content: FC-typed dispatch surface, registry schema, three-layer denylist enforcement, integration with P-28 + P-29. Registry: Medium (comparable to P-14).

@@ -1,0 +1,46 @@
+# P-28 — Typed-object store (content-addressed, append-only)
+
+**Dispatch tier:** per-primitive (designed-system; contested across four variants).
+**Claimed by:** [U-A typed-object store](../tracks/unified-A.md) §1; [U-B layer-typed object store](../tracks/unified-B.md) §1; [U-C anchor object store](../tracks/unified-C.md) §1; [D7-U-1 FC store](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md) §1.
+**Registry buildability scope:** designed-system. The construction substrate (content-addressed append-only blob store) is commodity; the per-variant **typed envelope schema** is the design content, and each claiming candidate ships a different schema.
+
+**CRITICAL CONSTRAINT (per [primitives/index.md §"Same-vs-distinct verdicts deferred to Phase 4.2"](index.md) and the [scoping principle](../phase-3.4-decisions-resolved.md#scoping-principle-immutable-overrides-any-conflicting-framing-in-the-integration-brief)).** This sketch deliberately does **NOT** render a same-vs-distinct verdict on whether U-A / U-B / U-C / D7-U-1's stores are "the same primitive." Each variant gets its own envelope-schema paragraph and its own corpus-why citation; the Phase-4.2 / methodology-to-substrate-matching stage owns the collapse question.
+
+## Contract restatement
+
+Common API surface across all four variants: `put(typed_envelope) → content_hash` (deterministic hash over the envelope's canonical-serialised bytes; idempotent on identical input); `get(content_hash) → typed_envelope` (immutable read); `query(typed_filter) → cursor` (typed-field-indexed scan over the append-only log). Append-only: no in-place mutation, no deletion; "supersession" is a new put with a back-reference field. Content-addressed: the hash is the only handle; equality is hash-equality. The differentiator across variants is the **envelope's typed schema** — what fields the envelope carries, what the typed filter indexes, and what downstream substrate primitives consume which fields.
+
+## Construction path
+
+**Candidate A: Git's object store (libgit2 or go-git).** Git already implements blob/tree/commit objects under SHA-1 / SHA-256 addressing with append-only semantics and content-hash equality. **Integration sentence:** the envelope schema becomes a CBOR/JSON-Schema-validated payload that `git_odb_write(odb, hash, payload, type)` stores under a SHA-256 hash, and a custom `notes`-style index (one `refs/notes/<envelope-kind>` ref per typed-filter field) provides the `query(typed_filter)` cursor without re-walking the object database; tag references carry the supersession back-reference.
+
+**Candidate B: Postgres with `bytea` payload + `jsonb` typed-envelope columns + content-hash unique index.** A single table `typed_objects(content_hash bytea primary key, envelope_kind text, envelope jsonb, created_at timestamptz)` with per-field GIN indexes on `(envelope_kind, envelope->'<typed_field>')` and a trigger refusing `UPDATE`/`DELETE`; supersession is a back-reference field `supersedes: <prior_hash>` inside the envelope. **Integration sentence:** `INSERT ... ON CONFLICT (content_hash) DO NOTHING RETURNING content_hash` realises `put`; `SELECT envelope WHERE content_hash = $1` realises `get`; `SELECT content_hash WHERE envelope_kind = $1 AND envelope @> $2 ORDER BY created_at` realises `query(typed_filter)` via the GIN index on the typed fields the variant declares load-bearing.
+
+Other substrates (IPFS; Pulumi's blob+manifest; OpenHands V1's event log composed via P-05) are equally viable; the two above suffice for the buildability bar.
+
+## Per-candidate variant contract differences
+
+The four variants share the API + content-addressing semantics above but each declares a distinct envelope schema:
+
+**U-A typed-node-graph envelope** ([unified-A.md §1](../tracks/unified-A.md), `EscrowInterval` schema, lines 47–68). Fields: `id`, `kind` ∈ {bootstrap, refactor, spec-author, review, merge, deploy, re-entry, …}, `pace-layer` ∈ {code, plans, specs, architecture, standards}, `priors.{out-of-tree[], in-tree[]}`, `policies.{gate, log, sandbox, approval-gate, reflection-trigger, judge-diversity}`, `classifier.{work-unit-class, automation-eligibility}`, `artefacts.{inputs[], outputs[], trajectory}`. The typed filter is keyed on `kind` × `pace-layer` × `classifier.work-unit-class`; the policy mediator (P-29 U-A variant) reads `policies.*` at interval-open time.
+
+**U-B layer-typed envelope** ([unified-B.md §1](../tracks/unified-B.md), `TypedObject<L>` per-pace-layer hierarchy, lines 37–41). Fields: `layer` ∈ {L0 Standards, L1 Architecture, L2 Spec, L3 Plan, L4 Code}, `change-rate` (months–years through minutes–hours), `escrow-policy`, `invariants[]` (the pace-layer-specific invariants the cross-layer drift detector P-31 reads), `parent-layer-ref`, `child-layer-refs[]`. The typed filter is keyed on `layer` first; per-layer judge routing (P-14 U-B variant) consumes `layer` to pick a model-family-diversity profile. The schema differs from U-A's by being **layer-indexed rather than interval-indexed** — the typed-filter primary axis is the pace-layer position, not the interval kind.
+
+**U-C anchor envelope** ([unified-C.md §1](../tracks/unified-C.md), `AnchorObject` schema in §1 around line 40). Fields: `kind` ∈ {intent-invariant, architecture-rule, standards-rule, live-test, runtime-trace}, `content` (the immutable text/rule/test bytes), `frozen-since` (timestamp), `owning-mandate` ∈ {greenfield, brownfield, both}, `mutation-protocol` (the explicit named-human policy for changing this anchor — always L4). The typed filter is keyed on `kind` × `owning-mandate`; the distance estimator (P-32) reads the anchor set produced by this filter to compute distance for any proposed change. The schema differs from U-A and U-B by encoding **immutability metadata** (`frozen-since` + `mutation-protocol`) as first-class envelope fields.
+
+**D7-U-1 FC envelope** ([d7-u-1-prohibit-interval-escrow.md §1](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md), `FalsificationCommitment` schema, lines 49–70). Fields: `id`, `artifact` (content-addressed handle), `artifact-kind` ∈ {spec, plan, code-change, eval, adr, skill, classifier-decision, scaffold-edit}, `conjecture`, `opposing-side.{kind, identity, independence-evidence}`, `refutation-attempt.{budget, method, inputs[]}`, `verdict.{outcome, counter-evidence[], survival-window}`, `ledger.{immutable-log-ref, trajectory-ref}`. The typed filter is keyed on `artifact-kind` × `verdict.outcome`; the compounding gate (P-29 D7-U-1 variant) refuses to expose any artifact whose FC has no `outcome=survived` entry. Schema differs from the prior three by being **commitment-indexed rather than artifact-indexed** — the envelope describes a commitment *about* an artifact, not the artifact itself.
+
+## Corpus-why citation per variant
+
+- **U-A.** The escrow-interval-as-substrate axis ([unified-A §0](../tracks/unified-A.md), Kahana [report 30 §1](../../../research/30-cognitive-escrow.md)) requires every interval to be a durable typed record carrying its own policies — without per-interval content-addressed durability, F42 (cognitive-escrow negligence) and F53 (voluntary-discipline fragility) cannot be addressed at substrate level.
+- **U-B.** The pace-layer × cognitive-escrow axis ([unified-B §0](../tracks/unified-B.md), Brier [followup/12 §4](../../../research/followup/12-brier-pace-layers.md)) requires each layer's artifact to carry explicit `change-rate` and `escrow-policy` fields so F34 (cross-layer drift) is **natively detectable** at envelope-field level rather than via post-hoc heuristics.
+- **U-C.** The distance-from-frozen-anchor axis ([unified-C §0](../tracks/unified-C.md), El Kaim [report 14 §4.1](../../../research/14-el-kaim-book-intent-and-spec-authorship.md) intent block + Brier architecture rules) requires `frozen-since` and `mutation-protocol` to be substrate-enforced envelope fields so anchor mutation is structurally a separate work-unit class (mitigates F8 stale-knowledge inversion, F35 federation-as-family drift).
+- **D7-U-1.** The falsification-topology axis ([d7-u-1 §0](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md)) requires every artifact compounding boundary to be gated by a typed survived-FC; mitigates the F1/F27/F46/F48 correlated-error cascade at substrate level by refusing to compound artifacts without a typed falsification commitment in the store.
+
+## Research-grade-uncertainty flag
+
+**None for any variant.** Content-addressed append-only stores are commodity construction (Git, IPFS, Postgres + GIN, EventStoreDB are all production-tested). The per-variant envelope schema is **designed-system effort**, not research-grade — the design space is bounded by the variant's own organising axis and the corpus-why citations above.
+
+## Buildability verdict
+
+**designed-system** — same verdict applies to all four variants because the shared construction substrate is commodity; each variant additionally carries **its own envelope-schema design effort** whose scope is bounded by that variant's axis defense. Whether the four schemas collapse to fewer-than-four primitives at methodology-matching is the Phase-4.2 question explicitly deferred per the scoping principle.

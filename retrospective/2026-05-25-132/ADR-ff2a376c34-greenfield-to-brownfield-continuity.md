@@ -38,6 +38,6 @@ A continuity-compatible greenfield methodology is one whose typed, versioned, qu
 
 - [`../2026-05-25-132.md`](../2026-05-25-132.md) — source retrospective.
 - [`../../architectures/v3/candidate-registry.md`](../../architectures/v3/candidate-registry.md) — the greenfield-to-brownfield continuity table at the end of the candidate registry; concrete worked example of the matrix this ADR formalizes.
-- [`../../architectures/v3/SESSION-HANDOFF-2026-05-25.md`](../../architectures/v3/SESSION-HANDOFF-2026-05-25.md) — handoff doc captures the DEC-1 reframe that motivates this ADR.
+- [`../../architectures/v3/SESSION-HANDOFF-2026-05-25-phase-3.4-close.md`](../../architectures/v3/SESSION-HANDOFF-2026-05-25-phase-3.4-close.md) — handoff doc captures the DEC-1 reframe that motivates this ADR. (Renamed from `SESSION-HANDOFF-2026-05-25.md` at Phase-3.5 close.)
 - [`./ADR-0550adf359-scoping-principle-carry-all-defensible-candidates.md`](./ADR-0550adf359-scoping-principle-carry-all-defensible-candidates.md) — the scoping principle that keeps multiple greenfield + brownfield candidates alive; continuity matrix is a comparison across them.
 - PRs the decision was made in: #132.

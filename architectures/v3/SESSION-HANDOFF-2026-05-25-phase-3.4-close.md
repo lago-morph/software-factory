@@ -1,4 +1,8 @@
-# Session handoff — 2026-05-25 (Phase 3.4 closed)
+# Session handoff — 2026-05-25 (Phase 3.4 closed) [SUPERSEDED]
+
+> **Superseded by** [`SESSION-HANDOFF-2026-05-25-phase-3.5-close.md`](SESSION-HANDOFF-2026-05-25-phase-3.5-close.md) — Phase 3.5 is now closed; the next work is Phase 4. This file is preserved as the historical Phase-3.4-close handoff record but is no longer the active pickup brief.
+
+---
 
 This is the pickup brief for the next agent. Phase 3.4 is **closed**. The next work is Phase 3.5 (substrate-primitive buildability sketches) and synthesis-plan revision.
 

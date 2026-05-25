@@ -1,5 +1,9 @@
 # DEC-1 — Unification verdict
 
+> **⚠ THIS BRIEF IS SUPERSEDED.** The user reframed DEC-1 at session-end 2026-05-25. The option-pick framing below (A/B/C/D) is no longer the question. See [`../phase-3.4-decisions-resolved.md`](../phase-3.4-decisions-resolved.md), [`../SESSION-HANDOFF-2026-05-25.md`](../SESSION-HANDOFF-2026-05-25.md), and [`../candidate-registry.md`](../candidate-registry.md). The new DEC-1 (to be authored next session) asks three small confirmations: (a) confirm the working hypothesis (no methodology serves both mandates; substrates and disciplines do); (b) confirm greenfield→brownfield continuity as primary Phase-4 design concern; (c) confirm the 10-candidate set. The content below is preserved as historical context only.
+>
+> ---
+
 **The question.** Does the v3 architecture set treat greenfield and brownfield as one unified architecture, two separate architectures, or some hybrid?
 
 ## Origin of the tension

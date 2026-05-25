@@ -146,3 +146,177 @@ Long-run drift concerns against greenfield candidates (F40 last-mile drift; F8 s
 | D7-U-1 | unified-attempt | adversarial-falsification topology | 5 | 4 | Medium-High (FC store + opposing-side router + independence auditor) |
 
 **Total**: 10 candidate methodologies in the catalog. Roughly 60 substrate primitives across them (with significant overlap — the union after de-duplication is ~25-30). Phase 3.5 needs buildability sketches for the de-duplicated union before Phase 4 dispatches.
+
+---
+
+## Phase 3.5.5 candidate re-check (post-buildability)
+
+Phase 3.5 ([sketches in `primitives/`](primitives/)) produced buildability sketches for the de-duplicated primitive union (P-01–P-34). This section annotates each candidate with its post-buildability status. Format per candidate: **primitive coverage** (which P-ids the candidate names + their verdict), **material findings** (shifts in defense status from sketches), **Phase 3.5.5 status** (one of: `survives`, `survives with deferred-defense flag`, `shrinks`, `self-eliminates`), **forward action** (what the candidate owes at Phase 4 if anything).
+
+### Headline outcomes (all 10 candidates)
+
+| Candidate | Status | Forward action at Phase 4 |
+|---|---|---|
+| GF-S | **survives** with one Phase-8 lean-eval flag (contradiction-detector reliability) | Carry P-15 contradiction-detector reliability as lean-eval input |
+| GF-M | **survives** | Carry P-21 calibration as Phase-8 lean-eval input (OQ-T6 confirmed) |
+| GF-C | **survives** with two partial-RG flags (P-17 substance-check on 2 fields) | Articulate Phase-4 plan for `business_outcomes` and `capability_scope` substance gating |
+| BF-S | **survives with downgraded B7 claim** (P-23 partition-leakage is structural) | Rephrase B7 from "substrate-enforced role partition" to "rate-limited side-channel mitigation"; surface remaining leakage as accepted-open |
+| BF-M | **survives** | Brief-quality calibration (P-27) carried to Phase 5/8 |
+| BF-L | **survives with research-grade-uncertainty flag on Codebase Model** (P-26: 2 of 6 views are RG; 9–18 engineer-months realistic) | Articulate Phase-4 plan for the conventional + invariant views or accept them as research-grade |
+| U-A | **survives** | Same-vs-distinct verdicts on P-28/P-29/P-30 variants are Phase-4.2 work |
+| U-B | **conditional survival** (P-31 unbuildable without invariant authoring) | **MUST commit at Phase 4 to authoring ≥3 machine-checkable invariants per layer-pair with corpus citations**, OR self-eliminate at Phase 4 entry |
+| U-C | **survives** with partial-RG on distance-estimator calibration + Goodhart-resistance | Calibration recipe + Goodhart-resistance evidence owed at Phase 5/8 |
+| D7-U-1 | **survives with research-grade-uncertainty flag on independence auditor** (P-34 OQ-1 auditor-recursion has no dominating option) | Carry A+C hybrid audit-recursion option as Phase-5 ADR + accepted-open structural concern |
+
+**No candidate self-eliminates at Phase 3.5.** U-B has a conditional survival that converts to self-elimination at Phase 4 entry if the candidate cannot commit to the invariant-authoring sub-track.
+
+### Per-candidate detail
+
+#### GF-S — Greenfield, substrate-first
+
+**Primitive coverage** (with verdicts):
+- S1=P-01 commodity; S2=P-08 designed-system + P-09 commodity; S3=P-05 commodity; S4=P-02 commodity; S5=P-06 commodity; S6=P-14 designed-system; S7=P-10 commodity; S8=P-15 designed-system (with contradiction-detector RG partial); S9=P-19 designed-system.
+
+**Material findings:**
+- S2 (scenario storage) primitive escalated from commodity to designed-system because the holdout-partition discipline (P-08) is load-bearing for F28 — actually *strengthens* GF-S's claim (the substrate-typing of holdout enforcement was the original GF-S thesis).
+- S8 four-guard mediator (P-15) contradiction-detector sub-guard's Larbi MCC ≤ 0.55 ceiling is empirically open against F27/F48 shared-pretraining collusion risk; this is Phase-8 lean-eval work.
+
+**Phase 3.5.5 status:** `survives`. F40 (last-mile drift) defense unchanged (still accepted-open). Cost-stacking math still owed; no new claim from buildability sketches changes that.
+
+**Forward action at Phase 4:** carry P-15 contradiction-detector reliability ceiling as Phase-8 lean-eval candidate. No other action required at Phase 4 entry.
+
+#### GF-M — Greenfield, methodology-first
+
+**Primitive coverage:**
+- Reversibility=P-20 designed-system; Paraphrase=P-21 designed-system (calibration is RG); Holdout=P-08 designed-system; Tiered watchdog=P-06 commodity; Cost ceiling=P-02 commodity. (Cognitive escrow demoted to methodology per DEC-2.)
+
+**Material findings:**
+- P-21 paraphrase divergence calibration confirmed open per GF-M's own OQ-T6; not a buildability blocker, but the primitive must expose N, divergence-metric, and threshold as first-class parameters so Phase-8 sweeps are possible.
+- P-20 reversibility cost is sub-ms (negligible); cycle cost dominated by paraphrase fan-out N× multiplier (already GF-M's known cost concern).
+
+**Phase 3.5.5 status:** `survives`. Defense owed (cost-ceiling math + slice-coherence operational definition) unchanged.
+
+**Forward action at Phase 4:** the paraphrase divergence calibration is registered as a Phase-8 lean-eval candidate. Slice-coherence operational definition still owed (not a Phase-3.5 question — Phase-4 / Phase-5 methodology spec).
+
+#### GF-C — Greenfield, cold-start-first
+
+**Primitive coverage:**
+- Intent Crucible=P-17 designed-system (with partial RG on 2 of 9 fields); EARS+GtWR=P-16 designed-system (likely absorbs into P-12 framework at Phase 4.2); Cold-Start Bench=P-11 commodity; RSI Ledger=P-18 designed-system (mitigates F43/F53). (Cognitive escrow demoted per DEC-2.)
+
+**Material findings:**
+- P-17 Intent Crucible substance-check on `business_outcomes` and `capability_scope` is research-grade — measurability + plausible-attribution + boundedness are not deterministically checkable. The structural validator is bounded designed-system work; substance gating is open.
+- This *partly addresses* GF-C's OQ-6 operator-intent-illiteracy: the substrate cannot deterministically gate substance, so GF-C's pre-mortem 18-month "thin-intent → click-through-STIR → F40" cascade requires a methodology-layer answer (likely Council interrogation depth), not a substrate answer.
+
+**Phase 3.5.5 status:** `survives` with two partial-RG flags. The flags do NOT invalidate the candidate — they sharpen what GF-C's Phase-4 methodology spec must answer.
+
+**Forward action at Phase 4:** GF-C must articulate how the Council interrogation handles substance-uncheckable fields (Council depth requirement; named operator-intent-richness criteria). This is Phase-4 methodology work, not Phase-3.5 substrate work.
+
+#### BF-S — Brownfield, substrate-first
+
+**Primitive coverage:**
+- S-1=P-22 designed-system (polyglot fidelity risk on cross-language types); S-2=P-23 designed-system (**partition-leakage structural**); S-3=P-07 designed-system (per-role ABAC filter); S-4=P-24 designed-system (P-22 dependency); S-5=P-25 designed-system (CaMeL utility-tax calibration partial-RG).
+
+**Material findings (load-bearing):**
+- **P-23 partition-leakage is STRUCTURAL.** Transitive closure of a connected graph leaks hidden-node information by count, edge-type, and path-length. The BF-S B7 ROBUST claim "role-partitioning of in-codebase reads" was contested in Phase 3.2 red-team; the buildability sketch confirms the contestation. Leakage is mitigable to a rate-limited side channel via role-visibility predicates joined into closure rules — but not eliminable.
+- BF-S's other red-team finding (Stripe-scale 1300 PRs/week self-reference accretion) is not directly addressed by sketches — remains accepted-open per the original entry.
+
+**Phase 3.5.5 status:** `survives with downgraded B7 claim`. BF-S does NOT self-eliminate — the B7 partition-leakage degradation is to a known-magnitude residual side channel, not a defeat of the substrate-first framing.
+
+**Forward action at Phase 4:** BF-S's Phase-4 substrate-requirements summary must:
+1. Rephrase B7 from "substrate-enforced role partition" to "rate-limited side-channel mitigation; residual leakage tracked and audited."
+2. Surface the residual leakage rate as accepted-open and as a Phase-8 lean-eval candidate (how much can an adversary exfiltrate via the side channel under realistic adversarial-budget constraints?).
+
+#### BF-M — Brownfield, methodology-first
+
+**Primitive coverage:**
+- Code-traversal=P-22 designed-system; Telemetry=P-07 designed-system; Trajectory=P-05 commodity; Sandbox=P-01 commodity; Worktree=P-03 commodity; Cost ceiling=P-02 commodity; Watchdog=P-06 commodity; Cross-family=P-14 designed-system; Det-linters=P-12 commodity; Held-out runner=P-09 commodity (possible Phase-4.2 collapse into P-08); Scenario extractor=P-27 designed-system (with partial RG on brief-quality calibration); CaMeL=P-25 designed-system (partial RG on utility-tax); PR creator=P-04 commodity.
+
+**Material findings:**
+- P-27 archaeological-brief tooling brief-quality calibration is the load-bearing open problem (three plausible approaches sketched, none empirically validated). Doesn't block construction; gates Phase-5/8 acceptance.
+- P-25 CaMeL utility-tax not measurable a-priori — substrate must expose per-class bypass with audit-log. Affects BF-M's OQ-T3 (CaMeL utility-tax acceptance criterion not set) — the buildability sketch confirms the acceptance criterion has to be deferred to per-deployment measurement.
+
+**Phase 3.5.5 status:** `survives`. Other open questions (stage-compression specification + judge-shape policy + scenarios-from-codebase governance) unchanged — those are methodology questions, not substrate.
+
+**Forward action at Phase 4:** BF-M's stage-compression rules per work-unit-class need specification (own OQ-T1). Brief-quality calibration registered as Phase-5/8 candidate.
+
+#### BF-L — Brownfield, legacy-ingestion-first
+
+**Primitive coverage:**
+- Codebase Model=P-26 **research-grade-uncertainty** (2 of 6 views are RG: conventional + invariant; 4 are designed-system); Ingestion engine + Model-query interface = P-26 sub-components; Scenario-derivation=P-27 designed-system; Regime classifier=P-19 designed-system; Held-out partition=P-08 designed-system; Maintenance loop=P-13 commodity.
+
+**Material findings (load-bearing):**
+- **P-26 Codebase Model is research-grade-uncertainty overall.** Structural view (Glean + SCIP + tree-sitter) and historical view (P-24 + cosign) and runtime view (P-07 + OPA) and debt view (CodeScene + SonarQube) are designed-system with named tools and integration sentences. Conventional view (LLM + golden corpus; no industry standard) and invariant view (Daikon + CodeQL + LLM, no production-grade polyglot integration) are research-grade.
+- **9–18 engineer-months realistic** for full Codebase Model construction. Per-view phased delivery is plausible: ship structural + historical + debt first (highest-value, lowest-risk), then runtime, then conventional / invariant as RG R&D.
+- **P-26 sketch's lead-agent recommendation: BF-L survives Phase 3.5 with honest RG flag carried into Phase 4. Do NOT self-eliminate. Phase 3.5.5 should not force shrinkage — the methodology-vs-BF-S/BF-M comparison is Phase 4 work.**
+
+**Phase 3.5.5 status:** `survives with research-grade-uncertainty flag on Codebase Model`.
+
+**Forward action at Phase 4:** BF-L must articulate the Phase-4 plan for the two RG views. Two acceptable shapes:
+1. Phased delivery — ship 4 of 6 views first; treat conventional + invariant as Phase-2 R&D with explicit acceptance criteria for when those views are "good enough."
+2. Substrate-only acceptance — the Codebase Model carries 4 of 6 views indefinitely; methodology gates that depend on conventional + invariant either degrade gracefully or are deferred until the views mature.
+
+The X_UNM_B cross-mandate finding (CodebaseModel is the load-bearing brownfield primitive for unified-attempt candidates' brownfield-fit) interacts with this: U-A, U-B, U-C, D7-U-1 that claim brownfield-fit must address how they acquire the Codebase Model (or equivalent) — they cannot assume it exists.
+
+#### U-A — Escrow-Graph Factory
+
+**Primitive coverage:**
+- Typed-object store=P-28 designed-system (4 variants, same-vs-distinct deferred); Policy mediator=P-29 designed-system (2 variants, same-vs-distinct deferred); Classifier=P-19 designed-system (3 variants, same-vs-distinct deferred); Judge router=P-14 designed-system; Re-entry registrar=P-30 designed-system (2 variants, same-vs-distinct deferred).
+
+**Material findings:**
+- All primitives buildable. The dominant Phase-4.2 work is the same-vs-distinct calls on P-28/P-29/P-30 — particularly U-A's typed-object store vs U-B's layer-typed store vs U-C's anchor store vs D7-U-1's FC store, each of which gets its own envelope schema in the sketches.
+- DPU-1 granularity concern (process-state node, many per cycle — highest substrate cost at year-2 scale) is not addressed by sketches; remains accepted-open as a Phase-8 lean-eval candidate.
+
+**Phase 3.5.5 status:** `survives`.
+
+**Forward action at Phase 4:** if U-A claims brownfield-fit, must articulate how it acquires the CodebaseModel-equivalent from legacy artifacts (X_UNM_B finding). Granularity-cost trade-off remains Phase-8 lean-eval candidate.
+
+#### U-B — Pace-Layered Escrow Factory
+
+**Primitive coverage:**
+- Layer-typed store=P-28 designed-system (per-layer variant); Transition gates=P-29 designed-system (variant); **Cross-layer drift detector=P-31 research-grade-uncertainty**; Per-layer judge=P-14 designed-system.
+
+**Material findings (load-bearing):**
+- **P-31 cross-layer drift detector is unbuildable at Phase 3.5.** Brier's pace-layer framework is descriptive, not algorithmic; no source in the corpus authors per-layer-pair invariants. Substrate scaffolding (typed-object snapshots + OPA graph-walk + LLM-judge dispatch via P-14) is commodity engineering, but the contract — flag cross-layer drift — cannot be honored without an invariant catalog.
+- **U-B must commit at Phase 4 to an invariant-authoring sub-track delivering ≥3 machine-checkable invariants per layer-pair with corpus citations, OR self-eliminate at Phase 4 entry.**
+
+**Phase 3.5.5 status:** `conditional survival`. Adjudicated at Phase 4 entry: invariant-authoring commitment converts conditional survival to `survives with deferred-defense flag`; refusal converts to `self-eliminates`.
+
+**Forward action at Phase 4:** see above. Lead-agent recommendation: the invariant-authoring sub-track is a substantive Phase-4 work item but is plausibly executable (the 5 layer-pairs × ≥3 invariants = 15 invariants is bounded; the corpus has fragments — GtWR, EARS, AILCCP — that point at intra-layer invariants but not cross-layer ones). Defer the adjudication to user review at Phase 3.5.5 close.
+
+#### U-C — Anchor-Distance Factory
+
+**Primitive coverage:**
+- Anchor object=P-28 designed-system (variant: typed with `frozen-since`+`mutation-protocol`); Distance estimator=P-32 designed-system (construction) + research-grade-uncertainty (calibration + partial Goodhart resistance); Distance-gated dispatcher=P-19 designed-system (variant); Anchor mutation queue=P-28 (write surface); Distance-keyed trajectory=P-05 commodity.
+
+**Material findings:**
+- P-32 distance estimator construction is solid (Glean/CodeQL/Stack-Graphs BFS over P-23 for graph_distance; deterministic decision table for pace_layer_crossings; P-22 + LLM judge for intent_field_touches). Calibration is open — no corpus recipe maps tuple components or weights to operator-meaningful risk.
+- 2 of 3 distance components are structurally Goodhart-resistant (real cost on graph distance + anchor-edit gating on pace_layer_crossings); third leg (intent_field_touches LLM-judged) is F33/F51-vulnerable with patrol-tier residual detector only. Does **not** close F47.
+
+**Phase 3.5.5 status:** `survives` with partial-RG on calibration + Goodhart-resistance.
+
+**Forward action at Phase 4:** if U-C claims brownfield-fit, must articulate Codebase Model acquisition (X_UNM_B). Calibration recipe + Goodhart-resistance evidence owed at Phase 5/8. F33/F51 residual patrol detector must be specified at Phase 5.
+
+#### D7-U-1 — Falsification-Topology Factory
+
+**Primitive coverage:**
+- FC store=P-28 designed-system (variant: FC-typed envelope); Opposing-side router=P-33 designed-system; Compounding gate=P-29 designed-system (variant); **Independence auditor=P-34 research-grade-uncertainty** (structural; construction is designed-system); Survival-window registrar=P-30 designed-system (variant).
+
+**Material findings (load-bearing):**
+- **P-34 independence auditor recursion (OQ-1) has no dominating option.** Option A (deterministic-ness is the assurance) has Ashby-deficient variety against novel collusion patterns (F51). Option B (recursive auditor) is infinite regress. Option C (human review at audit cadence) re-introduces F42 cognitive-escrow at the audit layer — the exact substrate-promotion D7-U-1 explicitly declined.
+- Recommended A+C hybrid (deterministic-ness primary + Option C backstop) is best-current but not closure.
+- P-33 opposing-side router shares substantial substrate with P-14 judge router; same-vs-distinct deferred to Phase 4.2.
+
+**Phase 3.5.5 status:** `survives with research-grade-uncertainty flag on independence auditor`.
+
+**Forward action at Phase 4:** carry A+C hybrid audit-recursion option as a Phase-5 ADR with explicit accepted-open structural concern. If D7-U-1 claims brownfield-fit, must articulate Codebase Model acquisition (X_UNM_B). FC-graph cost at high parallelism (own OQ-2) remains Phase-8 lean-eval candidate.
+
+### Phase 3.5.5 close
+
+- Phase 3.5 close criterion (per [`phase-3.4-decisions-resolved.md` refined two-part rule](phase-3.4-decisions-resolved.md#refined-two-part-rule-for-accepting-a-substrate-primitive)): each primitive named by a surviving candidate has a buildability sketch or carries an explicit research-grade-uncertainty flag.
+- Coverage: 34 enumerated primitive IDs (P-01–P-34), 32 distinct after expected Phase-4.2 collapses, all sketched.
+- Candidates self-eliminating at Phase 3.5: **none**.
+- Candidates with conditional survival: **1** (U-B — invariant-authoring commitment adjudicated at Phase 4 entry).
+- Candidates carrying research-grade-uncertainty flags into Phase 4: **3** (BF-L Codebase Model; U-B drift detector; D7-U-1 independence auditor).
+- Candidates with partial-RG flags on specific sub-components or calibration: **5** (GF-S contradiction-detector reliability; GF-C 2-field substance-check; BF-M brief-quality calibration; U-C distance-estimator calibration + Goodhart-resistance; D7-U-1 already counted).
+
+**All 10 candidates carry forward into Phase 4.** Phase 4 dispatches per-candidate substrate-requirements summaries + shared-discipline extraction + primitive-overlap analysis per the v1.2 plan revision.

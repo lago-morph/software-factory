@@ -1,0 +1,126 @@
+# Phase 3.5 substrate-primitive index — de-duplicated union across all 10 candidates
+
+This file is the canonical primitive enumeration for [Phase 3.5](../../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md#phase-35--substrate-primitive-buildability-sketches-new-in-v12). It is the input to the dispatch shape determined in [`decisions/auto-001-phase-3.5-dispatch-shape.md`](../decisions/auto-001-phase-3.5-dispatch-shape.md) (hybrid, option C).
+
+**Scope discipline.** Per the [scoping principle](../phase-3.4-decisions-resolved.md#scoping-principle-immutable-overrides-any-conflicting-framing-in-the-integration-brief) and Round-2 adversarial review of the dispatch brief: each primitive is enumerated once with all claiming candidates listed. **Same-vs-distinct verdicts on primitives that look similar across candidates (e.g., U-A typed-object store vs. U-B layer-typed store vs. D7-U-1 FC store) are NOT rendered here.** Those judgments belong at Phase 4.2 / methodology-matching. The de-duplication this file performs is only for primitives whose contract, role, and construction recipe are uncontroversially the same across candidates (commodity primitives like sandbox, watchdog, cost-ceiling).
+
+**Cognitive escrow exclusion.** Per [DEC-2](../phase-3.4-decisions-resolved.md#dec-2--cognitive-escrow-placement-methodology), the cognitive-escrow surface is methodology-layer, not substrate. Primitives originally named in GF-M and GF-C as escrow-related are excluded from this index.
+
+## Summary
+
+- **Total primitive IDs enumerated:** 34 (P-01 through P-34). Two IDs may collapse at sketch time (P-12 deterministic-linter-framework vs P-16 EARS+GtWR linter rule library; P-08 scenario storage vs P-09 held-out runner) — left as distinct IDs pre-sketch and resolved by the sketches themselves.
+- **Dispatch tier `cluster` (commodity):** 13 primitives across 3 clusters (P-01 through P-13).
+- **Dispatch tier `per-primitive` (designed-system / research-grade):** 21 primitives (P-14 through P-34).
+- **Anticipated subagent count:** 3 cluster subagents + 21 per-primitive subagents = **24 total**.
+- **Research-grade-uncertainty flags expected:** P-26 (Codebase Model), P-31 (cross-layer drift detector), P-34 (independence auditor); possibly P-32 (distance estimator calibration). Confirmed at sketch time.
+
+Cost-hawk's sequencing fix (per [auto-001 Round 2](../decisions/auto-001-phase-3.5-dispatch-shape.md#sequencing-change)) was: enumerate first, then re-pick the shape. Result: 34 enumerated primitives, ~22 distinct after collapse, hybrid (option C) remains the right shape — count is above cost-hawk's "≤15 → switch to per-primitive" threshold, below the "≥23 → keep option B per-cluster" threshold. Hybrid stands.
+
+## Per-primitive enumeration
+
+### Commodity primitives (dispatch-tier: `cluster`)
+
+#### Cluster C1 — Execution & resource control
+
+| ID | Name | Contract (one-line) | Claimed by | Registry buildability scope |
+|---|---|---|---|---|
+| P-01 | Sandbox runtime (deny-by-default) | Isolated execution env; deny-all default; allow-list for tool/net/fs | [GF-S/S1](../tracks/greenfield-substrate-first.md), [BF-M](../tracks/brownfield-methodology-first.md), implicit in all | commodity |
+| P-02 | Cost ceilings (hard, multi-axis) | Per-cycle / per-cycle-class hard caps on tokens, calls, $; enforced by mediator | [GF-S/S4](../tracks/greenfield-substrate-first.md), [GF-M](../tracks/greenfield-methodology-first.md), [BF-M (D-5)](../tracks/brownfield-methodology-first.md) | commodity |
+| P-03 | Worktree isolation | Per-cycle worktree; F17 contamination mitigation | [BF-M (F17)](../tracks/brownfield-methodology-first.md) | commodity |
+| P-04 | PR creator | Authenticated branch-push + PR-open with structured metadata | [BF-M](../tracks/brownfield-methodology-first.md) | commodity |
+
+#### Cluster C2 — Observation & control
+
+| ID | Name | Contract (one-line) | Claimed by | Registry buildability scope |
+|---|---|---|---|---|
+| P-05 | Trajectory capture | Per-event append-only persistence of agent step/tool-use trace | [GF-S/S3](../tracks/greenfield-substrate-first.md), [BF-M (D-7)](../tracks/brownfield-methodology-first.md), [U-C distance-keyed variant](../tracks/unified-C.md) | commodity |
+| P-06 | Watchdog tiers (Daemon / Triage / Patrol) | 3-tier escalation: Daemon (per-event) → Triage (per-cycle anomaly) → Patrol (cross-cycle distribution) | [GF-S/S5](../tracks/greenfield-substrate-first.md), [GF-M](../tracks/greenfield-methodology-first.md), [BF-M (D-6)](../tracks/brownfield-methodology-first.md) | commodity |
+| P-07 | Telemetry ingestor (per-role read filters) | Production telemetry pull/subscribe with attribute-based access control | [BF-S/S-3](../tracks/brownfield-substrate-first.md), [BF-M runtime-telemetry-read](../tracks/brownfield-methodology-first.md), [BF-L Codebase Model runtime view component](../tracks/brownfield-legacy-ingestion-first.md) | commodity (per-role filter is the non-trivial part — see notes) |
+
+#### Cluster C3 — Scenario storage & holdout
+
+| ID | Name | Contract (one-line) | Claimed by | Registry buildability scope |
+|---|---|---|---|---|
+| P-08 | Scenario storage (out-of-tree, holdout-partitioned) | Append-only scenario store with substrate-enforced training/holdout partition | [GF-S/S2](../tracks/greenfield-substrate-first.md), [GF-M holdout enforcement](../tracks/greenfield-methodology-first.md), [BF-L held-out partition enforcement](../tracks/brownfield-legacy-ingestion-first.md), [BF-M held-out scenario runner](../tracks/brownfield-methodology-first.md) | commodity (key partition discipline is the design content) |
+| P-09 | Held-out scenario runner | Deterministic replay of stored scenarios against current agent; pass/fail verdict | [GF-S/S2 component](../tracks/greenfield-substrate-first.md), [GF-M](../tracks/greenfield-methodology-first.md), [BF-M](../tracks/brownfield-methodology-first.md), [BF-L](../tracks/brownfield-legacy-ingestion-first.md) | commodity |
+| P-10 | Coordination medium (CI-friendly, content-addressed) | Shared blob/object medium accessible by CI + agents with content-hash addressing | [GF-S/S7](../tracks/greenfield-substrate-first.md) | commodity |
+| P-11 | Cold-Start Bench (HMAC-signed scenario store) | Crypto-signed seed scenario bench, immutable after day-0 sign | [GF-C](../tracks/greenfield-cold-start-first.md) | commodity (HMAC + scenario storage) |
+| P-12 | Deterministic linter framework | Rule-engine for deterministic per-cycle checks (separate primitive from the rule set itself) | [BF-M (F38)](../tracks/brownfield-methodology-first.md), [GF-S/S8 component](../tracks/greenfield-substrate-first.md) | commodity |
+| P-13 | Maintenance loop (continuous reconciliation) | Low-cadence continuous job that compares model with reality and flags drift | [BF-L](../tracks/brownfield-legacy-ingestion-first.md) | commodity (cron + diff infrastructure) |
+
+### Designed-system / research-grade primitives (dispatch-tier: `per-primitive`)
+
+| ID | Name | Contract (one-line) | Claimed by | Registry buildability scope |
+|---|---|---|---|---|
+| P-14 | Judge router (multi-shape typed) | Provider-family-diverse model dispatch with typed input/output shapes per judge role | [GF-S/S6](../tracks/greenfield-substrate-first.md), [BF-M cross-family routing (F46)](../tracks/brownfield-methodology-first.md), [U-A judge router](../tracks/unified-A.md), [U-B per-layer judge routing](../tracks/unified-B.md) | designed-system (registry: Medium) |
+| P-15 | Four-guard mediator | Composition of 4 deterministic guards: GtWR lint + contradiction-detector + req-count budgeter + perimeter typing — gated single mediator surface | [GF-S/S8](../tracks/greenfield-substrate-first.md) | designed-system (contradiction-detector needs multi-model judge ensemble) |
+| P-16 | EARS+GtWR linter | Deterministic rule engine for INCOSE R7–R35 + EARS pattern conformance | [GF-C](../tracks/greenfield-cold-start-first.md), [GF-S/S8 component](../tracks/greenfield-substrate-first.md) | designed-system (specific rule library) |
+| P-17 | Intent Crucible validator | 9-field typed-object intake with deterministic structural validators | [GF-C](../tracks/greenfield-cold-start-first.md) | designed-system |
+| P-18 | RSI-Declaration Ledger | Append-only declaration ledger tracking RSI commitments + invariants | [GF-C](../tracks/greenfield-cold-start-first.md) | designed-system |
+| P-19 | Eligibility / regime classifier | Per-(work-unit-class × region) classifier deciding which regime/cycle applies | [GF-S/S9](../tracks/greenfield-substrate-first.md), [BF-L per-region regime classifier](../tracks/brownfield-legacy-ingestion-first.md), [U-C distance-gated dispatcher (related)](../tracks/unified-C.md) | designed-system (classifier may itself be LLM judge — open) |
+| P-20 | Reversibility primitive (event-sourced) | Cheap commit-and-reverse on intent / scenario / artifact objects via event-sourced storage | [GF-M](../tracks/greenfield-methodology-first.md) | designed-system (event-sourcing pattern is well-understood; integration with intent artifacts is the design content) |
+| P-21 | Paraphrase divergence primitive | N model-family-diverse paraphrasers callable in parallel with deterministic prompt-paraphrase generators | [GF-M](../tracks/greenfield-methodology-first.md) | designed-system |
+| P-22 | Polyglot codebase index | Per-language incremental queryable index of symbols/AST/types | [BF-S/S-1](../tracks/brownfield-substrate-first.md), [BF-M code-traversal](../tracks/brownfield-methodology-first.md), component-of [BF-L Codebase Model](../tracks/brownfield-legacy-ingestion-first.md) | designed-system (registry: High) |
+| P-23 | Dependency-and-impact graph | Per-symbol blast-radius compute; cross-language reference graph | [BF-S/S-2](../tracks/brownfield-substrate-first.md), component-of [BF-L Codebase Model](../tracks/brownfield-legacy-ingestion-first.md), used by [U-C distance estimator](../tracks/unified-C.md) | designed-system (registry: High) |
+| P-24 | Change-history / attribution store (append-only, signed) | Per-symbol attribution at fine granularity with signed append-only history | [BF-S/S-4](../tracks/brownfield-substrate-first.md), component-of [BF-L Codebase Model historical view](../tracks/brownfield-legacy-ingestion-first.md) | designed-system (git plumbing + symbol-level granularity is the design content) |
+| P-25 | CaMeL-class typed perimeter | Capability-typed boundary mediating production-adjacent reads/writes | [BF-S/S-5](../tracks/brownfield-substrate-first.md), [BF-M](../tracks/brownfield-methodology-first.md) | designed-system (registry: prior art is CaMeL paper + AgentDojo) |
+| P-26 | Codebase Model (6 views, integrated) | Durable versioned queryable artifact integrating structural / conventional / historical / runtime / invariant / debt views | [BF-L](../tracks/brownfield-legacy-ingestion-first.md) | **research-grade-uncertainty** (registry: Highest; "the most ambitious primitive in the catalog") |
+| P-27 | Archaeological-brief generation tooling | LLM-driven codebase summarization with structured outputs feeding Phase-comprehension stage | [BF-M](../tracks/brownfield-methodology-first.md) | designed-system (uses Codebase Model + LLM-with-structured-output) |
+| P-28 | Typed-object store (content-addressed, append-only) | Append-only blob store with typed envelope + content-hash addressing | [U-A typed-object store](../tracks/unified-A.md), [U-B layer-typed object store (per-layer variant)](../tracks/unified-B.md), [D7-U-1 FC store (FC-typed variant)](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md), [U-C anchor object store (anchor-typed variant)](../tracks/unified-C.md), related-to [P-10 coordination medium](#cluster-c3--scenario-storage--holdout) | designed-system (variants are pre-identified contested — same-vs-distinct deferred to Phase 4.2 per scoping principle) |
+| P-29 | Policy mediator (declarative gates) | OPA / Cedar-style declarative policy enforcement at primitive boundaries | [U-A policy mediator](../tracks/unified-A.md), [D7-U-1 compounding gate (variant)](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md) | designed-system (prior art: OPA, Cedar) |
+| P-30 | Re-entry / event registrar | Substrate-typed event protocol registering re-entry events into the cycle graph | [U-A re-entry registrar](../tracks/unified-A.md), [D7-U-1 survival-window registrar (variant)](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md) | designed-system |
+| P-31 | Cross-layer drift detector | Per-layer-pair invariant checker; flags inter-layer drift on pace-layer artifact stack | [U-B](../tracks/unified-B.md) | **research-grade-uncertainty** (registry: "Brier's pace-layer framework is a description, not a tool — needs substrate-side detector implementation") |
+| P-32 | Distance estimator (multi-component, typed) | Compute graph-distance + pace-layer-crossings + intent-field-touch count to a frozen anchor | [U-C](../tracks/unified-C.md) (depends on P-22, P-23) | designed-system, near-research-grade (composition of well-understood components; calibration may be research-grade) |
+| P-33 | Opposing-side router | Provider-property-driven routing for adversarial / falsification dispatch; model-family taxonomy + capability registry | [D7-U-1](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md) | designed-system |
+| P-34 | Independence auditor | Patrol-tier deterministic anomaly detection on FC log distributions for collusion/correlation | [D7-U-1](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md) | **research-grade-uncertainty** (auditor recursion is the candidate's own load-bearing OQ) |
+
+### Notes on numbering
+
+The numbered IDs run P-01 through P-34 (13 cluster + 21 per-primitive). Two pairs may collapse at sketch time:
+
+- **P-12 (deterministic linter framework) vs P-16 (EARS+GtWR linter rule library)** — P-12 is the rule-engine substrate; P-16 is a specific rule set running on that engine. If a sketch determines they are not separable in practice, P-16 absorbs into P-12.
+- **P-08 (scenario storage) vs P-09 (held-out runner)** — P-08 is the partitioned store; P-09 is the deterministic replay loop. If the registry's "held-out scenario runner" is just the store with a read-API, P-09 absorbs into P-08.
+
+These determinations happen at sketch time, not pre-judged here. Best-estimate distinct count after collapse: 32.
+
+## Per-tier subagent dispatch plan
+
+### Cluster subagents (3 total)
+
+- **C1 subagent** — sketches P-01 through P-04 (sandbox + cost ceiling + worktree + PR creator).
+- **C2 subagent** — sketches P-05 through P-07 (trajectory capture + watchdog tiers + telemetry ingestor with per-role filters).
+- **C3 subagent** — sketches P-08 through P-13 (scenario storage + held-out runner + coordination medium + Cold-Start Bench + deterministic linter framework + maintenance loop).
+
+### Per-primitive subagents (21 total, one each for P-14 through P-34)
+
+The per-primitive dispatch will fire as a single parallel fanout wave to keep elapsed time bounded.
+
+### Brief shape sent to each subagent
+
+Per Round 2 of the [dispatch decision brief](../decisions/auto-001-phase-3.5-dispatch-shape.md#amendments-to-the-dispatch-brief-that-will-be-sent-to-subagents):
+
+- **Construction path** must name at least one tool/library AND one **integration sentence** (how that tool's specific API/feature realizes the primitive's contract). No tool-name-only or shared-citations-across-primitives.
+- **Corpus-why** must cite the specific corpus problem the primitive solves (not "this is commodity cloud engineering").
+- **Research-grade-uncertainty flag** is mandatory when no plausible construction path is known.
+- **Buildability verdict** is one of: `commodity`, `designed-system`, `research-grade-uncertainty`.
+
+Cluster subagents are **forbidden** from rendering same-vs-distinct verdicts on primitives that look similar across candidates (defer to Phase 4.2 per scoping principle).
+
+## Per-candidate primitive coverage (round-trip check)
+
+This section confirms every primitive each candidate names appears somewhere in the enumeration above (with the cognitive-escrow primitives excluded per DEC-2).
+
+| Candidate | Primitive IDs covered |
+|---|---|
+| [GF-S](../tracks/greenfield-substrate-first.md) | S1=P-01, S2=P-08+P-09, S3=P-05, S4=P-02, S5=P-06, S6=P-14, S7=P-10, S8=P-15 (+P-12, P-16 components), S9=P-19 |
+| [GF-M](../tracks/greenfield-methodology-first.md) | Reversibility=P-20, Paraphrase=P-21, Holdout=P-08, Watchdog=P-06, Cost ceiling=P-02 (escrow demoted per DEC-2) |
+| [GF-C](../tracks/greenfield-cold-start-first.md) | Intent Crucible=P-17, EARS+GtWR=P-16, Cold-Start Bench=P-11, RSI Ledger=P-18 (escrow demoted per DEC-2) |
+| [BF-S](../tracks/brownfield-substrate-first.md) | S-1=P-22, S-2=P-23, S-3=P-07, S-4=P-24, S-5=P-25 |
+| [BF-M](../tracks/brownfield-methodology-first.md) | Code-traversal=P-22, Telemetry=P-07, Trajectory=P-05, Sandbox=P-01, Worktree=P-03, Cost ceiling=P-02, Watchdog=P-06, Cross-family=P-14, Det-linters=P-12, Held-out runner=P-09, Scenario extractor=P-27, CaMeL=P-25, PR creator=P-04, Archaeological-brief=P-27 |
+| [BF-L](../tracks/brownfield-legacy-ingestion-first.md) | Codebase Model=P-26 (composes P-22+P-23+P-07+P-24+conventional view+debt view), Ingestion engine=P-26 sub-component, Model-query interface=P-26 sub-component, Scenario-derivation=P-27, Regime classifier=P-19, Held-out partition=P-08, Maintenance loop=P-13 |
+| [U-A](../tracks/unified-A.md) | Typed-object store=P-28, Policy mediator=P-29, Classifier=P-19, Judge router=P-14, Re-entry registrar=P-30 |
+| [U-B](../tracks/unified-B.md) | Layer-typed store=P-28 (variant), Transition gates=P-29 (variant), Drift detector=P-31, Per-layer judge=P-14 |
+| [U-C](../tracks/unified-C.md) | Anchor object=P-28 (variant), Distance estimator=P-32, Distance-gated dispatcher=P-19 (variant), Anchor mutation queue=P-28 (write surface), Distance-keyed trajectory=P-05 |
+| [D7-U-1](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md) | FC store=P-28 (variant), Opposing-side router=P-33, Compounding gate=P-29 (variant), Independence auditor=P-34, Survival-window registrar=P-30 (variant) |
+
+**Same-vs-distinct verdicts deferred to Phase 4.2:** the typed-object store variants (P-28 across U-A / U-B / U-C / D7-U-1), the policy mediator / compounding gate variants (P-29 across U-A / D7-U-1), the registrar variants (P-30 across U-A / D7-U-1), the classifier / dispatcher variants (P-19 across GF-S / BF-L / U-C). Each variant gets its own per-primitive sketch focused on that candidate's specific contract; whether multiple variants collapse to a single primitive at the methodology-to-substrate matching stage is the Phase-4.2 question.

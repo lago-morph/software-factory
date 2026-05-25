@@ -1,4 +1,6 @@
-# Session handoff — 2026-05-25 (Phase 5a closed; Wave 5.3 owed)
+# Session handoff — 2026-05-25 (Phase 5a closed; Wave 5.3 owed) [SUPERSEDED]
+
+> **[SUPERSEDED]** This handoff is superseded by the [Phase-5 close handoff](SESSION-HANDOFF-2026-05-25-phase-5-close.md). Wave 5.3 was delivered in the same run that authored this handoff (the run continued past the original deferral); Phase 6 is now unblocked. Read the active handoff first.
 
 This is the pickup brief for the next agent. **Phase 5a is closed** as of the autonomous run completed 2026-05-25 (Phase-5 ADR dispatch split per [auto-005 Round 2](decisions/auto-005-phase-5-dispatch-shape.md#decision-round-2): this run = Wave 5.1a + 5.1b + 5.2; Wave 5.3 deferred). **The next work is Wave 5.3** (~29 candidate-specific + per-variant ADRs) which is **non-negotiable owed before Phase 6 dispatch** per the binding constraint below.
 

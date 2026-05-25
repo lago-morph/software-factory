@@ -124,3 +124,13 @@ This section confirms every primitive each candidate names appears somewhere in 
 | [D7-U-1](../bias-guards/phase-3/d7-blind-axis/d7-u-1-prohibit-interval-escrow.md) | FC store=P-28 (variant), Opposing-side router=P-33, Compounding gate=P-29 (variant), Independence auditor=P-34, Survival-window registrar=P-30 (variant) |
 
 **Same-vs-distinct verdicts deferred to Phase 4.2:** the typed-object store variants (P-28 across U-A / U-B / U-C / D7-U-1), the policy mediator / compounding gate variants (P-29 across U-A / D7-U-1), the registrar variants (P-30 across U-A / D7-U-1), the classifier / dispatcher variants (P-19 across GF-S / BF-L / U-C). Each variant gets its own per-primitive sketch focused on that candidate's specific contract; whether multiple variants collapse to a single primitive at the methodology-to-substrate matching stage is the Phase-4.2 question.
+
+## Post-sketch annotations (running)
+
+Updates from Phase-3.5.3 cluster-sketch subagents that change this index's pre-tags:
+
+- **P-07 (Telemetry ingestor) — escalated `commodity` → `designed-system`.** Cluster-C2 sketch confirmed the per-role read-filter discipline is load-bearing for F28 holdout enforcement under the brownfield CTR-B5/CTR-G2 inversion. The storage half is commodity (OpenTelemetry Collector); the ABAC integration on top is not. See [`cluster-C2.md` § P-07](cluster-C2.md).
+- **P-08 (Scenario storage) — escalated `commodity` → `designed-system`.** Cluster-C3 sketch confirmed the substrate-enforced role-keyed partition (OPA ABAC over `partition=train|holdout` against builder/judge role tokens) is the load-bearing F28-critical integration; storage half is commodity. See [`cluster-C3.md` § P-08](cluster-C3.md).
+- **P-08 / P-09 collapse question raised but not decided.** Cluster-C3 sketch flagged honest evidence that P-09 (held-out scenario runner) reduces to a thin read-API on P-08 with the judge-role token; the cluster subagent did NOT render a same-vs-distinct verdict (per the cluster-subagent constraints). Deferred to Phase 4.2.
+
+Updated counts after C2/C3 reclassifications: 11 commodity (C1: 4 + C2 P-05/P-06 + C3 P-09/P-10/P-11/P-12/P-13) + 23 designed-system / research-grade (was 21; +P-07, +P-08). The dispatch tiers don't change retroactively — the cluster sketches landed correctly under the original dispatch — but the *index's* commodity-vs-designed classification updates to reflect the sketches' findings.

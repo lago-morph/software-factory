@@ -1,0 +1,9 @@
+# agent instruction
+
+**Round-1 strikethrough preservation in decision briefs.** When a decision brief enters Round 2, the Round-1 decision MUST be preserved in the file with `~~strikethrough~~` annotation and a "superseded by Round 2 below" pointer, not deleted. The Round-1 reasoning section MUST also be preserved under a "(preserved for traceability)" heading. This makes the brief itself the audit trail of the lead agent anchoring and the reviewers findings.
+
+*Grounded in: every auto-NNN brief in this repo (auto-001, auto-002, auto-003, auto-004) follows this pattern; the pattern is currently social convention but not codified.*
+
+# justification
+
+Decision briefs go through two rounds: Round 1 is the lead agent's best call with all the pre-defused-objection reasoning that real reviewers then puncture; Round 2 is the revised brief. The temptation when authoring Round 2 is to delete-and-rewrite: the Round-1 decision is wrong, so why keep it? Two reasons make preservation load-bearing. First, the audit trail of "what the lead agent anchored on" is itself evidence — every Round 1 → Round 2 transition in this repo so far (auto-001 per-cluster → hybrid; auto-002 full-sub-track → smoke-test; auto-003 count-gate → smoke-test-first) shows the lead agent had a specific blind spot the reviewers caught, and preserving the Round-1 reasoning lets future authors (and future reviewers) recognize the recurring blind-spot pattern. Second, downstream artifacts may reference Round-1 framing by accident or in interim drafts; preserving Round 1 makes those references resolve to "superseded by Round 2 below" rather than to a deleted section, which would be a broken-link tax on every retroactive read. The marginal cost is `~~strikethrough~~` markers and a "(preserved)" heading; the cost of deletion is a silent audit-trail loss across the entire decision-brief library.

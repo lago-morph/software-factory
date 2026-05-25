@@ -260,4 +260,101 @@ These disciplines are *named in AGENTS.md or the registry / brief but are weakly
 
 ---
 
-*End of track-driven discipline index. Per-discipline stubs follow in this directory at the file paths shown above.*
+*End of track-driven discipline index.*
+
+---
+
+# Substrate-layer disciplines (merged in at Wave 4.6 from sketch/registry extraction)
+
+The following disciplines surface predominantly at the substrate / decision-brief / cross-cutting layer rather than in candidate tracks. They were extracted by the parallel Wave-4.3 sketch-and-registry subagent (full extraction preserved in [`sketch-registry-extracted-disciplines.md`](sketch-registry-extracted-disciplines.md) for traceability). Each is named here with its substrate-layer surfaces, reconciliation note vs the track-driven disciplines above, and its relation to specific primitives.
+
+## D-Construction-Path-Plus-Corpus-Why — Two-part rule for substrate primitive admission
+
+- **One-line definition.** Every substrate primitive admitted to the catalog must ship (i) a construction path naming concrete tools/libraries with an integration sentence per primitive, and (ii) a corpus citation for *why* the primitive solves a corpus-named problem.
+- **Governing principle.** Per [phase-3.4-decisions-resolved.md § Refined two-part rule](../phase-3.4-decisions-resolved.md#refined-two-part-rule-for-accepting-a-substrate-primitive) (`binding-rule`). "It is handwaving to just assume something like `CodebaseModel` just exists."
+- **Surfaces in.** Every per-primitive sketch (P-14–P-34) and cluster sketch (C1/C2/C3) is structured by this rule (`explicit-named`); [`auto-001` Round-2 amendments](../decisions/auto-001-phase-3.5-dispatch-shape.md#amendments-to-the-dispatch-brief-that-will-be-sent-to-subagents) sharpened it to "named tool + integration sentence + specific corpus problem."
+- **Reconciliation with track-driven D-Honesty.** Partial overlap (both require evidence). This discipline is the *substrate-side enforcement mechanism* for D-Honesty's no-fabrication norm on construction paths. Track-driven D-Honesty extends to methodology-level scope claims; the two are *complementary not identical*.
+- **Relation to specific primitives.** Universal — every P-NN sketch is an instance.
+
+## D-RG-Primitive-Rule — Bounded-sub-track-or-accept-as-RG per RG-portion
+
+- **One-line definition.** Any candidate carrying a load-bearing research-grade-uncertainty primitive must choose, per RG-portion, between (a) committing to a bounded authoring sub-track to convert RG content to designed-system, or (b) downgrading the dependent contract to accept-as-RG with substrate documenting the gap and methodology specifying graceful degradation.
+- **Governing principle.** Symmetry across candidates; no per-candidate ad-hoc lifelines. Same toolkit (a/b with defaults) governs every RG primitive. Per [candidate-registry.md § Phase-3.5.5 RG-primitive rule](../candidate-registry.md#phase-355-rule-on-load-bearing-rg-primitives-binding-user-approved-2026-05-25) (`binding-rule`, user-approved 2026-05-25).
+- **Surfaces in.** [`auto-002 Round 2`](../decisions/auto-002-ub-path.md) (U-B P-31 smoke-test); [`auto-003 Round 2`](../decisions/auto-003-bfl-rg-view-choice.md) (BF-L per-view smoke-tests); [`P-34`](../primitives/P-34-independence-auditor.md) (A+C hybrid as combined a+b application). Wave-4.5 sub-track verdicts apply this rule.
+- **Reconciliation with track-driven disciplines.** Substrate-only — born post-tracks at the Phase-3.5.5 close. Not in the track scope.
+- **Relation to specific primitives.** P-26 (BF-L conventional + invariant views); P-31 (U-B); P-34 (D7-U-1); partial-RG on P-15, P-17, P-21, P-25, P-27, P-32.
+
+## D-Same-vs-Distinct-Deferred — Substrate-matching is methodology-downstream
+
+- **One-line definition.** Buildability-sketch subagents are forbidden from declaring whether two candidates' superficially-similar primitives are "the same." Each variant gets its own contract paragraph; collapse is reserved for the Phase-4.2 lead-agent diff.
+- **Governing principle.** Substrate-matching is downstream-methodology work; premature collapse forecloses cross-candidate variety the scoping principle protects.
+- **Surfaces in.** [`primitives/index.md` § Scope discipline](../primitives/index.md) (`binding-rule`); [`auto-001` Round-2 cluster-subagent constraints](../decisions/auto-001-phase-3.5-dispatch-shape.md#amendments-to-the-dispatch-brief-that-will-be-sent-to-subagents). Operationalized by Wave 4.2 [`overlap.md`](../primitives/overlap.md).
+- **Reconciliation with track-driven disciplines.** Substrate-only — process discipline born of the Phase-3.5 sketch-dispatch shape. Tracks predate it.
+- **Relation to specific primitives.** P-28, P-29, P-30, P-19 contested variants; P-08↔P-09 collapse; P-12↔P-16 absorption; P-14↔P-33 distinction.
+
+## D-Real-Subagent-Review — Adversarial review MUST be real subagents
+
+- **One-line definition.** Adversarial review of any lead-agent-authored decision brief, design proposal, plan, or artifact MUST use real subagent dispatches (the `Agent` tool), not inline-simulated reviewers written as prose.
+- **Governing principle.** Per [AGENTS.md § Adversarial review MUST be real subagents](../../../AGENTS.md#adversarial-review-must-be-real-subagents) (`binding-rule`, codified PR #144 retrospective). Inline-simulated reviewers inherit the lead agent's anchoring on the chosen option; they look like adversarial pressure but exert none.
+- **Surfaces in.** AGENTS.md; auto-001 Round 2; auto-002 Round 2; auto-003 Round 2; auto-004 Round 2 (every decision brief in the catalog applies this rule explicitly).
+- **Reconciliation with track-driven D-Bias-Guard.** D-Bias-Guard is about *content* (opposing-side judge diversity within the architecture). D-Real-Subagent-Review is about *process* (how decision briefs are reviewed during the synthesis pipeline). Complementary, not identical.
+- **Relation to specific primitives.** N/A — process discipline.
+
+## D-Per-Role-Read-Filter — ABAC partition at the read API, not the filesystem
+
+- **One-line definition.** Holdout enforcement, builder/judge separation, and role-based access are implemented as ABAC policy at the substrate read-API layer, not as filesystem permissions or directory layout.
+- **Governing principle.** Substrate-enforcement applied to information-flow boundaries. Per the [cluster-C2 sketch § P-07](../primitives/cluster-C2.md) and [cluster-C3 § P-08](../primitives/cluster-C3.md): the storage half is commodity; the ABAC integration is the design content.
+- **Surfaces in.** P-07 (telemetry ingestor); P-08 (scenario storage); BF-S B7 partition-leakage analysis (P-23 sketch's "rate-limited side channel" conclusion).
+- **Reconciliation with track-driven D-Holdout.** D-Holdout is the *what* (training/holdout partition); D-Per-Role-Read-Filter is the *how* (ABAC mechanism). The new discipline tightens D-Holdout's substrate enforcement claim.
+- **Relation to specific primitives.** P-07, P-08, P-25 (CaMeL perimeter).
+
+## D-Typed-Envelope — Substrate-typed-store discipline
+
+- **One-line definition.** Substrate stores (P-28 variants, P-10, P-11, P-18, P-24) carry a typed envelope with content-hash addressing + append-only discipline + typed-filter primary axis declared at admission time.
+- **Governing principle.** The envelope schema is the integration contract; the storage is commodity. Multiple candidates' variants can coexist on one substrate provided their envelope namespaces are disjoint (per [Wave 4.2 overlap.md § P-28](../primitives/overlap.md#p-28-typed-object-store--four-contested-variants)).
+- **Surfaces in.** P-28 (4 variants); P-10 coordination medium; P-11 Cold-Start Bench; P-18 RSI Ledger; P-24 attribution store.
+- **Reconciliation with track-driven disciplines.** Substrate-only — tracks name their stores without articulating the typed-envelope discipline. Surfaced by the sketch-driven extraction.
+- **Relation to specific primitives.** P-28 (load-bearing); P-10, P-11, P-18, P-24 (instances).
+
+## D-Snapshot-Consistency-at-Version-Boundaries
+
+- **One-line definition.** Versioned substrate artifacts (P-26 Codebase Model; P-08 scenario store; P-18 RSI Ledger) maintain snapshot consistency at version boundaries; per-cycle queries pin a version at dispatch; the cycle does not see mid-cycle changes.
+- **Governing principle.** F34 (cross-layer drift) defence at the model level. Eventually-consistent within an ingestion pass; consistent across versions.
+- **Surfaces in.** P-26 sketch (Integration discipline section); P-13 maintenance loop; P-08 scenario storage's append-only discipline.
+- **Reconciliation with track-driven disciplines.** Substrate-only — sharpest in P-26 sketch; tracks observe it inferentially.
+- **Relation to specific primitives.** P-26, P-13, P-08, P-18.
+
+## D-Honest-RG-Flag — "Say so explicitly" honesty clause for RG primitives
+
+- **One-line definition.** When a primitive or sub-component is research-grade-uncertain, the substrate documentation says so explicitly with named gaps; fabricated construction paths without corpus support do not count.
+- **Governing principle.** Operationalizes track-driven D-Honesty at the substrate-primitive layer. Per [P-31 smoke-test § Honesty discipline](../primitives/P-31-smoke-test-invariants.md) (verbatim: "If a layer-pair has no corpus-citable non-trivial invariant, this report says so explicitly and names the gap — fabricated invariants without corpus support do not count").
+- **Surfaces in.** P-26 sketch; P-31 sketch + smoke-test; P-34 sketch; P-32 sketch (partial-RG on calibration); auto-002 Round 2 + auto-003 Round 2 reviewers' enforcement.
+- **Reconciliation with track-driven D-Honesty.** Substrate-layer specialization of D-Honesty. The track-driven discipline is the umbrella; this is the substrate-primitive-layer enforcement mechanism.
+- **Relation to specific primitives.** P-26, P-31, P-32, P-34 (load-bearing RG); P-15, P-17, P-21, P-25, P-27 (partial-RG).
+
+## D-Decision-Brief-Rewind-Pointer — Decisions are reversible
+
+- **One-line definition.** Every `decisions/auto-NNN-*.md` brief carries an explicit rewind point (a named commit SHA or branch state) so any decision can be reverted without losing downstream work.
+- **Governing principle.** "Make every decision rewindable." Per the project's unattended-mode discipline.
+- **Surfaces in.** Every `auto-NNN` brief (auto-001 through auto-004); SESSION-HANDOFF docs; the overnight-summary.md.
+- **Reconciliation with track-driven disciplines.** Substrate-only — process discipline born of the synthesis pipeline. Tracks don't observe it (tracks are not decision briefs).
+- **Relation to specific primitives.** N/A — process discipline.
+
+---
+
+## Reconciliation summary (Wave 4.6 merge)
+
+**21 disciplines total** in the canonical index: 13 track-driven + 8 substrate-layer (with 4 substrate-layer disciplines from the sketch-registry extraction reconciled as overlapping with track-driven entries and dropped: substrate-enforcement-not-operator-voluntary → matches D-Substrate-Enforcement; honest-RG-flag-flagging → folded into substrate-only D-Honest-RG-Flag (a specialization) above; cross-family-judge-diversity → matches D-Bias-Guard; graceful-degradation → moved to track-driven flagged-for-attention list as ambiguous-per-candidate).
+
+**Dropped overlap notes (for Wave-5 ADR authors):**
+- *Substrate-enforcement-not-operator-voluntary* and D-Substrate-Enforcement are the same discipline. Use D-Substrate-Enforcement.
+- *Cross-family / opposing-side judge diversity* and D-Bias-Guard are the same discipline. Use D-Bias-Guard.
+
+**Track-driven flagged-for-attention items resolved by the substrate-layer merge:**
+- *D-Real-Subagent-Review* → captured here (substrate-layer).
+- *D-Three-Layer-Citation* → not surfaced by either subagent's read scope; carries forward as an open discipline-extraction question (it exists in `phase-3.4-integration-brief.md` but neither subagent's read scope covered it deeply). Not landed at Wave 4.6; carries to Phase 5/6 as informal.
+- *D-Concrete-Task* → process-level (dispatch); carries forward as informal.
+- *D-Internal-Document-References* → process-level (codified in AGENTS.md); informal.
+- *D-Graceful-Degradation* → substrate-layer extraction did not name it as a distinct discipline either; it is a per-candidate choice expressed via the (b) option of the RG-Primitive-Rule (see D-RG-Primitive-Rule above). NOT a separate cross-cutting discipline; carries forward as RG-Primitive-Rule application.
+
+**Per-discipline stubs status.** Stubs for the 13 track-driven disciplines exist in this directory (`bias-guard.md`, `substrate-enforcement.md`, etc.). The 8 substrate-layer disciplines do not yet have stub files — the lead-agent merge intentionally left these as index-only entries (referencing the sketch-registry-extracted file for full content) per the Wave 4.6 cost discipline. Stubs can be authored at Phase 5 ADR dispatch time as needed.

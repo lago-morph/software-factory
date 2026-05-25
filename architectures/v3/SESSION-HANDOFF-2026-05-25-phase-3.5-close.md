@@ -1,4 +1,6 @@
-# Session handoff — 2026-05-25 (Phase 3.5 closed)
+# Session handoff — 2026-05-25 (Phase 3.5 closed) — SUPERSEDED
+
+> **STATUS: SUPERSEDED 2026-05-25 by [Phase-4-close handoff](SESSION-HANDOFF-2026-05-25-phase-4-close.md).** Phase 4 closed in the same calendar day as Phase 3.5; this brief was the pickup brief for Phase 4 work and is now historical. The Phase-4-close handoff is the canonical pickup point for Phase 5.
 
 This is the pickup brief for the next agent. Phase 3.5 is **closed** as of the overnight run completed 2026-05-25. The next work is **Phase 4** (per-candidate substrate-requirements + shared-discipline extraction + primitive-overlap analysis).
 

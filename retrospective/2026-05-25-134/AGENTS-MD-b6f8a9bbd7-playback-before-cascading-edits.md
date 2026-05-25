@@ -1,0 +1,11 @@
+# agent instruction
+
+**Play back and confirm cascading framing before editing.** Before recording, in any project document, a user-supplied framing whose implications cascade across other documents (definitions, scoping principles, working hypotheses, criteria), play back the implications you intend to write down — in your own words — and wait for the user to confirm. Do not author the cascading edits until the playback is acknowledged. This applies even when the framing seems clear in isolation; "clear in isolation" is exactly when a misread is most expensive to undo.
+
+*Grounded in: the DEC-1.b continuity-matrix misread in PR #134, which propagated into PR #132's retro ADR before the user corrected the framing.*
+
+# justification
+
+In PR #132, the lead agent interpreted the user's claim that "greenfield → brownfield continuity matters" as a temporal claim (greenfield codebases eventually become brownfield) and wrote it into the candidate registry, the session handoff, and a fresh ADR draft (`ADR-ff2a376c34-greenfield-to-brownfield-continuity.md`). In the next session (PR #134) the user corrected the framing: greenfield and brownfield are entry-modes, not temporal phases. The continuity matrix was N/A. Cost of the misread: a continuity-matrix section in the registry that had to be withdrawn, a Phase-4 deliverable that had to be removed from the synthesis plan in the handoff doc, a published ADR draft that now needs an explicit superseding ADR, and a full DEC-1 brief authored under the wrong frame. Probably 40–60 minutes of agent work + the user's correction time.
+
+Marginal cost of adopting the rule: a single playback message ("Before I write this into the resolved-decisions doc, here's what I'd record — does this match what you mean?"). One round-trip. The asymmetry is enormous: one cheap confirmation prevents cascading rework across 3+ documents and 2 sessions. The trap is that the misread framing reads as "internally consistent" — it had to, or the agent wouldn't have written it confidently — and only the user can tell whether the confident reading matches their intent.

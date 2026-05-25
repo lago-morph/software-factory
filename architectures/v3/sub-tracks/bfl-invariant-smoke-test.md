@@ -440,24 +440,25 @@ public class OrderService {
 }
 ```
 
-Single annotation; tx binds cleanly. Passes.
+Single annotation; transaction binds cleanly. Invariant passes.
 
-(e) **Negative example.** The docs-warned pitfall:
+(e) **Negative example.** The user pitfall the docs warn about:
 
 ```java
 @Service
 public class OrderService {
-    @Transactional   // default REQUIRED
+    @Transactional   // default propagation REQUIRED
     @Async           // forks to executor thread
     public Order processOrderAsync(OrderRequest req) {
-        repository.save(req);   // runs in executor thread; NOT in calling thread's tx
+        repository.save(req);   // runs in executor thread; NOT inside calling thread's tx
+        ...
     }
 }
 ```
 
-CodeQL detects the co-occurrence. Fires `refuted: true`. Operational consequence: `repository.save(req)` executes outside the expected tx context — "atomic" mental model is wrong.
+CodeQL detects the co-occurrence. Invariant fires `refuted: true` with the AST citation. The actual operational consequence: `repository.save(req)` either commits in its own implicit transaction (if `@Transactional` activates a new tx on the new thread, but the calling thread's tx still exists separately and may roll back independently) or executes outside any transaction context. Either way, the developer's mental model "this is one atomic operation" is wrong.
 
-(f) **Honest verdict. Non-trivial.** *Annotation-co-occurrence* invariant about behavioral interaction of two declarative constructs. Not a presence check; substantive concurrency-and-transaction contract verifiable by static AST inspection. Precision ~0.95.
+(f) **Honest verdict. Non-trivial.** This is an *annotation-co-occurrence* invariant about the *behavioral interaction* of two declarative constructs. It is not a presence check; it is a substantive concurrency-and-transaction contract verifiable by static AST inspection. Recall is high (the pattern is mechanically detectable); precision ~0.95 (false positives only on intentional uses where the developer knows what they're doing, which the corpus indicates is rare).
 
 ### Invariant J-3: Bean-Validation `@NotNull` ↔ JPA `@Column(nullable=false)` consistency
 
@@ -471,11 +472,11 @@ CodeQL detects the co-occurrence. Fires `refuted: true`. Operational consequence
 }
 ```
 
-Asserts: a JPA field with `@Column(nullable=false)` (DB NOT NULL) must carry a bean-validation `@NotNull` (or `@NotBlank`/`@NotEmpty`), and conversely. Otherwise bean-validation passes but DB insertion crashes — or null inserts succeed silently.
+The invariant asserts: a JPA entity field declared `@Column(nullable = false)` (DB-level NOT NULL constraint) must also carry a bean-validation `@NotNull` annotation, and conversely. Otherwise, bean-validation passes but DB insertion crashes with a constraint violation, or DB inserts succeed with null but the bean-validation contract is silently misrepresented.
 
-(b) **Corpus citation.** Hibernate Validator + Spring data-access reference: *"To synchronize Bean Validation constraints with the database schema, use @NotNull together with @Column(nullable = false). … inferred only with `hibernate.validator.apply_to_ddl=true`."* Research-notes §8 item 4.
+(b) **Corpus citation.** Spring docs `spring-framework-reference/data-access.adoc` and the Hibernate Validator reference: *"To synchronize Bean Validation constraints with the database schema, use @NotNull together with @Column(nullable = false). Hibernate Validator's `HibernateConstraintValidatorContext` and Hibernate ORM's schema-generation infer one from the other only with `hibernate.validator.apply_to_ddl=true`."* Research-notes §8 item 4 (Schema-conformance invariants on API boundaries — the entity is the API boundary between bean-validation and persistence).
 
-(c) **Construction sentence.** T2 CodeQL. Walks `@Entity` classes, enumerates fields, extracts `@Column(nullable=…)` and the presence of `@NotNull`/`@NotBlank`/`@NotEmpty`. Emits `Invariant` on agreement, `refuted` on disagreement.
+(c) **Construction sentence.** T2 CodeQL. Walks every `@Entity`-annotated class, enumerates fields, extracts the `@Column(nullable=…)` value and the presence of `@NotNull`/`@NotBlank`/`@NotEmpty`. Emits an `Invariant` fact for each field where both agree; emits a `refuted` record with witness for each field where they disagree (e.g., `nullable=false` but no `@NotNull`, or `@NotNull` but `@Column(nullable=true)`).
 
 (d) **Positive example.** From a typical Spring Boot entity:
 
@@ -504,9 +505,9 @@ public class Order {
 }
 ```
 
-CodeQL refutes. Consequence: `validator.validate(order)` returns empty violations (silent pass); `entityManager.persist(order)` then throws DB-side `ConstraintViolationException`.
+CodeQL emits a refutation. Operational consequence: `validator.validate(order)` returns empty violation set (silent pass); subsequent `entityManager.persist(order)` throws `ConstraintViolationException` from the DB. The bean-validation contract has lied — caller expected a clean `Set<ConstraintViolation>` and got a DB-side crash.
 
-(f) **Honest verdict. Non-trivial.** Cross-annotation *substantive consistency* between two declarative subsystems (bean-validation, JPA schema). Bidirectional implication catches real defect classes. T2 CodeQL; precision ~0.95.
+(f) **Honest verdict. Non-trivial.** Cross-annotation *substantive consistency* invariant between two independent declarative subsystems (bean-validation, JPA schema). Not a presence check; not type-tautology. The bidirectional implication catches real defect classes. T2 CodeQL; precision ~0.95.
 
 ### Invariant J-4: `@Cacheable` method signature — `Serializable` argument constraint
 
@@ -520,11 +521,11 @@ CodeQL refutes. Consequence: `validator.validate(order)` returns empty violation
 }
 ```
 
-Asserts: methods annotated `@Cacheable` must have `Serializable` parameter and return types — the default `SimpleKeyGenerator` uses parameters as keys; Redis/Hazelcast serialize keys and values to bytes. Non-`Serializable` types produce silent misses or runtime exceptions.
+The invariant asserts: methods annotated `@Cacheable` must have parameter types and a return type that are `Serializable`, since the default `SimpleKeyGenerator` uses parameters as cache keys (compared by `equals()`/`hashCode()` and often serialized by the underlying provider — Redis, Hazelcast, EhCache disk persistence — into byte arrays) and return values are stored. Non-serializable types produce silent cache misses or runtime exceptions depending on provider.
 
-(b) **Corpus citation.** `spring-framework-reference/integration.adoc` §Cache abstraction: *"For most cache providers, both the cache key (derived from method arguments) and the cache value (the method return) need to be `Serializable`. … providers like Redis and Hazelcast serialize the key bytes to the wire."* Research-notes §6 + §8 item 4.
+(b) **Corpus citation.** Spring docs `spring-framework-reference/integration.adoc` §"Cache abstraction": *"For most cache providers, both the cache key (derived from method arguments) and the cache value (the method return) need to be `Serializable`. Spring's `SimpleKeyGenerator` will call `equals()`/`hashCode()`, but providers like Redis and Hazelcast serialize the key bytes to the wire."* Research-notes §8 item 4 (schema-conformance) and §6 (LLM-extracted from docs).
 
-(c) **Construction sentence.** T2+T3. **T3:** LLM extracts the `Serializable` requirement. **T2:** CodeQL walks `@Cacheable`/`@CachePut` methods, performs transitive-implements check on `java.io.Serializable` for parameters and return; flags `void` returns (docs-warned degenerate case).
+(c) **Construction sentence.** Hybrid T2+T3. **T3 step:** LLM extracts the `Serializable` requirement from the reference docs. **T2 step:** CodeQL walks every method annotated `@Cacheable` (and `@CachePut`), inspects parameter and return types, performs a transitive-implements check on `java.io.Serializable`. Emits refutations for non-`Serializable` types; flags `@Cacheable` methods returning `void` (a special degenerate case the docs explicitly warn against).
 
 (d) **Positive example.**
 
@@ -552,9 +553,9 @@ public class ConnectionLookupService {
 }
 ```
 
-CodeQL flags `Connection` as non-`Serializable`. On Redis-backed cache, first write throws `NotSerializableException`; on `ConcurrentMapCacheManager`, the broken Connection object is retained and reused — resource leak. Fires with witness.
+CodeQL flags `Connection` as non-`Serializable`. Operational consequence on a Redis-backed cache: every call serializes the JDBC `Connection` object — fails at runtime with `NotSerializableException` for the first cache write, or worse, on an in-memory `ConcurrentMapCacheManager` the broken connection object is retained and reused across calls, leaking resources. Invariant fires with witness.
 
-(f) **Honest verdict. Non-trivial.** Cross-type-system invariant: `@Cacheable` imposes a runtime serializability contract the type system does not enforce. CodeQL transitive-implements check + T3 corpus extraction.
+(f) **Honest verdict. Non-trivial.** Substantive cross-type-system invariant: the `@Cacheable` annotation imposes a runtime serializability contract that the type system does not enforce. CodeQL's transitive-implements check catches it statically; T3-extracted from corpus docs.
 
 ---
 

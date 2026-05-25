@@ -1,6 +1,12 @@
 # DEC-1 (reframed) — Unification verdict, three confirmations
 
-> **Status.** The original DEC-1 brief at [`dec-1-unification-verdict.md`](dec-1-unification-verdict.md) is superseded. That brief asked "pick one of A/B/C/D" (unified / split / two unified candidates / defer). Under the scoping principle declared at session-end 2026-05-25 ("carry forward every candidate that defended itself"), most of that framing dissolves into Phase-4 normal work. What remains for the user to decide at DEC-1 is three small confirmations: **DEC-1.a** (working hypothesis), **DEC-1.b** (greenfield → brownfield continuity), **DEC-1.c** (the candidate set). This file is the brief for all three.
+> **⚠ RESOLVED 2026-05-25.** Resolution is recorded in [`phase-3.4-decisions-resolved.md` § DEC-1](../phase-3.4-decisions-resolved.md#dec-1--unification-verdict-resolved-reframed-into-three-sub-confirmations):
+>
+> - **DEC-1.a — Working hypothesis: CONFIRMED AS HYPOTHESIS (not axiom).** Phase 4 proceeds under the orientation "no methodology serves both mandates; substrates and disciplines do," but the four unified-attempt candidates carry forward as active falsifiers.
+> - **DEC-1.b — N/A.** The continuity-matrix framing in this brief is based on a lead-agent misreading. The user's actual greenfield/brownfield distinction is entry-mode (system originates inside vs. enters as legacy artifacts), not temporal. There is no GF → BF handoff to design. See [resolved decisions](../phase-3.4-decisions-resolved.md#working-definitions-greenfield-brownfield-entry-mode-framing) for the binding working definitions.
+> - **DEC-1.c — All 10 candidates carry forward.** Registry stands.
+>
+> The original DEC-1 brief at [`dec-1-unification-verdict.md`](dec-1-unification-verdict.md) is superseded. This file is preserved as the brief that the user reviewed before resolving; the option-A/B/C content below remains useful as a record of what was considered.
 
 **The question(s).** Three confirmations that orient Phase 4 onward:
 

@@ -120,24 +120,13 @@ This file is the next-session reference for the methodology candidates carried f
 
 ---
 
-## Greenfield → brownfield continuity (per user's DEC-1 reframe)
+## ~~Greenfield → brownfield continuity~~ — WITHDRAWN
 
-User's claim: greenfield efforts eventually turn into maintaining an active codebase; greenfield-built codebases are guaranteed to have certain artifacts that make working with them easier. This table makes the continuity concrete — what each greenfield candidate *produces* that a brownfield candidate can *consume*.
+This section originally proposed a "greenfield outputs become brownfield inputs" continuity matrix, motivated by a lead-agent misreading of the user's framing.
 
-| Greenfield methodology produces… | Brownfield methodology consumes it as… |
-|---|---|
-| **GF-C Intent Crucible** (9-field typed intent block, operator-authored, versioned) | An *operator-curated spec layer above the codebase* that brownfield's BF-M change-intent block contracts back to. The brownfield factory inherits a richer "what is this system supposed to do" artifact than a codebase-archaeology pass can reconstruct. |
-| **GF-C / GF-M / GF-S out-of-tree scenario set** (Kaner-style with EARS criteria) | Becomes the *out-of-tree minority* of the brownfield holdout set, complementing the in-codebase-derived scenarios (tests, traces, incident replays). |
-| **GF-C RSI-Declaration Ledger** + AILCCP control instantiation | Carries forward as the brownfield factory's *governance-evidence baseline*. Caremark prong-1 reporting, SB 53 conformance — the deploying entity inherits the day-0 declarations without retroactive reconstruction. |
-| **GF-M Regime-B durable intent set** (post-promotion) | Becomes the brownfield factory's *spec layer*. Intent items already paraphrase-divergence-validated and probe-survived — much higher confidence than archaeology-inferred spec. |
-| **GF-M cross-model judge agreement history** (per work-unit-class) | Brownfield's TPR/TNR-aligned judge baselines start with this history rather than from scratch. The classifier feature populations are populated. |
-| **GF-S S3 trajectory history** (per-event content-addressed) | Brownfield's pre-cycle attribution baseline. F14 forensic reconstruction can reach back across the greenfield→brownfield boundary instead of bottoming out at "pre-factory commit (unattributed)." |
-| **GF-S S2 scenario storage** (substrate-typed, builder-blind) | Becomes the *initial population* of the brownfield factory's holdout partition; the partition discipline transfers without re-establishment. |
-| **GF-S S9 eligibility-classifier baselines** | Brownfield's classifier inherits feature priors from greenfield's measured K=5 / paraphrase robustness data rather than starting from no measurement. |
+The user's actual greenfield/brownfield distinction is **entry-mode, not temporal** ([resolved in DEC-1.b](phase-3.4-decisions-resolved.md#dec-1b--greenfield--brownfield-artifact-continuity-na-lead-agent-misread-users-framing)): a greenfield system stays greenfield as long as the same methodology governs it, regardless of age or scale; brownfield is the entry mode where the system arrives as legacy artifacts. There is no GF → BF handoff to design.
 
-The pattern: **greenfield methodologies that produce typed, versioned, queryable artifacts give the brownfield methodology a head start that codebase-archaeology alone cannot produce.** This is the substantive content of the user's continuity claim.
-
-The corollary: greenfield candidates that *don't* produce these artifact types (or produce them in formats brownfield methodologies can't easily consume) lose the continuity benefit. This is a Phase-4 evaluation criterion: greenfield methodologies are stronger candidates if they ship continuity-compatible artifact contracts.
+Long-run drift concerns against greenfield candidates (F40 last-mile drift; F8 stale-knowledge) are addressed within each greenfield candidate's own methodology (steady-state regime, or whatever within-greenfield regime structure that candidate specifies), not by a cross-mandate continuity deliverable.
 
 ---
 

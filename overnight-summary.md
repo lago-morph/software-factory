@@ -6,10 +6,10 @@ This file is the morning-review entry point. Read this first, then drill into th
 
 ## TL;DR
 
-- **Phase 3.5 (substrate-primitive buildability sketches) is complete.** All 34 enumerated primitives have buildability sketches; all 10 candidates carry forward into Phase 4. 1 candidate (U-B) has a conditional survival that needs your adjudication at Phase 4 entry.
-- **5 stacked PRs opened.** Stack order: #136 → #137 → #138 → #139 → #140. Each is reviewable independently; rewind points named per PR.
-- **1 decision brief written** (auto-001 Phase-3.5 dispatch shape). Round 1 was per-cluster; 3 real adversarial-reviewer subagents converged on switching to hybrid (option C). Round 2 supersedes Round 1.
-- **1 morning-decision item** for you: U-B's invariant-authoring commitment (do they get to attempt it, or self-eliminate now?). Lead-agent recommendation: allow the attempt. Detail below.
+- **Phase 3.5 (substrate-primitive buildability sketches) is complete, plus a U-B follow-up smoke-test.** All 34 enumerated primitives have buildability sketches; all 10 candidates carry forward into Phase 4. **No conditional survivals remain after the smoke-test resolved U-B.**
+- **7 stacked PRs opened.** Stack order: #136 → #137 → #138 → #139 → #140 → #141 → #142 → (#143 once opened). Each is reviewable independently; rewind points named per PR.
+- **2 decision briefs written** (auto-001 dispatch shape; auto-002 U-B path). Both went through real adversarial-reviewer rounds and revised in Round 2 based on their findings (auto-001: per-cluster → hybrid; auto-002: full sub-track → smoke-test variant).
+- **1 morning-review item** remains for you: the BF-L / U-B asymmetry on RG-primitive treatment likely should lift to a Phase-3.5.5 rule (any candidate with a load-bearing RG primitive may either commit to a bounded sub-track *or* downgrade dependent contract to accept-RG). The smoke-test variant for U-B implicitly applies the "bounded sub-track" half; the morning user should decide whether to make the rule explicit and apply it retroactively to BF-L.
 
 ## PRs opened (in stack order)
 
@@ -22,12 +22,13 @@ Each PR targets the *previous* PR's branch (GitHub auto-rebases the base to `mai
 | [#138](https://github.com/lago-morph/software-factory/pull/138) | `claude/phase-3.5-cluster-sketches` | Phase 3.5.3 wave 1: cluster sketches C1/C2/C3 (P-01–P-13) | PR #137 | Open, ready-for-review, doc-only | Revert `167b4b9` → cluster sketches removed; can re-dispatch as per-primitive |
 | [#139](https://github.com/lago-morph/software-factory/pull/139) | `claude/phase-3.5-per-primitive` | Phase 3.5.3 wave 2: per-primitive sketches P-14–P-34 (21 sketches) | PR #138 | Open, ready-for-review, doc-only | Revert `ba80cbc` → 21 per-primitive sketches removed; cluster sketches and decision brief survive |
 | [#140](https://github.com/lago-morph/software-factory/pull/140) | `claude/phase-3.5.5-candidate-recheck` | Phase 3.5.5: candidate re-check — all 10 carry forward (1 conditional, 3 with RG flag) | PR #139 | Open, ready-for-review, doc-only | Revert `eb75787` → Phase 3.5.5 annotations removed; sketches survive; registry returns to pre-3.5.5 status |
+| [#141](https://github.com/lago-morph/software-factory/pull/141) | `claude/overnight-summary` | Overnight run summary for morning review | PR #140 | Open, ready-for-review, doc-only | Revert `465b55b` → summary removed; everything underneath survives |
+| [#142](https://github.com/lago-morph/software-factory/pull/142) | `claude/auto-002-ub-path` | auto-002: U-B path decision brief (smoke-test variant after adversarial review) | PR #141 | Open, ready-for-review, doc-only | Revert `720ff99` reverses Round 2 (returns to Round-1 sub-track decision); revert both `720ff99` + `af54c72` removes brief entirely |
+| #143 (this PR) | `claude/ub-smoke-test-result` | U-B smoke-test result (5/5 pairs produced non-trivial invariants) + registry update | PR #142 | Open, ready-for-review, doc-only | Revert the registry-update commit returns U-B to conditional-survival; the smoke-test sketch survives as evidence |
 
 PRs are stacked using the [`stacked-pr-on-feature-branch`](./.claude/skills/stacked-pr-on-feature-branch/SKILL.md) pattern. As you merge from the bottom of the stack, each subsequent PR's base auto-updates.
 
-**Recommended merge order:** #136 → #137 → #138 → #139 → #140 (bottom-up). You can also merge them all in one batch if you're satisfied with the chain.
-
-Plus this PR (#141 once opened) carrying [`overnight-summary.md`](./overnight-summary.md) itself.
+**Recommended merge order:** #136 → #137 → #138 → #139 → #140 → #141 → #142 → #143 (bottom-up). You can also merge them all in one batch if you're satisfied with the chain.
 
 ## Decision briefs written
 
@@ -36,8 +37,11 @@ Location: `architectures/v3/decisions/`.
 | Brief | Status | One-line summary |
 |---|---|---|
 | [`auto-001-phase-3.5-dispatch-shape`](./architectures/v3/decisions/auto-001-phase-3.5-dispatch-shape.md) | Decided (Round 2) | Per-cluster vs per-primitive dispatch for Phase 3.5 — Round 1 = per-cluster; 3 real adversarial reviewers converged on hybrid (option C), pre-classified by registry "Buildability scope" column; Round 2 supersedes |
+| [`auto-002-ub-path`](./architectures/v3/decisions/auto-002-ub-path.md) | Decided (Round 2) + smoke-test result landed | U-B path at Phase 4 entry — Round 1 = full Phase-4 sub-track; 2 real adversarial reviewers converged on smoke-test variant (Round 2) on grounds that Round 1 misread the P-31 sketch on cross-layer invariants and understated cost ~30×. Smoke-test produced 5/5 non-trivial cross-layer invariants → U-B survives, full sub-track authorized. |
 
-The brief carries both Round 1 (lead-agent's original choice + inline-simulated review) and Round 2 (real adversarial reviewer findings + final hybrid decision) for traceability. **If you disagree with the hybrid decision, the rewind path is: revert commit `607a53e` on PR #137's branch** — the primitive enumeration is dispatch-shape-agnostic and survives.
+Both briefs carry Round 1 (lead-agent's original choice + reasoning) and Round 2 (real adversarial reviewer findings + revised decision) for traceability. **If you disagree with either decision:**
+- auto-001 hybrid dispatch: revert commit `607a53e` on PR #137's branch — primitive enumeration is dispatch-shape-agnostic and survives.
+- auto-002 smoke-test verdict on U-B: revert the registry-update commit on this PR (#143) → U-B returns to conditional-survival; the smoke-test sketch survives as evidence and you can re-adjudicate.
 
 ## Where the chain currently stands
 
@@ -57,24 +61,32 @@ The brief carries both Round 1 (lead-agent's original choice + inline-simulated 
 
 Phase 4 dispatch needs your adjudication on U-B first (see Morning-decision item below).
 
-## Morning-decision item
+## Morning-review item
 
-### U-B conditional survival — invariant-authoring commitment
+### BF-L / U-B asymmetry on RG-primitive treatment — lift to a Phase-3.5.5 rule?
 
-**Question:** does U-B (Pace-Layered Escrow Factory) get to attempt an invariant-authoring sub-track at Phase 4, or does it self-eliminate now?
+The auto-002 adversarial review (scoping-principle skeptic) flagged an asymmetry: BF-L is allowed to "accept-as-RG" on its 2 RG views in the Codebase Model (per the registry's BF-L Forward-action), while U-B was initially being told "deliver-or-die." The Round-2 smoke-test variant for U-B implicitly applies a "bounded sub-track first, then accept-as-RG if the substantive-drift portion can't be made fully deterministic" pattern — but the **rule itself** hasn't been lifted to the registry.
+
+**Proposed rule (your call):** Any candidate with a load-bearing RG primitive may either (a) commit to a bounded authoring / specification sub-track at Phase 4, *or* (b) downgrade the dependent contract to accept-as-RG with the substrate documenting the gap. Applies to:
+- **U-B P-31** (cross-layer drift detector) — smoke-test passed; sub-track authorized; some pairs may degrade to accept-as-RG if they don't scale to ≥3 invariants.
+- **BF-L P-26 conventional + invariant views** — accept-as-RG was the registry's pre-rule wording; under the lifted rule, BF-L may instead commit to a bounded conventional-view authoring sub-track (e.g., LLM-with-structured-output + golden corpus of 20 idiomatic patterns per language) and/or an invariant-view bounded sub-track (e.g., Daikon-style runtime inference + ≥5 invariants per language). User decides whether BF-L wants this option.
+- **D7-U-1 P-34 independence auditor** — the A+C hybrid recommendation in P-34 already implicitly applies the rule (accept-as-RG on the structural recursion concern while delivering bounded deterministic + human-backstop construction).
+
+If you adopt the rule, the lead-agent action is: update the Phase-3.5.5 close section in `candidate-registry.md` to name the rule; offer BF-L the bounded-sub-track option at Phase 4 entry. If you reject the rule, the asymmetry remains (U-B got a smoke-test concession that BF-L didn't get); no harm done but worth recording.
+
+### (Resolved overnight) U-B conditional survival — invariant-authoring commitment
+
+**Question:** did U-B (Pace-Layered Escrow Factory) get to attempt an invariant-authoring sub-track at Phase 4, or self-eliminate?
 
 **Context.** P-31 (cross-layer drift detector) — U-B's load-bearing substrate primitive — landed [`research-grade-uncertainty`](./architectures/v3/primitives/P-31-cross-layer-drift-detector.md) because Brier's pace-layer framework is descriptive, not algorithmic. The substrate scaffolding (typed-object snapshots + OPA graph-walk + LLM-judge dispatch via P-14) is commodity engineering, but the contract — flag cross-layer drift — cannot be honored without an invariant catalog. **No source in the corpus authors per-layer-pair invariants.**
 
 The P-31 sketch's specific recommendation: **for U-B to defend P-31 at Phase 4, U-B must commit to an invariant-authoring sub-track delivering ≥3 machine-checkable invariants per layer-pair with corpus citations.** With 5 layer-pairs (L0↔L1, L1↔L2, L2↔L3, L3↔L4, plus possibly L0↔L4 long-distance), that's ≥15 invariants. The corpus has fragments (GtWR, EARS, AILCCP) that point at intra-layer invariants but not cross-layer ones, so the work is substantive but bounded.
 
-**Three options:**
+**Resolved overnight via [auto-002 Round 2](./architectures/v3/decisions/auto-002-ub-path.md) + smoke-test.** Lead-agent's Round 1 picked option 1 (full Phase-4 sub-track); 2 real adversarial reviewers converged on a smoke-test variant (~30× cheaper if U-B fails) and caught that the Round-1 brief misread the P-31 sketch on cross-layer invariants. Round 2 dispatched the smoke-test ([`P-31-smoke-test-invariants.md`](./architectures/v3/primitives/P-31-smoke-test-invariants.md)).
 
-1. **Allow U-B to attempt the commitment.** Phase 4 dispatch includes a U-B invariant-authoring sub-track; if delivered, U-B moves to `survives with deferred-defense flag`; if not delivered by Phase 4 close, U-B self-eliminates at Phase 4 close (not Phase 4 entry).
-   - **Lead-agent recommendation: this option.** The work is bounded, U-B's other primitives are all buildable, and the scoping principle says "carry every defensible candidate." If U-B can author 15 cross-layer invariants drawn from corpus material, the candidate is strengthened; if not, the self-elimination at Phase 4 close is on honest evidence.
-2. **Self-eliminate U-B now.** Phase 4 dispatches over 9 candidates instead of 10. Defensible if you think the corpus is too thin to support invariant authoring and U-B should not get the chance.
-3. **Defer to Phase 5.** U-B carries forward through Phase 4 as a candidate with an unresolved load-bearing primitive; Phase 5 ADR authoring forces the question. (Risky — pushes the adjudication later without changing the underlying evidence.)
+**Smoke-test result: all 5 of 5 layer-pairs produced non-trivial machine-checkable cross-layer invariants with verbatim corpus citations.** Per the Round-2 verdict logic (≥4 of 5 → survives), U-B survives Phase 3.5 with the full Phase-4 invariant-authoring sub-track authorized. Caveats from the smoke-test (sample-size bias toward 1-per-pair; L0↔L4 judge-arm RG inheritance; corpus concentration on AILCCP/EARS/El-Kaim-Ch8; multi-cycle drift out of scope) are recorded in the registry's U-B Forward-action.
 
-If you want me to dispatch the U-B invariant-authoring sub-track when this session resumes, option 1 is the action. If you want U-B self-eliminated, option 2 — and I'll revert the U-B portions of subsequent work.
+No morning-decision needed on this specific question. If you want to override (e.g., reject the smoke-test as evidence), revert the registry-update commit on PR #143 — U-B returns to conditional-survival, the smoke-test sketch survives as evidence for re-adjudication.
 
 ## Phase 4 dispatch shape (your call)
 
@@ -124,8 +136,8 @@ Any combination of these can be rewound independently as long as you start from 
 
 ## Session metadata
 
-- **Branch chain at run end:** `claude/overnight-summary` (this commit) → `claude/phase-3.5.5-candidate-recheck` (PR #140) → `claude/phase-3.5-per-primitive` (PR #139) → `claude/phase-3.5-cluster-sketches` (PR #138) → `claude/phase-3.5-enumeration` (PR #137) → `claude/busy-mayer-d1pjJ` (PR #136) → `main`.
-- **Subagents dispatched:** 27 total (3 adversarial reviewers on the dispatch brief + 3 cluster subagents + 21 per-primitive subagents).
+- **Branch chain at run end:** `claude/ub-smoke-test-result` (PR #143, this final commit) → `claude/auto-002-ub-path` (PR #142) → `claude/overnight-summary` (PR #141) → `claude/phase-3.5.5-candidate-recheck` (PR #140) → `claude/phase-3.5-per-primitive` (PR #139) → `claude/phase-3.5-cluster-sketches` (PR #138) → `claude/phase-3.5-enumeration` (PR #137) → `claude/busy-mayer-d1pjJ` (PR #136) → `main`.
+- **Subagents dispatched:** 30 total (3 auto-001 reviewers + 3 cluster subagents + 21 per-primitive subagents + 2 auto-002 reviewers + 1 U-B smoke-test subagent).
 - **Files written:** 27 new + 3 modified across `architectures/v3/{primitives, decisions, candidate-registry.md}` and `ARCHITECTURE-V3-SYNTHESIS-PLAN.md` and this summary.
 - **Adversarial-review discipline:** all 3 reviewers on the auto-001 brief returned `accept with named amendments`, converging on hybrid dispatch + named amendments (integration sentence, orphan-defender drop, no cluster same-vs-distinct verdicts). Round 2 incorporated all amendments.
 

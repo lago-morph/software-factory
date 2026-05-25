@@ -164,7 +164,7 @@ Phase 3.5 ([sketches in `primitives/`](primitives/)) produced buildability sketc
 | BF-M | **survives** | Brief-quality calibration (P-27) carried to Phase 5/8 |
 | BF-L | **survives with research-grade-uncertainty flag on Codebase Model** (P-26: 2 of 6 views are RG; 9–18 engineer-months realistic) | Articulate Phase-4 plan for the conventional + invariant views or accept them as research-grade |
 | U-A | **survives** | Same-vs-distinct verdicts on P-28/P-29/P-30 variants are Phase-4.2 work |
-| U-B | **conditional survival** (P-31 unbuildable without invariant authoring) | **MUST commit at Phase 4 to authoring ≥3 machine-checkable invariants per layer-pair with corpus citations**, OR self-eliminate at Phase 4 entry |
+| U-B | **survives with deferred-defense flag** (smoke-test produced 5/5 non-trivial cross-layer invariants per auto-002 Round 2) | Full Phase-4 invariant-authoring sub-track authorized (scale smoke-test from 1-per-pair to ≥3-per-pair) |
 | U-C | **survives** with partial-RG on distance-estimator calibration + Goodhart-resistance | Calibration recipe + Goodhart-resistance evidence owed at Phase 5/8 |
 | D7-U-1 | **survives with research-grade-uncertainty flag on independence auditor** (P-34 OQ-1 auditor-recursion has no dominating option) | Carry A+C hybrid audit-recursion option as Phase-5 ADR + accepted-open structural concern |
 
@@ -279,9 +279,9 @@ The X_UNM_B cross-mandate finding (CodebaseModel is the load-bearing brownfield 
 - **P-31 cross-layer drift detector is unbuildable at Phase 3.5.** Brier's pace-layer framework is descriptive, not algorithmic; no source in the corpus authors per-layer-pair invariants. Substrate scaffolding (typed-object snapshots + OPA graph-walk + LLM-judge dispatch via P-14) is commodity engineering, but the contract — flag cross-layer drift — cannot be honored without an invariant catalog.
 - **U-B must commit at Phase 4 to an invariant-authoring sub-track delivering ≥3 machine-checkable invariants per layer-pair with corpus citations, OR self-eliminate at Phase 4 entry.**
 
-**Phase 3.5.5 status:** `conditional survival`. Adjudicated at Phase 4 entry: invariant-authoring commitment converts conditional survival to `survives with deferred-defense flag`; refusal converts to `self-eliminates`.
+**Phase 3.5.5 status (post-smoke-test):** `survives with deferred-defense flag`. Per [`auto-002` Round 2](decisions/auto-002-ub-path.md) the Phase-3.5 follow-up smoke-test ([`P-31-smoke-test-invariants.md`](primitives/P-31-smoke-test-invariants.md)) attempted 1 non-trivial machine-checkable cross-layer invariant per layer-pair (5 total). Result: **all 5 of 5 layer-pairs produced non-trivial invariants with verbatim corpus citations** (L0↔L1 via AILCCP three-controls coverage per Kahana 31; L1↔L2 via `protects` linkage + binding-shape match per El Kaim Ch8 §7/§9; L2↔L3 via chunk-load ceiling at F36's empirical 10-requirement bar per Yang et al.; L3↔L4 via expected-touch dependency-closure containment per F34; L0↔L4 via AILCCP-control runtime-mode shape match per Kahana "trappings vs substance"). Per the smoke-test verdict logic (≥4 of 5 → survives, full sub-track authorized), U-B survives Phase 3.5 close.
 
-**Forward action at Phase 4:** see above. Lead-agent recommendation: the invariant-authoring sub-track is a substantive Phase-4 work item but is plausibly executable (the 5 layer-pairs × ≥3 invariants = 15 invariants is bounded; the corpus has fragments — GtWR, EARS, AILCCP — that point at intra-layer invariants but not cross-layer ones). Defer the adjudication to user review at Phase 3.5.5 close.
+**Forward action at Phase 4:** authorize the full invariant-authoring sub-track (scale smoke-test recipe from 1-per-pair to ≥3-per-pair, ≥15 total). Carry these caveats from the smoke-test: (a) sample-size bias toward 1-per-pair (some pairs may not scale to 3); (b) L0↔L4 judge-arm RG inheritance (the invariant depends on LLM judge for substance check); (c) corpus concentration on AILCCP/EARS/El-Kaim-Ch8 (other pairs may need broader corpus search); (d) OQ-PLEF-3 multi-cycle drift remains out of scope. If the full sub-track fails to scale to ≥3 per pair, fall back to the smoke-test's 1-per-pair set with explicit accept-RG flag on the substantive-drift portion.
 
 #### U-C — Anchor-Distance Factory
 
@@ -315,7 +315,7 @@ The X_UNM_B cross-mandate finding (CodebaseModel is the load-bearing brownfield 
 - Phase 3.5 close criterion (per [`phase-3.4-decisions-resolved.md` refined two-part rule](phase-3.4-decisions-resolved.md#refined-two-part-rule-for-accepting-a-substrate-primitive)): each primitive named by a surviving candidate has a buildability sketch or carries an explicit research-grade-uncertainty flag.
 - Coverage: 34 enumerated primitive IDs (P-01–P-34), 32 distinct after expected Phase-4.2 collapses, all sketched.
 - Candidates self-eliminating at Phase 3.5: **none**.
-- Candidates with conditional survival: **1** (U-B — invariant-authoring commitment adjudicated at Phase 4 entry).
+- Candidates with conditional survival: **0** (U-B was conditional at Phase-3.5.5-initial; smoke-test per [auto-002 Round 2](decisions/auto-002-ub-path.md) resolved survival).
 - Candidates carrying research-grade-uncertainty flags into Phase 4: **3** (BF-L Codebase Model; U-B drift detector; D7-U-1 independence auditor).
 - Candidates with partial-RG flags on specific sub-components or calibration: **5** (GF-S contradiction-detector reliability; GF-C 2-field substance-check; BF-M brief-quality calibration; U-C distance-estimator calibration + Goodhart-resistance; D7-U-1 already counted).
 

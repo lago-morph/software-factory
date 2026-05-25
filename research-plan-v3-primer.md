@@ -55,7 +55,7 @@ flowchart TB
 
 ### What each phase does, in one paragraph
 
-- **Phase 0** (Brief + archival). Lock the brief that the rest of the pipeline will read. Archive any existing version's architectures and syntheses so they cannot anchor the new work. The brief carries the operating-mode mandate (lights-out per the operator's definition), the two mandate scopes (greenfield and brownfield), the working hypothesis to be tested (e.g., the user's claim that no single architecture serves both mandates), and any explicit out-of-scope statements.
+- **Phase 0** (Brief + archival). Lock the brief that the rest of the pipeline will read. Archive any existing version's architectures and syntheses so they cannot anchor the new work. The brief carries the operating-mode mandate (lights-out per the operator's definition), the two mandate scopes (greenfield and brownfield), the working hypothesis to be tested (e.g., the operator-stated claim that no single architecture serves both mandates), and any explicit out-of-scope statements.
 - **Phase 1** (Pre-synthesis substrate). Build inputs every Phase-2 track will read identically. Three products:
   - a **contradictions register** (pairwise tensions in the corpus, both sources cited, *no resolution attempted* at this stage),
   - a **failure-mode catalog** (enumerated risks with greenfield- and brownfield-specific severity ratings),
@@ -104,7 +104,7 @@ flowchart TB
     P1OUT["Phase 1 outputs<br/>contradictions / failure-modes / inventory"]
     TRACKS["9 Phase-2 tracks"]
     DRAFTS["3 Phase-3.1 drafts"]
-    CRITIQUES["~24 Phase-3.2/3.3 critiques"]
+    CRITIQUES["Phase-3.2/3.3 critiques<br/>18 personas + N blind-axis + 4 cross-mandate<br/>(24 in the v3 run)"]
     SV1["surviving post-adversarial syntheses<br/>(count depends on Phase-3.4 decisions)"]
     P4OUT["Phase 4 outputs<br/>shared-substrate + divergence"]
     ADRS["~14 ADRs"]
@@ -124,15 +124,15 @@ Phase 3 has four sub-phases. The first three are mechanical — they fan out sub
 ```mermaid
 flowchart TB
     P31["3.1 Merge<br/>(lead agent)<br/>9 tracks → 3 drafts"] --> P32
-    P32["3.2 Adversarial<br/>parallel × 18 + N blind-axis<br/>(N = mandates flagged by anchor-detector;<br/>N = 2 in the v3 run)"] --> P33
+    P32["3.2 Adversarial<br/>parallel × 18 + N blind-axis<br/>(N = drafts where the anchor-detector<br/>bias-guard flagged suspect convergence;<br/>N = 2 in the v3 run)"] --> P33
     P33["3.3 Cross-mandate<br/>parallel × 4 falsification tests"] --> P34
     P34["3.4 Integrate<br/>+ USER CHECKPOINT"] --> P4
     P4["Phase 4"]
 ```
 
-- **Phase 3.1 (merge — lead-agent work).** Read all 9 Phase-2 tracks and produce 3 pre-adversarial drafts — one per mandate plus one unified-candidate draft. Each draft marks each claim as either **ROBUST** (all 3 contributing tracks agree, with corpus grounding) or **DECISIONS-PENDING** (tracks diverge in a way that requires user resolution). The ROBUST/DECISIONS-PENDING distinction is the central data structure of Phase 3.
+- **Phase 3.1 (merge — lead-agent work).** Read all 9 Phase-2 tracks and produce 3 pre-adversarial drafts — one per mandate plus one unified-candidate draft. The merge groups by axis: the 3 greenfield tracks merge into draft-greenfield, the 3 brownfield tracks merge into draft-brownfield, the 3 unified-mandate tracks merge into draft-unified. Each draft marks each claim as either **ROBUST** (all 3 contributing tracks agree, with corpus grounding) or **DECISIONS-PENDING** (tracks diverge in a way that requires user resolution). The ROBUST/DECISIONS-PENDING distinction is the central data structure of Phase 3.
 
-- **Phase 3.2 (parallel adversarial dispatch).** 18 subagents attack the drafts — 6 personas × 3 drafts. The persona set is drawn from a bias-guard catalog. Plus a small number of mandatory "blind-axis" tests (typically one per mandate that exhibited suspect convergence — 2 in the v3 run), dispatched with the most-converged-on framings explicitly prohibited. The discipline asks whether the convergence among the Phase-2 tracks reflected real corpus signal or shared inheritance from the brief.
+- **Phase 3.2 (parallel adversarial dispatch).** 18 subagents attack the drafts — 6 personas × 3 drafts. The persona set is drawn from a bias-guard catalog. Plus a small number of mandatory "blind-axis" tests — one per *draft* where an anchor-detector bias-guard (a member of the catalog that runs after the Phase-2 fanout) has flagged suspect convergence among the contributing tracks. The blind-axis subagents are dispatched with the most-converged-on framings explicitly prohibited; the discipline asks whether the convergence reflected real corpus signal or shared inheritance from the brief. In the v3 run, 2 such tests ran — one against the greenfield draft and one against the unified-candidate draft.
 
 ```mermaid
 flowchart LR
@@ -144,8 +144,8 @@ flowchart LR
     RB --> CB["6 critiques"]
     RU --> CU["6 critiques"]
 
-    DG -.->|"blind-axis"| D7G["one prohibition test<br/>per mandate that exhibited<br/>suspect convergence"]
-    DU -.->|"blind-axis"| D7U["(typically one for greenfield<br/>+ one for unified)"]
+    DG -.->|"blind-axis"| D7G["one prohibition test<br/>per draft where the anchor-detector<br/>flagged suspect convergence"]
+    DU -.->|"blind-axis"| D7U["(in v3, the flagged drafts<br/>were draft-greenfield<br/>and draft-unified)"]
 ```
 
 - **Phase 3.3 (cross-mandate falsification).** 4 cross-mandate subagents (an [adversarial-collaboration](https://en.wikipedia.org/wiki/Adversarial_collaboration)-shaped grid) test the unification hypothesis from four angles — two arguing the unified architecture *cannot* work for one mandate or the other, a third arguing the two separate mandate-drafts *can* collapse into a single architecture, and a fourth arguing they *cannot*.
@@ -205,7 +205,7 @@ The decisions are tiered by load-bearingness:
 flowchart TB
     T1["Tier 1 — architectural-shape decisions<br/>• unification verdict (does one architecture serve both mandates?)<br/>• methodology-shape per mandate<br/>• placement of any primitive a blind-axis test flagged contested"]
     T2["Tier 2 — substrate-vs-methodology boundary<br/>where particular primitives live;<br/>classifier-placement choices; granularity questions"]
-    T3["Tier 3 — operational specifications<br/>cost budgets; attribution-engineering;<br/>judge sub-shape policy; etc.<br/>(can defer to Phase 5)"]
+    T3["Tier 3 — operational specifications<br/>cost budgets; attribution-engineering;<br/>judge-routing policy; etc.<br/>(can defer to Phase 5)"]
 
     T1 -->|gates| T2
     T2 -->|gates| T3
@@ -217,18 +217,18 @@ flowchart TB
     style P4 fill:#ffffff,color:#000
 ```
 
-- **Tier 1 (architectural shape).** Whether one architecture serves both mandates or they need separate architectures; what shape the methodology layer takes per mandate; the substrate-vs-methodology placement of any primitive that a blind-axis test flagged as contested. **Gating** — must resolve before Phase 4 can dispatch.
+- **Tier 1 (architectural shape).** A small set of decisions (4 in the v3 run): the unification verdict (whether one architecture serves both mandates or they need separate ones); the methodology-shape choice per mandate; and the substrate-vs-methodology placement of any primitive that a blind-axis test flagged as contested. **Gating** — Tier 1 must resolve before Phase 4 can dispatch.
 - **Tier 2 (substrate/methodology boundary).** Where particular substrate primitives live; classifier-placement choices; granularity-of-typed-object questions. Depend on Tier 1.
-- **Tier 3 (operational specifications).** Cost-budget specs, attribution-engineering details, judge sub-shape policy, etc. Can be carried into Phase 5 as ADR questions if the user prefers.
+- **Tier 3 (operational specifications).** Cost-budget specs, attribution-engineering details, judge-routing policy choices (which model family judges which sub-task at which stake level), etc. Can be carried into Phase 5 as ADR questions if the user prefers.
 
-(For scale: in v3, Tier 1 had 4 items, Tier 2 had 5, Tier 3 had 10. The exact count varies by run.)
+(For scale: in the v3 run, Tier 2 had 5 items, Tier 3 had 10. The exact count varies by run.)
 
 ---
 
 ## What happens after the Tier-1 (architectural-shape) decisions resolve
 
 1. **Integration writes post-adversarial syntheses.** One per surviving architecture — the count depends on how the Tier-1 unification decision resolves; see diagram below. Each is the corresponding pre-adversarial draft after applying Phase-3.2 critique demotions, with an objections-and-responses appendix pointing at the relevant critiques. ROBUST claims that were demoted by critique move down; DECISIONS-PENDING items with resolutions become DECISIONS-RESOLVED.
-2. **Phase 4 dispatches.** Lead agent reads the surviving syntheses and produces a shared-substrate document and a divergence document. Bias guards at this phase: a [splitter/lumper](https://en.wikipedia.org/wiki/Lumpers_and_splitters)-style debate pair plus a substrate-vs-methodology classifier subagent.
+2. **Phase 4 dispatches.** Lead agent reads the surviving syntheses and produces a shared-substrate document and a divergence document. Bias guards at this phase: a [splitter/lumper](https://en.wikipedia.org/wiki/Lumpers_and_splitters)-style debate pair plus a substrate-vs-methodology classifier subagent (which decides, for each contested primitive surfaced by Phase 3, whether it belongs in shared substrate or in a per-mandate methodology layer).
 3. **Phase 5 starts.** ~14 ADRs in two waves. Each ADR has an "Alternatives considered" section that must engage with the archived prior-version content (this is where the Phase-7 back-fill audit starts naturally).
 
 The shape Phase 4 takes is conditional on the architectural-shape (unification) decision. Four canonical outcomes:

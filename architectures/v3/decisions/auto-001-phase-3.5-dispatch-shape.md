@@ -1,8 +1,8 @@
 # auto-001 — Phase 3.5 dispatch shape: per-cluster vs per-primitive
 
 **Author.** Lead agent, unattended overnight run 2026-05-25.
-**Status.** Decided — proceeding with **per-cluster** dispatch (option B below).
-**Rewind point.** Commit at the tip of branch `claude/phase-3.5-enumeration` before any cluster-sketch subagent dispatches; reverting that commit reverses the decision and the next agent can re-attempt the dispatch shape question.
+**Status.** **Round 2 (revised after adversarial review)** — switched to **hybrid dispatch (option C)** with explicit pre-classification by the registry's existing "Buildability scope" column. Final shape decision is parameterized on the actual de-duplicated primitive count, which will be settled by [`primitives/index.md`](../primitives/index.md) before any dispatch fires.
+**Rewind point.** The decision-brief commit (`ce88802`) plus the Round-2 revision commit on `claude/phase-3.5-enumeration` precede any dispatch. Reverting both reverts the decision; the primitive enumeration (next commit) is dispatch-shape-agnostic.
 
 ---
 
@@ -40,7 +40,11 @@ The [session handoff](../SESSION-HANDOFF-2026-05-25.md) and the [v1.2 plan revis
 - **Pros.** Each subagent reads the candidate's full track in detail; the sketches benefit from per-candidate context.
 - **Cons.** Massive duplication on shared primitives (the same sandbox primitive gets sketched 5+ times by 5+ different subagents). De-duplication moves *after* dispatch instead of before, defeating the whole point of the de-duplicated-union framing in the plan. **Rejected on duplication grounds.**
 
-## Decision
+## Decision (Round 1 — superseded by Round 2 below)
+
+~~**Option B — per-cluster dispatch with ~6–10 clusters.**~~ (Round-2 adversarial review converged on switching to option C; see Round 2 section at the end of this brief.)
+
+**Original Round-1 reasoning (preserved for traceability):**
 
 **Option B — per-cluster dispatch with ~6–10 clusters.**
 
@@ -67,9 +71,9 @@ Reasoning:
 
 Rewind to: the commit on `claude/phase-3.5-enumeration` immediately before the cluster-sketch subagents are dispatched (this brief lands first, then the enumeration + cluster-assignment commit, then the dispatch). To switch to per-primitive after dispatch starts: revert the dispatch commit and re-dispatch with one subagent per primitive listed in [`primitives/index.md`](../primitives/index.md) (which is dispatch-shape-agnostic — the same primitive list works for either shape).
 
-## Adversarial-review round
+## Adversarial-review round 1 (inline-simulated; superseded)
 
-Three adversarial reviewers attacked this brief cold. Their objections + how they were incorporated:
+The original brief included three inline-simulated adversarial reviewers. They are preserved below for traceability but were superseded by Round 2 (real subagent reviewers, see at the end of this brief).
 
 ### Reviewer 1 — Buildability-rule enforcer
 
@@ -104,3 +108,68 @@ Three adversarial reviewers attacked this brief cold. Their objections + how the
 5. **Lead-agent re-check** at Phase 3.5.5 annotates [`candidate-registry`](../candidate-registry.md) with per-candidate buildability outcomes.
 
 This brief authorizes the lead agent to proceed with steps 1–2 in the next commit on this branch, and steps 3–5 in subsequent commits / stacked PRs.
+
+---
+
+## Adversarial-review round 2 (real subagent reviewers — converged on switching to option C)
+
+Three real adversarial subagents reviewed the brief: buildability-rule enforcer, cost/scope hawk, and scoping-principle skeptic. All three returned **"accept with named amendments"** — and the amendments **all three converged on the same shape**: switch from option B (per-cluster, ~6–10 subagents) to option C (hybrid: commodity primitives batched, designed-system / contested primitives per-primitive).
+
+### Convergent findings across reviewers
+
+1. **The ~25–30 primitive-count estimate is unverified and probably inflated.** Cost-hawk re-counted from the registry and got 18–22 after aggressive de-dup, possibly 10–12 if "commodity ≈ same construction recipe" is honored. The dispatch-shape decision should be made *after* enumeration, not before.
+
+2. **Designed-system primitives must NOT be in clusters.** All three reviewers named the same primitives: BF-L Codebase Model, U-A typed-object store, U-B layer-typed object store, D7-U-1 FC store, U-C distance estimator, U-C anchor store, BF-S codebase index, BF-S dependency graph. Plus (Reviewer 1): U-B cross-layer drift detector, GF-S S8 four-guard mediator, D7-U-1 independence auditor. Plus (cost-hawk): GF-C Intent Crucible validator. These are exactly the primitives whose candidate defenses hinge on per-primitive differentiation; clustering them collapses the same-vs-distinct judgments that belong at Phase 4.2 / methodology-matching, not Phase 3.5.
+
+3. **The minimum-evidence bar (one named tool + one corpus citation) is syntactic, not semantic.** Reviewer 1's strongest objection: a cluster subagent can satisfy "OPA + Cedar; cf. BF-S §S-5" for five primitives in a row without engaging the per-primitive *integration* (how the named tool's API/feature realizes the primitive's contract). Amendment: strengthen the bar to require an integration sentence per primitive plus a corpus-specific (not generic-commodity) why citation.
+
+4. **The orphan-defender bias guard is misplaced at Phase 3.5.** Cost-hawk: orphans the brief preserves are cost without affecting Phase 4–8; cross-pollination is a Phase 6/8 concern. Scoping-principle skeptic: the more pressing protection is for *orphan clusters* (single-primitive clusters that compete for re-check attention against multi-primitive commodity clusters). Amendment: drop orphan-defender at 3.5 (or downgrade to a Phase 4.3-time guard); add an orphan-cluster bias guard IF any orphan clusters emerge under the chosen shape.
+
+5. **Cluster subagents must not render same-vs-distinct verdicts** even informally. Scoping-principle skeptic: the "in-subagent cluster reasoning aid" the Round-1 brief allowed is the same-vs-distinct call, which is methodology-to-substrate-matching work deferred to Phase 4+. Amendment: forbid in-subagent cluster reasoning for any cluster containing contested designed-system primitives; only "this whole cluster is commodity cloud engineering" coda is allowed for pure-commodity clusters.
+
+### Revised decision
+
+**Option C — hybrid dispatch, pre-classified by the registry's "Buildability scope" column.**
+
+1. **Pure-commodity primitives** (registry verdict `commodity` or implied by 3-line "Terraform + bwrap / OPA / IPFS-or-Git-object-store" construction): batched, dispatched per-cluster — but each cluster has ≤5 primitives, all of the same construction family, and the cluster subagent is forbidden from rendering same-vs-distinct verdicts.
+
+2. **Designed-system / research-grade-uncertainty primitives** (registry verdict `designed-system`, `research-grade-uncertainty`, or one of the named contested primitives in convergent finding #2): dispatched per-primitive, one subagent each.
+
+3. **The actual split between (1) and (2) is determined by [`primitives/index.md`](../primitives/index.md), not pre-decided in this brief.** Each primitive in the index will carry a `dispatch-tier` field set to `cluster` or `per-primitive`. The split is reviewed by the lead agent against the registry's "Buildability scope" column before any dispatch fires.
+
+### Amendments to the dispatch brief that will be sent to subagents
+
+- **Per-primitive subagent brief.** Must produce: (i) contract restatement, (ii) construction path naming at least one tool/library AND **one integration sentence** explaining how that tool's specific API/feature realizes the primitive's contract, (iii) corpus-why citation that names the **specific** corpus problem (not "this is commodity cloud engineering"), (iv) research-grade-uncertainty flag if no plausible construction path exists, (v) buildability verdict (`commodity` / `designed-system` / `research-grade-uncertainty`).
+
+- **Cluster subagent brief.** Same per-primitive requirements as above (one section per primitive in the cluster), PLUS the constraint: cluster subagent may NOT opine on whether two primitives in the cluster are "really the same" or substitutable. The cluster framing is a dispatch optimization, not a substrate-matching verdict.
+
+- **Bias guards.** Buildability-skeptic runs per primitive (independent of cluster grouping). Corpus-citation auditor runs per primitive. Orphan-defender is **dropped from Phase 3.5** (moved to Phase 4.3 considerations — see the v1.2 plan revision). Orphan-cluster bias guard is added IF any cluster ends up with only one primitive after the pre-classification step.
+
+### Downstream impact of Round-2 revision
+
+- **Phase 3.5.2** becomes "pre-classification" (assigning each primitive a `dispatch-tier`) rather than "clustering" (assigning each primitive to a named cluster). The lead agent makes the call against the registry's Buildability-scope column.
+- **Phase 3.5.3 dispatch shape.** ~8–14 subagents total (~3–5 cluster subagents for commodity primitives, ~5–10 per-primitive subagents for designed/research-grade primitives), depending on the actual enumerated count.
+- **Phase 4.2 primitive-overlap analysis.** No longer benefits from any "Phase 4.2 input for free" framing — the cluster-level same-vs-distinct work stays in Phase 4.2 as the v1.2 plan revision specified. The Round-2 revision is *consistent* with the v1.2 plan as written; the Round-1 brief had quietly pulled work forward into 3.5 in a way Reviewer 3 (Round 1) had partially caught and Round-2's scoping-principle skeptic finished off.
+
+### Sequencing change
+
+Per cost-hawk's amendment 1: **enumerate the de-duplicated primitive union before fixing the final number of per-primitive vs cluster subagents.** The next commit on this branch lands [`primitives/index.md`](../primitives/index.md) with each primitive's tentative `dispatch-tier` field. After that lands, this brief is updated with the final subagent count and the dispatch fires.
+
+### Why not switch all the way to pure per-primitive
+
+Cost-hawk's amendment 1 explicitly leaves option open: "if count ≤15, switch to per-primitive." Per-primitive across the board is operationally simpler and removes the cluster-boundary judgment entirely. The reasons to stay with hybrid:
+
+- True commodity primitives (sandbox, cost ceiling, watchdog tiers, trajectory capture, PR creator, worktree isolation) genuinely don't need per-primitive depth — their construction is uncontroversial and their corpus-why is well-established.
+- Batching commodity primitives reduces aggregation overhead at lead-agent re-check (3.5.5) — a single cluster file for "sandboxing + cost + watchdog + trajectory" is easier to integrate than four separate files.
+- Hybrid preserves accountability where it matters (designed/research-grade) and economizes where it doesn't (commodity).
+
+If [`primitives/index.md`](../primitives/index.md) lands and the actual count is ≤15 with most primitives in the "designed-system" tier, the hybrid collapses to nearly-per-primitive (1 commodity cluster + N designed primitives) — which is fine and consistent with this brief.
+
+### Verdict status from reviewers (recorded)
+
+- Buildability-rule enforcer: accept with named amendments ✓ (incorporated above)
+- Cost/scope hawk: accept with named amendments ✓ (incorporated above)
+- Scoping-principle skeptic: accept with named amendments ✓ (incorporated above)
+
+No reviewer recommended rejecting the dispatch-shape framing entirely; all three converged on hybrid (option C) with named amendments. This is a strong adversarial signal that hybrid is the right shape.
+

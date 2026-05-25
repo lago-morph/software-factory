@@ -100,3 +100,59 @@ Skill SKILL.md files and resources under `.claude/skills/<name>/` follow the
 same rule. The repo-root checker
 [`scripts/check-internal-refs.py`](./scripts/check-internal-refs.py) flags the
 common bare-text patterns and can be run locally before pushing.
+
+## Adversarial-review verdict tiers
+
+<!-- AGENTS-MD-8a7029647f -->
+
+**Adversarial-review verdict tiers must include `reject-with-counter-proposal`.** Briefs that dispatch real adversarial subagents per the adversarial-review rule MUST present three admissible verdict tiers to each reviewer: `accept-as-is`, `accept-with-named-amendments`, and `reject-with-counter-proposal`. A 2-tier schema (accept / accept-with-amendments) lets reviewers default to amendments even when the underlying shape is wrong.
+
+*Grounded in: auto-003 Round 1 — the methodology-purist reviewer used `reject-with-counter-proposal` to surface the count-gate-vs-smoke-test structural issue; a 2-tier review would have produced an accept-with-amendments that masked the structural problem.*
+
+## Round-1 strikethrough preservation in decision briefs
+
+<!-- AGENTS-MD-bb7fe2c5aa -->
+
+**Round-1 strikethrough preservation in decision briefs.** When a decision brief enters Round 2, the Round-1 decision MUST be preserved in the file with `~~strikethrough~~` annotation and a "superseded by Round 2 below" pointer, not deleted. The Round-1 reasoning section MUST also be preserved under a "(preserved for traceability)" heading. This makes the brief itself the audit trail of the lead agent anchoring and the reviewers findings.
+
+*Grounded in: every auto-NNN brief in this repo (auto-001, auto-002, auto-003, auto-004) follows this pattern; the pattern is currently social convention but not codified.*
+
+## Verbatim text-pull when citing binding rule tables
+
+<!-- AGENTS-MD-bf4431be57 -->
+
+**Verbatim text-pull when citing binding rule tables.** When a subagent or per-candidate summary cites a binding rule with a per-row application table (e.g., the Phase-3.5.5 RG-primitive rule's "Application to current candidates" table), the citation MUST be a verbatim quoted text-pull of the applicable row, not a paraphrase. Paraphrase drift across parallel subagents handling the same rule is silent and only surfaces at lead-agent aggregation.
+
+*Grounded in: Wave 4.1 dispatch — auto-004 Round 2 added required text-pulls for §2 of substrate-requirements summaries after the aggregation-cost auditor flagged drift risk across BF-L / U-B / D7-U-1 parallel handling of the Phase-3.5.5 rule.*
+
+## Stacked-PR base selection
+
+<!-- AGENTS-MD-de48bd24b4 -->
+
+**Stacked-PR base selection.** Before creating a new stacked PR, fetch `origin/main` and inspect `git log --oneline origin/main -5`. If every PR in the previous chain has been merged, branch the new work off `origin/main` directly; if the chain is partially open, branch off the tip of the unmerged chain. Do NOT blindly branch off a previous session's "tip" branch name without first checking its merge state.
+
+*Grounded in: Phase-4 dispatch session 2026-05-25 — the prior chain (PRs #136-#145) had all merged to main before the session started; the dispatch instructions named `claude/handoff-phase-3.5-close` as the "tip" but it was already in main.*
+
+## Self-check rubric requires tool-verification for measurable items
+
+<!-- AGENTS-MD-e74e4811a2 -->
+
+**Self-check rubric requires tool-verification for measurable items.** Self-check rubrics that include measurable items (word count, file existence, link relativity) MUST require the subagent to run an actual tool call (`wc -w`, `ls`, `grep`) verifying the item, not just self-attest. Bare self-attestation drifts.
+
+*Grounded in: Wave 4.1 — the BF-L subagent returned 1676 words against an 800-1500 budget while claiming self-check passed.*
+
+## Exemplar before parallel uniform-schema fanout
+
+<!-- AGENTS-MD-eec503a3c2 -->
+
+**Exemplar before parallel uniform-schema fanout.** Before dispatching ≥3 parallel subagents producing a uniform-schema deliverable, the lead agent MUST author one exemplar of the deliverable and ship it with the dispatch brief as input. Subagents read the exemplar as the format model. Choose an exemplar candidate that is least-contested (no RG flags, no contested-primitive references, no shared-skeleton obligations) so the exemplar demonstrates the schema cleanly.
+
+*Grounded in: Wave 4.1 — the GF-M substrate-requirements summary was authored as the exemplar; the 9 Wave-4.1 subagents consumed it as the format model; aggregation at Wave 4.2 was tractable because all 10 summaries shared the format.*
+
+## Honest-acknowledgements for pre-Round-2 wave firing
+
+<!-- AGENTS-MD-ffe35aa500 -->
+
+**Honest-acknowledgements for pre-Round-2 wave firing.** When adversarial review of a decision brief amends a wave that has already fired concurrent with the review (because the brief's Round-1 dispatch authorized it), the Round-2 brief MUST include an explicit "Round-2 honest acknowledgements" section calling out the deviation, the mitigation, and whether re-dispatch is required.
+
+*Grounded in: auto-004 Round 2 — Wave 4.3 (disciplines) and Wave 4.4 (BF-L research) fired concurrent with the brief's adversarial review per Round-1 sequencing; the sequencing skeptic flagged this; Round 2 added an "Honest acknowledgements" section reconciling.*

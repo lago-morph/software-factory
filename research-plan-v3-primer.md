@@ -106,7 +106,7 @@ flowchart TB
     P1OUT["Phase 1 outputs<br/>contradictions / failure-modes / inventory"]
     TRACKS["9 Phase-2 tracks"]
     DRAFTS["3 Phase-3.1 drafts"]
-    CRITIQUES["Phase-3.2/3.3 critiques<br/>18 personas + N blind-axis + 4 cross-mandate<br/>(24 in the v3 run)"]
+    CRITIQUES["Phase-3.2/3.3 critiques<br/>18 personas + N blind-axis + 4 cross-mandate<br/>(N is determined by the anchor-detector;<br/>24 total in v3 because N=2)"]
     SV1["surviving post-adversarial syntheses<br/>(count depends on Phase-3.4 decisions)"]
     P4OUT["Phase 4 outputs<br/>shared-substrate + divergence"]
     ADRS["~14 ADRs"]
@@ -259,7 +259,7 @@ A few patterns recur across phases:
 
 - **YAML headers** with `based-on-commit` + `based-on-date` on every artifact, so the dependency graph survives rebases.
 - **Concrete-task discipline**: every open item names what specific action resolves it (who does what to which file). No abstract "we should investigate X" items survive into a synthesis or decision document.
-- **Three-layer citation discipline**: architecture specs cite synthesis documents; ADRs cite neither raw corpus nor specs. The citation graph is acyclic and the dependency direction is auditable. (Both this discipline and the concrete-task discipline above are themselves captured as methodology-level ADRs alongside the architecture ADRs of Phase 5 — the methodology eats its own dog food on the decision-record discipline.)
+- **Three-layer citation discipline**: synthesis documents cite the raw corpus; architecture specs cite synthesis documents; ADRs cite neither raw corpus nor specs. The citation graph is acyclic and the dependency direction is auditable. (Both this discipline and the concrete-task discipline above are themselves captured as methodology-level ADRs alongside the architecture ADRs of Phase 5 — the methodology eats its own dog food on the decision-record discipline.)
 
 ```mermaid
 flowchart BT

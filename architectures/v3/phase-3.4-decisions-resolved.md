@@ -117,9 +117,59 @@ Combinations (e.g., BF-L's CodebaseModel as substrate, with BF-M's 8-stage cycle
 
 ---
 
-## DEC-1 — UNRESOLVED (user to address next)
+## DEC-1 — Unification verdict (RESOLVED, reframed into three sub-confirmations)
 
-See [`dec-1-unification-verdict.md`](decisions/dec-1-unification-verdict.md). Note that under the scoping principle, the unification verdict question reframes: instead of "pick one of A/B/C/D," it becomes "which of the unified candidates (from the three unified-mandate Phase-2 tracks plus D7-U-1's Adversarial-Falsification Topology alternative) defended themselves successfully and should carry forward alongside the mandate-specific candidates from DEC-3 / DEC-4?"
+The original DEC-1 brief at [`dec-1-unification-verdict.md`](decisions/dec-1-unification-verdict.md) (A/B/C/D pick) is superseded. The reframed brief at [`dec-1-unification-verdict-reframed.md`](decisions/dec-1-unification-verdict-reframed.md) posed three sub-confirmations. User resolution 2026-05-25:
+
+### DEC-1.a — Working hypothesis: **CONFIRMED AS HYPOTHESIS (not axiom)**
+
+Phase 4 onward proceeds under the orienting commitment: *no methodology serves both mandates; substrates and disciplines do.* This is held as a **falsifiable working hypothesis**, not an axiom. Phase-8 lean-evals and downstream simulation can overturn it — for example, if one of the unified-attempt candidates (U-A, U-B, U-C, D7-U-1) demonstrates empirically that a single methodology fits both mandates, the hypothesis is falsified. The hypothesis is the *starting* frame; evidence wins over framing.
+
+**Effect:** The unified-attempt candidates carry forward as candidate methodologies (per DEC-1.c) and also as *active falsifiers* of the hypothesis. Phase-4 dispatch is per-mandate (3 GF + 3 BF methodologies) plus unified-attempt (4 methodologies) plus cross-mandate substrate + discipline extraction.
+
+### DEC-1.b — Greenfield → brownfield artifact continuity: **N/A (lead agent misread user's framing)**
+
+The continuity-matrix framing in the original handoff and in the reframed-DEC-1 brief was based on the lead agent's misreading. The user's actual framing of greenfield vs. brownfield is **entry-mode**, not temporal:
+
+- **Greenfield** = the system *originates inside the methodology*. The methodology is in force from day 0; spec, CodebaseModel (or equivalent), intent capture, structural invariants are all built incrementally *with* the code rather than reconstructed from artifacts.
+- **Brownfield** = the system *enters as pre-existing code, docs, and other artifacts* — typically inconsistent, missing intent, contradictory, the accumulated debt of multiple eras of architectural decisions.
+
+Under this framing, there is no GF → BF transition to design. A greenfield-born codebase stays greenfield as long as the same methodology is in force; its day-1800 state is the same kind of work as its day-180 state, just at greater scale. A brownfield-handled codebase is whatever it is *because* it entered with legacy structure that the methodology did not get to enforce from the start.
+
+**Working definitions of greenfield and brownfield are now part of the binding working-definitions section below.**
+
+The two within-greenfield hypotheses the user surfaced (recorded as hypotheses, not axioms):
+
+1. **"Maintenance is just implementation as the spec grows" applies only to greenfield.** A 1-line spec becoming a 2-line spec is the same kind of operation as a 10,000-line spec becoming a 10,001-line spec. Brownfield methodologies may have very different answers — that is a per-candidate question, not a cross-mandate axiom. *Hypothesis, not axiom.*
+2. **Initial-spec discovery *may* differ across greenfield's own early-vs-mature stages.** Some greenfield methodologies have separate cold-start vs. steady-state regimes (GF-C, GF-M's Regime A → B); others may treat early and mature the same. Both are admissible candidate shapes. The synthesis MUST NOT foreclose either. *Hypothesis, not axiom.*
+
+**Effect on the synthesis pipeline:** the lead-agent's proposed "GF → BF continuity matrix" Phase-4 deliverable is **withdrawn**. F40/F8 long-run-drift concerns against GF-S/GF-M are addressed within each greenfield candidate's own methodology (via its steady-state regime or its unified treatment, depending on the candidate), not by a separate cross-mandate continuity deliverable. The "greenfield candidates that ship continuity-compatible artifact contracts" evaluation criterion in [`candidate-registry.md`](candidate-registry.md) is **removed**.
+
+### DEC-1.c — Candidate set: **CONFIRMED (all 10 carry forward)**
+
+The [`candidate-registry.md`](candidate-registry.md) stands as-is. All 10 candidates (GF-S / GF-M / GF-C + BF-S / BF-M / BF-L + U-A / U-B / U-C / D7-U-1) carry forward into Phase 3.5 (buildability) and Phase 4 (substrate-requirements extraction + discipline extraction + per-mandate methodology candidates). The user's rationale: the 10 candidates show enough variety and approach-from-different-directions that having all on the table for Phase-8 pressure-testing produces richer options than any pre-narrowed set would.
+
+---
+
+## Working definitions: greenfield, brownfield (entry-mode framing)
+
+These definitions are binding for the rest of the synthesis. They replace any implicit "greenfield = early stage, brownfield = late stage" framing that may persist in earlier artifacts.
+
+### Greenfield
+
+The system **originates inside the methodology**. From day 0, the methodology is in force; spec, intent, structural invariants, CodebaseModel (or whatever the architecture's equivalent is) accrete incrementally as the code is written. A greenfield-born codebase carries — by construction — direct links from spec to implementation, construction-time intent, and architectural consistency that cannot be retroactively reconstructed.
+
+A greenfield system does not "become" brownfield as it matures. As long as the same methodology continues to govern it, it remains greenfield regardless of code age or size. **Maintenance is just implementation as the spec grows** (working hypothesis: see DEC-1.b note 1).
+
+### Brownfield
+
+The system **enters the methodology as pre-existing artifacts** — code, docs, tests, telemetry, tickets — typically with the pathologies of legacy systems: inconsistency, missing or unrecoverable intent, contradictions, multiple eras of architectural decisions stacked on each other. The methodology's first job is to recover or fabricate the substrate (CodebaseModel, intent, structural invariants) from artifacts that were not built to be recovered from.
+
+**Brownfield methodologies do not inherit greenfield's structural advantages.** A greenfield-born system, absent life-critical-grade rigor (essentially never present in practice), will never structurally resemble a legacy system that a brownfield methodology has to handle.
+
+### Within-greenfield variation (open per scoping principle)
+
+Greenfield methodologies are free to specify a single regime that handles day-1 through day-N uniformly, *or* to specify distinct regimes (cold-start vs. steady-state, regime A vs. regime B) with explicit transitions. Both are admissible. The synthesis MUST NOT foreclose either shape; this is the within-greenfield differentiator that Phase-8 lean-evals can pressure-test.
 
 ---
 
@@ -187,6 +237,6 @@ Outside the 8-phase synthesis pipeline, the user's plan includes simulation / mo
 
 - Scoping principle: declared 2026-05-25 in user message to lead agent. Immutable per user direction.
 - DEC-2 / DEC-3 / DEC-4: declared 2026-05-25 in same message.
-- DEC-1: pending in next user message.
+- DEC-1.a / DEC-1.b / DEC-1.c: declared 2026-05-25 across two follow-up user messages. The lead agent's first reframed-DEC-1 brief proposed a GF → BF continuity matrix as a Phase-4 deliverable; the user corrected the framing (entry-mode greenfield/brownfield, not temporal), and DEC-1.b was resolved N/A. Working definitions section added in the same edit.
 
-This file should be updated when DEC-1 resolves and at any subsequent Phase-3.4 decision the user finalises.
+Phase 3.4 is now closed. The next sub-phase is Phase 3.5 (substrate-primitive buildability sketches per the [refined two-part rule](#refined-two-part-rule-for-accepting-a-substrate-primitive)).

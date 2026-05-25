@@ -134,3 +134,60 @@ Updates from Phase-3.5.3 cluster-sketch subagents that change this index's pre-t
 - **P-08 / P-09 collapse question raised but not decided.** Cluster-C3 sketch flagged honest evidence that P-09 (held-out scenario runner) reduces to a thin read-API on P-08 with the judge-role token; the cluster subagent did NOT render a same-vs-distinct verdict (per the cluster-subagent constraints). Deferred to Phase 4.2.
 
 Updated counts after C2/C3 reclassifications: 11 commodity (C1: 4 + C2 P-05/P-06 + C3 P-09/P-10/P-11/P-12/P-13) + 23 designed-system / research-grade (was 21; +P-07, +P-08). The dispatch tiers don't change retroactively — the cluster sketches landed correctly under the original dispatch — but the *index's* commodity-vs-designed classification updates to reflect the sketches' findings.
+
+### Per-primitive sketch annotations (P-14 through P-34)
+
+Per-primitive sketches landed in wave 2 (subagent fanout per Round-2 hybrid dispatch). Final verdicts and key findings:
+
+| ID | Verdict | Key construction tool | Notable finding |
+|---|---|---|---|
+| P-14 Judge router | `designed-system` | LiteLLM `Router` + Pydantic per-role envelopes | Resolves CTR-C4 via typed choice; F46 mitigation |
+| P-15 Four-guard mediator | `designed-system` (contradiction-detector sub-guard carries partial RG flag) | Composition over P-12 engine + LiteLLM ensemble | Larbi MCC ≤ 0.55 ceiling for contradiction-detector is empirically open (F27/F48 collusion risk) |
+| P-16 EARS+GtWR linter | `designed-system` | Custom Python rule engine on spaCy | **P-12 can host P-16** (high confidence); likely absorption into P-12 at Phase 4.2 |
+| P-17 Intent Crucible validator | `designed-system` (partial RG flag on substance-check) | Pydantic v2 + `@model_validator` + structured-outputs | 2 of 9 fields (`business_outcomes`, `capability_scope`) substance-check is RG; structural validation is bounded |
+| P-18 RSI Declaration Ledger | `designed-system` | SQLite WAL + abort triggers + Merkle hash chain | RSI = Recursive Self-Improvement (Kahana/Stanford-CodeX); mitigates F43, F53; F54/F55/F58 |
+| P-19 Eligibility / regime classifier | `designed-system` | Hybrid: Drools/OPA Rego decision tables + LLM-judge fallback via P-14 + OPA hard-floor post-check | F25 / F57 hard-floor enforcement; F51 recursion question is Phase-4.2 / Phase-8 |
+| P-20 Reversibility primitive | `designed-system` | EventStoreDB (`AppendToStream`); axon-framework / Postgres event_log fallback | Composes on P-05; cost dominated by paraphrase fan-out (OQ-T2), not by reversibility itself |
+| P-21 Paraphrase divergence | `designed-system` (calibration is RG, not buildability) | LiteLLM + asyncio.gather + Jinja2 seeded macros + sentence-transformers | N, divergence metric, threshold vs Larbi MCC ≤ 0.55 are Phase-8 lean-eval candidates (OQ-T6) |
+| P-22 Polyglot codebase index | `designed-system` | tree-sitter + per-language LSP federation + SQLite-FTS/DuckDB (single-tenant); Sourcegraph/SCIP (fleet); Glean (Meta-scale) | Type fidelity uneven across languages; cross-language type resolution at RPC boundaries is near-zero (Phase-4 risk marker) |
+| P-23 Dependency-impact graph | `designed-system` | Glean (Datalog) + Stack Graphs cross-language resolver | **BF-S B7 partition-leakage is structural** — transitive closure leaks hidden-node info; mitigable to rate-limited side channel only. Critical for Phase-3.5.5 BF-S re-check. |
+| P-24 Attribution store | `designed-system` | Git plumbing (`git verify-commit` + `git blame --line-porcelain`) + Sigstore/cosign + Postgres projection | Hard P-22 dependency for per-symbol granularity (rename-edges → `parent_event_id`) |
+| P-25 CaMeL perimeter | `designed-system` (partial RG on utility-tax calibration) | Released CaMeL ref impl (`google-research/camel-prompt-injection`) + OPA + eBPF | Utility-tax not measurable a-priori; substrate must expose per-class bypass with audit-log |
+| P-26 Codebase Model | **`research-grade-uncertainty`** (gated by 2 of 6 RG views: conventional + invariant) | Glean + SCIP + Tree-sitter (structural); P-24 + cosign (historical); P-07 + OPA (runtime); CodeScene + SonarQube (debt); LLM + golden corpus (conventional, RG); Daikon + CodeQL + LLM (invariant, RG) | 9-18 engineer-months realistic. **BF-L recommended to SURVIVE Phase 3.5 with RG flag carried forward to Phase 4** (do not self-eliminate). |
+| P-27 Archaeological-brief tooling | `designed-system` (partial RG on brief-quality calibration) | Pydantic v2 Brief schema + Anthropic/OpenAI structured outputs + tool-use loop over P-26 query interface | Brief-quality gating mirrors P-17 structural-vs-substance split; calibration deferred to Phase 5/8 |
+| P-28 Typed-object store | `designed-system` (all 4 variants viable) | libgit2 (`git_odb_write` + `refs/notes/<envelope-kind>`); Postgres `bytea`+`jsonb`+GIN | Per-variant envelope schemas distinct (U-A typed-node-graph, U-B layer-typed L0–L4, U-C anchor with `frozen-since`+`mutation-protocol`, D7-U-1 FC commitment). Same-vs-distinct DEFERRED to Phase 4.2. |
+| P-29 Policy mediator | `designed-system` (both variants viable) | OPA Rego (`opa eval` at boundary); Cedar alternative | Per-variant policy DSL is design content; same-vs-distinct DEFERRED to Phase 4.2 |
+| P-30 Event registrar | `designed-system` (both variants viable) | Temporal workflow engine (signal+timer+query triad); AWS EventBridge / Kafka / Postgres-NOTIFY alternatives | Per-variant state machines distinct (U-A re-entry interval; D7-U-1 survival-window). Same-vs-distinct DEFERRED to Phase 4.2 |
+| P-31 Cross-layer drift detector | **`research-grade-uncertainty`** | Substrate (OPA graph-walk + LLM judge via P-14) is commodity; **the invariants don't exist** | Brier's framework is descriptive, not algorithmic. **U-B must commit at Phase 4 to an invariant-authoring sub-track delivering ≥3 machine-checkable invariants per layer-pair with corpus citations**, otherwise P-31 cannot be defended. |
+| P-32 Distance estimator | `designed-system` (construction); `research-grade-uncertainty` (calibration + partial Goodhart resistance) | Per-component: Glean/CodeQL/Stack-Graphs BFS over P-23 (graph_distance); deterministic decision table (pace_layer_crossings); P-22 + LLM judge (intent_field_touches) | Calibration recipe absent in corpus; 2 of 3 legs Goodhart-resistant, third leg F33/F51-vulnerable with patrol-tier detector only (does not close F47) |
+| P-33 Opposing-side router | `designed-system` | LiteLLM `Router` + FC-typed dispatch + YAML/SQLite capability registry | "Do-not-unify" enforced via `tags=["exclude:"+builder.family]`; honest evidence: shares substantial substrate with P-14 but has FC-shaped surface, unconditional builder-family exclusion, broader handler universe. Same-vs-distinct DEFERRED to Phase 4.2 |
+| P-34 Independence auditor | **`research-grade-uncertainty`** (structural; construction is designed-system) | scipy `binomtest` + Fisher exact + IsolationForest pipeline over P-28 FC log | **Recommended audit-recursion**: Option A (deterministic-ness is the assurance) as primary + Option C (named human review at low cadence) as backstop. No option dominates; corpus does not name a recursion-stopping rule. |
+
+### Critical findings for Phase 3.5.5 candidate re-check
+
+The post-sketch annotations surface several findings that **change candidate defense status** and must be processed at Phase 3.5.5:
+
+1. **BF-S partition-leakage is structural** (P-23 sketch). BF-S's B7 ROBUST claim of substrate-enforced role-partition was contested in Phase 3.2 red-team; the buildability sketch confirms the contestation. BF-S cannot fully defend on B7 — partition leakage is mitigable to a rate-limited side channel but not eliminable. BF-S survives Phase 3.5 but with a downgraded B7 claim.
+
+2. **BF-L Codebase Model survives with research-grade flag** (P-26 sketch). The conventional + invariant views are RG-uncertainty; the other 4 views are designed-system. 9-18 engineer-months realistic. BF-L does NOT self-eliminate at Phase 3.5 — the candidate carries forward with the RG flag honestly displayed.
+
+3. **U-B cross-layer drift detector unbuildable without invariant authoring** (P-31 sketch). U-B's P-31 cannot be defended at Phase 3.5; U-B must commit at Phase 4 to authoring ≥3 machine-checkable invariants per layer-pair. If U-B accepts that commitment, the candidate survives Phase 3.5 with the deferred-defense flag. If U-B cannot accept, U-B self-eliminates at Phase 3.5 — adjudicate at 3.5.5.
+
+4. **D7-U-1 independence auditor is structurally research-grade** (P-34 sketch). Auditor-recursion (OQ-1) has no dominating option; recommended A+C hybrid is best-current but not closure. D7-U-1 carries forward with explicit RG flag on P-34.
+
+5. **GF-S contradiction-detector reliability is empirically open** (P-15 sketch). The sub-guard's Larbi MCC ≤ 0.55 ceiling is single-judge; the 3-of-N ensemble lifts effective reliability but the empirical question is Phase-8. GF-S survives Phase 3.5 with this carried as Phase-8 lean-eval input.
+
+6. **P-12 likely absorbs P-16** (P-16 sketch). At Phase 4.2 same-vs-distinct resolution, P-16's rule library likely becomes content on P-12's framework. The two are not the same primitive at Phase 3.5 — sketches landed independently — but the absorption is high-confidence and recorded for Phase 4.2 work.
+
+7. **Same-vs-distinct on 4 contested primitive variants is honestly deferred** (P-28, P-29, P-30 sketches). All three primitives' variant pairs (U-A/U-B/U-C/D7-U-1 envelope variants on P-28; U-A/D7-U-1 variants on P-29 and P-30) have viable buildability paths per variant; the same-vs-distinct question is genuinely Phase-4.2 work, not pre-judged.
+
+8. **P-08 ↔ P-09 collapse evidence** (C3 sketch). Same as #7 but for the held-out scenario runner / scenario storage pair. Deferred to Phase 4.2.
+
+### Final distinct-primitive count after Phase 3.5 sketches
+
+- **Commodity**: 11 (P-01, P-02, P-03, P-04, P-05, P-06, P-09, P-10, P-11, P-12, P-13)
+- **Designed-system**: 19 (P-07, P-08, P-14, P-15, P-16, P-17, P-18, P-19, P-20, P-21, P-22, P-23, P-24, P-25, P-27, P-28, P-29, P-30, P-32, P-33)
+- **Research-grade-uncertainty**: 4 (P-26 Codebase Model, P-31 Cross-layer drift detector, P-34 Independence auditor; P-32 partial RG on calibration)
+- **Total**: 34 enumerated IDs; ~32 distinct after expected Phase 4.2 collapses (P-12+P-16, P-08+P-09).
+
+Note: many designed-system primitives carry *partial* RG flags on specific sub-components or calibration questions (P-15 contradiction-detector, P-17 substance-check, P-21 calibration, P-25 utility-tax, P-27 brief-quality, P-32 calibration + Goodhart-resistance). These do not move the primary verdict but are recorded for Phase 4 / Phase 5 / Phase 8 work.

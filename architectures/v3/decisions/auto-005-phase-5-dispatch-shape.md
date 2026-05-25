@@ -191,6 +191,79 @@ This brief's commit. Revert to undo the Round-1 framing; Wave 5.1 has not fired 
 
 (Round-1 reviewers will challenge any/all of these + anything else they find.)
 
+## Round 2 reviewer findings
+
+Three real subagents dispatched with fresh angles (pre-mortemer, naive newcomer, regulator/governance).
+
+### Reviewer 4 — pre-mortemer (`accept-with-named-amendments`)
+
+Most-likely failure path: Wave 5.3 deferral becomes permanent because no binding artifact carries it to the next run. Secondary: Wave-5.1a→5.1b re-dispatch protocol unspecified; P-30-substrate fold could mislead Phase-6 spec authors into citing it for state-machine semantics.
+
+### Reviewer 5 — naive newcomer (`reject and counter-propose`, but counter-proposal is amendment-shaped)
+
+Glossary gaps: "variant ADR" / "orphan" / "per-variant" / "2-candidate primitive" not defined inline; P-30 overlap-verdict not quoted inline; exemplar-timing ambiguity; "next run" handoff has no forward pointer; "Phase 6" unexplained.
+
+### Reviewer 6 — regulator / governance (`reject and counter-propose`, but counter-proposal is amendment-shaped)
+
+Audit-trail defects: strikethrough alone doesn't preserve Round-1 reviewer transcripts; "honest acknowledgement" claim is unverifiable without commit-SHA citation; Wave-5.3 deferral has no binding artifact.
+
+**Convergence observation.** All three Round-2 reviewers raise the **Wave-5.3 binding** concern from different angles (pre-mortem → "successor run drifts"; newcomer → "no forward pointer"; governance → "no binding artifact"). This is the load-bearing amendment. The remaining amendments are quality-of-life (glossary, transcript-preservation, re-dispatch protocol).
+
+No Round-2 reviewer pushed a different dispatch shape — all three operate on Option A′ as-is with amendments. Per [AGENTS-MD-8a7029647f](../../../retrospective/2026-05-25-155/AGENTS-MD-8a7029647f-adversarial-review-verdict-tiers.md) verdict-tier semantics, the two `reject and counter-propose` verdicts are effectively `accept-with-named-amendments` in substance (no alternative shape proposed). Round-3 is NOT triggered.
+
+## Round-2 final amendments folded
+
+The Round-2 decision (Option A′) stands. Following amendments are folded in below the decision section and into per-wave dispatch briefs.
+
+### Wave-5.3 binding artifact (convergent Round-2 amendment)
+
+**Binding mechanism:** The Phase-5-this-run-close session handoff doc (`SESSION-HANDOFF-2026-05-25-phase-5a-close.md`, authored at this run's close) carries a **non-negotiable "Wave 5.3 is owed before Phase 6 dispatch"** constraint with the following specifics:
+
+1. Wave 5.3's scope is fully enumerated in the handoff: ~29 ADRs across 16 orphan primitives + per-variant ADRs for P-28 (4 envelopes) + P-29 (3 DSLs) + P-19 (4 feature sources) + P-30 (2 state machines) + BF-L per-candidate methodology-degradation-clause spec.
+2. The handoff names this brief (`auto-005` Round 2) as the parent decision and embeds the ADR-ID-to-file mapping table that the Wave-5.3 dispatch brief will inherit.
+3. The next-run dispatch prompt (`next-agent-prompt-phase-5b.md` or analog) will be authored at this run's close, pointing at the handoff and at this brief.
+4. Phase 6 (architecture-spec authorship) **MAY NOT START** until either (a) Wave 5.3 ADRs are Accepted, OR (b) a future decision brief explicitly waives the dependency with adversarial review. The handoff documents this gate.
+
+### Round-1 reviewer transcripts preservation (Reviewer 6)
+
+The three Round-1 review subagent return digests are preserved verbatim under [retrospective/2026-05-25-155-supplement-round1/](../../../retrospective/2026-05-25-155-supplement-round1/) (authored at run close as a retrospective supplement). For audit-defensibility, the digest hashes are recorded in the morning summary's Decision-briefs-written table.
+
+### Honest-acknowledgement verifiability (Reviewer 6)
+
+This brief lives at commit `e9cbd69` on `claude/auto-2026-05-25-B1-auto-005-dispatch-shape` (Round 2 commit; Round 1 was `dba00bc`). No Wave-5.1a / 5.1b / 5.2 dispatch commit exists on this branch or any descendant branch as of brief authorship. Mechanically verifiable: `git log --all --oneline --grep "Wave 5.1\|Wave 5.2" --before=<this-commit's-timestamp>` returns empty.
+
+### Wave-5.1a→5.1b re-dispatch protocol (Reviewer 4)
+
+After Wave 5.1a closes, lead agent's checkpoint pass enforces: (a) every Wave-5.1a ADR has ≥3 references + matching H1-path self-check + no rubric drift from the P-08 exemplar; (b) spot-check that cross-cutting commodity-tier references are consistent (e.g., if the P-08 ADR cites P-01 sandbox, other commodity-tier ADRs that need sandbox isolation also cite P-01 by the same pattern). If >1 ADR fails: lead-agent authors a per-ADR rubric-gap summary + re-dispatches the failing subset to 1-2 fresh subagents on a stacked PR (budget: ≤2 PRs for re-dispatch). Wave 5.1b does NOT fire until Wave 5.1a rubric compliance is verified.
+
+### P-30-substrate scope boundary (Reviewer 4)
+
+The Wave-5.1b dispatch brief for P-30 explicitly limits the common ADR's scope to **Temporal substrate choice + append-only event-log contract**. It does NOT cover per-variant state-machine definitions. The Wave-5.3 dispatch brief in the next run will author two distinct per-variant ADRs (`P-30-variant-u-a-re-entry`, `P-30-variant-d7-u-1-survival-window`). Phase-6 architecture specs for U-A and D7-U-1 must reference BOTH the common substrate ADR + the per-variant state-machine ADR. The Wave-5.1b P-30 ADR text MUST carry this scoping note in its `## Consequences` section.
+
+### Glossary (Reviewer 5)
+
+Folded inline into the Wave-5.1a / 5.1b / 5.2 dispatch briefs (not into this auto-005 brief — those briefs are read by subagents whose context budget is tight). Definitions:
+
+- **Common ADR.** One ADR per substrate primitive shared by ≥3 candidates (Wave 5.1a/5.1b) or per discipline (Wave 5.2). Captures the shared contract, construction recipe, and design alternatives.
+- **Variant ADR / per-variant ADR / candidate-specific ADR.** One ADR per distinct envelope/DSL/feature-source/state-machine of a shared primitive across its claiming candidates (e.g., U-A's interval envelope on P-28). Authored in Wave 5.3 next run. Each variant ADR references its parent common ADR.
+- **Orphan ADR.** One ADR per primitive claimed by exactly one candidate (e.g., BF-L's P-26 Codebase Model). Authored in Wave 5.3 next run; no per-variant fan-out needed.
+- **Two-candidate primitive.** Primitive shared by exactly 2 candidates (P-25, P-27, P-24). Folded into Wave 5.1b as common ADRs with 2-candidate cross-references; no per-variant Wave-5.3 fan-out.
+- **Exemplar.** ADR authored inline by the lead agent BEFORE the wave's parallel fanout fires. All Wave subagents read the exemplar and use it as a shape model. The lead agent commits the exemplar on the wave's PR before dispatching the fanout.
+- **Overlap verdict.** A same-vs-distinct judgment in [`overlap.md`](../primitives/overlap.md) on primitives that look similar across candidates (P-28 SAME-distinct-envelopes; P-30 DISTINCT despite shared substrate; etc.). Binding inputs to ADR authoring.
+- **Phase 6.** Architecture-spec authorship per surviving candidate (per the v1.2 plan revision). Consumes the merged Phase-5 ADR set as binding input. NOT this run's scope.
+
+### P-30 overlap verdict (Reviewer 5)
+
+Quoted inline from [overlap.md § P-30](../primitives/overlap.md#p-30-event-registrar--two-contested-variants): "DISTINCT primitives despite shared underlying substrate. Both use Temporal workflow engine (signal+timer+query triad) at the construction layer, but the load-bearing semantics diverge: U-A's registrar is event-driven; D7-U-1's registrar is timer-driven. The state-machines have non-overlapping invariants. A single deployment hosting both candidates' methodologies would need two separate registrar instances." Wave 5.1b's P-30 ADR scopes to the Temporal substrate; per-variant state-machine ADRs are Wave 5.3.
+
+### Exemplar timing (Reviewer 5)
+
+The P-08 exemplar is authored inline by the lead agent in the same commit as the Wave-5.1a dispatch brief; all Wave-5.1a subagents read it as a shape model. The same exemplar is referenced (not re-authored) by Wave 5.1b. Same for the cost-ceiling exemplar in Wave 5.2.
+
+## Round-2 final decision
+
+**Option A′ (per [§Decision (Round 2)](#decision-round-2) above), with all six Round-2 amendments folded in (Wave-5.3 binding artifact via session handoff; reviewer-transcript preservation; verifiable honest-acknowledgement; Wave-5.1a→5.1b re-dispatch protocol; P-30-substrate scope boundary; glossary + inline overlap verdict + exemplar timing for Wave dispatch briefs).** Decision is locked. Wave 5.1a + 5.2 dispatch fires next.
+
 ---
 
-*(Round 2 above. Awaiting Round-2 adversarial wave: ≥3 real subagents with fresh angles. Round-3 will only fire if Round-2 reviewers converge on a material change.)*
+*(Round 2 closed 2026-05-25. No Round 3 needed — Round-2 reviewers converged on amendments, not different dispatch shapes.)*

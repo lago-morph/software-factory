@@ -1,14 +1,14 @@
 # auto-006 — Phase 6 dispatch shape
 
 **Author.** Lead agent, unattended Phase-6 dispatch session 2026-05-26.
-**Status.** **Round 1 (initial brief).** Awaiting ≥3 real adversarial subagents per [AGENTS.md § Adversarial review MUST be real subagents](../../../AGENTS.md#adversarial-review-must-be-real-subagents). Round-2 dispatch follows.
+**Status.** **Round 2 (revised after first real adversarial wave).** Round 1 returned 3 × `accept-with-named-amendments`. Round-1 decision shape (per-candidate parallel fanout, 3 mandate-clustered sub-waves, GF-M exemplar, 2 verifiers, ≤3500-word ceiling) is **superseded**; revised decision in [§Decision (Round 2)](#decision-round-2) swaps exemplar to U-C, tiers the word budget, consolidates spec PRs to 3 per-sub-wave PRs, collapses to 1 verifier + inline ADR-coverage script, adds a mandatory §0 ADR-citation index table, mandates subagent return digests ≤500 words, and resolves the mandate-fit YAML schema ambiguity.
 **Rewind point.** This brief's commit on [`claude/phase-6-architecture-specs-NHmM3`](../../../). Reverting it returns Phase-6 dispatch to "undecided"; no per-candidate spec-authoring subagent has fired.
 
 ---
 
 ## TL;DR (≤200 words)
 
-Phase 6 produces **10 architecture specs** (one per surviving candidate) + **1 mandate-fit matrix** + **Phase-6-close session handoff**, composing each candidate's substrate ADRs + discipline ADRs + per-variant ADRs into a coherent architecture description. This brief decides the dispatch shape. Open questions for the Round-1 reviewers: (1) **wave shape** — 10-in-one parallel fanout vs mandate-clustered sub-waves vs hybrid; (2) **per-spec rubric** — section structure, word budget, mandatory cross-reference floor; (3) **exemplar choice** — which candidate's spec the lead agent authors inline first per the [exemplar-before-fanout discipline](../../../AGENTS.md#exemplar-before-parallel-uniform-schema-fanout); (4) **matrix authorship** — lead-agent inline after specs land vs its own subagent dispatch; (5) **cross-spec consistency check** — fresh-context verification subagent(s) per the [phase-A-fresh-context-verification SKILL-SPEC](../../../retrospective/2026-05-25-170/SKILL-SPEC-ad9a173772-phase-A-fresh-context-verification.md). Lead-agent recommendation: per-candidate parallel fanout in **3 mandate-clustered sub-waves** (3 GF + 3 BF + 4 U), GF-M exemplar (the [Phase-4 exemplar](../substrate-requirements/gf-m.md)), matrix authored as **its own subagent** after specs land, **2 verification subagents** (cross-spec consistency + ADR-coverage completeness).
+Phase 6 produces **10 architecture specs** (one per surviving candidate) + **1 mandate-fit matrix** + **Phase-6-close session handoff**, composing each candidate's substrate ADRs + discipline ADRs + per-variant ADRs into a coherent architecture description. This brief decides the dispatch shape. Round 2 decision (post-adversarial-review): per-candidate parallel fanout in **3 mandate-clustered sub-waves consolidated to 3 sub-wave PRs** (Wave 6.1 GF = 1 PR carrying 3 specs; Wave 6.2 BF = 1 PR carrying 3 specs; Wave 6.3 U = 1 PR carrying 4 specs). Exemplar: **U-C** (mid-difficulty unified, 1 P-19 variant + 1 P-28 variant + 1 orphan — demonstrates the framework-ADR + per-variant pairing 7 of 9 downstream specs need). Per-spec **tiered word budget**: 2500-3500 (light); 3000-4500 (mid); 3500-5500 (heavy — BF-L, D7-U-1). Mandatory **§0 ADR-citation index table**. Matrix authored as **its own subagent** after specs land. **1 verification subagent** (cross-spec semantic consistency) + lead-agent inline `grep -L` ADR-coverage script. Subagent return digests **≤500 words mandatory**. PR-cap math: 11-14 PRs against ≤15 cap, 1-4 PRs margin.
 
 ## The question
 
@@ -100,22 +100,20 @@ Lead agent authors the matrix inline after the 10 specs land, by reading each sp
 - **Pros.** Saves one subagent dispatch; lead-agent has the full Phase-5 + Phase-6 context.
 - **Cons.** Lead-agent at end-of-Phase-6 has ~150K words of read-context (briefs + ADRs + spec returns); a fresh-context matrix subagent reads 10 spec files (~35K words) cold and produces a less-anchored matrix. Per [SKILL-SPEC-ad9a173772](../../../retrospective/2026-05-25-170/SKILL-SPEC-ad9a173772-phase-A-fresh-context-verification.md), fresh-context for cross-document extraction is the higher-quality default. **Not chosen unless context-budget pressure forces it.** Round-1 reviewers should challenge whether the marginal quality gain justifies the extra subagent.
 
-## Decision (Round 1)
+## Decision (Round 1 — superseded by Round 2 below)
 
-**Option A. Per-candidate parallel fanout, 3 mandate-clustered sub-waves (GF / BF / U), GF-M exemplar, matrix-as-its-own-subagent, 2 verification subagents.** Per the structure laid out in [Alternative A](#a-per-candidate-parallel-fanout-3-mandate-clustered-sub-waves-gf--bf--u-gf-m-exemplar--lead-agent-recommendation) above.
+~~**Option A. Per-candidate parallel fanout, 3 mandate-clustered sub-waves (GF / BF / U), GF-M exemplar, matrix-as-its-own-subagent, 2 verification subagents.** Per the structure laid out in [Alternative A](#a-per-candidate-parallel-fanout-3-mandate-clustered-sub-waves-gf--bf--u-gf-m-exemplar--lead-agent-recommendation) above.~~ Round 1 superseded — all three reviewers returned `accept-with-named-amendments` with convergent load-bearing amendments (exemplar swap, word budget tiering, PR consolidation, verifier collapse, §0 index table, digest cap, schema disambiguation). See [§Decision (Round 2)](#decision-round-2). Round-1 text preserved below for traceability per [AGENTS-MD-bb7fe2c5aa](../../../AGENTS.md#round-1-strikethrough-preservation-in-decision-briefs).
 
-Concretely:
+### Round 1 reasoning (preserved)
 
-- **Lead-agent inline: GF-M exemplar spec** committed as the first Phase-6 artifact. ~3000-word target. Authored using the rubric below.
-- **Waves 6.1 + 6.2 + 6.3 fire concurrent** after the GF-M exemplar lands. Total: 9 spec-authoring subagents (10 minus GF-M).
-- **After all specs land**: lead-agent ≤10-minute aggregation checkpoint. Then **Wave 6.4 (matrix subagent)** + **Wave 6.5 (2 verification subagents in parallel)** all fire concurrent.
-- **Verification finding triage**. If verifiers surface zero or non-blocking findings: Phase 6 closes with the handoff PR. If verifiers surface a blocking finding (a spec contradicts its own substrate; an ADR is uncited and the verifier judges it dead Phase-5 work): lead agent re-dispatches the affected spec(s) on a stacked PR. Budget for re-dispatch: ≤2 PRs.
+~~Concretely:~~
 
-**Total subagents this run: 9 (spec authoring, excluding GF-M exemplar) + 1 (matrix) + 2 (verifiers) = 12 ADR-authoring-equivalent dispatches**, plus ~6 adversarial reviewers across this brief's two rounds = ~18 subagents total for Phase 6.
+- ~~**Lead-agent inline: GF-M exemplar spec** committed as the first Phase-6 artifact. ~3000-word target. Authored using the rubric below.~~
+- ~~**Waves 6.1 + 6.2 + 6.3 fire concurrent** after the GF-M exemplar lands. Total: 9 spec-authoring subagents (10 minus GF-M).~~
+- ~~**After all specs land**: lead-agent ≤10-minute aggregation checkpoint. Then **Wave 6.4 (matrix subagent)** + **Wave 6.5 (2 verification subagents in parallel)** all fire concurrent.~~
+- ~~**Verification finding triage**. If verifiers surface zero or non-blocking findings: Phase 6 closes with the handoff PR. If verifiers surface a blocking finding (a spec contradicts its own substrate; an ADR is uncited and the verifier judges it dead Phase-5 work): lead agent re-dispatches the affected spec(s) on a stacked PR. Budget for re-dispatch: ≤2 PRs.~~
 
-### Revised per-ADR rubric (none — first-Round)
-
-(Round-1 rubric reasonable as drafted. Reviewers should challenge any item.)
+~~**Total subagents this run: 9 (spec authoring, excluding GF-M exemplar) + 1 (matrix) + 2 (verifiers) = 12 ADR-authoring-equivalent dispatches**, plus ~6 adversarial reviewers across this brief's two rounds = ~18 subagents total for Phase 6.~~
 
 ### Round-1 reasoning
 
@@ -154,3 +152,205 @@ Per [AGENTS-MD-ffe35aa500](../../../AGENTS.md#honest-acknowledgements-for-pre-ro
 ## Round-1 if-user-overrides rewind point
 
 This brief's commit on `claude/phase-6-architecture-specs-NHmM3`. Revert to undo the Round-1 framing; no spec-authoring subagent has fired (this brief precedes the wave dispatch).
+
+## Round 1 reviewer findings
+
+Three real subagents dispatched per [AGENTS.md § Adversarial review MUST be real subagents](../../../AGENTS.md#adversarial-review-must-be-real-subagents).
+
+### Reviewer 1 — Phase-6-pipeline architect (`accept-with-named-amendments`)
+
+- **Objection 1: GF-M exemplar miscalibrates the heavier candidates.** GF-M has 5 primitives, no P-19/P-28/P-29/P-30 contested-primitive references, no §3 fixed-header sub-sections, X_UNM_B is N/A, zero load-bearing RG primitives. Compare D7-U-1: 5 primitives but with 3 contested-primitive sub-sections, full X_UNM_B articulation, load-bearing RG primitive. The auto-005 Round-1 reviewer raised this exact objection ("least-contested ≠ best calibration; want smallest cross-cutting obligations"); this brief repeats it.
+- **Objection 2: The §2 Substrate composition rubric is shaped by a candidate that has nothing to demonstrate there.** GF-M cites none of P-19/P-28/P-29/P-30. The framework-ADR + per-variant pairing — the load-bearing discipline of the rubric — is not demonstrated by the exemplar. Seven of nine downstream subagents need to see this pattern done correctly.
+- **Objection 3: Mandate clustering at brief-shape time is theater on this dispatch shape.** Concurrent firing means no learning between waves, no per-mandate aggregation gate, no rubric divergence. The clustering reduces to labeling.
+- **Objection 4: Verifier-1 cannot catch the dominant cross-spec failure mode.** Verifier-1 as scoped checks structural citation existence, not interpretation drift on shared framework ADRs.
+- **Amendments (5):** swap exemplar to U-C; rewrite §A footnote into explicit per-candidate budget exceptions (BF-L + D7-U-1 → 4500 ceiling); narrow Verifier-1 to "structural citation integrity", broaden Verifier-2 to "cross-spec semantic consistency"; either drop mandate clustering or add a real reason for it; pre-author common ADR-ID-to-file mapping table in the brief.
+
+### Reviewer 2 — Spec-quality auditor (`accept-with-named-amendments`)
+
+- **Objection 1: Framework-ADR + per-variant cross-reference floor not mechanically testable.** `grep` cannot verify pairing — a spec could cite ADR 0050 in §6 References and ADR 0028 in §3 and they'd never be co-located. Need `## ADR-citation index` table making the pairing a single-row grep target.
+- **Objection 2: Mandate-fit YAML schema carries hidden ambiguity.** DEC-2 schema is `greenfield | brownfield | both | n/a`; brief uses `greenfield-fit | brownfield-fit | both | n/a` — pick one. Neither distinguishes "candidate is silent on this work-unit-class" from "deliberately not-applicable."
+- **Objection 3: Word budget 2000-3500 is under-budgeted.** §2 (600-800) + §3 (500-700) + §4 (400-600) + §5 (300-500) + §1 (200) + §6 (200-300) + §7 references (400 min) = **2425-3500 baseline**, leaving zero headroom for BF-L (20 ADRs) or D7-U-1 (22 ADRs).
+- **Objection 4: Missing critical section: §0 ADR-citation index table.** A spec composing 18-25 ADRs needs an upfront index so verifier doesn't have to grep prose.
+- **Objection 5: Citation floor "~25-35 references" is hand-wavy.** Make floor exact per the Phase-5-close handoff table.
+- **Objection 6: Self-check rubric misses verbatim text-pull discipline (AGENTS-MD-bf4431be57).**
+- **Amendments (6):** add §0 ADR-citation index table; word budget 2500-4500 + 500/extra-per-variant; replace hand-wavy reference count with exact per-candidate ADR floor from handoff; resolve `-fit` suffix discrepancy; add `silent` value to mandate-fit YAML or require `n/a` rationale; add self-check items (f) verbatim text-pull and (g) framework+variant co-location.
+
+### Reviewer 3 — Cost/scope hawk (`accept-with-named-amendments`)
+
+- **Objection 1: PR-cap math under-counted.** Realistic count: 1 (brief) + 1 (exemplar) + 9 (specs at one-per-PR) + 1 (matrix) + 2 (verifiers) + 1 (handoff) + 1 (summary) + 1 (retro) + 2 (re-dispatch) = **18-20 PRs vs ≤15 cap**.
+- **Objection 2: Two verifiers is overkill.** Verifier-2 ("every ADR has at least one citing spec") is a `grep -L` against `docs/adr/` — a script, not a subagent. Collapse to 1 verifier + inline script. Saves 1 dispatch + 1 PR.
+- **Objection 3: Re-dispatch budget ≤2 PRs is unrealistic at 9 concurrent specs.** Base rate for verifier surfacing a blocking finding on at least one spec is non-trivial.
+- **Objection 4: Lead-agent ingest of ~35K words of returns is operationally optimistic.** Brief doesn't mandate digest length.
+- **Objection 5: Per-candidate ADR-ID-to-file mapping table production cost unaccounted for.** ~225 mapping table rows the lead agent must hand-author into briefs.
+- **Amendments (5):** consolidate spec PRs to 3 per-sub-wave PRs (one per mandate); collapse to 1 verifier + lead-agent inline script for ADR-coverage; mandate subagent return digest ≤500 words; raise re-dispatch budget to 3 PRs OR explicitly accept Phase-6-followup deferral; pre-author one ADR-mapping table per mandate cluster + parameterize per-candidate.
+
+### Convergence
+
+All three reviewers returned `accept-with-named-amendments` — no `reject-with-counter-proposal`. The dispatch shape (per-candidate parallel fanout + exemplar + verification) is correct; the load-bearing amendments are at the rubric + verifier + PR-consolidation layers, not the dispatch shape layer.
+
+**Load-bearing convergent amendments:**
+1. **Exemplar swap** (Reviewer 1): GF-M → U-C. Mid-difficulty unified candidate that demonstrates framework-ADR + per-variant pairing.
+2. **Word budget tiering** (Reviewers 1 & 2): tier by ADR count, not uniform.
+3. **PR consolidation** (Reviewer 3): 3 sub-wave PRs (not 9 per-spec PRs). Saves ~6 PRs.
+4. **Verifier collapse** (Reviewer 3): 2 → 1 verifier + inline script. Saves ~1 PR + ~1 dispatch.
+5. **§0 ADR-citation index table** (Reviewer 2): mandatory in every spec.
+6. **Subagent return digest ≤500 words** (Reviewer 3): mandate.
+7. **Mandate-fit YAML schema** (Reviewer 2): pin to DEC-2 canonical tokens; add `silent` value.
+
+**Non-load-bearing amendments folded:**
+- Common ADR-ID-to-file mapping table pre-authored in this brief (Reviewers 1 & 3).
+- Verbatim text-pull self-check addition (Reviewer 2).
+- Per-candidate exact reference floor (Reviewer 2).
+
+**Amendments rejected with reason:**
+- Drop mandate clustering entirely (Reviewer 1 alternative): rejected; mandate clustering is preserved because consolidating PRs by mandate (Reviewer 3 amendment) requires the cluster boundary at dispatch time. Reviewer 1's objection ("clustering is theater") is correct under Round 1's "9 per-spec PRs" framing; under Round 2's "3 sub-wave PRs" framing, mandate clustering becomes load-bearing.
+- Raise re-dispatch budget to 3 (Reviewer 3): partially accepted at 3 PRs but flagged as a budget *ceiling* — if more than 1 spec needs re-author, lead agent must consider Phase-6-followup deferral per [AGENTS-MD-cb08b5a7f3](../../../AGENTS.md#self-imposed-deferrals-re-validate-before-honoring).
+
+## Decision (Round 2)
+
+**Option A′. Per-candidate parallel fanout, 3 mandate-clustered sub-waves consolidated to 3 sub-wave PRs, U-C exemplar, tiered word budget, §0 ADR-citation index table, 1 verifier + inline ADR-coverage script, mandatory ≤500-word digests.**
+
+Concretely:
+
+- **Lead-agent inline: U-C exemplar spec** committed as the first Phase-6 artifact. ~3500-word target. Authored using the rubric below. Demonstrates the framework-ADR + per-variant pairing (ADR 0028 + ADR 0058 for P-19; ADR 0029 + ADR 0059 for P-28) for 7-of-9 downstream candidates to inherit.
+- **Wave 6.1 (greenfield, 3 specs in 1 sub-wave PR)**. GF-S + GF-M + GF-C. Three parallel subagents commit to the same sub-wave branch; one PR carries all three spec files.
+- **Wave 6.2 (brownfield, 3 specs in 1 sub-wave PR)**. BF-S + BF-M + BF-L. Same pattern. BF-L's word budget tier: 3500-5500.
+- **Wave 6.3 (unified-attempt, 3 specs in 1 sub-wave PR)**. U-A + U-B + D7-U-1. Same pattern (U-C is the lead-agent-authored exemplar, not in this wave). D7-U-1's word budget tier: 3500-5500.
+- **All three sub-waves fire concurrent** after U-C exemplar lands. Total: 9 spec-authoring subagents across 3 sub-wave PRs.
+- **After all specs land**: lead-agent ≤10-minute aggregation checkpoint + runs `grep -L` ADR-coverage check inline (deterministic script per Reviewer 3 Amendment 2). Then **Wave 6.4 (matrix subagent)** + **Wave 6.5 (1 verification subagent)** fire concurrent.
+- **Verification subagent scope** (revised per Reviewer 1 Objection 4 + Reviewer 2 Objection 1 + Reviewer 3 Amendment 2): **structural citation integrity** (every ADR cited exists; framework-ADR references always paired with per-variant per [AGENTS-MD-a9fb7b42f8](../../../AGENTS.md#framework-adr-scope-boundary-discipline) via §0 index table) **+ cross-spec semantic consistency** (read every paragraph in every spec that cites ADRs 0010-0036, flag interpretation drift on shared framework ADRs). ADR-coverage completeness check moves to lead-agent inline script (not a subagent).
+- **Verification finding triage**. If verifier surfaces zero or non-blocking findings: Phase 6 closes. If verifier surfaces ≤1 spec needing re-author: lead agent re-dispatches on a stacked PR (≤1 re-dispatch PR budgeted). If verifier surfaces ≥2 specs needing re-author: lead agent invokes Phase-6-followup deferral per [AGENTS-MD-cb08b5a7f3](../../../AGENTS.md#self-imposed-deferrals-re-validate-before-honoring) (deferral re-validates at fire-time) and surfaces this as a binding-artifact-triple item per [AGENTS-MD-2adf78e54a](../../../AGENTS.md#deferred-work-binding-artifact-triple).
+
+**Total subagents this run:** 9 (spec authoring, excluding U-C exemplar) + 1 (matrix) + 1 (verifier) = **11 ADR-authoring-equivalent dispatches**, plus 6 adversarial reviewers across this brief's two rounds = **17 subagents total for Phase 6**.
+
+**PR-cap math (revised):** 1 (this brief R2) + 1 (U-C exemplar) + 3 (sub-wave PRs: GF / BF / U) + 1 (matrix) + 1 (verifier findings) + 1 (handoff) + 1 (summary) + 1 (retro) + ≤1 (re-dispatch) = **10-11 PRs against ≤15 cap, 4-5 PRs margin**. Plus 1 already-consumed PR (#181 bring-forward, pre-Phase-6) = **11-12 PRs run total**.
+
+### Revised per-spec rubric (Round-2 amendments folded in)
+
+Each spec-authoring subagent receives:
+
+1. The candidate's [`candidate-registry`](../candidate-registry.md) entry + [`substrate-requirements/<id>.md`](../substrate-requirements/) + [`tracks/<id>.md`](../tracks/) (and `sub-tracks/<id>.md` if applicable).
+2. The full ADR-ID-to-file mapping table — common 0010-0036 published once in this brief (see [§Common ADR-ID-to-file mapping](#common-adr-id-to-file-mapping-0010-0036) below); candidate-specific (variant + orphan) mapping appended per-subagent-brief.
+3. The U-C exemplar spec (when authored).
+4. The rubric (below).
+
+**Per-spec rubric (Round-2 revised).** Section structure, word budget, citation floor:
+
+- **H1**: `# Architecture spec — <candidate-id> (<full name>)`.
+- **YAML frontmatter** per ADR-0004 + per-(work-unit-class) `mandate-fit` block per [DEC-2 canonical schema](../decisions-captured.md#d2--mandate-fit-is-per-architecture--work-unit-class-not-per-architecture):
+  ```yaml
+  based-on-commit: <commit-sha>
+  based-on-date: <YYYY-MM-DD>
+  mandate-fit:
+    initial-spec: greenfield | brownfield | both | n/a | silent
+    refactor: greenfield | brownfield | both | n/a | silent
+    mvp: greenfield | brownfield | both | n/a | silent
+    post-mvp-evolution: greenfield | brownfield | both | n/a | silent
+    regression-fix: greenfield | brownfield | both | n/a | silent
+  ```
+  Token semantics (Reviewer 2 Amendment): `greenfield` = candidate is greenfield-fit on this class; `brownfield` = brownfield-fit; `both` = candidate explicitly claims both; `n/a` = candidate deliberately rejects this class as in-scope (with one-line reason inline in §5); `silent` = candidate has no position (different from `n/a` — silence is not a claim).
+- **§0 ADR-citation index table** (mandatory, new per Reviewer 2 Objection 4):
+  ```
+  | ADR ID | Title | Layer | Variant of (if per-variant) | Citing § |
+  |---|---|---|---|---|
+  | 0010 | P-01 Sandbox runtime | common | — | §2 |
+  | 0028 | P-19 framework | common | — | §2, §3 |
+  | 0058 | P-19 variant U-C | per-variant | 0028 | §2, §3 |
+  ...
+  ```
+  Single-row grep target for `(framework-ADR-id) → (variant-ADR-id)` pairing per [AGENTS-MD-a9fb7b42f8](../../../AGENTS.md#framework-adr-scope-boundary-discipline). Verification subagent reads §0 to enforce the pairing rule.
+- **§1 Overview** (~200 words). Mandate, axis, entry-mode, one-paragraph methodology summary, candidate's load-bearing claim.
+- **§2 Substrate composition** (~600-1000 words depending on tier). Lists every substrate primitive the candidate carries with its ADR ref; explicitly names common-vs-orphan-vs-per-variant for each; framework-ADR references MUST be accompanied by per-variant ADR references per the §0 index pairing.
+- **§3 Methodology shape** (~500-900 words depending on tier). Cycle structure, regime structure if any, work-unit definition, the candidate's distinctive methodology decisions.
+- **§4 Discipline binding** (~400-600 words). Names which of the 21 disciplines (ADRs 0018-0027) the candidate carries and how each binds to substrate + methodology. Names disciplines the candidate is silent on.
+- **§5 Mandate fit** (~300-600 words). Restates the YAML mandate-fit block in prose; per cell, names supporting substrate + methodology evidence + falsifying scenario per the [DEC-1.a falsifier discipline](../decisions-captured.md#d1--unification-verdict-no-methodology-serves-both-mandates-working-hypothesis-falsifiable-by-phase-8). For any `n/a` cell, one-line reason inline.
+- **§6 Open carries** (~200-300 words). Open questions surfaced into Phase 7 / Phase 8 / future ADRs.
+- **§7 References** (mandatory; relative paths only per [AGENTS.md § Internal document references](../../../AGENTS.md#internal-document-references)). Floor: **exact per-candidate ADR set** (per the Phase-5-close handoff per-candidate table) **+ ≥4 supporting docs** (candidate-registry entry + substrate-requirements + track + overlap.md entry).
+
+**Word budget tiering (Round-2 amendment per Reviewers 1 & 2):**
+
+| Tier | Word budget | Candidates | Rationale |
+|---|---|---|---|
+| Light | 2500-3500 | GF-S, GF-M, GF-C, BF-S | Small ADR set (≤15 ADRs); minimal contested-primitive references |
+| Mid | 3000-4500 | BF-M, U-A, U-B, U-C | Medium ADR set (16-19 ADRs); 1-2 per-variant ADRs |
+| Heavy | 3500-5500 | BF-L, D7-U-1 | Large ADR set (20-22 ADRs); 3-5 per-variant ADRs OR significant orphan content |
+
+**Self-check rubric (Round-2 revised)** per [AGENTS-MD-e74e4811a2](../../../AGENTS.md#self-check-rubric-requires-tool-verification-for-measurable-items). Subagent runs:
+
+- (a) `wc -w` on its spec to verify word budget compliance against its tier.
+- (b) `ls` on every cited ADR file path to verify the file exists.
+- (c) `grep` for §0-§7 headers to verify section structure.
+- (d) `grep` the YAML frontmatter for the `mandate-fit:` block and each work-unit-class key.
+- (e) `grep -E '^\| 0[0-9]+'` on §0 table to verify ≥(candidate's per-handoff-table ADR-count) rows present.
+- (f) `grep -F` for verbatim quoted text-pulls when the spec invokes overlap.md or decisions-captured rows per [AGENTS-MD-bf4431be57](../../../AGENTS.md#verbatim-text-pull-when-citing-binding-rule-tables) (new per Reviewer 2 Amendment).
+- (g) `grep` per framework-ADR ID (0028, 0029, 0030, 0036) in §0 row to verify the per-variant column is non-empty when the candidate claims the framework (new per Reviewer 2 Amendment).
+
+**Subagent return digest mandate (Round-2 amendment per Reviewer 3):** Subagent return ≤500 words, structured as: file path + final `wc -w` count + final `wc -l` count + 3-bullet cross-ref summary + open-questions list + self-check results (each item pass/fail). The spec body itself is in the committed file, not the return.
+
+## Common ADR-ID-to-file mapping (0010-0036)
+
+Pre-authored per [AGENTS-MD-8740bd7b0a](../../../AGENTS.md#adr-number-to-filename-mapping-in-subagent-dispatch-briefs) — every per-candidate dispatch brief inherits this table by reference.
+
+| ADR | File | Layer | Notes |
+|---|---|---|---|
+| 0010 | [`docs/adr/0010-p-01-sandbox-runtime.md`](../../../docs/adr/0010-p-01-sandbox-runtime.md) | common substrate | Commodity |
+| 0011 | [`docs/adr/0011-p-02-cost-ceilings.md`](../../../docs/adr/0011-p-02-cost-ceilings.md) | common substrate | Commodity |
+| 0012 | [`docs/adr/0012-p-05-trajectory-capture.md`](../../../docs/adr/0012-p-05-trajectory-capture.md) | common substrate | Commodity |
+| 0013 | [`docs/adr/0013-p-06-watchdog-tiers.md`](../../../docs/adr/0013-p-06-watchdog-tiers.md) | common substrate | Commodity |
+| 0014 | [`docs/adr/0014-p-07-telemetry-ingestor.md`](../../../docs/adr/0014-p-07-telemetry-ingestor.md) | common substrate | Commodity |
+| 0015 | [`docs/adr/0015-p-08-scenario-storage-with-runner-contract.md`](../../../docs/adr/0015-p-08-scenario-storage-with-runner-contract.md) | common substrate | Designed-system |
+| 0016 | [`docs/adr/0016-p-14-judge-router.md`](../../../docs/adr/0016-p-14-judge-router.md) | common substrate | Commodity |
+| 0017 | [`docs/adr/0017-p-22-polyglot-codebase-index.md`](../../../docs/adr/0017-p-22-polyglot-codebase-index.md) | common substrate | Commodity |
+| 0018 | [`docs/adr/0018-discipline-bias-guard.md`](../../../docs/adr/0018-discipline-bias-guard.md) | discipline | — |
+| 0019 | [`docs/adr/0019-discipline-cognitive-escrow.md`](../../../docs/adr/0019-discipline-cognitive-escrow.md) | discipline | — |
+| 0020 | [`docs/adr/0020-discipline-cost-ceiling.md`](../../../docs/adr/0020-discipline-cost-ceiling.md) | discipline | — |
+| 0021 | [`docs/adr/0021-discipline-holdout.md`](../../../docs/adr/0021-discipline-holdout.md) | discipline | — |
+| 0022 | [`docs/adr/0022-discipline-honesty.md`](../../../docs/adr/0022-discipline-honesty.md) | discipline | — |
+| 0023 | [`docs/adr/0023-discipline-knowledge-promotion.md`](../../../docs/adr/0023-discipline-knowledge-promotion.md) | discipline | — |
+| 0024 | [`docs/adr/0024-discipline-regime-classification.md`](../../../docs/adr/0024-discipline-regime-classification.md) | discipline | — |
+| 0025 | [`docs/adr/0025-discipline-scoping.md`](../../../docs/adr/0025-discipline-scoping.md) | discipline | — |
+| 0026 | [`docs/adr/0026-discipline-three-loop.md`](../../../docs/adr/0026-discipline-three-loop.md) | discipline | — |
+| 0027 | [`docs/adr/0027-discipline-trifecta-closure.md`](../../../docs/adr/0027-discipline-trifecta-closure.md) | discipline | — |
+| 0028 | [`docs/adr/0028-p-19-eligibility-regime-classifier.md`](../../../docs/adr/0028-p-19-eligibility-regime-classifier.md) | common substrate | **Framework** — has 4 per-variant ADRs (0039, 0049, 0050, 0058) |
+| 0029 | [`docs/adr/0029-p-28-typed-object-store.md`](../../../docs/adr/0029-p-28-typed-object-store.md) | common substrate | **Framework** — has per-variant ADRs (0051, 0055, 0059, 0062) |
+| 0030 | [`docs/adr/0030-p-29-policy-mediator.md`](../../../docs/adr/0030-p-29-policy-mediator.md) | common substrate | **Framework** — has per-variant ADRs (0052, 0056, 0063) |
+| 0031 | [`docs/adr/0031-p-23-dependency-impact-graph.md`](../../../docs/adr/0031-p-23-dependency-impact-graph.md) | common substrate | Designed-system |
+| 0032 | [`docs/adr/0032-p-12-deterministic-linter-framework.md`](../../../docs/adr/0032-p-12-deterministic-linter-framework.md) | common substrate | Designed-system |
+| 0033 | [`docs/adr/0033-p-25-camel-perimeter.md`](../../../docs/adr/0033-p-25-camel-perimeter.md) | common substrate | 2-candidate fold (BF-S, BF-M) |
+| 0034 | [`docs/adr/0034-p-27-archaeological-brief-tooling.md`](../../../docs/adr/0034-p-27-archaeological-brief-tooling.md) | common substrate | 2-candidate fold (BF-M, BF-L) |
+| 0035 | [`docs/adr/0035-p-24-attribution-store.md`](../../../docs/adr/0035-p-24-attribution-store.md) | common substrate | 2-candidate fold (BF-S, BF-L) |
+| 0036 | [`docs/adr/0036-p-30-event-registrar-substrate.md`](../../../docs/adr/0036-p-30-event-registrar-substrate.md) | common substrate | **Framework** — has per-variant ADRs (0053, 0064) |
+
+Candidate-specific (orphan + per-variant) mapping appended per-subagent-brief from the [Phase-5-close handoff per-candidate table](../SESSION-HANDOFF-2026-05-25-phase-5-close.md#candidate-set-state-at-phase-5-close).
+
+## Round-2 reasoning
+
+Three drivers select Option A′ over Round 1's Option A:
+
+1. **Exemplar U-C demonstrates the framework-ADR + per-variant pattern.** U-C has 1 P-19 variant (ADR 0058) + 1 P-28 variant (ADR 0059) + 1 orphan (ADR 0057 P-32). The exemplar §0 ADR-citation index table will show the framework-ADR + per-variant pairing pattern for 7-of-9 downstream subagents (those whose candidates carry per-variant ADRs) to inherit. GF-M (Round-1 choice) had nothing to demonstrate there.
+
+2. **PR consolidation to 3 sub-wave PRs preserves PR-cap margin.** 11-12 PRs run-total against ≤15 cap gives 3-4 PRs margin for re-dispatch + unanticipated work. Round-1's 18-20 estimate blew the cap.
+
+3. **§0 ADR-citation index table makes framework+variant pairing mechanically testable.** Verification subagent reads §0 rows; the pairing is a single-row grep target rather than a cross-section semantic check. Round-1 rubric required pairing but couldn't enforce it.
+
+The tiered word budget honors that BF-L and D7-U-1 carry larger ADR sets without bloating the light/mid tier specs. The 1-verifier + inline-script collapse saves 1 PR + 1 dispatch.
+
+## Round-2 if-user-overrides rewind point
+
+This brief's commit on `claude/phase-6-architecture-specs-NHmM3`. Revert to undo the Round-2 framing; no spec-authoring subagent has fired (this brief precedes the wave dispatch).
+
+## Honest acknowledgements (Round 2)
+
+Per [AGENTS-MD-ffe35aa500](../../../AGENTS.md#honest-acknowledgements-for-pre-round-2-wave-firing): no Wave-6.1/6.2/6.3/6.4/6.5 ADR-authoring subagent has fired pre-Round-2; this dispatch brief precedes the wave dispatch. Mechanically verifiable: `git log --oneline -- architectures/v3/specs/` returns empty as of this Round-2 commit.
+
+**Process-bug carry-forward.** This run's first action was PR #181 (Phase-5 bring-forward), executed before this brief was authored. The brief's premises hold under the corrected main state.
+
+## Open questions for the Round-2 adversarial reviewers to challenge
+
+1. **U-C exemplar choice.** Is U-C right? Or does U-C's specific shape (interval-kind P-19 variant + anchor-envelope P-28 variant) miscalibrate subagents on candidates with different variant shapes (BF-L per-region P-19; D7-U-1 timer-driven P-30)?
+2. **Tiered word budget enforceability.** Each tier has a 1000-word band. Is that wide enough that the budget becomes non-binding (specs always run to the ceiling)? Should the tier be tighter or expressed as a function (e.g., `2000 + 150 × ADR-count`)?
+3. **PR consolidation downside.** 3 sub-wave PRs (3-4 specs each) means a single bad spec blocks merging the whole sub-wave PR. Should the 4 unified-attempt specs (Wave 6.3) be 2 PRs (U-A+U-B together; D7-U-1 alone) given D7-U-1's high complexity?
+4. **Verifier collapse risk.** 1 verifier doing both structural integrity + semantic consistency may be too much for one fresh-context subagent. Split or keep collapsed?
+5. **§0 index table production cost.** Per-spec ADR-citation index is ~18-25 rows the subagent authors. Is this material extra work, or does it land naturally as part of §2/§7 authoring?
+6. **Phase-6-followup deferral trigger ("≥2 specs needing re-author").** Is this threshold right? Or should it be ≥3 (more aggressive in-session work) or ≥1 (more conservative)?
+7. **Mandate clustering still surviving in Round 2.** Reviewer 1 said clustering was theater; the Round-2 fix (3 sub-wave PRs) makes clustering load-bearing for PR-consolidation purposes. Is the clustering then justified, or is there a cleaner shape (e.g., 1 omnibus PR with 9 specs)?

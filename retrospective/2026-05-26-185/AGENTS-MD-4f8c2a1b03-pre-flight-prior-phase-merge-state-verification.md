@@ -1,0 +1,9 @@
+# agent instruction
+
+**Pre-flight prior-phase merge-state verification.** When a dispatch prompt or session-handoff doc says "Phase N closed; the following PRs landed", the agent's first action after the scope envelope (and before any non-Read tool call on the new phase's work) MUST be to verify the prior phase's PRs actually landed in `main` — not just in stacked-PR base branches. Concrete check: `git ls-tree -r origin/main --name-only | grep -E "<expected files from prior phase>"` AND `git log --oneline origin/main ^origin/<prior-phase-tip-branch>` returns empty. If the verification fails, surface to the user via AskUserQuestion (in unattended mode, propose a bring-forward PR as the default action) before proceeding.
+
+*Grounded in: 2026-05-26 Phase-6 run started with the discovery that the Phase-5 work (55 ADRs + handoff + AGENT-ENTRY) was missing from main; PRs #160-#177 had merged into a stacked-PR chain that never tipped into main. The recovery (PR #181) was clean but added one round-trip; without pre-flight verification, the Phase-6 specs would have referenced ADRs not in main.*
+
+# justification
+
+The stacked-PR pattern's failure mode is "the chain merges fine but never tips into main; the user thought they had merged the chain, but they had merged it into the wrong base." Detecting this at session-start costs ~10 seconds (one `git log` + one `git ls-tree`); detecting it after spec-authoring fires would have wasted a sub-wave of work + user round-trip to remediate. The marginal cost of the rule (one check per session-start when a handoff references prior-phase work) is minimal. The asymmetric cost without (every session that picks up from a stacked-PR-chain-merge is at risk of authoring against a stale base) is high. Particularly relevant for multi-session autonomous workflows where the merging-user and the authoring-agent are different sessions.

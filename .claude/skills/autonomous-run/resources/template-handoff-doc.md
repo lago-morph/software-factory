@@ -53,6 +53,24 @@ Numbered list of items the next agent should consider surfacing or deciding. Eac
 - Lead-agent's view (if any) — but flag if it's a value judgment vs an evidence-based position.
 - Where in the corpus / artifact set the evidence lives.
 
+## Task-aware reading lists
+
+The next likely tasks the next agent will pick up, with a per-task curated reading list. These feed directly into the [`AGENT-ENTRY.md`](../../../../AGENT-ENTRY.md) "Reading lists by task" section at handoff time — the autonomous-run skill's handoff discipline updates the entry doc from this section.
+
+Format: one subsection per anticipated task; per-subsection a "Read:" line + a "Skip:" line. Each entry is a markdown link with a descriptive label (no bare-text references, no backtick-wrapped paths-in-link). Per [`AGENTS.md` § Internal document references](../../../../AGENTS.md#internal-document-references).
+
+### `<Likely-next-task 1>`
+
+- Read: `[<descriptive label>](<path>)`, `[<descriptive label>](<path>)`, ... (the docs the next agent needs to make this decision or perform this work).
+- Skip: `<category of docs the agent should NOT eagerly load>` (e.g., "per-candidate substrate-requirements until the ADR is authored", "per-primitive sketches; drill on demand").
+
+### `<Likely-next-task 2>`
+
+- Read: ...
+- Skip: ...
+
+If you cannot enumerate the next likely tasks at handoff time, leave a single subsection: `### (Next tasks not yet enumerated)` — and explain why. The next agent then falls back to the entry doc's section-by-section navigation.
+
 ## Concrete pickup steps for the next agent
 
 Numbered list, in order:

@@ -1,4 +1,6 @@
-# Session handoff — 2026-05-25 (Phase 4 closed)
+# Session handoff — 2026-05-25 (Phase 4 closed) [SUPERSEDED]
+
+> **[SUPERSEDED]** This handoff is superseded by the [Phase-5a close handoff](SESSION-HANDOFF-2026-05-25-phase-5a-close.md). Phase 5a (Wave 5.1a + 5.1b + 5.2 ADRs) is closed; Wave 5.3 is the active owed work with a binding Phase-6 gate. Read the active handoff first.
 
 This is the pickup brief for the next agent. **Phase 4 is closed** as of the unattended Phase-4 dispatch session completed 2026-05-25 (same calendar day as Phase 3.5 close, evening run). The next work is **Phase 5** (per-candidate ADRs + common ADRs on shared primitives + discipline ADRs).
 

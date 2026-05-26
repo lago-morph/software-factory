@@ -1,5 +1,19 @@
 # Methodology candidate registry — v3 catalog (as of Phase 3.4 close)
 
+## TL;DR (≤200 words)
+
+Registry of 10 methodology candidates carried forward from Phase 3.4. **Three mandates:** greenfield (GF-S substrate-first, GF-M methodology-first, GF-C cold-start-first); brownfield (BF-S substrate-first, BF-M methodology-first, BF-L legacy-ingestion-first); unified-mandate-attempt (U-A escrow-graph-factory, U-B pace-layered-escrow-factory, U-C anchor-distance-factory, D7-U-1 falsification-topology-factory).
+
+**Per-candidate entry shape:** source track file, mandate scope, axis declaration, required substrate primitives, methodology shape, Phase-3.2/3.3/blind-axis open critique findings, defense status, buildability sketches owed for Phase 3.5. A summary table at the end of the file carries one row per candidate.
+
+A separate **Phase-3.5.5 RG-primitive application table** tracks which RG-flagged primitives apply to which candidates and records each candidate's bounded sub-track smoke-test outcome from Wave 4.5. A **Phase-4 close summary** section records per-candidate Phase-5 entry posture.
+
+Carries a strikethrough-marked **"Greenfield → brownfield continuity"** section near the top (WITHDRAWN per [DEC-1.b](phase-3.4-decisions-resolved.md)). Its presence in the file marks the structural commitment that drift concerns live within each candidate's methodology, not in a cross-candidate matrix; see the body for the binding rationale.
+
+*Regenerated at end-of-run by the [autonomous-run](../../.claude/skills/autonomous-run/SKILL.md) skill; body below is the source of truth.*
+
+---
+
 This file is the next-session reference for the methodology candidates carried forward per [`phase-3.4-decisions-resolved.md`](phase-3.4-decisions-resolved.md). Ten candidates total: 3 greenfield-mandate, 3 brownfield-mandate, 4 unified-mandate-attempt. Each entry: source track file, mandate scope, axis declaration, substrate primitives the methodology requires, methodology shape, open critique findings (Phase-3.2 / Phase-3.3 / blind-axis), defense status, buildability sketches owed for Phase 3.5.
 
 **Carry-forward criterion** (recap from handoff): a candidate is carried forward when (i) each Phase-3.2/3.3 critique finding against it is either addressed in its track/draft or noted as an accepted open concern; (ii) each substrate primitive it requires has a Phase-3.5 buildability sketch or is a placeholder pending one; (iii) its load-bearing claims are corpus-grounded. Candidates with open items (i) or missing (ii) carry forward as *placeholders pending defense* — preserved in this registry but cannot proceed to Phase 5/6 until the defense lands.

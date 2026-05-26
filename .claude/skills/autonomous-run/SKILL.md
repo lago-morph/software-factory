@@ -324,6 +324,15 @@ SESSION-HANDOFF document:
   file.
 - Fix stale-path references per
   [`AGENTS.md` § Internal document references rule 3](../../../AGENTS.md#internal-document-references).
+- **Update [`AGENT-ENTRY.md`](../../../AGENT-ENTRY.md) filename pointers.**
+  Specifically: (a) section 2 ("Current state") link target switches to the
+  new SESSION-HANDOFF; (b) section 7 / "Reading lists by task" gets refreshed
+  from the new handoff's "Task-aware reading lists" section (populated per
+  [`resources/template-handoff-doc.md`](resources/template-handoff-doc.md));
+  (c) any sub-doc rename surfaced during the run is reflected in the entry
+  doc's navigation lines. Run
+  [`scripts/check-internal-refs.py --include 'AGENT-ENTRY.md' --no-bare-text`](../../../scripts/check-internal-refs.py)
+  after the update to catch broken links.
 
 The handoff is the durable cross-session state; the morning summary is the
 single-session review artifact. Both are required when a phase closes
@@ -340,18 +349,28 @@ When the run stops (any of the allowed stop conditions above):
    [`in-flight-workflow-tracking`](../in-flight-workflow-tracking/SKILL.md),
    nothing leaves in-flight without a recorded outcome.
 2. **Commit + push everything.** Verify `git status` is clean.
-3. **Write the morning summary** if not already written. Push as its own PR
+3. **TL;DR regeneration over tagged docs.** Any doc carrying a top-of-file
+   `## TL;DR (≤200 words)` section is tagged for regeneration. Dispatch one
+   subagent per tagged doc; the subagent reads the body, writes a fresh
+   TL;DR (≤200 words, structure-not-conclusions discipline per the
+   [context-slimming plan](../../../CONTEXT-SLIMMING-PLAN.md#part-3--tldr-first-discipline-for-heaviest-docs-proposal-4)),
+   and the lead agent commits each regenerated TL;DR section. Tagged docs
+   at time of writing: [`ARCHITECTURE-V3-SYNTHESIS-PLAN.md`](../../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md),
+   [`architectures/v3/candidate-registry.md`](../../../architectures/v3/candidate-registry.md).
+   Find new tagged docs by `grep -lR "^## TL;DR (≤200 words)" --include='*.md'`
+   at run close. Staleness window from this step: ≤1 run.
+4. **Write the morning summary** if not already written. Push as its own PR
    at the top of the stack.
-4. **Update the handoff document** if a phase closed during the run.
-5. **Auto-invoke [`self-retrospective`](../self-retrospective/SKILL.md).**
+5. **Update the handoff document** if a phase closed during the run.
+6. **Auto-invoke [`self-retrospective`](../self-retrospective/SKILL.md).**
    The retro captures durable lessons from the run before they're lost to
    context truncation. Even if you think the run was uneventful, the retro
    surfaces subtle patterns. Run it before the final stop.
-6. **Subscribe to all PRs opened** (per
+7. **Subscribe to all PRs opened** (per
    [`in-flight-workflow-tracking`](../in-flight-workflow-tracking/SKILL.md)).
    Even if the run is ending, the user may merge PRs which trigger webhook
    events that the next session inherits.
-7. **End the run with a one-paragraph status message** to the user. Names
+8. **End the run with a one-paragraph status message** to the user. Names
    the morning-summary PR, the suggested merge order, and any morning-review
    items.
 

@@ -9,6 +9,16 @@
 
 ---
 
+## TL;DR (≤200 words)
+
+Eight-phase plan to produce a v3 architecture set. **Phase 0** archives prior versions and authors the brief. **Phase 1** lays pre-synthesis substrate across three parallel tracks. **Phase 2** runs a 9-track synthesis fanout (3 greenfield, 3 brownfield, 3 unified per [DEC-1](architectures/v3/decisions-captured.md)). **Phase 3** merges and adversarially reviews the syntheses across four sub-stages (3.1 syntheses → 3.2 critiques → 3.3 cross-mandate → 3.4 decisions). **Phase 3.5** (new in v1.2) renders substrate-primitive buildability sketches over the carried-forward candidates. **Phase 4** extracts per-candidate substrate-requirements and shared disciplines across 10 candidates. **Phase 5** authors ADRs in three waves (common-primitive, discipline, candidate-specific). **Phases 6–8** produce per-candidate architecture specs, back-fill audits against archived v1/v2, and lean-eval briefs.
+
+Bound by a 15-persona bias-guard catalog (§3) deployed at every phase, working definitions of architecture/substrate/methodology/discipline (§4), the scoping principle (carry every defensible candidate forward), and explicit checkpoints (§6). The accuracy ≫ speed ≫ tokens principle (§0) sets all defaults.
+
+*Regenerated at end-of-run by the [autonomous-run](.claude/skills/autonomous-run/SKILL.md) skill; body below is the source of truth.*
+
+---
+
 ## 0. North-star principle
 
 **Accuracy ≫ speed ≫ tokens.** This step sets the direction for hundreds or thousands of hours of downstream work. Every bias guard, every adversarial pass, every checkpoint is justified by the asymmetric cost: a wrong synthesis is enormously expensive; an over-careful synthesis is only token-expensive.

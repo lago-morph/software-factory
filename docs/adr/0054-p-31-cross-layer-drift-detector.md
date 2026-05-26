@@ -1,0 +1,39 @@
+# ADR 0054: U-B P-31 cross-layer drift detector
+
+- **Status**: Accepted
+- **Date**: 2026-05-25
+- **Deciders**: lead agent (Phase 5 Wave 5.3c1 subagent)
+
+## Context
+
+[U-B Pace-Layered Escrow Factory](../../architectures/v3/tracks/unified-B.md) is the sole claimant of [P-31 cross-layer drift detector](../../architectures/v3/primitives/P-31-cross-layer-drift-detector.md); the primitive is a U-B orphan and load-bearing for U-B's distinguishing claim — *invariant-based drift detection across the five pace layers* (L0 Standards, L1 Architecture, L2 Spec, L3 Plan, L4 Code). Without P-31 the U-B watchdog story collapses to per-layer intra-layer checks (GtWR, EARS, AILCCP presence) that other unified candidates also offer.
+
+The Phase-3.5 buildability sketch verdicted P-31 `research-grade-uncertainty`: the *scaffolding* (typed-object snapshots, graph-walk, OPA evaluation, LLM-judge dispatch) is commodity, but the *invariants the detector would check* were not enumerated in the corpus — Brier's pace-layer framework names the layers without specifying cross-layer constraints. The Phase-3.5.5 [P-31 smoke-test](../../architectures/v3/primitives/P-31-smoke-test-invariants.md) produced 5 of 5 non-trivial corpus-anchored invariants per [auto-002 Round 2](../../architectures/v3/decisions/auto-002-ub-path.md). The Wave 4.5 [invariant-authoring sub-track](../../architectures/v3/sub-tracks/u-b-invariant-authoring.md) scaled the recipe to **20 invariants, exceeding the ≥15 target**, with the 1-per-pair smoke-test set as the documented fallback. The forcing failure mode is [F34 cross-layer drift](../../architectures/v3/failure-modes-v3.md#f34--cross-layer-drift) (greenfield **high**; brownfield **critical**) — *locally satisfied spec/plan/code that silently violates upper-layer invariants*, named by U-B §2.5 as Patrol's primary signal.
+
+## Decision
+
+**Build P-31 as a per-layer-pair invariant registry layered on the [ADR 0029 P-28 typed-object store](0029-p-28-typed-object-store.md), with envelope kind `LayerPairInvariant{layer-pair, invariant-id, construction-shape ∈ {OPA-Rego, Postgres-CTE, property-test, LLM-judge-hybrid}, corpus-citation, severity-default, recommended-handback-layer}`.** The invariant evaluator runs at per-cycle boundaries (Patrol cadence, any commit to an L0–L3 typed object, any L4 builder cycle touching a symbol the [ADR 0031 P-23 dependency-impact graph](0031-p-23-dependency-impact-graph.md) traces to an upper-layer invariant tag), reading typed-object snapshots via the U-B layer-typed envelope (ADR 0049/0055 — the U-B variant of P-28's per-candidate envelope schema), and emits a typed `LayerDriftEvent{layer-pair, invariant-id, drifted-artifact-handle, severity, recommended-handback-layer}` to the [ADR 0030 P-29 policy mediator](0030-p-29-policy-mediator.md), which converts the event into an operator handback at the appropriate layer-transition escrow interval through closure evaluation.
+
+The registry seeds with the **Wave 4.5 verified 20 invariants** across L0↔L1, L1↔L2, L2↔L3, L3↔L4, and the long-distance L0↔L4 pair. Construction-C *hybrid* is the canonical composition rule: deterministic OPA + Postgres CTE + property tests for declared-invariant arms; LLM-judge residue (via [P-14 cross-family panel](../../architectures/v3/primitives/cluster-C2.md)) only for substance-check arms (notably L0↔L4 runtime-mode shape) — judge verdicts are advisory, never deterministic, with explicit confidence thresholds and cross-family panel composition.
+
+## Alternatives considered
+
+**B. Per-cycle simple-diff drift detection.** Snapshot each layer's artifact and emit drift on any cross-cycle diff. *Why rejected:* simple-diff is *change* detection, not *drift* detection — every L4 commit produces a diff against the prior cycle but most are intended changes, not invariant violations. The substantive F34 signal is *locally-satisfied-but-globally-inconsistent* artifacts; a diff against the last cycle cannot distinguish a legitimate L3 plan refinement from an L3 plan that has silently lost trace to its L2 spec. Per the [P-31 sketch §Construction path](../../architectures/v3/primitives/P-31-cross-layer-drift-detector.md), referential-integrity-style checks were *explicitly disqualified* as trivial; diff-only would be even weaker.
+
+**C. LLM-judge-driven detection only.** Have a P-14 cross-family panel read adjacent-layer artifacts each cycle and return a `DriftVerdict`. *Why rejected:* the judge arm inherits [F37 unreliability](../../architectures/v3/failure-modes-v3.md) (Larbi MCC ≤ 0.55 for LLM-as-judge semantic-divergence). Replacing the deterministic invariant registry with a judge-only path is the [F52 *Tempting-Wrong-Hybrid*](../../architectures/v3/failure-modes-v3.md) trap U-B's OQ-PLEF-8 explicitly names, and defeats the invariant rigor that distinguishes U-B from candidates relying on judge ensembles. The 20 Wave 4.5 invariants demonstrate deterministic substance-checks exist; abandoning them to a judge would discard verified work.
+
+## Consequences
+
+**Easier:** F34 detection becomes substrate-enforced and corpus-traceable — each `LayerDriftEvent` carries an invariant-id that resolves to a Wave 4.5 invariant with a verbatim corpus citation, making drift signals auditable rather than judge-opaque. The P-28/P-29/P-31 triple gives U-B a complete typed-object → invariant → policy-closure pipeline. P-23's dependency-impact graph is reused as the trigger surface for L3↔L4 expected-touch closure, so the substrate composition is internally consistent.
+
+**Harder:** Maintaining the invariant registry as L0 standards evolve is now a per-cycle methodology obligation; OPA bundle distribution + Rego authoring become per-environment ops requirements. The L0↔L4 judge-arm RG inheritance is *not* eliminated — it is contained behind a confidence-threshold + cross-family-panel construction with degraded-deterministic-reachability fallback, but the substantive shape-match arm remains research-grade.
+
+**Explicitly NOT promising:** (i) detection of multi-cycle population drift (OQ-PLEF-3, F48 tacit collusion) — Wave 4.5 invariants are per-cycle snapshots; population-scale drift is deferred to Phase 5 ADR or accept-as-RG; (ii) elimination of F37 inheritance on the L0↔L4 judge arm — caveat carried per [u-b.md §2](../../architectures/v3/substrate-requirements/u-b.md); (iii) corpus-source diversification beyond AILCCP / EARS-GtWR / El Kaim Ch8 — Wave 4.5 concentrates on the three richest corpus surfaces, by design rather than oversight. **Phase-8 lean-eval candidate:** invariant calibration (per-invariant precision/recall on a held-out drift corpus) + drift-signal correlation across the 20-invariant set (do invariants fire independently or in clusters? — informs Patrol policy thresholds).
+
+## References
+
+- [P-31 buildability sketch](../../architectures/v3/primitives/P-31-cross-layer-drift-detector.md) and [P-31 smoke-test invariants (5/5 non-trivial)](../../architectures/v3/primitives/P-31-smoke-test-invariants.md)
+- [U-B substrate requirements § P-31](../../architectures/v3/substrate-requirements/u-b.md) and [U-B invariant-authoring Wave 4.5 sub-track (20 invariants ≥15 target)](../../architectures/v3/sub-tracks/u-b-invariant-authoring.md)
+- [ADR 0029: P-28 typed-object store](0029-p-28-typed-object-store.md) and [ADR 0030: P-29 policy mediator](0030-p-29-policy-mediator.md) — substrate dependencies; [ADR 0031: P-23 dependency-impact graph](0031-p-23-dependency-impact-graph.md) — L3↔L4 trigger surface
+- [F34 cross-layer drift](../../architectures/v3/failure-modes-v3.md#f34--cross-layer-drift) — the load-bearing failure mode this primitive defends against
+- [auto-002 Round 2 (U-B path)](../../architectures/v3/decisions/auto-002-ub-path.md) — smoke-test verdict logic and full sub-track authorization

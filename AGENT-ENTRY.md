@@ -14,7 +14,8 @@ This is the top-level navigation document for new agent sessions on this repo. I
 
 ## 2. Current state
 
-- [Phase-5 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-25-phase-5-close.md) — pickup brief for the next agent; **Phase 5 fully closed with all 55 ADRs landed across 7 waves**; per-candidate ADR set table; Phase-6 architecture-spec authorship UNBLOCKED; task-aware reading lists for Phase 6 dispatch shape + per-candidate parallel fanout. **This is the active handoff.** Update this entry's link target when a new SESSION-HANDOFF is written.
+- [Phase-6 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-26-phase-6-close.md) — pickup brief for the next agent; **Phase 6 fully closed with 10 architecture specs + mandate-fit matrix + verification subagent PASS WITH AMENDMENTS**; per-candidate spec set + matrix; Phase-7 back-fill audit UNBLOCKED; task-aware reading lists for Phase 7 dispatch shape + per-candidate parallel back-fill fanout; ADR 0049 documentation erratum on the Phase-5-close handoff. **This is the active handoff.** Update this entry's link target when a new SESSION-HANDOFF is written.
+- [Phase-5 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-25-phase-5-close.md) — superseded by Phase-6-close above. **Note**: this prior handoff's per-candidate ADR set table has a documentation defect on BF-M (assigns ADR 0049 to BF-M; actually BF-L's per-variant). See the Phase-6-close handoff erratum for the correction.
 
 ## 3. Plan
 

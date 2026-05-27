@@ -61,15 +61,15 @@ Per Reviewer 5 Defect 1 + Reviewer 6 D-H5 amendments. Each default verified by `
 
 | Default | Source claim | BF-L verdict | Spec cite |
 |---|---|---|---|
-| D-1 specs durable | `00-synthesis.md` §2.1 | `challenged` | BF-L spec §4 final paragraph: *"D-1 (specs as the durable artifact) is challenged per [BF-L §4 D-1 challenge]( ../tracks/brownfield-legacy-ingestion-first.md#4-defaults-accepted-vs-challenged-all-7-marked) — the durable artifact is the Codebase Model."* The substrate's P-26 displaces the spec as the load-bearing durable artifact. |
-| D-2 scenarios out-of-tree | `00-synthesis.md` §2.2 | `challenged` | BF-L spec §3.5 distinctive-methodology #1: *"Scenarios are inherited from the model, not authored out-of-tree — explicit challenge to D-2."* + spec §2.4 P-27 cite: scenarios are derived from gaps in the Codebase Model, not maintained as a separate out-of-tree corpus. |
+| D-1 specs durable | `00-synthesis.md` §2.1 | `challenged` | BF-L spec §4: *"D-1 (specs as the durable artifact) is challenged — the durable artifact is the Codebase Model."* Substrate P-26 displaces spec as load-bearing durable artifact. |
+| D-2 scenarios out-of-tree | `00-synthesis.md` §2.2 | `challenged` | BF-L spec §3.5: *"Scenarios are inherited from the model, not authored out-of-tree — explicit challenge to D-2."* Scenarios derived from gaps in Codebase Model. |
 | D-3 Agent = Model + Harness | `13-round-2-synthesis.md` §1.1 C10 | `absorbed (with adaptation, partial challenge)` | BF-L spec §4: *"D-3 (Agent = Model + Harness) is partially challenged — the Codebase Model is a substrate primitive that does not decompose into either."* Per `be-generous` bias: Agent shape absorbed; partial-challenge is BF-L specialization. |
 | D-4 holdout discipline | `13-round-2-synthesis.md` §1.1 C13 | `absorbed (verified at specs/bf-l.md §2.5 + §4 holdout binding)` | BF-L spec §2.5: *"Substrate marks subsets of the Codebase Model itself as held-out (partition=train\|holdout tag attaches to model-derived scenarios). Ingestion-aware judges enforce the partition."* + §4 holdout-discipline binding ADR 0021. |
-| D-5 hard cost ceilings | `13-round-2-synthesis.md` §1.1 C15 | `absorbed (verified at specs/bf-l.md §3.1 + §4 cost-ceiling binding)` | BF-L spec §3.1: *"Cost ceiling per ADR 0011 P-02 cost ceilings: ingestion has a higher one-time ceiling than per-cycle work — 'the ceiling itself is per-phase, not flat' per BF-L §4 D-5 acceptance with justification."* Per-loop parameterisation (ingestion > per-cycle > maintenance). |
-| D-6 tiered watchdog | `13-round-2-synthesis.md` §1.1 C14 | `absorbed (verified at specs/bf-l.md §2.6 + §3.2 step 6 Patrol-tier monitors model drift)` | BF-L spec §2.6: *"P-06 watchdog tiers (ADR 0013) — Triage tier parameterised by the Codebase Model (stalled agent in low-coverage area triggers earlier than in high-coverage area)."* Per-region parameterisation is BF-L's specialization. |
+| D-5 hard cost ceilings | `13-round-2-synthesis.md` §1.1 C15 | `absorbed (verified at specs/bf-l.md §3.1 + §4 cost-ceiling)` | Per-loop parameterisation (ingestion > per-cycle > maintenance) — *"the ceiling itself is per-phase, not flat."* |
+| D-6 tiered watchdog | `13-round-2-synthesis.md` §1.1 C14 | `absorbed (verified at specs/bf-l.md §2.6 + §3.2 step 6)` | BF-L spec §2.6: Triage tier parameterised by Codebase Model — stalled agent in low-coverage area triggers earlier. Per-region parameterisation is BF-L specialization. |
 | D-7 trajectory capture | `13-round-2-synthesis.md` §1.1 C16 | `absorbed (verified at specs/bf-l.md §3.2 step 6 + §4 cognitive-escrow + §2.6 BF-L specialization)` | BF-L spec §4 cognitive-escrow: *"ingestion trajectories become part of the Codebase Model — Loop-3 reconciliation can re-read how a region was indexed and detect ingestion-pass drift."* |
 
-**Summary:** 5-of-7 defaults absorbed with explicit cite; D-1 + D-2 explicitly challenged (per BF-L's substrate-displaces-spec axis + scenarios-from-model axis). D-3 partially challenged (Codebase Model is a third substrate primitive not absorbed into either Agent or Harness, but the Agent=Model+Harness shape persists). No silent absorptions in this candidate.
+**Summary:** 5-of-7 absorbed with explicit cite; D-1 + D-2 explicitly challenged; D-3 partially challenged. No silent absorptions.
 
 ## §2 — archive/research-plan.md
 
@@ -93,7 +93,7 @@ Pre-v3 research-action plan (2026-05-14). User-stated constraints already extrac
 
 ### §2.3 Notes
 
-Research-plan.md's user-stated constraints (UC1 lights-out mandate / UC4 brownfield-cold-start / UC5 / UC6 archive-and-rebuild) are already in `constraints-extracted.md` and NOT Phase-7 scope. UC4 brownfield-cold-start is structurally load-bearing for BF-L (its day-0 problem) but the user-constraint extraction already carried it forward; Phase-7 audit does not re-litigate.
+User-stated constraints (UC1/UC4/UC5/UC6) already in `constraints-extracted.md` and NOT Phase-7 scope. UC4 brownfield-cold-start is structurally load-bearing for BF-L but the user-constraint extraction already carried it forward.
 
 ## §3 — archive/synthesis-v1-v2/00-synthesis.md
 
@@ -365,7 +365,7 @@ v2 Architecture 4 — Evolutionary Tournament. "The factory does not specify the
 
 ### §9.3 Notes
 
-Tournament's primary primitives (population, predator, tournament bracket) are N/A to BF-L (BF-L is single-model-single-codebase), but cross-model-family diversity (§9.1.3) and independence policy (§9.1.7) land at substrate level. Predator-agent (§9.1.5) is explicitly rejected with reason: BF-L's per-region hard-floor table + cross-family judge substitutes for runtime predator pressure. BF-L's loops-within-loops absorption (§9.1.6) is cadence-stratified rather than generation-stratified — the same primitive shape carrying different content.
+Tournament's primary primitives (population, predator, bracket) are N/A to BF-L (single-model-single-codebase), but cross-model-family diversity (§9.1.3) + independence policy (§9.1.7) land at substrate. Predator-agent (§9.1.5) explicitly rejected: BF-L's per-region hard-floor table + cross-family judge substitutes. Loops-within-loops absorption (§9.1.6) is cadence-stratified rather than generation-stratified.
 
 ## §10 — archive/architectures-v2/failure-modes.md
 
@@ -433,15 +433,15 @@ F1-F20 per-architecture coverage matrix PLUS "Coverage column scores" per-archit
 
 ### §10.3 Notes (REQUIRED §N.3 ADR-0036 framing characterization per Reviewer 5 Defect 2 + auto-007 amendment)
 
-**ADR-0036 / P-30 framing characterization — BF-L "commodity dispatch surface" (per Reviewer 5 / scoping-skeptic Defect 2 + auto-007 §N.3 amendment + Phase-6 verifier Finding-2).** BF-L's §0 ADR-citation index row for 0036 carries the verbatim annotation:
+**ADR-0036 / P-30 framing — BF-L "commodity dispatch surface"** (per Reviewer 5 Defect 2 + auto-007 §N.3 amendment + Phase-6 verifier Finding-2). BF-L's §0 ADR-citation index row for 0036 carries the verbatim annotation:
 
 > *"0036 IS consumed (without per-variant binding) by P-13 maintenance-loop dispatch ([ADR 0048](../../../docs/adr/0048-p-13-maintenance-loop.md)), so 0036 appears in §0 as a **commodity dispatch surface**, not as a framework requiring BF-L per-variant authorship."*
 
-(per [BF-L spec §0 framework + per-variant pairing check](../specs/bf-l.md#0-adr-citation-index))
+(per [BF-L spec §0](../specs/bf-l.md#0-adr-citation-index))
 
-This is **distinct from U-A and D7-U-1's "registrar-framework" framing of the same ADR**. U-A 0053 + D7-U-1 0064 are per-variant ADRs on top of framework ADR 0036; BF-L has *no per-variant ADR for 0036* because BF-L consumes the event registrar only as a dispatch substrate (P-13 emits `kind=maintenance-trigger` events; reconciliation handlers subscribe). The substrate doesn't require BF-L to define new event types, new envelope schemas, or new registrar policies — it consumes the framework verbatim. This characterization is load-bearing for the silent-absorption auditor's cross-spec ADR-0036 framing audit (auto-007 §Decision Round 2 amendment — Reviewer 2 A3 + Reviewer 6 D-H4): BF-L's "commodity dispatch" framing MUST coexist alongside U-A/D7-U-1's "registrar-framework" framing without being collapsed into the same characterization. Per-candidate verdicts remain authoritative for each spec; the auditor's read is the reconciliation surface.
+**Distinct from U-A and D7-U-1's "registrar-framework" framing.** U-A 0053 + D7-U-1 0064 are per-variant ADRs on framework 0036; BF-L has *no per-variant ADR for 0036* — P-13 emits `kind=maintenance-trigger` events, reconciliation handlers subscribe; substrate consumes the framework verbatim without new event types / envelope schemas / registrar policies. The silent-absorption auditor's cross-spec ADR-0036 framing audit (per Reviewer 2 A3 + Reviewer 6 D-H4) MUST preserve this distinction — BF-L's "commodity dispatch" framing coexists with U-A/D7-U-1's "registrar-framework" framing without collapse.
 
-**F-mode coverage summary for BF-L.** 15-of-20 F-modes absorbed (F1, F2, F4, F5, F6, F7, F8, F10, F11, F12, F13, F14, F15, F16, F19, F20). F8 and F20 are *verified-with-deepest-mitigation* (Loop-3 P-13 maintenance loop is the structural defence). F11 and F14 verified-absorbed with explicit BF-L substrate citations. 1 TBD (F17 parallel-agents — methodology call given snapshot-consistency substrate support). 4 N/A (F3, F9, F18 spec-discipline-presupposes-D-1 which BF-L challenges; A1-A4 coverage rows are per-architecture characterizations not BF-L-actionable). The 4 per-architecture coverage-strength rows are informational characterizations of the v2 architectures, not BF-L-actionable items.
+**F-mode coverage summary.** 15-of-20 absorbed (F1, F2, F4, F5, F6, F7, F8, F10, F11, F12, F13, F14, F15, F16, F19, F20). F8 + F20 verified-with-deepest-mitigation (Loop-3 P-13 maintenance loop). F11 + F14 verified-absorbed. 1 TBD (F17 parallel-agents on shared Codebase Model). 4 N/A (F3, F9, F18 presuppose D-1 which BF-L challenges; A1-A4 coverage rows are per-v2-architecture).
 
 ## §11 Summary
 
@@ -457,28 +457,26 @@ This is **distinct from U-A and D7-U-1's "registrar-framework" framing of the sa
 
 YAML frontmatter folds `challenged` into `rejected` per schema convention; per-cell tables use distinct tokens.
 
-**High-confidence absorbed cells:** D-4, D-5, D-6, D-7 (verified per §1.5); F8 + F20 (verified-with-deepest-mitigation — BF-L's signature contributions); F11 + F14 (verified at §3.2 step 7 + §2.1 structural view); §7.1.1 Atelier compounding core thesis (verified at historical view); §8.1.8 Foundry CM-as-spine (verified at integration discipline); §8.1.3 Configuration Management (verified at attribution + version tokens).
+**High-confidence absorbed:** D-4, D-5, D-6, D-7 per §1.5; F8 + F20 (verified-deepest-mitigation, BF-L signature); F11 + F14; §7.1.1 Atelier compounding; §8.1.8 Foundry CM-as-spine; §8.1.3 Configuration Management.
 
-**High-confidence challenged cells:** D-1 (specs durable) — BF-L's substrate-displaces-spec axis. D-2 (scenarios out-of-tree) — BF-L's scenarios-from-model axis. D-3 (Agent = Model + Harness) — partial challenge: Codebase Model is third irreducible substrate primitive.
+**High-confidence challenged:** D-1 (substrate-displaces-spec axis); D-2 (scenarios-from-model axis); D-3 (partial, Codebase Model is third irreducible substrate primitive).
 
 **Surfaced TBDs (require lead-agent reconciliation or Phase-8 follow-up):**
 
-1. §3.1.11 persona-vs-graph-node tension — BF-L front-end-agnostic; Phase-8 lean-eval surfaces.
-2. §3.1.15 parallel-agent + human-role tension — Codebase-Model-at-1M+LOC carry per §6.
-3. §4.1.6 falsified consensus items — needs per-item review of what was falsified vs preserved in v3.
+1. §3.1.11 persona-vs-graph-node — BF-L front-end-agnostic; Phase-8 lean-eval.
+2. §3.1.15 parallel-agent + human-role — converges with §6 1M+LOC carry.
+3. §4.1.6 falsified consensus items — needs per-item review.
 4. §6.1.5 Refinery 5-mode failure classification — Phase-8 lean-eval candidate.
-5. §7.1.4 Atelier workshop chain — methodology-overlay call given BF-L Loop-2 front-end-agnostic.
-6. §9.1.8 Tournament scaling — converges with BF-L §6 P-26 integration discipline at 1M+LOC carry.
-7. §10.1.17 F17 Parallel agents on shared dirs (Codebase Model) — methodology-layer anti-collision call.
+5. §7.1.4 Atelier workshop chain — methodology-overlay call.
+6. §9.1.8 Tournament scaling — converges with §6 1M+LOC carry.
+7. §10.1.17 F17 parallel agents on Codebase Model — methodology-layer anti-collision call.
 
-**Silent-absorption auditor flags (for cross-spec reconciliation):**
+**Silent-absorption auditor flags:**
 
-- §3.1.16 cross-cutting primitives (v3 `primitives/index.md` likely inherited the framing without explicit citation).
-- §7.1.11 severity × autofix orthogonal axes (likely informed DEC-2 mandate-fit-per-(architecture × work-unit-class) schema).
+- §3.1.16 cross-cutting primitives (v3 `primitives/index.md` likely inherited framing without explicit citation).
+- §7.1.11 severity × autofix orthogonal axes (likely informed DEC-2 schema).
 
-**ADR-0036 framing reconciliation flag (per Reviewer 5 Defect 2 + auto-007 §N.3 amendment):**
-
-- BF-L's §10.3 carries the required ADR-0036 framing characterization as **"commodity dispatch surface"** — distinct from U-A 0053 / D7-U-1 0064's "registrar-framework" framing. Silent-absorption auditor's cross-spec ADR-0036 framing audit (per Reviewer 2 A3 + Reviewer 6 D-H4) MUST preserve this distinction at aggregation — BF-L must NOT be collapsed into the same framing characterization as U-A/D7-U-1.
+**ADR-0036 framing reconciliation flag:** §10.3 carries the required ADR-0036 framing characterization as **"commodity dispatch surface"** — distinct from U-A 0053 / D7-U-1 0064's "registrar-framework" framing. Silent-absorption auditor MUST preserve this distinction at aggregation.
 
 **Known-rejected items confirmed:**
 

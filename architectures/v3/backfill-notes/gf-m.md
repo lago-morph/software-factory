@@ -27,9 +27,11 @@ cell-counts:
   # text). See §11 reconciliation for the per-table-section breakdown.
 self-check-results:
   # Per auto-007 §1.5 rubric + self-check items (a)-(g).
-  wc-w: 6728  # over Light tier upper bound (3500-5000) and over the dispatch-brief amended
+  wc-w: 6176  # over Light tier upper bound (3500-5000) and over the dispatch-brief amended
               # cap (5000-5700); see exemplar-budget-flag carried forward from bf-s.md
-              # frontmatter. Per-archive-file §N.3 notes section drove most of the overage.
+              # frontmatter. §10 F-mode table (24 rows) + §1.5 D-default verification +
+              # §11 reconciliation drive the bulk of the over-cap content. Trimming further
+              # would lose audit-trail traceability that the rubric requires.
   ls-cited-files: PASS  # all cited v3 files exist (verified at write time via ls)
   section-headers: PASS  # §1, §1.5, §2-§10, §11, §12 (13 ## headers) + 9 §N.0 file-headers
   enumeration-floor: PASS  # §2.1=3 (small-file-exception per Reviewer 4 amendment),
@@ -63,13 +65,13 @@ Per Reviewer 5 Defect 1 + Reviewer 6 D-H5 amendments. Each default verified per 
 
 | Default | Source claim | GF-M verdict | Spec cite |
 |---|---|---|---|
-| D-1 specs durable | `00-synthesis.md` §2.1 | `absorbed (with adaptation, verified at specs/gf-m.md §3 Regime-A→B slice-coherence promotion)` | GF-M re-encodes "durable spec" as "promoted slice" — spec is durable *only after* slice-coherence promotion; in Regime A the spec is *reversible-by-construction*. Adaptation is load-bearing. |
-| D-2 scenarios out-of-tree | `00-synthesis.md` §2.2 | `absorbed (verified at specs/gf-m.md §4 holdout binding "scenarios are authored out-of-tree from day 0 (CTR-B5/CTR-G2 fragility flag does not bite greenfield)")` | Greenfield mandate trivially satisfies D-2 — no legacy code to embed scenarios in. P-08 substrate-typed holdout (ADR 0015). |
-| D-3 Agent = Model + Harness | `13-round-2-synthesis.md` §1.1 C10 | `absorbed (verified at specs/gf-m.md §3 Regime-B "Standard Compound-Engineering loop" + §4 bias-guard via P-14 judge router)` | GF-M §3 cycle-shape inherits Compound-Engineering plan→work→review→compound shape; P-14 judge router (ADR 0016) routes the cross-model review panel. |
-| D-4 holdout discipline | `13-round-2-synthesis.md` §1.1 C13 | `absorbed (verified at specs/gf-m.md §4 holdout binding "Bound at P-08 substrate-typed holdout — not agent-policy. F28 mitigation")` | Substrate-typed holdout via P-08 (ADR 0015) + ADR 0021 holdout discipline. |
-| D-5 hard cost ceilings | `13-round-2-synthesis.md` §1.1 C15 | `absorbed (with adaptation, verified at specs/gf-m.md §4 cost-ceiling binding "with the Regime-A paraphrase fan-out (~N× single-cycle cost) admitted as the dominant cost-driver")` | Adaptation: GF-M explicitly admits paraphrase fan-out N× multiplier; D-5 ceiling must explicitly include it. CTR-E6 CaMeL utility-tax acknowledged. Phase-8 OQ-T2 carry. |
-| D-6 tiered watchdog | `13-round-2-synthesis.md` §1.1 C14 | `absorbed (verified at specs/gf-m.md §3 "Patrol-tier monitoring as Regime-A→B drift detector" + §4 three-loop "meta-loop closure is substrate-enforced via P-06 + P-07")` | P-06 watchdog tiers (ADR 0013) Patrol tier runs from day 0; substrate-enforced not operator-voluntary. |
-| D-7 trajectory capture | `13-round-2-synthesis.md` §1.1 C16 | `absorbed (verified at specs/gf-m.md §2 "P-05 trajectory capture (ADR 0012) for cycle-event persistence" + §6 OQ-T3)` | P-05 trajectory (ADR 0012) consumed as commodity primitive; §6 OQ-T3 surfaces whether Regime-A→B handoff can be expressed on top of P-05 + P-08. |
+| D-1 specs durable | `00-synthesis.md` §2.1 | `absorbed (with adaptation, verified at specs/gf-m.md §3)` | Re-encoded: spec is durable *only after* slice-promotion; in Regime A spec is reversible-by-construction. Adaptation load-bearing. |
+| D-2 scenarios out-of-tree | `00-synthesis.md` §2.2 | `absorbed (verified at specs/gf-m.md §4)` | Greenfield trivially compliant — no legacy code; P-08 substrate-typed holdout (ADR 0015). |
+| D-3 Agent = Model + Harness | `13-round-2-synthesis.md` §1.1 C10 | `absorbed (verified at specs/gf-m.md §3 + §4)` | Regime B inherits Compound-Engineering plan→work→review→compound; P-14 judge router routes cross-model panel. |
+| D-4 holdout discipline | `13-round-2-synthesis.md` §1.1 C13 | `absorbed (verified at specs/gf-m.md §4)` | Substrate-typed holdout via P-08 (ADR 0015) + ADR 0021. F28 mitigation. |
+| D-5 hard cost ceilings | `13-round-2-synthesis.md` §1.1 C15 | `absorbed (with adaptation, verified at specs/gf-m.md §4)` | Adaptation: paraphrase fan-out N× multiplier admitted; CTR-E6 utility-tax acknowledged. Phase-8 OQ-T2 carry. |
+| D-6 tiered watchdog | `13-round-2-synthesis.md` §1.1 C14 | `absorbed (verified at specs/gf-m.md §3 + §4)` | P-06 Patrol tier runs from day 0; substrate-enforced not operator-voluntary. |
+| D-7 trajectory capture | `13-round-2-synthesis.md` §1.1 C16 | `absorbed (verified at specs/gf-m.md §2 + §6 OQ-T3)` | P-05 (ADR 0012) consumed as commodity primitive; OQ-T3 surfaces Regime-A→B handoff on top of P-05 + P-08. |
 
 **Summary:** 7-of-7 defaults absorbed (D-1 with explicit adaptation reframing durable-vs-reversible, D-5 with explicit cost-multiplier admission). No challenges. No silent absorptions in this candidate (auditor reconciliation expected to confirm).
 
@@ -126,22 +128,22 @@ Round-1 v2 synthesis post-primary-source-access. Canonical entry for F1-F20. 502
 
 | Item | Verdict | Rationale (≤25 words) | v3 cite (if absorbed) |
 |---|---|---|---|
-| §3.1.1 specs primary artifact (D-1) | `absorbed (with adaptation, verified at §1.5)` | D-1 verified per §1.5 with reframing: spec is durable only post-slice-coherence-promotion. | specs/gf-m.md §3 + §5 |
+| §3.1.1 specs primary artifact (D-1) | `absorbed (with adaptation, verified at §1.5)` | D-1 verified per §1.5; reframing: durable only post-slice-promotion. | specs/gf-m.md §3 + §5 |
 | §3.1.2 scenarios outside codebase (D-2) | `absorbed (verified at §1.5)` | D-2 verified per §1.5; greenfield trivially compliant. | specs/gf-m.md §4 holdout |
-| §3.1.3 validation harnesses are real engineering | `absorbed (with adaptation)` | GF-M makes the methodology cycle itself the validation harness — paraphrase divergence + tiny probe + cross-model review panel ARE the harness. | specs/gf-m.md §3 Regime A + Regime B |
+| §3.1.3 validation harnesses are real engineering | `absorbed (with adaptation)` | The methodology cycle itself IS the validation harness — paraphrase + tiny probe + cross-model panel. | specs/gf-m.md §3 Regime A + Regime B |
 | §3.1.4 Agent=LLM-in-loop (D-3) | `absorbed (verified at §1.5)` | D-3 verified per §1.5. | specs/gf-m.md §3 Regime-B Compound-Engineering loop |
-| §3.1.5 knowledge accumulates between cycles | `absorbed (with adaptation)` | GF-M explicitly *delays* accumulation until Regime B has produced enough cycles; "no `docs/solutions/` in Regime A" is distinctive F8/F55 mitigation. | specs/gf-m.md §3 + §4 knowledge-promotion |
-| §3.1.6 single-threaded human ceiling | `absorbed (with adaptation)` | GF-M Regime A is *deliberately* operator-bottlenecked (intent dictation + promote/reverse); methodology owns the ceiling by design rather than fighting it. | specs/gf-m.md §3 Regime A + §4 cognitive-escrow |
-| §3.1.7 human leverage upstream/downstream | `absorbed` | Regime A is upstream-only (intent + paraphrase audit + promote/reverse); Regime B is downstream-only (cross-model review). The split is the upstream/downstream materialisation. | specs/gf-m.md §3 two regimes |
-| §3.1.8 tiered ceremony | `absorbed (with adaptation)` | GF-M's L3/L4 split between Regime A (augmentation) and Regime B (lights-out on promoted slices) per DEC-2 is the tiering. | specs/gf-m.md §3 Regime A operating mode + Regime B operating mode |
-| §3.1.9 cost first-class (D-5) | `absorbed (verified at §1.5)` | D-5 verified per §1.5 with paraphrase-fan-out cost-multiplier admission. | specs/gf-m.md §4 cost-ceiling |
-| §3.1.10 human-review tension | `absorbed (with adaptation)` | Resolved as tiered: required at Regime-A promote-or-reverse gate; eliminated at Regime-B steady-state on promoted slices. | specs/gf-m.md §3 |
-| §3.1.11 persona vs graph-node tension | `not-applicable-to-candidate-mandate` | GF-M methodology is agent-shape-agnostic — paraphrase divergence is multi-model not multi-persona; Compound-Engineering loop is graph-node-style. Tension dissolves. | — |
-| §3.1.12 spec format tension | `absorbed (with adaptation)` | GF-M binds EARS-constrained acceptance-criteria block + El Kaim 9-field intent block — structured-prose hybrid, with deterministic GtWR R7/R8/R9 lint. | specs/gf-m.md §3 Regime-A Phase 1 intent draft |
-| §3.1.13 knowledge architecture tension | `absorbed (with adaptation)` | GF-M owns the DAG-vs-flat tension via deliberate delayed-accumulation (no `docs/solutions/` in Regime A); promotion is methodology-layer per ADR 0023. | specs/gf-m.md §3 + §4 |
-| §3.1.14 adversarial review tension | `absorbed (with adaptation)` | GF-M makes adversarial-by-default an attribute of every reviewer — Regime A paraphrasers are adversarial-by-divergence; Regime B review panel is cross-model adversarial. | specs/gf-m.md §3 + §4 bias-guard |
-| §3.1.15 parallel-agent + human-role tension | `tbd` | GF-M Regime A is operator-serial-by-design; Phase-8 lean-eval may surface scaling limits. | — |
-| §3.1.16 cross-cutting primitives | `absorbed (silently — flagged for auditor)` | v3 has its own primitive enumeration (`primitives/index.md`); the 00-synthesis §5 list informed earlier phases but isn't directly cited by GF-M spec. | — (flagged for silent-absorption auditor) |
+| §3.1.5 knowledge accumulates between cycles | `absorbed (with adaptation)` | Delayed until post-Regime-B-warmup — distinctive F8/F55 mitigation ("no `docs/solutions/` in Regime A"). | specs/gf-m.md §3 + §4 |
+| §3.1.6 single-threaded human ceiling | `absorbed (with adaptation)` | Regime A deliberately operator-bottlenecked; methodology owns the ceiling by design. | specs/gf-m.md §3 Regime A + §4 |
+| §3.1.7 human leverage upstream/downstream | `absorbed` | Regime A upstream-only; Regime B downstream-only — the split materialises the framing. | specs/gf-m.md §3 two regimes |
+| §3.1.8 tiered ceremony | `absorbed (with adaptation)` | DEC-2 L3/L4 split between Regime A (augmentation) and Regime B (lights-out on promoted slices). | specs/gf-m.md §3 |
+| §3.1.9 cost first-class (D-5) | `absorbed (verified at §1.5)` | D-5 verified with paraphrase-fan-out N× multiplier admission. | specs/gf-m.md §4 cost-ceiling |
+| §3.1.10 human-review tension | `absorbed (with adaptation)` | Resolved as tiered: required at Regime-A promote/reverse; eliminated at Regime-B steady-state. | specs/gf-m.md §3 |
+| §3.1.11 persona vs graph-node tension | `not-applicable-to-candidate-mandate` | Agent-shape-agnostic: paraphrase is multi-model not multi-persona; Compound-Engineering is graph-node. | — |
+| §3.1.12 spec format tension | `absorbed (with adaptation)` | EARS-constrained AC + El Kaim 9-field intent block — structured-prose hybrid with GtWR R7/R8/R9 lint. | specs/gf-m.md §3 Regime-A Phase 1 |
+| §3.1.13 knowledge architecture tension | `absorbed (with adaptation)` | DAG-vs-flat tension owned via deliberate delayed-accumulation; promotion is methodology-layer per ADR 0023. | specs/gf-m.md §3 + §4 |
+| §3.1.14 adversarial review tension | `absorbed (with adaptation)` | Adversarial-by-default an attribute of every reviewer — paraphrasers adversarial-by-divergence; Regime B cross-model. | specs/gf-m.md §3 + §4 bias-guard |
+| §3.1.15 parallel-agent + human-role tension | `tbd` | Regime A operator-serial-by-design; Phase-8 lean-eval may surface scaling limits. | — |
+| §3.1.16 cross-cutting primitives | `absorbed (silently — flagged for auditor)` | v3 has own `primitives/index.md`; 00-synthesis §5 likely informed it without explicit citation. | — (flagged for silent-absorption auditor) |
 
 ### §3.3 Notes
 
@@ -282,19 +284,19 @@ v2 Architecture 2 — Compound Atelier. "Each unit of work makes the next easier
 
 | Item | Verdict | Rationale (≤25 words) | v3 cite (if absorbed) |
 |---|---|---|---|
-| §7.1.1 compounding core thesis | `absorbed (with adaptation)` | GF-M Regime B is Compound-Engineering by construction; Regime A *delays* compounding until post-promotion (deliberate F8/F55 mitigation). | specs/gf-m.md §3 Regime B + §4 knowledge-promotion |
-| §7.1.2 knowledge accumulation between cycles | `absorbed (with adaptation)` | GF-M binds via ADR 0023; deliberately delays accumulation in Regime A — distinctive departure from Atelier. | specs/gf-m.md §3 "No docs/solutions/ accumulation in Regime A" |
-| §7.1.3 artifact stack (specs/knowledge/workpad) | `absorbed (with adaptation)` | GF-M's intent + scenario pair (event-sourced via P-20) replaces specs+knowledge+workpad with a tighter 2-artifact stack. | specs/gf-m.md §2 + §3 |
-| §7.1.4 workshop chain (persona workshops) | `rejected (subsumed by paraphrase divergence shape)` | GF-M Regime A uses N model-family-diverse paraphrasers, NOT persona workshops; substituting structural diversity for stylistic diversity is the load-bearing choice. | — |
-| §7.1.5 researcher fan-out | `absorbed (with adaptation)` | GF-M Regime A paraphrase divergence step (P-21) is parallel-fan-out by construction; Regime B cross-model review panel similarly. | specs/gf-m.md §3 Regime A paraphrase + Regime B cross-model |
-| §7.1.6 reviewer panel | `absorbed (verified)` | GF-M Regime B explicitly cites "cross-model review panel" per §3; F46 mitigation via P-14 judge router (ADR 0016) + ADR 0018 bias-guard. | specs/gf-m.md §3 Regime B + §4 bias-guard |
-| §7.1.7 synthesis and curation | `absorbed (with adaptation)` | GF-M Regime-A→B slice-promotion is the synthesis-and-curation moment; methodology-layer per ADR 0023. | specs/gf-m.md §3 slice-coherence transition |
-| §7.1.8 conductor orchestrator | `not-applicable-to-candidate-mandate` | GF-M operator IS the conductor at promote/reverse gate; no separate orchestrator role. | — |
-| §7.1.9 workpad protocol | `absorbed (with adaptation)` | GF-M's event-sourced intent+scenario store (P-20) plus the Regime-B sandbox (P-01) is the workpad-equivalent. | specs/gf-m.md §2 + §3 |
-| §7.1.10 tiered cycle scope | `absorbed (with adaptation)` | GF-M's Regime A (L3) vs Regime B (L4-on-promoted-slices) is the tiering. | specs/gf-m.md §3 two regimes |
-| §7.1.11 severity × autofix axes | `absorbed (silently — flagged for auditor)` | The orthogonal-axes framing influenced v3's mandate-fit-per-(architecture × work-unit-class) DEC-2 schema. Not explicitly cited in GF-M spec. | — (flagged for silent-absorption auditor) |
-| §7.1.12 residual work gate | `absorbed (with adaptation)` | GF-M Regime A promote-or-reverse gate plus delayed knowledge-promotion close the residual-work loop. | specs/gf-m.md §3 + §4 |
-| §7.1.13 three memory tiers | `not-applicable-to-candidate-mandate` | GF-M deliberately avoids multi-tier memory in Regime A (no `docs/solutions/` accumulation); Brier pace-layer subsumption is OQ in §6 (Phase-7 carry). | — |
+| §7.1.1 compounding core thesis | `absorbed (with adaptation)` | Regime B is Compound-Engineering by construction; Regime A delays compounding until post-promotion (F8/F55 mitigation). | specs/gf-m.md §3 + §4 |
+| §7.1.2 knowledge accumulation between cycles | `absorbed (with adaptation)` | ADR 0023; deliberately delayed in Regime A — distinctive Atelier departure. | specs/gf-m.md §3 |
+| §7.1.3 artifact stack (specs/knowledge/workpad) | `absorbed (with adaptation)` | Intent + scenario pair (event-sourced via P-20) replaces 3-artifact stack with tighter 2-artifact. | specs/gf-m.md §2 + §3 |
+| §7.1.4 workshop chain (persona workshops) | `rejected (subsumed by paraphrase divergence shape)` | Regime A uses N model-family paraphrasers, NOT personas; structural-not-stylistic diversity is load-bearing. | — |
+| §7.1.5 researcher fan-out | `absorbed (with adaptation)` | Regime A paraphrase (P-21) is parallel-fan-out by construction; Regime B cross-model panel similarly. | specs/gf-m.md §3 |
+| §7.1.6 reviewer panel | `absorbed (verified)` | Regime B explicitly cites "cross-model review panel"; F46 via P-14 + ADR 0018. | specs/gf-m.md §3 Regime B + §4 |
+| §7.1.7 synthesis and curation | `absorbed (with adaptation)` | Regime-A→B slice-promotion is the synthesis-and-curation moment; methodology-layer per ADR 0023. | specs/gf-m.md §3 slice-coherence |
+| §7.1.8 conductor orchestrator | `not-applicable-to-candidate-mandate` | Operator IS the conductor at promote/reverse; no separate orchestrator role. | — |
+| §7.1.9 workpad protocol | `absorbed (with adaptation)` | Event-sourced intent+scenario store (P-20) plus Regime-B sandbox (P-01) is the workpad-equivalent. | specs/gf-m.md §2 + §3 |
+| §7.1.10 tiered cycle scope | `absorbed (with adaptation)` | Regime A (L3) vs Regime B (L4-on-promoted-slices) is the tiering. | specs/gf-m.md §3 |
+| §7.1.11 severity × autofix axes | `absorbed (silently — flagged for auditor)` | Likely informed DEC-2 mandate-fit-per-(architecture × work-unit-class) schema. Not explicitly cited. | — (flagged for silent-absorption auditor) |
+| §7.1.12 residual work gate | `absorbed (with adaptation)` | Regime A promote-or-reverse gate + delayed knowledge-promotion close the residual-work loop. | specs/gf-m.md §3 + §4 |
+| §7.1.13 three memory tiers | `not-applicable-to-candidate-mandate` | Multi-tier memory avoided in Regime A; Brier subsumption is OQ in §6 (Phase-7 carry). | — |
 | §7.1.14 implementation roadmap | `not-applicable-to-candidate-mandate` | Architecture-specific deployment. | — |
 
 ### §7.3 Notes

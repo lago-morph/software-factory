@@ -343,7 +343,7 @@ Pre-authored per [`AGENTS-MD-8740bd7b0a`](../../../AGENTS.md#adr-number-to-filen
 
 Per [`AGENTS-MD-ffe35aa500`](../../../AGENTS.md#honest-acknowledgements-for-pre-round-2-wave-firing) (pre-Round-2 wave firing): no Phase-7 back-fill subagent has fired pre-Round-2; this dispatch brief precedes the wave dispatch.
 
-This brief lives at commit **`<TBD-Round-2-SHA>`** on [`claude/phase-7-auto-007-brief`](../../../) (Round 2 commit; Round 1 was **`9c77389`** at authordate 2026-05-27).
+This brief lives at commit **`e1ca9b4`** on [`claude/phase-7-auto-007-brief`](../../../) (Round 2 commit; Round 1 was **`9c77389`** at authordate 2026-05-27).
 
 Mechanical verifiability (time-anchored per Reviewer 3 / D9 amendment): a later auditor can reproduce the no-back-fill-subagent-fired claim by running, from this brief's Round-2 commit:
 
@@ -531,7 +531,7 @@ But: the **spec-patch threshold of ≥4 candidates → deferral** is ambiguous. 
 - **D5. Round-1 reviewer-return-text preservation infrastructure missing.** "Round-1 findings will land at this section" but no Appendix A scaffolding for verbatim subagent returns. **Amendment:** add stub section "Appendix A — Round-1 reviewer return text (verbatim)" with one subsection per reviewer.
 - **D6. Self-check rubric items mostly pass; one weak.** Items (a)-(e), (g) specify tool commands. Item (f) "`grep -F` for verbatim text-pull when invoked" is conditional and underspecified. **Amendment:** "(f) For each binding rule table cited in the notes file, `grep -F '<verbatim cell text>'` against the source AGENTS.md anchor; report exit code in digest."
 - **D7. Classification taxonomy table — guidance, not binding.** The 4-token table is Phase-7-internal classification scheme proposed by lead agent. NOT a binding rule table per [`AGENTS-MD-bf4431be57`](../../../AGENTS.md#verbatim-text-pull-when-citing-binding-rule-tables). Subagents may paraphrase token semantics. No amendment needed — but flag this distinction.
-- **D8. Rewind-point pinning defect inherited from auto-006.** Branches named not SHAs. Auto-006 Reviewer 6 Amendment 8 flagged identical defect. **Amendment:** add "(SHA pinned post-commit: `<TBD-Round-1-SHA>` Round 1 / `<TBD-Round-2-SHA>` Round 2)" to both lines.
+- **D8. Rewind-point pinning defect inherited from auto-006.** Branches named not SHAs. Auto-006 Reviewer 6 Amendment 8 flagged identical defect. **Amendment:** add "(SHA pinned post-commit: `<TBD-Round-1-SHA>` Round 1 / `e1ca9b4` Round 2)" to both lines.
 - **D9. Honest-acknowledgement `git log` not time-anchored.** Command `git log --oneline -- architectures/v3/backfill-notes/` is unanchored — a later auditor running it post-Wave-7.1 would get non-empty output and the claim would appear false. **Amendment:** rewrite as `git log --all --oneline --before=<Round-1-authordate> -- architectures/v3/backfill-notes/` and use `git ls-tree <SHA>` for SHA-anchored verifiability.
 - **D10. Sub-wave coordination protocol** ✓ Branch names unique, files disjoint, conflict protocol stated. Passes.
 - **D11. §0 ADR-citation index preservation** ✓ Explicitly invokes ADR 0065. Passes.

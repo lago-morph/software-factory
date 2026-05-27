@@ -30,7 +30,7 @@ Phase 7 of the v3 synthesis produces a per-candidate back-fill audit per the [v1
 | §7 | [`archive/architectures-v2/`](../../../archive/architectures-v2/) | [`02-compound-atelier.md`](../../../archive/architectures-v2/02-compound-atelier.md) | 4,515 | v2 Architecture 2 — queue + workpad + persona panel + accumulated `docs/solutions/` |
 | §8 | [`archive/architectures-v2/`](../../../archive/architectures-v2/) | [`03-phase-gated-foundry.md`](../../../archive/architectures-v2/03-phase-gated-foundry.md) | 4,610 | v2 Architecture 3 — phase-bound experts, SRS/SAD/DD templates, RTM, gate boards |
 | §9 | [`archive/architectures-v2/`](../../../archive/architectures-v2/) | [`04-evolutionary-tournament.md`](../../../archive/architectures-v2/04-evolutionary-tournament.md) | 4,279 | v2 Architecture 4 — genome library, predator agent, tournament bracket, model-family diversity |
-| §10 | [`archive/architectures-v2/`](../../../archive/architectures-v2/) | [`failure-modes.md`](../../../archive/architectures-v2/failure-modes.md) | 664 | F1-F20 per-architecture coverage matrix (pre-F21+). **Structurally flat coverage matrix** — see [Reviewer-1 amendment A1 / Round-2 amendment](#round-2-final-amendments-folded) for per-F-mode enumeration-floor exception. |
+| §10 | [`archive/architectures-v2/`](../../../archive/architectures-v2/) | [`failure-modes.md`](../../../archive/architectures-v2/failure-modes.md) | 664 | F1-F20 per-architecture coverage matrix PLUS a second "Coverage column scores" table with 4 ★-rated per-architecture qualitative-strength rows + prose verdicts (per Reviewer-6 historian amendment D-H1; brief Round-1 mischaracterized as "matrix only"). **Structurally flat** — see [Reviewer-1 A1 + Reviewer-6 D-H1 / Round-2 amendments folded](#round-2-final-amendments-folded) for per-F-mode + per-architecture-row enumeration-floor exception. |
 | | | **Total archive corpus** | **~33,078** | Per-subagent input: candidate spec (~3-5K) + archive (~33K) + brief (~6K) + exemplar (~3.5K) ≈ **~46K words**; comfortably within harness budget per Reviewer 2 cost-hawk audit. |
 
 **Already-inherited material (NOT in scope for back-fill — already absorbed):** the 7 D-1 through D-7 defaults per [`archive/synthesis-v1-v2/ARCHIVE.md`](../../../archive/synthesis-v1-v2/ARCHIVE.md#what-v3-inherits-from-these-syntheses--explicitly) were already carried forward into v3 as Round-1/Round-2 defaults. Back-fill subagents skip these or mark them `absorbed (v3 default D-N)` without further analysis.
@@ -55,10 +55,17 @@ The dispatch shape determines (i) how the 10 back-fill subagents are sequenced (
 **Per-candidate brief shape.** Each subagent receives:
 
 1. The candidate's [`specs/<id>.md`](../specs/) (the Phase-6 spec — authoritative input for what's already in v3).
-2. The full archive scope (8 files listed above) + the ARCHIVE.md indexes for context.
+2. The full archive scope (9 files listed above) + the 3 ARCHIVE.md indexes for context.
 3. The classification taxonomy (4 tokens).
 4. The exemplar back-fill notes file.
 5. The rubric (see below).
+6. **The Glossary section + verbatim text of every AGENTS-MD rule cited inline in the rubric** (per Reviewer-4 / naive-newcomer amendment). The dispatch brief MUST paraphrase or quote each AGENTS-MD-<hash> the rubric references so the subagent does not need to leave the dispatch context to operationalize the rule.
+7. The candidate's entry in [`candidate-registry.md`](../candidate-registry.md) — needed for the §1 lineage statement template.
+8. **Enumeration-pattern precedent** (per Reviewer-6 / historian D-H6 amendment): the Phase-3 [`contradictions.md`](../contradictions.md) + [`corpus-inventory.md`](../corpus-inventory.md) files as enumeration-style precedents (one numbered claim per row + per-claim verdict column). Subagents do NOT need to re-author these patterns; they inherit the shape.
+
+**Bias-guard subagent brief shape** (additional input beyond the per-candidate-fanout brief):
+
+- For both bias-guard subagents: **output format precedent** is [`phase-6-verification-findings.md`](../phase-6-verification-findings.md) (per Reviewer-6 / historian D-H7 amendment). The silent-absorption auditor and historian produce structured findings in the same shape — §A scope, §B per-finding rows with classification (blocking / non-blocking / informational), §C recommendations.
 
 **Per-candidate notes file rubric.** Section structure, word budget, citation floor:
 
@@ -83,10 +90,16 @@ The dispatch shape determines (i) how the 10 back-fill subagents are sequenced (
     tbd: <N>
     not-applicable: <N>
   ```
-- **§1 Overview** (~200 words). Candidate's mandate + axis + entry-mode; one-paragraph statement of the candidate's relationship to the v2 architecture lineage (e.g., "U-A is closest to Architecture 2 Compound Atelier; the audit will be especially careful on Compound-Atelier-specific primitives like persona panels."). **MUST include a one-sentence statement** that the D-1 through D-7 defaults per [`archive/synthesis-v1-v2/ARCHIVE.md`](../../../archive/synthesis-v1-v2/ARCHIVE.md#what-v3-inherits-from-these-syntheses--explicitly) are skipped from the audit because they are already-inherited material (per Reviewer 3 / D15 amendment for skip-discipline auditability).
+- **§1 Overview** (~200 words). Candidate's mandate + axis + entry-mode; one-paragraph statement of the candidate's relationship to the v2 architecture lineage. **Per-candidate lineage assignment** (per Reviewer-4 / naive-newcomer amendment for template guidance): use the format: "*This candidate's strongest v2-architecture-lineage is to [Architecture N (name)] / multiple lineages [list]. Rationale (verbatim cite from `candidate-registry.md` entry §X): '...'.*" (Per Reviewer-6 / historian D-H2 amendment: the brief's Glossary lineage suggestions are explicitly NOT canonical — each subagent derives its own from its candidate registry entry, not from speculative lead-agent mappings.)
+- **§1.5 D-1 through D-7 defaults verification** (~250-300 words; new subsection per Reviewer-5 / scoping-skeptic Defect 1 + Reviewer-6 / historian D-H5 amendments — replaces the blanket "skip" instruction). For each of D-1 (specs durable) / D-2 (scenarios out-of-tree) / D-3 (Agent=Model+Harness) / D-4 (holdout) / D-5 (cost ceilings) / D-6 (tiered watchdog) / D-7 (trajectory capture), the subagent verifies the candidate's spec content against the default. Verdict tokens:
+  - `absorbed (verified at specs/<id>.md §X)` — spec carries the default; cite the section.
+  - `absorbed (silently — no §-cite found, flagged)` — spec's §4 marks the discipline as accepted but no specific section invokes it; flag for silent-absorption auditor reconciliation.
+  - `challenged` — spec's §4 explicitly challenges or rejects this default (e.g., BF-L challenges D-1 and D-2 per Reviewer-6's spec audit); cite the §4 challenge text verbatim.
+  - `not-applicable-to-candidate-mandate` — structurally inapplicable (rare for D-1..D-7 since they were cross-mandate defaults).
+  Word-cost is bounded: ~40 words per default × 7 defaults = ~280 words. This subsection makes the skip-discipline mechanically auditable per Reviewer 3 / D15.
 - **§2-§10 Per-archive-file audits** (one section per archive file; 9 sections total — see [§Archive scope](#the-question) table for §N → file mapping; ~400-600 words each, ~3500-5500 total). For each archive file:
   - **§N.0** File header: `## §N — archive/<path>`
-  - **§N.1** Enumeration of claims/framings/primitives/recommendations in the file. Each as a numbered bullet (`§N.1.1`, `§N.1.2`, ...). Source the enumeration from the file's table of contents + section headers + numbered claims; **NOT** a full re-extraction (would blow the word budget). Floor: ≥5 enumeration bullets per archive file. **Exception for `failure-modes.md`** (§10 only): the file is a structurally-flat F1-F20 coverage matrix — treat **each F-mode row as one enumeration unit**; floor is **20**, not 5, for §10 (per Reviewer-1 pre-mortemer A1 amendment).
+  - **§N.1** Enumeration of claims/framings/primitives/recommendations in the file. Bullets are **unlabelled** (per Reviewer-4 / naive-newcomer amendment): the claim/framing/primitive/recommendation taxonomy describes scope of what to enumerate, NOT a per-bullet tag. Each bullet as a numbered entry (`§N.1.1`, `§N.1.2`, ...). Source the enumeration from the file's table of contents + section headers + numbered claims; **NOT** a full re-extraction (would blow the word budget). Floor: ≥5 enumeration bullets per archive file. **Exception for `failure-modes.md`** (§10 only): the file has TWO tables — (a) F1-F20 coverage matrix (20 rows × 4 architectures) and (b) "Coverage column scores" per-architecture qualitative-strength rows (4 rows: one ★-rated row + prose verdict per architecture). Treat **each F-mode row as one enumeration unit** AND **each per-architecture coverage-strength row as one enumeration unit**; floor is **24 (20 + 4)**, not 5, for §10 (per Reviewer-1 A1 + Reviewer-6 D-H1 amendments). **Small-file exception (per Reviewer-4 / naive-newcomer amendment)**: if a file's structure yields <5 enumeration units (e.g., research-plan.md at 758 words), document the count + reason in §N.3 (e.g., "research-plan.md contains only 3 enumerable lead-agent recommendations after user-constraint exclusion; count justified at <5 floor"); the subagent's self-check (d) auto-passes for that file.
   - **§N.2** Per-item classification table:
     ```
     | Item | Verdict | Rationale | v3 cite (if absorbed) |
@@ -96,7 +109,9 @@ The dispatch shape determines (i) how the 10 back-fill subagents are sequenced (
     | §N.1.3 | not-applicable | The W discipline is Architecture-4-tournament-specific; this candidate doesn't claim that axis | — |
     | §N.1.4 | tbd | Lead agent and silent-absorption auditor should reconcile | — |
     ```
-  - **§N.3** Notes (any per-file observations that don't fit a per-item row).
+  - **§N.3** Notes (any per-file observations that don't fit a per-item row, including the small-file-exception justification for §N.1 if applicable). **For candidates BF-L, U-A, D7-U-1: when §N is the failure-modes.md section AND any F-mode row touches ADR 0036 P-30 territory, §N.3 MUST include a one-paragraph framing characterization of the candidate's own ADR-0036 usage (commodity-dispatch / registrar-framework / other), with verbatim cite from the candidate's own §0 ADR-citation index row** per Reviewer-5 / scoping-skeptic Defect 2 amendment. This per-candidate §N.3 framing coexists with the silent-absorption auditor's cross-spec ADR-0036 framing audit (Reviewer 2 A3); per-candidate verdicts remain authoritative for each spec, the auditor's read is the reconciliation surface.
+
+  - **§N.2 cell-text constraint (per Reviewer-4 / naive-newcomer amendment)**: Rationale cell text ≤25 words per cell. v3-cite cell text: file path + §-anchor + optional ADR ID (no free-text).
 - **§11 Summary** (~200 words). Per-token cell counts; high-confidence cells; surfaced TBDs. (Renumbered from §10 → §11 in Round 2 because the per-archive-file section count is 9 sections at §2-§10.)
 - **§12 References** (mandatory; relative paths only per [`AGENTS.md § Internal document references`](../../../AGENTS.md#internal-document-references)). Floor: candidate's spec + all 9 archive files + this brief + the candidate's substrate-requirements summary + any ADRs the audit cites. (Renumbered from §11 → §12 in Round 2.)
 
@@ -116,7 +131,7 @@ The dispatch shape determines (i) how the 10 back-fill subagents are sequenced (
 - (c) `grep` for §1-§12 headers + §N.0 file-header pattern for each archive file to verify section structure (9 §N.0 headers expected across §2-§10).
 - (d) `grep -E '^\| §[0-9]+\.1\.[0-9]+' <file>` to verify ≥5 enumeration rows in each §N.2 table per archive file. **Exception for §10 (failure-modes.md)**: floor is 20, not 5, per Round-2 amendment.
 - (e) `grep -cE '\| absorbed \|'` etc. to verify YAML frontmatter cell-counts match table-row counts.
-- (f) For each binding rule table cited in the notes file, `grep -F '<verbatim cell text>' <source-anchor>` to verify exact-text-pull per [`AGENTS-MD-bf4431be57`](../../../AGENTS.md#verbatim-text-pull-when-citing-binding-rule-tables); report exit code in digest. **If the notes file cites no binding rule tables, item (f) self-reports `n/a` with rationale.** (Per Reviewer 3 / D6 amendment.)
+- (f) For each binding rule table cited in the notes file, `grep -F '<verbatim cell text>' <source-anchor>` to verify exact-text-pull per [`AGENTS-MD-bf4431be57`](../../../AGENTS.md#verbatim-text-pull-when-citing-binding-rule-tables); report exit code in digest. **Definition (per Reviewer-4 / naive-newcomer amendment): "binding rule table" = any AGENTS-MD-tagged table the notes file quotes verbatim (e.g., a candidate's §0 ADR-citation index, or a row from `decisions-captured.md`).** **If the notes file cites no binding rule tables, item (f) self-reports `n/a` with rationale.** (Per Reviewer 3 / D6 amendment.)
 - (g) `grep -c "tbd"` on the file — surfaced TBDs reported in return digest.
 
 **Word budget per notes file (tiered per Reviewer 2 cost-hawk Amendment 1; mirrors auto-006 tier discipline).** Section budgets sum to ~4200-6000 baseline:
@@ -219,10 +234,10 @@ Concretely (Round-2 amended Decision):
 - **Lead-agent inline: exemplar back-fill notes** for the least-contested candidate. Candidate set: **{GF-M, BF-S}** (Light tier). Lead agent picks at exemplar-authoring time based on which produces the cleanest cell-classification demonstrations across all 9 archive files (i.e., the candidate whose lineage to one of Architectures 1-4 is least ambiguous, giving the cleanest §1 lineage-statement model). ~4000-word target (mid-Light-tier). Committed as PR 3.
 - **Wave 7.1 (all 10 in parallel)** fires after the exemplar lands. 9 spec-authoring back-fill subagents (10 minus exemplar candidate). Each writes its candidate's notes file at `architectures/v3/backfill-notes/<candidate-id>.md`. Returns ≤500-word digest.
 - **Wave 7.2 (2 bias-guards in parallel)** fires concurrent with Wave 7.1.
-  - **Silent-absorption auditor.** Reads all 10 Phase-6 specs + the 9 archive files. Flags spec content that looks like archive material without explicit citation. **Expanded mandate (Reviewer 2 cost-hawk Amendment 3):** also folds the Phase-6-followup carry-forward #1 — the BF-L "commodity dispatch surface" vs U-A/D7-U-1 "registrar-framework" framing of ADR 0036, per [Phase-6-close verifier Finding-2](../SESSION-HANDOFF-2026-05-26-phase-6-close.md#what-phase-6-closed-looks-like-verification-of-close-conditions). Output: `architectures/v3/backfill-notes/audit-silent-absorption.md`. Word budget: ≤2500 (~500 extra for the ADR-0036 framing audit).
-  - **Historian.** Reads all 10 Phase-6 specs + the 9 archive files. Enumerates archive items appearing in zero Phase-6 specs in any form. Output: `architectures/v3/backfill-notes/audit-historian.md`. Word budget: ≤2000.
-- **Aggregation step**: lead-agent authors `backfill-notes.md` aggregation file at fanout-close. **Reconciliation precedence rule** (Reviewer 1 pre-mortemer Amendment A3 — load-bearing):
-  > **Silent-absorption auditor's `silently-absorbed` finding overrides any per-candidate `rejected` verdict on the same cell**; the aggregation cell is downgraded to `absorbed (silently, flagged for Phase-8 cite)`. Per-candidate `not-applicable-to-candidate-mandate` is NEVER overridden by historian or silent-absorption findings (the not-applicable verdict reflects structural mandate-mismatch that auditors cannot re-litigate). For `tbd` cells, the silent-absorption auditor's verdict is folded in if available; otherwise the cell remains `tbd` and surfaces in the morning summary's review items.
+  - **Silent-absorption auditor.** Reads all 10 Phase-6 specs + the 9 archive files. Flags spec content that looks like archive material without explicit citation. **Expanded mandate (Reviewer 2 cost-hawk Amendment 3 + Reviewer 6 historian D-H4):** also folds (i) Phase-6-followup #1 — the BF-L "commodity dispatch surface" vs U-A/D7-U-1 "registrar-framework" framing of ADR 0036, per [Phase-6-close verifier Finding-2](../SESSION-HANDOFF-2026-05-26-phase-6-close.md#what-phase-6-closed-looks-like-verification-of-close-conditions); and (ii) Phase-6-followup #2 — cross-spec characterization audit of all 4 framework ADRs (0028 P-19, 0029 P-28, 0030 P-29, 0036 P-30) across the candidates that claim each framework. Each `silently-absorbed` finding labeled with confidence (`high` / `medium` / `low`) per the Reviewer 5 / scoping-skeptic Defect 3 amendment. Output: `architectures/v3/backfill-notes/audit-silent-absorption.md`. Word budget: ≤3000 (~1000 extra for the expanded mandate over the Round-1 baseline).
+  - **Historian.** Reads all 10 Phase-6 specs + the 9 archive files. Enumerates archive items appearing in zero Phase-6 specs in any form. **Expanded mandate (Reviewer 6 / historian D-H3 amendment, also folding Phase-6-followup #3):** also performs a one-pass scan of the Phase-5-close handoff per-candidate ADR set table (see [Phase-6-close handoff erratum](../SESSION-HANDOFF-2026-05-26-phase-6-close.md#adr-0049-documentation-erratum)) looking for additional documentation drift beyond the known BF-M / 0049 row. Output: `architectures/v3/backfill-notes/audit-historian.md`. Word budget: ≤2500 (~500 extra for the handoff-erratum sweep). **Phase-6-followup #2 (cross-spec characterization audit of shared framework ADRs)** is folded into the **silent-absorption auditor's** mandate (extends the ADR-0036 framing audit already added by Reviewer 2 A3 to cover all 4 framework ADRs 0028 / 0029 / 0030 / 0036) per Reviewer 6 / historian D-H4 amendment; silent-absorption auditor's word budget revised to ≤3000 (~500 more for the broader framework-ADR scope).
+- **Aggregation step**: lead-agent authors `backfill-notes.md` aggregation file at fanout-close. **Reconciliation precedence rule** (Reviewer 1 pre-mortemer Amendment A3 + Reviewer 5 scoping-skeptic Defect 3 confidence-threshold amendment — load-bearing):
+  > **Silent-absorption auditor MUST label each `silently-absorbed` finding with a confidence level**: `high` (verbatim or near-verbatim phrase from archive appears in spec without citation) / `medium` (semantic equivalence in spec without citation; arguable) / `low` (lineage suggestive but not concrete). **Only `high`-confidence findings override per-candidate `rejected` verdicts on the same cell** — the aggregation cell is downgraded to `absorbed (silently, high-confidence — flagged for Phase-8 cite)`. **`medium`-confidence findings trigger a `tbd` reconciliation row** for lead-agent adjudication. **`low`-confidence findings are informational only** (recorded in the aggregation but do NOT override per-candidate verdicts). Per-candidate `not-applicable-to-candidate-mandate` is NEVER overridden by historian or silent-absorption findings at any confidence level (the not-applicable verdict reflects structural mandate-mismatch that auditors cannot re-litigate). For per-candidate `tbd` cells, the silent-absorption auditor's verdict is folded in (any confidence level) if available; otherwise the cell remains `tbd` and surfaces in the morning summary's review items.
 - **Wave 7.3 (conditional spec patches)**: surgical §-level edits for absorbed material per the Round-2 rubric (framework-ADR + per-variant pairing per [`AGENTS-MD-a9fb7b42f8`](../../../AGENTS.md#framework-adr-scope-boundary-discipline)). **Threshold (Reviewer 1 A2 + Reviewer 2 A2): on candidate count, not patch count.** ≤3 *candidates* with any patches in-run; ≥4 *candidates* needing patches triggers Phase-7-followup deferral. "Needs a patch" defined verbatim in [§A Per-candidate fanout rubric](#a-per-candidate-parallel-fanout-10-subagents-in-one-wave-lead-agent-exemplar-first-omnibus-pr-concurrent-bias-guards--lead-agent-recommendation) above.
 
 **Total subagents this run (Round-2 revised per Reviewer 2 cost-hawk):** 9 (back-fill, excluding exemplar candidate) + 2 (bias-guards) = 11 back-fill-equivalent dispatches + 6 adversarial reviewers (Round 1 + Round 2) + 1 spec-patch authorer (if conditional patches fire) + ~3-4 retrospective-package authoring subagents at run close (SKILL-SPEC / ADR-draft / per-rule AGENTS-MD subagents per the autonomous-run skill end-of-run protocol) = **~21 subagents total for Phase 7** (~17 was the Round-1 undercount).
@@ -294,6 +309,13 @@ Per [`00-brief-v3` OQ-B10](../00-brief-v3.md), Phase 7 is the explicit mitigatio
 
 > **Be generous toward archive items.** A close-call between `rejected (subsumed)` and `absorbed (with adaptation)` defaults to `absorbed`. The Phase-7 audit's purpose is to catch what slipped through, not to re-justify the v3 decisions. Lead agent and verifier prefer over-absorption (with a follow-up reconciliation row) to under-absorption (which is invisible at audit-close).
 
+**Known-rejected v3 items — bias direction does NOT apply** (per Reviewer 6 / historian D-H8 amendment). The following archive items are **explicitly excluded** from v3 per [`constraints-extracted.md`](../constraints-extracted.md) and MUST be classified `rejected (explicitly-excluded-per-constraints-extracted)`, **NEVER** `absorbed`, regardless of close-call bias:
+
+- **OpenHands SDK + Overstory-design-in-Python as substrate stack** — Round-2 synthesis (`archive/synthesis-v1-v2/13-round-2-synthesis.md` §6.2 / §8) proposed this as the load-bearing substrate-stack recommendation. The user explicitly classified it as "NOT a constraint" in `constraints-extracted.md`. Any cell touching the substrate-stack-recommendation must use the verbatim verdict `rejected (explicitly-excluded-per-constraints-extracted, see constraints-extracted.md)`.
+- **Compound Atelier as baseline + selective borrows** — v2 comparison `archive/architectures-v2/00-comparison.md` §7 proposed this. Per the archive-and-rebuild discipline ([`archive/architectures-v2/ARCHIVE.md` line 7](../../../archive/architectures-v2/ARCHIVE.md)), this recommendation was the specific anchor v3 was supposed to avoid. Cells touching "Compound Atelier as baseline" must classify `rejected (explicitly-anchor-avoided, see archive-and-rebuild discipline)`.
+
+Subagents that encounter these items in archive enumeration must use the verbatim verdict text above; the per-candidate `rejected (reason)` format is satisfied by the parenthetical-reason clause.
+
 ## Sub-wave coordination protocol
 
 Each sub-wave / wave fires from a separate stacked branch:
@@ -333,7 +355,7 @@ Pre-authored per [`AGENTS-MD-8740bd7b0a`](../../../AGENTS.md#adr-number-to-filen
 - **Archive item**. A single claim, framing, primitive, or recommendation enumerated from an archive file. Granularity: paragraph-or-shorter; named primitives count individually; long lists of failure modes count as one per failure mode.
 - **Cell**. A (candidate × archive item) pair in the back-fill matrix. Total cell count: ~50 items × 10 candidates = ~500 cells (rough; actual count emerges from per-candidate enumeration).
 - **Verdict / classification**. One of the 4 tokens: `absorbed | rejected (reason) | not-applicable-to-candidate-mandate | tbd`.
-- **Lineage mapping**. Per-candidate identification of its closest v2 Architecture lineage (Architecture 1 Spec Refinery / Architecture 2 Compound Atelier / Architecture 3 Phase-Gated Foundry / Architecture 4 Evolutionary Tournament). Lead-agent best-draft mappings: GF-S~A4 tournament-flavored, GF-M~A1 refinery-flavored, GF-C~A3 foundry-flavored (or A1 hybrid), BF-S~A2 atelier-flavored, BF-M~A2 atelier+A3 hybrid, BF-L~A3 heavy-foundry, U-A~A2 atelier-flavored, U-B~A1 refinery-flavored, U-C~A3+A1 hybrid, D7-U-1~A4 tournament+A3 hybrid. **These mappings are NOT binding** — each subagent makes its own call in §1.
+- **Lineage mapping**. Per-candidate identification of its closest v2 Architecture lineage (Architecture 1 Spec Refinery / Architecture 2 Compound Atelier / Architecture 3 Phase-Gated Foundry / Architecture 4 Evolutionary Tournament). **NO speculative lead-agent best-draft mappings are pre-published** in this brief, per Reviewer-6 / historian D-H2 amendment (Round-1 draft mappings were unsourced and contradicted the candidate-registry content). Each subagent derives its own lineage from its candidate's [`candidate-registry.md`](../candidate-registry.md) entry verbatim (§1 template per the rubric: "*This candidate's strongest v2-architecture-lineage is to [Architecture N (name)] / multiple lineages [list]. Rationale (verbatim cite from candidate-registry.md entry §X): '...'.*"). If the candidate registry does not name a specific v2-architecture lineage for the candidate, the subagent declares "no single-lineage assignment; per-archive-file audit treats all 4 v2 architectures as potentially-relevant prior art."
 - **Already-inherited material**. D-1 through D-7 defaults per [`archive/synthesis-v1-v2/ARCHIVE.md`](../../../archive/synthesis-v1-v2/ARCHIVE.md#what-v3-inherits-from-these-syntheses--explicitly). Back-fill subagents skip these or mark `absorbed (v3 default D-N)` without further analysis.
 - **Be-generous bias**. Per [`00-brief-v3` OQ-B10](../00-brief-v3.md); defaults close-calls to `absorbed (with adaptation)`.
 - **Silent absorption**. An archive item that appears in a Phase-6 spec without an explicit citation — possibly inherited unconsciously by the spec author. Surfaced by the silent-absorption auditor bias guard.
@@ -467,6 +489,79 @@ All three reviewers returned `accept-with-named-amendments` — no `reject-with-
 
 ---
 
+## Round-2 reviewer findings
+
+Three real subagents dispatched with fresh angles per [`AGENTS-MD-d72e1a4f3c`](../../../AGENTS.md#adversarial-review-must-be-real-subagents). Each was offered the 3-tier verdict menu (`accept-as-is` / `accept-with-named-amendments` / `reject-with-counter-proposal`) per [`AGENTS-MD-8a7029647f`](../../../AGENTS.md#adversarial-review-verdict-tiers). Verbatim reviewer return text preserved at [§Appendix B](#appendix-b--round-2-reviewer-return-digests).
+
+### Reviewer 4 — naive newcomer (`accept-with-named-amendments`)
+
+- **Jargon at point-of-use:** 12 AGENTS-MD-<hash> citations without paraphrase glosses; "lean-eval / silent absorption / historian / exemplar pattern" used before Glossary defines them; "framework-ADR / per-variant ADR / orphan ADR / designed-system substrate" absent from Glossary; "DEC-1.a / Phase-3.5.5 / RG primitive / X_UNM_B" referenced but undefined.
+- **Section-structure ambiguity:** §0 disambiguation needed (notes files have no §0 ADR-citation index — that's spec-only); §1 lineage statement format needs template; §N.1 four-taxonomy needs scope-vs-per-bullet-tag clarification; §N.2 Rationale cell needs ≤25 words constraint; self-check (d) needs small-file exception; self-check (f) needs "binding rule table" definition.
+- **Round-1 vs Round-2 OQs:** preserved Round-1 OQs need `[superseded]` or `[still open]` marking.
+- **Subagent-dispatch self-sufficiency:** dispatch brief input list (5 items) doesn't include Glossary + AGENTS-MD paraphrases.
+- **Amendments (~10):** paraphrase AGENTS-MD hashes inline; gloss lean-eval / historian / silent absorption / exemplar at first use; define claim/framing/primitive/recommendation as scope-not-tag; add small-file exception to (d); define "binding rule table" in (f); mark Round-1 OQs; add Glossary + verbatim AGENTS-MD text to dispatch input.
+
+### Reviewer 5 — scoping-principle skeptic (`accept-with-named-amendments`)
+
+3 load-bearing defects identified:
+
+- **Defect 1 (load-bearing): D-1..D-7 default-skip mandate violates per-candidate engagement.** Brief tells subagents to skip D-1..D-7 or mark `absorbed (v3 default D-N) without further analysis`. But `archive/synthesis-v1-v2/ARCHIVE.md` line 18 says: *"Defaults are not invariants — every Phase-2 track must mark each as `accepted with justification` or `challenged`."* That is per-candidate engagement language. Blanket-skip violates per-candidate scoping principle.
+  - **Amendment:** Replace "skip" with "verify per-candidate, then short-form-cite." Each subagent runs `grep` on its candidate's spec for each D-1..D-7 token. Verdict per default: `absorbed (verified at §X)` / `absorbed (silently — no §-cite found, flagged)` / `challenged` / `not-applicable`. Word cost: ~300 words/candidate.
+- **Defect 2: Bias-guard mandate expansion (R2 A3) collapses 3 per-candidate verdicts.** Phase-6-followup #1 (BF-L vs U-A vs D7-U-1 ADR-0036 framing) is a cross-spec characterization question. Folding into a single auditor adjudicates 3 candidates' framing without per-candidate independent verdicts.
+  - **Amendment:** Per-candidate rubric requires BF-L, U-A, D7-U-1 to **also** produce a §N.3-Notes entry on its own ADR-0036 framing with verbatim cite from its §0 row. Per-candidate verdicts remain authoritative; auditor's read is the reconciliation surface.
+- **Defect 3: Silent-absorption precedence rule needs confidence-threshold guard.** Without a threshold, the auditor's low-confidence guesses override per-candidate high-confidence rejections.
+  - **Amendment:** Auditor labels each `silently-absorbed` finding with confidence (`high` / `medium` / `low`). Only `high` overrides per-candidate `rejected`; `medium` triggers `tbd` reconciliation; `low` is informational.
+
+Acceptable (not scoping violations): be-generous bias direction (tie-breaker, not verdict); exemplar gate (calibration-of-shape ≠ inheritance-of-verdicts); aggregation file (derived view); "needs a patch" uniform rule (mechanical).
+
+### Reviewer 6 — historian / prior-art (`accept-with-named-amendments`)
+
+8 defects identified:
+
+- **D-H1 (load-bearing): `failure-modes.md` mischaracterized.** File has 20 F-mode rows AND 4 per-architecture qualitative-strength rows. §10 floor=20 misses the per-architecture rows. **Amendment:** floor=24 (20+4).
+- **D-H2 (load-bearing): Lineage mappings in Glossary unsourced.** Brief asserts `GF-S~A4`, `GF-M~A1`, etc., but candidate registry doesn't support these. Per `00-brief-v3` UC6, exactly this kind of recency-anchored mapping is forbidden. **Amendment:** delete speculative mappings; each subagent derives lineage from candidate registry verbatim cite.
+- **D-H3: Phase-6-followup #3 silently dropped.** Brief OQs the carry-forward but doesn't decide. **Amendment:** explicit decision in §Decision (Round 2): #3 absorbed into historian's mandate (zero PR cost).
+- **D-H4: Phase-6-followup #2 fold half-stated.** Reviewer 2 A3 covers #1; #2 left in OQ. **Amendment:** explicit fold into silent-absorption auditor scope.
+- **D-H5 (load-bearing): D-1..D-7 skip wrong for 2+ candidates.** BF-L explicitly challenges D-1, D-2 per §4 audit; D7-U-1 generalizes D-4. **Amendment:** rephrase to "skip only if §4 marks `accepted`; explicitly audit if `challenged`." Reinforces Reviewer 5 Defect 1.
+- **D-H6: Prior-art on enumeration not invoked.** Phase-3 `contradictions.md` + `corpus-inventory.md` are precedents for the enumeration shape. **Amendment:** cite both in §A rubric.
+- **D-H7: Bias-guard precedent not cited.** Phase-6 verifier (`phase-6-verification-findings.md`) is structurally identical. **Amendment:** silent-absorption auditor output format mirrors §B sections.
+- **D-H8 (load-bearing): OpenHands+Overstory rejection not prominent.** Round-2 archive proposed substrate stack; `constraints-extracted.md` excluded it. Be-generous bias would absorb it without a flag. **Amendment:** under Bias-direction discipline, name OpenHands+Overstory as known-rejected v3 item; verdict `rejected (explicitly-excluded-per-constraints-extracted)`.
+
+### Round 2 convergence observation
+
+All three Round-2 reviewers converge on a **pre-author-everything-in-the-brief** discipline from different angles (same convergent pattern as auto-006 Round 2):
+
+- **Naive newcomer:** pre-paraphrase AGENTS-MD rules; pre-define every term; pre-prescribe section structure.
+- **Scoping-skeptic:** pre-author per-candidate D-1..D-7 verification rubric (not runtime skip-or-audit decision); pre-author confidence-threshold rule (not runtime adjudication).
+- **Historian:** pre-source every Glossary lineage assignment; pre-fold every Phase-6 carry-forward (#1, #2, #3); pre-flag known-rejected items.
+
+This is the load-bearing convergent amendment — remaining R2 amendments are surgical extensions of body sections already folded.
+
+**No Round-2 reviewer pushed a different dispatch shape** — all three operate on Option A′ as-is with amendments. Per [`AGENTS-MD-8a7029647f`](../../../AGENTS.md#adversarial-review-verdict-tiers) verdict-tier semantics, three `accept-with-named-amendments` verdicts mean **Round 3 is NOT triggered**.
+
+### Convergent amendments folded post-R2
+
+All Round-2 amendments listed in the per-reviewer subsections above are folded inline in the body via Edit operations on commit `<TBD-post-R2-SHA>`. The Round-2 Decision (Option A′) stands; the per-rubric body edits operationalize:
+
+1. §10 floor = 24 (20 F-mode rows + 4 per-architecture coverage-strength rows) — Reviewer 6 D-H1.
+2. §1.5 new subsection for D-1..D-7 verification (replaces blanket skip) — Reviewer 5 Defect 1 + Reviewer 6 D-H5.
+3. Glossary lineage mappings deleted, §1 template now references candidate-registry verbatim — Reviewer 6 D-H2.
+4. Per-candidate §N.3 ADR-0036 framing for BF-L / U-A / D7-U-1 — Reviewer 5 Defect 2.
+5. Silent-absorption confidence-threshold (high / medium / low) — Reviewer 5 Defect 3.
+6. Bias-direction discipline names OpenHands+Overstory + Compound Atelier baseline as known-rejected — Reviewer 6 D-H8.
+7. Silent-absorption auditor mandate expanded to fold Phase-6-followup #2 (cross-spec characterization audit of all 4 framework ADRs); historian mandate expanded to fold Phase-6-followup #3 (Phase-5-close handoff erratum sweep) — Reviewer 6 D-H3 + D-H4.
+8. Self-check items (d) small-file exception, (f) "binding rule table" definition — Reviewer 4.
+9. §N.2 cell-text constraint (Rationale ≤25 words) — Reviewer 4.
+10. §1 lineage statement template — Reviewer 4.
+11. §N.1 four-taxonomy clarified as scope-not-tag — Reviewer 4.
+12. Per-candidate dispatch brief inputs expanded to include Glossary + AGENTS-MD paraphrases + candidate-registry entry + Phase-3 contradictions/corpus-inventory + Phase-6 verifier — Reviewer 4 + Reviewer 6 D-H6 + D-H7.
+
+## Round-2 final decision
+
+**Option A′** (per [§Decision (Round 2)](#decision-round-2) above), **with all Round-1 + Round-2 amendments folded in**: per-candidate parallel fanout (10 + 2 concurrent); lead-agent exemplar with self-check gate; tiered word budget (Light 3500-5000 / Heavy 4500-6500); 4-token classification with silent-absorption-precedence + confidence-threshold reconciliation; §1.5 D-1..D-7 per-candidate verification; §10 floor=24; BF-L/U-A/D7-U-1 per-candidate ADR-0036 §N.3 framing; bias-guards fold Phase-6-followups #1/#2/#3; OpenHands+Overstory + Compound Atelier known-rejected flags; full audit-trail discipline inheritance from auto-006; mandatory ≤500-word digests; omnibus PR consolidation; Phase-7-followup deferral on ≥4 candidates needing patches.
+
+**Decision is locked. Exemplar authoring fires next.**
+
 ## Appendix A — Round-1 reviewer return digests
 
 (Per [Reviewer 3 / D5 amendment](#round-2-final-amendments-folded). Preserved verbatim from the three Round-1 subagent returns. Verdicts confirmed via the 3-tier menu offered per [`AGENTS-MD-8a7029647f`](../../../AGENTS.md#adversarial-review-verdict-tiers).)
@@ -544,6 +639,121 @@ But: the **spec-patch threshold of ≥4 candidates → deferral** is ambiguous. 
 
 ---
 
-*(Round 1 closed 2026-05-27 at commit `9c77389`. Round-2 revision authored above.)*
+*(Round 1 closed 2026-05-27 at commit `9c77389`. Round-2 revision at `e1ca9b4` + post-R2 amendments at `<TBD-post-R2-SHA>`. No Round 3 — Round-2 reviewers converged on amendments, not different dispatch shapes.)*
 
-*(Round 2 closes when reviewers' findings land. Round 3 only if Round-2 reviewers return `reject-with-counter-proposal`.)*
+---
+
+## Appendix B — Round-2 reviewer return digests
+
+(Per Reviewer 6 / historian D-H7 amendment, also per the auto-006 Appendix-A precedent. Preserved verbatim from the three Round-2 subagent returns. Verdicts confirmed via the 3-tier menu offered per [`AGENTS-MD-8a7029647f`](../../../AGENTS.md#adversarial-review-verdict-tiers).)
+
+### Round-2 Reviewer 4 — naive newcomer (verdict: `accept-with-named-amendments`)
+
+**1. Jargon undefined inline at point-of-use**
+
+- L4 (Status) — "10+2 concurrent subagents, lead-agent exemplar, omnibus PR, 4-token classification" dumped before §TL;DR. None defined yet. *Amend:* delete from Status.
+- L4 — "BF-L vs U-A/D7-U-1 ADR-0036 framing" — these candidate IDs (BF-L, U-A, D7-U-1) plus ADR 0036 land before the Glossary.
+- L11 (TL;DR) — "lean-eval design per candidate" never explained. *Amend:* one parenthetical gloss at first use.
+- L11 — "silent absorption" used before §Glossary defines it.
+- L11 — "historian" named as role without explanation it's a bias-guard subagent role.
+- L19 — "Phase-7-close session handoff" — newcomer doesn't know what a "session handoff" file is.
+- L4, L11, L228, L344 — `AGENTS-MD-<hash>` IDs (12 distinct hashes cited); rule text never paraphrased. A newcomer cannot operationalize without leaving the brief. *Amend:* parenthetical paraphrase (≤8 words) after each first-use hash.
+- L4, L228, L283 — "framework-ADR + per-variant pairing", "orphan ADR", "designed-system substrate" absent from Glossary.
+- L389, L403 — "DEC-1.a", "Phase-3.5.5", "RG primitive", "X_UNM_B" referenced but never defined in scope. *Amend:* Glossary entry.
+- L333 — "claim/framing/primitive/recommendation" named as enumeration taxonomy but never disambiguated. Subagent will not know whether a numbered list item is a "claim" or a "primitive". *Amend:* one-line definition each in §Glossary.
+
+**2. Smuggled-in assumptions**
+
+- Lineage to v2 architectures (Glossary L336): mappings are given but the Glossary calls them "NOT binding." Naive subagent has no instruction on how to choose. *Amend:* "If unsure, default to the lead-agent best-draft mapping above."
+- L207 — "the Phase-6 precedent worked cleanly with the same shape" — auto-006 not introduced or summarised as a precedent.
+- L135, L150 — "exemplar before parallel fanout" — pattern presumed familiar but never described in the brief.
+
+**3. Hidden anchors**
+
+- L15 — "per the v1.2 plan § Phase 7" — newcomer must leave the brief to know what the plan says.
+- L135 — "per [`AGENTS-MD-eec503a3c2`]" — same.
+- L209 — "the Phase-6 precedent" / "auto-006 precedent" — which auto-006 element specifically?
+
+**4. Section-structure ambiguity**
+
+- **§0 ambiguity:** L18 mentions "§0 ADR-citation index" for spec patches, but per-candidate NOTES rubric gives a YAML frontmatter labelled implicitly as §0 with cell-counts. *Amend:* explicit "Notes files have no §0 ADR-citation index; YAML frontmatter is unnumbered."
+- **§1 lineage statement format** (L86) — free-text? bullet? required tokens? *Amend:* prescribe a one-sentence template.
+- **§N.1 four-taxonomy enumeration** (L89, L333) — how does the subagent choose which token to tag each bullet with? Or is it just unlabelled? *Amend:* clarify "bullets are unlabelled; taxonomy describes scope, not per-item tagging."
+- **§N.2 Rationale cell** (L92-97) — free-form or constrained length? *Amend:* "≤25 words per cell."
+
+**5. Self-check items that aren't mechanical**
+
+- **(f) "binding rule table cited"** (L119) — no test for what makes a citation "a binding rule table." *Amend:* "binding rule table = any AGENTS-MD-tagged table you quote verbatim."
+- **(d) ≥5 enumeration rows** (L117) — what if research-plan.md yields only 3 enumerable claims? *Amend:* add "If a file's structure yields <5 items, document the count + reason in §N.3; auto-pass."
+
+**6. Path-reference correctness:** Paths resolve correctly to repo root.
+
+**7. Round-1 vs Round-2 confusion:** §362-378 (Round-2 OQs) and §379-392 (Round-1 OQs) coexist. *Amend:* mark every Round-1 OQ with `[superseded by Round-2 amendment X]` or `[still open]`.
+
+**8. Subagent-dispatch self-sufficiency:** L55-61 lists 5 inputs but the subagent needs (a) the Glossary, (b) AGENTS.md anchors quoted, (c) auto-006 exemplar. *Amend:* add a 6th input: "Glossary + verbatim text of every AGENTS-MD rule cited."
+
+Highest-priority amendments: paraphrase AGENTS-MD hashes inline; gloss "lean-eval" / "historian" / "silent absorption" / "exemplar pattern" at first use; define the claim/framing/primitive/recommendation taxonomy; add a small-file exception to self-check (d); mark Round-1 OQs as superseded or still-open.
+
+### Round-2 Reviewer 5 — scoping-principle skeptic (verdict: `accept-with-named-amendments`)
+
+**Lens:** per-candidate independence (v1.2 plan § Phase 7, line 423: *"the audit runs per candidate — each candidate's spec must independently engage with archived material"*).
+
+**Three load-bearing defects:**
+
+**Defect 1 — D-1..D-7 default-skip mandate violates per-candidate engagement** (§The question ¶7 + Glossary "Already-inherited material" + §1 rubric Reviewer-3/D15 amendment)
+
+Brief tells every subagent to skip D-1..D-7 or mark `absorbed (v3 default D-N) without further analysis`. **But** [`archive/synthesis-v1-v2/ARCHIVE.md` line 18](../../../archive/synthesis-v1-v2/ARCHIVE.md) says: *"Defaults are not invariants — every Phase-2 track must mark each as `accepted with justification` or `challenged`."* That is per-candidate engagement language. The brief converts a per-candidate verification obligation into a lead-agent-decided uniform skip. This is the single clearest violation: a candidate whose spec quietly dropped D-2 (scenarios as holdout — flagged fragile for brownfield) would be marked `absorbed (D-2)` by mandate, with the actual absence invisible.
+
+**Surgical amendment.** Replace "skip" with "verify per-candidate, then short-form-cite." Each subagent runs `grep` on its candidate's spec for each of D-1..D-7's load-bearing tokens. Verdict per default: `absorbed (verified at specs/<id>.md §X)` / `absorbed (silently — no §-cite found, flagged)` / `challenged` / `not-applicable-to-candidate-mandate`. Word cost: <300 words per candidate.
+
+**Defect 2 — Bias-guard mandate expansion (Reviewer 2 A3) collapses 3 per-candidate verdicts into 1 auditor read**
+
+Phase-6-followup #1 (BF-L "commodity dispatch" vs U-A / D7-U-1 "registrar-framework" framing of ADR 0036) is a **cross-spec characterization** question that touches 3 candidates. Folding it into the silent-absorption auditor means one subagent — with 71K words of context — adjudicates 3 candidates' framing. The per-candidate fanout will NOT independently re-derive this.
+
+**Surgical amendment.** In the per-candidate rubric, add: "For candidates BF-L, U-A, D7-U-1: §N.3 for the ADR-0036 audit-file row MUST include a one-paragraph framing characterization (commodity dispatch / registrar-framework / other), with verbatim cite from the candidate's own §0 row. Bias-guard reconciliation per A3 applies only after these per-candidate framings exist."
+
+**Defect 3 — Silent-absorption precedence rule (Reviewer 1 A3) is correct-as-written but needs a confidence-threshold guard**
+
+The rule "silent-absorption auditor's `silently-absorbed` overrides per-candidate `rejected`" is **defensible** under per-candidate independence because the auditor has *fresh-context advantage*. The override moves authority from one fresh-context read to another fresh-context read — not from a per-candidate subagent to a lead-agent verdict.
+
+BUT: Round-2 OQ-1 itself flags "the auditor's confidence threshold isn't specified." Without a threshold, the auditor's low-confidence guesses override per-candidate high-confidence rejections.
+
+**Surgical amendment.** Require silent-absorption auditor to label each `silently-absorbed` finding with confidence (`high` / `medium` / `low`). Only `high`-confidence findings override per-candidate `rejected`; `medium` triggers a `tbd` reconciliation row; `low` is informational only.
+
+**Acceptable (not violations):**
+
+- **Be-generous bias direction** — lead-agent quality-of-life amendment, NOT scoping violation. Each subagent still independently classifies; the bias is a tie-breaker, not a verdict.
+- **Exemplar gate** — calibration-of-shape ≠ inheritance-of-verdicts. Shape-uniform output with per-candidate-independent content is the intended Phase-3.5.5 RG-primitive discipline.
+- **Aggregation file authored by lead agent** — derived view; per-candidate files at `backfill-notes/<id>.md` remain authoritative for Phase 8.
+- **"Needs a patch" uniform rule** — mechanical, not a verdict. Acceptable.
+- **Phase-6-followup #2 deferral** — defensible; per-candidate already audits its own framework ADRs in §2-§10.
+
+### Round-2 Reviewer 6 — historian / prior-art (verdict: `accept-with-named-amendments`)
+
+Brief inherits ~80% of auto-006 discipline cleanly, but misrepresents one archive artifact, invents lineage mappings the registry doesn't underwrite, and silently defers Phase-6 carry-forwards #2/#3 without an audit-trail commitment.
+
+**D-H1. `failure-modes.md` characterization is materially wrong.** Brief says (line 33, line 324) the file is an "F1-F20 per-architecture coverage matrix." Reading the file (`archive/architectures-v2/failure-modes.md`, 45 lines): it has a 20-row F-mode coverage matrix PLUS a **second "Coverage column scores" table** (4 ★-rated rows per architecture with prose verdicts like "weakest on F18 — replaces rigor with empiricism"). The brief's Round-2 floor=20 exception captures the F-mode rows but ignores the per-architecture qualitative-strength rows. **Amendment:** floor for §10 = **20 + 4 = 24** enumeration units.
+
+**D-H2. Lineage mappings in Glossary are unsourced and contradict the registry.** Brief Glossary asserts `GF-S~A4 tournament-flavored, GF-M~A1 refinery-flavored, BF-S~A2 atelier-flavored…`. `architectures/v3/candidate-registry.md` describes GF-S as substrate-first with 9 numbered substrate primitives — zero "tournament" lineage. These mappings are lead-agent free-association, not registry-derived. Per `00-brief-v3` UC6, exactly this kind of recency-anchored mapping is what archive-and-rebuild discipline forbids. **Amendment:** delete the example mapping list, or pin each to a candidate-registry quote.
+
+**D-H3. Phase-6-followup #3 silently dropped.** Phase-6-close handoff carried 3 carry-forwards. Brief folds #1 (ADR-0036 framing → silent-absorption auditor) but only mentions #3 (BF-M handoff erratum sweep) in OQ-8 without deciding. **Amendment:** explicit decision in §Decision (Round 2): "#3 deferred to Phase-7-close handoff with a one-row erratum-sweep finding by the historian bias-guard" OR "#3 absorbed into historian's existing scope (zero PR cost)."
+
+**D-H4. Phase-6-followup #2 fold half-stated.** Reviewer 2 A3 expanded silent-absorption auditor to fold the BF-L 0036 framing — that's Phase-6-followup #1. Phase-6-followup #2 (cross-spec characterization audit of shared framework ADRs) is a deeper version. Brief leaves it in OQ-8/OQ-9. **Amendment:** state explicitly whether #2 is in or out of silent-absorption auditor scope; if in, raise that auditor's word budget another ~500 words.
+
+**D-H5. D-1..D-7 skip not verified against actual specs.** Brief instructs subagents to mark D-1..D-7 as `absorbed (v3 default D-N)` and skip. But `grep` against `specs/*.md` shows: BF-L spec explicitly **challenges** D-1, D-2, and partially D-3. D7-U-1 generalizes D-4 to every artifact boundary. The blanket "skip D-1..D-7" instruction is wrong for at least 2 candidates. **Amendment:** rephrase to "skip D-N for candidates whose §4 Discipline binding marks D-N `accepted`; explicitly audit D-N for candidates whose track marks it `challenged`."
+
+**D-H6. Prior-art on enumeration not invoked.** Phase-3 produced `architectures/v3/contradictions.md` and `corpus-inventory.md` — both per-claim enumerations of corpus material with classification. The rubric reinvents this shape without referencing the precedent. **Amendment:** add one sentence under §A rubric: "Enumeration pattern follows the Phase-3 [`contradictions.md`](../contradictions.md) + [`corpus-inventory.md`](../corpus-inventory.md) precedent."
+
+**D-H7. Bias-guard precedent not cited.** Brief introduces "bias-guards" without referencing the Phase-6 fresh-context verifier as precedent. The Phase-6 verifier (`phase-6-verification-findings.md`) is structurally identical. **Amendment:** cite Phase-6 verifier as bias-guard precedent in §Alternatives A; explicitly state silent-absorption auditor's output format mirrors `phase-6-verification-findings.md` §B sections.
+
+**D-H8. OpenHands+Overstory rejection not prominent.** `constraints-extracted.md` explicitly excludes "OpenHands SDK + Overstory-design-in-Python as substrate stack" as a recommendation, not a constraint. Round-2 archive material carried this as the load-bearing §6.2 / §8 recommendation. Brief's bias-direction discipline says "be generous toward archive items" — without a flag, subagents will absorb the substrate-stack recommendation that the user explicitly excluded. **Amendment:** under Bias-direction discipline, name the OpenHands+Overstory recommendation as a **known-rejected v3 item** — back-fill cells for this MUST classify `rejected (explicitly-excluded-per-constraints-extracted)`, never `absorbed`.
+
+**Passes (prior-art correctly inherited):**
+
+- Archive scope = 9 files: verified via `find archive -type f -name '*.md'`.
+- `constraints-extracted.md` does contain UC1-UC8 as claimed.
+- auto-006 audit-trail discipline (SHA pinning, Appendix A, time-anchored honest-acknowledgements, 3-tier menu) all folded.
+
+---
+
+*(Round 2 closed 2026-05-27. All Round-1 + Round-2 amendments folded into Decision (Round 2) above. No Round 3 needed — Round-2 reviewers converged on amendments, not different dispatch shapes.)*

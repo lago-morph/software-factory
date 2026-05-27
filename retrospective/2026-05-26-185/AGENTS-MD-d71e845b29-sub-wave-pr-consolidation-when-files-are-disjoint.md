@@ -1,0 +1,9 @@
+# agent instruction
+
+**Sub-wave PR consolidation when files are disjoint.** When a brief plans N sub-wave PRs (one per cluster) and the N sub-waves write disjoint files to the same parent branch, the lead agent MAY consolidate them into a single omnibus PR at delivery time IF: (a) each sub-wave's files do not overlap with sibling sub-waves; (b) the brief's clustering rationale survives in the omnibus (e.g., the omnibus PR description preserves the per-cluster sectioning); (c) consolidation does not bundle blocking + non-blocking work (a failing spec must be isolatable for re-author without affecting siblings). The consolidation MUST be explicitly acknowledged in the omnibus PR description AND the run's session handoff AND the morning summary per the "deviation acknowledgement" pattern.
+
+*Grounded in: 2026-05-26 Phase-6 run — auto-006 brief committed to 4 sub-wave PRs (Wave 6.1 GF / 6.2 BF / 6.3a U-mid / 6.3b U-heavy isolated). Actual delivery consolidated to 1 omnibus PR; saved 3 PRs against the cap with zero loss of mandate-clustering rationale (preserved as PR description sections). Honest-acknowledgement landed in the omnibus PR body + Phase-6-close handoff + morning summary.*
+
+# justification
+
+The brief's PR-shape decision was made before knowing the actual cost/benefit of branching. When the disjoint-files invariant holds, the omnibus consolidation is a net-positive optimization. The rule's three conditions (a/b/c) prevent the misuse case where consolidation hides blocking work. The acknowledgement requirement preserves auditability — the brief still says 4 PRs; the omnibus PR + handoff document the pivot. Cost of the rule: one decision per multi-sub-wave run (omnibus vs sub-wave). Asymmetric cost without: agents either honor the brief mechanically (burning PRs against the cap) or pivot silently (breaking the audit trail).

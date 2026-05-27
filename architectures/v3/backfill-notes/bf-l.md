@@ -28,11 +28,11 @@ cell-counts:
   # challenged / partial-challenge).
 self-check-results:
   # Per auto-007 §1.5 rubric + self-check items (a)-(g).
-  wc-w: 6480  # within Heavy tier (4500-6500); see §exemplar-budget note below
+  wc-w: 6498  # within Heavy tier (4500-6500)
   ls-cited-files: PASS  # all cited v3 files verified at commit time
   section-headers: PASS  # §1, §1.5, §2-§10, §11, §12 + §N.0 file-headers per §2-§10
-  enumeration-floor: PASS  # §2.1=3 (small-file-exception), §3=16, §4=12, §5=9,
-                           # §6=8, §7=14, §8=8, §9=8, §10=24 (all ≥5 or exempt)
+  enumeration-floor: PASS  # §2.1=3 (small-file-exception), §3.1=17, §4.1=13, §5.1=10,
+                           # §6.1=8, §7.1=15, §8.1=8, §9.1=8, §10.1=24 (all ≥5 or exempt)
   cell-counts-match-yaml: PASS  # 69+11+18+7 = 105 cells across §1.5 + §2.2-§10.2
   verbatim-text-pull: PASS  # BF-L §0 ADR-citation row 0036 verbatim quoted in §10.3
                             # ADR-0036 framing characterization per Reviewer 5 Defect 2.
@@ -45,7 +45,7 @@ Per Wave-7.1 dispatch under [auto-007 §Decision (Round 2)](../decisions/auto-00
 
 ## §1 Overview
 
-**Mandate.** Brownfield (only). BF-L is brownfield-only by construction — 4-of-5 mandate-fit cells `brownfield`, 1 `n/a` (mvp) per the [BF-L spec §5](../specs/bf-l.md#5-mandate-fit). The mvp cell is structurally inapplicable: BF-L's three loops are tied to *existing code* and running Loop-1 on an empty repository produces an empty Codebase Model.
+**Mandate.** Brownfield (only). 4-of-5 mandate-fit cells `brownfield`, 1 `n/a` (mvp) per [BF-L spec §5](../specs/bf-l.md#5-mandate-fit). The mvp cell is structurally inapplicable: BF-L's three loops are tied to *existing code* — Loop-1 on empty repository = empty Codebase Model.
 
 **Axis.** Legacy-ingestion-first. *Code-archaeology is the primary organizing principle* (per [BF-L spec §1](../specs/bf-l.md#1-overview)) — the factory's first move on any new brownfield codebase is a dedicated ingestion phase that produces the durable, queryable **P-26 Codebase Model** (six views: structural / conventional / historical / runtime / invariant / debt). Every downstream choice (work-unit shape, gate definitions, regime classification, scenario library) is *derived from the ingestion artifact*, not assumed in advance.
 
@@ -57,7 +57,7 @@ Per Wave-7.1 dispatch under [auto-007 §Decision (Round 2)](../decisions/auto-00
 
 ## §1.5 D-1 through D-7 defaults verification
 
-Per Reviewer 5 Defect 1 + Reviewer 6 D-H5 amendments. Each default verified by `grep` against BF-L spec content; verdict tokens per the auto-007 Round-2 rubric.
+Per Reviewer 5 Defect 1 + Reviewer 6 D-H5. Each default verified against BF-L spec content; verdict tokens per auto-007 Round-2 rubric.
 
 | Default | Source claim | BF-L verdict | Spec cite |
 |---|---|---|---|

@@ -78,7 +78,7 @@ The retro-#185 governance proposals were adopted into canonical artifacts before
   - [ADR 0065](../../docs/adr/0065-section-0-adr-citation-index-table.md) — §0 ADR-citation index table is the testable framework + per-variant pairing surface.
   - [ADR 0066](../../docs/adr/0066-omnibus-pr-over-sub-wave-prs-when-files-are-disjoint.md) — Omnibus PR over sub-wave PRs when files are disjoint.
 - **GitHub repo setting `Automatically delete head branches` enabled** by user (prevents stale-branch accumulation post-merge).
-- **9 stale merged-PR branches deleted** (A0-scope-envelope, A1-agent-entry, A5-verification-fixes, nice-mccarthy-FIcXW, retrospective-2026-05-25-151, wave-4.2-primitive-overlap, wave-4.5-authoring-sub-tracks, wave-4.6-phase-4-close, revert-155-claude/wave-4.6-phase-4-close).
+- **9 stale merged-PR branches scheduled for deletion** (A0-scope-envelope, A1-agent-entry, A5-verification-fixes, nice-mccarthy-FIcXW, retrospective-2026-05-25-151, wave-4.2-primitive-overlap, wave-4.5-authoring-sub-tracks, wave-4.6-phase-4-close, revert-155-claude/wave-4.6-phase-4-close). **NOTE**: The session-runtime agent attempted deletion via `git push origin --delete` and received HTTP 403 from the harness git proxy (branch-deletion not permitted at the harness level). The deletion is a one-time manual cleanup via GitHub UI or `gh api -X DELETE repos/lago-morph/software-factory/git/refs/heads/<branch>`. The `Automatically delete head branches` setting is enabled, so future merged-PR branches will self-clean.
 - **Phase-7 dispatch prompt authored** at [`next-agent-prompt-phase-7.md`](../../next-agent-prompt-phase-7.md). Confirms per-candidate parallel fanout shape (10 subagents, one per spec audited against archive).
 
 ## Phase-6-followup carry-forward

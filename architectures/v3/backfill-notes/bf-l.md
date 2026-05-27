@@ -41,7 +41,7 @@ self-check-results:
 
 # Back-fill notes — BF-L (Brownfield, legacy-ingestion-first) vs v1/v2 archive
 
-Per Wave-7.1 dispatch under [auto-007 §Decision (Round 2)](../decisions/auto-007-phase-7-dispatch-shape.md#decision-round-2). Shape inherited verbatim from the lead-agent-authored [BF-S exemplar](./bf-s.md) (YAML frontmatter; §N.0/§N.1/§N.2/§N.3 per archive file; self-check (a)-(g)). Heavy tier per [auto-007 word-budget tier table](../decisions/auto-007-phase-7-dispatch-shape.md#decision-round-2).
+Per Wave-7.1 dispatch under [auto-007 §Decision (Round 2)](../decisions/auto-007-phase-7-dispatch-shape.md#decision-round-2). Shape inherited from the [BF-S exemplar](./bf-s.md). Heavy tier.
 
 ## §1 Overview
 
@@ -49,11 +49,11 @@ Per Wave-7.1 dispatch under [auto-007 §Decision (Round 2)](../decisions/auto-00
 
 **Axis.** Legacy-ingestion-first. *Code-archaeology is the primary organizing principle* (per [BF-L spec §1](../specs/bf-l.md#1-overview)) — the factory's first move on any new brownfield codebase is a dedicated ingestion phase that produces the durable, queryable **P-26 Codebase Model** (six views: structural / conventional / historical / runtime / invariant / debt). Every downstream choice (work-unit shape, gate definitions, regime classification, scenario library) is *derived from the ingestion artifact*, not assumed in advance.
 
-**Entry-mode.** Brownfield-by-construction. An operator delivers an existing repository with git history, CI logs, runtime telemetry, and existing tests. BF-L's day-0 problem is *legacy ingestion* — the brownfield analogue of greenfield cold-start, but explicitly not symmetric to it (per BF-L track §5 + own OQ-T2).
+**Entry-mode.** Brownfield-by-construction. Operator delivers an existing repository with git history, CI logs, runtime telemetry, and existing tests. BF-L's day-0 problem is *legacy ingestion* — the brownfield analogue of greenfield cold-start, not symmetric (per BF-L track §5 + own OQ-T2).
 
 **Strongest v2-architecture-lineage.** *This candidate's strongest v2-architecture-lineage is a **two-architecture pair**: primary to **Architecture 2 (Compound Atelier)** on the durable-knowledge-accumulation surface, and primary-co-equal to **Architecture 3 (Phase-Gated Foundry)** on the dedicated-upfront-phase + V&V-independence + CM-as-spine surface.* Rationale (derived from [BF-L candidate-registry entry](../candidate-registry.md#bf-l--brownfield-legacy-ingestion-first), verbatim: *"Three loops over the Codebase Model. (1) Ingestion (deep, slow, once per codebase + refresh on declared triggers). (2) Work (per-cycle, methodology-shaped, queries the model). (3) Maintenance (continuous, low-cadence; reconciles model with reality). Work-unit-class taxonomy is derived from the codebase model's profile."*): BF-L's persistent Codebase Model thickening through P-24 attribution is direct Atelier compounding (Codebase Model replaces `docs/solutions/`); BF-L's Loop-1 dedicated ingestion + Loop-3 maintenance-as-CM + per-region P-19 classifier acting as Foundry RTM/gate-board is direct Foundry inheritance (Codebase Model substitutes for SRS/SAD/DD stack). Secondary Refinery lineage on per-symbol stable-identifier discipline. Tournament lineage is weakest — cross-model-family judging absorbed; predator-agent + tournament-bracket substrate-substituted.
 
-**D-1 through D-7 default-verification preview.** Per [auto-007 §1.5 verification rubric](../decisions/auto-007-phase-7-dispatch-shape.md#decision-round-2): BF-L explicitly **challenges D-1 and D-2** per [BF-L spec §4 "Disciplines BF-L is explicitly silent on"](../specs/bf-l.md#4-discipline-binding) — these are NOT silently absorbed and the §1.5 verification subsection below records the verdicts verbatim per Reviewer 5 / scoping-skeptic Defect 1 amendment.
+**D-1 through D-7 default-verification preview.** Per auto-007 §1.5: BF-L explicitly **challenges D-1 and D-2** per [BF-L spec §4](../specs/bf-l.md#4-discipline-binding); §1.5 below records verdicts per Reviewer 5 Defect 1.
 
 ## §1.5 D-1 through D-7 defaults verification
 
@@ -322,12 +322,12 @@ v2 Architecture 3 — Phase-Gated Foundry. "Pre-agile structured methodologies b
 |---|---|---|---|
 | §8.1.1 structured pre-agile core thesis | `absorbed (with adaptation)` | BF-L's dedicated Loop-1 ingestion phase + Loop-3 maintenance phase + Loop-2 work phase is structured-phase-discipline; phase-bound experts → per-view ingestion subagents. | specs/bf-l.md §3.1 + §3.3 |
 | §8.1.2 phase model + V&V pairing | `absorbed (with adaptation)` | BF-L's three loops + per-region regime classifier acts as a phase-gated dispatcher: each cycle is V&V-paired via cross-family judging at augmentation-required regime. | specs/bf-l.md §3 + §4 bias-guard |
-| §8.1.3 Configuration Management discipline | `absorbed (verified)` | BF-L §4 attribution-store binding (ADR 0035) + Codebase Model version tokens (git-commit + ingestion-pass ID) IS substrate-level CM. Merkle-DAG incremental versioning per §2.1. | specs/bf-l.md §2.1 + §3.2 step 7 + ADR 0035 |
+| §8.1.3 Configuration Management discipline | `absorbed (verified)` | §4 attribution-store (ADR 0035) + Codebase Model version tokens IS substrate-level CM. Merkle-DAG incremental versioning per §2.1. | specs/bf-l.md §2.1 + §3.2 step 7 + ADR 0035 |
 | §8.1.4 defect-of-origin table | `absorbed (with adaptation)` | P-24 attribution envelope `(agent_id, model_snapshot, cycle_id, symbol_id, diff_slice)` per §3.2 step 7 provides defect-of-origin traceability per-symbol. | specs/bf-l.md §3.2 step 7 + ADR 0035 envelope |
 | §8.1.5 RUP-style discipline × phase matrix | `absorbed (with adaptation)` | BF-L binds 9 of 10 discipline ADRs at substrate; three-loop discipline (0026) is load-bearing for the BF-L phase structure. | specs/bf-l.md §4 all-discipline-binding |
 | §8.1.6 iteration within phases | `absorbed (with adaptation)` | BF-L's three loops each iterate at distinct cadences (Loop-1 deep-slow-once-plus-refresh; Loop-2 per-cycle; Loop-3 continuous low-cadence). | specs/bf-l.md §3.1 / §3.2 / §3.3 |
 | §8.1.7 V&V-side independent roles + different model family | `absorbed (verified)` | BF-L §3.2 step 4 augmentation-required regime: *"cross-family judge required via P-14"* — F46 mitigation. | specs/bf-l.md §3.2 step 4 + §4 bias-guard |
-| §8.1.8 CM as spine | `absorbed (verified)` | BF-L's Codebase Model with snapshot-consistency-at-version-boundaries + Merkle-DAG incremental versioning IS the CM-as-spine architecture. The Codebase Model + P-24 attribution together form the CM spine. | specs/bf-l.md §1 axis + §2.1 integration discipline + §3.2 step 7 |
+| §8.1.8 CM as spine | `absorbed (verified)` | Codebase Model with snapshot-consistency + Merkle-DAG versioning IS CM-as-spine. Codebase Model + P-24 form the CM spine. | specs/bf-l.md §1 axis + §2.1 + §3.2 step 7 |
 
 ### §8.3 Notes
 
@@ -413,7 +413,7 @@ F1-F20 per-architecture coverage matrix PLUS "Coverage column scores" per-archit
 | §10.1.5 F5 Cognitive ceiling | `absorbed (with adaptation)` | BF-L per-region human-required regime (Caremark/RSI + below coverage-floor) + L4 named-human routing is substrate-level F5 mitigation. | specs/bf-l.md §3.2 step 4 + §2.3 |
 | §10.1.6 F6 Cognitive debt | `absorbed` | BF-L §3.2 step 6 P-05 trajectory + §4 cognitive-escrow binding + BF-L specialization (ingestion trajectories become part of Codebase Model). | specs/bf-l.md §4 + ADR 0019 |
 | §10.1.7 F7 Normalization of deviance | `absorbed (with adaptation)` | BF-L Loop-3 maintenance per-region prioritisation surfaces drift earlier; per-region regime classifier with hard-floor table resists deviance accumulation. | specs/bf-l.md §3.3 + §2.3 |
-| §10.1.8 F8 Stale knowledge | `absorbed (verified)` | **BF-L is the candidate with the deepest F8 mitigation**: Loop-3 P-13 maintenance loop is the structural defence per ADR 0048 + §3.3. | specs/bf-l.md §3.3 + ADR 0048 |
+| §10.1.8 F8 Stale knowledge | `absorbed (verified)` | **BF-L's deepest F8 mitigation**: Loop-3 P-13 maintenance loop per ADR 0048 + §3.3. | specs/bf-l.md §3.3 + ADR 0048 |
 | §10.1.9 F9 Spec overfitting | `not-applicable-to-candidate-mandate` | BF-L challenges D-1; spec-overfitting framing presupposes spec-as-durable. | — |
 | §10.1.10 F10 Findings disappear | `absorbed` | BF-L §3.2 step 7 substrate-logs-via-P-24 + immutable attribution + historical view consumption closes finding-disappearance at substrate. | specs/bf-l.md §3.2 step 7 + ADR 0035 |
 | §10.1.11 F11 Renumbering | `absorbed (verified)` | BF-L §2.1 structural view per-symbol stable-IDs (`{language, qname, source-revision}` + stable hash) + Merkle-DAG incremental versioning. | specs/bf-l.md §2.1 structural view + §3.2 step 7 |
@@ -425,7 +425,7 @@ F1-F20 per-architecture coverage matrix PLUS "Coverage column scores" per-archit
 | §10.1.17 F17 Parallel agents on shared dirs | `tbd` | Parallel-agents-on-shared-Codebase-Model is the BF-L variant; substrate supports concurrent ingestion (snapshot consistency at version boundaries) but specific anti-collision is methodology call. | — |
 | §10.1.18 F18 Prose-spec rigor | `not-applicable-to-candidate-mandate` | BF-L challenges D-1; spec-rigor presupposes spec-as-durable. | — |
 | §10.1.19 F19 Model-floor dependency | `absorbed` | BF-L §4 bias-guard + cross-family judging via P-14 surfaces model-floor explicitly per F46. | specs/bf-l.md §4 + ADR 0018 |
-| §10.1.20 F20 Maintenance asymmetry | `absorbed (verified)` | **BF-L is the candidate with the deepest F20 mitigation**: Loop-3 P-13 maintenance loop IS the structural answer to maintenance-vs-greenfield asymmetry per ADR 0048 + §2.2. | specs/bf-l.md §2.2 + §3.3 + ADR 0048 |
+| §10.1.20 F20 Maintenance asymmetry | `absorbed (verified)` | **BF-L's deepest F20 mitigation**: Loop-3 P-13 maintenance loop IS the structural answer per ADR 0048 + §2.2. | specs/bf-l.md §2.2 + §3.3 + ADR 0048 |
 | §10.1.21 A1 Refinery coverage row | `not-applicable-to-candidate-mandate` | Coverage row characterizes Architecture 1, not BF-L. Informational. | — |
 | §10.1.22 A2 Atelier coverage row | `not-applicable-to-candidate-mandate` | Coverage row characterizes Architecture 2 (one of BF-L's lineages), but ★★★★★ scoring is per-Atelier, not per-BF-L. BF-L's own F-mode coverage tracked above. | — |
 | §10.1.23 A3 Foundry coverage row | `not-applicable-to-candidate-mandate` | Coverage row characterizes Architecture 3 (one of BF-L's lineages); scoring is per-Foundry. BF-L's F11/F14 absorption is per-spec, not per-row inheritance. | — |

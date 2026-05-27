@@ -541,7 +541,7 @@ This is the load-bearing convergent amendment — remaining R2 amendments are su
 
 ### Convergent amendments folded post-R2
 
-All Round-2 amendments listed in the per-reviewer subsections above are folded inline in the body via Edit operations on commit `<TBD-post-R2-SHA>`. The Round-2 Decision (Option A′) stands; the per-rubric body edits operationalize:
+All Round-2 amendments listed in the per-reviewer subsections above are folded inline in the body via Edit operations on commit `8883e28`. The Round-2 Decision (Option A′) stands; the per-rubric body edits operationalize:
 
 1. §10 floor = 24 (20 F-mode rows + 4 per-architecture coverage-strength rows) — Reviewer 6 D-H1.
 2. §1.5 new subsection for D-1..D-7 verification (replaces blanket skip) — Reviewer 5 Defect 1 + Reviewer 6 D-H5.
@@ -639,7 +639,7 @@ But: the **spec-patch threshold of ≥4 candidates → deferral** is ambiguous. 
 
 ---
 
-*(Round 1 closed 2026-05-27 at commit `9c77389`. Round-2 revision at `e1ca9b4` + post-R2 amendments at `<TBD-post-R2-SHA>`. No Round 3 — Round-2 reviewers converged on amendments, not different dispatch shapes.)*
+*(Round 1 closed 2026-05-27 at commit `9c77389`. Round-2 revision at `e1ca9b4` + post-R2 amendments at `8883e28`. No Round 3 — Round-2 reviewers converged on amendments, not different dispatch shapes.)*
 
 ---
 

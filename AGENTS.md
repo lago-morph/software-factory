@@ -114,3 +114,21 @@ The repo-root checker [`scripts/check-internal-refs.py`](./scripts/check-interna
 <!-- AGENTS-MD-a43c9584c9 -->
 
 **Dispatch-prompt edit-before-run pattern.** When the user surfaces a quality concern about a dispatch prompt for an upcoming autonomous run, commit the modification to the prompt file in its own PR BEFORE kicking off the run — do not fold the modification into the run's first work-PR. The edit is then mechanically auditable (the run's scope envelope can cite the prompt at a stable commit) and the run benefits from the improvement.
+
+## Pre-flight prior-phase merge-state verification
+
+<!-- AGENTS-MD-4f8c2a1b03 -->
+
+**Pre-flight prior-phase merge-state verification.** When a dispatch prompt or session-handoff doc says "Phase N closed; the following PRs landed", the agent's first action after the scope envelope (and before any non-Read tool call on the new phase's work) MUST be to verify the prior phase's PRs actually landed in `main` — not just in stacked-PR base branches. Concrete check: `git ls-tree -r origin/main --name-only | grep -E "<expected files from prior phase>"` AND `git log --oneline origin/main ^origin/<prior-phase-tip-branch>` returns empty. If the verification fails, surface to the user via AskUserQuestion (in unattended mode, propose a bring-forward PR as the default action) before proceeding.
+
+## PR webhook `merged` is advisory, not authoritative
+
+<!-- AGENTS-MD-c5a92e6017 -->
+
+**PR webhook `merged` is advisory, not authoritative.** When a `<github-webhook-activity>` event reports a PR as merged, the agent MUST verify via `mcp__github__pull_request_read` (`method: "get"`) before acting on the notification. The webhook's `state` field is event-time, not necessarily current; webhook delivery is asynchronous and can fire on a transient "merged" signal that the API later contradicts. The verification call costs one API roundtrip and prevents the agent from re-creating PRs that already exist or skipping PRs that did not merge.
+
+## Sub-wave PR consolidation when files are disjoint
+
+<!-- AGENTS-MD-d71e845b29 -->
+
+**Sub-wave PR consolidation when files are disjoint.** When a brief plans N sub-wave PRs (one per cluster) and the N sub-waves write disjoint files to the same parent branch, the lead agent MAY consolidate them into a single omnibus PR at delivery time IF: (a) each sub-wave's files do not overlap with sibling sub-waves; (b) the brief's clustering rationale survives in the omnibus (e.g., the omnibus PR description preserves the per-cluster sectioning); (c) consolidation does not bundle blocking + non-blocking work (a failing spec must be isolatable for re-author without affecting siblings). The consolidation MUST be explicitly acknowledged in the omnibus PR description AND the run's session handoff AND the morning summary per the "deviation acknowledgement" pattern.

@@ -66,6 +66,21 @@ Per the [auto-006 brief's Phase-6-close definition](decisions/auto-006-phase-6-d
 - ✅ Phase 7 unblocked.
 - 🟡 Pending: omnibus Phase-6 PR opened + merged (in flight at handoff-write time); morning summary + retrospective PRs to follow.
 
+## Retrospective adoption (closed 2026-05-27)
+
+The retro-#185 governance proposals were adopted into canonical artifacts before Phase 7 fires:
+
+- **3 new AGENTS.md rules** appended (file now 134 lines, 17 rules):
+  - [`AGENTS-MD-4f8c2a1b03`](../../AGENTS.md#pre-flight-prior-phase-merge-state-verification) — pre-flight prior-phase merge-state verification (would have caught the Phase-5-missing-from-main bug at session-start).
+  - [`AGENTS-MD-c5a92e6017`](../../AGENTS.md#pr-webhook-merged-is-advisory-not-authoritative) — PR webhook `merged` is advisory, not authoritative (mandates `mcp__github__pull_request_read` verification before acting).
+  - [`AGENTS-MD-d71e845b29`](../../AGENTS.md#sub-wave-pr-consolidation-when-files-are-disjoint) — omnibus consolidation rule with 3 conditions + 3-place acknowledgement.
+- **2 new ADRs** at canonical numbers:
+  - [ADR 0065](../../docs/adr/0065-section-0-adr-citation-index-table.md) — §0 ADR-citation index table is the testable framework + per-variant pairing surface.
+  - [ADR 0066](../../docs/adr/0066-omnibus-pr-over-sub-wave-prs-when-files-are-disjoint.md) — Omnibus PR over sub-wave PRs when files are disjoint.
+- **GitHub repo setting `Automatically delete head branches` enabled** by user (prevents stale-branch accumulation post-merge).
+- **9 stale merged-PR branches scheduled for deletion** (A0-scope-envelope, A1-agent-entry, A5-verification-fixes, nice-mccarthy-FIcXW, retrospective-2026-05-25-151, wave-4.2-primitive-overlap, wave-4.5-authoring-sub-tracks, wave-4.6-phase-4-close, revert-155-claude/wave-4.6-phase-4-close). **NOTE**: The session-runtime agent attempted deletion via `git push origin --delete` and received HTTP 403 from the harness git proxy (branch-deletion not permitted at the harness level). The deletion is a one-time manual cleanup via GitHub UI or `gh api -X DELETE repos/lago-morph/software-factory/git/refs/heads/<branch>`. The `Automatically delete head branches` setting is enabled, so future merged-PR branches will self-clean.
+- **Phase-7 dispatch prompt authored** at [`next-agent-prompt-phase-7.md`](../../next-agent-prompt-phase-7.md). Confirms per-candidate parallel fanout shape (10 subagents, one per spec audited against archive).
+
 ## Phase-6-followup carry-forward
 
 **No mid-stream Phase-6-followup deferral fired** (verifier PASS WITH AMENDMENTS — no spec re-author needed; re-dispatch budget unused). The auto-006 brief's [§Phase-6-followup deferral binding mechanism](decisions/auto-006-phase-6-dispatch-shape.md#phase-6-followup-deferral-binding-mechanism-reviewers-4--6--load-bearing) was set up to fire if ≥2 specs needed re-author; that threshold was not reached.

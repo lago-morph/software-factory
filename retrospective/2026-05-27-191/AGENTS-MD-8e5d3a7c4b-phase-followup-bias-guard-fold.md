@@ -1,0 +1,9 @@
+# agent instruction
+
+**Phase-N-followup carry-forward absorption into bias-guard expanded mandates.** When the next phase's brief includes bias-guard / audit subagents (silent-absorption auditor, historian, verifier, etc.), the lead agent MUST audit the prior Phase-(N-1)-close handoff's "carry-forward" section for items that fit the bias-guard's existing input scope (e.g., prior Phase already reads the same archive + same specs). Such items MUST be folded into the bias-guard's expanded mandate at zero PR cost — adding ~500-1000 words to the auditor's output rather than firing a separate carry-forward subagent + carry-forward PR.
+
+*Grounded in: Phase-7 auto-007 Round 2 — Phase-6-followup carry-forwards #1 (ADR-0036 framing) + #2 (cross-spec framework characterization) + #3 (Phase-5-close handoff erratum sweep) all folded at zero PR cost into silent-absorption auditor + historian expanded mandates per Reviewer 2 A3 + Reviewer 6 D-H3 + D-H4 amendments.*
+
+# justification
+
+Phase-6-close left 3 carry-forwards as "optional, not Phase-7 blockers." A naive Phase-7 run would either (a) skip the carry-forwards (carry-forward debt accumulates phase-over-phase), or (b) fire 3 separate carry-forward subagents (3 additional PRs against the cap). Reviewer 2 cost-hawk A3 + Reviewer 6 historian D-H3 + D-H4 amendments identified that all 3 fit cleanly within the silent-absorption auditor + historian's existing input scope (they're already reading all 10 specs + 9 archive files + the prior handoff) — folding adds ~1000 words to auditor outputs at zero PR cost. The outcome at Phase-7-close: all 3 Phase-6-followup carry-forwards CLOSED. Cost of not having the rule: carry-forward debt accumulates indefinitely OR PR-cap blows out from carry-forward subagent fanouts. Cost of adopting the rule: 2 sentences in each `auto-NNN` brief's bias-guard description section.

@@ -1,0 +1,9 @@
+# agent instruction
+
+**Adversarial-review amendment-inheritance from prior auto-NNN briefs.** When authoring a new `auto-NNN` decision brief that follows an immediately-prior `auto-NNN` brief as structural template (e.g., auto-007 inherits from auto-006), the new brief MUST pre-fold the prior brief's adversarial-review amendments (especially Reviewer-N audit-trail amendments — SHA-pinning, time-anchored honest-acknowledgement, Appendix scaffolding, 3-tier verdict menu commitment, TL;DR structure-not-conclusions) at Round-1 authoring time. Failure to inherit means the new brief's regulator-angle reviewer surfaces ~9 defects already-solved in the prior brief.
+
+*Grounded in: Phase-7 auto-007 Round 1 — Reviewer 3 / regulator surfaced 9 defects, 6 of which directly repeat auto-006 Reviewer 6 findings ("D1, D2, D3, D5, D8, D9 are direct repeats of auto-006 Reviewer 6 findings — minor process bug").*
+
+# justification
+
+auto-007 Round-1 Reviewer 3 (regulator) returned a 9-defect audit. Reviewer 3 itself flagged the meta-finding: "defects D1, D2, D3, D5, D8, D9 are direct repeats of auto-006 Reviewer 6 findings that should have been pre-folded as inherited precedent — minor process bug, not blocker." Cost of not having the rule: every successor `auto-NNN` brief's Round-1 regulator pass re-surfaces the same audit-trail discipline amendments (SHA-pinning, time-anchored git-log, Appendix A scaffolding, 3-tier menu commitment, TL;DR rewrite, etc.) → wasted Round-1 amendment cycle + 9-defect regulator output that's mostly noise. Cost of adopting the rule: when authoring auto-NNN-Round-1, lead agent does a 5-minute review of auto-(NNN-1)'s Round-2 amendments-folded section + audit-trail discipline checklist; pre-folds the canonical patterns. Estimated saving: 30-45 minutes per `auto-NNN` brief Round-1 cycle.

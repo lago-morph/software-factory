@@ -1,0 +1,9 @@
+# agent instruction
+
+**Silent-absorption-finding confidence-threshold rule.** When a fresh-context audit subagent (e.g., a Phase-7 silent-absorption auditor or analogous cross-spec auditor) produces findings that would override per-candidate / per-spec subagent verdicts at lead-agent aggregation, the audit subagent MUST label each finding with a 3-tier confidence (`high` / `medium` / `low`). Only `high`-confidence findings override per-candidate verdicts; `medium` triggers a `tbd` reconciliation row; `low` is informational only. Required to prevent the fresh-context auditor's low-confidence guesses from overriding per-candidate high-confidence rejections.
+
+*Grounded in: Phase-7 auto-007 Round 2 — Reviewer 5 / scoping-skeptic Defect 3 amendment + Phase-7 silent-absorption auditor's 3 high / 7 medium / 5 low label distribution.*
+
+# justification
+
+The Phase-7 silent-absorption auditor produced 15 findings. Without confidence labels, all 15 would have overridden any per-candidate `rejected` verdict on the same cell → 15 forced overrides at aggregation. With confidence labels: only the 3 high-confidence findings apply override (and none of them actually overrode anything since per-candidate verdicts were already `absorbed`); 7 medium-confidence findings became `tbd` reconciliation rows for Phase-8 design input; 5 low-confidence findings were informational only. The Round-2 reviewer (scoping-skeptic) explicitly raised this defect — without the threshold, the fresh-context auditor's low-confidence guesses would have moved authority from per-candidate subagents to a single auditor read. Cost of not having the rule: per-candidate scoping-principle violations at every aggregation pass + 12 spurious cell-overrides per fanout. Cost of adopting the rule: 3 lines added to the auditor's dispatch brief (label each finding high/medium/low) + a single paragraph in the aggregation file's reconciliation precedence section.

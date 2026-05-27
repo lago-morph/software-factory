@@ -14,8 +14,9 @@ This is the top-level navigation document for new agent sessions on this repo. I
 
 ## 2. Current state
 
-- [Phase-6 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-26-phase-6-close.md) — pickup brief for the next agent; **Phase 6 fully closed with 10 architecture specs + mandate-fit matrix + verification subagent PASS WITH AMENDMENTS**; per-candidate spec set + matrix; Phase-7 back-fill audit UNBLOCKED; task-aware reading lists for Phase 7 dispatch shape + per-candidate parallel back-fill fanout; ADR 0049 documentation erratum on the Phase-5-close handoff. **This is the active handoff.** Update this entry's link target when a new SESSION-HANDOFF is written.
-- [Phase-5 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-25-phase-5-close.md) — superseded by Phase-6-close above. **Note**: this prior handoff's per-candidate ADR set table has a documentation defect on BF-M (assigns ADR 0049 to BF-M; actually BF-L's per-variant). See the Phase-6-close handoff erratum for the correction.
+- [Phase-7 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-27-phase-7-close.md) — pickup brief for the next agent; **Phase 7 fully closed with 10 per-candidate back-fill notes + 2 bias-guard audits + lead-agent aggregation matrix**; Wave 7.3 spec patches NOT FIRED (matrix-flag + Phase-8 cite-obligation alternative); Phase 8 lean-eval design UNBLOCKED; task-aware reading lists for Phase 8 dispatch shape (auto-008) + per-candidate lean-eval brief authoring + cross-candidate evaluator-brief; Phase-6-close handoff erratum-extensions for BF-M + BF-L rows. **This is the active handoff.** Update this entry's link target when a new SESSION-HANDOFF is written.
+- [Phase-6 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-26-phase-6-close.md) — superseded by Phase-7-close above. Phase-6-followup carry-forwards #1/#2/#3 closed by Phase 7 (silent-absorption auditor + historian expanded mandates). ADR 0049 documentation erratum on the Phase-5-close handoff extended by Phase 7 historian audit (BF-M row + BF-L row additions).
+- [Phase-5 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-25-phase-5-close.md) — superseded by Phase-6-close + Phase-7-close above. **Note**: per-candidate ADR set table has documentation defects on BF-M (assigns ADR 0049 to BF-M; actually BF-L's per-variant) AND under-statement of framework + designed-system ADRs on BF-M + BF-L rows. See the Phase-7-close handoff erratum-extension for the full correction set.
 
 ## 3. Plan
 
@@ -47,7 +48,22 @@ This is the top-level navigation document for new agent sessions on this repo. I
 
 Pre-curated per-task reading lists. If your first task is on this list, read exactly the named files and skip everything else until needed. Lists are accelerators — if your task isn't here, fall back to navigation sections 1–7.
 
-### Phase 5 dispatch shape decision (`auto-005`)
+### Phase 8 dispatch shape decision (`auto-008`, next agent's first task)
+
+- Read: [`AGENTS.md`](AGENTS.md), this file, [Phase-7 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-27-phase-7-close.md), [v3 synthesis plan § Phase 8](ARCHITECTURE-V3-SYNTHESIS-PLAN.md#phase-8--lean-eval-design-one-brief-per-candidate-first-pressure-test-surface-revised-in-v12), [auto-007 Phase-7 dispatch shape brief](architectures/v3/decisions/auto-007-phase-7-dispatch-shape.md) (precedent for `auto-NNN` brief shape), [Phase-7 aggregation matrix](architectures/v3/backfill-notes.md) for Phase-8 brief inputs (cite obligations + reconciliation TBDs + historian load-bearing gaps), [autonomous-run skill](.claude/skills/autonomous-run/SKILL.md).
+- Skip: per-candidate back-fill notes (only needed when Wave 8.1 per-candidate briefs are authored); per-candidate specs (only needed for content authoring, not dispatch shape).
+
+### Phase 8 per-candidate lean-eval brief authoring (Wave 8.1; after auto-008 fires)
+
+- Read per candidate: [`AGENTS.md`](AGENTS.md), this file, [Phase-7 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-27-phase-7-close.md), the candidate's `architectures/v3/specs/<id>.md`, the candidate's `architectures/v3/backfill-notes/<id>.md`, the candidate's open-carries from `specs/<id>.md` §6, the auto-008 brief (when authored), the cite obligations from [aggregation §3.1](architectures/v3/backfill-notes.md#31-high-confidence-findings-3--apply-precedence-rule) that touch this candidate.
+- Skip: other candidates' specs + back-fill notes.
+
+### Phase 8 cross-candidate evaluator-brief (Wave 8.2; after Wave 8.1 closes)
+
+- Read: [`AGENTS.md`](AGENTS.md), this file, [Phase-7 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-27-phase-7-close.md), all 10 candidate `architectures/v3/lean-evals/<id>.md` files (after Wave 8.1 lands), [DEC-1.a falsifier discipline](architectures/v3/decisions-captured.md#d1--unification-verdict-no-methodology-serves-both-mandates-working-hypothesis-falsifiable-by-phase-8), [aggregation §6.4 DEC-1.a observation](architectures/v3/backfill-notes.md#64-dec-1-a-working-hypothesis-observation-neutral-pre-phase-8).
+- Skip: per-candidate specs (already absorbed via lean-eval brief authoring); per-candidate back-fill notes (Phase-7 done).
+
+### Phase 5 dispatch shape decision (`auto-005`, historical)
 
 - Read: [`AGENTS.md`](AGENTS.md), this file, [Phase-4 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-25-phase-4-close.md), [v3 synthesis plan § Phase 5](ARCHITECTURE-V3-SYNTHESIS-PLAN.md#phase-5--adrs-per-candidate-with-cross-references-on-shared-primitives-revised-in-v12), [Primitive overlap verdicts](architectures/v3/primitives/overlap.md), [Disciplines index](architectures/v3/disciplines/index.md), [auto-004 Phase-4 dispatch shape](architectures/v3/decisions/auto-004-phase-4-dispatch-shape.md) (precedent for `auto-NNN` brief shape), [autonomous-run skill](.claude/skills/autonomous-run/SKILL.md), [decision-brief adversarial-review lifecycle SKILL-SPEC](retrospective/2026-05-25-155/SKILL-SPEC-34dd1d0274-decision-brief-adversarial-review-lifecycle.md).
 - Skip: per-candidate substrate-requirements (only needed when ADRs are authored), per-primitive sketches (drill on demand).

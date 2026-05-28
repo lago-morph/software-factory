@@ -158,7 +158,13 @@ The 6 scenarios are designed to surface the following failure modes — for each
 | X_UNM_B | Completeness gap | #4 (load-bearing) | §2 X_UNM_B |
 | L0↔L4 long-distance invariant arm | Deterministic-reachability vs judge-arm | #6 | Wave 4.5 L0-L4-1 + L0-L4-2 |
 
-17 cells; each maps to ≥1 scenario; each cell's spec §-anchor is auditable from `specs/u-b.md`. Coverage is intentional, not coincidental: the 3 brownfield scenarios were designed FROM U-B's X_UNM_B completeness gap (the load-bearing brownfield surface), not the reverse.
+17 cells; each maps to ≥1 scenario; each cell's spec §-anchor is auditable from `specs/u-b.md`. Coverage is intentional, not coincidental: the 3 brownfield scenarios were designed FROM U-B's X_UNM_B completeness gap (the load-bearing brownfield surface), not the reverse. **No scenario engages a failure mode F-mode is not enumerated in U-B's spec §3-§4 or in the Wave-4.5 invariant catalog** — i.e., the lean-eval does NOT smuggle in failure modes U-B did not commit to defending.
+
+**Cross-cutting failure-mode coverage observations.** Three structural observations follow from the F-mode matrix:
+
+1. **U-B's F-mode density is notably higher than greenfield-only candidates.** Per [`backfill-notes/u-b.md §10.3`](../backfill-notes/u-b.md): U-B absorbs 19-of-20 v2 F-modes (F1-F16 except F17 TBD; F18-F20), reflecting the per-layer-pair invariant catalog's structural coverage. The lean-eval's 17 cells sample the F-mode universe; full F-mode coverage is the substrate's design property, not the lean-eval's surface.
+2. **The load-bearing F-modes split by mandate.** F44 (lethal-trifecta), F46 (cross-family), F58 (regulatory-L0-seed) are load-bearing on the greenfield bloc — they pressure-test U-B's *substrate-enforced gate-closure* claim. X_UNM_B (completeness gap), F52 (own-F52 risk), F40-analogue (L4→L0 inversion) are load-bearing on the brownfield bloc — they pressure-test U-B's *honest-degradation discipline*. The split is not symmetric: U-B's greenfield F-mode coverage is dense and structural; brownfield coverage is bounded by the X_UNM_B completeness gap and depends on the honest-degradation discipline holding.
+3. **L0↔L4 long-distance pair is uniquely tested.** Scenarios #1 + #4 + #6 collectively exercise the L0↔L4 long-distance pair from three angles (top-down seeding via #1; bottom-up inference via #4; drift detection via #6). No other layer-pair gets the same three-angle treatment in this lean-eval — this is intentional: the L0↔L4 long-distance arm is U-B's most distinctive substrate property (the Wave-4.5 L0-L4-1 deterministic-reachability + L0-L4-2 five-category coverage pair) and the one most likely to falsify the layer-typing wager if it fails.
 
 ## §5 Evaluator time + protocol
 
@@ -240,6 +246,8 @@ Per the [auto-008 per-candidate historian-design-input table](../decisions/auto-
 - `medium-confidence-design-inputs`: 3 §B.1 cells (rows 2, 4, 5; row 2 subsumed by high-confidence; rows 4 + 5 non-blocking design inputs).
 - `historian-design-inputs`: 0 (none assigned).
 
+**Cross-spec characterization audit hook (per backfill-notes/u-b.md §11).** U-B claims both framework ADRs 0029 (P-28) and 0030 (P-29) with per-variant ADRs 0055 + 0056 respectively. Per the [silent-absorption auditor's Phase-6-followup #2 mandate](../backfill-notes/audit-silent-absorption.md): the auditor should compare U-B's framing of P-28 (`layer-indexed-first`) and P-29 (`per-layer-boundary policy DSL`) against U-A's, U-C's, and D7-U-1's framings of the same frameworks for cross-spec inheritance gaps. The lean-eval's scenarios #1-#4 exercise P-28 + P-29 via the per-cycle envelope construction + layer-pair gate evaluation; the lean-eval result therefore provides cross-spec characterization evidence the auditor can use without re-running the four unified-attempt evaluations. Non-blocking for the lean-eval verdict; informational for downstream aggregation.
+
 ## §8 References
 
 **Candidate spec + back-fill notes (primary inputs):**
@@ -286,10 +294,10 @@ Per the [auto-008 per-candidate historian-design-input table](../decisions/auto-
 
 Self-check items (a)-(g) run on this brief per [`auto-008 §Per-candidate lean-eval brief rubric self-check`](../decisions/auto-008-phase-8-dispatch-shape.md#decision-round-2).
 
-- **(a) `wc -w`**: TBD — recorded at commit time. Heavy tier bounds 5500-7200; this brief targets ~6500.
+- **(a) `wc -w`**: **5584 words.** PASS — within Heavy tier bounds 5500-7200 (just above the floor with comfortable margin under the ceiling).
 - **(b) `ls` on cited paths**: PASS at authoring time — all cited v3 file paths verified present (`specs/u-b.md`, `backfill-notes/u-b.md`, `substrate-requirements/u-b.md`, `tracks/unified-B.md`, `sub-tracks/u-b-invariant-authoring.md`, `decisions/auto-008-phase-8-dispatch-shape.md`, `archive/synthesis-v1-v2/13-round-2-synthesis.md`, ADRs 0010-0017 + 0018-0027 + 0029-0031 + 0054-0056, `backfill-notes.md`, `backfill-notes/audit-silent-absorption.md`, `backfill-notes/audit-historian.md`, `lean-evals/gf-m.md`).
 - **(c) `grep -cE "^## §[1-8]"`**: PASS — exactly 8 §-headers (§1 through §8).
-- **(d) `grep "falsifying-outcome:"` + value ≤80 words**: PASS — YAML field present in frontmatter; field value is **80 words** (at the ≤80-word limit). Load-bearing item; pass means fanout is unblocked.
+- **(d) `grep "falsifying-outcome:"` + value ≤80 words**: PASS — YAML field present in frontmatter; field value is **75 words** (under the ≤80-word limit). Load-bearing item; pass means fanout is unblocked.
 - **(e) `grep -c "phase-7-cite-obligations:"`**: PASS — YAML field present.
 - **(f) Binding-rule-table verbatim text-pull check**: PASS with `n/a` qualifier. This brief quotes short phrases from `specs/u-b.md §3`, `§4`, `§5` verbatim (e.g., "Lethal-Trifecta prohibition on builder-cycle effects per Shapiro R1+R3; substrate-default off per F44"; "L0 standards are seeded from priors... and never start empty") but does NOT cite a multi-row binding rule table verbatim. The candidate's `specs/u-b.md §0` ADR-citation index is referenced by individual ADR markdown links, not as a verbatim multi-row text-pull. Per [auto-008 self-check item (f) `n/a` clause](../decisions/auto-008-phase-8-dispatch-shape.md#decision-round-2): no binding-rule-table verbatim text-pull is invoked.
 - **(g) `grep -cE "##? §[1-8]"`**: 8 §-headers from §1 through §8 (same as item c). The "Subagent self-check results" H2 (above this list) is excluded by the `§[1-8]` pattern.

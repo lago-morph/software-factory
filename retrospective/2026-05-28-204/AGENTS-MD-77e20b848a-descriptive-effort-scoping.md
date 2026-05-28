@@ -1,0 +1,15 @@
+# agent instruction
+
+**No quantitative time estimates in deliverables; use descriptive effort scoping.** Day / week / month / dollar estimates date instantly in the current AI-tooling landscape — the 2026 calibration is that what a 5-person team did in a month in 2023 a skilled engineer with AI tools now does in a day. When an artifact needs to convey effort, use descriptive scoping: "configure existing OSS" / "small custom harness" / "medium custom build with multiple integration points" / "major engineering investment integrating multiple existing systems." Quantitative estimates in human-facing material are misleading; the agent does not have wall-clock prediction capability and the underlying ratios shift faster than reviews can be re-cycled.
+
+*Grounded in: build-guide session 2026-05-28 — the initial substrate-cost section used "2–4 engineer-weeks" and "6–12 engineer-months." The user explicitly flagged this as wrong framing: "Days, weeks, and dollars are very hard to use as comparison points in May 2026." Reframed to descriptive scoping in the `human-scoped-deliverables` skill.*
+
+# justification
+
+Quantitative time estimates have three problems compounding in 2026. First, the underlying productivity ratios are changing weekly as agent tooling improves — what was a week of work in 2025 became a day of work in early 2026 and may be hours by late 2026. Second, the estimates are calibrated against an unstated baseline (which team? which skill level? with which tools?) that the reader cannot reconstruct. Third, the agent has no first-hand wall-clock data and is extrapolating from training-data norms that no longer match reality.
+
+The user in this session is a 35+-year engineer who explicitly named this as a wrong-framing pattern. His framing: "I most want to understand what can be built from existing open source parts. … There is basically 0 chance that any of these will work first time. I need to pressure test them with real problems and see what works." Engineer hours are not the load-bearing constraint; cognitive load and attention are. Descriptive scoping ("configure existing OSS" vs. "major engineering build") tells the engineer the right thing to know — what kind of work it is, what existing systems it integrates, where the irreducible custom complexity lives — without pretending to predict wall-clock time.
+
+The marginal cost of adopting descriptive scoping is small. Most artifacts already need to describe what the work involves; replacing the closing "~3 engineer-weeks" with "small custom harness on top of existing OSS" is a one-clause edit. The asymmetry is favorable: descriptive scoping ages gracefully (it's still true a year later); quantitative estimates rot instantly.
+
+This rule applies to all human-facing material — not only the build-guide. The `human-scoped-deliverables` skill encodes it for deliverables triggered by summary/overview/primer phrasing; this AGENTS.md rule extends it to anywhere the agent might be tempted to estimate.

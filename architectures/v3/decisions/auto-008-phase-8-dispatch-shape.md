@@ -348,7 +348,7 @@ Per [`AGENTS-MD-ffe35aa500`](../../../AGENTS.md#honest-acknowledgements-for-pre-
 
 6. **Time-anchored git log at Round-2 commit time** (per the pre-folded [`AGENTS-MD-4a7c2e9f6b`](../../../retrospective/2026-05-27-191/AGENTS-MD-4a7c2e9f6b-adversarial-review-amendment-inheritance.md) draft):
    - **Round-1 commit SHA:** `54438e3` (this brief, Round 1).
-   - **Round-2 commit SHA:** *(pinned post-commit — see git log of `claude/phase-8-auto-008-4CZoC`)*.
+   - **Round-2 commit SHA:** `7e685c5`.
    - **origin/main tip at Round-2 commit time:** `99053b0` (Merge PR #193, dispatch prompt phase 8) — unchanged from Round-1 commit time.
    - **Phase-8 envelope commit:** `cce0f73` (merged in PR #194).
 

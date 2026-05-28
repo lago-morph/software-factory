@@ -1,9 +1,0 @@
-# agent instruction
-
-**Matrix-flag over spec-patches when an audit subagent's recommendation #N names the matrix-flag alternative.** When a bias-guard / audit subagent's recommendation list includes "use matrix-flag aggregation row + downstream-phase cite obligation INSTEAD OF per-spec patches," and the lead-agent verifies that per-candidate-patch fire-count would exceed the run's deferral threshold, lead-agent MUST prefer the matrix-flag alternative. Rationale: silently-absorbed / silently-inherited material is a *citation gap* not a *content gap*; spec patches add cites without changing content. Document the decision in the aggregation file with explicit reasoning + user-override path; do NOT fire the deferral.
-
-*Grounded in: Phase-7 Wave-7.3 decision (silent-absorption auditor recommendation #5; 7+ candidates would need patches → exceeds ≤3 threshold → matrix-flag adopted).*
-
-# justification
-
-The Phase-7 fanout would have fired 7+ candidate-spec-patch PRs if every silently-absorbed cell triggered one, exhausting the ≤3-candidate Phase-7-followup deferral threshold. The silent-absorption auditor explicitly named the alternative (matrix-flag + Phase-8 cite-obligation) as its recommendation #5. Without this rule, future runs facing similar audit-finding floods will default to firing the deferral (4+ patches → deferral) — but the deferral is the *wrong* mechanism for citation gaps because it implies content rework when only cite rework is needed. Cost of not having the rule: a future autonomous run produces 6+ unnecessary spec-patch PRs OR fires a deferral that next-run agents must spend effort understanding "why was this deferred?" only to discover the patches are mechanically trivial cites. Cost of adopting the rule: one paragraph in the aggregation file documenting the matrix-flag decision (Phase-7 retro shows this is ~150 words). The asymmetry is large.

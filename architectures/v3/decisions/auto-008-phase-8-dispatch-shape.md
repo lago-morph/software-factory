@@ -1,14 +1,14 @@
 # auto-008 — Phase 8 dispatch shape
 
 **Author.** Lead agent, unattended Phase-8 dispatch session 2026-05-28.
-**Status.** **Round 1 (initial brief; awaiting first adversarial wave).** Pre-folds the auto-007 audit-trail amendments at Round-1 authoring time (per the deferred [`AGENTS-MD-4a7c2e9f6b`](../../../retrospective/2026-05-27-191/AGENTS-MD-4a7c2e9f6b-adversarial-review-amendment-inheritance.md) draft, applied informally — see [§Honest acknowledgements (Round 1)](#honest-acknowledgements-round-1) for the deferral acknowledgement).
-**Rewind point.** This brief's commit on [`claude/phase-8-auto-008-4CZoC`](../../../). Round-1 commit SHA pinned post-commit at the end of [§Honest acknowledgements (Round 1)](#honest-acknowledgements-round-1). Reverting it returns Phase-8 dispatch to "undecided"; no per-candidate lean-eval brief has fired.
+**Status.** **Round 2 (revised after first real adversarial wave).** Round 1 returned 3 × `accept-with-named-amendments`. Round-1 decision shape (Option A: per-candidate parallel fanout + bias-guards-paired-or-rollup + hypothesis-falsifier-serial + Wave-8.2 cross-candidate evaluator-brief) is **preserved with material amendments**; revised decision at [§Decision (Round 2)](#decision-round-2) flips the bias-guard config from A.1 per-candidate-paired (default) to **A.2′ cross-candidate-rollup with 3 auditors serial-after-Wave-8.1** (load-bearing — R1 + R3 converged); tightens the falsifier discipline with a 3-item concreteness rubric + escape-hatch enumeration + "pass cleanly" definition + reframed "in advance" claim (R2 amendments, load-bearing); splits Wave 8.1.b and Wave 8.2 into separate PRs for clean rewind boundary (R1 + R3 converged); restricts Phase-8-followup deferral threshold to unified-attempt candidates (R1); drops self-check item (h); tightens Heavy ceiling from 7500 to 7200; adds lead-agent falsifier cross-check between Wave 8.1.b and Wave 8.2. Pre-folds the auto-007 audit-trail amendments at Round-1 authoring time per the deferred [`AGENTS-MD-4a7c2e9f6b`](../../../retrospective/2026-05-27-191/AGENTS-MD-4a7c2e9f6b-adversarial-review-amendment-inheritance.md) draft (applied informally — 5 Phase-7 retro rules not adopted into canonical AGENTS.md per user election; see [§Honest acknowledgements (Round 1)](#honest-acknowledgements-round-1)).
+**Rewind point.** This brief's commit on [`claude/phase-8-auto-008-4CZoC`](../../../). Round-1 commit SHA `54438e3`; Round-2 commit SHA pinned post-commit at the end of [§Honest acknowledgements (Round 2)](#honest-acknowledgements-round-2). Reverting either commit returns Phase-8 dispatch to "undecided"; no per-candidate lean-eval brief has fired.
 
 ---
 
 ## TL;DR (≤200 words)
 
-This brief decides Phase-8's dispatch shape per the [v1.2 plan § Phase 8](../../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md#phase-8--lean-eval-design-one-brief-per-candidate-first-pressure-test-surface-revised-in-v12). Phase 8 produces three sub-products: **10 per-candidate lean-eval briefs** (one per candidate in [`architectures/v3/lean-evals/`](../lean-evals/)), **one cross-candidate evaluator-brief** at `architectures/v3/lean-evals/00-cross-candidate.md`, and a **Phase-8-close session handoff**. The brief decides: wave shape (per-candidate parallel fanout vs alternatives); per-candidate brief rubric (section structure with mandatory `falsifying-outcome:` YAML field, word-budget tier, scenario-set sourcing); exemplar selection + pre-fanout self-check gate; bias-guard concurrency shape (which auditors fire concurrent vs serial); Phase-7 cite-obligation propagation mechanism (lead-agent-pre-authored per-candidate mapping table vs subagent-derived); cross-candidate evaluator-brief shape with DEC-1.a falsifying-result-pattern named **in advance** (load-bearing); tier-table calibration per Phase-7 evidence; audit-trail discipline inherited from auto-007. The Round-1 decision section ([§Decision (Round 1)](#decision-round-1)) names every parameter. Round-1 reviewers' load-bearing amendments will be folded in Round 2 at [§Decision (Round 2)](#decision-round-2-pending) (currently empty scaffold).
+This brief decides Phase-8's dispatch shape per the [v1.2 plan § Phase 8](../../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md#phase-8--lean-eval-design-one-brief-per-candidate-first-pressure-test-surface-revised-in-v12). Phase 8 produces three sub-products: **10 per-candidate lean-eval briefs** (one per candidate in [`architectures/v3/lean-evals/`](../lean-evals/)), **one cross-candidate evaluator-brief** at `architectures/v3/lean-evals/00-cross-candidate.md`, and a **Phase-8-close session handoff**. The brief decides: wave shape (per-candidate parallel fanout vs alternatives); per-candidate brief rubric (section structure with mandatory `falsifying-outcome:` YAML field, word-budget tier, scenario-set sourcing); exemplar selection + pre-fanout self-check gate; bias-guard concurrency shape (which auditors fire concurrent vs serial); Phase-7 cite-obligation propagation mechanism (lead-agent-pre-authored per-candidate mapping table vs subagent-derived); cross-candidate evaluator-brief shape with DEC-1.a falsifying-result-pattern named **in advance** (load-bearing); tier-table calibration per Phase-7 evidence; audit-trail discipline inherited from auto-007. The Round-2 decision section ([§Decision (Round 2)](#decision-round-2)) names every parameter. Round-1 reviewers' load-bearing amendments are folded in [§Round-2 final amendments folded](#round-2-final-amendments-folded); Round 1's decision is preserved with strikethrough at [§Decision (Round 1 — superseded by Round 2 below)](#decision-round-1--superseded-by-round-2-below) per [`AGENTS-MD-bb7fe2c5aa`](../../../AGENTS.md#round-1-strikethrough-preservation-in-decision-briefs). Round-1 reviewer return digests preserved verbatim at [§Appendix A](#appendix-a--round-1-reviewer-return-digests-preserved-for-traceability).
 
 ## The question
 
@@ -83,16 +83,16 @@ The dispatch shape determines (i) how the 10 lean-eval subagents are sequenced (
 - **§7 Phase-7 cite obligations honored** (~300-500 words). For each high-confidence cite obligation in this candidate's row of [§Phase-7 cite-obligation propagation table](#phase-7-cite-obligation-propagation-load-bearing-pre-authored-mapping) below, names how the lean-eval brief honors it (the cite appears verbatim in §1 or §4 or §6 with archive `path` + §-anchor). For each medium-confidence design input from [`backfill-notes/audit-silent-absorption.md` §B.1](../backfill-notes/audit-silent-absorption.md): if the lean-eval scenario design touches the TBD cell, name how (one paragraph). For each historian load-bearing gap touching this candidate: name how the lean-eval surface engages the gap (if at all).
 - **§8 References** (mandatory; relative paths only per [`AGENTS.md § Internal document references`](../../../AGENTS.md#internal-document-references)). Floor: candidate's spec + candidate's back-fill notes + this brief + the candidate's substrate-requirements summary + any archive files cited + the relevant ADRs.
 
-**Word budget per lean-eval brief (tiered per Phase-7 advisory carry-forward; pre-folded at Round 1 per the [Phase-7-close handoff §Open questions item 2](../SESSION-HANDOFF-2026-05-27-phase-7-close.md#open-questions--suggestions-for-the-next-agent)).**
+**Word budget per lean-eval brief (tiered per Phase-7 advisory carry-forward; pre-folded at Round 1 per the [Phase-7-close handoff §Open questions item 2](../SESSION-HANDOFF-2026-05-27-phase-7-close.md#open-questions--suggestions-for-the-next-agent); Heavy ceiling tightened in Round 2 per R3 #5 amendment).**
 
 | Tier | Word budget | Candidates | Rationale |
 |---|---|---|---|
 | Light | 5000-6500 | GF-S, GF-M, GF-C, BF-S | Single-dominant or no-single lineage; smaller cite-obligation surface (0-2 high-confidence mandatory cites each) |
-| Heavy | 5500-7500 | BF-M, BF-L, U-A, U-B, U-C, D7-U-1 | Multiple-lineage candidates; larger cite-obligation surface (1-3 high-confidence mandatory cites each); unified-attempts carry the DEC-1.a falsification load |
+| Heavy | 5500-**7200** | BF-M, BF-L, U-A, U-B, U-C, D7-U-1 | Multiple-lineage candidates; larger cite-obligation surface (1-3 high-confidence mandatory cites each); unified-attempts carry the DEC-1.a falsification load. **Heavy ceiling tightened from 7500 → 7200 in Round 2** (aligns to Phase-7 actual median; discourages continued drift). |
 
 Calibrated against Phase-7 actuals (median Light ~6400, median Heavy ~7200). Subagent runs `wc -w` against its tier's bounds in self-check item (a); over-budget triggers a return-digest flag for lead-agent review.
 
-**Self-check rubric** per [`AGENTS-MD-e74e4811a2`](../../../AGENTS.md#self-check-rubric-requires-tool-verification-for-measurable-items). Subagent runs:
+**Self-check rubric** per [`AGENTS-MD-e74e4811a2`](../../../AGENTS.md#self-check-rubric-requires-tool-verification-for-measurable-items). Subagent runs **items (a)-(g); item (h) DROPPED in Round 2** per R3 #2 (cite-obligation honoring is enforced by the falsification-designer auditor + post-fanout aggregation; 3-layer enforcement was over-engineering):
 
 - (a) `wc -w` on its lean-eval file to verify word budget compliance against its tier.
 - (b) `ls` on every cited v3 file path (`specs/<id>.md`, `backfill-notes/<id>.md`, any ADR files, any archive files) to verify the file exists.
@@ -101,7 +101,7 @@ Calibrated against Phase-7 actuals (median Light ~6400, median Heavy ~7200). Sub
 - (e) `grep -c "phase-7-cite-obligations:" <its file>` to verify the YAML field exists.
 - (f) For each binding rule table cited (e.g., the candidate's `specs/<id>.md` §0 ADR-citation index): `grep -F '<verbatim cell text>' <source-anchor>` to verify exact-text-pull per [`AGENTS-MD-bf4431be57`](../../../AGENTS.md#verbatim-text-pull-when-citing-binding-rule-tables). If no binding rule table is cited, item (f) self-reports `n/a` with rationale.
 - (g) `grep -cE "##? §[1-8]"` to verify exactly 8 §-headers (excluding YAML frontmatter and H1).
-- (h) Per-candidate cite-obligation check: `grep -F '<archive cite text from this candidate's row in the cite-obligation mapping>' <its file>` for each high-confidence mandatory cite obligation; ALL must pass. Failures triggered re-authoring before fanout closes.
+- ~~(h) Per-candidate cite-obligation check~~ — **DROPPED in Round 2 per R3 #2 amendment.** Enforcement migrates to the falsification-designer auditor (per-brief verdict at Wave 8.1.b) + post-fanout aggregation (lead-agent cross-check before Wave 8.2).
 
 **Pros.**
 - Maximum parallelism: 10 + 20 (paired per-candidate bias-guards) = 30 concurrent subagents (Wave 8.1 + 8.1.b). At the upper end of the ~20-25 practical limit per the [autonomous-run skill § Subagent fanout cadence](../../../.claude/skills/autonomous-run/SKILL.md#subagent-fanout-cadence) — see [§Honest acknowledgements (Round 1)](#honest-acknowledgements-round-1) for mitigation.
@@ -158,9 +158,9 @@ Wave 8.0.a: 10 subagents each derive their candidate's Phase-7 cite obligations 
 - **Pros.** Cite-obligation derivation isolated from brief authoring.
 - **Cons.** Lead agent CAN pre-author the cite-obligation table at Round-1 brief authoring time (the obligations are mechanically derivable from aggregation §3.1 + §4.1). Wave 8.0.a is wasteful. **Not chosen** — see [§Phase-7 cite-obligation propagation table](#phase-7-cite-obligation-propagation-load-bearing-pre-authored-mapping) below.
 
-## Decision (Round 1)
+## Decision (Round 1 — superseded by Round 2 below)
 
-**Option A. Per-candidate parallel fanout (Wave 8.1, 9 sibling subagents) + per-candidate-paired bias-guards concurrent (Wave 8.1.b, 20 subagents — see [§Bias-guard concurrency shape decision point](#bias-guard-concurrency-shape-decision-point) for fallback to 2 cross-candidate auditors if harness capacity is a concern) + hypothesis-falsifier serial after Wave 8.1 closes (Wave 8.1.c, 1 subagent) + Wave 8.2 cross-candidate evaluator-brief (lead-agent-authored by default), lead-agent exemplar first with self-check gate, tiered word-budget (Light 5000-6500 / Heavy 5500-7500), pre-authored Phase-7 cite-obligation propagation table.**
+~~**Option A. Per-candidate parallel fanout (Wave 8.1, 9 sibling subagents) + per-candidate-paired bias-guards concurrent (Wave 8.1.b, 20 subagents — see [§Bias-guard concurrency shape decision point](#bias-guard-concurrency-shape-decision-point) for fallback to 2 cross-candidate auditors if harness capacity is a concern) + hypothesis-falsifier serial after Wave 8.1 closes (Wave 8.1.c, 1 subagent) + Wave 8.2 cross-candidate evaluator-brief (lead-agent-authored by default), lead-agent exemplar first with self-check gate, tiered word-budget (Light 5000-6500 / Heavy 5500-7500), pre-authored Phase-7 cite-obligation propagation table.**~~ Round 1 preserved per [`AGENTS-MD-bb7fe2c5aa`](../../../AGENTS.md#round-1-strikethrough-preservation-in-decision-briefs); superseded by [§Decision (Round 2)](#decision-round-2) below. Three Round-1 reviewers returned `accept-with-named-amendments` and converged on (a) A.1 → A.2 default flip + (b) Wave 8.1.b / 8.2 PR split + (c) falsifier-discipline tightening (R2). See [§Round-2 final amendments folded](#round-2-final-amendments-folded) for the full list.
 
 ### Reasoning
 
@@ -187,21 +187,23 @@ The hypothesis-falsifier is always 1× cross-candidate serial after Wave 8.1 —
 
 ### Sub-wave coordination protocol
 
-Each sub-wave fires from a separate stacked branch:
+Each sub-wave fires from a separate stacked branch. **Round 2 splits Wave 8.1.b and Wave 8.2 into separate PRs** (R1 #4 + R3 #3 converged amendment) for clean rewind boundary.
 
-- **Exemplar (PR 3)** branch: `claude/phase-8-exemplar`. Lead agent authors `lean-evals/<exemplar-id>.md` and (if not already created) `lean-evals/` directory + `lean-evals/.gitkeep`. Lead-agent self-checks (a)-(h) on exemplar before fanout dispatch.
-- **Wave 8.1 + 8.1.b (PR 4 omnibus)** branch: `claude/phase-8-fanout-omnibus`. 9 per-candidate subagents write to `lean-evals/<id>.md`. Bias-guards write to `lean-evals/audit-domain-practitioner.md` + `lean-evals/audit-falsification-designer.md` (A.1: per-candidate sections within each audit file; A.2: each file is one cross-candidate roll-up).
-- **Wave 8.1.c + 8.2 (PR 5 omnibus)** branch: `claude/phase-8-cross-candidate`. Lead agent dispatches hypothesis-falsifier subagent (1× cross-candidate); when its output lands at `lean-evals/audit-hypothesis-falsifier.md`, lead agent authors `lean-evals/00-cross-candidate.md` quoting the falsifier pattern verbatim.
-- **Phase-8-close handoff (PR 6)** branch: `claude/phase-8-handoff`. New `SESSION-HANDOFF-2026-05-28-phase-8-close.md` + `AGENT-ENTRY.md` Section-2 update.
-- **Run summary + retrospective (PR 7)** branch: `claude/phase-8-summary-retro`. Top-level `run-summary-2026-05-28-phase-8.md` + `retrospective/2026-05-28-<PPP>/` full-package directory per [`AGENTS-MD-1d7c94415e`](../../../AGENTS.md#full-retrospective-package-lean-mode-is-anti-pattern).
+- **Exemplar (PR 3)** branch: `claude/phase-8-exemplar`. Lead agent authors `lean-evals/<exemplar-id>.md` and (if not already created) `lean-evals/` directory + `lean-evals/.gitkeep`. Lead-agent self-checks (a)-(g) on exemplar before fanout dispatch (item h dropped in Round 2).
+- **Wave 8.1 (PR 4 omnibus)** branch: `claude/phase-8-fanout-omnibus`. 9 per-candidate subagents write to `lean-evals/<id>.md`. All disjoint files.
+- **Wave 8.1.b (PR 5 omnibus)** branch: `claude/phase-8-bias-guards`. 3 cross-candidate auditors fire in parallel SERIAL-AFTER-Wave-8.1: domain-practitioner writes `lean-evals/audit-domain-practitioner.md`; falsification-designer writes `lean-evals/audit-falsification-designer.md`; hypothesis-falsifier writes `lean-evals/audit-hypothesis-falsifier.md`. All disjoint files. Per A.2′ shape (Round-2 default; supersedes A.1 from Round 1).
+- **Lead-agent falsifier cross-check (post-PR-5)** — 5-minute lead-agent task between PR 5 merging and PR 6 firing. Lead agent reads `audit-falsification-designer.md`, identifies any "rewrite §3" verdicts, and re-authors the failing briefs (in-place on `claude/phase-8-fanout-omnibus`'s merged content, via a small fix PR if needed). If 0 rewrite verdicts, no fix PR.
+- **Wave 8.2 (PR 6)** branch: `claude/phase-8-cross-candidate`. Lead agent (or subagent fallback if ≥3 unified-attempt rewrite verdicts) authors `lean-evals/00-cross-candidate.md` quoting the hypothesis-falsifier pattern verbatim.
+- **Phase-8-close handoff (PR 7)** branch: `claude/phase-8-handoff`. New `SESSION-HANDOFF-2026-05-28-phase-8-close.md` + `AGENT-ENTRY.md` Section-2 update.
+- **Run summary + retrospective (PR 8)** branch: `claude/phase-8-summary-retro`. Top-level `run-summary-2026-05-28-phase-8.md` + `retrospective/2026-05-28-<PPP>/` full-package directory per [`AGENTS-MD-1d7c94415e`](../../../AGENTS.md#full-retrospective-package-lean-mode-is-anti-pattern).
 
 **File uniqueness invariant**: each lean-eval subagent's file is named per the candidate's ID (`gf-s.md` / `gf-m.md` / `gf-c.md` / `bf-s.md` / `bf-m.md` / `bf-l.md` / `u-a.md` / `u-b.md` / `u-c.md` / `d7-u-1.md`). Bias-guard subagents write to fixed audit filenames. Exemplar candidate's file is authored by lead agent on PR 3 before fanout.
 
 **Conflict protocol**: if a per-candidate subagent finds its target brief file already exists or the branch tip moved unexpectedly, surface in return digest; do not force-push. Lead agent reconciles at Wave 8.1 close.
 
-**Total subagents this run:** 9 (per-candidate fanout, excluding exemplar candidate) + 2 or 20 (bias-guards per A.1 or A.2) + 1 (hypothesis-falsifier) + 0 or 1 (cross-candidate evaluator-brief — lead-agent by default) + 6 adversarial reviewers (Round 1 + Round 2 of this brief) + ~3-4 retrospective-package authoring subagents at run close = **~21-39 subagents total for Phase 8** (range driven by A.1 vs A.2).
+**Total subagents this run (Round-2 revised):** 9 (per-candidate fanout, excluding exemplar candidate) + 3 (cross-candidate bias-guards under A.2′ default) + 0 or 1 (cross-candidate evaluator-brief — lead-agent by default; subagent if ≥3 unified-attempt rewrite verdicts) + 6 adversarial reviewers (Round 1 + Round 2 of this brief) + ~3-4 retrospective-package authoring subagents at run close = **~22-23 subagents total for Phase 8** (down from Round-1's ~21-39 range; A.2′ flip resolves the upper-bound uncertainty).
 
-**PR-cap math**: 1 (envelope #194, already opened) + 1 (this brief, R2) + 1 (exemplar) + 1 (Wave 8.1 + 8.1.b omnibus) + 1 (Wave 8.1.c + 8.2 omnibus) + 1 (handoff) + 1 (summary+retro) = **7 PRs against ≤15 Phase-8 budget cap**. Comfortable 8-PR margin.
+**PR-cap math (Round-2 revised):** 1 (envelope #194, already opened) + 1 (this brief, R2 push) + 1 (exemplar) + 1 (Wave 8.1 fanout omnibus) + 1 (Wave 8.1.b bias-guards omnibus) + 0-1 (cross-check fix PR, conditional) + 1 (Wave 8.2 cross-candidate) + 1 (handoff) + 1 (summary+retro) = **8 PRs (9 if cross-check fix PR fires) against ≤15 Phase-8 budget cap**. Margin: 6-7 PRs.
 
 ## Phase-7 cite-obligation propagation (load-bearing pre-authored mapping)
 
@@ -244,21 +246,57 @@ H-5 (scaffold/harness C11 vocabulary) is a glossary addition opportunity, NOT a 
 
 ## Falsifier discipline (load-bearing)
 
-**This discipline is what makes Phase 8 the actual pressure-testing surface** rather than another internal-consistency exercise. The discipline has three load-bearing components:
+**This discipline is what makes Phase 8 the actual pressure-testing surface** rather than another internal-consistency exercise. **Round-2 amendments (R2 #1-#4) tighten the discipline from "ceremony-risk" to "load-bearing".** The discipline has three load-bearing components plus four mechanical sub-rules:
 
 1. **Mandatory `falsifying-outcome:` YAML frontmatter field** in every per-candidate `lean-evals/<id>.md`. The field value is a verbatim ≤80-word statement of the concrete result pattern that would falsify the candidate's methodology against the lean-eval. The falsification-designer auditor's first check is `grep "falsifying-outcome:" architectures/v3/lean-evals/*.md` — every file must have this field, populated, non-empty.
 
 2. **Mandatory §3 falsifying-outcome statement** in every per-candidate brief. Expands the YAML field's ≤80 words into ~200-300 words of rationale: why this falsifier and not another; how it differs from the success-criteria negation (failing criteria might be implementation noise; the falsifier is the methodology's load-bearing claim being wrong); machine-checkability constraints. Per the [autonomous-run skill § Working-mode reminders](../../../.claude/skills/autonomous-run/SKILL.md#working-mode-three-rules): briefs that hand-wave the falsifier get rewritten.
 
-3. **Mandatory cross-candidate DEC-1.a falsifying result pattern named in advance** in the hypothesis-falsifier output AND quoted verbatim in the cross-candidate evaluator-brief. The hypothesis-falsifier reads all 10 lean-eval briefs AFTER they are finalized (serial post-Wave-8.1), names the cross-candidate pattern that would falsify DEC-1.a, and commits the pattern to `lean-evals/audit-hypothesis-falsifier.md`. The cross-candidate evaluator-brief in Wave 8.2 quotes this pattern verbatim in its §X falsifying-result-pattern section, so post-hoc reinterpretation of the DEC-1.a outcome is mechanically blocked.
+3. **Mandatory cross-candidate DEC-1.a falsifying result pattern named before-simulator-runs-but-after-brief-authoring** in the hypothesis-falsifier output AND quoted verbatim in the cross-candidate evaluator-brief. The hypothesis-falsifier reads all 10 lean-eval briefs AFTER they are finalized (serial post-Wave-8.1), names the cross-candidate pattern that would falsify DEC-1.a, and commits the pattern to `lean-evals/audit-hypothesis-falsifier.md`. The cross-candidate evaluator-brief in Wave 8.2 quotes this pattern verbatim in its §X falsifying-result-pattern section, so post-hoc reinterpretation of the DEC-1.a outcome (relative to the simulator run) is mechanically blocked.
 
-Example falsifying-outcome statements (illustrative; per-candidate subagents author their own based on their candidate's methodology):
+   **Honest framing (R2 #4 amendment):** Naming the pattern AFTER reading the 10 finalized briefs means the cross-candidate falsifier can be silently tuned to match patterns the 10 briefs already display. The discipline blocks reinterpretation of the simulator-run, NOT reinterpretation relative to the brief corpus. **The hypothesis-falsifier audit file's first section MUST state explicitly how the auditor guarded against fitting the observed pattern of the 10 briefs** — e.g., by drafting the pattern independent of the 10 briefs first, then verifying applicability; or by naming a falsifier the briefs would NOT predict. Without this self-account, the "before-simulator-runs" framing is honest but the audit is not.
 
-> **For U-A (illustrative):** "U-A's Compound-Knowledge Atelier produces zero promoted patterns after 5 brownfield scenarios where the existing codebase's documentation explicitly contradicts the candidate's promotion-criteria. The knowledge-promotion-rate is machine-countable from `solutions/` directory state at scenario close."
+### R2 #1: Falsification-designer concreteness rubric (3-item; mechanical)
 
-> **For DEC-1.a falsifying result pattern (illustrative):** "If ≥2 unified-attempt candidates (U-A / U-B / U-C / D7-U-1) pass BOTH the greenfield-mandate lean-eval AND the brownfield-mandate lean-eval cleanly (≥80% of named scenarios pass success-criteria; falsifying-outcome NOT triggered) AND neither lean-eval invokes an escape-hatch (e.g., 'this scenario is out of mandate'), DEC-1.a is falsified — at least one methodology serves both mandates."
+The falsification-designer auditor's verdict on each per-candidate `falsifying-outcome:` field AND §3 statement is **pass/fail on each of 3 mechanical items**:
 
-The illustrative statements above are NOT binding — per-candidate subagents and the hypothesis-falsifier author their own. The point is the **form**: concrete, machine-checkable in principle, pre-committed (named BEFORE evaluation runs).
+| Item | Pass criterion | Example pass | Example fail |
+|---|---|---|---|
+| **(i) Names a metric** | The statement names a countable quantity, a rate, or a categorical outcome | "knowledge-promotion-rate" / "%-of-scenarios-passing-success-criteria" / "category enum {playbook, correction, pattern}" | "the methodology produces good code" |
+| **(ii) Names a directory, artifact state, or trajectory class** | The statement names a specific place where the metric can be observed | "`solutions/` directory state at scenario close" / "spec amendment commits in `architectures/v3/specs/`" / "the trajectory of agent actions during scenario N" | "the evaluator's overall impression" |
+| **(iii) Names a threshold** | The statement names a numeric or categorical bar that determines pass/fail | "zero promoted patterns" / "≥80% of scenarios pass" / "any failure-mode F1-F33 surfaces" | "fewer than expected" |
+
+**Pass = ≥2 of 3.** A statement passing 0 or 1 items triggers a "rewrite §3" verdict on that candidate. Lead-agent re-authors the failing brief before Wave 8.2 (per the [§Lead-agent falsifier cross-check](#decision-round-2)).
+
+This rubric is **mechanical** — the falsification-designer auditor applies it identically across 10 candidates rather than 10 different interpretations of "concrete".
+
+### R2 #2 + #3: DEC-1.a falsifying pattern canonical terms (committed in THIS brief)
+
+Per R2 amendments #2 and #3: the load-bearing terms in the DEC-1.a falsifying result pattern are committed here, not delegated to the hypothesis-falsifier. The hypothesis-falsifier USES these terms when naming the pattern.
+
+**Canonical "escape-hatch" enumeration (R2 #2):** A candidate's lean-eval result "invokes an escape-hatch" if any of the following apply:
+
+1. **Out-of-mandate scope claim** — the candidate's lean-eval result claims a scenario is out of the candidate's mandate (e.g., "this brownfield scenario is greenfield-only; not applicable to U-A's mandate"). Per [candidate-registry.md](../candidate-registry.md), unified-attempt candidates (U-A / U-B / U-C / D7-U-1) explicitly claim BOTH mandates; an out-of-mandate scope claim from a unified-attempt is structurally a failure to deliver on the unified-attempt claim.
+2. **Scenario-skip** — the candidate's lean-eval skips a scenario rather than producing a result on it (any reason). Scenarios skipped by the brief's own §1 design (e.g., "this candidate's scenario set is only 4 scenarios") do NOT count; mid-run skips by the evaluator do count.
+3. **Criterion-substitution** — the candidate's lean-eval declares "pass" on a scenario by substituting a different success criterion than the one named in §2 of its lean-eval brief. (Re-interpreting §2 mid-run is forbidden; if §2 is defective, the brief is rewritten not the criterion swapped.)
+
+**Canonical "pass cleanly" definition (R2 #3):** A candidate's lean-eval result "passes cleanly" iff BOTH:
+
+- **(a) Quantitative gate:** ≥80% of the brief's §1 named scenarios pass the §2 success criteria. (For a brief with 5 scenarios, ≥4 pass; for 6 scenarios, ≥5 pass; etc.)
+- **(b) Falsifying-outcome gate:** the brief's §3 `falsifying-outcome` is NOT triggered on any scenario.
+
+Both conditions must hold. Conditions are committed in this brief and apply uniformly across all 10 candidate lean-evals.
+
+### R2 illustrative falsifier statements (REVISED from Round-1 versions)
+
+Per-candidate subagents and the hypothesis-falsifier author their own falsifier statements. The illustrative statements below are the **form** subagents follow — not binding content.
+
+> **For U-A (illustrative, passes 3-of-3 rubric items):** "U-A's Compound-Knowledge Atelier produces zero promoted patterns (`solutions/` directory state at scenario close) after 5 brownfield scenarios where the existing codebase's documentation explicitly contradicts the candidate's promotion-criteria."
+> *(Item i: 'zero promoted patterns' = metric ✓. Item ii: '`solutions/` directory state at scenario close' = artifact state ✓. Item iii: 'zero' = threshold ✓.)*
+
+> **For DEC-1.a falsifying result pattern (illustrative, uses canonical escape-hatch + pass-cleanly terms verbatim):** "If ≥2 unified-attempt candidates (U-A / U-B / U-C / D7-U-1) pass cleanly (per [§R2 #3 canonical 'pass cleanly' definition](#r2-2--3-dec-1a-falsifying-pattern-canonical-terms-committed-in-this-brief)) on BOTH the greenfield-mandate lean-eval AND the brownfield-mandate lean-eval, AND neither lean-eval result invokes any of the 3 escape-hatches enumerated in [§R2 #2 canonical 'escape-hatch' enumeration](#r2-2--3-dec-1a-falsifying-pattern-canonical-terms-committed-in-this-brief), DEC-1.a is falsified — at least one methodology serves both mandates."
+
+The illustrative statements above are NOT binding — per-candidate subagents and the hypothesis-falsifier author their own. The point is the **form**: concrete, mechanical (passes the 3-item rubric), and pre-committed using canonical escape-hatch + pass-cleanly terms.
 
 ## Bias-direction discipline
 
@@ -286,11 +324,33 @@ If a Phase-8-followup deferral fires (any Wave-8.1 subagent's lean-eval brief fa
 2. **Run summary "what I deliberately did NOT do" section.** The run's summary carries a `Phase-8-followup lean-eval re-author for <candidates> — deferred to <next-run-id>` bullet.
 3. **Next-run dispatch prompt.** `next-agent-prompt-phase-8-followup.md` authored at this run's close (or its absence flagged as a follow-up bullet in the run summary). Points at the Phase-8-close handoff and at this brief.
 
-**Threshold trigger:** ≥1 candidate's lean-eval brief flagged by falsification-designer as "rewrite §3" + cannot be re-authored in-run. (Lower threshold than Phase 7's ≥4 candidates because Phase-8 deliverables are smaller in number — 10 briefs total — and any candidate's lean-eval failing the falsifier discipline is a real defect.)
+**Threshold trigger (Round-2 revised per R1 #5):** **≥1 *unified-attempt* candidate's** lean-eval brief flagged by falsification-designer as "rewrite §3" + cannot be re-authored in-run. **Restricted to unified-attempt candidates** (U-A / U-B / U-C / D7-U-1) because the Phase-8 falsification surface is for DEC-1.a; only the 4 unified-attempts carry the DEC-1.a load. A failed GF-S / GF-C / GF-M / BF-S / BF-M / BF-L lean-eval is a quality defect on that candidate but does NOT block DEC-1.a falsification; lead agent re-authors at run-close as a non-blocker. Restricting the threshold to unified-attempts prevents over-aggressive triggering.
+
+(Round-1 threshold was "≥1 candidate", any mandate — superseded.)
 
 ## Exemplar pre-fanout self-check gate (load-bearing)
 
 Before dispatching Wave 8.1 / Wave 8.1.b, the lead agent **runs self-check items (a)-(h) on the exemplar** and records pass/fail in this brief's [§Exemplar pre-fanout self-check results](#exemplar-pre-fanout-self-check-results) (subsection appended at exemplar-commit time). **Failure on item (d)** (`falsifying-outcome:` field populated AND ≤80 words) or item (h) (high-confidence cite obligations honored) **blocks fanout** — lead agent re-authors the exemplar before any sub-wave fires. Mirrors the Phase-6 U-C / Phase-7 BF-S exemplar gate pattern.
+
+## Honest acknowledgements (Round 2)
+
+Per [`AGENTS-MD-ffe35aa500`](../../../AGENTS.md#honest-acknowledgements-for-pre-round-2-wave-firing): Round-2 deviations acknowledged for the durable audit trail.
+
+1. **No wave fired pre-Round-2.** Round-1 → Round-2 transition happened entirely within this brief's lifecycle (Round-1 commit `54438e3`; Round-2 commit pinned below). No per-candidate or bias-guard subagent fired between rounds. The pre-Round-2-wave-firing acknowledgement rule does not directly apply here, but the principle of explicit honesty about the brief's audit-trail state does.
+
+2. **Round-1 reviewer convergence drove load-bearing amendments.** R1 (pre-mortemer) + R3 (cost-hawk) converged on flipping the bias-guard default from A.1 (per-candidate-paired) to A.2′ (cross-candidate-rollup, 3 auditors serial-after). This convergence was strong enough that the Round-2 decision flips the default rather than treating A.1/A.2 as a runtime decision. R2 (falsification-designer) drove the falsifier-discipline tightening (3-item rubric + escape-hatch enumeration + pass-cleanly definition + reframed "in advance" claim) — single-reviewer-driven but the amendments are mechanical (rubric, enumeration, definition), so single-reviewer confidence is sufficient.
+
+3. **A.1 fallback REMOVED in Round 2.** The Round-1 brief named A.1 as default with A.2 as fallback. Round 2 inverts: A.2′ is the only shape; A.1 is rejected for both the timing-model reason (R1 #2) and the cost reason (R1 #1 + R3 #1). If a Round-2 reviewer surfaces a reason A.1 should still be admissible, they can amend.
+
+4. **Cross-candidate evaluator-brief authorship subagent-fallback criterion is concrete.** Round 1 said "subagent-dispatched if context budget approaches 70%" (vague). Round 2 says "subagent-dispatched if ≥3 unified-attempt briefs triggered 'rewrite §3' verdicts during Wave 8.1.b" (concrete, mechanical). Improves auditability of the runtime decision.
+
+5. **Self-check item (h) drop is conservatively scoped.** R3 #2 amendment drops item (h) (per-candidate cite-obligation honoring check). The enforcement migrates to the falsification-designer auditor + post-fanout aggregation. If both layers fail to catch a missing cite obligation, the omission would surface in the Phase-8-close handoff or at the morning summary. Acceptable two-layer enforcement.
+
+6. **Time-anchored git log at Round-2 commit time** (per the pre-folded [`AGENTS-MD-4a7c2e9f6b`](../../../retrospective/2026-05-27-191/AGENTS-MD-4a7c2e9f6b-adversarial-review-amendment-inheritance.md) draft):
+   - **Round-1 commit SHA:** `54438e3` (this brief, Round 1).
+   - **Round-2 commit SHA:** *(pinned post-commit — see git log of `claude/phase-8-auto-008-4CZoC`)*.
+   - **origin/main tip at Round-2 commit time:** `99053b0` (Merge PR #193, dispatch prompt phase 8) — unchanged from Round-1 commit time.
+   - **Phase-8 envelope commit:** `cce0f73` (merged in PR #194).
 
 ## Honest acknowledgements (Round 1)
 
@@ -306,7 +366,7 @@ Per [`AGENTS-MD-ffe35aa500`](../../../AGENTS.md#honest-acknowledgements-for-pre-
 3. **Bias-guard concurrency shape (A.1 per-candidate-paired by default; A.2 cross-candidate-rollup as fallback)** is a runtime decision at exemplar-commit time, not a Round-1-bound decision. Round-2 reviewers may amend the criterion if they think the A.1 / A.2 choice should be made at Round 2 instead.
 4. **Cross-candidate evaluator-brief authorship (lead-agent-default; subagent-fallback if context approaches 70%)** is a runtime decision at Wave-8.1.c close, not a Round-1-bound decision. Round-2 reviewers may amend.
 5. **Time-anchored git log at Round-1 commit time**: per the pre-folded [`AGENTS-MD-4a7c2e9f6b`](../../../retrospective/2026-05-27-191/AGENTS-MD-4a7c2e9f6b-adversarial-review-amendment-inheritance.md) draft (rule 4 of the amendments pre-folded), the Round-1 commit SHA + the most-recent main commit at Round-1 commit time are pinned here. Filled in immediately post-commit:
-   - **Round-1 commit SHA:** *(filled in post-commit — see git log)*
+   - **Round-1 commit SHA:** `54438e3`
    - **origin/main tip at Round-1 commit time:** `99053b0` (Merge PR #193, dispatch prompt phase 8).
    - **Phase-8 envelope commit:** `cce0f73` (Phase-8 scope envelope; merged in PR #194; this brief is stacked on the envelope branch per [`AGENTS-MD-de48bd24b4`](../../../AGENTS.md#stacked-pr-base-selection)).
 
@@ -354,24 +414,145 @@ Per [`AGENTS-MD-ffe35aa500`](../../../AGENTS.md#honest-acknowledgements-for-pre-
 
 ## Appendix A — Round-1 reviewer return digests (preserved for traceability)
 
-*Scaffolded; populated at Round-1 reviewer return time.* Per [`AGENTS-MD-bb7fe2c5aa`](../../../AGENTS.md#round-1-strikethrough-preservation-in-decision-briefs): Round-1 reviewer return text is preserved verbatim here, even if amendments are folded into Round 2 and the Round-1 decision is strikethrough'd above.
+Per [`AGENTS-MD-bb7fe2c5aa`](../../../AGENTS.md#round-1-strikethrough-preservation-in-decision-briefs): Round-1 reviewer return text is preserved verbatim here, even though amendments have been folded into Round 2 above. Round-1 dispatch fired three real adversarial reviewer subagents per [`AGENTS-MD-d72e1a4f3c`](../../../AGENTS.md#adversarial-review-must-be-real-subagents) (no inline simulation); each was given the 3-tier verdict menu per [`AGENTS-MD-8a7029647f`](../../../AGENTS.md#adversarial-review-verdict-tiers).
 
-### Reviewer 1 — *(angle TBD at dispatch time; default: pre-mortemer)*
+### Reviewer 1 — pre-mortemer
 
-*Populated after Round 1 fires.*
+**Verdict:** `accept-with-named-amendments` — five non-load-bearing amendments and **one load-bearing amendment** (A.1/A.2 fallback criterion).
 
-### Reviewer 2 — *(angle TBD; default: cost-hawk)*
+**Pre-mortem failure narrative (verbatim, ≤600w):**
 
-*Populated after Round 1 fires.*
+> Most likely failure (6 weeks out, load-bearing). Phase 8 closes with 10 lean-eval briefs in hand. The downstream evaluator runs U-B's lean-eval and U-B "passes" — but the falsifying-outcome statement reads "U-B fails to produce promoted patterns under the brownfield scenario set", which the evaluator now reads as success-criteria-negation re-skinned, not a load-bearing-claim falsifier. Walking back: at exemplar-commit time, the lead agent looked at GF-M's exemplar `falsifying-outcome:`, judged it "machine-checkable in principle" (a low bar — any sentence containing a noun and a number passes), and fired A.1 with 30 concurrent subagents. The falsification-designer subagents, each scoped to a single brief, had no cross-candidate visibility to notice that 6-of-10 falsifiers had collapsed into "success criteria negation in disguise". The hypothesis-falsifier, reading 10 finalized briefs serially after Wave 8.1 closes, surfaces the pattern — but by then the briefs are committed and a "rewrite §3" verdict at this stage triggers the Phase-8-followup deferral (threshold ≥1), and the run runs out of PR budget. **The seed was the §Bias-guard concurrency shape decision criterion**: "mechanically auditable" is not operationally defined, so the lead agent will default-bias to A.1 under capacity pressure.
+>
+> Second-likely failure (harness-level). A.1 dispatches 30 concurrent subagents against the documented ~20-25 practical limit. One or more subagents return with truncated output or 429-class errors. The omnibus PR loses bias-guard coverage for 2-3 candidates silently (since each bias-guard writes to a shared audit file with per-candidate sections, missing sections are easy to miss). The hypothesis-falsifier then reads briefs whose falsifier discipline was never audited.
+>
+> Third (timing race). The brief says bias-guards fire concurrent with per-candidate briefs and audit "the brief draft (when ready from the per-candidate subagent's first commit)". But subagents don't commit drafts mid-run — they return digests. The actual artifact is the omnibus-PR commit at fanout close. So bias-guards either (a) audit nothing real, or (b) become serial-after-fanout, collapsing the parallelism claim.
 
-### Reviewer 3 — *(angle TBD; default: regulator)*
+**Amendments (verbatim):**
 
-*Populated after Round 1 fires.*
+1. **(LOAD-BEARING) Operationalize the A.1/A.2 criterion.** "Mechanically auditable" must mean: exemplar's `falsifying-outcome:` names a specific artifact path, metric name, or trajectory class AND a numeric threshold. If either is missing, fire A.2. Default lean should flip to A.2 under any ambiguity.
+2. **(non-load-bearing) Fix the bias-guard timing model.** Bias-guards cannot read per-candidate "first commits" because subagents don't commit mid-run. Either: (a) bias-guards fire serial-after-Wave-8.1 (downgrading parallelism), or (b) per-candidate subagents are instructed to commit a §1+§3 draft at the 50% mark before continuing.
+3. **(non-load-bearing) Add a falsifier cross-check at fanout close, before hypothesis-falsifier.** Lead agent runs a 5-minute check: for each `falsifying-outcome:`, does it name an artifact-path/metric/threshold? Catches the success-criteria-negation collapse before the hypothesis-falsifier serial step.
+4. **(non-load-bearing) PR-cap stress test.** If Wave 8.1 returns ≥3 "rewrite §3" verdicts, the omnibus PR must split (rewrite-PR before audit-PR). Pre-authorize a PR-8 contingency now; 7+1=8 PRs against ≤15 cap is still comfortable.
+5. **(non-load-bearing) Phase-8-followup threshold tightening.** ≥1 trigger is correct, but add: deferral fires only if the failed candidate is a **unified-attempt** (U-A/U-B/U-C/D7-U-1). A failed GF-S/GF-C lean-eval doesn't block the DEC-1.a falsification surface; deferring on it over-triggers.
+6. **(non-load-bearing) Cross-candidate evaluator-brief authorship default.** Make subagent-dispatch the default when ≥3 unified-attempt briefs triggered "rewrite §3" verdicts during Wave 8.1 — lead-agent context will be saturated by re-author cycles. Current "70% context" trigger is too vague.
+
+### Reviewer 2 — falsification-designer
+
+**Verdict:** `accept-with-named-amendments`. The discipline is real and load-bearing, not pure ceremony — but it has four specific weak points that subagents will exploit unless tightened.
+
+**Falsifier-discipline assessment (verbatim, ≤600w):**
+
+> The illustrative falsifiers are uneven. The U-A example ("knowledge-promotion-rate is machine-countable from `solutions/` directory state at scenario close") is genuinely machine-checkable in principle — it names a directory, a counting operation, a threshold ("zero promoted patterns"), and a denominator ("5 brownfield scenarios"). The DEC-1.a illustrative is much softer: **"no escape-hatches invoked"** and **"pass cleanly"** are both undefined. "Escape-hatch" has no enumeration; "cleanly" gets a parenthetical (≥80% of named scenarios pass) but the scenarios themselves vary across the 10 briefs, so the cross-candidate threshold isn't apples-to-apples. A hypothesis-falsifier writing in this register will produce a pattern that passes the `grep` but cannot be applied to a future simulator run without further adjudication.
+>
+> The falsification-designer auditor's verdict criterion is under-specified. The brief says the auditor checks "verbatim, concrete, not 'evaluator subjective judgment', and pre-committed". Three of those four are mechanical (grep / word-count / commit-order). "Concrete" is the load-bearing one and has **no rubric**. Across 10 candidates, 10 different auditor instances will draw the concrete/interpretive line differently. The §Bias-guard concurrency shape decision point even concedes this: "concrete-but-not-machine-checkable" is named as a real possibility that triggers the A.2 fallback — but no example, no taxonomy, no test.
+>
+> The "in advance" claim is partly compromised. The hypothesis-falsifier reads all 10 finalized briefs first, then names the falsifier "before evaluation runs". This is genuinely in advance of the simulator-harness, but it is **after** the per-candidate falsifiers are written — which means the cross-candidate falsifier can be silently tuned to match patterns the 10 briefs already display. The brief asserts "post-hoc reinterpretation is mechanically blocked" (§Falsifier discipline ¶3), but only blocks reinterpretation of the simulator run, not reinterpretation relative to the brief corpus. The honest framing is "named before evaluation, named after brief authoring" — Round 1 elides this.
+>
+> GF-S / GF-C have weaker falsifier load. They carry zero high-confidence mandatory cites and the brief gives them lighter cite-obligation §7 surfaces. But §3 falsifying-outcome is independent of cite obligations — the brief never says it's weaker for these candidates. This is actually fine; flag only because reviewers might miss it.
+>
+> Bias-direction prose is genuinely symmetric. I looked for anchoring; the lead-agent prose names DEC-1.a's working-hypothesis status correctly, names Phase-7 §6.4 as NEUTRAL, and the illustrative DEC-1.a falsifier is framed as falsifying-the-hypothesis ("≥2 candidates pass"), not confirming it. No detectable lean.
+
+**Amendments (verbatim):**
+
+1. Add to §Falsifier discipline a 3-item concreteness rubric for the falsification-designer (names a metric / names a directory or artifact state / names a threshold) — pass = ≥2 of 3.
+2. Require the DEC-1.a illustrative to be replaced or supplemented with an enumeration of "escape-hatch" (e.g., "out-of-mandate scope claim, scenario-skip, criterion-substitution") before hypothesis-falsifier dispatch.
+3. Define "pass cleanly" as a fixed cross-candidate threshold (e.g., ≥80% scenarios pass success-criteria AND falsifying-outcome NOT triggered) — committed in this brief, not delegated to hypothesis-falsifier.
+4. Reframe the "in advance" claim in §Falsifier discipline ¶3 as "named before simulator runs but after brief authoring" and require the hypothesis-falsifier's audit file to state how it guarded against fitting the observed pattern.
+
+### Reviewer 3 — cost/scope-hawk
+
+**Verdict:** `accept-with-named-amendments`.
+
+**Cost/scope assessment (verbatim, ≤600w):**
+
+> Where the cost is justified. The 9-subagent per-candidate fanout (Wave 8.1), the lead-agent exemplar, the hypothesis-falsifier-serial, and the omnibus PR consolidation pattern are all calibrated against Phase-6/Phase-7 precedent — reusing a working shape is cheaper than reinventing. The pre-authored cite-obligation table (rejecting Option G's two-stage fanout) genuinely saves a whole sub-wave at the cost of ~30 minutes of brief-authoring; that math is clearly in the brief's favor. The falsifier-discipline triad (YAML field + §3 + hypothesis-falsifier) is what makes Phase 8 distinct from another consistency exercise, so its cost is the load-bearing cost.
+>
+> Where the cost is NOT justified. Three items leak budget:
+>
+> 1. **A.1 (20 bias-guard subagents) as default is the wrong default.** The brief's own §Cons admits 30 concurrent exceeds the harness's 20-25 practical limit. The trigger criterion ("mechanically auditable falsifying-outcome") is something the falsification-designer can already check in a roll-up — per-candidate isolation is not load-bearing here. A.2 (2 cross-candidate roll-ups) saves 18 subagents and stays under the harness limit. The brief should flip the default.
+> 2. **Self-check item (h) duplicates falsification-designer + post-fanout aggregation work.** The cite-obligation honoring check is already enforced by the falsification-designer (per the brief's §Bias-guards block) and re-checked at aggregation. Three layers for one obligation is over-engineering.
+> 3. **Wave 8.1.c + 8.2 omnibus PR conflates serial commits.** Hypothesis-falsifier (subagent) must land BEFORE cross-candidate evaluator-brief (lead-agent). One PR with two sequential commits muddies rewind boundary — if the evaluator-brief misquotes the falsifier pattern, you can't rewind cleanly without losing the falsifier. Split.
+>
+> Where the brief deserves credit for honesty. It explicitly names A.1 vs A.2, the 70%-context-budget escape on cross-candidate authorship, and the Phase-7 actuals against tier ceilings. The acknowledgements section is calibrated. The brief's word count (5778 — at auto-007's Round-2 length at Round-1) is a real concern but is the price of pre-folding the audit-trail amendments; net-net the work moves out of Round 2.
+
+**Amendments (verbatim):**
+
+1. **Flip A.1 / A.2 default.** A.2 (2 cross-candidate roll-up bias-guards) becomes default; A.1 (20 per-candidate-paired) is the fallback iff exemplar's falsifying-outcome is unambiguously machine-checkable.
+2. **Drop self-check item (h).** Cite-obligation honoring is enforced by falsification-designer + aggregation; item (h) is redundant tool-call cost. Keep (a)-(g).
+3. **Split Wave 8.1.c and Wave 8.2 into separate PRs.** Hypothesis-falsifier (subagent output) and cross-candidate evaluator-brief (lead-agent) commit on separate PRs for clean rewind boundary. Pushes PR-cap math to 8; still 7 under cap.
+4. **Commit roll-up file shape now, not at exemplar-commit time.** Decide A.2 → one `audit-bias-guards.md` roll-up with per-auditor §-sections. Removes runtime decision; saves exemplar-time cycle.
+5. **Tighten Heavy ceiling to 7200 (median actual), not 7500.** Light at 6500 is fine (200 over median — modest headroom); Heavy at 7500 (300 over) tolerates continued overrun. Align Heavy to median to discourage drift.
+6. **Defer Phase-7 cite-obligation table population to exemplar-commit time.** Keep the table scaffold in this brief; populate at exemplar-commit (when lead agent is already in cite-mapping context). Cuts Round-1 brief by ~400 words.
+
+(Note on R3 amendment #4: Round 2 folds it into the A.2′ flip — 3 separate audit files (`audit-domain-practitioner.md`, `audit-falsification-designer.md`, `audit-hypothesis-falsifier.md`) rather than 1 combined `audit-bias-guards.md`, because the 3 auditors have distinct mandates and per-auditor file scoping makes the falsification-designer's "rewrite §3" verdicts easier to grep. The intent — committing the roll-up file shape now rather than at exemplar-time — is honored.)
+
+(Note on R3 amendment #6: rejected in Round 2 per [§Round-2 final amendments folded](#round-2-final-amendments-folded).)
 
 ## Exemplar pre-fanout self-check results
 
 *Subsection appended at exemplar-commit time (PR 3 in the run).* Lead-agent self-check items (a)-(h) run on the exemplar brief; pass/fail recorded. Failure on item (d) or (h) blocks fanout.
 
-## Decision (Round 2 — pending)
+## Decision (Round 2)
 
-*Section scaffolded; populated after Round-1 adversarial wave returns and amendments are folded.* Per [`AGENTS-MD-bb7fe2c5aa`](../../../AGENTS.md#round-1-strikethrough-preservation-in-decision-briefs): if Round-2 amendments supersede the Round-1 decision shape, the Round-1 decision section is strikethrough'd (~~text~~) above and the Round-2 decision lands here.
+**Option A′. Per-candidate parallel fanout (Wave 8.1, 9 sibling subagents) + 3 cross-candidate bias-guard auditors fired in parallel SERIAL-AFTER-Wave-8.1 (Wave 8.1.b — domain-practitioner + falsification-designer + hypothesis-falsifier; each reads all 10 finalized lean-eval briefs and writes its own audit roll-up file) + lead-agent falsifier cross-check between Wave 8.1.b and Wave 8.2 + Wave 8.2 cross-candidate evaluator-brief (lead-agent-default authorship, subagent-fallback if ≥3 unified-attempt briefs triggered "rewrite §3" verdicts), lead-agent exemplar first with self-check gate (items a-g; item h dropped), tiered word-budget (Light 5000-6500 / Heavy 5500-7200), pre-authored Phase-7 cite-obligation propagation table, falsifier-discipline tightened (3-item concreteness rubric + escape-hatch enumeration + "pass cleanly" definition + reframed "in advance" claim), Phase-8-followup deferral threshold restricted to unified-attempt candidates.**
+
+Concretely (Round-2 amended Decision):
+
+- **Lead-agent inline: exemplar lean-eval brief** for the least-contested candidate. Candidate set: **{GF-M, BF-S}** (Light tier). Lead agent picks at exemplar-authoring time based on which produces the cleanest falsifying-outcome demonstration under the 3-item concreteness rubric (see [§Falsifier discipline (load-bearing)](#falsifier-discipline-load-bearing) below). Default lean: **GF-M** (greenfield-light, single-dominant lineage, cleanest scenario-set framing). ~5500-word target (mid-Light-tier). Committed as PR 3.
+- **Wave 8.1 (9 per-candidate subagents in parallel)** fires after the exemplar lands. Each subagent reads (i) its candidate's [`specs/<id>.md`](../specs/), (ii) the candidate's [`backfill-notes/<id>.md`](../backfill-notes/), (iii) the candidate's open carries from [`specs/<id>.md` §6](../specs/), (iv) this brief's rubric + cite-obligation table row for its candidate, (v) the exemplar brief. Writes its lean-eval brief at `architectures/v3/lean-evals/<candidate-id>.md`. Returns ≤500-word digest.
+- **Wave 8.1.b (3 cross-candidate bias-guards in parallel, serial-after-Wave-8.1-closes)** — A.2′ shape: 3 auditors run in parallel with each other AFTER Wave 8.1 closes. **Per Round-1 R1 #2 timing-model fix**: subagents do not commit drafts mid-run, so concurrent-with-Wave-8.1 firing was structurally broken; serial-after-Wave-8.1 firing is the only consistent shape. The 3 auditors are independent of each other (each reads the same 10 finalized briefs and writes its own audit file).
+  - **Domain-practitioner subagent (1× cross-candidate).** Reads all 10 finalized `lean-evals/<id>.md` briefs. Verdict per-candidate (paragraph-level in roll-up): would the test scenarios actually validate the discipline? Practical concerns the brief misses. Output: `lean-evals/audit-domain-practitioner.md` — one cross-candidate roll-up with per-candidate §-sections. Word budget: ≤3000.
+  - **Falsification-designer subagent (1× cross-candidate).** Reads all 10 finalized `lean-evals/<id>.md` briefs. For each brief: verifies the `falsifying-outcome:` YAML field is populated AND §3 falsifying-outcome statement passes the **3-item concreteness rubric** (per [§Falsifier discipline](#falsifier-discipline-load-bearing) below: names a metric / names a directory or artifact state / names a threshold; pass = ≥2 of 3). If any brief fails the rubric, the falsification-designer's verdict for that brief is "rewrite §3"; lead agent re-authors the failing brief before Wave 8.2. Output: `lean-evals/audit-falsification-designer.md` — one cross-candidate roll-up with per-candidate §-sections + per-brief pass/fail on each rubric item. Word budget: ≤3000.
+  - **Hypothesis-falsifier subagent (1× cross-candidate).** Reads all 10 finalized `lean-evals/<id>.md` briefs + the [DEC-1.a working hypothesis text](../decisions-captured.md#d1--unification-verdict-no-methodology-serves-both-mandates-working-hypothesis-falsifiable-by-phase-8) + the [Phase-7 §6.4 NEUTRAL observation](../backfill-notes.md#64-dec-1-a-working-hypothesis-observation-neutral-pre-phase-8). Output: `lean-evals/audit-hypothesis-falsifier.md` — names the cross-candidate result pattern that would falsify DEC-1.a. **Honest framing (per R2 #4):** the pattern is named "before simulator runs, after brief authoring" — NOT in absolute advance. The audit file's first section MUST state explicitly **how the auditor guarded against fitting the observed pattern of the 10 briefs** (e.g., by drafting the pattern independent of the 10 briefs first, then verifying applicability; or by naming a falsifier the briefs would NOT predict). Word budget: ≤2500. **Uses the canonical "escape-hatch" enumeration AND "pass cleanly" definition** committed in [§Falsifier discipline](#falsifier-discipline-load-bearing) below.
+- **Lead-agent falsifier cross-check (between Wave 8.1.b and Wave 8.2)** — per R1 #3 amendment. Lead agent reads `lean-evals/audit-falsification-designer.md` and verifies the rubric-failed briefs (if any) have been re-authored before Wave 8.2 fires. Quick 5-minute lead-agent task; not a subagent dispatch. Mechanically catches the success-criteria-negation collapse before the cross-candidate evaluator-brief lands.
+- **Wave 8.2 (cross-candidate evaluator-brief, lead-agent-default authorship, subagent-fallback)** — fires SERIAL after Wave 8.1.b closes AND lead-agent cross-check completes. Reads all 10 finalized per-candidate briefs + the 3 audit roll-ups. Writes `lean-evals/00-cross-candidate.md`. **Quotes the hypothesis-falsifier's DEC-1.a falsifying result pattern verbatim** in its §X (load-bearing per [§Falsifier discipline](#falsifier-discipline-load-bearing)). **Authorship default**: lead-agent inline. **Authorship fallback (per R1 #6)**: if Wave 8.1.b reports ≥3 unified-attempt candidates with "rewrite §3" verdicts (lead-agent context will be saturated by re-author cycles), Wave 8.2 dispatches a single cross-candidate evaluator-brief subagent instead.
+
+**PR consolidation per [`AGENTS-MD-d71e845b29`](../../../AGENTS.md#sub-wave-pr-consolidation-when-files-are-disjoint):**
+
+- **Wave 8.1 (PR 4 omnibus)** — 9 sibling per-candidate briefs. All disjoint files.
+- **Wave 8.1.b (PR 5 omnibus)** — 3 cross-candidate audit roll-up files. All disjoint files. **Split from Wave 8.2 (R1 + R3 converged amendment)** for clean rewind boundary: if the evaluator-brief misquotes the hypothesis-falsifier pattern, rewind PR 6 doesn't lose the audit work.
+- **Wave 8.2 (PR 6)** — single cross-candidate evaluator-brief file.
+
+### Round-2 reasoning
+
+Four drivers selected Option A′ over Round 1's Option A:
+
+1. **A.1 per-candidate-paired bias-guards was structurally broken AND over-budget.** Round-1 R1 #2 surfaced the timing-model defect: subagents don't commit drafts mid-run, so concurrent-with-Wave-8.1 firing of per-candidate auditors had nothing to read. R1 #1 + R3 #1 converged on the cost: 30 concurrent subagents exceeds the harness's 20-25 practical limit. A.2′ resolves both: 3 cross-candidate auditors fire serial-after-Wave-8.1 in parallel with each other, reading the finalized briefs. The "per-candidate isolation" advantage of A.1 is recoverable because each auditor's roll-up file carries per-candidate §-sections — no information loss.
+
+2. **Falsifier-discipline tightening (R2 amendments) moves the discipline from "ceremony" toward "load-bearing".** R2's #1 (3-item concreteness rubric) gives the falsification-designer auditor a mechanical pass/fail criterion across 10 candidates rather than 10 different interpretations of "concrete". R2's #2 (escape-hatch enumeration: "out-of-mandate scope claim, scenario-skip, criterion-substitution") + R2's #3 ("pass cleanly" = ≥80% scenarios pass success-criteria AND falsifying-outcome NOT triggered) commit the DEC-1.a falsifying pattern's load-bearing terms in this brief rather than delegating to the hypothesis-falsifier. R2's #4 (reframed "in advance" claim, honestly: "before simulator runs, after brief authoring") closes the post-hoc-reinterpretation escape route that the original framing left open.
+
+3. **Wave 8.1.b ↔ Wave 8.2 PR split (R1 #4 + R3 #3 converged) gives a clean rewind boundary.** The hypothesis-falsifier pattern is load-bearing for Wave 8.2's cross-candidate evaluator-brief. If the evaluator-brief misquotes or misapplies the pattern, the user needs to be able to rewind Wave 8.2 (cross-candidate evaluator-brief) WITHOUT losing the 3 audit roll-ups (which themselves cost ~3 subagents of effort). Two separate PRs make this rewindable.
+
+4. **Phase-8-followup deferral threshold restricted to unified-attempt candidates (R1 #5).** The Phase-8 falsification surface is for DEC-1.a; only the 4 unified-attempt candidates (U-A / U-B / U-C / D7-U-1) carry the DEC-1.a load. A failed GF-S / GF-C / GF-M / BF-S / BF-M / BF-L lean-eval is a quality defect on that candidate but does not block DEC-1.a falsification. Restricting the deferral threshold to unified-attempts prevents over-aggressive triggering.
+
+The drop of self-check item (h) (R3 #2; cite-obligation honoring) is non-load-bearing — the falsification-designer auditor's per-brief verdict already checks cite-obligation honoring + the post-fanout aggregation re-checks it. Three-layer enforcement was over-engineering.
+
+The Heavy ceiling tightening 7500 → 7200 (R3 #5) aligns the ceiling to Phase-7 actual median; the looser 7500 would tolerate continued drift.
+
+### Round-2 final amendments folded
+
+The Round-2 decision (Option A′) stands. Following amendments are folded:
+
+| Amendment | Source | Status |
+|---|---|---|
+| Flip A.1 → A.2′ default (3 cross-candidate bias-guards serial-after-Wave-8.1) | R1 #1 + R3 #1 (converged) | **load-bearing** — folded inline at [§Decision (Round 2)](#decision-round-2) above |
+| Bias-guard timing-model fix (subagents don't commit drafts mid-run) | R1 #2 | **load-bearing** — subsumed by A.1→A.2′ flip |
+| 3-item concreteness rubric for falsification-designer auditor | R2 #1 | **load-bearing** — folded into [§Falsifier discipline](#falsifier-discipline-load-bearing) below |
+| Escape-hatch enumeration for DEC-1.a falsifier pattern | R2 #2 | **load-bearing** — folded into [§Falsifier discipline](#falsifier-discipline-load-bearing) |
+| "Pass cleanly" definition committed in this brief | R2 #3 | **load-bearing** — folded into [§Falsifier discipline](#falsifier-discipline-load-bearing) |
+| Reframed "in advance" claim (honest: before-simulator-runs-after-brief-authoring) + hypothesis-falsifier audit-file requirement | R2 #4 | **load-bearing** — folded inline at [§Decision (Round 2)](#decision-round-2) above + [§Falsifier discipline](#falsifier-discipline-load-bearing) |
+| Split Wave 8.1.b and Wave 8.2 into separate PRs | R1 #4 + R3 #3 (converged) | **load-bearing** — folded into [§Sub-wave coordination protocol](#sub-wave-coordination-protocol) below |
+| Phase-8-followup deferral threshold restricted to unified-attempt candidates | R1 #5 | **load-bearing** — folded into [§Phase-8-followup deferral binding mechanism (load-bearing)](#phase-8-followup-deferral-binding-mechanism-load-bearing) below |
+| Lead-agent falsifier cross-check between Wave 8.1.b and Wave 8.2 | R1 #3 | non-load-bearing — folded inline at [§Decision (Round 2)](#decision-round-2) above |
+| Cross-candidate evaluator-brief authorship: subagent-fallback if ≥3 unified-attempt rewrite verdicts | R1 #6 | non-load-bearing — folded inline at [§Decision (Round 2)](#decision-round-2) above |
+| Drop self-check item (h) | R3 #2 | non-load-bearing — folded into [§Per-candidate lean-eval brief rubric](#a-per-candidate-parallel-fanout-wave-81--2-per-candidate-concurrent-bias-guards-domain-practitioner--falsification-designer-paired-per-candidate--1-serial-bias-guard-after-wave-81-hypothesis-falsifier--wave-82-cross-candidate-evaluator-brief-lead-agent-exemplar-first-with-self-check-gate-tiered-word-budget-per-phase-7-evidence--lead-agent-recommendation) below |
+| Tighten Heavy ceiling 7500 → 7200 | R3 #5 | non-load-bearing — folded into tier-table below |
+
+Amendments rejected with reason:
+
+- **R3 #6 (defer Phase-7 cite-obligation table to exemplar-commit time).** REJECTED. The pre-authored mapping table belongs in the brief per [`AGENTS-MD-8740bd7b0a`](../../../AGENTS.md#adr-number-to-filename-mapping-in-subagent-dispatch-briefs) (analogous to ADR-number-to-filename mapping pattern; subagents need it in their dispatch input). Moving it to exemplar-commit time would force subagents to read the exemplar's commit for their dispatch input rather than the brief, breaking the dispatch-prompt-stability pattern.
+
+### Adversarial review discipline commitment (Round 2)
+
+Per [`AGENTS-MD-8a7029647f`](../../../AGENTS.md#adversarial-review-verdict-tiers): Round-1 reviewer dispatch briefs (already fired) explicitly offered all 3 verdict tiers — see [§Appendix A — Round-1 reviewer return digests (preserved for traceability)](#appendix-a--round-1-reviewer-return-digests-preserved-for-traceability) below where each verdict is one of the three (all 3 reviewers returned `accept-with-named-amendments`). Round-2 dispatch briefs likewise offer the menu.

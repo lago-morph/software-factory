@@ -1,0 +1,13 @@
+# agent instruction
+
+**Silent-absorption-finding confidence-threshold rule.** When a fresh-context audit subagent (e.g., a Phase-7 silent-absorption auditor or analogous cross-spec auditor) produces findings that would override per-candidate / per-spec subagent verdicts at lead-agent aggregation, the audit subagent MUST label each finding with a 3-tier confidence (`high` / `medium` / `low`). Only `high`-confidence findings override per-candidate verdicts; `medium` triggers a `tbd` reconciliation row; `low` is informational only. Required to prevent the fresh-context auditor's low-confidence guesses from overriding per-candidate high-confidence rejections. Per-candidate `not-applicable-to-candidate-mandate` is NEVER overridden at any confidence level (structural mandate-mismatch is not re-litigable by an auditor).
+
+*Grounded in: Phase-7 auto-007 Round 2 — Reviewer 5 / scoping-skeptic Defect 3 amendment + Phase-7 silent-absorption auditor's 3 high / 7 medium / 5 low label distribution observed at fanout-close.*
+
+# justification
+
+The Phase-7 silent-absorption auditor produced 15 findings against 10 Phase-6 specs + 9 archive files. Without confidence labels, all 15 would have overridden any per-candidate `rejected` verdict on the same cell — 15 forced overrides at aggregation, regardless of whether the auditor's read was a verbatim-phrase match or a "this sort of reminds me of that" lineage suggestion. Reviewer 5 (scoping-principle-skeptic) caught this in Round 2 Defect 3: without a threshold, the fresh-context auditor's low-confidence guesses would have moved authority from per-candidate subagents (who had read the candidate spec + 9 archive files + the exemplar + the brief — heavy context) to a single auditor read (10 specs + 9 archive files but no per-candidate-fanout context).
+
+With confidence labels applied at the Phase-7 aggregation in [`backfill-notes.md` §3](architectures/v3/backfill-notes.md): only the 3 high-confidence findings applied precedence — and they didn't actually override anything because per-candidate verdicts on those 3 cells were already `absorbed (with adaptation)`. The 7 medium-confidence findings became `tbd` reconciliation rows for Phase-8 design input. The 5 low-confidence findings were informational only.
+
+Cost of not having the rule: per-candidate scoping-principle violations at every aggregation pass + ~12 spurious cell-overrides per fanout (the 12 = 7 medium + 5 low). Cost of adopting the rule: 3 lines added to the auditor's dispatch brief (label each finding `high`/`medium`/`low`) + a single paragraph in the aggregation file's reconciliation precedence section. The asymmetry preserves the per-candidate-engagement discipline that justifies the parallel fanout in the first place.

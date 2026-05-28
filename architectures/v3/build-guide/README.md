@@ -8,12 +8,11 @@ This directory translates the v3 synthesis output into something a human enginee
 2. **[`02-paradigm.md`](02-paradigm.md)** — where the 10 candidates sit on the "Five Levels" axis (Shapiro) and which of the "12 principles" (El Kaim's synthesis) they each commit to. This is the discipline layer.
 3. **[`03-substrate.md`](03-substrate.md)** — the existing open-source landscape and what each piece does. Where each candidate's substrate is already a solved problem (most of it is) vs. where you'd actually have to build something.
 4. **[`04-candidates.md`](04-candidates.md)** — the 10 candidates side-by-side. For each: the distinctive bet in one sentence, methodology shape, substrate composition (which OSS in each slot), what's custom, rough buildability estimate, what could kill it.
+5. **[`05-per-candidate-diagrams.md`](05-per-candidate-diagrams.md)** — per-candidate methodology diagrams, discipline binding tables, and substrate composition diagrams. The visual layer on top of `04-candidates.md`.
 
 ## What this guide is NOT
 
-It is not a per-candidate methodology diagram or a per-candidate spec walkthrough. Those are coming in items 5-6 (still pending). This guide is the **framework** for reading those diagrams when they arrive — and may be enough on its own to make a build decision.
-
-It also does not pre-judge which candidate(s) to ship. The final recommendation is a separate artifact.
+It does not pre-judge which candidate(s) to ship. The final recommendation is a separate artifact, deferred until the lean-evals run.
 
 ## Underlying sources
 

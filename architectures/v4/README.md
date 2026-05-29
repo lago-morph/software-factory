@@ -285,7 +285,7 @@ The compound dependency set has to be license-compatible with whatever you inten
 
 | Project | License | Notes |
 |---|---|---|
-| Gas City | MIT | `internal/` paths in Go — must vendor + fork under your module path to use as library |
+| Gas City | MIT | `internal/` paths in Go block library import — does NOT affect pack-based extension. v4 extends via packs (no Go imports needed), so no fork required. |
 | Claude Code CLI | Anthropic ToS | Max subscription allows subprocess automation |
 | CXDB | Apache 2.0 | Clean for OSS release; required attribution |
 | Beads | MIT | Clean |
@@ -331,7 +331,7 @@ The compound dependency set has to be license-compatible with whatever you inten
 **Specific cautions:**
 
 - **Phoenix (Arize)** uses the Elastic License — restrictive if you plan to operate the factory as a hosted service. Use LangFuse instead.
-- **Gas City's `internal/` Go import paths** mean GitHub blocks direct module import. You must fork and vendor under your own module path. Until the team exposes `pkg/`, this is a vendoring situation, not a dependency-management one.
+- **Gas City's `internal/` Go import paths** mean GitHub blocks direct module import. **This only matters if you want to use Gas City as a Go library.** v4 doesn't — v4 extends via packs (TOML config + tool node binaries + prompt templates), which don't require Go imports. No fork needed. The `internal/` situation would only matter if a future need required source-level Gas City modification (a new runtime Provider, a modified reconciler, an urgent upstream bug fix).
 - **Tracker's license** needs verification before adoption or transfusion. Likely MIT but check.
 - **Claude Code CLI** is proprietary client code; the Max subscription license terms govern its use. Subprocess automation is allowed.
 
@@ -386,7 +386,7 @@ flowchart LR
 - Install OpenTelemetry Collector to receive Claude Code's native OTLP output (`OTEL_LOG_RAW_API_BODIES=file:<dir>` for the raw-body path)
 - Install LangFuse self-hosted for trace browsing + session management
 - Install CXDB (Apache 2.0) for content-addressed trajectory storage
-- Build the raw-API-bodies → CXDB bridge as a Gas City pack (transfusion source: Kilroy's CXDB integration pattern + Gas City's `internal/sessionlog`)
+- Build the raw-API-bodies → CXDB bridge as a Gas City pack — a small standalone tool node binary that watches the `OTEL_LOG_RAW_API_BODIES` directory and posts to CXDB via HTTP/JSON :9010. Pattern transfusion from Kilroy's per-stage logging and Gas City's `internal/sessionlog` — but the bridge is a standalone binary called by Gas City as a tool node, not a Go import.
 
 **What's delivered (additions)**:
 - **P3** (pipeline-as-process): full, including visualization and (optionally) Mammoth-derived 21-rule linter
@@ -506,7 +506,7 @@ flowchart TB
 **The bets**:
 
 1. **The 12 principles are the right set.** If self-optimization shouldn't be in there, or if something is missing, the runtime is wrong-shaped.
-2. **Gas City scales as the substrate baseline.** If Gas City's design choices (Dolt, OTP reconciler, TOML formulas) become limiting, you fork or migrate.
+2. **Gas City scales as the substrate baseline.** Pack-based extension covers v4's needs; if Gas City's design choices (Dolt, OTP reconciler, TOML formulas) eventually become limiting at the substrate level, you'd fork or migrate. Until then, packs are the extension surface.
 3. **The factory can do its own development work after Phases 0-2.** If bootstrap validation in Phase 2 fails, the whole "factory builds factory" approach has to be reconsidered.
 4. **Gene transfusion is reliable for bounded components.** If the factory can't reliably port a pattern from one codebase to another, Phase 3+ becomes much harder.
 5. **Methodologies will emerge empirically.** Once Layer 2 is up, running v3's GF-M (the cheapest candidate) on the runtime is a few days of pack work. The bet is that empirical results will tell us which methodologies are worth pursuing, and that the substrate cost amortizes across all of them.
@@ -515,7 +515,7 @@ flowchart TB
 
 - **Vocabulary lock-in to Gas City.** Cities, rigs, formulas, molecules. Real cognitive load. Recoverable but irreversible without major rework.
 - **Gas City migration tail.** Two CI-enforced migrations in flight (worker boundary, session-first). Expect 1-2 breaking changes per quarter through 2026.
-- **`internal/` path means vendoring forever** (until upstream exposes `pkg/`). You're maintaining a fork.
+- **`internal/` paths constrain Go library use.** v4 doesn't need Gas City as a Go library — packs are the extension model — so this isn't a blocker. Becomes relevant only if v4 grows to need source-level Gas City extension (new runtime Provider, modified reconciler).
 - **Phase 2 may not validate the bootstrap.** First factory-built component may fail human review. Plan: iterate on the spec and run again; if still failing after a few attempts, the factory needs more substrate before Phase 3.
 - **Layer 5 (twins) is genuinely sparse.** No good OSS exemplar for "twin a service from SDK." LocalStack is the closest pattern transfer; building twins is per-service engineering work whether the factory does it or you do it.
 - **Layer 6 (self-optimization) is research-frontier.** Components exist; the integration is genuinely new. The factory building Layer 6 is the highest-risk move in the plan.
@@ -532,8 +532,8 @@ flowchart TB
 
 Concrete first steps:
 
-1. **Fork Gas City** under your own GitHub org, vendor `internal/` into a usable module path. Verify Tracker's license while you're at it.
-2. **Install `gc` from your fork**, author the minimum `pack.toml` + `city.toml` + one prompt template per Phase 0.
+1. **Install `gc` from upstream Gas City** (latest release). All v4 extension is pack-based — no Go library imports, no fork needed. Verify Tracker's license separately if Layer 4 transfusion is planned.
+2. **Author the minimum `pack.toml` + `city.toml` + one prompt template** per Phase 0.
 3. **Verify Claude Code runs in the Gas City tmux runtime** with attribution flowing into beads. This is your first checkpoint.
 4. **Start the formula↔DOT translator** as a small Go side project. Doesn't have to be perfect; the bidirectional capability is what enables Mammoth-compatible linting.
 5. **Set up an OpenTelemetry Collector** receiving Claude Code's OTLP output. Verify events flow.

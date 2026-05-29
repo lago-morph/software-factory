@@ -125,8 +125,8 @@ Vocabulary is real cognitive cost but front-loaded and recoverable.
 
 - Two CI-enforced migrations in flight (worker boundary, session-first)
 - Expect 1-2 breaking pack-schema or formula-format changes per quarter through 2026
-- `internal/` paths in Go — GitHub blocks direct import; must vendor + fork under your own module path
-- `pkg/` exposure unlikely until both migrations settle
+- `internal/` paths in Go — GitHub blocks direct library import. **Only matters for Go library use.** v4 extends Gas City via packs (TOML + tool node binaries + prompt templates) — no Go imports needed, no fork required for the v4 extension model.
+- `pkg/` exposure unlikely until both migrations settle — does not block v4's pack-based work
 
 ### 3.6 Extractability findings (research subagent verified)
 
@@ -229,7 +229,7 @@ Three options, ranked by impedance (lower = better):
 | Claude Code raw API bodies → CXDB | Low | Conversation-shaped already; parent-chain via `session.id` |
 | Claude Code OTLP → CXDB | **Highest** | Span tree → turn DAG mapping is what CXDB was designed against |
 
-**Recommended**: raw API bodies path. Gas City's `internal/sessionlog` already parses Claude Code JSONL; bridge can reuse this and add CXDB output.
+**Recommended**: raw API bodies path. The bridge is a small standalone Go binary that watches `OTEL_LOG_RAW_API_BODIES` directory and posts to CXDB HTTP API. Pattern is transfused from Gas City's `internal/sessionlog` (which parses Claude Code JSONL) — but the bridge is a standalone tool-node binary in a pack, not a Go import of Gas City code.
 
 ### 5.5 What CXDB adds over plain JSONL
 
@@ -436,7 +436,7 @@ Reference: corpus term from Jesse Vincent / Compound Atelier. From `architecture
 ### 10.1 Specific issues to remember
 
 - **Phoenix (Arize)**: Elastic License — restrictive for hosted services. Use LangFuse instead.
-- **Gas City `internal/` paths**: GitHub blocks direct module import; vendor + fork under own module path
+- **Gas City `internal/` paths**: GitHub blocks direct module import. **Only matters for Go library use of Gas City.** v4 extends Gas City via packs (TOML config + tool node binaries + prompt templates), which require no Go imports. No fork needed for v4. Would only become relevant if a future v4 need required source-level Gas City modification — new runtime Provider, modified reconciler, urgent upstream bug fix.
 - **Tracker license**: verify before adoption (likely MIT, 2389 convention)
 - **Claude Code CLI**: Anthropic ToS — Max subscription allows subprocess automation; OAuth tokens NOT permitted outside Claude Code/claude.ai
 - **Weights & Biases**: free tier non-commercial; consider MLflow or Aim as fully-OSS alternatives
@@ -462,7 +462,7 @@ Where multiple options exist with different licenses, v4 picks the permissive ch
 | Pivot from v3 methodology-pick to v4 principle-runtime | Yes | Methodology is variable; substrate is convergent |
 | Gas City as runtime baseline | Yes | Smallest viable install handles 6 of 12 principles natively |
 | CXDB integration | Yes, Phase 1 | Required for principle 10 (memory layer) full + principles 11 + 12 |
-| Bridge path: raw API bodies → CXDB | Yes, recommended | Lowest impedance; reuses Gas City `internal/sessionlog` |
+| Bridge path: raw API bodies → CXDB | Yes, recommended | Lowest impedance; bridge is a standalone tool-node binary in a pack that transfuses the pattern from `internal/sessionlog` (no Go imports of Gas City needed) |
 | Skip OTLP → CXDB path | Yes | StrongDM explicitly designed CXDB against OTel span tree model |
 | Inspect AI for Layer 2 | Yes | Most mature general-purpose; agent-trajectory model fits |
 | LangFuse for Layer 3 | Yes | Phoenix's Elastic License excludes it for hosted-service paths |
@@ -473,6 +473,7 @@ Where multiple options exist with different licenses, v4 picks the permissive ch
 | Phase 0 = minimum Gas City install only | Yes | Validates baseline before adding complexity |
 | Phase 1 = verbatim OSS adoption (no invention) | Yes | Separates "configure" from "invent" risk |
 | Phase 2 = Layer 2 + bootstrap validation | Yes | First factory-built component proves/disproves whole approach |
+| Pack-based extension of Gas City; no fork | Yes | Gas City's pack model (TOML + tool node binaries + prompt templates) covers all v4 extension needs. Forking only warranted for source-level Gas City modification (new runtime Provider, modified reconciler, urgent upstream bug fix), none of which v4 needs. |
 
 ### 11.2 Decisions deferred
 
@@ -498,6 +499,7 @@ Where multiple options exist with different licenses, v4 picks the permissive ch
 | Wait until June 15 for Agent SDK Max access before starting | Subprocess automation works under Max today |
 | Build self-healing before evaluation (Layer 2) | Can't evaluate factory's own work without scenarios + judge |
 | Pick a v3 methodology and build for it | Wrong question per pivot rationale |
+| Fork Gas City and vendor `internal/` paths | Earlier framing in v4 docs overstated this. Pack-based extension handles all v4 needs without Go library imports. Fork only warranted for source-level Gas City modification, which v4 doesn't need. Corrected 2026-05-29. |
 
 ---
 
@@ -612,7 +614,7 @@ work_partition = "scenarios"
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
 | Gas City migration breaks downstream | Medium | Medium | Pin specific Gas City version; track migrations; budget for 1-2 breaking changes/quarter |
-| Internal path forking forever | High | Low | Accepted cost; fork well-named |
+| ~~Internal path forking forever~~ Not applicable to v4 | n/a | n/a | v4 doesn't import Gas City as Go library; pack-based extension handles all v4 needs. Forking only warranted if future work requires source-level Gas City modification. |
 | CXDB stays small-team | Medium | Medium | Apache 2.0 means fork is always available; design integration to minimize lock-in |
 | Phase 2 bootstrap validation fails | Medium | High | Iterate on spec; if persistent, add more substrate before Phase 3 |
 | Layer 5 twin work doesn't transfer well | Medium | Medium | LocalStack is the strong exemplar; budget per-service work |

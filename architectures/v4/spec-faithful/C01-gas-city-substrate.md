@@ -8,9 +8,10 @@
 
 C01 is the **load-bearing third-party runtime substrate** of Software Factory v4: an *adopted* (not
 authored) install of **Gas City** — a single Go binary `gc` — configured as the factory's foundation.
-It is the engine on which everything else runs. Per AI-CONTEXT §2 it occupies layer 3 of the convergent
-"three-layer + persistence" shape (the **pipeline engine** / DOT-graph workflow runner), and it natively
-*supplies* layers covering persistence and dispatch. The component's job is to provide, from a *minimum
+It is the engine on which everything else runs. Per AI-CONTEXT §2 it occupies the **pipeline-engine tier**
+of the convergent "three-layer + persistence" shape (the DOT-graph workflow runner) — the
+*three-layer-architecture* sense of "layer" (C07 canonical sense 1, G01), **not** the numbered
+"Layer 0–6" principle-tier sense — and it natively *supplies* the persistence + dispatch tiers. The component's job is to provide, from a *minimum
 install*, a principled runtime that already satisfies ~5–6 of the 12 principles before any custom code
 is written (AI-CONTEXT §3.6: "Gas City provides P1, P2, P3, P4, P9, P10 native").
 
@@ -65,6 +66,13 @@ is written (AI-CONTEXT §3.6: "Gas City provides P1, P2, P3, P4, P9, P10 native"
 | External dependency | **Gas City** (`gc` binary, MIT) | The adopted third-party runtime itself. **G11 blocker** lives here (§6). |
 | External dependency | **Claude Code CLI** (C28, under Max) | Driven by the `claude` provider preset; the agent/LLM layer C01 dispatches to. |
 | Downstream (consumers) | **C02** Pack ABI; **C05** Sling; **C06** Messaging; **C07** Vocabulary; **C08** Spec artifact; **C12** Formula format; **C13** Molecule; **C17** Tool-node; **C18** Reconciler loop; **C19/C20** Bead store/schema; **C21/C23** CXDB bridge / Event bus; **C40** Orders; **C41** Identity; **C42** Rig partitioning | Per inventory, these list C01 (directly or transitively) as a dependency. They consume C01's runtime, persistence, dispatch, and extension surfaces. |
+
+> [AMBIGUITY: C01↔C03 dependency direction] The inventory lists C01 `Depends on: C03, C04`, but the C03,
+> C04, C07, C02 rows each list `Depends on: C01`. C01↔C03 is therefore a **cycle** in the canonical
+> inventory (the same XC-1 class flagged for C19↔C20). Both rows are cited here verbatim. The faithful
+> reading that resolves the cycle is C01-B's: C01 depends on C03's *contract* at **load time** (it calls
+> C03's loader), while C03 depends on C01 as the **host** that parses the TOML — a contract dependency, not
+> a build-order cycle. C01 records both and **defers** the canonical ruling to the integrator pass.
 
 **Position in the system.** C01 is **Batch-1 foundational** (inventory line 107) and sits at the root of
 the dependency forest: it is the "load-bearing third-party dependency. If Gas City fails, the whole plan

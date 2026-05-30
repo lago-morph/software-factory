@@ -37,7 +37,10 @@ the load-bearing native match for **P10 (memory layer)** and a primary carrier f
 - NOT the **CXDB trajectory store** (C21). Beads are the **work ledger** (coarse-grained tasks/dependencies);
   CXDB is the **content-addressed turn-DAG** of fine-grained trajectories (AI-CONTEXT §2, §5; README:241,
   244 "CXDB adds content-addressed trajectory storage when self-healing needs richer trajectory analysis").
-  Different granularity, different store.
+  Different granularity, different store. **Bead types are a *separate type space* from CXDB turn types**
+  (AI-CONTEXT §5 keeps the two stores distinct); C19 asserts **no shared `{bundle_id,…}` namespace** with
+  CXDB. Any bead↔CXDB payload binding is a C20/C22 concern, not C19's, and C19 takes no position on the
+  bead `bundle_id` (see OQ-C19-5 and the bundle-id collision flagged to the integrator).
 - NOT the **event bus** (C23). The event bus is append-only JSONL of *every action* (AI-CONTEXT §3.2 #3);
   beads are the *durable typed graph of work*. README:228 pairs "event bus + bead history" as two
   audit-trail sources; they are distinct components.
@@ -54,7 +57,7 @@ the load-bearing native match for **P10 (memory layer)** and a primary carrier f
 |---|---|---|
 | Upstream (depends on) | **C01** Gas City substrate | C19 is Gas City native concept #2; the `gc` binary provides the bead store and `gc bd` commands (AI-CONTEXT §3.2, §16; inventory: C19 depends on C01). |
 | Upstream (depends on) | **C03** Config/feature-flags | `[beads] provider = "file"` (the backend selector) is a C03 section (AI-CONTEXT §13.1). C19's backend is config-gated. |
-| Bidirectional | **C20** Bead schema registry | C19 stores *typed* beads; C20 defines the types. Inventory lists **C20 depends on C19**; the dispatch brief lists **C19 depends on C20**. Faithful reading: a *mutual* foundational pair (see OQ-C19-1 / G17). |
+| Upstream-of (C20 depends on C19) | **C20** Bead schema registry | C19 stores *typed* beads; C20 defines the types. **Canonical direction (inventory): C20 depends on C19.** The dispatch brief's reversed arrow (C19→C20) is best read as "co-foundational," not a real reversal; the proposed co-foundational resolution lives in OQ-C19-1 / XC-1, not as a faithful fact here. |
 | Downstream (consumes) | **C05** Sling, **C13** Molecule, **C18** Reconciler | route / instantiate / converge over beads stored here. |
 | Downstream (consumes) | **C35** Override loop, **C39** Fix-task loop-closure, **C52** Self-bootstrap | write/read `override`, `fix_task`, `factory_build_in_progress` beads and the resolution **bead chain** (README:214, 257–259; AI-CONTEXT §16). |
 | Downstream (consumes) | **C41** Identity/attribution, **C33** Satisfaction | C41 reads `created_by` off every bead (inventory: C41 depends on C19); C33 reads judge-output beads (README:426 "reading judge outputs from beads"). |
@@ -84,8 +87,13 @@ Sweep 1 — interfaces **named and described**; concrete signatures/schemas defe
    the *same* bead interface (AI-CONTEXT §3.2 #2, §13.1).
 
 **Invariants**
-- **Attribution-total**: *every* bead carries a `created_by` — it is "automatic everywhere", with no
-  configuration (AI-CONTEXT §3.1 P9; README:227, 371). A bead without `created_by` is not well-formed.
+- **Attribution-native**: *every* bead carries a `created_by` — it is "automatic everywhere", with no
+  configuration (AI-CONTEXT §3.1 P9; README:227, 371). v4 states the create path **always stamps** a
+  non-empty `created_by`; it does not itself state the store *rejects* an un-attributed write.
+  > [FAITHFUL-FILL] To make "total" *testable*, the minimal faithful mechanism is that the C19 create path
+  > refuses to persist a bead with an empty `created_by`. This is the smallest enforcement consistent with
+  > "native/automatic everywhere"; it is an elaboration of the v4 property, not a v4-stated validation gate
+  > (the store-side rejecting gate is the explicit Track-B choice, C19-B DELTA-02).
 - **Typed-total**: every bead has a type drawn from the C20 registry (no untyped beads;
   `gc bd find --type` presupposes every bead is type-tagged).
 - **Durable across sessions**: a bead written in one session is readable, with its edges and state, by a
@@ -111,7 +119,7 @@ schema is C20):
 | dependency edges | README:235, 239 | "tasks with dependencies"; directed edges to other beads. |
 | state | AI-CONTEXT §16; README:259 | enough to drive resume + the resolution chain. |
 | payload fields | per-type | type-specific content (e.g. `transfused_from` on factory-build beads, AI-CONTEXT §16; the fix-task linkage on `fix_task`). C20 owns these. |
-| history | README:228 | per-bead change history (audit). |
+| history | README:228 | per-bead change history (audit). [FAITHFUL-FILL] README:228 names "bead history" as a *query/audit surface*; whether it is a stored field on the record or a *derived view* over C23/Dolt versioning is unspecified by v4 and deferred to sweep 2. |
 
 > [FAITHFUL-FILL] v4 names `id`, `type`, `created_by`, dependency edges, state, and `transfused_from`
 > (on bootstrap beads) but never enumerates a complete bead record. The minimal faithful field set above
@@ -167,7 +175,7 @@ per BUILDER-BRIEF altitude.)
 | **G36** — *minor*: attribution integrity is optional/deferred; without signed provenance, `created_by` is self-asserted | C19 records `created_by` natively but cannot *verify* it. | Faithful: C19 guarantees attribution is **present and total**; *verification* of the claimed actor is C41's "optional, deferred … signature on bead provenance" (README:229). C19 surfaces that the recorded actor is self-asserted (residual risk, §7/§9); inventing signing here would exceed v4 and duplicate C41. |
 | **Backend durability / crash mid-write** | A `file`-backend write could be interrupted (single-node, Phase 0). | v4 claims durability but gives no crash/atomicity spec for the file backend; faithfully noted as a Gas City internal (G11 unverified) and an open question (OQ-C19-3). "Orders survive crashes" is claimed for Orders (C40), *not* for the bead file backend. |
 | **Concurrent writes from parallel agents** | L4/L5 runs fan out many agents writing beads. | v4 states no concurrency/isolation model for the `file` backend; Dolt would add it. Faithful: flag as open (OQ-C19-3); do not invent locking semantics v4 does not state. |
-| **Unknown / unregistered bead type** | A bead written with a type absent from C20's registry. | Faithful: by the **typed-total** invariant every bead's type must be in C20's registry; enforcement of "reject unknown type" is the C19↔C20 contract, finalized once C20 exists (sweep 2). |
+| **Unknown / unregistered bead type** | A bead written with a type absent from C20's registry. | Faithful: by the **typed-total** invariant every bead's type must be in C20's registry; enforcement of "reject unknown type" is the C19↔C20 contract, finalized once C20 exists (sweep 2). **Caveat (G11 / OQ-C20-4):** closed-type enforcement presupposes Gas City's native bead store *rejects* unregistered `type` strings — unverified. If the substrate accepts free-form types, this enforcement becomes pack work (C02), not a native guarantee. |
 
 No v4 F-mode is *owned* by C19 beyond the persistence/attribution role; F32 (mail-injection) and the
 attribution F-modes are addressed via P9 `created_by` flowing through beads (C41 owns the security framing).
@@ -192,8 +200,11 @@ attribution F-modes are addressed via P9 `created_by` flowing through beads (C41
 
 ## 8. Acceptance criteria & test strategy
 
-1. **Attribution-total**: every bead created through the C19 interface has a non-empty `created_by`;
-   creating a bead without one fails (faithful to "native, automatic everywhere", README:227/371).
+1. **Attribution-native**: every bead created through the C19 interface has a non-empty `created_by` —
+   the create path always stamps one ("native, automatic everywhere", README:227/371). The minimal
+   testable form of this is that the create path refuses to persist a bead with an empty `created_by`
+   (FAITHFUL-FILL, §3); the *store-side rejecting validation gate* on an externally-supplied null is the
+   Track-B enforcement (C19-B DELTA-02), not a v4-stated fact.
 2. **Cross-session durability**: a bead (with type, edges, state) written in session S1 is readable —
    identical — from a separate session S2 after process restart (the "survives across sessions" property,
    README:235).
@@ -226,6 +237,14 @@ test vectors are sweep-2 deliverables, jointly with C20.)
   durability + cross-session readability but states no isolation level, write atomicity, or ordering for
   concurrent multi-agent bead writes at L4/L5 fan-out. Needed before parallel write contracts can be
   asserted; today flagged, not invented.
+- **OQ-C19-5** (→ review-log): **Bead `bundle_id` / CXDB type-namespace (XC-4, DEFERRED to integrator).**
+  C19 faithfully treats bead types as a *separate* type space from CXDB turn types and asserts no shared
+  bundle namespace. But the optimized siblings collide: C20 binds beads to `v4.beads.v1`, C22-faithful uses
+  `softwarefactory.v4`, C22-optimized claims one registry owning *both* bead and CXDB namespaces under
+  `strongdm.factory.v4`, and C21-optimized names `softwarefactory.trajectory.v1`. C19 takes no position on
+  the bead `bundle_id`; the canonical namespace ruling and whether bead types are registered in C22 at all
+  belong to C20/C22 + the integrator. Recorded so C19's *silence* is not read as assent to C22 owning the
+  bead namespace.
 - **OQ-C19-4** (→ review-log): **Attribution integrity (G36).** `created_by` is self-asserted in C19;
   C41's signed provenance is "optional, deferred." For an L5 self-modifying factory, is unsigned
   attribution acceptable as the *only* integrity control, or must the C19↔C41 seam reserve a place for

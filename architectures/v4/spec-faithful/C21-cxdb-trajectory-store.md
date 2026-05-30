@@ -7,7 +7,9 @@
 ## 1. Purpose & responsibility
 
 C21 is the factory's **content-addressed trajectory store**: an *adopted* (not authored) install of
-**CXDB** (`github.com/strongdm/cxdb`, Apache 2.0), configured as the substrate that records agent
+**CXDB** (`github.com/strongdm/cxdb`, Apache 2.0 — *both the repo URL and the license are unverified
+upstream assertions per G11; treat as provisional until the OQ-3/§6 conformance run confirms them*),
+configured as the substrate that records agent
 **trajectories** — the conversation-shaped, turn-by-turn history of every run — in a form that supports
 **deduplication**, **O(1) branching**, and **replay**. It is the second persistence pillar alongside the
 bead work-graph (C19): beads are the *typed work-ledger*, CXDB is the *content-addressed trajectory log*
@@ -99,12 +101,16 @@ owning components (C22 for the type bundle, C24 for the bridge delivery seam).
 | I4 | **Blob CAS (BLAKE3) put/get** | internal/inbound | Store/fetch a payload keyed by BLAKE3 of its msgpack bytes; identical payloads dedup (AI-CONTEXT §5.3, §5.5). | C21 (this) |
 | I5 | **Branch / fork (O(1))** | inbound (write) | Create a new head pointer from any turn with no history copy (AI-CONTEXT §5.3 line 216). The primitive C49 builds on. | C21 (this); C49 consumes |
 | I6 | **Replay / trajectory retrieval** | inbound (read) | Reconstruct a trajectory by walking the parent chain; sub-ms retrieval over TB-scale (AI-CONTEXT §5.5). | C21 (this); C36/C37/C38/C49 consume |
-| I7 | **Type registry** (`{bundle_id, type, version}`, `registry/`) | inbound (config) + read | Register/resolve typed payload schemas (JSON bundles like `mycompany.agents.v1`). C21 hosts the mechanism; the **v4 bundle is C22**. | **C22** (the bundle), C21 (host) |
+| I7 | **Type registry** (`{bundle_id, type, version}`, `registry/`) | inbound (config) + read | Register/resolve typed payload schemas (JSON bundles like `mycompany.agents.v1`). C21 hosts the mechanism; the **v4 bundle is C22**. C21-A deliberately does **not** name the v4 trajectory `bundle_id` — the tracks currently disagree (C21-B `softwarefactory.trajectory.v1`, C22-A `softwarefactory.v4`, C22-B `strongdm.factory.v4`, C20-B `v4.beads.v1`); see **review-log XC-4** and defer the canonical namespace to the integrator ruling. | **C22** (the bundle), C21 (host) |
 | I8 | **`[[service]]` lifecycle** | inbound (ops) | Registered in `city.toml` as a Phase-1 service the substrate operates (AI-CONTEXT §13.2 lines 558, 579). | C01 (host), C21 (config) |
 
 **Invariants C21 must uphold (store-level):**
 - **INV-1 (content-addressing):** every payload is keyed by BLAKE3 of its msgpack-serialized bytes;
   storing the same bytes twice yields one stored blob (dedup) and the same key (AI-CONTEXT §5.3, §5.5).
+  > [FAITHFUL-FILL] v4 states "BLAKE3 Blob CAS" and "`{bundle_id,type,version}` per payload" (AI-CONTEXT
+  > §5.3) but does not spell out the *serialize-then-hash ordering*. "msgpack-serialize the payload, then
+  > BLAKE3 the msgpack bytes" is the minimal faithful reading (msgpack is v4's named turn-payload
+  > encoding); the *BLAKE3 CAS + dedup* property is v4-stated, the serialization-ordering detail is filled.
 - **INV-2 (turn-DAG, not tree):** every turn except a root has exactly one parent pointer; multiple turns
   may share a parent (branching); the structure is a DAG (AI-CONTEXT §5.3 line 215).
 - **INV-3 (O(1) branch):** forking from any turn allocates a new head pointer and copies **no** history
@@ -262,8 +268,11 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
 5. **AC-5 (registry mechanism — addresses G17):** a v4 `{bundle_id, type, version}` bundle can be
    registered into `registry/` and resolved on read; typed payloads project structurally (AI-CONTEXT §5.3,
    §5.5 line 238). *Proves the mechanism C22 fills.*
-6. **AC-6 (performance contract):** p50 append < 1ms for 10KB payloads; retrieval sub-ms over a large store
-   (AI-CONTEXT §5.5 lines 239–240). *De-risks the G11/upstream performance assumption.*
+6. **AC-6 (performance contract — *measure, don't assume*):** **measure and record** p50 append for 10KB
+   payloads and point-retrieval latency against the *pinned* binary, comparing them to v4's asserted
+   "p50 < 1ms / sub-ms over TB-scale" (AI-CONTEXT §5.5 lines 239–240). These numbers are **unverified
+   upstream claims** (G11), not guaranteed properties — the AC is the de-risking measurement, and a miss
+   is a finding for the integrator, not a build-blocking contract C21 must hit.
 7. **AC-7 (fail-open + idempotent ingest — addresses G33):** with CXDB down, a factory run continues on
    beads+events without crashing; re-posting a previously-accepted turn is a **no-op** (BLAKE3 idempotency,
    INV-1) — the property a buffering C24 bridge relies on. *Buffer/retry design itself is C24's.*

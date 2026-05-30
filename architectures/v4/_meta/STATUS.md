@@ -6,16 +6,25 @@ Live state of the v4 spec & plan run. Updated by the primary agent every wave.
 **Phase 2 — Sweep 1 (architecture foundation).** Batch-1 builds COMPLETE (12 components × 2 tracks).
 Batch-1 adversary review wave RUNNING (5 subsystem red-teamers). Batch-2 foundational builds STARTED.
 
-## Completed (Sweep-1 builds, both tracks)
-Batch 1 ✅: C01 C02 C03 C07 C08 C17 C19 C20 C21 C22 C23 C41 (24 docs spec + 24 plan).
+## Completed (Sweep-1, both tracks)
+- **Batch 1 ✅ BUILT + ADVERSARIALLY REVIEWED + INTEGRATED (consistent).** C01 C02 C03 C07 C08 C17 C19 C20
+  C21 C22 C23 C41. 5 subsystem adversaries applied fixes; Integration Pass 1 applied rulings D-1..D-5.
+  Foundation verdict: internally consistent (one namespace, one bead-schema author, one dep direction,
+  one chain owner, unblocked same-provider judge). See `_meta/INTEGRATION-PASS-1.md`.
+- **Batch 2 (build, both tracks): C04 C05 C09 C10 C12 C13 C24 C28 C29 ✅ built.** (Not yet adversary-reviewed.)
+
+## Adopted decisions (see review-log.md)
+D-1 same-provider judge (cross-family→FE-1) · D-2 bundle-id `softwarefactory.v4.{beads,trajectory,packs}`
+· D-3 C20 authors bead schemas / C22 mechanism · D-4 C20 depends on C19 · D-5 C41 owns hash-chain over C23.
 
 ## In flight
-- Adversaries: Runtime{C01,C02,C03,C07}, PersistA{C19,C20}, PersistB{C21,C22,C23}, Security{C41}, SpecWf{C08,C17}.
-- Builders (Batch 2): C28-F, C28-O, C29-F.
+- Builders: C42 (both), C25 (both). Cleanup: align plan docs to D-2..D-5.
 
-## Batch-2 remaining queue (build)
-C29-O, C04, C05, C09, C10, C12, C13, C24, C25, C26, C27, C42 (both tracks each).
-## Then Batches 3,4,5 (see component-inventory.md §Suggested build/spec batches).
+## Remaining work
+- Batch 2 build: C26, C27 (observability). Then Batch-2 adversary review wave.
+- Batches 3 (eval/judge/workflow-tooling/override), 4 (self-healing+bootstrap), 5 (self-optimization).
+- Sweep 2 (implementation-ready depth) once Sweep-1 breadth is covered.
+- Open human decisions in review-log: signing mandatory-vs-optional; G37 secrets store.
 
 ## Concurrency reality
 Platform rate-limits subagent launches at **~8 concurrent**. Pipeline at width ~6–8, top up as agents finish. (Target "50+" is not reachable on this infra.)

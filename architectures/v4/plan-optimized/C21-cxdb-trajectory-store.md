@@ -7,7 +7,7 @@
 | Task | Description | Size | Prereqs |
 |---|---|---|---|
 | T1 | **CXDB repo-inspection spike (G11/OQ1).** Clone `github.com/strongdm/cxdb`, run it, confirm the turn/Blob-CAS/branch model, measure ingest p50 + retrieval, map its Go client surface to the proposed `TrajectoryStore` port. Output: a go/no-go on DELTA-01 thinness + a verified perf baseline. | M | none (de-risk first) |
-| T2 | **Freeze the `{bundle_id,type,version}` triple format** (DELTA-03) jointly with C22. The on-turn wire shape of the type triple + the v4 bundle ID `softwarefactory.trajectory.v1` + the initial turn-type names. | S | none (contract) |
+| T2 | **Freeze the `{bundle_id,type,version}` triple format** (DELTA-03) jointly with C22. The on-turn wire shape of the type triple + the v4 trajectory bundle ID `softwarefactory.v4.trajectory` (canonical per D-2) + the initial turn-type names. | S | none (contract) |
 | T3 | **Define the `TrajectoryStore` port** (DELTA-01): `AppendTurn`, `PutBlob`, `GetTurn`, `GetBlob`, `WalkTrajectory`, `EnumerateBranches`, `Branch`, `Query`, back-pressure signal. Language-neutral contract + Go binding (CXDB client is Go). | M | T2 |
 | T4 | **In-memory stub implementation** of the port (for conformance suite + downstream parallel build). | M | T3 |
 | T5 | **CXDB-backed adapter**: wire the port to the real CXDB server (:9009 binary + :9010 HTTP), parent-chain via `session.id`. | L | T1, T3 |
@@ -35,7 +35,7 @@
 ## 4. Interfaces-first / contract milestones
 
 Freeze early, in this order, to unblock the most dependents:
-1. **The `{bundle_id,type,version}` triple format + `softwarefactory.trajectory.v1` bundle ID** (T2) — co-owned with C22; *everything* typed depends on it.
+1. **The `{bundle_id,type,version}` triple format + `softwarefactory.v4.trajectory` bundle ID** (T2) — co-owned with C22; *everything* typed depends on it.
 2. **The `TrajectoryStore` port signatures** (T3) — C24/C49/C36/C37/C38 all code against this; freezing it lets four downstream teams build on the stub before the CXDB adapter exists.
 3. **The ingest idempotency contract** (DELTA-02, defined in T3, realized in T6) — C24 must know retries are safe before it builds delivery.
 4. **The back-pressure / degraded-mode signal** (DELTA-04, in T3) — the C23/C24 seam needs the `BUSY`/`UNAVAILABLE` contract to build the spool path.

@@ -36,7 +36,7 @@ C29 is the **policy artifact + resolution rule** that decides *which concrete mo
 - **`crossFamilyRule(coderModel) → constraint` (rule, outbound).** Emits the constraint "judge.family ≠ coder.family" used by C32/C34 (README:189,427). Invariant: for any (coder, judge) node pair in a satisfaction-measuring formula, `family(judge) ≠ family(coder)`.
 - **`floorDeclaration` (invariant, outbound).** Asserts Claude Code (Max) is the floor; this is what makes F19/F31 "Addressed by declaration" (FM:71,73).
 
-**Key invariants:** (I1) coder nodes never resolve below floor; (I2) `family(judge) ≠ family(coder)`; (I3) resolution is deterministic (same node + same stylesheet → same model) so it is lintable/auditable like other v4 deterministic rules (cf. F51 deterministic-first posture).
+**Key invariants:** (I1) coder nodes never resolve below floor; (I2) `family(judge) ≠ family(coder)` — **relaxed at Phase 0 per D-1/FE-1** (the same-provider judge is the Phase-0 baseline, isolated by rig partitioning + role/prompt rather than family diversity; the literal cross-provider form is FE-1 — see §6/§9); (I3) resolution is deterministic (same node + same stylesheet → same model) so it is lintable/auditable like other v4 deterministic rules (cf. F51 deterministic-first posture).
 
 ## 4. Data model / state
 
@@ -54,7 +54,7 @@ Resolution flow at node dispatch:
 1. Node arrives with attributes (role, stage, …).
 2. Match selectors → collect declarations → CSS-cascade by specificity → winning model.
 3. If `role=coder`: clamp to floor (I1).
-4. If `role=judge`: apply `crossFamilyRule` against the coder's resolved family; reject/repath if same family (I2).
+4. If `role=judge`: **(Phase-0, D-1/FE-1)** route to a same-provider judge that is rig/role/prompt-isolated from the coder, emitting the active independence constraint; the literal `family(judge) ≠ family(coder)` cross-provider check is deferred to FE-1 and applies only when a second-provider family is registered (I2, relaxed).
 5. Return model identity to dispatch (C05) / agent loop (C28) / judge (C32).
 
 Sequence/state diagrams and the cascade-specificity algorithm are **sweep-2/3**; this sweep fixes only the named flow and invariants above.
@@ -93,7 +93,7 @@ Sequence/state diagrams and the cascade-specificity algorithm are **sweep-2/3**;
 ## 8. Acceptance criteria & test strategy (sweep-1, high level)
 
 - A1: A coder node always resolves to a model ⩾ the declared floor (I1). *Test:* stylesheet with a sub-floor declaration on a coder node → resolution clamps to floor.
-- A2: For any coder/judge pair, `family(judge) ≠ family(coder)` or dispatch is refused (I2). *Test:* judge selector pointing at the coder's family → C29 rejects (fail-closed).
+- A2: **(Phase-0, per D-1/FE-1)** A satisfaction-measuring judge runs same-provider but **rig/role/prompt-isolated** from the coder; the `family` constraint emitter is exercised but the cross-provider form is **not** required (FE-1). *Test:* a same-provider judge with a disjoint rig + distinct rubric resolves successfully; the emitted `IndependenceConstraint` records the active (Phase-0) level. *(The literal `family(judge) ≠ family(coder)` fail-closed test moves to the FE-1 cross-provider tier.)*
 - A3: Resolution is deterministic and reproducible (I3). *Test:* same (node, stylesheet, registry) twice → identical model.
 - A4: The floor declaration exists and is the single sanctioned coder adapter (F19/F31). *Test:* registry/declaration names exactly one floor adapter (Claude Code @ Max).
 - A5: Cost-awareness is expressible: a node can prefer a cheaper tier among floor-or-above options. *Test:* two above-floor models, cheaper one selected when cost-tier preferred.

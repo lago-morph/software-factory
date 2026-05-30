@@ -95,7 +95,7 @@ to sweep 2 (and the actor-value contract to C41, the bridge delivery seam to C24
 | I2 | **Ordered read / tail / replay** | inbound (read) | Read events in `seq` order from a given position to the head; replay the action history; tail live. The audit/replay surface (AI-CONTEXT §3.2 "P9, P10, P11"). | C23 (this); C24/C40/self-healing consume |
 | I3 | **Checkpoint / resume-from-seq** | inbound (read) | A consumer records its last-processed `seq` and resumes from there (the property that makes the bus a reliable bridge source). | C23 (this); C24 consumes (G27 ordering) |
 | I4 | **`created_by` attribution field** | contract | Every record carries a resolvable actor id; C23 carries it, **C41 defines/resolves** the actor schema (README line 227; "rides events"). | **C41** (value+schema), C23 (carrier) |
-| I5 | **CXDB-bridge source seam** | outbound (read) | The "events already attributed and trajectory-shaped" stream the C24 bridge consumes as the lowest-impedance CXDB path (AI-CONTEXT §5.4 line 228). C23 guarantees the stream *shape*; C24 owns delivery. | C23 (source), **C24** (delivery) |
+| I5 | **CXDB-bridge source seam** | outbound (read) | The "events already attributed and trajectory-shaped" stream the C24 bridge consumes as the lowest-impedance CXDB path (AI-CONTEXT §5.4 line 228). C23 guarantees the stream *shape*; C24 owns delivery. C23 records are **plain JSONL with no `{bundle_id,type,version}` triple** — when bridged into CXDB they acquire a type triple *there* (C22/C24); the canonical bundle-id namespace is the **review-log XC-4** integrator ruling, not C23's concern. | C23 (source), **C24** (delivery) |
 | I6 | **`[[service]]`/substrate lifecycle** | inbound (ops) | The bus is part of C01's lifecycle (always-on); operated alongside the substrate, no separate service block in the minimal install. | C01 (host), C23 (config of log location) |
 
 **Invariants C23 must uphold (bus-level):**
@@ -111,7 +111,9 @@ to sweep 2 (and the actor-value contract to C41, the bridge delivery seam to C24
   spec-faithful/C01 INV-3; README line 231). No event is anonymous — this is the F14 guarantee.
 - **INV-4 (records every action):** the bus is *complete* — every factory action that mutates state or makes
   a decision emits an event; there is no action path that bypasses the log (README line 252; component-
-  inventory C23).
+  inventory C23). This is an **adopted Gas City property** (C23 is not factory-authored), to be *verified*
+  by the conformance pack (AC-7), not a guarantee C23-the-spec independently enforces over Gas City's
+  internals — same G11-class "exercise the upstream claim" posture as C01/C21.
 - **INV-5 (JSONL, one record per line):** the on-disk format is line-delimited JSON — one self-describing
   record per line — so it is grep-able, tailable, and bridgeable without a special reader (AI-CONTEXT §3.2;
   §5.5 frames CXDB as additions "over plain JSONL").
@@ -212,7 +214,10 @@ C41's optional layer.
 > This is most consistent with the rest of v4: README §Part 4 and AI-CONTEXT §11/§13.2 concretely build the
 > raw-API-bodies bridge (the standalone Go binary watching `OTEL_LOG_RAW_API_BODIES`, AI-CONTEXT §5.4 line
 > 232), and CXDB's *turn* unit needs the conversation payloads that live in raw API bodies, not in Gas City's
-> action events. The "Lowest" ranking is best read as *"events are the cheapest-to-bridge **because already
+> action events. *(That events are action-shaped and lack the full model request/response bodies is a
+> **faithful inference** grounding choice (b): v4 calls events "trajectory-shaped"/"attributed" (§5.4) but
+> never states whether the full bodies ride on them — so this is the basis for picking (b), not a v4 fact.)*
+> The "Lowest" ranking is best read as *"events are the cheapest-to-bridge **because already
 > attributed**"* — a property statement, not a build directive that overrides the explicit recommendation.
 > **Faithful resolution for C23:** C23 guarantees its stream is *bridgeable* (attributed + ordered + shaped
 > for replay, I5) so the event-bus path **remains available** and is the cheapest if/when needed; **which

@@ -20,6 +20,17 @@ this file is written by the primary or a single collector agent per pass.
   the canonical bead `bundle_id` — the bead-payload round-trip fails until reconciled. Must be fixed in
   both specs before any bundle-authoring task. Owner: integrator + C20/C22 (B). Also note C21-B names its
   CXDB bundle `softwarefactory.trajectory.v1` — the whole bundle-id namespace needs one ruling.
+- **XC-4b — identity-namespace sprawl (extends XC-4).** FOUR unreconciled reverse-DNS namespaces now
+  exist: bead `v4.beads.v1` (C20), type-registry `strongdm.factory.v4` (C22), trajectory
+  `softwarefactory.trajectory.v1` (C21-B), pack `pack_id` (C02). Need ONE namespace convention ruling
+  across C02/C20/C21/C22. Owner: integrator.
+- **XC-7 — CapabilityDescriptor ownership straddle.** Same concept declared in both C02 and C03 (both
+  flagged OQ3). Rule one owner. Owner: integrator + C02/C03.
+- **XC-8 — Phase-0 capability enforcement is detection-only.** C02-B "kill on capability breach" and
+  related controls have no enforcement teeth until C43 isolation (unbuilt, G31/G21). Several Track-B
+  "prevention" claims are really detection at Phase 0; adversary softened wording. Real fix = sequence
+  C43 earlier or accept detection-only Phase 0. Owner: C43 + integrator.
+- **XC-9 — `[rigs]`/`[[rig]]` spelling inconsistent** across C01/C03/C42. Pick canonical. Owner: C07/integrator.
 - **XC-3 — G18 numeric policy ownership.** C20 provides boundable schema slots
   (`attempt_no`/`max_attempts`/`escalated`/`closes`); the numeric policy (N attempts → escalate, F52
   oscillation detection, L5 ship authorization) is deferred to C39 (and possibly C18). Confirm C39 owns it.

@@ -48,10 +48,9 @@ Freeze early so dependents build against stubs:
 
 ## 5. Risks & de-risking order
 
-1. **OQ-2 — judge-seat admissibility (spike first).** Before building T7, confirm whether a metered-API judge seat is admissible under the "no second key under Max" posture and where its credential lives (G37 secrets gap). If inadmissible, **L2/L3 are structurally unreachable** and the factory is permanently capped at L1 same-family judging — re-pricing OQ-1's trust question. Highest-uncertainty; gates the entire cross-family thesis.
-2. **OQ-1 — is L1 trustworthy enough?** Decide, with C32/C50, the minimum independence level per decision class. If L1 is untrustworthy for *any* decision, the judge-seat becomes mandatory (re-pricing G32) and T7 moves onto the critical path for Phase 0.
-3. **OQ-4 — floor capability comparator (co-design with C28).** Spike the `capability_rank` metric jointly so "⩾ floor" is well-defined; without agreement T5's clamp is unverifiable.
-4. **OQ-3 — does L2 (cross-family-same-provider) buy real independence** over L1, or collapse via shared training distribution (F48 residual)? Determines whether L2 is a real tier or dead config; prototype a disagreement-rate measurement before committing routing rules to it.
+1. **OQ-1/OQ-2 — RESOLVED by D-1/FE-1 (no longer Phase-0 spikes).** D-1 ratifies **L1 (same-provider, prompt-independent) as the Phase-0 default** — holdout integrity from rig/role/prompt isolation, not family diversity. The metered-API judge seat (OQ-2/DELTA-03) and **L2/L3 (cross-family/cross-provider) are FE-1 (future)**, so judge-seat admissibility and the second-key/G37 question do **not** gate Phase 0; T7 stays off the Phase-0 critical path. Build T6/T7 as the clean FE-1 `judge_family` seam that switches on when a second-family credential lands. (FE-1 residual: minimum independence level per high-stakes class, revisited when a second-provider path exists.)
+2. **OQ-4 — floor capability comparator (co-design with C28).** Spike the `capability_rank` metric jointly so "⩾ floor" is well-defined; without agreement T5's clamp is unverifiable.
+3. **OQ-3 (FE-1-scoped) — does L2 (cross-family-same-provider) buy real independence** over L1, or collapse via shared training distribution (F48 residual)? Determines whether L2 is a real tier or dead config; an FE-1-time question (prototype a disagreement-rate measurement before committing L2 routing rules), not a Phase-0 blocker.
 5. **Cascade-specificity correctness (T3/T4)** — CSS cascade is a classic source of surprising precedence bugs; lock the lint + determinism tests (spec A5) before exposing the stylesheet to operators.
 
 ## 6. Definition of done

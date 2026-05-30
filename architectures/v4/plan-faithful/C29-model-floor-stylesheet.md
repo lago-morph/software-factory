@@ -47,7 +47,7 @@ Freezing 1–4 lets C32 (judge harness) and C34 (holdout integrity / cross-famil
 
 | Risk | De-risk first by |
 |---|---|
-| **G08/G20 — no second family available** (highest). | Spike the **fail-closed** path (T5) and the registry's `family` label *before* the cascade, so the cross-family contract is proven independent of whether a second provider ever materializes. Surface G20 to the run/review-log as an upstream blocker. |
+| **G08/G20 — no second family available — RESOLVED by D-1/FE-1.** | No longer a top risk: Phase-0 baseline is the same-provider judge (rig/role/prompt isolation), so the evaluation tier stands up without a second provider. Build the `family` label + constraint emitter as the FE-1 seam; sourcing a second family is FE-1 (future), not a Phase-0 de-risking spike. |
 | Floor-clamp semantics ("⩾ floor") under a single-adapter world (degenerate: only one model). | Prototype T4 with a 1-entry registry to confirm clamp is a no-op-but-correct, then with ≥2 to confirm ordering. |
 | Cost-tier expressiveness vs absent v4 cost model (G32). | Keep cost-tier a *preference label* only; do NOT build a cost model here (defer to C46). Prototype tier-preference selection (A5) with synthetic tiers. |
 | Stylesheet round-trip / CSS-cascade fidelity to Fabro pattern. | Sweep-2 concern; sweep-1 only freezes selector/declaration shape. |
@@ -56,6 +56,6 @@ Freezing 1–4 lets C32 (judge harness) and C34 (holdout integrity / cross-famil
 
 - Spec acceptance A1–A5 each have a named owning task: A1→T4, A2→T5, A3→T4, A4→T1, A5→T3/T4.
 - Floor declaration exists and names exactly one coder adapter (F19/F31 "Addressed by declaration" is backed by a real artifact, not just prose).
-- `crossFamilyRule` contract is frozen and **fails closed**; C32/C34 can build against it.
-- The three deferred/blocked items (G08 picked = provider-level; G20 = upstream sourcing; G32 = C46 owns cost model) are recorded in the review-log with their reasons.
+- The independence-constraint contract (`crossFamilyRule` seam) is frozen; **Phase-0 emits the same-provider isolation constraint (I2 relaxed per D-1/FE-1), the cross-provider fail-closed form is FE-1**; C32/C34 can build against it.
+- The deferred items are recorded with reasons: G08/G20 **RESOLVED by D-1/FE-1** (same-provider Phase-0 baseline; cross-family/cross-provider = FE-1); G32 = C46 owns cost model.
 - Per-component exit: resolution is deterministic, lintable (T7), and every interface in §4 is frozen for dependents.

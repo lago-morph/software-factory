@@ -1,0 +1,130 @@
+# C17 — Tool-node Abstraction  (Spec, Track B)
+
+> Source: README §"Principle 4 — Deterministic-first" (154–162: "Tool node abstraction | Unified interface for deterministic steps | Gas City native — tool beads | MIT | Native"; "Tool nodes are cheap and reproducible. Most steps don't need a model."), README P4 row (370 "deterministic-first: reconciler + tool-node primitives available"), README pack-as-tool-node rows (108, 177, 199, 253–255, 271–275, 389, 426); AI-CONTEXT §13.3 (`[[tool]] type="subprocess"` invocation sketch), §3.3 vocab, §"intensity 4 = reconciler + tool nodes" (69); component-inventory C17 row (subsystem Workflow Engine, foundational, maps A35/A17, depends C02, gap G29); component-inventory-A A35 (tool-node abstraction, Native), A17 (P4 deterministic-first, "Primary guard over probabilistic"), A36b (LLM-where-tool linter), A28i (Inspect AI subprocess tool node); F-MODE-COVERAGE F51 (Ashby-deficient probabilistic guard → deterministic boundary typing is *primary* guard), F52 (Tempting-Wrong-Hybrid / deterministic-wrapping reflex), F44 (lethal-trifecta blast radius), F31 (substrate safety floor); _meta gap G29 (pack↔runtime tool-node contract undocumented); **C02 spec-optimized** (the binary↔runtime wire ABI + packaging beneath C17 — its DELTA-01/03 wire protocol, DELTA-04 capability grant, DELTA-05 ABI handshake).
+> Inventory ID: C17   Kind: component   Status: sweep-1
+> Deltas: DELTA-01 (C17 is an explicit **runtime catalog/registry + invocation facade**, not just "Gas City native — tool beads"; v4 treats the abstraction as already-existing, but the seam from formula→node→ABI is unspecified — G29), DELTA-02 (a **typed node-interface descriptor** — name, typed input/output schema, determinism class, capability needs — sits above C02's wire envelope so callers bind to a stable interface, not a binary path), DELTA-03 (**determinism-class taxonomy** {pure / capability-scoped-deterministic / nondeterministic} replaces the single `deterministic` bool, making C49 replay-cacheability and the F52 discipline-linter rule precise), DELTA-04 (**result-cache / memoization layer** keyed on (node-id, input-hash, granted-caps, abi) for pure + capability-scoped nodes — the structural cost lever P4 promises but never operationalizes), DELTA-05 (**built-in vs pack node parity**: Gas City's native tool beads and pack-supplied C02 nodes are exposed through one registry/interface so callers never branch on origin), DELTA-06 (**F52 discipline hook is a first-class registry obligation** — every node carries a `falsifying_scenario_ref`; the C16 discipline linter reads it from the registry, not from prose)).
+
+## 1. Purpose & responsibility
+
+C17 is the **runtime-facing unified interface for deterministic steps** — the single abstraction through which a formula (C12), the sling/reconciler (C05/C18), or any caller invokes a *tool node* without knowing whether that node is a Gas City-native tool bead or a pack-supplied subprocess binary. It owns three things:
+
+1. **The node-interface descriptor (DELTA-02)** — the stable, typed contract a caller binds to: `{ node_id, input schema, output schema, determinism class, declared capability needs, falsifying-scenario ref }`. Callers reference *this*, not an entrypoint path or a `{placeholder}` argv recipe.
+2. **The tool-node registry/catalog (DELTA-01/05)** — the runtime index of all available nodes (native tool beads + every node registered by a loaded pack via C02's `ToolNodeManifest`), keyed by `node_id`, exposing lookup, capability/determinism metadata, and the parity guarantee that built-in and pack nodes are indistinguishable to callers.
+3. **The invocation facade + result cache (DELTA-01/04)** — the call path that takes a typed request from a caller, hands it to C02's wire ABI (`ToolNodeRequest`→subprocess→`ToolNodeResponse`), validates the typed result back, and — for `pure`/`capability-scoped-deterministic` nodes — serves/populates a memoization cache so identical re-invocations skip the subprocess entirely.
+
+The load-bearing reason C17 is foundational: it is the abstraction A17/P4 ("deterministic-first — use models only where reasoning is required") is *expressed through*, and it is the **primary guard over the probabilistic layer** (F51). Almost every Workflow-Engine and downstream capability calls deterministic work *as a tool node through C17*; if this interface is unstable, the whole "cheap, reproducible, model-free" thesis (README 154) has no operational surface. v4 names C17 as "Gas City native" and stops — C17 *is* the specification of what that native interface guarantees and how it composes with C02's pack ABI (G29).
+
+What it is **NOT**:
+- **Not the wire ABI / packaging.** **C02** owns the binary↔runtime stdio/JSON envelope, exit-code taxonomy, ABI-version handshake, capability *grant* mechanics, and the pack bundle. C17 sits *on top* of C02 and exposes a typed, cataloged, cacheable interface; it does not redefine the wire format. (C02 §1 explicitly cedes "the runtime-facing unified interface + registry of available nodes" to C17.)
+- **Not the DAG / node-graph wiring.** A formula (C12) decides *which* nodes run in *what* order and how data flows between them. C17 defines what a node *is* as an invocable unit and resolves a name to a runnable interface; it does not own the graph.
+- **Not the reconciler.** **C18** (Health Patrol / convergence) decides *when* to (re)invoke toward desired state and how to interpret C02's retry/branch exit codes. C17 provides the invocation primitive C18 drives.
+- **Not the agent loop.** Tool nodes are the deterministic half; the LLM agent is **C28**. C17 is explicitly the model-free path.
+- **Not the discipline linter.** **C16** *enforces* "no LLM node where a tool suffices" and "every guard cites a falsifying scenario" (F52); C17 only *carries* the metadata (determinism class, `falsifying_scenario_ref`) C16 reads.
+- **Not a per-pack concern.** Individual packs (C10/C14/C24/C31/C33/C36–38/C44/C47–48) *register* nodes into C17; C17 is the shared registry/interface, owned once.
+
+## 2. Context & dependencies
+
+- **Depends on:** **C02** (the pack & tool-node ABI — C17's invocation facade serializes through C02's `ToolNodeRequest`/`ToolNodeResponse` wire protocol and consumes `ToolNodeManifest`s to populate its registry). **C01** (Gas City runtime spawns the subprocesses and exposes native tool beads C17 also catalogs). Reads node-availability/policy via **C03** (config decides which packs/nodes are enabled; capability policy bounds grants). Capability needs declared per node feed **C43** isolation (via C02's grant mechanism).
+- **Consumed by (foundational fan-out):** essentially every deterministic step in the system. **C12** formulas reference nodes by `node_id` through C17; **C05/C18** sling+reconciler invoke through C17; **C10** (spec linter), **C14** (DOT translator), **C15/C16** (workflow/discipline linters — C16 also *reads C17 metadata*), **C24** (CXDB bridge), **C30/C31** (scenario store/runner — Inspect AI wrapped as a node, A28i), **C33** (satisfaction aggregator Go node), **C36/C37/C38** (Python anomaly/embedding/clustering nodes), **C44** (per-twin binary), **C47/C48** (DSPy/Optuna nodes). **C49** (replay) relies on C17's determinism-class + cache for reproducibility.
+- **Sits at:** the **Workflow Engine**, directly above C02 in the Runtime Substrate. It is the boundary where "a named deterministic step in a formula" becomes "a typed, cataloged, possibly-cached invocation over the pack ABI." Foundational: it is the single interface the deterministic-first principle is realized through, and the primary guard surface against over-use of the probabilistic layer.
+
+## 3. Interfaces / contracts
+
+Named-and-described (sweep 1; concrete signatures, JSON schemas, registry-lookup API, and a Mermaid invocation sequence land in sweep 2). C17's interfaces deliberately *layer on top of* C02's wire contract rather than restating it.
+
+### 3a. Node-interface descriptor (DELTA-02) — the caller-facing contract
+
+The stable interface a caller (C12 formula / C18 reconciler) binds to, decoupled from any binary path:
+
+- **`NodeInterface`** — `{ node_id, version, input_schema_ref, output_schema_ref, determinism_class (DELTA-03), capability_needs (the node's declared C02 capabilities), origin (native | pack:<pack_id>), falsifying_scenario_ref (DELTA-06, required for any node used as a guard), abi_version }`.
+- **`determinism_class` (DELTA-03)** — replaces C02's single `deterministic` bool with a three-valued taxonomy:
+  - `pure` — output is a function of `inputs` only (no capability reads). Fully cacheable, fully replayable.
+  - `capability-scoped-deterministic` — output is a function of `(inputs, granted capabilities' content)` — e.g. reads a partition-scoped file. Cacheable keyed on capability content-hash; replayable if captured.
+  - `nondeterministic` — calls out to a live external (network, clock, RNG). Never cached; flagged so C16/C49 know it breaks replay and C12 authors know to twin it (C44) or quarantine it.
+- **Invariant (interface stability):** a `node_id`'s `NodeInterface` (its input/output schemas + determinism class) is part of the contract callers bind against; a breaking change to it bumps the node `version` and is mediated by C02's ABI-version handshake. Callers never depend on `entrypoint`/`origin`.
+
+### 3b. Registry / catalog (DELTA-01/05) — the runtime index
+
+- **`ToolNodeRegistry`** — the in-runtime catalog. Operations (sweep-2 signatures): `register(NodeInterface, source)` (called by C01 at native-bead init and by C02 at pack-load for each `ToolNodeManifest`); `resolve(node_id) → NodeInterface` (used by C12/C18 to bind a formula step); `list(filter)` (by determinism class, capability needs, origin — used by C16's discipline pass and by operators); `is_enabled(node_id)` (via C03).
+- **Parity invariant (DELTA-05):** native Gas City tool beads and pack-supplied C02 nodes are registered through the *same* `register` path and resolved through the *same* `resolve`; a caller cannot tell (and must not branch on) whether a node is native or pack-supplied. This is what makes "Gas City native — tool beads" and "Python tool node in a pack" a single abstraction rather than two.
+- **Name-collision invariant:** `node_id` is globally unique in the registry; a pack registering a `node_id` that collides with a native bead or another loaded pack is a fail-closed load error (surfaced through C02's pack-load failure path), never a silent shadow.
+- **Determinism-honesty invariant:** the `determinism_class` a node advertises is part of its registry contract; the C16 discipline linter and C49 replay rely on it. A node manifest-flagged `pure`/`capability-scoped-deterministic` that exhibits nondeterminism is a contract violation (detected by C49 replay-divergence; attributed as an anomaly to C36).
+
+### 3c. Invocation facade + result cache (DELTA-01/04) — the call path
+
+- **`invoke(node_id, inputs, context) → NodeResult`** — the single caller-facing entry. It: (1) `resolve`s the `NodeInterface`; (2) validates `inputs` against `input_schema`; (3) computes the cache key `(node_id, node_version, input_hash, granted_caps_hash, abi_version)` for `pure`/`capability-scoped-deterministic` nodes and returns a cache hit if present (DELTA-04); (4) otherwise delegates to **C02's wire ABI** — building a `ToolNodeRequest`, spawning via C01, reading the `ToolNodeResponse`, interpreting the exit-code taxonomy; (5) validates `outputs` against `output_schema`; (6) populates the cache on a clean (`exit 0`, pure/cap-scoped) result; (7) returns a `NodeResult { status, outputs, diagnostics, emitted_beads?, metrics?, cache_hit }`.
+- **`NodeResult`** — the typed return the caller sees; a *thin, validated* projection of C02's `ToolNodeResponse` plus C17's `cache_hit` flag. Exit-code → caller action mapping (commit/branch/retry/abort) is *inherited from C02 §3b*, not redefined here; C17 surfaces it as a typed `status` so C18 can branch deterministically.
+- **Result cache (DELTA-04)** — keyed as above; scope and eviction are config (C03). For `nondeterministic` nodes the cache is *bypassed unconditionally*. The cache is the operationalization of "tool nodes are cheap and reproducible" (README 154): a repeated pure step (linter re-run over unchanged input, replay over an identical trajectory) costs zero subprocess spawns. Cache correctness rests on the determinism-honesty invariant (§3b).
+- **Capability passthrough:** C17 does not compute or enforce grants — it *threads* the node's `capability_needs` into C02's request so C02/C43 produce the effective grant. C17 owns the *interface*; C02/C43 own the *teeth*.
+
+**Invariants (summary)**
+- **Abstraction parity:** one interface over native + pack nodes (DELTA-05).
+- **Interface-over-path:** callers bind to `node_id` + typed schema, never an entrypoint (DELTA-02).
+- **Determinism honesty drives caching + replay:** the class taxonomy is load-bearing for DELTA-04 cache and C49 (DELTA-03).
+- **Guard accountability (DELTA-06):** any node used as a deterministic guard carries a `falsifying_scenario_ref` in its registry entry; a guard node without one is a C16 lint failure — the structural enforcement of F52, lifted from prose into registry metadata.
+- **No-redefine-ABI:** C17 adds typing/catalog/cache *above* C02; it never reimplements the wire format or the grant mechanism.
+
+## 4. Data model / state
+
+- **Registry (runtime, in-memory, rebuildable):** the `node_id → NodeInterface` index, assembled at startup/phase-transition from native tool-bead definitions (C01) + every loaded pack's `ToolNodeManifest`s (C02). Not durably persisted — it is a derived projection of "what packs are loaded under current C03 config," rebuilt deterministically on each runtime start. Source of truth is the packs + native definitions, not a separate store.
+- **Result cache (DELTA-04):** a content-addressed store keyed on `(node_id, node_version, input_hash, granted_caps_hash, abi_version)` → `NodeResult`. Persistence tier and eviction policy are C03 config (in-memory for a run vs. on-disk content-addressed for cross-run reuse / feeding C49). Cache entries for `nondeterministic` nodes are never written. The cache owns *derived* data only — it can always be discarded and recomputed, so it carries no consistency obligation beyond key-correctness.
+- **No bead/trajectory ownership.** What a node *did* (emitted beads, attributed events) lives in C19/C21/C23 via the `context.created_by`/`emitted_beads` fields C02's ABI already threads; C17 passes them through (it guarantees carriage, not storage).
+- **Version axes (inherited from C02):** node `version`, ABI `abi_version`, and pack version stay decoupled; the registry records all three so an operator can reason about compatibility per node.
+
+## 5. Behavior
+
+Two flows (sweep-2 adds a Mermaid sequence + the registry/cache schemas):
+
+**A. Registry assembly (startup / phase transition)**
+1. C01 initializes native tool beads → each `register(NodeInterface, native)`.
+2. C02 loads packs (signature/ABI verified per C02 §5); for each `ToolNodeManifest`, C17 derives a `NodeInterface` and `register`s it.
+3. Collision check: duplicate `node_id` → fail-closed (surface through C02 pack-load failure).
+4. C03 marks each node enabled/disabled; capability needs are recorded (effective grant computed later by C02/C43 at invocation).
+5. Result: a complete, parity-flat registry; `resolve`/`list` are now serviceable.
+
+**B. Node invocation (per formula step)**
+1. C12 formula step (or C18 reconciler) calls `invoke(node_id, inputs, context)`.
+2. C17 `resolve`s the interface, validates `inputs` against `input_schema` (bad input → typed reject *before* any spawn).
+3. If `pure`/`capability-scoped-deterministic`: compute cache key; on hit, return the cached `NodeResult` (no subprocess).
+4. On miss (or `nondeterministic`): delegate to C02 — build `ToolNodeRequest`, spawn via C01, read `ToolNodeResponse`, interpret exit code.
+5. Validate `outputs` against `output_schema`; map C02 exit-code → typed `status`.
+6. On clean pure/cap-scoped result: populate cache.
+7. Return `NodeResult`; `emitted_beads`/attributed events flow through to C19/C23 (carriage, not storage).
+8. Violations (schema mismatch, C02 contract breach, capability breach surfaced as exit ≥124) → typed failure + attributed anomaly (feeds C36); never a silently-wrong cached entry.
+
+## 6. Failure modes & handling
+
+- **G29 (the runtime-facing half of the seam) — primary, resolved here.** C02 specifies the wire/packaging contract; C17 specifies the *runtime interface* (registry + typed descriptor + invocation facade) that makes "Gas City native — tool beads" an actual composable surface rather than an unexamined phrase. Together C02+C17 close G29: C02 = "how bytes cross the subprocess boundary," C17 = "how a caller names, finds, types, and (re)uses a deterministic step."
+- **F51 (Ashby-deficient probabilistic guard).** C17 *is* the deterministic-first guard surface (A17 "primary guard over probabilistic"). Mitigation: making the typed, cataloged deterministic-node path first-class and cheap (cache) so authors reach for a tool node, not an LLM, by default. Residual: C17 enables the path; it cannot force authors to use it — that enforcement is C16.
+- **F52 (Tempting-Wrong-Hybrid / deterministic-wrapping reflex).** The risk that deterministic guards proliferate without purpose. Mitigation (DELTA-06): `falsifying_scenario_ref` is a required registry field for guard nodes; C16 reads it from the registry. A guard with no cited falsifying scenario is a lint failure — the F52 discipline lifted from "reviewed monthly" prose into structural metadata.
+- **Determinism dishonesty (cache poisoning).** A node mislabeled `pure` that is actually nondeterministic would return stale cache results. Mitigation: determinism-honesty invariant + C49 replay-divergence detection demotes/flags the node and attributes an anomaly (C36); cache is keyed to include `granted_caps_hash` so a capability-scoped node can't silently share a key with a different grant.
+- **Registry collision / shadowing.** Two nodes claiming one `node_id` could let a malicious/buggy pack shadow a trusted native bead. Mitigation: globally-unique `node_id`, fail-closed on collision at load (no silent override).
+- **Origin-leakage coupling.** If callers branched on native-vs-pack, swapping a native bead for a pack node (or vice versa) would break formulas. Mitigation: parity invariant (DELTA-05) — `origin` is metadata, never part of the call contract.
+- **F44 (blast radius at the tool layer) — bounded by C02/C43, threaded by C17.** C17 carries `capability_needs` into C02's grant; it declares and threads, it does not enforce. Residual identical to C02's: enforcement strength is a C02↔C43 seam, not solved at C17.
+
+## 7. Cross-cutting
+
+- **Cost/scale:** the result cache (DELTA-04) is the concrete cost lever behind "tool nodes are cheap and reproducible" — repeated pure/cap-scoped steps cost zero spawns; this is the structural answer to spawn-per-invocation overhead and the model-free cost path (README 154). No per-token cost on this layer at all.
+- **Security:** C17 threads capability needs into C02/C43 (no new enforcement surface, no new secret exposure — secrets reach nodes only via C02's declared env keys). Fail-closed collision handling prevents pack-shadows-native attacks.
+- **Observability:** every `invoke` threads `created_by`/bead context and surfaces `cache_hit` + `metrics`; tool-node failures are first-class anomaly inputs (C36); `list`/`resolve` give operators a live inventory of deterministic capability.
+- **Ops:** registry is a rebuildable projection — a phase transition that adds/removes packs reshapes available nodes with no runtime-binary change; three decoupled version axes (node/ABI/pack) per registry entry give independent upgrade reasoning.
+- **Parallelizability:** because the `NodeInterface` + `invoke` signature freeze independently of any node's implementation, every downstream pack (C10/C14/C24/C31/C33/C36–38/C44/C47–48) can be authored and tested against a C17 stub registry the moment §3 freezes — exactly mirroring C02's parallel-build story, one layer up.
+
+## 8. Acceptance criteria & test strategy
+
+1. **Parity (DELTA-05):** a caller `resolve`s and `invoke`s a native tool bead and a pack-supplied node through the identical interface; no caller code branches on `origin`. Swapping one implementation for the other (same `NodeInterface`) requires zero caller change.
+2. **Typed binding (DELTA-02):** a formula step binds to a `node_id`; invoking with input violating `input_schema` fails *before* any subprocess spawn with a typed error; a node whose entrypoint path changes (but interface unchanged) is invoked identically.
+3. **Determinism taxonomy (DELTA-03):** nodes declared `pure`, `capability-scoped-deterministic`, and `nondeterministic` are cataloged distinctly; `list(determinism_class=...)` returns the correct partition; a `nondeterministic` node is never cached.
+4. **Result cache (DELTA-04):** a `pure` node invoked twice with identical inputs spawns the subprocess once (second call is a `cache_hit`); a `capability-scoped` node with a changed granted-capability content-hash is a cache miss; an input change is a cache miss.
+5. **Registry assembly:** after loading N packs, every declared `ToolNodeManifest` is `resolve`-able; a duplicate `node_id` across packs/natives fails load closed (no silent shadow).
+6. **Guard accountability (DELTA-06):** a node registered as a guard with no `falsifying_scenario_ref` is flagged by the C16 discipline pass reading C17's registry; one with a ref passes. (Contract is C17-side: the field exists and is queryable.)
+7. **C02 delegation:** `invoke` produces a wire-valid `ToolNodeRequest` and correctly maps every C02 exit code (0/1/2/3/≥124) to the typed `NodeResult.status` C18 branches on — verified against C02's reference node.
+8. **Determinism honesty / replay (C49 precondition):** a node mislabeled `pure` that diverges on replay is detected (cache key would have masked it) and demoted/flagged + attributed (C36); a truly `pure` node replays bit-identically from cache.
+9. **Attribution carriage:** `created_by` in the request appears on every `emitted_bead`/event the invocation produces (inherited C02 precondition, re-verified at the C17 facade).
+
+## 9. Open questions
+
+- **OQ1 (→ review-log):** **Is C17 a real runtime layer or just a thin naming convention over C02?** v4 calls the tool-node abstraction "Gas City native — tool beads" and treats it as pre-existing. If Gas City's native tool-bead mechanism *already* provides a registry + typed-interface + (some) caching, C17 reduces to "catalog native beads + pack nodes uniformly + add the cache/determinism-class/guard-metadata deltas," and DELTA-01/02 become *adopt-and-extend* rather than *define*. This directly inherits C02's OQ1/G11 (Gas City unverified) one layer up — **top open question**, since it decides whether C17 is a built component or a documented facade.
+- **OQ2:** **Does the result cache (DELTA-04) belong in C17 or in C49 (replay)?** Memoization and replay are close cousins — both key on (node, inputs) determinism. If C49 owns a trajectory store that already content-addresses node results, C17's cache may be a *view* over C49 rather than a separate store. Needs an ownership ruling before the cache schema freezes (sweep-2).
+- **OQ3:** **Where is the determinism class *verified* vs *declared*?** C17 records the declared class and C49 detects divergence at replay — but is there an active conformance check (run a `pure` node twice at load, compare) or is detection purely passive-on-replay? Active checking adds cost but closes the cache-poisoning window earlier. (Mirrors C02's determinism-honesty residual.)
+- **OQ4:** **Long-running / streaming / service-shaped nodes.** C02 OQ4 flags that the single-request/single-response model may not fit a twin (C44) or a watch-loop bridge (C24, a `[[service]]`). C17's `invoke` facade is single-shot by construction; if C24/C44-shaped work uses a `[[service]]` contract rather than the tool-node ABI, C17 must decide whether it catalogs services too (one registry) or stays tool-node-only (separate service registry). The tool-node↔service boundary is undrawn in the corpus and straddles C02↔C17↔C44.

@@ -101,20 +101,16 @@ The v4-referenced types, made concrete. This is the **versioned schema delta** t
 
 - **Versioning:** each `type` carries an independent semver `schema_version`; instances pin the version they were written under (DELTA-06). Up-migrations are registered functions; reads of old instances either resolve through the old schema or are lazily migrated.
 - **Persistence:** schemas themselves are version-controlled artifacts (JSON Schema files) shipped in a Gas City pack and loaded by C19's writer; bead *instances* live in C19's provider (file or Dolt, AI-CONTEXT §13.2). C20 adds no separate datastore.
-- **CXDB binding (DELTA-07):** each bead type maps to a CXDB `{bundle_id, type, version}` (illustratively bundle `v4.beads.v1`, type `v4:fix_task`, version `1.0.0`) registered in C22, so a bead payload can be a replayable turn in C21.
-  > **DEFERRED — bundle-id collision + ownership fork (review-log XC-4, RC20B-01).** Two unresolved
-  > conflicts gate this binding and the *string* `v4.beads.v1` below is **not yet canonical**:
-  > 1. **String collision (4-way):** C20-B `v4.beads.v1`, C21-B `softwarefactory.trajectory.v1`,
-  >    C22-A `softwarefactory.v4`, C22-B `strongdm.factory.v4` — four different roots for one namespace.
-  >    The bead-payload round-trip (DELTA-07, §8 AC-6) **fails until one root is chosen.**
-  > 2. **Ownership fork (load-bearing):** this spec asserts "**two registries, one mapping**" — C20 *owns*
-  >    the per-type bead payload schemas and merely *binds* each to a CXDB bundle. **C22-B asserts the
-  >    opposite** ("one registry, two namespaces" — C22 is the single source of truth and *owns* bead-type
-  >    schemas as `kind: bead`, defining `fix_task`/`override` itself). Both specs currently define the same
-  >    `fix_task` payload schema. These are mutually exclusive architectures and MUST be reconciled before
-  >    any bundle-authoring task. **C20-B's position (recommended canonical):** C20 authors bead-type
-  >    schemas; C22 hosts the *registration mechanism* only; canonical root `softwarefactory.v4.beads`.
-  >    Routed to the integrator — do not treat `v4.beads.v1` or C20-vs-C22 ownership as settled.
+- **CXDB binding (DELTA-07):** each bead type maps to a CXDB `{bundle_id, type, version}` under the factory-owned bead bundle `softwarefactory.v4.beads` (e.g. type `softwarefactory.v4.beads:fix_task`, version `1.0.0`) registered in C22, so a bead payload can be a replayable turn in C21.
+  > **RESOLVED — bundle-id namespace + ownership (review-log D-2, D-3; was XC-4, RC20B-01).**
+  > 1. **Canonical root (D-2):** the bead bundle id is `softwarefactory.v4.beads` — one factory-owned
+  >    reverse-DNS root with per-store sub-bundles (`softwarefactory.v4.beads` here, `softwarefactory.v4.trajectory`
+  >    in C21, `softwarefactory.v4.packs` in C02). The earlier `v4.beads.v1` / `softwarefactory.v4` /
+  >    `strongdm.factory.v4` candidates are dropped; vendor `strongdm.*` is not used.
+  > 2. **Ownership (D-3):** **C20 authors the per-type bead payload schemas** (`fix_task`, `override`,
+  >    `factory_build`, …); **C22 hosts the registration *mechanism* only** and registers C20's bead types
+  >    via a documented binding seam (C22 does not author bead schemas). "Two registries, one mapping"
+  >    stands as the canonical architecture.
 
 ## 5. Behavior
 
@@ -167,11 +163,9 @@ The v4-referenced types, made concrete. This is the **versioned schema delta** t
 
 - **OQ1 (→ review-log):** Compatibility shim for the literal `gc bd find --type factory_build_in_progress` query that AI-CONTEXT §16 hard-codes, given DELTA-02 folds it into `factory_build` + state. Options: (a) C19 query alias mapping the legacy type-string to `type=factory_build & state=in_progress`; (b) patch §16's documented command. Affects the cold-agent recovery UX. *Top open question.*
 - **OQ2 (→ review-log):** Ownership seam for loop-control *policy*. C20 owns the `max_attempts`/`escalated` fields + monotonicity invariant; who sets the default `max_attempts` and the escalation-routing target — C39 (fix-loop), C18 (reconciler bounded gates), or C03 (config)? The schema reserves the field regardless, but the binding default must be assigned.
-- **OQ3 (→ review-log, XC-4, DEFERRED):** Two coupled questions. (a) **Which root** is canonical for the
-  bead namespace — the four siblings disagree (`v4.beads.v1` here, `softwarefactory.trajectory.v1` C21-B,
-  `softwarefactory.v4` C22-A, `strongdm.factory.v4` C22-B); the bead-payload round-trip fails until one is
-  chosen. (b) **Who owns the per-type bead schemas** — C20 (this spec: "two registries, one mapping") or C22
-  (C22-B: "one registry, two namespaces"). These are mutually exclusive and both currently define `fix_task`.
-  C20-B's recommended canonical: root `softwarefactory.v4.beads`; **C20 authors the schemas, C22 hosts
-  registration only**. Then: one shared bundle vs per-type bundles is a *granularity* sub-question under (a).
-  Routed to the integrator — see the DELTA-07 DEFERRED block in §4.4.
+- **OQ3 (→ review-log, RESOLVED by D-2/D-3):** Both coupled questions are now ruled. (a) **Canonical root:**
+  `softwarefactory.v4.beads` (D-2 — one factory-owned root with per-store sub-bundles; `strongdm.*` and the
+  merged-single-bundle option dropped). (b) **Schema ownership:** **C20 authors the per-type bead schemas;
+  C22 hosts the registration mechanism only** (D-3, "two registries, one mapping"). Remaining granularity
+  sub-question (one shared bundle vs per-type bundles *within* `softwarefactory.v4.beads`) is a sweep-2
+  detail, not a foundational blocker. See the DELTA-07 RESOLVED block in §4.4.

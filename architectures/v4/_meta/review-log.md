@@ -13,11 +13,20 @@ this file is written by the primary or a single collector agent per pass.
   Impact: C29 cross-family rule becomes advisory/relaxed; C32/C34 build against same-provider judging
   with holdout-integrity provided by rig partitioning + prompt/role isolation rather than family
   diversity. Cross-family judging is a documented future enhancement, not a Phase-0 requirement.
-- **D-2 (proposed, pending confirmation) — Bundle-id namespace.** Adversary-recommended ruling for XC-4:
-  one factory-owned reverse-DNS root with per-store sub-bundles — `softwarefactory.v4.beads`
-  (bead types, C20-owned) and `softwarefactory.v4.trajectory` (CXDB turn types, C21/C22-owned), with a
-  documented binding seam. Drop the vendor `strongdm.*` root and the merged-single-bundle option.
-  Apply across C02 (`pack_id` aligns to `softwarefactory.v4.packs`), C20, C21, C22. Owner: integrator.
+- **D-2 (ADOPTED — both Persistence adversaries independently concur) — Bundle-id namespace.** One
+  factory-owned reverse-DNS root with per-store sub-bundles: `softwarefactory.v4.beads` (bead types),
+  `softwarefactory.v4.trajectory` (CXDB turn types), `softwarefactory.v4.packs` (pack ids). Drop vendor
+  `strongdm.*` and the merged-single-bundle option. Apply across C02/C20/C21/C22.
+- **D-3 (ADOPTED) — bead-type schema ownership (resolves RC20B-01 blocker + XC-4).** **C20 authors the
+  bead-type payload schemas** (`fix_task`, `override`, `factory_build`, …); **C22 owns the registration
+  *mechanism* + the CXDB-turn types only** and registers C20's bead types via a documented binding seam.
+  Reject C22-B's single-registry-authors-beads claim.
+- **D-4 (ADOPTED) — C19↔C20 direction (resolves XC-1).** Canonical: **C20 depends on C19** (schema layer
+  over the graph store). They are co-foundational; the production write-path cycle is broken by the M1
+  interface freeze + a no-op `validate` stub seam (the reversed dispatch arrow was only that call seam).
+- **D-5 (ADOPTED) — C41↔C23 tamper-evidence (resolves XC-5 blocker).** **C41 owns the provenance
+  hash-chain**, computed over C23-provided ordered `event_id`s. C23 provides gap-free ordered `event_id`s
+  only; it does NOT provide the chain. Update both specs.
 
 ## Cross-component issues (raised during Sweep 1 builds)
 

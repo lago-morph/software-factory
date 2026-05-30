@@ -103,8 +103,10 @@ to sweep 2 (and the actor-value contract to C41, the bridge delivery seam to C24
   or deleted in place (AI-CONTEXT §3.2 concept 3 "Append-only JSONL"). This is what makes the log a trusted
   audit trail (F10).
 - **INV-2 (monotonic seq / total order):** every record carries a strictly-increasing `seq`; `seq` imposes a
-  total order on all events and is gap-free enough to checkpoint against (AI-CONTEXT §3.2 concept 3
-  "monotonic seq").
+  total order on all events to checkpoint against (AI-CONTEXT §3.2 concept 3 "monotonic seq"). Whether
+  `seq` is *gap-free* (single appender) or *monotonic-but-possibly-gapped* under concurrent producers is
+  **not stated by v4** → OQ-4, to be confirmed against the pinned Gas City binary (checkpointing works
+  either way: a consumer resumes from its last-seen `seq`).
 - **INV-3 (universal attribution):** every event carries a resolvable `created_by` (inherited from
   spec-faithful/C01 INV-3; README line 231). No event is anonymous — this is the F14 guarantee.
 - **INV-4 (records every action):** the bus is *complete* — every factory action that mutates state or makes

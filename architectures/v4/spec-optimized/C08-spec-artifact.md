@@ -47,7 +47,8 @@ Named-and-described (sweep 1; concrete schema/signatures in sweep 2).
 A spec is a **directory bundle**, not one file, with a manifest:
 - `spec.md` — the target-system description (required; the StrongDM/Kilroy `spec.md` shape).
 - `DoD.md` — the **machine-checkable Definition-of-Done** (required; DELTA-03; the Kilroy `DoD.md` / Fabro `spec-dod` shape): an enumerated, checkable acceptance list that C32/C33 score against.
-- `spec.toml` (manifest) — `{ spec_id, name, detail_level, references: { formula?: <C12-ref>, exemplar?: <C51-ref>, dod: DoD.md }, schema_version }`.
+- `spec.toml` (manifest) — `{ spec_id, spec_lineage_id, name, detail_level, references: { formula?: <C12-ref>, exemplar?: <C51-ref>, dod: DoD.md }, schema_version }`. `spec_lineage_id` is the stable identity of "this spec across revisions" (minted at creation); `spec_id` is the per-revision content-address (DELTA-04). C33 satisfaction / C46 meta-metrics key time-series on `spec_lineage_id` and annotate each point with the `spec_id` it was measured at — so a revision is a visible step-change in one continuous series, not a severed new series.
+- *Bundle-hash rule (DELTA-04):* `spec_id` = a Merkle hash over the bundle's files in sorted relative-path order, with the manifest's own `spec_id` field excluded from the hashed bytes (so the manifest can carry the hash of a bundle that includes the manifest). Full canonicalization spec → sweep-2 (with C21).
 - optional `*.dot` / formula reference — the methodology DAG lives in C12; the bundle only *points at* it (DELTA-01).
 
 ### 3.2 Required-section schema (DELTA-05)
@@ -66,7 +67,7 @@ A spec is a **directory bundle**, not one file, with a manifest:
 ### 3.5 Invariants
 - **INV-1 (source-of-truth).** The bundle — including its DoD — is authoritative; code is a disposable derivative; fixes target the bundle (README:102).
 - **INV-2 (well-formed bundle).** The manifest resolves; the four required sections exist; `DoD.md` parses as an enumerated checkable list. A bundle failing this is rejected before any run (replaces the faithful "must parse as a Go template" — renderability is now C09's concern, not C08's, DELTA-01).
-- **INV-3 (immutable identity).** `spec_id` is the content-address of the bundle; any edit yields a new `spec_id`. Runs, judgments, and satisfaction scores cite a `spec_id` (DELTA-04).
+- **INV-3 (immutable identity, two-level).** `spec_id` is the content-address of the *revision* (any edit yields a new `spec_id`); `spec_lineage_id` is the stable cross-revision identity. Runs, judgments, and satisfaction scores cite the `spec_id` they measured and roll up under `spec_lineage_id` (DELTA-04). This prevents both *mixing* revisions (a revision is a distinct `spec_id`) and *severing* the satisfaction time-series at every edit (the series is keyed on lineage).
 - **INV-4 (versioned + attributable).** Every revision is a git commit carrying actor identity (README:107; C41).
 - **INV-5 (separation).** The bundle contains *what to build + done-criteria*, never agent-acting instructions (C09) or methodology DAG (C12). A bundle that embeds a formula inline fails lint (DELTA-01/DELTA-02).
 

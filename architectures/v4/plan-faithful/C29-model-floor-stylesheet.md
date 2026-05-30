@@ -11,9 +11,9 @@
 | T2 | **Model registry (`modeldb`-shaped).** `{id, family(provider-level), cost_tier}` per model; family label is the cross-family comparison key. Transfusion: Kilroy `modeldb` (AI-CONTEXT §6.3). | S | T1 |
 | T3 | **Stylesheet schema + parser.** CSS-like (selector → declaration), layered TOML under C03. Transfusion: Fabro CSS model stylesheet (AI-CONTEXT §6.2). | M | C03 config shape; T2 |
 | T4 | **`resolveModel(node)` cascade.** CSS specificity resolution → winning model; clamp coder nodes to floor (I1). | M | T3 |
-| T5 | **`crossFamilyRule`.** Enforce `family(judge) ≠ family(coder)`; **fail closed** when no compliant family registered (I2). This is the load-bearing cross-family deliverable (README:427). | M | T2, T4 |
+| T5 | **`crossFamilyRule` (seam) — Phase-0 same-provider baseline per D-1/FE-1.** Phase 0 routes a same-provider judge that is rig/role/prompt-isolated from the coder and emits the active independence constraint; I2 is **relaxed (advisory, not fail-closed)** at Phase 0. Keep the `family` registry field + constraint emitter as the clean seam; the literal `family(judge) ≠ family(coder)` cross-provider enforcement (README:427) is **FE-1 (future)**, switched on when a second-provider family is registered. | M | T2, T4 |
 | T6 | **Dispatch integration seam.** Expose resolution to C05/C28/C32 at node dispatch; record chosen model for attribution (C41/C23). | M | T4, T5 |
-| T7 | **Lint/audit hook.** Deterministic check that every satisfaction-measuring formula's judge/coder pair is cross-family-valid (lintable like other v4 deterministic rules). | S | T5 |
+| T7 | **Lint/audit hook.** Deterministic check that every satisfaction-measuring formula's judge/coder pair carries a resolvable independence constraint (Phase-0: same-provider isolation present; FE-1: cross-family-valid). Lintable like other v4 deterministic rules. | S | T5 |
 
 ## 2. Dependency graph
 
@@ -23,22 +23,22 @@ C28 (floor adapter) ──▶ T1 ──▶ T2 ──▶ T3 ──▶ T4 ──�
 C03 (config shape) ─────────────────▶ T3
 ```
 
-**Critical path:** T1 → T2 → T3 → T4 → T5 → T6. T5 (cross-family) is the load-bearing gate: it is *consumed by C32/C34* and sits on the inventory critical path (note 3 — cross-family vs single-adapter tension). C32 (judge harness) cannot be acceptance-tested until T5 + its **upstream G20 dependency** (a registered non-Claude family) both exist.
+**Critical path:** T1 → T2 → T3 → T4 → T5 → T6. T5 (independence seam) is the load-bearing gate consumed by C32/C34. **Per D-1/FE-1 the Phase-0 cross-family/single-adapter tension is RESOLVED:** the Phase-0 baseline is the same-provider judge (isolated by rig/role/prompt), so C32 can be acceptance-tested at Phase 0 *without* a registered non-Claude family. The literal cross-provider judge is FE-1.
 
-**Hard external blocker (G20):** acceptance of T5's *positive* path (a judge actually running on a different family) is gated on an upstream decision that sources a non-Claude provider + credentials. C29 builds the *constraint and fail-closed path* without it; the *satisfied* path waits on G20.
+**G20 — RESOLVED by D-1/FE-1 (no longer a Phase-0 blocker):** Phase 0 runs the same-provider judge, so no second-provider credential is required to stand up the evaluation tier. Sourcing a non-Claude provider + credentials is **FE-1 (future)**, revisited when a second-provider credential path exists; C29 keeps the `family` label + constraint emitter as the seam FE-1 switches on.
 
 ## 3. Parallelization
 
 - T1 + (C03 shape read) can start immediately and in parallel.
 - T2 (registry) and the T3 **schema** half can be drafted concurrently once T1 fixes the floor identity.
-- T5 (`crossFamilyRule` logic) can be developed against a **stubbed registry** in parallel with T4 (resolution cascade), then joined at T6.
+- T5 (independence-seam logic — Phase-0 same-provider isolation per D-1/FE-1) can be developed against a **stubbed registry** in parallel with T4 (resolution cascade), then joined at T6.
 - T7 (lint) can be authored against the frozen interfaces (§4) before T6 wiring lands.
 
 ## 4. Interfaces-first / contract milestones (freeze early)
 
 1. **`modeldb` entry shape** `{id, family, cost_tier}` with **family at provider granularity** (resolves G08 reading (a)). Freeze first — C32/C34 compare on this.
 2. **`resolveModel(node) → modelIdentity`** signature + the floor-clamp postcondition (I1).
-3. **`crossFamilyRule` contract** including the **fail-closed-when-no-compliant-family** behavior (I2). C32/C34 build against this stub immediately.
+3. **Independence-constraint contract** (the `crossFamilyRule` seam). Phase-0 (D-1/FE-1): emit the active same-provider isolation constraint; I2 is advisory/relaxed at Phase 0. The fail-closed cross-provider form is FE-1. C32/C34 build against this stub immediately.
 4. **Floor declaration** identity string. Downstream attribution (C41) and F19/F31 coverage cite it.
 
 Freezing 1–4 lets C32 (judge harness) and C34 (holdout integrity / cross-family + independence enforcement) build against stubs in parallel with C29's internals.

@@ -118,6 +118,12 @@ three parts: the common envelope, the named types, and the named chains.
 > the `type` string — except where v4 *itself* encodes it in the type (`factory_build` vs
 > `factory_build_in_progress`), which is preserved verbatim (see the AMBIGUITY block). Concrete enum
 > values deferred to sweep 2.
+> **Diffability note (RC20A-04 / review-log XC-2):** keeping `factory_build_in_progress` as a *literal
+> type* is precisely what makes the cold-start query `gc bd find --type factory_build_in_progress` (§16)
+> resolve verbatim with no shim. The **optimized** track (C20-B DELTA-02) instead folds it into
+> `factory_build` + `state=in_progress` and therefore needs a compatibility shim for that literal query
+> (XC-2). The two tracks diverge exactly here; this faithful choice is the one that satisfies §16 as
+> written.
 
 ### 4.2 Named bead types (faithful enumeration)
 

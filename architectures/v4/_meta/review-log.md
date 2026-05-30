@@ -46,6 +46,12 @@ this file is written by the primary or a single collector agent per pass.
   Track B makes it graduated-mandatory. Integrator/human must settle; if mandatory, G37 + XC-5 must be
   pulled forward with it.
 
+- **DECISION NEEDED — cross-family judge credential (critical path).** C29's "judge family ≠ coder
+  family" constraint (consumed by C32/C34) has no *satisfiable* path: Max issues no second-provider API
+  key (AI-CONTEXT §4.1). The whole evaluation/judge tier (C32–C34) is blocked until an upstream
+  provider/credential decision lands (or the cross-family requirement is relaxed). Owner: human +
+  integrator; gates Batch-3 evaluation components. (Gaps G20, G08.)
+
 ## Per-component open questions (harvested)
 (Collector appends `C<ID>:OQ-n — text` rows here each pass. Initial seeds below.)
 - C01: has anyone run `gc` end-to-end vs v4's Native claims? Pinned version+commit? (blocks on G11)

@@ -29,7 +29,7 @@ C08 owns:
 | Direction | Component | Relationship |
 |---|---|---|
 | Upstream (depends on) | **C03** config/feature-flags | The spec bundle lives in a git-versioned pack whose layout/section-gating C03 governs (inventory C08 `Depends on: C03`; AI-CONTEXT §3.4). |
-| Upstream (depends on) | **C21** CXDB / content-addressing | C08 reuses the substrate's BLAKE3 content-addressing for `spec_id` (DELTA-04). Soft/build-time dependency: C08 defines the addressing rule; CXDB provides the primitive. |
+| Upstream (depends on) | **C21** CXDB / content-addressing | C08 reuses the substrate's BLAKE3 content-addressing for `spec_id` (DELTA-04). Soft/build-time *primitive reuse*, not a blocking dep: C08 defines the bundle-hash rule and can stub BLAKE3, so the C08↔C21 edge (both Batch-1 foundational) does not serialize the parallel build. |
 | Upstream (authored by) | **C11** intent intake (9-field crucible) | C11 is the structured *intake* that **emits a C08 bundle** (its DoD/constraints become the spec's required sections, DELTA-05). |
 | Downstream (references + renders) | **C09** prompt-template binding | The prompt template **references a C08 `spec_id`**; C09 renders the agent instruction *around* the spec, not *as* it (DELTA-01). |
 | Downstream (validates) | **C10** spec linter (EARS/INCOSE) | Runs deterministic structural rules over the required sections (DELTA-05; F18, F38). |

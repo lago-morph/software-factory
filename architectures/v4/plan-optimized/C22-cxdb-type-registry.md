@@ -65,7 +65,7 @@ Spike highest-uncertainty first:
 
 Per-component (ties to spec §8 acceptance):
 
-- **DoD-1 G17 resolved (AC1):** the `strongdm.factory.v4` bundle exists and every type v4 names in prose (`factory_build_in_progress`, `factory_build`, `fix_task`, `override`) resolves via `Resolve`; `gc bd find --type factory_build_in_progress` returns without "unknown type." [T9, T5]
+- **DoD-1 G17 resolved (AC1):** the `softwarefactory.v4.beads` bundle (bead types, C20-authored) and the `softwarefactory.v4.trajectory` bundle (CXDB turns) exist and every type v4 names in prose (`factory_build_in_progress`, `factory_build`, `fix_task`, `override`) resolves via `Resolve`; `gc bd find --type factory_build_in_progress` returns without "unknown type." [T9, T5]
 - **DoD-2 Total typing (AC2/I2):** an append with an unregistered type is rejected by C21's ingest; an append with a schema-violating payload is rejected. [T6, T10]
 - **DoD-3 Viewpoint guard (AC3/F50/DELTA-02):** `CheckViewpoint` flags an `architecture`-viewpoint object presented where a `spec`-viewpoint is required. [T7]
 - **DoD-4 Append-only (AC4/I1/DELTA-03):** re-registering an existing `{bundle_id,type,version}` with a changed schema fails; registering at `version+1` succeeds and leaves the old version resolvable. [T4]

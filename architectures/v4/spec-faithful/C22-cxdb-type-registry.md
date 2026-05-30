@@ -24,8 +24,8 @@ convention F50 leans on.
 **Responsibilities**
 - Define the **type-identity triple** `{bundle_id, type, version}` carried by every CXDB payload
   (AI-CONTEXT §5.3) — its grammar, uniqueness rules, and how it indexes into `registry/`.
-- Define the **bundle** unit: a JSON document (`<bundle_id>` e.g. `softwarefactory.v4`) that declares a
-  set of `type` schemas at a `version`, stored under CXDB's `registry/` (AI-CONTEXT §5.3 line 220).
+- Define the **bundle** unit: a JSON document (`<bundle_id>`, here `softwarefactory.v4.trajectory` — D-2)
+  that declares a set of `type` schemas at a `version`, stored under CXDB's `registry/` (AI-CONTEXT §5.3 line 220).
 - Define the **viewpoint tag** that F50 requires: an enumerated standpoint attached to a typed payload
   so that "architecture" assertions and "spec" assertions about the same subject are *separable* and do
   not collapse into one another (F-MODE-COVERAGE §2 F50, §11 line 149 "enforces viewpoint separation").
@@ -120,12 +120,12 @@ introduces no new store.
 - **Type-identity triple** (per payload, stored alongside the payload in the turn record):
   - `bundle_id` — namespace of the owning bundle (v4's own bundle, see below).
   - `type` — the type name within the bundle (CXDB example form `mycompany:DeployEvent`; for v4,
-    `softwarefactory:<TypeName>`).
+    `softwarefactory.v4.trajectory:<TypeName>` — D-2).
   - `version` — the bundle/schema version this payload was written against.
   - `viewpoint` — the standpoint tag (see below). *(F50 — the v4-specific addition over stock CXDB.)*
 
 - **Bundle** (JSON document in `registry/`):
-  - `bundle_id` (e.g. `softwarefactory.v4` — analogous to CXDB's `mycompany.agents.v1`).
+  - `bundle_id` (`softwarefactory.v4.trajectory` — D-2; analogous to CXDB's `mycompany.agents.v1`).
   - `version`.
   - `types`: map of `type` name → JSON schema (field shapes for projection + validation).
   - `viewpoints`: the enumerated set of legal viewpoint values this bundle uses.
@@ -150,19 +150,20 @@ types the rest of v4 stores in CXDB (trajectory turns, raw-body conversation pay
 projections the Healer/clustering tier reads). Sweep-1 fixes its **existence and shape**; the
 concrete per-type schemas are a sweep-2 deliverable (they depend on C24's payload shapes and C37's
 projection needs).
-> [FAITHFUL-FILL + XC-4] The bundle's *existence* is faithfully forced (reading (b) below). Its literal
-> *id string* is **not** v4-stated and is a placeholder pending the integrator's canonical-namespace
-> ruling. The candidate strings disagree across the foundational specs — C22-A `softwarefactory.v4`,
-> C22-B `strongdm.factory.v4`, C21-B `softwarefactory.trajectory.v1`, C20-B `v4.beads.v1` (review-log
-> XC-4). C22-A uses `softwarefactory.v4` only as an illustrative placeholder; the bead-payload round-trip
-> (C20↔C22) fails until one namespace is ruled canonical. Do not treat the literal as settled.
+> [AMBIGUITY: XC-4 — RESOLVED by D-2] The bundle's *existence* is faithfully forced (reading (b) below);
+> its literal *id string* was not v4-stated. The integrator's canonical-namespace ruling (review-log **D-2**)
+> settles it: one factory-owned reverse-DNS root with per-store sub-bundles — `softwarefactory.v4.beads`
+> (C20 bead types), `softwarefactory.v4.trajectory` (C22 CXDB turn/trajectory types), `softwarefactory.v4.packs`
+> (C02 pack ids). The earlier candidates (`softwarefactory.v4`, `strongdm.factory.v4`, `softwarefactory.trajectory.v1`,
+> `v4.beads.v1`) and vendor `strongdm.*` are dropped. C22's CXDB-payload bundle is therefore
+> **`softwarefactory.v4.trajectory`**.
 > [AMBIGUITY: G17] v4 gives two readings of "the type bundle". (a) CXDB's generic registry is *enough*
 > and v4 needs no bundle of its own (the `mycompany.*` examples are the whole story). (b) v4 must
 > **register its own** bundle for its payloads to be typed/resolvable at all. Reading (b) is forced by
 > the rest of v4: F50 is marked **Addressed** *on the strength of* viewpoint tagging on v4 bundles
 > (F-MODE-COVERAGE §2), and §5.5 promises type-aware projection of v4 payloads — both require a
-> registered v4 bundle. So C22 adopts (b): define one `softwarefactory.v4` bundle. Reading (a) is
-> rejected because it leaves F50 unaddressed and §5.5 unfulfillable.
+> registered v4 bundle. So C22 adopts (b): define one `softwarefactory.v4.trajectory` bundle (D-2).
+> Reading (a) is rejected because it leaves F50 unaddressed and §5.5 unfulfillable.
 
 **Lifecycle.** Bundles are append-only/versioned (I2). Registering a new bundle version is additive;
 old versions remain to keep historical turns resolvable for replay (C49) and audit.
@@ -223,7 +224,7 @@ open question, not resolved, since Track A may not redesign.
 ## 8. Acceptance criteria & test strategy
 
 Sweep-1 (high-level; concrete tests at sweep 2):
-- **AC1.** A single `softwarefactory.v4` bundle is defined and registrable under CXDB `registry/`,
+- **AC1.** The `softwarefactory.v4.trajectory` bundle (D-2) is defined and registrable under CXDB `registry/`,
   closing G17 for the CXDB type side: the previously-undefined v4 type bundle now exists. *(G17)*
 - **AC2.** Every payload carries a resolvable `{bundle_id, type, version}` (I1); a write claiming an
   unregistered triple is rejected.

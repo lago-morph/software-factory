@@ -27,7 +27,7 @@ What C22 is **NOT**:
   - **C21** (CXDB trajectory store) — C22's `registry/` lives inside the CXDB storage layout (AI-CONTEXT §5.3 lists `registry/` alongside `turns.log`, `blobs.pack`). C22 is the *type-system half* of CXDB; C21 is the *storage/DAG half*. They are co-located in the same Rust server process (AI-CONTEXT §5.1 lists "type registry" as a CXDB composition element) but are distinct components for diffability.
 - **Consumed by (directly):**
   - **C21 ingest path** — validates `{bundle_id,type,version}` on every binary/HTTP append (AI-CONTEXT §5.2); a payload with an unregistered type or a schema-violating body is rejected at the seam.
-  - **C19/C20** (bead work-graph + schema) — bead `type` values are C22-registered; `gc bd find --type X` (AI-CONTEXT §16) resolves `X` against C22.
+  - **C19/C20** (bead work-graph + schema) — **C20 authors the bead-type payload schemas and supplies them to C22 via the binding seam** (D-3); C22 registers them so `gc bd find --type X` (AI-CONTEXT §16) resolves `X`. Bead cold-start itself (Phase-0) is served by C20/C19 and does not require the CXDB process; C22 registration is the replay/projection seam.
   - **C24** (telemetry→CXDB bridge) — stamps the right `{bundle_id,type,version}` on bridged turns; reads C22 to know the telemetry-viewpoint types.
   - **C37/C38/C49** (clustering, diagnosis, counterfactual-replay) — read typed payloads by viewpoint; C49's replay determinism depends on version-pinned types (DELTA-03).
   - **CXDB UI** (AI-CONTEXT §5.5) — type-aware structural projection reads C22 schemas to render payloads.
@@ -55,40 +55,40 @@ Named-and-described (sweep 1; concrete signatures, JSON Schemas, and the wire fo
 
 ## 4. Data model / state
 
-C22 owns the **registry**, stored as JSON bundle files in CXDB's `registry/` (AI-CONTEXT §5.3 names the layout). One registry, two namespaces (DELTA-04): CXDB payload types and bead types.
+C22 owns the **registration mechanism** for the **registry**, stored as JSON bundle files in CXDB's `registry/` (AI-CONTEXT §5.3 names the layout). One mechanism, two namespaces under the factory-owned root (D-2, DELTA-04): the **trajectory-turn** types (`softwarefactory.v4.trajectory`, authored by C22) and the **bead** types (`softwarefactory.v4.beads`, authored by **C20** and registered here via the binding seam — D-3).
 
-**Bundle** (`registry/strongdm.factory.v4.json` and any imported bundles like the upstream `mycompany.agents.v1` example):
+**Bundle** (`registry/softwarefactory.v4.trajectory.json`, `registry/softwarefactory.v4.beads.json` (C20-authored, registered via seam), and any imported bundles like the upstream `mycompany.agents.v1` example):
 | Field | Meaning |
 |---|---|
-| `bundle_id` | reverse-DNS id, e.g. `strongdm.factory.v4` |
+| `bundle_id` | reverse-DNS id under the factory root, e.g. `softwarefactory.v4.trajectory` or `softwarefactory.v4.beads` |
 | `types[]` | the registered types in this bundle |
 
 **RegisteredType** (one entry):
 | Field | Meaning |
 |---|---|
-| `type` | namespaced name, e.g. `strongdm.factory:factory_build_in_progress` |
+| `type` | namespaced name, e.g. `softwarefactory.v4.trajectory:trajectory_turn` or `softwarefactory.v4.beads:factory_build_in_progress` |
 | `version` | integer, monotonic per (bundle,type) |
 | `viewpoint` | closed enum (I3) |
-| `schema` | JSON Schema for the payload body |
-| `kind` | `bead` \| `payload` (namespace tag — DELTA-04) |
+| `schema` | JSON Schema for the payload body (for bead types, **authored by C20** and supplied via the seam) |
+| `kind` | `bead` \| `payload` (namespace tag — DELTA-04; `bead` schemas are C20-owned) |
 | `description` | human/agent-readable purpose |
 
-**The concrete `strongdm.factory.v4` bundle (DELTA-01, the G17 resolution).** Initial registered types, derived from the type names v4 actually uses (README Part 4, AI-CONTEXT §16):
+**The concrete registered types (DELTA-01, the G17 resolution).** Initial types, derived from the names v4 actually uses (README Part 4, AI-CONTEXT §16). **`kind: bead` rows are authored by C20 (D-3) and registered here via the binding seam; `kind: payload` trajectory-turn rows are authored by C22.**
 
-| type | kind | viewpoint | source citation |
-|---|---|---|---|
-| `factory_build_in_progress` | bead | control | AI-CONTEXT §16 cold-start query |
-| `factory_build` | bead | control | AI-CONTEXT §16; README Part 6 phases |
-| `fix_task` | bead | control | README Part 4 P8 ("diagnosis agent writes bead of type `fix_task`") |
-| `override` | bead | control | README Part 4 P8 ("Gas City beads with type `override`") |
-| `spec_artifact` | payload | spec | README Part 4 P1; ties to C08 spec-artifact — **see note** |
-| `architecture_doc` | payload | architecture | F50 — the viewpoint that must not be confused with `spec` — **see note** |
-| `trajectory_turn` | payload | trajectory | AI-CONTEXT §5.3 turn model |
-| `telemetry_event` | payload | telemetry | AI-CONTEXT §5.4 bridge (C24) |
-| `anomaly` | payload | telemetry | README Part 4 P11 anomaly detection (C36) |
-| `diagnosis` | payload | control | README Part 4 P11 Healer (C38) |
+| type | bundle | kind | viewpoint | source citation |
+|---|---|---|---|---|
+| `factory_build_in_progress` | `softwarefactory.v4.beads` (C20-authored) | bead | control | AI-CONTEXT §16 cold-start query |
+| `factory_build` | `softwarefactory.v4.beads` (C20-authored) | bead | control | AI-CONTEXT §16; README Part 6 phases |
+| `fix_task` | `softwarefactory.v4.beads` (C20-authored) | bead | control | README Part 4 P8 ("diagnosis agent writes bead of type `fix_task`") |
+| `override` | `softwarefactory.v4.beads` (C20-authored) | bead | control | README Part 4 P8 ("Gas City beads with type `override`") |
+| `spec_artifact` | `softwarefactory.v4.trajectory` | payload | spec | README Part 4 P1; ties to C08 spec-artifact — **see note** |
+| `architecture_doc` | `softwarefactory.v4.trajectory` | payload | architecture | F50 — the viewpoint that must not be confused with `spec` — **see note** |
+| `trajectory_turn` | `softwarefactory.v4.trajectory` | payload | trajectory | AI-CONTEXT §5.3 turn model |
+| `telemetry_event` | `softwarefactory.v4.trajectory` | payload | telemetry | AI-CONTEXT §5.4 bridge (C24) |
+| `anomaly` | `softwarefactory.v4.trajectory` | payload | telemetry | README Part 4 P11 anomaly detection (C36) |
+| `diagnosis` | `softwarefactory.v4.trajectory` | payload | control | README Part 4 P11 Healer (C38) |
 
-> This table is the **G17-resolving artifact**: it is the concrete `{bundle_id, type, version}` bundle the gap demanded. Sweep 2 fills each row's JSON Schema; sweep 1 fixes the namespace, viewpoints, and kinds.
+> This table is the **G17-resolving artifact**: it is the concrete `{bundle_id, type, version}` set the gap demanded. The `bead`-kind rows' payload **schemas are authored by C20 (D-3)** and registered here via the seam — C22 owns their *registration*, not their *schema*. Sweep 2 fills each row's JSON Schema; sweep 1 fixes the namespace, viewpoints, and kinds.
 >
 > **NOTE on `spec_artifact` / `architecture_doc`:** the spec artifact is C08's git-versioned Markdown source-of-truth, not a CXDB trajectory payload; v4's model keeps specs as git artifacts, not CXDB turns. These two rows must be justified by an *actual* stored CXDB payload class (e.g. a reference/pointer turn into the spec) or reduced to viewpoint-tags-on-references rather than full payload types. Resolve with C08 at sweep 2 — they currently exist mainly to give F50 a concrete architecture-vs-spec pair, which is not sufficient grounds to assert specs flow through CXDB.
 
@@ -98,7 +98,7 @@ C22 owns the **registry**, stored as JSON bundle files in CXDB's `registry/` (AI
 
 Key flows (sequence/state diagrams in sweep 2):
 
-1. **Cold-start type resolution.** Agent runs `gc bd find --type factory_build_in_progress` → C19 query → resolves `factory_build_in_progress` against C22's `strongdm.factory.v4` bundle → returns matching beads. Previously (v4 as written) this type was undefined; DELTA-01 makes it resolve.
+1. **Cold-start type resolution.** Agent runs `gc bd find --type factory_build_in_progress` → C19 query → resolves `factory_build_in_progress` (a C20-authored bead type registered under `softwarefactory.v4.beads`) → returns matching beads. Bead cold-start is served by C20/C19 in Phase-0 without the CXDB process; DELTA-01/D-3 makes the type resolvable and replayable once registered. Previously (v4 as written) this type was undefined.
 2. **Ingest validation (tiered — cost-bounded).** C21 receives an append with `{bundle_id,type,version,payload}`. On the hot path it does only **cheap structural checks** (triple resolves in C22; required envelope fields present) so the p50<1ms append budget (AI-CONTEXT §5.5) is preserved. **Deep JSON-Schema body validation** of high-volume trajectory turns (whole raw-API-body payloads from C24) is NOT mandatory inline — it is sampled / async / or restricted to low-volume control-plane types (beads, judge verdicts). On a structural-check failure, reject at the seam (I2). Exact tier policy + per-class cost budget is a sweep-2 freeze.
 3. **Viewpoint guard (F50).** A consumer that expects spec-viewpoint objects calls `CheckViewpoint(type_ref, spec)`; an `architecture_doc` (viewpoint=architecture) tagged where a `spec_artifact` is expected → `mismatch`, preventing the architecture/spec confusion F50 names (DELTA-02).
 4. **Type evolution.** Author bumps a payload schema → `Register(...,version=N+1,...)` → old version N stays resolvable for replay of historical turns (I1, DELTA-03).
@@ -118,12 +118,12 @@ Key flows (sequence/state diagrams in sweep 2):
 - **Security:** registry is the type-authority; write access to `Register` is privileged (only authoring/bootstrap flows). Viewpoint tagging is also a containment boundary (an architecture doc cannot masquerade as a shippable spec).
 - **Cost/scale:** registry is small (tens–hundreds of types), in-memory after load; validation cost is per-append JSON Schema check — bounded, on C21's hot ingest path, so schemas must stay cheap (sweep 2: compile schemas at load).
 - **Observability:** `List` by viewpoint gives a live catalog; the UI's type-aware projection (AI-CONTEXT §5.5) is a direct consumer.
-- **Ops:** the `strongdm.factory.v4` bundle is a versioned, git-committed JSON file — cold-start reproducible; adding a type is a registry append + commit, not a code change.
+- **Ops:** the `softwarefactory.v4.trajectory` bundle (and the C20-authored `softwarefactory.v4.beads` bundle registered via the seam) is a versioned, git-committed JSON file — cold-start reproducible; adding a type is a registry append + commit, not a code change.
 
 ## 8. Acceptance criteria & test strategy
 
 (Concrete test cases in sweep 2.) The component is correct when:
-- **AC1 (G17):** the `strongdm.factory.v4` bundle exists and every type name v4 uses in prose (`factory_build_in_progress`, `factory_build`, `fix_task`, `override`) resolves via `Resolve`. Test: `gc bd find --type factory_build_in_progress` returns without "unknown type."
+- **AC1 (G17):** the `softwarefactory.v4.trajectory` bundle exists, and the C20-authored bead types (`factory_build_in_progress`, `factory_build`, `fix_task`, `override`) are registered under `softwarefactory.v4.beads` via the seam and resolve via `Resolve`. Test: `gc bd find --type factory_build_in_progress` returns without "unknown type."
 - **AC2 (I2):** an append with an unregistered type is rejected by C21's ingest; an append with a schema-violating payload is rejected.
 - **AC3 (F50/DELTA-02):** `CheckViewpoint` flags an `architecture`-viewpoint object presented where a `spec`-viewpoint is required.
 - **AC4 (I1/DELTA-03):** re-registering an existing `{bundle_id,type,version}` with a changed schema fails; registering it at `version+1` succeeds and leaves the old version resolvable.

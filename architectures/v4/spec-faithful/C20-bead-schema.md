@@ -132,16 +132,22 @@ three parts: the common envelope, the named types, and the named chains.
 > The P11 closure chain ("anomaly → diagnosis → fix → resolution", README P11) implies **anomaly**,
 > **diagnosis**, and **resolution** as further bead types (the "fix" node = `fix_task`). The minimal
 > faithful elaboration is to register `anomaly`, `diagnosis`, and `resolution` as the chain's other
-> nodes, because the chain is named explicitly and cannot be a "bead chain" unless its links are beads.
-> They are marked as *chain-derived* types, distinct from the four v4 names by literal string. No other
-> types are invented.
+> nodes, because README P11 names it a "Custom **bead** chain" and a chain cannot be a *bead* chain unless
+> its links are beads.
+> **Provisional, not settled (RC20A-03 / OQ-C20-2):** these three are registered *provisionally*. The live
+> alternative is that `anomaly`/`diagnosis`/`resolution` are **CXDB turns** (C21/C22 trajectory content),
+> with only `fix_task` as a bead — the §5 corpus puts fine-grained trajectory content in CXDB, not the
+> work-graph. The C20↔C21/C22 type-boundary ruling (OQ-C20-2) must confirm these are beads before their
+> field schemas are frozen at sweep 2. They are marked *chain-derived* + *provisional*, distinct from the
+> four v4 names by literal string. No other types are invented.
 
 ### 4.3 Named chains
 
 **Override-discipline chain (P8).** `override` beads accumulate; periodic surfacing reads them; recurring
 patterns convert to rules (README P8 "Periodic pattern surfacing", "Rule conversion"). Faithful shape:
-`override` is a leaf-record type, not a multi-link chain; its only edge is `created_by` + a reference to
-the overridden action.
+`override` is a leaf-record type, not a multi-link chain; its only dependency *link* is a reference to the
+overridden action. (`created_by` is the envelope attribution field per §4.1, **not** a dependency edge —
+corrected from an earlier draft that called it an "edge".)
 
 **Self-heal closure chain (P11).** The v4-named chain:
 
@@ -153,6 +159,13 @@ This is the "Custom bead chain: anomaly → diagnosis → fix → resolution" th
 closure tracking … Did the fix actually fix it?" and that Phase 3b lists as the "Fix-task bead schema"
 deliverable. The `resolution` node is what proves the fix worked; its existence + a positive verdict is
 loop closure.
+
+> [FAITHFUL-FILL] **Edge names are inferred.** v4 names *no* edge kinds — only "Tasks with dependencies"
+> (README P10), untyped and singular. The edge labels `diagnosed_by`/`produces`/`resolved_by` above are a
+> minimal faithful elaboration to make the chain expressible; they are not v4 terms. Note the **optimized**
+> track (C19-B/C20-B) independently chose a *different, incompatible* taxonomy (`caused_by`/`closes`/
+> `child_of`/`blocks`). The two tracks must not be assumed to share edge vocabulary; the canonical
+> edge-kind set + its owning component is a cross-track integrator decision (XC-1 freeze / C19-B OQ2).
 
 > [AMBIGUITY: G18] **Where does the termination/escalation bound live — and does it exist at all?**
 > Reading A (no bound): v4 describes the chain as a pure data lineage (anomaly→diagnosis→fix→resolution)
@@ -236,6 +249,9 @@ BUILDER-BRIEF altitude.)
 4. **Closure chain is well-formed (G18 slots)**: a self-heal instance forms the typed chain
    `anomaly→diagnosis→fix_task→resolution`, acyclic, ≤1 `resolution`, and carries the attempt-count +
    terminal-state + escalation-marker fields — so C39 *can* express a bound (even though C20 sets none).
+   **Note: this is G18 *relocated to C39*, not G18 *closed here*.** C20 guarantees only that the slots
+   exist; the actual termination / oscillation-detection / L5-ship policy is C39's deliverable (OQ-C20-1,
+   review-log XC-3). AC-4 passing must not be read as G18 being resolved at the schema layer.
 5. **Registry closed**: writing a bead whose `type` is not registered is rejected (no silent free-form
    types — the G17 prevention).
 (Concrete JSON/TOML field schemas, the terminal-state enum, and registry-vs-store conformance test

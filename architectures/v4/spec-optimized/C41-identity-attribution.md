@@ -119,7 +119,13 @@ Named-and-described (sweep 1; concrete signatures, key/signature byte-shapes, an
 
 Per actor, attributions form an append-only hash chain: `prev_provenance_hash` links each attribution to that actor's previous one. `verify_chain` walks the chain; a missing/edited/reordered link is a break. This is the structural backing for "Audit trail — queryable history" (README l.228) and the detection mechanism F14 ("attribution collapse") needs to move from *asserted-addressed* to *verified*.
 
-> **Ownership note (RC41B-01 — blocker, cross-component):** "anchored in C23" must mean **C41 computes and stores `prev_provenance_hash` in the `Attribution` it writes, keyed on C23's `event_id=(stream,seq)`** — i.e. the chain is a **C41-owned application-level structure over C23 records**. C23-optimized §7 explicitly **defers** record-level hash-chaining (its OQ3, "candidate hardening … signed actor provenance is C41's"). So C23 supplies only ordered append-only-on-disk + non-null `created_by`; C41 owns the tamper-evident chain. Two foundational specs currently read ambiguously on this; the C41↔C23 ownership split must be ratified by the integrator before F14 can be called "detectable" (it is **DEFERRED**, filed as a cross-component issue like XC-1/XC-4). Until ratified, F14 detection rests on append-only-on-disk only.
+> **Ownership note (RC41B-01 — RESOLVED by D-5):** the integrator's ruling **D-5** ratifies the split:
+> **C41 owns the provenance hash-chain**, computed over **C23-provided ordered gap-free `event_id`s**.
+> Concretely C41 computes and stores `prev_provenance_hash` in the `Attribution` it writes, keyed on C23's
+> `event_id=(stream,seq)` — the chain is a **C41-owned application-level structure over C23 records**. C23
+> provides ordered gap-free `event_id`s **only**; it does **not** provide the chain (C23-optimized §7
+> correctly defers record-level hash-chaining). With D-5 ratified, F14 is **detectable** via `verify_chain`,
+> not merely append-only-on-disk.
 
 > [DELTA-04] **v4 said:** audit trail = "Gas City event bus + bead history" (README l.228) — queryable, but no integrity guarantee; a sufficiently privileged actor (or a compromised one) could rewrite history and attribution would "collapse" silently. **Change:** per-actor tamper-evident hash chain over the existing log. **Rationale (security/failure):** F14 is the failure mode "attribution collapse"; without tamper-evidence the control credited with addressing it cannot *detect* the collapse it is named for. **Tradeoff:** one hash per attribution + a chain-verify pass; history becomes append-only (legitimate redaction needs an explicit tombstone, not deletion — OQ3).
 

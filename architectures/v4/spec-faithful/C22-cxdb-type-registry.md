@@ -243,11 +243,12 @@ Sweep-1 (high-level; concrete tests at sweep 2):
   separation*, not enforcement that the *correct* viewpoint is chosen at write time. Is detect-and-label
   sufficient to call F50 "Addressed", or does it share the detect-vs-prevent weakness of G21/G36? Track
   A flags; resolution belongs to Track B / the residual-risk register (C57).
-- **OQ2.** C20 (bead type registry) and C22 (CXDB type registry) are parallel registries on two stores.
-  v4 never states whether they should share machinery or a viewpoint convention. Faithfully kept
-  separate; a future reconciliation may unify them. **Cross-track contradiction (→ integrator):** the
-  optimized track takes the opposite position — C22-B DELTA-04 *unifies* both into one registry with two
-  namespaces, and C20-B DELTA-07 binds bead types into a CXDB bundle. The two tracks disagree on the
-  C20↔C22 relationship; the integrator must rule (ties to XC-4).
-- **OQ3.** The concrete per-`type` schemas in `softwarefactory.v4` depend on C24's raw-body payload
-  shape (G26) and C37's projection needs; pinned at sweep 2 once those seams are fixed.
+- **OQ2 (→ RESOLVED by D-3).** C20 (bead type registry) and C22 (CXDB type registry) are parallel
+  registries on two stores; this faithful reading is upheld. The integrator's ruling **D-3** confirms
+  the ownership split: **C20 authors the bead-type payload schemas**; **C22 owns the registration
+  *mechanism* + the CXDB-turn/trajectory types only** and registers C20's bead types via a documented
+  binding seam (C22 does not author bead schemas). The optimized track's earlier "one registry" framing
+  (C22-B DELTA-04) is reconciled to this seam. Bead namespace `softwarefactory.v4.beads`; CXDB-turn
+  namespace `softwarefactory.v4.trajectory` (D-2).
+- **OQ3.** The concrete per-`type` schemas in `softwarefactory.v4.trajectory` depend on C24's raw-body
+  payload shape (G26) and C37's projection needs; pinned at sweep 2 once those seams are fixed.

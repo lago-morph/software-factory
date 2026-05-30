@@ -29,7 +29,7 @@ What it is **NOT**:
 
 - **Depends on:**
   - **C01** (Gas City substrate) — beads are a native Gas City primitive; C19 is the v4 spec of that primitive + the `gc bd` CLI surface. Per the inventory, C19 depends on C01 only.
-  - **C20** (bead schema) — soft/co-foundational: C19 calls C20's `validate` at the write seam (DELTA-06). C19 can store the *generic* envelope before C20's catalog is final, but a production write path is fail-closed against C20 (interface-first; see plan).
+  - **C20** (bead schema) — **co-foundational; canonical direction (review-log D-4): C20 depends on C19** (the schema layer sits over the graph store). C19 calls C20's `validate` at the write seam (DELTA-06); that call is the only reverse arrow, and the production write-path cycle is broken by the **M1 interface freeze + a no-op `validate` stub** (the stub lets C19 build/store the generic envelope before C20's catalog is final; the production path is then fail-closed against C20). Interface-first; see plan.
   - **C41** (identity/actor) — supplies the `Actor` referenced by `created_by` (DELTA-02). In a Phase-0 single-agent install the actor set is trivial (one `worker`), so this is a *type* dependency, not a runtime blocker.
   - **C03** (config / feature-flags) — `[beads] provider = "file"|"dolt"` selects the backend (AI-CONTEXT §13.2); section presence/value is the feature flag.
   - **C23** (event bus) — receives the per-mutation event (DELTA-05); soft dependency (a Phase-0 install can run with the bus off, buffering or no-op'ing emission).

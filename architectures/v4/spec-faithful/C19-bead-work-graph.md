@@ -57,7 +57,7 @@ the load-bearing native match for **P10 (memory layer)** and a primary carrier f
 |---|---|---|
 | Upstream (depends on) | **C01** Gas City substrate | C19 is Gas City native concept #2; the `gc` binary provides the bead store and `gc bd` commands (AI-CONTEXT §3.2, §16; inventory: C19 depends on C01). |
 | Upstream (depends on) | **C03** Config/feature-flags | `[beads] provider = "file"` (the backend selector) is a C03 section (AI-CONTEXT §13.1). C19's backend is config-gated. |
-| Upstream-of (C20 depends on C19) | **C20** Bead schema registry | C19 stores *typed* beads; C20 defines the types. **Canonical direction (inventory): C20 depends on C19.** The dispatch brief's reversed arrow (C19→C20) is best read as "co-foundational," not a real reversal; the proposed co-foundational resolution lives in OQ-C19-1 / XC-1, not as a faithful fact here. |
+| Upstream-of (C20 depends on C19) | **C20** Bead schema registry | C19 stores *typed* beads; C20 defines the types. **Canonical direction (review-log D-4): C20 depends on C19**, co-foundational. The dispatch brief's reversed arrow (C19→C20) was only the `validate` call seam, not a real reversal; the production write-path cycle is broken by the **M1 interface freeze + a no-op `validate` stub** (see OQ-C19-1, resolved). |
 | Downstream (consumes) | **C05** Sling, **C13** Molecule, **C18** Reconciler | route / instantiate / converge over beads stored here. |
 | Downstream (consumes) | **C35** Override loop, **C39** Fix-task loop-closure, **C52** Self-bootstrap | write/read `override`, `fix_task`, `factory_build_in_progress` beads and the resolution **bead chain** (README:214, 257–259; AI-CONTEXT §16). |
 | Downstream (consumes) | **C41** Identity/attribution, **C33** Satisfaction | C41 reads `created_by` off every bead (inventory: C41 depends on C19); C33 reads judge-output beads (README:426 "reading judge outputs from beads"). |
@@ -238,13 +238,14 @@ test vectors are sweep-2 deliverables, jointly with C20.)
 
 ## 9. Open questions
 
-- **OQ-C19-1** (→ review-log): **C19↔C20 dependency direction / G17 split.** The inventory lists *C20
-  depends on C19*; the dispatch brief lists *C19 depends on C20*. They are a mutually-dependent foundational
-  pair (a typed store needs a type catalog; a type catalog needs a store to live in). Faithful resolution:
-  treat them as co-foundational and freeze the **C19↔C20 interface** (a bead has `{id, type, created_by,
-  edges, state}`; C20 supplies the legal `type` set and per-type fields) *before* either is built, so the
-  cycle is broken at the contract, not the implementation. Needs explicit confirmation of which doc's
-  direction is canonical.
+- **OQ-C19-1** (→ review-log, **RESOLVED by D-4**): **C19↔C20 dependency direction / G17 split.** The
+  inventory lists *C20 depends on C19*; the dispatch brief listed *C19 depends on C20*. The integrator's
+  ruling **D-4** confirms the canonical direction: **C20 depends on C19** (the schema layer sits over the
+  graph store). They are **co-foundational**; the production write-path cycle (C19's writer calls C20's
+  `validate`) is broken by the **M1 interface freeze** plus a **no-op `validate` stub** seam — the reversed
+  dispatch arrow was only that call seam, not a real dependency reversal. The C19↔C20 interface (a bead has
+  `{id, type, created_by, edges, state}`; C20 supplies the legal `type` set and per-type fields) is frozen
+  at M1 *before* either is built, so the cycle is broken at the contract, not the implementation.
 - **OQ-C19-2** (→ review-log): **file → Dolt migration is unspecified.** v4 names both backends behind one
   interface but gives no migration path, file layout, or schema versioning. Is a faithful migration spec in
   scope, or is it a Gas City internal deferred upstream (G11 — Gas City behavior unverified)?
@@ -252,19 +253,16 @@ test vectors are sweep-2 deliverables, jointly with C20.)
   durability + cross-session readability but states no isolation level, write atomicity, or ordering for
   concurrent multi-agent bead writes at L4/L5 fan-out. Needed before parallel write contracts can be
   asserted; today flagged, not invented.
-- **OQ-C19-5** (→ review-log): **Bead `bundle_id` / CXDB type-namespace (XC-4, DEFERRED to integrator).**
-  C19 faithfully treats bead types as a *separate* type space from CXDB turn types and asserts no shared
-  bundle namespace. But the optimized siblings collide: C20 binds beads to `v4.beads.v1`, C22-faithful uses
-  `softwarefactory.v4`, C22-optimized claims one registry owning *both* bead and CXDB namespaces under
-  `strongdm.factory.v4`, and C21-optimized names `softwarefactory.trajectory.v1`. C19 takes no position on
-  the bead `bundle_id`; the canonical namespace ruling and whether bead types are registered in C22 at all
-  belong to C20/C22 + the integrator. Recorded so C19's *silence* is not read as assent to C22 owning the
-  bead namespace. **The collision is not merely a string disagreement — it is an *ownership* fork:** C20-B
-  asserts "two registries, one mapping" (C20 owns bead-type schemas and *binds* each to a CXDB bundle),
-  while C22-B asserts "one registry, two namespaces" (C22 is the single source of truth that *owns* the
-  per-type bead payload schemas, `kind: bead`). Both currently define the `fix_task`/`override` payload
-  schema. The integrator must resolve *who authors bead-type schemas* before any bundle string can be
-  pinned; C19 recommends C20 authors them and C22 hosts the registration mechanism (see review).
+- **OQ-C19-5** (→ review-log, **RESOLVED by D-2/D-3**): **Bead `bundle_id` / CXDB type-namespace (was XC-4).**
+  C19 faithfully treats bead types as a *separate* type space from CXDB turn types. The integrator's rulings
+  settle the two coupled questions: **(D-2, namespace)** one factory-owned reverse-DNS root with per-store
+  sub-bundles — `softwarefactory.v4.beads` (bead types), `softwarefactory.v4.trajectory` (CXDB turn types),
+  `softwarefactory.v4.packs` (pack ids); the divergent candidates (`v4.beads.v1`, `softwarefactory.v4`,
+  `softwarefactory.trajectory.v1`) and vendor `strongdm.*` are dropped. **(D-3, ownership)** the fork is
+  resolved in favor of "two registries, one mapping" — **C20 authors the per-type bead payload schemas**
+  (`fix_task`/`override`/…) and binds each to a CXDB bundle; **C22 hosts the registration mechanism only**
+  (and authors the CXDB-turn types). C19 still takes no position on the bead `bundle_id` itself (it stores
+  the `type`, not the bundle), but its silence is now backed by a ruling rather than an open fork.
 - **OQ-C19-4** (→ review-log): **Attribution integrity (G36).** `created_by` is self-asserted in C19;
   C41's signed provenance is "optional, deferred." For an L5 self-modifying factory, is unsigned
   attribution acceptable as the *only* integrity control, or must the C19↔C41 seam reserve a place for

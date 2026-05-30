@@ -27,7 +27,7 @@ What it is **NOT**:
 ## 2. Context & dependencies
 
 - **Depends on:**
-  - **C19** (bead store / typed work-graph) — C20's schemas are enforced *by* C19's writer; dependency edges referenced in C20 lifecycles (`closes`, `caused_by`) are C19 graph edges.
+  - **C19** (bead store / typed work-graph) — **co-foundational; canonical direction (review-log D-4): C20 depends on C19** (schema layer over the graph store). C20's schemas are enforced *by* C19's writer; dependency edges referenced in C20 lifecycles (`closes`, `caused_by`) are C19 graph edges. The C19→C20 `validate` call is the only reverse arrow; the production write-path cycle is broken by the **M1 interface freeze + a no-op `validate` stub**.
   - **C41** (identity/actor model) — supplies the `Actor` type that `created_by` references (DELTA-05).
   - **C22 / C21** (CXDB type registry + trajectory store) — receives the bead-type→bundle binding (DELTA-07); soft dependency (a bead is valid even if CXDB is absent in a Phase-0 install).
 - **Consumed by (fan-out):**

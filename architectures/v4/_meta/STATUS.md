@@ -3,7 +3,19 @@
 Live state of the v4 spec & plan run. Updated by the primary agent every wave.
 
 ## Current phase
-**Phase 2 — Sweep 1 (architecture foundation)** — Batch 1 building
+**Phase 2 — Sweep 1 (architecture foundation).** Batch-1 builds COMPLETE (12 components × 2 tracks).
+Batch-1 adversary review wave RUNNING (5 subsystem red-teamers). Batch-2 foundational builds STARTED.
+
+## Completed (Sweep-1 builds, both tracks)
+Batch 1 ✅: C01 C02 C03 C07 C08 C17 C19 C20 C21 C22 C23 C41 (24 docs spec + 24 plan).
+
+## In flight
+- Adversaries: Runtime{C01,C02,C03,C07}, PersistA{C19,C20}, PersistB{C21,C22,C23}, Security{C41}, SpecWf{C08,C17}.
+- Builders (Batch 2): C28-F, C28-O, C29-F.
+
+## Batch-2 remaining queue (build)
+C29-O, C04, C05, C09, C10, C12, C13, C24, C25, C26, C27, C42 (both tracks each).
+## Then Batches 3,4,5 (see component-inventory.md §Suggested build/spec batches).
 
 ## Concurrency reality
 Platform rate-limits subagent launches at **~8 concurrent**. Pipeline at width ~6–8, top up as agents finish. (Target "50+" is not reachable on this infra.)

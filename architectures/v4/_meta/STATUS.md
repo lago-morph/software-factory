@@ -2,28 +2,31 @@
 
 Live state of the v4 spec & plan run. Updated by the primary agent every wave.
 
-## Current phase
-**Phase 2 — Sweep 1 (architecture foundation).** Batch-1 builds COMPLETE (12 components × 2 tracks).
-Batch-1 adversary review wave RUNNING (5 subsystem red-teamers). Batch-2 foundational builds STARTED.
+## ⏹ SESSION ENDED at token limit (2026-05-30). PR #213 MERGED. See `_meta/HANDOFF.md` to resume.
 
-## Completed (Sweep-1, both tracks)
+## Current phase
+**Phase 2 — Sweep 1 (architecture foundation), STOPPED at 23/57 components.** All built work is committed,
+pushed, and merged to `main`. The other 34 components were never built (out of session budget).
+
+## Completed (Sweep-1, both tracks) — 23 components, 4 docs each
 - **Batch 1 ✅ BUILT + ADVERSARIALLY REVIEWED + INTEGRATED (consistent).** C01 C02 C03 C07 C08 C17 C19 C20
   C21 C22 C23 C41. 5 subsystem adversaries applied fixes; Integration Pass 1 applied rulings D-1..D-5.
-  Foundation verdict: internally consistent (one namespace, one bead-schema author, one dep direction,
-  one chain owner, unblocked same-provider judge). See `_meta/INTEGRATION-PASS-1.md`.
-- **Batch 2 (build, both tracks): C04 C05 C09 C10 C12 C13 C24 C28 C29 ✅ built.** (Not yet adversary-reviewed.)
+  See `_meta/INTEGRATION-PASS-1.md`.
+- **Batch 2 partial ✅ BUILT (not yet adversary-reviewed):** C04 C05 C09 C10 C12 C13 C24 C25 C28 C29 C42.
 
 ## Adopted decisions (see review-log.md)
 D-1 same-provider judge (cross-family→FE-1) · D-2 bundle-id `softwarefactory.v4.{beads,trajectory,packs}`
 · D-3 C20 authors bead schemas / C22 mechanism · D-4 C20 depends on C19 · D-5 C41 owns hash-chain over C23.
 
-## In flight
-- Builders: C42 (both), C25 (both). Cleanup: align plan docs to D-2..D-5.
+## NOT built (34) — resume here (see HANDOFF.md §1 for slugs)
+- Batch 2 tail: C26 C27.
+- Batch 3: C06 C11 C14 C15 C16 C18 C30 C31 C32 C33 C34 C35 C40.
+- Batch 4: C36 C37 C38 C39 C43 C44 C45 C51 C52 C53 C54 C55 C56.
+- Batch 5: C46 C47 C48 C49 C50 C57.
 
-## Remaining work
-- Batch 2 build: C26, C27 (observability). Then Batch-2 adversary review wave.
-- Batches 3 (eval/judge/workflow-tooling/override), 4 (self-healing+bootstrap), 5 (self-optimization).
-- Sweep 2 (implementation-ready depth) once Sweep-1 breadth is covered.
+## Remaining passes (see HANDOFF.md §2)
+- Batch-2 adversary review wave; reviews for Batches 3–5 as built; Integration Pass 2+;
+  Sweep 2 (implementation-ready); Sweep 3 (exhaustive); final cross-cutting pass.
 - Open human decisions in review-log: signing mandatory-vs-optional; G37 secrets store.
 
 ## Concurrency reality

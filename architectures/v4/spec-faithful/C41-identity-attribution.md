@@ -132,7 +132,9 @@ event records live in C23. C41 defines what the `created_by` *on* those records 
 | (optional) *signature* | signed provenance binding the reference to the action — present only with the optional verification pack | README:229; F-MODE-COVERAGE §2/§7 |
 
 > [FAITHFUL-FILL] **Actor-kind set = exactly {city, rig, agent}.** v4 names "cities, rigs, agents"
-> verbatim as the Gas City `actor` schema (README:226). The minimal faithful choice is to treat that
+> verbatim as the Gas City `actor` schema (README:226); the `agent` kind is sourced from README:226 +
+> §3.4 `[[agent]]` blocks (RC41A-01 — *not* from §3.3, which glosses only city/rig and ambiguously maps
+> rig = "agent worker role"). The minimal faithful choice is to treat that
 > triple as the *closed* kind set, because v4 never names a fourth actor kind and the universal-attribution
 > invariant requires a *closed* set for "actor of unknown kind is invalid" to be well-defined. Whether
 > the *human operator* is modeled as an `agent`, a distinct kind, or sits outside the actor model entirely
@@ -140,12 +142,15 @@ event records live in C23. C41 defines what the `created_by` *on* those records 
 > faithful reading is that the operator acts *through* an agent/rig and is attributed as such, since v4
 > gives no fourth kind. Concrete identifier grammar deferred to sweep 2.
 
-> [FAITHFUL-FILL] **Actor reference is a (kind, identifier) pair, not a flat string.** v4 stores
-> `created_by` as a field but never gives its internal shape. The smallest consistent elaboration that
-> lets a reader "resolve to a valid actor" (§3 contract) is a structured (kind, identifier) reference
-> rather than an opaque string, because the actor *kinds* are explicitly enumerated and partitioning
-> (C42) is written against kind (worker/scenario/judge rigs). This does not add a store — it only
-> structures an existing field. Wire encoding (string convention vs sub-object) deferred to sweep 2.
+> [FAITHFUL-FILL] **Actor reference is (minimal faithful reading) a (kind, identifier) pair, not a flat
+> string — pending C19/C23 ratification (OQ-C41-4).** v4 stores `created_by` as a field but never gives
+> its internal shape. The smallest consistent elaboration that lets a reader "resolve to a valid actor"
+> (§3 contract) is a structured (kind, identifier) reference rather than an opaque string, because the
+> actor *kinds* are explicitly enumerated and partitioning (C42) is written against kind
+> (worker/scenario/judge rigs). This does not add a store — it only structures an existing field.
+> *Honesty caveat (RC41A-04):* C19/C23 faithful specs currently treat `created_by` as an **opaque carried
+> value** and have not ratified this structure; if they ship a flat string, this fill is over-reach. The
+> flat-string-vs-structured choice is the joint freeze OQ-C41-4 (plan M1). Wire encoding deferred to sweep 2.
 
 ### 4.2 Audit trail (derived, not owned)
 
@@ -202,8 +207,8 @@ BUILDER-BRIEF altitude.)
 
 | F-mode / gap | Relevance | Handling in C41 (faithful) |
 |---|---|---|
-| **F14** Attribution collapse (F-MODE §2, "Addressed") | The core mode C41 prevents: actions losing their actor. | **Addressed** at sweep-1 altitude by the universal-attribution invariant (§3): every bead/event carries a `created_by` resolving to a valid actor; an unattributed write is invalid. This is v4's "strongest principle match" (README:231). |
-| **F32** Mail-injection / unsigned coordination (F-MODE §2 + §7) | Unsigned inter-agent mail can be spoofed; the guard is "optional HMAC signing." | **Addressed-on-paper-only** in the faithful reading: C41 defines the provenance-verification *seam* the HMAC layer attaches at (§3 #4, §4.3), but the signing is **optional** (G36). The mail bus itself is C06; C41 supplies the actor identity the signature binds. Residual risk flagged below + §9. |
+| **F14** Attribution collapse (F-MODE §2, "Addressed") | The core mode C41 prevents: actions losing their actor. | **Addressed conditional on OQ-C41-3** at sweep-1 altitude by the universal-attribution invariant (§3): every bead/event carries a `created_by` resolving to a valid actor; an unattributed write is invalid. This is v4's "strongest principle match" (README:231). *Caveat (RC41A-03, aligns spec with plan §5 risk 1):* the "unattributed write is invalid" guarantee is firm only if Gas City *rejects* (not merely *defaults*) an unattributed write — an unverified G11-class assumption (OQ-C41-3). If the substrate only defaults the field, F14 is discipline-dependent, not enforced. Retire OQ-C41-3 (plan T7) before declaring F14 unconditionally Addressed. |
+| **F32** Mail-injection / unsigned coordination (F-MODE §2 + §7) | Unsigned inter-agent mail can be spoofed; the guard is "optional HMAC signing." | **Addressed-on-paper-only** in the faithful reading: C41 defines the provenance-verification *seam* the HMAC layer attaches at (§3 #4, §4.3), but the signing is **optional** (G36). *Fidelity divergence (RC41A-02):* F-MODE-COVERAGE §2/§7 marks F32 **"Addressed"**, but that status is **not faithfully supportable** under C41's optional-signing reading — an optional guard "does not address a security failure" (G36). Per Track-A rule 3 this divergence is recorded (not silently resolved) and routed to C57 (F-mode owner) as a residual-risk flag; the architecture stays optional. The mail bus itself is C06; C41 supplies the actor identity the signature binds. Residual risk flagged below + §9. |
 | **F43** RSI Board-Visibility Gap (F-MODE §6, "Partial") | Need an audit trail to see what self-modifying components did. | **Partially addressed**: C41's actor-keyed audit trail (event bus + bead history, §4.2) is exactly the "P9 attribution + audit trail + bead history" mechanism. The *declaration discipline* (pack-author declares RSI status in `pack.toml`) is operator-required and out of C41's scope (it's a pack-governance concern). |
 | **G36** Attribution integrity is optional/deferred (minor) | Without signed provenance, `created_by` is self-asserted; F32's guard is "optional," which "does not address a security failure." | See the AMBIGUITY block below. Faithful resolution: C41 **defines** the verification seam and **requires** universal *self-asserted* attribution, but does **not require** verification (v4 marks it deferred). The gap is acknowledged + surfaced as residual risk, not closed. |
 
@@ -249,7 +254,10 @@ BUILDER-BRIEF altitude.)
   behavior to actors.
 - **Ops.** The actor registry is sourced from `city.toml` `[[rig]]`/`[[agent]]` blocks (AI-CONTEXT §3.4,
   §13.3) under normal git review; C41 adds no separate operational surface. Enabling verification later is
-  a pack install at the defined seam (§4.3) — additive, not a migration.
+  a pack install at the defined seam (§4.3) — additive, not a migration. *Caveat (RC41A-06):* the
+  "additive later" property is **contingent on G37 (secrets/credential handling) being resolved first** —
+  the optional pack needs somewhere for a signing key to live, and faithful v4 supplies no secrets store
+  (G37 is an open gap assigned to C03/C43). The cheap-seam claim should not be oversold while G37 is open.
 
 ## 8. Acceptance criteria & test strategy
 
@@ -284,7 +292,8 @@ the default build.)
   Track-B `[DELTA]` candidate (make signing mandatory at the F32/F43 surface). Track A cannot decide it
   without an architectural change; route to review-log for the cross-track reconciler.
 - **OQ-C41-2** (→ review-log): **Is the human operator a fourth actor kind?** v4 names only city/rig/agent
-  (README:226), yet operator *overrides* are first-class actions (README P8) and must be attributed. The
+  (README:226), yet operator *overrides* are first-class actions (README P8 override-log row, README:214
+  "beads with type `override`") and must be attributed. The
   faithful fill (§4.1) models the operator as acting *through* an agent/rig. Confirm against C42 (which
   partitions worker/scenario/judge roles — none of which is obviously "operator") whether a distinct
   `operator`/`human` actor kind is needed, or whether operator overrides are attributed to an agent acting

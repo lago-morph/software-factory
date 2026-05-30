@@ -47,7 +47,7 @@ Named-and-described (sweep 1; concrete signatures, JSON/msgpack shapes, and Merm
 **Inbound — the `BeadStore` write/graph API (what writers call, exposed via `gc bd` CLI + library):**
 - `create(bead_draft) → BeadId` — validates via C20, assigns `id` + monotonic `seq`, persists, emits a mutation event. Fail-closed on C20 validation failure (DELTA-06).
 - `update(id, mutation) → seq` — applies a lifecycle/field mutation; re-validates against C20; bumps `seq`; emits event. Concurrent-update conflicts resolved per the provider's concurrency contract (§4.4).
-- `add_edge(from, to, edge_type) → ()` — adds a typed dependency edge; **rejects** any edge that would introduce a cycle in the `blocks` sub-graph (DELTA-03 acyclicity invariant).
+- `add_edge(from, to, edge_type) → ()` — adds a typed dependency edge; **rejects** any edge that would introduce a cycle in the `blocks` sub-graph **or** the `child_of` tree (DELTA-03 acyclicity invariant). `caused_by`/`closes` are not cycle-checked here (bounded by C20).
 - `get(id) → Bead` / `exists(id) → bool`.
 
 **Inbound — the query / traversal contract (frozen early, DELTA-07):**
@@ -63,7 +63,7 @@ Named-and-described (sweep 1; concrete signatures, JSON/msgpack shapes, and Merm
 **Invariants:**
 - **Attribution (DELTA-02, closes G36 at the graph layer):** no bead is creatable/mutable without a non-null `created_by` resolving to a C41 actor. Attribution is structural, not "optional/deferred" — README l.227 says P9 is "the strongest principle match… attribution flows automatically through beads"; making it nullable would contradict that. C41's *signature* verification remains optional, but the *presence* of an actor is mandatory here.
 - **Durability (DELTA-04):** once `create`/`update` returns, the mutation survives process crash — file provider does append-then-fsync-then-atomic-rename of its index; Dolt provider commits. No "scratchpad lost on restart" (the exact failure README l.235 calls out).
-- **Acyclic blocking graph (DELTA-03):** the `blocks` edge sub-graph is a DAG at all times; `add_edge` is the single enforcement point. (`caused_by`/`closes`/`child_of` may form chains but the blocking frontier must terminate, or `ready_frontier()` could never advance.)
+- **Acyclic blocking graph + acyclic molecule tree (DELTA-03):** `add_edge` enforces acyclicity on the `blocks` sub-graph (a DAG at all times, so `ready_frontier()` always terminates) **and** on `child_of` (a tree — a `child_of` cycle would make a molecule its own ancestor and break C13's tree walk). `caused_by`/`closes` may form chains across distinct anomaly instances and are *not* cycle-checked at the graph layer; their termination is C20's loop-closure invariant, not C19's.
 - **Monotonic ordering (DELTA-05):** `seq` is strictly increasing per store; a cross-session reader replays mutations in `seq` order and reaches the same graph state — the basis of deterministic resume (§16).
 - **Stable identity:** a bead's `id` is immutable across all lifecycle transitions, so `gc converge resume <id>` (§16) and `transfused_from`/`closes` references never dangle.
 - **Provider transparency (DELTA-01):** the same `BeadStore` contract holds whether `provider="file"` or `"dolt"`; switching providers is a config change (C03), not a code change for dependents.
@@ -89,10 +89,17 @@ Named-and-described (sweep 1; concrete signatures, JSON/msgpack shapes, and Merm
 
 | Edge | Semantics | Acyclic? | Primary consumer |
 |---|---|---|---|
-| `blocks` | source must complete before target is dispatchable | **yes (enforced)** | C18 reconciler / C05 sling `ready_frontier()` |
-| `child_of` | target is a sub-bead of source (molecule tree) | yes (tree) | C13 molecule |
+| `blocks` | source must complete before target is dispatchable | **yes (enforced at `add_edge`)** | C18 reconciler / C05 sling `ready_frontier()` |
+| `child_of` | target is a sub-bead of source (molecule tree) | **yes (enforced at `add_edge`)** | C13 molecule |
 | `caused_by` | source bead/event caused this bead (anomaly → fix) | chain | C39 fix-loop, C38 diagnosis |
 | `closes` | this bead closes/resolves the target (fix proves anomaly cleared) | chain | C39 loop-closure proof (G18, in C20) |
+
+> **Acyclicity enforcement scope (review fix RC19B-03):** `add_edge` enforces acyclicity on **both**
+> `blocks` (the dispatch DAG) *and* `child_of` (the molecule tree — a tree is by definition acyclic; a
+> `child_of` cycle would make a molecule its own ancestor and break C13's tree walk). `caused_by`/`closes`
+> are chains that may legitimately revisit a node only across *distinct* anomaly instances; they are not
+> cycle-checked, but C20's loop-closure invariant bounds them. Earlier wording named `blocks` as the
+> "single enforcement point", contradicting this table's "yes (tree)" for `child_of`; reconciled here.
 
 > [DELTA-03] **v4 said:** beads are "tasks with dependencies" (README l.239) — "dependency" is singular and untyped; the corpus never names edge kinds. **Change:** a typed edge taxonomy with one *acyclicity-enforced* kind (`blocks`). **Rationale (correctness + simplicity):** the self-heal loop's `caused_by`→`closes` chain (C39/C20 G18) and the reconciler's ready-frontier need *different* edge semantics; collapsing them into one untyped "dependency" forces every consumer to re-derive intent and makes the acyclicity guarantee unstatable. **Tradeoff:** four named edge kinds is a small fixed vocabulary C20 + downstream loops must agree on (shared seam, flagged OQ2).
 
@@ -100,7 +107,7 @@ Named-and-described (sweep 1; concrete signatures, JSON/msgpack shapes, and Merm
 
 | Provider | Backing | When | Durability (DELTA-04) | Concurrency |
 |---|---|---|---|---|
-| `file` | `turns`-style append log + index files under the city dir | Phase 0 (smallest install, AI-CONTEXT §3.4) | append → fsync → atomic-rename of index | single-writer (one agent in Phase 0); advisory lock for multi-process |
+| `file` | `turns`-style append log + index files under the city dir | Phase 0 (smallest install, AI-CONTEXT §3.4) | append → fsync → atomic-rename of index | single-writer (one agent in Phase 0); **advisory** lock for multi-process — see caveat |
 | `dolt` | Dolt SQL/versioned DB server | later phases (multi-rig, branching, AI-CONTEXT §3.4 "Dolt server explicitly off" in P0) | transactional commit | MVCC / Dolt transactions |
 
 Both satisfy the identical `BeadStore` contract (§3). Provider is selected by `[beads] provider = …` (C03 / AI-CONTEXT §13.2). **No dependent code branches on provider** (DELTA-01) — this is what lets Phase-0 (`file`) work be carried forward unchanged when Dolt arrives.
@@ -112,6 +119,7 @@ Both satisfy the identical `BeadStore` contract (§3). Provider is selected by `
 - **File provider:** mutation = append a record to the bead log + update derived indexes (by `id`, by `type`, by `lifecycle_state`, edge adjacency) under fsync + atomic-rename so a crash mid-write leaves either the old or new index, never a torn one (DELTA-04). `seq` is the log ordinal. Recovery = replay the log in `seq` order (DELTA-05).
 - **Dolt provider:** mutation = a transaction; `seq` from a monotonic sequence; branching/merge available but **not** exposed through `BeadStore` (DELTA-01 conservatism).
 - **Consistency:** single-writer linearizable in Phase 0; the contract specifies read-your-writes and `seq`-monotonic reads. Multi-writer (multi-rig) consistency is a Dolt-era concern (OQ3).
+  > **Caveat (review fix RC19B-04):** the multi-process *advisory* lock on the `file` provider is cooperative — a writer that ignores it (or a crash that strands the lock) can still corrupt the shared append log + indexes. The DELTA-04 durability guarantee (no torn write) holds *per writer* under atomic-rename, but **cross-writer serialization on the file provider is best-effort, not enforced**. True multi-writer safety is the Dolt provider's MVCC, deferred to OQ3. Phase 0 is single-writer by construction, so this is a correctness footnote, not a Phase-0 blocker — but the L4/L5 fan-out (OQ3) must move to Dolt before multiple agents share one file store.
 
 ## 5. Behavior
 

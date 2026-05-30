@@ -90,10 +90,12 @@ Sweep 1 — interfaces **named and described**; concrete signatures/schemas defe
 - **Attribution-native**: *every* bead carries a `created_by` — it is "automatic everywhere", with no
   configuration (AI-CONTEXT §3.1 P9; README:227, 371). v4 states the create path **always stamps** a
   non-empty `created_by`; it does not itself state the store *rejects* an un-attributed write.
-  > [FAITHFUL-FILL] To make "total" *testable*, the minimal faithful mechanism is that the C19 create path
-  > refuses to persist a bead with an empty `created_by`. This is the smallest enforcement consistent with
-  > "native/automatic everywhere"; it is an elaboration of the v4 property, not a v4-stated validation gate
-  > (the store-side rejecting gate is the explicit Track-B choice, C19-B DELTA-02).
+  > [FAITHFUL-FILL] To make "total" *testable* without exceeding v4, the minimal faithful mechanism is
+  > **stamping**: the C19 create path *always fills in* a non-empty `created_by` from the acting actor, so
+  > no bead can exist without one. This is the smallest elaboration consistent with "native/automatic
+  > everywhere" (a property of the *write path*, not of input validation). It is distinct from a *rejecting
+  > validation gate* that refuses a caller-supplied null/empty `created_by` — that store-side rejection is
+  > the explicit Track-B choice (C19-B DELTA-02) and is **not** asserted here as faithful.
 - **Typed-total**: every bead has a type drawn from the C20 registry (no untyped beads;
   `gc bd find --type` presupposes every bead is type-tagged).
 - **Durable across sessions**: a bead written in one session is readable, with its edges and state, by a
@@ -130,6 +132,16 @@ schema is C20):
 **Edges.** Dependency edges are directed bead→bead ("A depends on B"). The self-heal **chain**
 (anomaly → diagnosis → fix → resolution, README:259) and the `fix_task` re-entry into the build flow are
 expressed as edges/links between beads; C19 stores them, C20 names the link semantics per type.
+
+> [AMBIGUITY] v4 names only an **untyped** "dependency" ("Tasks with dependencies", README P10) — it never
+> states whether the self-heal chain uses *typed* edges or a single untyped depends-on edge with the
+> distinction carried on the *node* type. The two faithful readings are: (a) one untyped `depends-on`
+> edge, chain semantics inferred from node types (what §8 AC-4 below presumes); (b) typed chain edges —
+> which is the elaboration C20-A §4.3 supplies as `diagnosed_by`/`produces`/`resolved_by`. The C19/C20
+> faithful pair must agree on **one** model; today C19-A leans (a) and C20-A states (b). C19 stores
+> whatever edges C20 names; the canonical edge-kind ownership and whether edges are typed is routed to the
+> C19↔C20 interface freeze (OQ-C19-1) and the optimized siblings' edge-taxonomy OQ. No edge *names* are
+> invented here.
 
 **Backends.**
 - **`file`** (Phase 0 default, AI-CONTEXT §13.1): single-node, local-file persistence; the smallest viable
@@ -201,10 +213,11 @@ attribution F-modes are addressed via P9 `created_by` flowing through beads (C41
 ## 8. Acceptance criteria & test strategy
 
 1. **Attribution-native**: every bead created through the C19 interface has a non-empty `created_by` —
-   the create path always stamps one ("native, automatic everywhere", README:227/371). The minimal
-   testable form of this is that the create path refuses to persist a bead with an empty `created_by`
-   (FAITHFUL-FILL, §3); the *store-side rejecting validation gate* on an externally-supplied null is the
-   Track-B enforcement (C19-B DELTA-02), not a v4-stated fact.
+   the create path always **stamps** one from the acting actor ("native, automatic everywhere",
+   README:227/371). The minimal testable form of this is that no bead is ever persisted without a
+   non-empty `created_by` because the write path fills it in (stamping, FAITHFUL-FILL §3). The *store-side
+   rejecting validation gate* on an externally-supplied null is the Track-B enforcement (C19-B DELTA-02),
+   not a v4-stated fact.
 2. **Cross-session durability**: a bead (with type, edges, state) written in session S1 is readable —
    identical — from a separate session S2 after process restart (the "survives across sessions" property,
    README:235).
@@ -216,8 +229,10 @@ attribution F-modes are addressed via P9 `created_by` flowing through beads (C41
    (README:259).
 5. **Resume handle**: a `factory_build_in_progress` bead's `id` and state are sufficient for
    `gc converge resume <bead_id>` to pick the work back up (AI-CONTEXT §16).
-6. **Backend transparency**: the same test suite (1–5) passes against both `provider = "file"` and
-   `provider = "dolt"` with identical observable contract.
+6. **Backend transparency** *(sweep-2 / Dolt-era; G11-gated)*: the same test suite (1–5) passes against
+   both `provider = "file"` and `provider = "dolt"` with identical observable contract. Not exercisable at
+   sweep 1 — Phase 0 turns the Dolt server "explicitly off" (AI-CONTEXT §3.4) and the Dolt backend itself
+   is unverified Gas City behavior (G11). Stated now so the contract is frozen; tested when Dolt lands.
 (Concrete bead record schema, `gc bd` signatures, edge/link semantics per type, and file-layout/migration
 test vectors are sweep-2 deliverables, jointly with C20.)
 
@@ -244,7 +259,12 @@ test vectors are sweep-2 deliverables, jointly with C20.)
   `strongdm.factory.v4`, and C21-optimized names `softwarefactory.trajectory.v1`. C19 takes no position on
   the bead `bundle_id`; the canonical namespace ruling and whether bead types are registered in C22 at all
   belong to C20/C22 + the integrator. Recorded so C19's *silence* is not read as assent to C22 owning the
-  bead namespace.
+  bead namespace. **The collision is not merely a string disagreement — it is an *ownership* fork:** C20-B
+  asserts "two registries, one mapping" (C20 owns bead-type schemas and *binds* each to a CXDB bundle),
+  while C22-B asserts "one registry, two namespaces" (C22 is the single source of truth that *owns* the
+  per-type bead payload schemas, `kind: bead`). Both currently define the `fix_task`/`override` payload
+  schema. The integrator must resolve *who authors bead-type schemas* before any bundle string can be
+  pinned; C19 recommends C20 authors them and C22 hosts the registration mechanism (see review).
 - **OQ-C19-4** (→ review-log): **Attribution integrity (G36).** `created_by` is self-asserted in C19;
   C41's signed provenance is "optional, deferred." For an L5 self-modifying factory, is unsigned
   attribution acceptable as the *only* integrity control, or must the C19↔C41 seam reserve a place for

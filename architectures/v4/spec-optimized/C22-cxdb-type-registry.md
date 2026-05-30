@@ -2,7 +2,7 @@
 
 > Source: AI-CONTEXT §5.3 (the "turn" model: `{bundle_id, type, version}` per payload, type registry of JSON bundles like `mycompany.agents.v1` with `mycompany:DeployEvent` schemas, `registry/` storage layout), §5.1 (CXDB composition includes a "type registry" component), §5.5 (type-aware projection: "UI can render typed payloads structurally"); README Part 4 P9 (attribution), Part 4 P8 override/fix_task bead types, AI-CONTEXT §16 cold-start (`gc bd find --type factory_build_in_progress`); _meta component-inventory C22 row (depends C21; gap G17; foundational); _meta gaps G17 (assigned, blocker). F-MODE-COVERAGE: F50 (architecture/spec confusion in typed objects → "CXDB type registry enforces viewpoint separation").
 > Inventory ID: C22   Kind: data-store (schema/registry)   Status: sweep-1
-> Deltas: DELTA-01 (define the concrete v4 type bundle `strongdm.factory.v4` so cold-start works — the direct G17 resolution, not deferred), DELTA-02 (viewpoint promoted from a free tag to a closed enum that is a *first-class registry-enforced field* on every bundle entry, with a typed-object validation rule — the F50 mechanism v4 only names), DELTA-03 (registry is **append-only + version-monotonic**; types are never mutated in place, only superseded by a higher `version`, giving replay/counterfactual determinism), DELTA-04 (single source of truth for both bead types *and* CXDB payload types — one registry, two namespaces — so the bead-type vocabulary in AI-CONTEXT §16 stops being undefined), DELTA-05 (schema discipline: every registered type carries a machine-checkable JSON Schema, not just a name, so "type-aware projection" and ingest validation are real, not aspirational).
+> Deltas: DELTA-01 (define the concrete v4 type bundle — provisionally `strongdm.factory.v4` — so cold-start works — the direct G17 resolution, not deferred. **⚠ COLLISION (review-log XC-4): the literal bundle-id conflicts with C22-A `softwarefactory.v4`, C21-B `softwarefactory.trajectory.v1`, and especially C20-B `v4.beads.v1` — and DELTA-04 below registers the SAME bead types (`fix_task`/`override`/…) that C20-B DELTA-07 independently binds to `v4.beads.v1`, so the bead-payload round-trip fails until one namespace is ruled canonical. Also `strongdm.` is the upstream *vendor's* reverse-DNS — pinning the factory's own bundle there is lock-in. The literal value is PROVISIONAL pending the integrator's canonical-namespace ruling.**), DELTA-02 (viewpoint promoted from a free tag to a closed enum that is a *first-class registry-enforced field* on every bundle entry, with a typed-object validation rule — the F50 mechanism v4 only names), DELTA-03 (registry is **append-only + version-monotonic**; types are never mutated in place, only superseded by a higher `version`, giving replay/counterfactual determinism), DELTA-04 (single source of truth for both bead types *and* CXDB payload types — one registry, two namespaces — so the bead-type vocabulary in AI-CONTEXT §16 stops being undefined. **⚠ COUPLING + CROSS-TRACK CONTRADICTION: this inverts the inventory's C20→C21 dependency by routing bead cold-start through CXDB's `registry/`, coupling the Phase-0 bead work-graph's queryability to the Phase-1 CXDB process being up; and it contradicts C20-B, which keeps its OWN bead-type schemas and only *binds* to a CXDB bundle (C20-B DELTA-07). RESOLUTION: the registry-of-record for bead types stays with C20 (Phase-0, no CXDB dependency); C22 MAY import/mirror the bead-type vocabulary for projection, but bead cold-start MUST NOT require the CXDB process. Integrator must reconcile with C20-B.**), DELTA-05 (schema discipline: every registered type carries a machine-checkable JSON Schema, not just a name, so "type-aware projection" and ingest validation are real, not aspirational).
 
 ## 1. Purpose & responsibility
 
@@ -39,7 +39,7 @@ Named-and-described (sweep 1; concrete signatures, JSON Schemas, and the wire fo
 
 **Inbound (what C22 offers):**
 - `Register(bundle_id, type, version, json_schema, viewpoint) → {ok | conflict}` — add a new type version. **Append-only**: fails if `{bundle_id,type,version}` already exists with a different schema (DELTA-03); a changed schema requires a bumped `version`.
-- `Resolve(bundle_id, type, version?) → RegisteredType` — return the schema + viewpoint for a triple; if `version` omitted, return the highest registered version (with a "latest is implicit" caveat — callers needing determinism MUST pin, see §6).
+- `Resolve(bundle_id, type, version?) → RegisteredType` — return the schema + viewpoint for a triple. **Read/replay paths resolve against the version the payload was *written under* (the turn already carries `{bundle_id,type,version}` — C21 stores it), NOT "latest"** — this is the safe default, since C49 replay and C37 clustering read historical turns whose correct schema is their original version (DELTA-03 determinism). `version?`-omitted resolve-latest is permitted **only on the live-write path**, never on replay (resolve-latest on a historical turn is a determinism footgun — see §6/OQ-1).
 - `Validate(bundle_id, type, version, payload) → {valid | violations[]}` — schema-check a payload body against its registered type (DELTA-05).
 - `CheckViewpoint(type_ref, expected_viewpoint) → {ok | mismatch}` — the F50 guard: assert a payload's declared viewpoint is the one the caller's context permits (DELTA-02).
 - `List(bundle_id?, viewpoint?) → RegisteredType[]` — enumerate registered types, filterable by bundle and viewpoint (drives UI projection + cold-start discovery).
@@ -50,7 +50,7 @@ Named-and-described (sweep 1; concrete signatures, JSON Schemas, and the wire fo
 **Invariants (sweep-1 level; formalized sweep 2):**
 - **I1 — Append-only/version-monotonic:** a registered `{bundle_id,type,version}` is immutable; evolution = new higher version. (Replay/counterfactual determinism — DELTA-03.)
 - **I2 — Total typing:** every payload persisted via C21 carries a `{bundle_id,type,version}` that resolves in C22. No untyped writes (closes the G17 "type the schema never defines" hole).
-- **I3 — Closed viewpoint enum:** `viewpoint ∈ {architecture, spec, trajectory, telemetry, control}`; every registered type declares exactly one. (F50 mechanism — DELTA-02.)
+- **I3 — Viewpoint enum (provisional, closing at sweep 2):** `viewpoint ∈ {architecture, spec, trajectory, telemetry, control}`; every registered type declares exactly one. (F50 mechanism — DELTA-02.) **Only `architecture`/`spec` are F50-motivated; the other three are inferred — the enum stays EXTENSIBLE until C24/C37/C38 confirm their payload classes (OQ-2), because closing a wrong enum is a breaking registry migration.**
 - **I4 — Schema-present:** every registered type has a non-empty JSON Schema (DELTA-05).
 
 ## 4. Data model / state
@@ -81,14 +81,16 @@ C22 owns the **registry**, stored as JSON bundle files in CXDB's `registry/` (AI
 | `factory_build` | bead | control | AI-CONTEXT §16; README Part 6 phases |
 | `fix_task` | bead | control | README Part 4 P8 ("diagnosis agent writes bead of type `fix_task`") |
 | `override` | bead | control | README Part 4 P8 ("Gas City beads with type `override`") |
-| `spec_artifact` | payload | spec | README Part 4 P1; ties to C07 spec-artifact |
-| `architecture_doc` | payload | architecture | F50 — the viewpoint that must not be confused with `spec` |
+| `spec_artifact` | payload | spec | README Part 4 P1; ties to C08 spec-artifact — **see note** |
+| `architecture_doc` | payload | architecture | F50 — the viewpoint that must not be confused with `spec` — **see note** |
 | `trajectory_turn` | payload | trajectory | AI-CONTEXT §5.3 turn model |
 | `telemetry_event` | payload | telemetry | AI-CONTEXT §5.4 bridge (C24) |
 | `anomaly` | payload | telemetry | README Part 4 P11 anomaly detection (C36) |
 | `diagnosis` | payload | control | README Part 4 P11 Healer (C38) |
 
 > This table is the **G17-resolving artifact**: it is the concrete `{bundle_id, type, version}` bundle the gap demanded. Sweep 2 fills each row's JSON Schema; sweep 1 fixes the namespace, viewpoints, and kinds.
+>
+> **NOTE on `spec_artifact` / `architecture_doc`:** the spec artifact is C08's git-versioned Markdown source-of-truth, not a CXDB trajectory payload; v4's model keeps specs as git artifacts, not CXDB turns. These two rows must be justified by an *actual* stored CXDB payload class (e.g. a reference/pointer turn into the spec) or reduced to viewpoint-tags-on-references rather than full payload types. Resolve with C08 at sweep 2 — they currently exist mainly to give F50 a concrete architecture-vs-spec pair, which is not sufficient grounds to assert specs flow through CXDB.
 
 **Lifecycle:** bundles are loaded at CXDB startup from `registry/`; `Register` appends (never mutates — I1); a bundle export is a git-committable JSON artifact (cold-start reproducibility).
 
@@ -97,7 +99,7 @@ C22 owns the **registry**, stored as JSON bundle files in CXDB's `registry/` (AI
 Key flows (sequence/state diagrams in sweep 2):
 
 1. **Cold-start type resolution.** Agent runs `gc bd find --type factory_build_in_progress` → C19 query → resolves `factory_build_in_progress` against C22's `strongdm.factory.v4` bundle → returns matching beads. Previously (v4 as written) this type was undefined; DELTA-01 makes it resolve.
-2. **Ingest validation.** C21 receives an append with `{bundle_id,type,version,payload}` → calls `Validate` → on `violations[]`, reject at the seam (I2). On success, content-address and store.
+2. **Ingest validation (tiered — cost-bounded).** C21 receives an append with `{bundle_id,type,version,payload}`. On the hot path it does only **cheap structural checks** (triple resolves in C22; required envelope fields present) so the p50<1ms append budget (AI-CONTEXT §5.5) is preserved. **Deep JSON-Schema body validation** of high-volume trajectory turns (whole raw-API-body payloads from C24) is NOT mandatory inline — it is sampled / async / or restricted to low-volume control-plane types (beads, judge verdicts). On a structural-check failure, reject at the seam (I2). Exact tier policy + per-class cost budget is a sweep-2 freeze.
 3. **Viewpoint guard (F50).** A consumer that expects spec-viewpoint objects calls `CheckViewpoint(type_ref, spec)`; an `architecture_doc` (viewpoint=architecture) tagged where a `spec_artifact` is expected → `mismatch`, preventing the architecture/spec confusion F50 names (DELTA-02).
 4. **Type evolution.** Author bumps a payload schema → `Register(...,version=N+1,...)` → old version N stays resolvable for replay of historical turns (I1, DELTA-03).
 

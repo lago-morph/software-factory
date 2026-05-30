@@ -21,7 +21,11 @@ In the v4 substrate, the spec format **is** Gas City's prompt-template machinery
 - It is **not** the workflow/process description — the DAG/methodology lives in the **formula** (C12), not the spec (README:128 "the methodology lives in the file, not in agent prompts").
 - It is **not** the config layer that gates capabilities — that is **C03**; C08 only *depends on* C03 for where the format sits in the layered TOML.
 
-> [FAITHFUL-FILL] v4 never names this artifact with a single noun (it appears as "spec", "prompt template", `prompt.template.md`). This spec treats **the prompt-template file as the canonical spec artifact** because README:106 maps the "Spec format" row directly onto "Gas City prompt templates … `agents/<name>/prompt.template.md`". This is the minimal consistent reading: v4 explicitly equates the two and provides no separate spec file type.
+> [AMBIGUITY: OQ-1] v4 never names this artifact with a single noun (it appears as "spec", "prompt template", `prompt.template.md`), and two readings of "what the spec artifact *is*" both trace to cited v4 sources:
+> - **Reading A (collapse — chosen).** The prompt-template file *is* the canonical spec artifact, because README:106 maps the "Spec format" row directly onto "Gas City prompt templates … `agents/<name>/prompt.template.md`". This is the only v4 statement that names a concrete on-disk spec **format + path**.
+> - **Reading B (standalone).** The spec is a standalone target-system Markdown document the prompt template merely *references* — the shape the cited `one-shot-specs-and-research.md` Part 1 corpus actually shows in practice (StrongDM's three markdown files; Kilroy `spec.md`+`DoD.md`, distinct from agent prompt templates).
+>
+> **Faithful pick: Reading A**, because it is the smallest choice that yields a single v4-named artifact with a v4-named path, and v4's substrate section never reconciles the corpus practice with the placement-table equation. Reading B is *better engineering* but adds an artifact and a C08↔C09 reference seam v4 does not name — that is Track B's territory (see optimized DELTA-01). This is the **load-bearing ambiguity for C08**; it is restated as OQ-1 (§9) and is the integrator's call.
 
 ## 2. Context & dependencies
 
@@ -31,6 +35,7 @@ In the v4 substrate, the spec format **is** Gas City's prompt-template machinery
 | Upstream (authored by) | **C11** intent intake | The 9-field crucible (F41) is the structured intake that *feeds* spec authoring; C08 is the durable artifact it produces toward. |
 | Downstream (consumes) | **C09** prompt-template binding | Renders the spec (Go `text/template`) and binds it to work via formulas + sling (README:109). |
 | Downstream (validates) | **C10** spec linter (EARS/INCOSE) | Runs deterministic structural rules over the spec (README:108; F18, F38). |
+| Upstream (attribution) | **C41** actor/identity | Not a hard inventory dependency, but INV-3/AC-3 (versioned + attributable) rely on actor identity riding git commits via C41 (README:107). Soft upstream. |
 | Downstream (re-enters as fix target) | **C39** fix-task loop-closure | When something breaks, the fix is a spec change, not an output patch (Principle 1; inventory C39 `Depends on: …C08`). |
 | Downstream (bootstrap input) | **C51 / C52** gene-transfusion / self-bootstrap | The factory authors a *spec for its own next component* (inventory C51/C52 `Depends on: C08`). |
 
@@ -68,6 +73,8 @@ C08 owns the **artifact**, not a live store. State:
 | Consistency | Git is the consistency boundary; one committed revision = one authoritative spec state. |
 
 > [FAITHFUL-FILL] v4 gives no internal section schema for the Markdown body (no required headings). Faithful reading: the body is **free-form Markdown** ("arbitrary", AI-CONTEXT:542); structure is *optionally* imposed downstream by the EARS linter (C10), not by C08's format. C08's format contract is therefore "renderable Go-template Markdown in the right path", nothing stronger. Imposing a fixed section schema would be an architectural addition v4 does not make.
+>
+> Note (consistency with INV-2): "free-form" means free-form *within Go-template lexical rules* — INV-2 still requires the body parse as a Go `text/template`, so literal `{{` / `}}` sequences (e.g. inside a JSON example or a handlebars snippet) must be escaped per `text/template` rules. "Free-form" constrains *structure* (no required headings), not the template lexer.
 
 ## 5. Behavior
 
@@ -95,7 +102,7 @@ Key flow: **fix-the-spec-not-the-output.** When a run fails (anomaly → diagnos
 | **F3** Spec-completeness fallacy | A spec cannot enumerate everything that should not happen. | Twins (P7) + scenarios (P5) partially compensate; **residual gap** (F-MODE §"Inherent gaps", F3). C08 does not claim completeness. |
 | **F36** Instruction-following ceiling | A single spec chunk can exceed the model's instruction-following ceiling. | Mitigated via **spec-chunking** — "small focused specs" (F-MODE F36). The limit persists per chunk; faithful reading: C08 supports authoring many small specs, one per `agents/<name>/`. |
 
-> [FAITHFUL-FILL] "spec-chunking / small focused specs" (F-MODE F36) is named as a P1 mitigation but no chunk-size rule is given. Faithful elaboration: the natural chunk boundary is **one `prompt.template.md` per agent role**, since that is the only spec unit v4 names. No numeric size bound is asserted (none exists in v4).
+> [FAITHFUL-FILL] "spec-chunking / small focused specs" (F-MODE F36) is named as a P1 mitigation but no chunk-size rule is given. Faithful elaboration: the natural chunk boundary is **one `prompt.template.md` per agent role**, since that is the only spec unit v4 names. No numeric size bound is asserted (none exists in v4). *Contingent on OQ-1:* if the spec resolves to a standalone document (Reading B), the chunk unit is the spec doc rather than the template — the "one unit per role" framing survives either way, only the file it names changes.
 
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 

@@ -139,6 +139,10 @@ From this, the named ABI elements (faithful elaboration, sweep-1 descriptions):
 > superset for tool nodes that need to stream a structured request (deferred to sweep-2 as the "json"
 > tool-node profile). This keeps the single mandatory contract small (G29) while not contradicting the
 > HTTP/JSON-shaped bridge.
+> **Cross-track note:** the optimized track (C02-B DELTA-01/03) makes the structured stdin/stdout-JSON
+> envelope the *primary* path and demotes argv/`{placeholder}` to a compat shim — i.e. it promotes this
+> doc's optional Reading B to its floor. The divergence is deliberate (Track B improves freely); a reader
+> diffing the two tracks should expect opposite primary I/O channels by design.
 
 3. **Tool-node invariants** (sweep-1 statements):
    - A tool node is **deterministic-first**: it is the surface for steps that "don't need a model"
@@ -150,7 +154,10 @@ From this, the named ABI elements (faithful elaboration, sweep-1 descriptions):
    - Invocation is **stateless per call** > [FAITHFUL-FILL]: nothing in v4 describes a persistent tool-node
      daemon, and `type="subprocess"` implies spawn-per-step; minimal-consistent assumption is one process
      per node execution. (A long-lived "service" is the separate `[[service]]` block, §13.2, not a tool
-     node.)
+     node.) **Caveat:** the tool-node↔`[[service]]` boundary for the C24 directory-watch bridge and the
+     C44 twin is undrawn in the corpus (the optimized tracks raise this as C02-B OQ4 / C17 OQ4). The
+     faithful reading holds spawn-per-step as the *only* shape v4 shows, but C24/C44-shaped long-lived
+     work may belong on the `[[service]]` side, not under this invariant — see OQ5.
 
 ### 3.3 Outbound: what C02 guarantees to dependents
 
@@ -261,5 +268,7 @@ Sweep-1 high-level criteria (concrete tests at sweep-2):
 4. **Declaration-discipline key names** — the F44/F35/F43 manifest keys are reserved here; their exact
    names/shape must be reconciled with C43 (isolation) and C57 (failure-mode register) so the governance
    packs and the manifest agree.
-5. **Long-lived vs spawn-per-step tool nodes** — confirm no persistent tool-node daemon exists (vs the
-   `[[service]]` block), so the "stateless per call" invariant is safe.
+5. **Long-lived vs spawn-per-step tool nodes (OQ5)** — confirm no persistent tool-node daemon exists (vs the
+   `[[service]]` block), so the "stateless per call" invariant is safe. Specifically: do the C24 directory-
+   watch bridge and the C44 twin run as tool nodes or as `[[service]]` blocks? The corpus does not draw this
+   boundary; the optimized tracks defer it (C02-B OQ4 / C17 OQ4). Reconcile at sweep-2 before C24/C44 build.

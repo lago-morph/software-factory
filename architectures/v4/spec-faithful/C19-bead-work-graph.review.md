@@ -35,3 +35,45 @@ Charter: Track A — attack **fidelity & completeness**, not the design.
 
 ## Verdict
 **accept-with-fixes.** Faithful and well-sourced; the only real fidelity defects are (a) over-claiming store-side rejection as a v4 fact (R19A-01) and (b) a dependency-direction label that contradicts the cited inventory (R19A-03). Both fixed in place. The bundle-id silence (R19A-02) is correct faithful posture but is DEFERRED to the integrator because the *optimized* siblings actively collide.
+
+---
+
+## Second-pass addendum (Subsystem Adversary, cross-component sweep)
+
+A later subsystem-wide pass (C19+C20 both tracks, cross-checked against C21/C22) confirms the findings above
+and adds the following. Where the first pass already tightened the attribution invariant (R19A-01), my
+stamping-vs-rejection edit further sharpened the §3/§8 wording to say *stamping* explicitly; consistent, not
+conflicting.
+
+### R19A-06 — minor — Cold-start procedure cited "§16" here but "§13" in C20-A (same lines 694–699)
+The same recipe is labelled AI-CONTEXT §16 in C19-A/C21-A/C22 but §13 in C20-A. Line numbers agree; the label
+is the defect. C19-A matches the subsystem majority — **no edit to C19-A**; flagged in the C20-A review.
+
+### R19A-07 — major — Edge model inconsistent across the faithful pair: C19-A implies one untyped depends-on edge while C20-A names three typed chain edges
+C19-A §4/§8 AC-4 presume a single untyped "A depends on B"; C20-A §4.3 names `diagnosed_by`/`produces`/
+`resolved_by` (typed). v4 says only "Tasks with dependencies" (untyped). The faithful pair states two edge
+models. **Fix applied** — added an `[AMBIGUITY]` block to C19-A §4 recording both readings and routing
+edge-kind ownership to the C19↔C20 freeze without inventing edge names.
+
+### R19A-08 — minor — AC-6 backend transparency reads as sweep-1-testable but is Dolt-era / G11-gated
+Phase 0 turns Dolt "explicitly off" (AI-CONTEXT §3.4); the Dolt backend is unverified (G11). **Fix applied** —
+AC-6 annotated as sweep-2/Dolt-era and G11-gated.
+
+### R19A-09 — major (escalation of R19A-02) — the bundle-id collision is an *ownership* fork, not just a string clash
+Beyond the four conflicting strings (`v4.beads.v1` C20-B, `softwarefactory.trajectory.v1` C21-B,
+`softwarefactory.v4` C22-A, `strongdm.factory.v4` C22-B), **C20-B and C22-B both claim to author the per-type
+bead payload schema** (`fix_task`, `override`): C20-B says "two registries, one mapping" (C20 owns schemas,
+binds to a CXDB bundle); C22-B says "one registry, two namespaces" (C22 is the single source of truth, owning
+bead-type schemas as `kind: bead`). These are mutually exclusive architectures and both define the same
+schemas today. **Fix applied** — extended OQ-C19-5 to name the ownership fork and C19's recommendation: C20
+authors bead-type schemas; C22 hosts the registration *mechanism*. The string can't be pinned until ownership
+is decided. DEFERRED to integrator.
+
+### Recommended canonical resolutions (to integrator)
+- **Bundle-id:** one reverse-DNS root, per-store sub-bundles — `softwarefactory.v4.beads` (C19/C20) and
+  `softwarefactory.v4.trajectory` (C21/C22); **C20 authors bead-type schemas, C22 hosts registration.**
+- **C19↔C20 direction:** **C20 depends on C19** (inventory); co-foundational, broken by the M1 envelope
+  freeze. The reversed dispatch-brief arrow reflects the `validate` call seam, not a dependency reversal.
+
+Updated verdict: **accept-with-fixes** (unchanged). No blockers in C19-A itself; the load-bearing residuals
+(edge ownership, bundle-id ownership) are cross-component and DEFERRED to the integrator.

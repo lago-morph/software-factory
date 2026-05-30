@@ -59,6 +59,13 @@ leaves a reader unable to detect the XC-4 collision from C21-A alone.
 **Fix (applied).** Added a one-line pointer in §3 (I7 row note) to XC-4 / the canonical-namespace
 ruling, so C21-A explicitly defers naming to the integrator rather than silently omitting it.
 
+### RC21A-06 — minor — Second-pass: §5 step-4 and §7 still called perf numbers a "contract" after RC21A-03 only fixed AC-6 (Subsystem Adversary pass)
+**Claim.** RC21A-03 reworded AC-6 to "measure, don't assume" but left §5 "Ingest a turn" step 4 and
+§7 Scale still asserting "**Performance contract: p50 < 1ms**" as a hard guarantee — an internal
+inconsistency (the spec calls the same number both "unverified upstream claim" at AC-6 and "contract"
+at §5/§7). **Evidence.** Lines 170, 244 vs AC-6/G11. **Fix (applied).** Reworded §5 step-4 and §7
+Scale to "Performance *claim* (upstream, unverified — measured at AC-6)", matching AC-6's framing.
+
 ## Verdict
 **accept-with-fixes.** Faithful, well-traced, and the C21/C22 G17 split + G33 fail-open reading are
 the correct minimal readings. The only real fidelity defects are *under-qualified upstream claims*

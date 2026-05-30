@@ -126,8 +126,9 @@ the load-bearing README Part 4 terms named in **G06**. The authoritative seed se
 | Polecat | A specific role in the Gas Town pack (not in the interface) | (pack-specific role) | AI-CONTEXT §3.3 |
 | Mayor | Senior coordinator agent role (Gas Town pack vocab) | senior coordinator role | AI-CONTEXT §3.3 |
 | Model stylesheet | CSS-like syntax for routing pipeline nodes to different models (cost/family-aware) | model routing rules | README:189; v3 vocab (Fabro); C29 |
-| Gene transfusion | Applying a working pattern by pointing the agent at a concrete exemplar and asking it to reproduce the behavior, instead of describing it from scratch | transfusion / pattern-from-exemplar | README:384, :496; v3 vocab |
+| Gene transfusion | Applying a working pattern by pointing the agent at a concrete exemplar and asking it to reproduce the behavior, instead of describing it from scratch. **Definition is analogy-only (G07):** v4 gives no operational success/completeness predicate for "behaves like the exemplar"; that predicate is owned and unresolved at **C51**. The one-liner is not a complete definition. | transfusion / pattern-from-exemplar | README:384, :496; v3 vocab; G07 → C51 |
 | Gas City placement | (README authoring convention) where a v4 component maps onto the Gas City substrate | "where this lives in Gas City" | README Part 4 tables |
+| Layer (overloaded — G01) | **Two readings, both recorded, no winner picked (faithful).** *Sense 1 — three-layer architecture:* (1) LLM client, (2) agent loop, (3) pipeline engine, + persistence (README Part 3). *Sense 2 — numbered "Layer 0–6" principle tier* (AI-CONTEXT §6/§7; README Part 6 "Layer 2/5/6"). | sense 1: architecture tier; sense 2: principle grouping | README Part 3 / Part 6; AI-CONTEXT §6/§7; G01 |
 
 > [FAITHFUL-FILL] **"Gas City placement"** appears in G06's term list but in v4 it is a *column header /
 > authoring phrase* in README Part 4 tables, not a Gas City runtime primitive. The minimal faithful

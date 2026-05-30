@@ -167,7 +167,9 @@ lines 393, 397).
 2. C21 msgpack-serializes the payload, computes its **BLAKE3** key, and stores it in `blobs.pack` **iff
    not already present** (dedup; INV-1).
 3. C21 appends a turn record to `turns.log` referencing the blob key(s) and the parent pointer (INV-2).
-4. Performance contract: **p50 < 1ms append for 10KB payloads** (AI-CONTEXT §5.5 line 239).
+4. Performance *claim* (upstream, **unverified** — see AC-6, G11): CXDB asserts **p50 < 1ms append for
+   10KB payloads** (AI-CONTEXT §5.5 line 239). This is measured-and-recorded at AC-6, not a contract C21
+   guarantees.
 
 **Branch (O(1)).** A consumer (C49 driver, or a self-healing investigation) requests a fork from turn T.
 C21 creates a new head pointer rooted at T; **no history is copied** (INV-3). Subsequent appends extend
@@ -241,7 +243,7 @@ detectable via BLAKE3 mismatch (INV-4).
 - **Cost.** v4 gives no CXDB-specific cost model (G32); storage is file-backed local I/O (no managed DB
   fees). The *consumer* costs (embedding all trajectories for C37, replay token spend for C49) belong to
   those components, not the store.
-- **Scale.** Performance contract: **p50 < 1ms append for 10KB payloads; sub-ms retrieval over TB-scale**
+- **Scale.** Performance *claim* (upstream, unverified — measured at AC-6): **p50 < 1ms append for 10KB payloads; sub-ms retrieval over TB-scale**
   (AI-CONTEXT §5.5). O(1) branching means trajectory-count, not depth, drives branch cost. v4 names no
   multi-node/HA story → single-node ceiling is a known limitation (OQ).
 - **Observability.** C21 *is* the observability substrate for trajectories; the React/TS frontend

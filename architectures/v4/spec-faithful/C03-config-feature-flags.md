@@ -107,8 +107,13 @@ own; the substrate (C01) is what loads it each run.
 | `[mail]`, `[daemon]`, Dolt server, orders | messaging / daemon / Dolt / Orders | **off** at Phase 0 | AI-CONTEXT §3.4 ("Explicitly off") |
 
 **Phase-0 "off-by-omission" set** (the explicit faithful list): `[daemon]`, `[mail]`, `[formulas]`,
-`[rigs]`, Dolt server, `[[service]]` blocks, orders (AI-CONTEXT §3.4). All off purely because their
+`[rigs]`†, Dolt server, `[[service]]` blocks, orders (AI-CONTEXT §3.4). All off purely because their
 sections are absent.
+
+> † **Spelling note.** AI-CONTEXT §3.4 writes the prose form "rigs"; the canonical *section* form is the
+> array-of-tables `[[rig]]` (AI-CONTEXT §13.3 / C42). One spelling (`[[rig]]`) should be adopted in the
+> sweep-2 schema so the C10/C15 vocabulary linters key off a single section name. Mirror of C01 RC01-03;
+> reconcile across C01/C03/C42.
 
 ## 5. Behavior
 
@@ -128,7 +133,7 @@ C03 has no control loop; its behavior is **load-time** and **authoring-time**:
 
 | F-mode / gap | Relevance | Handling in C03 (faithful) |
 |---|---|---|
-| **G03** — "6 of 12 native" is unsupported because P3 is "Strong **when `[formulas]` enabled**" but Phase 0 turns `[formulas]` **off** | C03 *owns the very flag* (`[formulas]`) the miscount turns on. | See AMBIGUITY block below. Faithful resolution: the native count is **phase-relative** — 5 at Phase 0 (formulas off), 6 once `[formulas]` is added in Phase 1. C03's job is to make that gating explicit so the count is unambiguous per phase. |
+| **G03** — "6 of 12 native" is unsupported because P3 is "Strong **when `[formulas]` enabled**" but Phase 0 turns `[formulas]` **off** | C03 *owns the very flag* (`[formulas]`) the miscount turns on. | See AMBIGUITY block below. Faithful resolution: the native count is **phase-relative** — 5 at Phase 0 (formulas off), 6 once `[formulas]` is added in Phase 1. C03's job is to make that gating explicit so the count is unambiguous per phase. **Ownership split (consistent with C01-A §6):** C03 *derives* the count from which sections are present; C01 *verifies* each native capability against the pinned `gc` (conformance manifest); C57 *reconciles* the corpus-wide headline. The three are complementary, not three independent fixes of the same number. |
 | **G37** — secrets/credentials appear in `city.toml`/`env` as plaintext with no secrets story | OAuth/CXDB/LangFuse/OTel mTLS creds live in `[[service]]` endpoints and `env = { … }` (AI-CONTEXT §13.2), i.e. *inside C03's files*. | Noted + deferred (faithful): v4 specifies no secrets manager, so C03 faithfully records that secrets ride in version-controlled TOML/env and flags it as residual risk (§9). Inventing encryption/rotation would exceed v4. |
 | Misconfiguration (typo'd / missing section) | A capability silently stays off if its section is absent or misnamed. | Faithful posture: absence is *intentional* off (Phase 0 relies on it), so "missing section" is indistinguishable from "deliberately off." Detection of *unintended* omission is not specified by v4; flagged as open question (§9). |
 | Layer-merge ambiguity | Imported pack and local `city.toml` could set the same key. | Handled by the precedence FAITHFUL-FILL in §4 (inner overrides outer); concrete conflict rules → sweep 2. |

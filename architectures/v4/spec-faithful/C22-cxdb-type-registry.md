@@ -105,8 +105,12 @@ Sweep-1: interfaces are **named and described**; signatures are deferred to swee
 - **I3 (viewpoint totality).** Every typed payload carries exactly one viewpoint; "untagged" is not a
   legal state, because F50's separation guarantee fails if some payloads are viewpoint-less.
   > [FAITHFUL-FILL] v4 (F50) says viewpoint tagging exists but does not say it is mandatory. Making it
-  > total is the minimal way the F50 "Addressed" claim can actually hold — an optional tag cannot
-  > *enforce* separation, the same defect G36 flags for optional attribution.
+  > total is the *minimal choice that lets the F50 "Addressed" claim hold* — an optional tag cannot
+  > *enforce* separation, the same defect G36 flags for optional attribution. **Caveat:** mandatory-on-
+  > write changes the ingest contract for every writer (C24, event bus, Go clients). Whether totality is
+  > *enforced at write time* (hard-reject untagged writes) vs *audited after the fact* is a Track-B / C57
+  > detect-vs-prevent decision (see OQ1); a faithful builder must NOT hard-reject untagged writes without
+  > the integrator's sign-off, or it will break any legacy/untyped ingest path.
 
 ## 4. Data model / state
 
@@ -136,13 +140,22 @@ introduces no new store.
   > is the minimal third value needed because the *bulk* of CXDB payloads are runtime trajectory turns
   > (AI-CONTEXT §5.3) which are neither architecture nor spec assertions. Kept to three to avoid
   > inventing taxonomy v4 does not state; a downstream bundle may add viewpoints under its own version.
+  > **Cross-track note:** the optimized track (C22-B) widens this to a five-value enum
+  > (`architecture | spec | trajectory | telemetry | control`). The canonical enum is an integrator
+  > decision — a closed enum is a breaking registry migration to change later (C22-B OQ2 raises the same).
 
 **The v4 bundle.** G17 (blocker) is that *the v4-specific bundle is never specified*. Faithfully, C22's
-deliverable is exactly that bundle: a single `softwarefactory.v4` bundle that registers the payload
+deliverable is exactly that bundle: a single v4 bundle that registers the payload
 types the rest of v4 stores in CXDB (trajectory turns, raw-body conversation payloads, and any typed
-projections the Healer/clustering tier reads). Sweep-1 fixes its **existence, identity, and shape**; the
+projections the Healer/clustering tier reads). Sweep-1 fixes its **existence and shape**; the
 concrete per-type schemas are a sweep-2 deliverable (they depend on C24's payload shapes and C37's
 projection needs).
+> [FAITHFUL-FILL + XC-4] The bundle's *existence* is faithfully forced (reading (b) below). Its literal
+> *id string* is **not** v4-stated and is a placeholder pending the integrator's canonical-namespace
+> ruling. The candidate strings disagree across the foundational specs — C22-A `softwarefactory.v4`,
+> C22-B `strongdm.factory.v4`, C21-B `softwarefactory.trajectory.v1`, C20-B `v4.beads.v1` (review-log
+> XC-4). C22-A uses `softwarefactory.v4` only as an illustrative placeholder; the bead-payload round-trip
+> (C20↔C22) fails until one namespace is ruled canonical. Do not treat the literal as settled.
 > [AMBIGUITY: G17] v4 gives two readings of "the type bundle". (a) CXDB's generic registry is *enough*
 > and v4 needs no bundle of its own (the `mycompany.*` examples are the whole story). (b) v4 must
 > **register its own** bundle for its payloads to be typed/resolvable at all. Reading (b) is forced by
@@ -231,6 +244,9 @@ Sweep-1 (high-level; concrete tests at sweep 2):
   A flags; resolution belongs to Track B / the residual-risk register (C57).
 - **OQ2.** C20 (bead type registry) and C22 (CXDB type registry) are parallel registries on two stores.
   v4 never states whether they should share machinery or a viewpoint convention. Faithfully kept
-  separate; a future reconciliation may unify them.
+  separate; a future reconciliation may unify them. **Cross-track contradiction (→ integrator):** the
+  optimized track takes the opposite position — C22-B DELTA-04 *unifies* both into one registry with two
+  namespaces, and C20-B DELTA-07 binds bead types into a CXDB bundle. The two tracks disagree on the
+  C20↔C22 relationship; the integrator must rule (ties to XC-4).
 - **OQ3.** The concrete per-`type` schemas in `softwarefactory.v4` depend on C24's raw-body payload
   shape (G26) and C37's projection needs; pinned at sweep 2 once those seams are fixed.

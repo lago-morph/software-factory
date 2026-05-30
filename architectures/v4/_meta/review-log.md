@@ -24,6 +24,17 @@ this file is written by the primary or a single collector agent per pass.
   (`attempt_no`/`max_attempts`/`escalated`/`closes`); the numeric policy (N attempts → escalate, F52
   oscillation detection, L5 ship authorization) is deferred to C39 (and possibly C18). Confirm C39 owns it.
 
+- **XC-5 — C41↔C23 tamper-evidence chain ownership (blocker, from adversary).** C41-B DELTA-04 claims
+  tamper-evidence "anchored in C23," but C23-B defers record hash-chaining (its OQ3). F14 "RESOLVED" rests
+  on a chain that may not exist. Resolution: C41 owns the hash-chain computed over C23 `event_id`s; C23
+  provides ordered `event_id`s only. Confirm and update both specs. Owner: integrator + C41/C23 (B).
+- **XC-6 — Phase-0 signing assurance vs unsolved secrets (G37).** C41-B `signed`/`attested` assurance is
+  over-stated while G37 (key storage) is unsolved — plaintext keys in `city.toml` collapse the ladder.
+  Signing is a mechanism, not yet a control, until C03's SecretResolver (OQ) lands. Owner: C41/C03 (B).
+- **DECISION NEEDED — signing mandatory vs optional.** Track A holds README:229 "optional/deferred";
+  Track B makes it graduated-mandatory. Integrator/human must settle; if mandatory, G37 + XC-5 must be
+  pulled forward with it.
+
 ## Per-component open questions (harvested)
 (Collector appends `C<ID>:OQ-n — text` rows here each pass. Initial seeds below.)
 - C01: has anyone run `gc` end-to-end vs v4's Native claims? Pinned version+commit? (blocks on G11)

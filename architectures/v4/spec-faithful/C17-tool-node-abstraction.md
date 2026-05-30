@@ -48,7 +48,7 @@ caring whether the binary is Go, Python, or a CLI, and without re-implementing t
   + model-floor side, C04/C28/C29). C17's whole point is to be the *non-model* alternative.
 - NOT the **reconciler / Health Patrol** (C18). C18 decides *when* to (re)run a node and handles
   convergence/retry; C17 defines *what a node is*.
-- NOT the individual deterministic tools themselves (the EARS spec linter C32, the workflow/discipline
+- NOT the individual deterministic tools themselves (the EARS spec linter C10, the workflow/discipline
   linters C15/C16, the CXDB bridge C24, the satisfaction aggregator, the anomaly/embedding/clustering
   Python nodes). Each of those is *a* tool node — an instance built against C17's abstraction and C02's ABI.
 
@@ -61,7 +61,7 @@ caring whether the binary is Go, Python, or a CLI, and without re-implementing t
 | Upstream (terms) | **C07** vocabulary-glossary | Canonical meaning of `tool bead`/`tool node`, `formula`, `molecule`, `bead` (G06). |
 | Downstream (places nodes) | **C12** formula format, **C13** molecule | A formula DAG references a C17 deterministic node; a molecule instantiates it as a bead. |
 | Downstream (disciplines on it) | **C16** discipline linter (A36b), **C15** workflow linter | C16 flags LLM nodes that should be C17 tool nodes (F52); C15 lints the formula structure that places them. |
-| Downstream (instances — "a tool node") | **C24** CXDB bridge, **C30/C31** scenario store/runner, **C32** EARS spec linter, **C33** satisfaction aggregator, **C44** digital twin, and every component the inventory marks "tool node" / "Python tool node" | Each is built *as* a C17 deterministic node over the C02 ABI. The inventory routes C30, C31, C44 explicitly through C17 as a dependency. |
+| Downstream (instances — "a tool node") | **C24** CXDB bridge, **C30/C31** scenario store/runner, **C10** EARS spec linter, **C33** satisfaction aggregator, **C44** digital twin, and every component the inventory marks "tool node" / "Python tool node" | Each is built *as* a C17 deterministic node over the C02 ABI. The inventory routes C30, C31, C44 explicitly through C17 as a dependency. (C32 the LLM-judge is *not* a C17 tool node — it is a model-calling step, the node kind C17 explicitly excludes.) |
 
 C17 is **foundational** (inventory: yes) and lives in **Batch 1**, authored in parallel with C02/C01
 because nearly every deterministic step in the factory is "a C17 tool node."
@@ -91,6 +91,10 @@ realization of inputs/outputs/status is C02's, referenced, not redefined):
 > faithful fill is a single node-kind tag distinguishing `deterministic` (tool node) from the model/agent
 > kind, because the discipline linter (F52) cannot fire without a machine-readable distinction. C17 only
 > *names* the tag; the enforcement policy is C16's.
+> *Consistency note:* C02-faithful §3.2 already states a "deterministic-first" tool-node invariant for the
+> same concept at the ABI layer. The two fills are the same distinction at different layers; the tag's
+> *home* (the C12 formula-node entry vs. the C02 `[[tool]]` block — **not** a C17-owned new file) is the
+> open reconciliation, tracked as OQ-2 with C12/C16.
 
 ### 3.2 Inbound: how a formula/molecule references a C17 node
 
@@ -102,14 +106,18 @@ inputs/outputs, independent of the bound binary's language*. This is the "unifie
 > [AMBIGUITY: G29] **Where the input/output/status realization lives.** Two faithful readings of the C17↔C02
 > split: **Reading A** — C17 is a *thin naming/abstraction layer* and the entire I/O channel (args/files/
 > exit-code, optional stdin/stdout-JSON) is C02's; C17 adds only node-kind + determinism semantics.
-> **Reading B** — C17 *owns the workflow-facing input/output declaration* (which context keys a node
-> consumes and which outputs it surfaces to the molecule) while C02 owns only the byte-level wire format.
-> **Pick Reading A's wire ownership + Reading B's declaration ownership** (they are complementary, not
-> conflicting): the *bytes* are C02's (G29 is resolved there, in `spec-faithful/C02-pack-extension-abi.md`
-> §3.2); the *workflow-level declaration* of which inputs/outputs a node exposes is C17's. Rationale: this
-> is the only split consistent with C02 explicitly scoping itself "NOT the tool-node abstraction as a
-> workflow concept (C17)" while owning the ABI, and with C17 being a Workflow-Engine component rather than a
-> Runtime-Substrate interface. C17 therefore does **not** re-specify the wire bytes; it cites C02.
+> **Reading B** — C17 *owns a workflow-facing input/output declaration* distinct from the ABI (which context
+> keys a node consumes and which outputs it surfaces) while C02 owns only the byte-level wire format.
+> **Pick Reading A.** The *bytes and the I/O contract itself* are C02's (G29 is resolved there, in
+> `spec-faithful/C02-pack-extension-abi.md` §3.2, which already enumerates the input/output/status channels
+> as ABI elements). C17 adds only: the **node-kind** tag, the **determinism** semantics, and the **uniform
+> by-name reference** a formula uses to place the step. C17 does **not** introduce a third "workflow-level
+> I/O declaration" ownership band — *which placeholder keys a node fills* is the **C12** formula-node entry
+> (the node's args/context binding), and *which bytes those become* is C02's ABI. Rationale: this is the
+> only split that keeps C17 thin (consistent with §4/§8 "no new on-disk artifact / view-only"), avoids
+> duplicating C02's already-resolved seam, and matches C02 scoping itself "NOT the tool-node abstraction as a
+> workflow concept (C17)" while owning the wire contract. C17 therefore does **not** re-specify the wire
+> bytes or a parallel I/O declaration; it cites C02 (bytes) and C12 (which placeholders a node fills).
 
 ### 3.3 Outbound: what C17 guarantees to dependents
 
@@ -118,7 +126,9 @@ inputs/outputs, independent of the bound binary's language*. This is the "unifie
 - To **C16** (discipline linter): a machine-readable node-kind tag so "LLM node where a tool node would
   suffice" can be detected (F52).
 - To **C18** (reconciler): a step whose success/failure is a clean status signal and whose re-execution is
-  safe because the node is deterministic/reproducible (idempotent re-run is the P4 payoff).
+  *intended* to be safe because the node declares the determinism contract. (Note: v4 specifies no runtime
+  determinism check; safe re-run is the declared P4 payoff, enforced by the contract + C16/test — not a
+  C17 runtime-checked guarantee. See §6 and OQ-3.)
 - To **every "tool node" component** (C24, C30–C33, C44, …): one abstraction to build against, so a new
   deterministic tool is "declare a `[[tool]]` (C02) + reference it as a deterministic node (C17)," nothing
   more.
@@ -153,8 +163,10 @@ Key flow (sweep-1 narrative; sequence diagram deferred to sweep-2):
    files / structured result) and a **status** (exit code) per C02.
 5. C17's abstraction surfaces that status + outputs to the molecule as the step's product; on success the
    work graph advances; on failure the status blocks the DAG and C18/C40 own retry/escalation.
-6. Because the node is deterministic, **re-running it on the same inputs is safe** — the property C18's
-   convergence loop and C40's crash-survival rely on (P4 payoff).
+6. Because the node *declares* determinism, **re-running it on the same inputs is intended to be safe** —
+   the declared property C18's convergence loop and C40's crash-survival lean on (the P4 payoff). v4
+   specifies no runtime enforcement; the property is contract-declared and C16/test-enforced, not
+   C17-guaranteed at runtime (see §6, OQ-3).
 
 The discipline behavior P4 asserts: deterministic nodes are the *default*; a model/agent node must be
 *justified* (README:154, :160). C17 is the surface that makes "is this step deterministic?" a first-class,
@@ -170,8 +182,9 @@ checkable question (F52).
 | **Non-deterministic "tool" node** (determinism contract violated) | A node declared deterministic that actually varies output (hidden clock/network/randomness). | The determinism contract (3.1) is the invariant; detection is acceptance-test + C16 discipline territory. > [FAITHFUL-FILL]: v4 asserts reproducibility (README:154) but specifies no runtime determinism check; faithful floor is "contract is declared and tested," enforcement deferred to C16/test strategy. |
 
 > [FAITHFUL-FILL] **G29** is a **minor** gap *owned and resolved by C02* (the wire ABI). C17 addresses G29
-> only by *consuming* C02's resolution and pinning the workflow-level split (3.2); it does not re-resolve
-> the bytes. No other C17-assigned failure mode is deferred.
+> only by *consuming* C02's resolution and adding node-kind + determinism + the uniform by-name reference
+> (3.2); it does not re-resolve the bytes and does not introduce a separate workflow-level I/O declaration.
+> No other C17-assigned failure mode is deferred.
 
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 

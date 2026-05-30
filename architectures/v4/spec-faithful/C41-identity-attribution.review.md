@@ -92,6 +92,12 @@ exists, which G37 says it does not.
 **contingent on G37 (secrets handling) being resolved first**, so the cheap-seam claim is not
 oversold. Completeness fix.
 
+### RC41A-07 — process note — prior review draft claimed fixes "applied" that were not in the spec
+A prior version of this review file asserted all six fixes were "applied," but none of RC41A-01..06 were
+actually present in `spec-faithful/C41-identity-attribution.md` at re-review time (verified by grep). This
+adversary pass has now **genuinely applied** the confident faithful fixes (RC41A-01/02/03/04/05/06) to the
+spec §4.1, §6, §7, §9. Status language below reflects the real post-edit state.
+
 ## Verdict
 
 **accept-with-fixes.** The faithful spec is genuinely faithful: it does **not** invent the signing model

@@ -38,8 +38,8 @@ Named-and-described (sweep 1; signatures in sweep 2).
 **Invariants**
 - Determinism: same ordered layer set + same secret-resolver state ⇒ identical `EffectiveConfig` (and identical effective hash).
 - A capability is enabled **iff** its gating section is present in the flattened config **and** validation passed; partial/invalid enablement is impossible (fail-closed).
-- `requires` is transitively satisfied or load fails — you cannot enable C42 rigs without the substrate they assume.
-- No secret literal is ever present in a `LayerSource` payload that is version-controlled (lint-enforced, DELTA-03).
+- `requires` is transitively satisfied or load fails — you cannot enable C42 rigs without the substrate they assume. The `requires`/`conflicts_with` relation MUST form a **DAG**; a dependency cycle is a load-time error with a typed `DescriptorCycle` diagnostic, never a hang or opaque failure. (`conflicts_with` is mutual and non-transitive.)
+- No secret literal is ever present in a version-controlled `LayerSource` payload (lint-enforced, DELTA-03). Note this is *detection of secret-shaped literals*, not a storage guarantee — the actual protection depends on the resolver provider (OQ1).
 
 ## 4. Data model / state
 
@@ -47,7 +47,7 @@ Named-and-described (sweep 1; signatures in sweep 2).
 - **Merge semantics:** tables deep-merge by key; arrays-of-tables (`[[agent]]`, `[[rig]]`, `[[service]]`) merge by a declared identity key (`name`) — same-name entries override, new names append. Scalars: higher layer wins.
 - **Capability registry:** the set of `CapabilityDescriptor`s, keyed by `capability_id`. Lives in core + packs; assembled at load.
 - **Effective config:** in-memory, immutable per generation; carries a content hash (effective-config hash) for provenance and for C46 meta-metrics keying ("which config produced this satisfaction number").
-- **Phase profiles** (DELTA-05 framing): Phase 0 / Phase 1 / Phase 2 are *named layer presets* (which sections are present). They are documentation + optional named overlays, not new mechanism.
+- **Phase profiles** (DELTA-05 framing): Phase 0 / Phase 1 / Phase 2 are *named layer presets* (which sections are present). They are documentation + optional named overlays, not new mechanism. Selecting a profile is a **load/reload generation switch** (immutable generation), never a live per-request flip — preserving the §1 non-goal ("not a runtime feature-flag service").
 - Persistence: the source layers are version-controlled files (Gas City owns them); the effective config + provenance are derived, logged to C23, not separately persisted.
 
 ## 5. Behavior
@@ -70,11 +70,12 @@ Reload is the same flow producing a new generation; capabilities observe a gener
 - **G37 / secret leakage** — plaintext OAuth/CXDB/LangFuse/mTLS creds in version-controlled TOML. Mitigation: `SecretRef` indirection + lint that rejects secret-shaped literals in versioned layers (DELTA-03). See Open Questions for resolver-provider choice.
 - **Misconfiguration / phantom-enable** — a typo'd section name silently does nothing. Mitigation: unknown-section detection is an error, not ignored (DELTA-04).
 - **Config drift across layers (F34/F7 flavor)** — pack layer and city layer disagree. Mitigation: deterministic precedence (DELTA-01) + provenance hash so drift is observable and attributable (DELTA-06).
+- **Descriptor-graph cycle / dual source of truth (DELTA-02)** — `requires`/`conflicts_with` must be a DAG; a cycle fails load with `DescriptorCycle` rather than looping. Open architectural question (DEFERRED): the descriptor dependency edges duplicate the inventory's `Depends on` edges — whether descriptors are *authored* or *generated from / checked against* the inventory is a single-source-of-truth call for the integrator (see OQ3, and C02 OQ3 for the C02↔C03 ownership straddle).
 - **Reload corruption** — bad reload must not take down a running factory. Mitigation: immutable generations; failed validation keeps the prior generation live (fail-closed-to-last-good).
 
 ## 7. Cross-cutting
 
-- **Security:** DELTA-03 is the core security improvement — secrets out of git. Validation fail-closed prevents half-enabled capabilities crossing trust boundaries (relevant to C43 isolation).
+- **Security:** DELTA-03 is the core security improvement — secrets out of *version-controlled TOML* (the G37 surface). The achievable guarantee is "no secret literal in a versioned layer"; whether the secret *material* is actually protected vs merely relocated to an unspecified `env`/`${ENV:NAME}` source depends on the resolver-provider choice (OQ1) — env-injection still places the secret in the process environment from *somewhere*. Validation fail-closed prevents half-enabled capabilities crossing trust boundaries (relevant to C43 isolation).
 - **Cost/scale:** flags are install-scoped; resolution is O(layers); no per-request cost. Effective-config hash lets C46 attribute cost/satisfaction to a config generation.
 - **Observability:** every (re)load is an attributed event (DELTA-06); the effective config + its hash are introspectable, satisfying "what is actually turned on right now?".
 - **Ops:** phase profiles (DELTA-05) give operators a named, validated path Phase 0→1→2 instead of hand-editing and hoping.

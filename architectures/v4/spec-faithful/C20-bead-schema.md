@@ -1,6 +1,6 @@
 # C20 — Bead schema registry  (Spec, Track A)
 
-> Source: AI-CONTEXT §3.2 ("nine concepts" #2 — "Bead Store: Durable typed **work-graph** (Dolt or file)"); AI-CONTEXT §13 cold-start procedure (lines 694–699: "Find its bead with `gc bd find --type factory_build_in_progress` … `transfused_from` attribution … `gc converge resume <bead_id>`"); README Part 4 P8 ("Gas City beads with type `override`"), P9 ("beads … native `created_by`"), P10 ("Persistent task graph — Tasks with **dependencies**"), P11 ("diagnosis agent writes bead of type `fix_task`", "Loop closure tracking — Custom bead chain: anomaly → diagnosis → fix → resolution … Bead schema"); README Phase 3b ("Fix-task bead schema"); component-inventory C20 row (maps `A90, A91, A92, A58b, B37-schema`; depends on C19; gaps G17, G18; foundational: yes); ambiguities-and-gaps G17 (blocker — "no schema for any of the core stores", names `override`/`fix_task`/`factory_build_in_progress`/`factory_build`), G18 (blocker — self-healing loop has no termination / loop-closure contract).
+> Source: AI-CONTEXT §3.2 ("nine concepts" #2 — "Bead Store: Durable typed **work-graph** (Dolt or file)"); AI-CONTEXT §16 cold-start procedure (lines 694–699: "Find its bead with `gc bd find --type factory_build_in_progress` … `transfused_from` attribution … `gc converge resume <bead_id>`"); README Part 4 P8 ("Gas City beads with type `override`"), P9 ("beads … native `created_by`"), P10 ("Persistent task graph — Tasks with **dependencies**"), P11 ("diagnosis agent writes bead of type `fix_task`", "Loop closure tracking — Custom bead chain: anomaly → diagnosis → fix → resolution … Bead schema"); README Phase 3b ("Fix-task bead schema"); component-inventory C20 row (maps `A90, A91, A92, A58b, B37-schema`; depends on C19; gaps G17, G18; foundational: yes); ambiguities-and-gaps G17 (blocker — "no schema for any of the core stores", names `override`/`fix_task`/`factory_build_in_progress`/`factory_build`), G18 (blocker — self-healing loop has no termination / loop-closure contract).
 > Inventory ID: C20   Kind: data-store   Status: sweep-1
 > Track: A (faithful)
 
@@ -14,7 +14,7 @@ shape. Where C19 owns the **graph** (nodes, edges, durability, the `gc bd` store
 **vocabulary of node types** that flow through it.
 
 This component exists because v4 instructs agents to query bead **types that are never defined**:
-AI-CONTEXT §13 tells a cold agent to run `gc bd find --type factory_build_in_progress`, README P8/P11
+AI-CONTEXT §16 tells a cold agent to run `gc bd find --type factory_build_in_progress`, README P8/P11
 reference `override`, `fix_task`, `factory_build`, and Phase 3b lists "Fix-task bead schema" as a
 deliverable — but no schema is given anywhere (gap G17, blocker). C20 is the place those type
 definitions live.
@@ -22,7 +22,7 @@ definitions live.
 **Responsibilities**
 - Define the **bead-type registry**: the closed (Phase-relative) set of `type` values v4 names, plus the
   per-type field set. Faithful v4 types: `override`, `fix_task`, `factory_build`,
-  `factory_build_in_progress` (G17 §49; README P8/P11; AI-CONTEXT §13).
+  `factory_build_in_progress` (G17 §49; README P8/P11; AI-CONTEXT §16).
 - Define the **common bead envelope** every type shares — the fields v4 asserts are present on *all*
   beads: `id`, `type`, `created_by` (P9: "every bead … native `created_by`"), and dependency edges
   (P10: "Tasks with dependencies").
@@ -33,7 +33,7 @@ definitions live.
   the chain as described has no stated bound. (See §4 + the G18 AMBIGUITY block.)
 - Provide the **resume contract**: the fields C52/self-bootstrap and `gc converge resume` read to pick up
   an in-progress build (`factory_build_in_progress`, `transfused_from`, spec/scenario pointers;
-  AI-CONTEXT §13 lines 695–698).
+  AI-CONTEXT §16 lines 695–698).
 
 **Explicitly NOT**
 - NOT the bead **store** (C19). C19 owns persistence, the file/Dolt backend, the graph edges, and the
@@ -57,8 +57,8 @@ definitions live.
 | Upstream (concept) | **C01** Gas City substrate | Beads + `created_by` + the `gc bd` CLI are Gas City native (AI-CONTEXT §3.2 #2; README P9). |
 | Downstream (consumes) | **C35** Override→pattern→rule loop | Reads/writes `override` beads (README P8: "Gas City beads with type `override`"). Inventory: C35 `depends on C20`. |
 | Downstream (consumes) | **C39** Fix-task generation & loop-closure | Writes `fix_task` beads; reads the anomaly→diagnosis→fix→resolution chain + closure fields (README P11; Phase 3b "Fix-task bead schema"). Inventory: C39 `depends on C20`. |
-| Downstream (consumes) | **C51** Gene-transfusion discipline | Reads/writes `transfused_from` on `factory_build*` beads (AI-CONTEXT §13 step 2). Inventory: C51 `depends on C20`. |
-| Downstream (consumes) | **C52** Self-bootstrap recursion | Resumes via `factory_build_in_progress` beads (AI-CONTEXT §13 lines 695–699). |
+| Downstream (consumes) | **C51** Gene-transfusion discipline | Reads/writes `transfused_from` on `factory_build*` beads (AI-CONTEXT §16 step 2). Inventory: C51 `depends on C20`. |
+| Downstream (consumes) | **C52** Self-bootstrap recursion | Resumes via `factory_build_in_progress` beads (AI-CONTEXT §16 lines 695–699). |
 | Sibling (not dependency) | **C41** Identity/attribution | Supplies the meaning of `created_by`; C20 declares the field, C41 owns provenance. |
 
 C20 is **foundational** (inventory: yes), in **Batch 1**, authored in parallel with C19 — it is the
@@ -94,7 +94,7 @@ Sweep 1 — interfaces named and described (concrete field signatures / JSON sch
   chain: anomaly → diagnosis → fix → resolution", README P11).
 - **Resume-completeness**: a `factory_build_in_progress` bead carries enough (`transfused_from`, spec
   pointer, scenario pointer, workflow handle) for `gc converge resume <bead_id>` to continue without
-  out-of-band state (AI-CONTEXT §13 lines 695–699).
+  out-of-band state (AI-CONTEXT §16 lines 695–699).
 
 ## 4. Data model / state
 
@@ -105,8 +105,8 @@ three parts: the common envelope, the named types, and the named chains.
 
 | Field | Meaning | v4 source |
 |---|---|---|
-| `id` | bead identifier; target of `gc bd find` / `gc converge resume <bead_id>` | AI-CONTEXT §13 line 699 |
-| `type` | the registry type tag queried by `gc bd find --type <T>` | AI-CONTEXT §13 line 695; G17 |
+| `id` | bead identifier; target of `gc bd find` / `gc converge resume <bead_id>` | AI-CONTEXT §16 line 699 |
+| `type` | the registry type tag queried by `gc bd find --type <T>` | AI-CONTEXT §16 line 695; G17 |
 | `created_by` | actor attribution, present on every bead | README P9; AI-CONTEXT §3.1 row 9 |
 | `dependencies` | edges to other beads (the "dependency-aware" work-graph) | README P10 "Tasks with dependencies"; AI-CONTEXT §3.2 #2 "work-graph" |
 | `status` | lifecycle state of the bead | > [FAITHFUL-FILL] below |
@@ -125,8 +125,8 @@ three parts: the common envelope, the named types, and the named chains.
 |---|---|---|---|
 | `override` | durable record of an operator override + *why* | a "why"/rationale field; reference to the overridden action | README P8 ("beads with type `override`", "Override log storage") |
 | `fix_task` | a diagnosis-generated unit of repair work re-entering the build flow | pointer to the diagnosis/anomaly that produced it; closure-chain fields (§4.3) | README P11 ("diagnosis agent writes bead of type `fix_task`"); Phase 3b "Fix-task bead schema" |
-| `factory_build` | a factory-built-component build record | `transfused_from` (gene-transfusion attribution); spec pointer (`packs/*/spec.md`); scenario pointer (`scenarios/<component>/`) | AI-CONTEXT §13 steps 2–4; README P11 transfusion |
-| `factory_build_in_progress` | a build that is mid-flight and resumable | the `factory_build` fields **plus** a workflow handle resumable by `gc converge resume <bead_id>` | AI-CONTEXT §13 lines 695–699 |
+| `factory_build` | a factory-built-component build record | `transfused_from` (gene-transfusion attribution); spec pointer (`packs/*/spec.md`); scenario pointer (`scenarios/<component>/`) | AI-CONTEXT §16 steps 2–4; README P11 transfusion |
+| `factory_build_in_progress` | a build that is mid-flight and resumable | the `factory_build` fields **plus** a workflow handle resumable by `gc converge resume <bead_id>` | AI-CONTEXT §16 lines 695–699 |
 
 > [FAITHFUL-FILL] **Beyond these four, what other types exist?** v4 names exactly these four by string.
 > The P11 closure chain ("anomaly → diagnosis → fix → resolution", README P11) implies **anomaly**,
@@ -188,7 +188,7 @@ C20 has no control loop of its own; its behavior is **definitional** and **valid
 - **Write-time validation**: when a component writes a bead (C35 writes `override`, C38/C39 write
   `diagnosis`/`fix_task`/`resolution`, C52 writes `factory_build_in_progress`), the write is valid only
   if `type` is registered and the required envelope + type-specific fields are present.
-- **Query-time resolution**: `gc bd find --type <T>` (AI-CONTEXT §13) resolves against the registry; an
+- **Query-time resolution**: `gc bd find --type <T>` (AI-CONTEXT §16) resolves against the registry; an
   unregistered `<T>` is the G17 bug C20 exists to prevent.
 - **Chain-progression**: the self-heal loop (C39) advances a closure-chain instance node by node and
   writes the terminal-state field; C20 only guarantees the *slots* exist and the chain stays acyclic with
@@ -226,12 +226,12 @@ BUILDER-BRIEF altitude.)
 ## 8. Acceptance criteria & test strategy
 
 1. **Cold-start resolves (G17 closed)**: `gc bd find --type factory_build_in_progress` (and `override`,
-   `fix_task`, `factory_build`) resolves against the registry — every type AI-CONTEXT §13 / README P8/P11
+   `fix_task`, `factory_build`) resolves against the registry — every type AI-CONTEXT §16 / README P8/P11
    names is defined, with no "queries a type that doesn't exist" gap.
 2. **Envelope present on every type**: every registered type carries `id`, `type`, `created_by`,
    `dependencies`, `status`; a bead missing `created_by` is rejected (faithful to P9).
 3. **Resume-completeness**: a `factory_build_in_progress` bead carries `transfused_from` + spec pointer +
-   scenario pointer + workflow handle sufficient for `gc converge resume <bead_id>` (AI-CONTEXT §13
+   scenario pointer + workflow handle sufficient for `gc converge resume <bead_id>` (AI-CONTEXT §16
    695–699) with no out-of-band state.
 4. **Closure chain is well-formed (G18 slots)**: a self-heal instance forms the typed chain
    `anomaly→diagnosis→fix_task→resolution`, acyclic, ≤1 `resolution`, and carries the attempt-count +

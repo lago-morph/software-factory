@@ -13,7 +13,7 @@
 | T4 | Define per-type lifecycle state machines (§4.3), especially the `fix_task` bounded-attempt machine (DELTA-04 / G18). | M | T2 |
 | T5 | Implement the **write-time validation gate** (`validate(bead)→ValidationReport`) wired into C19's writer; fail-closed. | M | T3, T4, C19 writer hook |
 | T6 | Implement schema-version pinning + `migrate()` + `SchemaChangeEvent`→C23 (DELTA-06). | M | T3, C23 |
-| T7 | Define + register the **CXDB type-bundle bindings** `{bundle_id,type,version}` in C22 (DELTA-07). | S | T2, C22 |
+| T7 | Define the bead-type **CXDB type-bundle bindings** `{bundle_id,type,version}` in the canonical **`softwarefactory.v4.beads`** bundle (D-2) and register them via C22's seam (DELTA-07). C20 **authors** the bead schemas; C22 owns only the registration mechanism (D-3). | S | T2, C22 |
 | T8 | Resolve OQ1 shim: legacy `--type factory_build_in_progress` → `type=factory_build & state=in_progress` query alias in C19 (or doc patch). | S | T2, T4, C19 query layer |
 | T9 | Loop-closure invariant tests + resume-contract tests + attribution tests (acceptance §8). | M | T5, T8 |
 
@@ -39,7 +39,7 @@ Freeze in this order so dependents build against stubs:
 1. **M1 — Common envelope + closed type enum (T1+T2).** *Earliest, highest-leverage freeze.* Unblocks C35/C39/C50/C51 to start writing against named types. This is the G17-resolving milestone.
 2. **M2 — `fix_task` closure-field contract (`attempt_no`/`max_attempts`/`escalated`/`closes`) + lifecycle (T4 subset).** Unblocks C39's G18 termination work; reserve fields even before C39 picks the default `max_attempts` (OQ2).
 3. **M3 — `validate()` signature + `ValidationReport` shape (T5 contract).** Lets C19's writer integrate the gate against a stub.
-4. **M4 — CXDB `{bundle_id,type,version}` bindings (T7).** Lets C22/C21 register bead payloads.
+4. **M4 — CXDB `{bundle_id,type,version}` bindings in `softwarefactory.v4.beads` (T7, D-2).** C20-authored bead schemas (D-3) that C22/C21 register via the C22 seam.
 
 ## 5. Risks & de-risking order
 

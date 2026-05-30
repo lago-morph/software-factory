@@ -23,7 +23,7 @@
 ## 2. Dependency graph
 
 - **Upstream (must precede):** C03 (config/registry/policy section), C28 (the floor adapter + its conformance result + seat-governor budget — co-designed selection contract), C46 (live cost stream; optional/graceful at Phase 0/1).
-- **Critical path:** T1 → T2 → T6 → T7/T8 (the independence policy + credential gate + fail-closed are the load-bearing chain; T7 is gated by **OQ-2**, judge-seat admissibility). T5 floor clamp depends on the C28 conformance seam (**OQ-4** co-design).
+- **Critical path:** T1 → T2 → T6 → T8 (the independence policy + fail-closed are the load-bearing chain). **Per D-1/FE-1 the Phase-0 default is L1**, so T7's judge-seat credential gate (OQ-2) is the **FE-1 seam and is off the Phase-0 critical path** — not a Phase-0 gate. T5 floor clamp depends on the C28 conformance seam (**OQ-4** co-design).
 - **Downstream consumers:** C05 (dispatch resolves through C29), C28 (consumes `model_selection`), C32 (constrained judge identity), C34 (family-independence verdict input), C50/C46 (independence-tagged trust).
 - **Concurrent with:** C28, C25, C26, C27, C24 (Batch 2); C29 may start in Batch 1 once C01/C03 shapes are fixed.
 
@@ -57,4 +57,4 @@ Freeze early so dependents build against stubs:
 
 - **Per-component:** spec acceptance criteria 1–7 all pass; floor clamp + conformance gate enforce I1; graded independence policy enforces I2 with fail-closed; resolution deterministic + replayable from the emitted record; cost routing prefers cheapest floor-or-above with graceful static fallback; every satisfaction score carries its independence level.
 - **Per-task exits:** T1/T2 — schemas reviewed + frozen, C05/C28/C32 building against them. T3/T4 — stylesheet compiles, lint rejects unregistered models, cascade deterministic. T5 — sub-floor/non-conformed coder rule clamps + logs. T6 — each L0–L3 level evaluated correctly against a registry. T7 — L≥2 without a valid judge-seat credential is refused at the gate. T8 — independence-unmet dispatch fails closed unless a signed `degraded_eval` is present, which tags + logs. T9 — cheaper candidate selected under budget pressure; static fallback identical without C46. T10/T11 — resolution records emitted to C23/C41; satisfaction scores tagged.
-- **Open-question gates:** OQ-1/OQ-2/OQ-3/OQ-4 resolved or explicitly carried into review-log before C29 is production-ready; **T7 not merged until OQ-2 (judge-seat admissibility) resolves**, and the default policy level documented as **L1** with the L2/L3 upgrade path costed.
+- **Open-question gates:** OQ-1/OQ-2 are **RESOLVED by D-1/FE-1** (L1 is the documented Phase-0 default; the judge-seat + L2/L3 are FE-1, not a Phase-0 merge gate — so **T7 ships as the FE-1 seam, not blocked on judge-seat admissibility**). OQ-3 is FE-1-scoped; OQ-4 resolved or carried into review-log before C29 is production-ready. L2/L3 upgrade path documented + costed as FE-1.

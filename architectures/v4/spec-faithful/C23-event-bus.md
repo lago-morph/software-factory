@@ -242,6 +242,11 @@ A partial/torn final line on crash is detectable (JSONL line-framing, INV-5) and
   `seq` is detectable), but C23 does **not** cryptographically sign events — the optional HMAC/signed-
   provenance layer is C41's deferred optional pack (README line 229). Plaintext-TOML log-location config
   inherits the G37 exposure thread (flagged, deferred to config/secrets owner — out of C23 faithful scope).
+  > [AMBIGUITY resolution — D-5] The integrator's ruling **D-5** fixes the tamper-evidence ownership split:
+  > **C41 owns the provenance hash-chain**, computed over **C23-provided ordered gap-free `event_id`s**.
+  > C23's faithful contribution is exactly that — the ordered, gap-free, append-only `seq`/`event_id` stream
+  > (INV-1/INV-2) — and **not** any cryptographic chain over records. So C23 provides the ordered ids only;
+  > the chain (if/when built) is C41's, keyed on C23's `event_id = (stream, seq)`.
 - **Cost.** Append-only local file I/O; no managed-store fees (consistent with the CXDB "no Postgres/Redis/
   Kafka" stance, AI-CONTEXT §5.3). v4 gives no per-event cost model.
 - **Scale.** "Records every action" (INV-4) means event volume scales with factory activity; v4 names no

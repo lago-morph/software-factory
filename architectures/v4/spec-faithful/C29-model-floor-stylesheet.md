@@ -70,7 +70,19 @@ Sequence/state diagrams and the cascade-specificity algorithm are **sweep-2/3**;
 | **F46** Single-model review blindspot | FM §1:24 | Cross-family enforcement enables judge ensemble across families | Addressed |
 | **F48** Tacit collusion via shared context | FM §1:25 | Cross-family rule contributes; v4 marks **Partial** (shared training-distribution residual) | Partial |
 
-**Degraded behavior / the load-bearing tension (G08 + G20):** v4's cross-family rule presumes a *second model family* exists, but AI-CONTEXT §4.1 says Max issues *no separate API key* and the only sanctioned coder is Claude Code. So at the floor install there may be **no non-Claude family available to route a judge to**. Faithful handling: C29 *emits the constraint and the family registry*; **sourcing the second family is an upstream dependency (G20), not resolvable inside C29.** When no compliant family is registered, `crossFamilyRule` must **fail closed** (refuse to dispatch a satisfaction-measuring judge) rather than silently route judge=coder family. `> [FAITHFUL-FILL]` — v4 does not state the no-second-family behavior; fail-closed is the minimal choice consistent with F27/F46 being "Addressed" (a same-family fallback would silently un-address them).
+**Degraded behavior / the load-bearing tension (G08 + G20):** v4's cross-family rule presumes a *second model family* exists, but AI-CONTEXT §4.1 says Max issues *no separate API key* and the only sanctioned coder is Claude Code. So at the floor install there may be **no non-Claude family available to route a judge to**. Faithful handling: C29 *emits the constraint and the family registry*; **sourcing the second family is an upstream dependency (G20), not resolvable inside C29.**
+
+> [AMBIGUITY resolution — D-1 / FE-1] The integrator's ruling **D-1** resolves this tension so the
+> cross-family rule is **no longer an unsatisfiable Phase-0 blocker**: the **Phase-0 baseline is the
+> same-provider judge** (holdout integrity comes from rig partitioning + role/prompt isolation, not family
+> diversity — see the optimized sibling's L1 default, which D-1 confirms is correct). The literal
+> provider-level "judge.family ≠ coder.family" requirement (the README:189 reading) is reclassified as
+> **future enhancement FE-1** (`_meta/FUTURE-ENHANCEMENTS.md`), revisited when a second-provider credential
+> path exists. **Consequently `crossFamilyRule` (I2/A2) is advisory/relaxed at Phase 0, not fail-closed:**
+> a same-provider judge that is *prompt/role/rig-isolated* from the coder is the sanctioned Phase-0 path; it
+> does **not** silently un-address F27/F46 because the isolation is structural (separate rig + disjoint
+> context), only the *family-diversity* leg is deferred to FE-1. C29 keeps the `family` registry field and
+> the constraint emitter as the clean seam FE-1 switches on later.
 
 ## 7. Cross-cutting
 
@@ -90,7 +102,7 @@ Concrete CSS grammar, cascade-specificity tests, and the model-registry schema a
 
 ## 9. Open questions (→ review-log)
 
-- **[AMBIGUITY: G08] "Model family" is undefined.** Reading (a): *family = provider* (Anthropic vs OpenAI vs Google) — implies a second provider, which AI-CONTEXT §4.1 forbids under Max. Reading (b): *family = training-lineage within a provider* (Claude-judge vs Claude-coder allowed). **Faithful pick: (a) provider-level family.** Why: F27/F46/F48 are about *independence of the validator from the builder*; (b) leaves judge and coder in the same training distribution, which F48's "shared training distribution residual / Partial" verdict (FM:25) explicitly treats as a *weakening*, not the intended guard. (a) is the reading the F-mode statuses were written against. C29 stores `family` as a provider-level label accordingly.
-- **[G20] The judge model is unsourced (deferred — upstream).** No named non-Claude provider, budget, or auth path exists in v4 (G20). C29 *requires* a registered compliant family but cannot *create* one; this is a hard upstream dependency that gates the whole evaluation tier (inventory critical-path note 3). Deferred with reason: resolving it is a provider/credential decision outside C29's boundary.
+- **[AMBIGUITY: G08 — RESOLVED by D-1/FE-1] "Model family" is undefined.** Reading (a): *family = provider* (Anthropic vs OpenAI vs Google) — implies a second provider, which AI-CONTEXT §4.1 forbids under Max. Reading (b): *family = training-lineage within a provider* (Claude-judge vs Claude-coder allowed). The two readings were left open because F27/F46/F48 want validator-from-builder independence while the Max floor forbids a second provider. **The integrator's ruling D-1 resolves it:** the **Phase-0 baseline is the same-provider judge** — effectively reading (b) for Phase 0, with independence supplied by **rig partitioning + role/prompt isolation** rather than family diversity. The provider-level reading (a) — the literal README:189 cross-provider requirement — is reclassified as **future enhancement FE-1**, not a Phase-0 requirement. C29 still stores `family` as a label so FE-1 can switch on cross-family/cross-provider judging later without re-architecture.
+- **[G20 — RESOLVED by D-1/FE-1] The judge model is unsourced.** No named non-Claude provider, budget, or auth path exists in v4 (G20). Per **D-1**, this is **no longer a Phase-0 blocker**: Phase 0 runs the same-provider judge, so no second-provider credential is required to stand up the evaluation tier. Sourcing a second family/provider is **FE-1** (future), revisited when a second-provider credential path exists or same-family judge bias is measured as material.
 - **[G32] Cost model deferred to C46.** C29 is cost-*aware* (tiers) but does not own the cost-per-satisfaction model; v4 provides none. Deferred with reason: cost measurement is C46's responsibility per inventory.
 - Concrete stylesheet syntax for "judge != coder" is itself flagged as an open question in v4 (AI-CONTEXT §12, line 514) — resolved to a named rule here, concrete grammar at sweep-2.

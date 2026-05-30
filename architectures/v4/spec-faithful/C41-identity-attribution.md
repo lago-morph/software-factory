@@ -233,6 +233,12 @@ BUILDER-BRIEF altitude.)
 > (§7, §9) so no downstream component over-trusts attribution. Making verification *mandatory* is exactly
 > the kind of improvement Track B would propose as a `[DELTA]`; in Track A it is an open question routed to
 > review-log (OQ-C41-1), not a decision C41 may take.
+> **[AMBIGUITY resolution — D-5, chain ownership only]** Independent of the optional/mandatory question
+> above, the integrator's ruling **D-5** settles *where* any tamper-evident provenance hash-chain lives:
+> **C41 owns the provenance hash-chain**, computed over **C23-provided ordered gap-free `event_id`s** — C23
+> provides the ordered ids only, never the chain. So the (optional, deferred) provenance-verification seam
+> in §3 is C41's; if/when the chain is built, it is a C41-owned structure over C23 records, not a C23
+> feature. This does not make verification mandatory in Track A — it only fixes the ownership boundary.
 
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 

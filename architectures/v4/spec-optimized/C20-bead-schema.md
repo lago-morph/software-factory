@@ -55,7 +55,7 @@ Named-and-described (sweep 1; full field-by-field JSON Schema / msgpack shapes i
 - **Closed catalog:** a bead whose `type` ∉ `BeadTypeCatalog` cannot be written (no anonymous types — this is what makes `gc bd find --type X` well-defined, resolving the G17 §16 dangling-query problem).
 - **Envelope completeness:** every bead has non-null `id`, `type`, `schema_version`, `created_by`, `created_at` (DELTA-05). Attribution is structural, not optional.
 - **Version pinning:** every instance records the `schema_version` it was written under; readers resolve fields through that version's schema, never the latest implicitly.
-- **Loop-closure boundedness (DELTA-04, resolves G18):** within one anomaly's fix chain, `attempt_no` is strictly increasing and `attempt_no ≤ max_attempts`; a chain either reaches a terminal `resolved` bead (via a `closes` edge proving the originating anomaly cleared) or an `escalated=true` bead. An unbounded/oscillating chain is *unrepresentable* — you cannot write attempt N+1 once `escalated` or once `max_attempts` is hit without an explicit human/escalation actor in `created_by`.
+- **Loop-closure boundedness (DELTA-04, *partially* resolves G18 — see §6 scope caveat):** within one anomaly's fix chain, `attempt_no` is strictly increasing and `attempt_no ≤ max_attempts`; a chain either reaches a terminal `resolved` bead (via a `closes` edge proving the originating anomaly cleared) or an `escalated=true` bead. A *single-anomaly* unbounded chain is *unrepresentable* — you cannot write attempt N+1 once `escalated` or once `max_attempts` is hit without an explicit human/escalation actor in `created_by`. (**Cross-anomaly** oscillation — a fix spawning a *new* anomaly with a fresh counter — is **not** bounded by this invariant; that detection is C39/C18 policy over the `caused_by` graph, §6.)
 - **Single build identity (DELTA-02):** `factory_build_in_progress` and `factory_build` are the **same bead** at two `lifecycle_state` values, so the `gc converge resume` flow (§16) operates on one stable `id` across its whole life.
 
 ## 4. Data model / state
@@ -101,7 +101,20 @@ The v4-referenced types, made concrete. This is the **versioned schema delta** t
 
 - **Versioning:** each `type` carries an independent semver `schema_version`; instances pin the version they were written under (DELTA-06). Up-migrations are registered functions; reads of old instances either resolve through the old schema or are lazily migrated.
 - **Persistence:** schemas themselves are version-controlled artifacts (JSON Schema files) shipped in a Gas City pack and loaded by C19's writer; bead *instances* live in C19's provider (file or Dolt, AI-CONTEXT §13.2). C20 adds no separate datastore.
-- **CXDB binding (DELTA-07):** each bead type maps to a CXDB `{bundle_id, type, version}` (e.g. bundle `v4.beads.v1`, type `v4:fix_task`, version `1.0.0`) registered in C22, so a bead payload can be a replayable turn in C21.
+- **CXDB binding (DELTA-07):** each bead type maps to a CXDB `{bundle_id, type, version}` (illustratively bundle `v4.beads.v1`, type `v4:fix_task`, version `1.0.0`) registered in C22, so a bead payload can be a replayable turn in C21.
+  > **DEFERRED — bundle-id collision + ownership fork (review-log XC-4, RC20B-01).** Two unresolved
+  > conflicts gate this binding and the *string* `v4.beads.v1` below is **not yet canonical**:
+  > 1. **String collision (4-way):** C20-B `v4.beads.v1`, C21-B `softwarefactory.trajectory.v1`,
+  >    C22-A `softwarefactory.v4`, C22-B `strongdm.factory.v4` — four different roots for one namespace.
+  >    The bead-payload round-trip (DELTA-07, §8 AC-6) **fails until one root is chosen.**
+  > 2. **Ownership fork (load-bearing):** this spec asserts "**two registries, one mapping**" — C20 *owns*
+  >    the per-type bead payload schemas and merely *binds* each to a CXDB bundle. **C22-B asserts the
+  >    opposite** ("one registry, two namespaces" — C22 is the single source of truth and *owns* bead-type
+  >    schemas as `kind: bead`, defining `fix_task`/`override` itself). Both specs currently define the same
+  >    `fix_task` payload schema. These are mutually exclusive architectures and MUST be reconciled before
+  >    any bundle-authoring task. **C20-B's position (recommended canonical):** C20 authors bead-type
+  >    schemas; C22 hosts the *registration mechanism* only; canonical root `softwarefactory.v4.beads`.
+  >    Routed to the integrator — do not treat `v4.beads.v1` or C20-vs-C22 ownership as settled.
 
 ## 5. Behavior
 
@@ -113,8 +126,22 @@ The v4-referenced types, made concrete. This is the **versioned schema delta** t
 ## 6. Failure modes & handling
 
 - **G17 (no schema — blocker, RESOLVED):** the closed catalog §4.2 + common envelope §4.1 define every v4-referenced type concretely; `gc bd find --type X` is now well-defined for all X in the catalog. Residual: types not yet referenced in v4 must be *added to the catalog* (closed-enum requires explicit registration, by design).
-- **G18 (no loop termination — blocker, RESOLVED at schema layer):** DELTA-04 makes unbounded/oscillating fix chains unrepresentable; *policy* (default `max_attempts`, escalation routing) is C39/C18's, flagged OQ2.
-- **F52 (controller-patch oscillation):** the `max_attempts`+`escalated` invariant is the direct guard — the Healer cannot endlessly emit fix beads for the same anomaly without crossing into a terminal `escalated` state that demands a human actor.
+- **G18 (no loop termination — blocker, PARTIALLY RESOLVED at schema layer):** DELTA-04 makes an unbounded
+  fix chain *for a single anomaly* unrepresentable (`attempt_no ≤ max_attempts`, terminal `escalated`/
+  `resolved`). **Scope caveat (RC20B-02):** this bounds *within-anomaly* retries only; it does **not** by
+  itself bound **cross-anomaly oscillation** (fix-A causes anomaly-B, fix-B causes anomaly-C, … — each a
+  *distinct* anomaly id with a *fresh* `attempt_no`). The schema makes single-chain non-termination
+  unrepresentable; *cross-chain* oscillation detection (correlating distinct anomalies caused by prior
+  fixes) is **C39/C18 control-loop policy**, not a schema invariant. G18 is therefore *partially* closed at
+  the schema layer and *relocated* for the oscillation half — not fully resolved here. The `caused_by` edge
+  (which links a new anomaly back to the fix that caused it) is the *substrate* C39 needs to detect the
+  cycle, but the detection + bound is C39's. Policy (default `max_attempts`, escalation routing) is C39/C18
+  (OQ2).
+- **F52 (controller-patch oscillation):** the `max_attempts`+`escalated` invariant guards *single-anomaly*
+  retry runaway — the Healer cannot endlessly emit fix beads for *the same* anomaly without crossing into a
+  terminal `escalated` state demanding a human actor. It does **not** guard the multi-anomaly oscillation
+  F52 actually names (a fix spawning a *new* anomaly); that requires C39 to walk `caused_by` across chains
+  and apply a cross-chain bound. C20 supplies the `caused_by` linkage; the oscillation *detection* is C39.
 - **Schema drift / silent field-shape change:** version pinning + write-time validation + `SchemaChangeEvent` make any catalog change auditable and prevent old/new readers from silently disagreeing (DELTA-06).
 - **Unattributed action (audit gap):** envelope requires `created_by`; a bead with no actor cannot be written (DELTA-05), protecting C41's audit trail and P9.
 - **Cross-store payload divergence:** the CXDB binding (DELTA-07) keeps the bead schema and the trajectory-turn schema in one declared mapping rather than two drifting definitions.
@@ -140,4 +167,11 @@ The v4-referenced types, made concrete. This is the **versioned schema delta** t
 
 - **OQ1 (→ review-log):** Compatibility shim for the literal `gc bd find --type factory_build_in_progress` query that AI-CONTEXT §16 hard-codes, given DELTA-02 folds it into `factory_build` + state. Options: (a) C19 query alias mapping the legacy type-string to `type=factory_build & state=in_progress`; (b) patch §16's documented command. Affects the cold-agent recovery UX. *Top open question.*
 - **OQ2 (→ review-log):** Ownership seam for loop-control *policy*. C20 owns the `max_attempts`/`escalated` fields + monotonicity invariant; who sets the default `max_attempts` and the escalation-routing target — C39 (fix-loop), C18 (reconciler bounded gates), or C03 (config)? The schema reserves the field regardless, but the binding default must be assigned.
-- **OQ3:** Should `override`, `fix_task`, `factory_build` share one CXDB `bundle_id` (`v4.beads.v1`) or get per-type bundles? Affects C22 registration granularity and independent versioning of each type's payload schema.
+- **OQ3 (→ review-log, XC-4, DEFERRED):** Two coupled questions. (a) **Which root** is canonical for the
+  bead namespace — the four siblings disagree (`v4.beads.v1` here, `softwarefactory.trajectory.v1` C21-B,
+  `softwarefactory.v4` C22-A, `strongdm.factory.v4` C22-B); the bead-payload round-trip fails until one is
+  chosen. (b) **Who owns the per-type bead schemas** — C20 (this spec: "two registries, one mapping") or C22
+  (C22-B: "one registry, two namespaces"). These are mutually exclusive and both currently define `fix_task`.
+  C20-B's recommended canonical: root `softwarefactory.v4.beads`; **C20 authors the schemas, C22 hosts
+  registration only**. Then: one shared bundle vs per-type bundles is a *granularity* sub-question under (a).
+  Routed to the integrator — see the DELTA-07 DEFERRED block in §4.4.

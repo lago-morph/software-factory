@@ -5,6 +5,20 @@ orchestrator/human call. Per-component docs raise OQs inline; a periodic **colle
 them here so the primary doesn't have to read every doc. Do not have many agents append concurrently —
 this file is written by the primary or a single collector agent per pass.
 
+## ✅ Resolved decisions (binding)
+
+- **D-1 — Judge provider (resolves the cross-family critical-path blocker).** Decision (user,
+  2026-05-30): **implement the judge with the SAME provider/family as the coder for now**; a
+  different-provider judge moves to the **future-enhancements bucket** (`_meta/FUTURE-ENHANCEMENTS.md`).
+  Impact: C29 cross-family rule becomes advisory/relaxed; C32/C34 build against same-provider judging
+  with holdout-integrity provided by rig partitioning + prompt/role isolation rather than family
+  diversity. Cross-family judging is a documented future enhancement, not a Phase-0 requirement.
+- **D-2 (proposed, pending confirmation) — Bundle-id namespace.** Adversary-recommended ruling for XC-4:
+  one factory-owned reverse-DNS root with per-store sub-bundles — `softwarefactory.v4.beads`
+  (bead types, C20-owned) and `softwarefactory.v4.trajectory` (CXDB turn types, C21/C22-owned), with a
+  documented binding seam. Drop the vendor `strongdm.*` root and the merged-single-bundle option.
+  Apply across C02 (`pack_id` aligns to `softwarefactory.v4.packs`), C20, C21, C22. Owner: integrator.
+
 ## Cross-component issues (raised during Sweep 1 builds)
 
 - **XC-1 — C19↔C20 dependency direction contradiction.** The canonical inventory lists C20→C19

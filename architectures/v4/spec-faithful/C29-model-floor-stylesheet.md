@@ -66,8 +66,8 @@ Sequence/state diagrams and the cascade-specificity algorithm are **sweep-2/3**;
 | **F19** Model-floor dependency | FM §6:71 | The floor *declaration* is C29's deliverable | Addressed (by declaration) |
 | **F31** Substrate floor = weakest adapter | FM §6:73,148 | Single-adapter floor is well-defined *because* C29 declares one floor | Addressed (single-adapter) |
 | **F1** Hallucination loop | FM §1:17 | Cross-family judge rule (on the stylesheet) is part of the guard | Addressed |
-| **F27** Circularity / same-model build+validate | FM §1:21 | `crossFamilyRule` *is* the guard at judge nodes | Addressed |
-| **F46** Single-model review blindspot | FM §1:24 | Cross-family enforcement enables judge ensemble across families | Addressed |
+| **F27** Circularity / same-model build+validate | FM §1:21 | Phase-0 guard (D-1) is **rig/role/prompt isolation** of the same-provider judge; the cross-provider `crossFamilyRule` is FE-1 | Addressed at Phase-0 isolation level (cross-provider strengthening = FE-1) |
+| **F46** Single-model review blindspot | FM §1:24 | Cross-family ensembles enable the strongest form; deferred to FE-1. Phase-0 relies on prompt/role isolation | Partial at Phase-0 (full cross-family addressing = FE-1) |
 | **F48** Tacit collusion via shared context | FM §1:25 | Cross-family rule contributes; v4 marks **Partial** (shared training-distribution residual) | Partial |
 
 **Degraded behavior / the load-bearing tension (G08 + G20):** v4's cross-family rule presumes a *second model family* exists, but AI-CONTEXT §4.1 says Max issues *no separate API key* and the only sanctioned coder is Claude Code. So at the floor install there may be **no non-Claude family available to route a judge to**. Faithful handling: C29 *emits the constraint and the family registry*; **sourcing the second family is an upstream dependency (G20), not resolvable inside C29.**

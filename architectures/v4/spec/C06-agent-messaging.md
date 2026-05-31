@@ -48,7 +48,12 @@ It is responsible for:
   C06 is a *consumer* that stamps inherited identity onto messages. C06 does not verify identity.
 - **NOT a signing / secrets layer.** The "optional HMAC signing" mentioned in v4 is **optional and
   deferred** (README L229; D-14); its key is a *secret* (gap **G37**, owned by C03). C06 must **not** build
-  a signing subsystem or a secrets store (§6, G36/§7).
+  a signing subsystem or a secrets store (§6, G36/§7). *Reciprocal seam (C41):* C06 and C41 **share gap
+  G36** (inventory). When the deferred FE-3 signing lands, the HMAC signature would attach at **C06's Mail
+  envelope** and **bind to C41's provenance-verification seam** (C41 §2 lists C06 as "Downstream (consumes
+  the seam) — Optional HMAC mail signing binds a message to a C41 actor"; C41 §4.3). C06 owns the *carrier*
+  (the envelope the signature rides on); C41 owns the *identity* the signature binds — neither builds it on
+  the canonical track.
 
 ## 2. Context & dependencies
 
@@ -73,8 +78,11 @@ C06 surfaces **two delivery primitives** behind the Gas City messaging concept. 
    (agent/role/seat). Persisted by the substrate; survives recipient offline/suspended. Carries
    `created_by` (from), recipient address (to), and payload.
 2. **Mail — receive / acknowledge.** A recipient drains its durable inbox and (per the adopted substrate's
-   semantics) acknowledges consumption. Delivery is *at-least-once on resume*: a session that was suspended
-   when Mail arrived receives it when C04 brings it back.
+   semantics) acknowledges consumption. Delivery is *at-least-once on resume* — **the adopted Gas City
+   `[mail]` semantics C06 relies on, not a guarantee v4 states or C06 implements** (v4 states only "Mail =
+   durable", AI-CONTEXT §3.2 L90; the at-least-once/drain-on-run reading is the faithful entailment of
+   "durable addressed message", confirmed against real `gc` at sweep-2): a session that was suspended when
+   Mail arrived receives it when C04 brings it back.
 3. **Nudge — signal (ephemeral).** Emit a best-effort poke to a recipient/topic ("wake", "bead ready").
    No durability, no ack, no retry: lost if no live listener. The lightweight wake/coordination signal.
 4. **Addressing / identity binding.** Resolve a recipient handle (keyed on C04 `session.id` + C41/C42
@@ -114,9 +122,16 @@ C06 surfaces **two delivery primitives** behind the Gas City messaging concept. 
 - **I2 (Nudge is best-effort):** a Nudge has **no** durability or delivery guarantee by construction; a
   lost Nudge is correct behavior, not a fault. Anything that *must* be delivered uses Mail. (L90 "Nudge =
   ephemeral".)
-- **I3 (attribution totality):** every message — Mail or Nudge — carries a `created_by` actor; no
-  anonymous coordination message exists, because attribution is the substrate's native stamp (P9, README
-  L226). C06 adds no path that bypasses it.
+- **I3 (attribution totality):** every message carries a `created_by` actor; C06 adds no path that
+  bypasses it. For **Mail** this is the substrate's native bead/event-class `created_by` stamp (P9, README
+  L227/L371 "every bead and event carries `created_by`"), since a durable Mail is a recorded action. For
+  the **ephemeral Nudge**, attribution rests on the concept-6 → P9/P10 mapping (AI-CONTEXT §3.2 L90: Messaging
+  → P9, P10), a **[FAITHFUL-FILL] inference**: README's demonstrated `created_by` evidence is for beads and
+  events, and a Nudge is neither a bead nor necessarily an event — whether the ephemeral signal flows through
+  the *same* native stamp path is an adopted-substrate property to verify against real `gc` (→ OQ/sweep-2),
+  not a guarantee C06-the-spec demonstrates. The canonical-track posture is *attributed coordination on both
+  primitives*; the Nudge totality is the faithful reading, qualified here so it is not read as a proven
+  substrate fact.
 - **I4 (no self-asserted-identity hardening on the canonical track):** `created_by` is **self-asserted**
   (not cryptographically verified); message *authenticity* (sender truly is who it claims) is the
   optional/deferred HMAC-signing concern (G36/G37, D-14), **out of scope** here. C06 stamps identity; it
@@ -174,8 +189,8 @@ the same P9 mechanism that stamps beads and events (README L226; the property F1
 | F-mode | Applies how | Handling per v4 |
 |---|---|---|
 | **F32** Mail-injection / unsigned coordination | C06 *is* the coordination/mail surface a forged or unsigned message would ride on | **Addressed** per F-MODE-COVERAGE L34 via **"P9 attribution + optional HMAC signing layer."** On the canonical track the *active* control is **P9 attribution** (`created_by` on every message, I3) — every message is *attributed*. The **HMAC signing** half is **optional and deferred** (README L229; revisit at Phase 3+, F-MODE-COVERAGE L87; D-14). C06 must **not** build the signing layer; it provides the attributed-message surface and records that authenticity-verification is deferred (G36/G37). This is the *partial-by-design* reality behind the "Addressed" label — see G36. |
-| **F14** Attribution collapse | Coordination messages are actions that must carry an actor or attribution has a hole | **Addressed** (F-MODE-COVERAGE L33) by P9's native `created_by` — inherited, not C06-built (I3). C06's contribution is *not bypassing* the stamp; the guarantee is the substrate's. |
-| **F17** Parallel agents on shared dirs lose data | Coordination *between* parallel agents flows over C06, but the data-loss failure is a **filesystem/partition** concern | **Addressed elsewhere** (F-MODE-COVERAGE L84) via Gas City worktree isolation + OPA on shared partitions — **not C06-native**. C06 carries the messages; the isolation that prevents shared-dir clobber is C42/C43's. C06 must not build locking/coordination-of-writes machinery. |
+| **F14** Attribution collapse | Coordination messages are actions that must carry an actor or attribution has a hole | **Addressed** (F-MODE-COVERAGE L32) by P9's native `created_by` — inherited, not C06-built (I3; for Mail the bead/event-class stamp, for Nudge the concept-6→P9 faithful reading, I3). C06's contribution is *not bypassing* the stamp; the guarantee is the substrate's. |
+| **F17** Parallel agents on shared dirs lose data | Coordination *between* parallel agents flows over C06, but the data-loss failure is a **filesystem/partition** concern | **Addressed elsewhere** (F-MODE-COVERAGE L86) via Gas City **worktree isolation per run (C42)** + OPA / read-isolation enforcement on shared partitions (**C34**, with the lethal-trifecta blast-radius bound **C43**, per D-13) — **not C06-native**. C06 carries the messages; the isolation that prevents shared-dir clobber is C42/C34/C43's, not C06's. C06 must not build locking/coordination-of-writes machinery. |
 
 **Gap-driven failure mode (assigned: G36):**
 
@@ -223,12 +238,17 @@ the same P9 mechanism that stamps beads and events (README L226; the property F1
 ## 8. Acceptance criteria & test strategy (sweep-1, high level)
 
 - **AC1 (durable Mail survives offline recipient):** a Mail sent to a suspended/offline recipient is
-  delivered (at-least-once) when that recipient next runs — including after a **C04 resume** — carrying its
-  `created_by` (I1; AI-CONTEXT §3.2 L90 "Mail = durable").
+  delivered (at-least-once — the *adopted* substrate semantics, I1, verified against real `gc`) when that
+  recipient next runs — including after a **C04 resume** — carrying its `created_by` (AI-CONTEXT §3.2 L90
+  "Mail = durable" is the v4 anchor; the delivery-on-resume behavior is the faithful entailment, not a
+  v4-stated contract).
 - **AC2 (Nudge is ephemeral):** a Nudge with no live listener is dropped with no error and no queued state;
   delivery to a live listener is best-effort (I2).
-- **AC3 (attribution totality):** every Mail and Nudge carries a `created_by` actor; there is no path to
-  emit an anonymous coordination message (I3; README L226).
+- **AC3 (attribution totality):** every Mail carries the native `created_by` actor (bead/event-class stamp,
+  README L227/L371) and C06 adds no path to emit an anonymous coordination message (I3). For the ephemeral
+  **Nudge**, the test confirms `created_by` is present *to the extent the adopted substrate stamps the
+  ephemeral primitive* — the concept-6→P9/P10 reading verified against real `gc` (I3 [FAITHFUL-FILL]; →
+  sweep-2 if `gc` proves Nudge un-stamped, that is a faithful gap to record, not a C06-built fix).
 - **AC4 (capability by presence):** with `[mail]` absent (Phase-0 config) durable Mail is unavailable and
   the system degrades to Nudge/bead coordination; adding `[mail]` enables it with no other change (I5;
   AI-CONTEXT L122).

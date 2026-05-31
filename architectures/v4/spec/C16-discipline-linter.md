@@ -227,7 +227,8 @@ does not build it here.** The two are different surfaces: C16 is a **static** li
 (design-time "is this node an LLM where a tool would do"); C39's policy is a **runtime** bound on the heal
 loop (how many times the Healer may retry before escalating). Both descend from the same F52 "more
 controller patches" worry, which is why the gap was provisionally tagged here — but the linter half (C16)
-and the loop-bound half (C39) are cleanly separable. See OQ-G18.
+and the loop-bound half (C39) are cleanly separable (the loop "without human intervention" is README:248).
+See OQ-G18.
 
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 

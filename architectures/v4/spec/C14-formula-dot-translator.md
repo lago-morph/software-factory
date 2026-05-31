@@ -84,6 +84,7 @@ formula's steps and whose edges are its dependencies. Sweep-1 mapping (named, no
 | Node **kind** `{agent, tool, gate, sub_formula}` | DOT node attribute (e.g. a `kind=` attr) **+** a visual style (shape/color) for graphviz | Kind values are **C12's** (D-7); C14 only chooses the attribute encoding. |
 | Node binding (C17 tool name / C09 template name) | DOT node attribute | Preserved verbatim for round-trip. |
 | Edge / dependency | DOT directed edge | Edge direction = dependency direction. |
+| **Loop / back-edge marker** (bounded-iteration construct) | DOT **marked back-edge** (a back-edge carrying an attribute that flags it as a *sanctioned bounded loop*, distinct from a raw cycle) | **The C14→C15 seam element.** C15 must distinguish a sanctioned bounded loop from a raw back-edge in the DOT it lints (C15 §3.3 rule 1; C15 §9 OQ-2 names "loop-construct markers" as part of the surface it needs). The **concrete encoding is deferred to C12:OQ-2** (the loop primitive is unfrozen — §3.4); this row freezes the *obligation* (export must emit a marked, lintable loop) so C15's loop-lint capability is not silently dropped. |
 | Gate / `wait` semantics | DOT node (kind=`gate`) + attribute | The gate is a node-kind, so it rides the kind mapping. |
 | Formula parameters / metadata | DOT graph-level attributes | Graph attrs carry formula-scope data that has no node home. |
 

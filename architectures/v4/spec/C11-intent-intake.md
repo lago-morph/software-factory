@@ -12,8 +12,8 @@ The mechanism is deliberately minimal and serves Principle 1 (*specs are the sou
 
 **Responsibilities**
 - Define the **fixed 9-field intent schema** — the named slots a piece of intent must fill (the field set itself is a FAITHFUL-FILL; see §4 / §3.2, grounded in the one-shot Part 2 attributes).
-- Capture one **intent record** per unit of work: a small structured document, authored by a human (optionally LLM-*assisted*), persisted as a versioned artifact.
-- Carry the record's `transfused_from` provenance (the GF-C lineage) per the C51 gene-transfusion discipline.
+- Capture one **intent record** per unit of work: a small structured document, authored by a human (optionally LLM-*assisted*), persisted as a versioned artifact carrying its author (`created_by`, C41).
+- Carry the **crucible pack's** `transfused_from` provenance (the GF-C lineage) per the C51 gene-transfusion discipline — this is component-level provenance of C11 itself (A93: `transfused_from` is recorded *per factory-built component*), **not** per intent record (see §3.3 field #9 and INV-4).
 - Hand the completed record **to C08** as the anchoring input for spec authoring (the C11→C08 seam).
 
 **What C11 is NOT** (boundaries)

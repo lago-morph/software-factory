@@ -1,6 +1,6 @@
 # C15 — Workflow linter (Mammoth 21-rule) (`workflow-linter`)  (Spec, canonical track)
 
-> Source: README §"Principle 3 — Pipeline-file as process", the "Workflow linter" row (line 134 "Structural rules — Transfusion from Mammoth's 21-rule DOT linter (Go, MIT) — MIT (Mammoth) — Gas City pack") and the Principle-3 dataflow diagram (lines 137–148: formula ↔ translator ↔ DOT → "Mammoth-style 21-rule linter"); README Phase 1 (line 392 "P3 … including visualization and (optionally) Mammoth-derived 21-rule linter"); README license table (line 301 "Mammoth | MIT (verify; 2389 research convention) | DOT linter is the strongest transfusion target"); AI-CONTEXT §6.4 Mammoth (lines 272–278: "21-rule DOT linter for formula linting"; "strongest v4 transfusion target") and §12 open question (line 509 "Mammoth's exact 21 DOT linter rules: should be documented and ported to formulas"); F-MODE-COVERAGE F26 ("chain length is a formula property, visible and lintable"). component-inventory C15 row (line 27: subsystem Workflow Engine; kind component; maps A34b, B30; depends C14; gap G30; foundational no). Sibling specs: `spec/C12-formula-pipeline-file.md` (the formula DAG C15 lints — §3 node/edge model, §4 node-kind set, the acyclicity/loop invariant), `spec/C14-formula-dot-translator.md` (the bidirectional translator that produces the DOT surface — *named-but-unbuilt upstream*), and the LINTER sibling `spec/C10-spec-linter-ears.md` (same deterministic-tool-node + findings-report pattern, modeled on).
+> Source: README §"Principle 3 — Pipeline-file as process", the "Workflow linter" row (line 134 "Structural rules — Transfusion from Mammoth's 21-rule DOT linter (Go, MIT) — MIT (Mammoth) — Gas City pack") and the Principle-3 dataflow diagram (lines 137–148: formula ↔ translator ↔ DOT → "Mammoth-style 21-rule linter"); README Phase 1 (line 392 "P3 … including visualization and (optionally) Mammoth-derived 21-rule linter"); README license table (line 301 "Mammoth | MIT (verify; 2389 research convention) | DOT linter is the strongest transfusion target"); AI-CONTEXT §6.4 Mammoth (lines 272–278: "21-rule DOT linter for formula linting"; "strongest v4 transfusion target") and §12 open question (line 509 "Mammoth's exact 21 DOT linter rules: should be documented and ported to formulas"); F-MODE-COVERAGE F26 ("chain length is a formula property, visible and lintable"). component-inventory C15 row (line 27: subsystem Workflow Engine; kind component; maps A34b, B30; depends C14; gap G30; foundational no). Sibling specs: `spec/C12-formula-pipeline-file.md` (the formula DAG C15 lints — §3 node/edge model, §4 node-kind set, the acyclicity/loop invariant), `spec/C14-formula-dot-translator.md` (the bidirectional translator that produces the DOT surface — specced at sweep-1; its exact DOT-attribute encoding is a C14 sweep-2 item), and the LINTER sibling `spec/C10-spec-linter-ears.md` (same deterministic-tool-node + findings-report pattern, modeled on).
 > Inventory ID: C15   Kind: component (deterministic tool node)   Status: sweep-1
 > Track: canonical (single track; D-6)
 
@@ -60,8 +60,8 @@ makes "lintable" real for DAG structure.
 
 | Direction | Component | Relationship (source) |
 |---|---|---|
-| Upstream (input surface) | **C14** formula↔DOT translator | C15's stated inventory dependency (`Depends on → C14`). C15 lints the **DOT surface** C14 produces from the formula (README:134 diagram `D --> L`; AI-CONTEXT §3.1 "enables Mammoth-style linting", §469). C14 is a **named-but-unbuilt upstream** at this sweep (no C14 spec yet) — see footprint note. |
-| Upstream (the artifact behind the DOT) | **C12** formula / pipeline-file | The DAG whose node/edge topology C15 reasons over. C12 §3 names C15 a downstream that runs "structural rules over the DAG"; C12 owns the node-kind set `{agent,tool,gate,sub_formula}` (**D-7**) — C15 *references*, never redefines it (and barely needs it: structure, not kind). |
+| Upstream (input surface) | **C14** formula↔DOT translator | C15's stated inventory dependency (`Depends on → C14`). C15 lints the **DOT surface** C14 produces from the formula (README:134 diagram `D --> L`; AI-CONTEXT §3.1 "enables Mammoth-style linting", §469). C14 **is specced at sweep-1** (`spec/C14-formula-dot-translator.md`): its `export(formula)→dot` surface gives C15 the node ids (1:1, "must survive the round trip"), a `kind=` attr, and directed edges (= dependency direction) C15's rules read. The **exact DOT-attribute encoding is deferred to C14 sweep-2**, and the **loop-construct DOT encoding C15's cycle rule needs is C14:OQ-2** (which defers to C12:OQ-2 for the primitive) — see footprint note + OQ-2. |
+| Upstream (the artifact behind the DOT) | **C12** formula / pipeline-file | The DAG whose node/edge topology C15 reasons over. C12 §3 names C15 a downstream that runs "structural rules over the DAG"; C12 owns the node-kind set `{agent,tool,gate,sub_formula}` (**D-7**) — C15 *references*, never redefines it: it consumes the kind / loop-construct marker **only** to tell a sanctioned bounded loop from a raw back-edge (§3.3 rule 1), and otherwise reasons over pure topology. |
 | Upstream (built-as) | **C17** tool-node abstraction | C15 is "a tool node" built over C17's deterministic-node abstraction (README:134 "Gas City pack"; like C10, a C17 instance). |
 | Upstream (wire/pack) | **C02** pack/tool-node ABI | The Gas City pack + `[[tool]] type="subprocess"` declaration C15's binary is invoked through (via C17). |
 | Upstream (config) | **C03** config/feature-flags | Whether the linter runs, and at what severity / blocking disposition — README:392 marks it "optional", so the enable/severity set is layered-TOML config. |
@@ -70,8 +70,11 @@ makes "lintable" real for DAG structure.
 
 > **Dependency-footprint note (fidelity).** The inventory states one formal dependency: **C14**
 > (`Depends on → C14`). C15 reads the formula's graph through C14's DOT export, consistent with README:134's
-> diagram (`formula → translator → DOT → linter`). **C14 has no spec at this sweep** — C15 names it as a
-> named, unbuilt upstream and pins the contract it needs (a node/edge-faithful DOT export); see §3.1 and OQ-2.
+> diagram (`formula → translator → DOT → linter`). **C14 is specced at sweep-1**
+> (`spec/C14-formula-dot-translator.md`) — its `export` surface is the contract C15 reads — but C14's
+> **exact DOT-attribute encoding is a C14 sweep-2 item** (C14 §3.1 names the mapping, not attribute-level
+> typing), and the **loop-construct encoding C15's cycle rule needs is C14:OQ-2**; C15 pins the contract it
+> requires (node/edge-faithful DOT export + loop markers) against that surface — see §3.1 and OQ-2.
 > C12 (the artifact), C17/C02 (the tool-node abstraction + ABI C15 is built *as*), and C03 (the
 > "optional" enable/severity config) are **derived/soft** upstreams traced through the *other* component's
 > doc, not asserted as inventory edges — the same posture C10 takes. Read the table as "C14 = stated
@@ -93,7 +96,7 @@ realization is C02's):
 
 | Input | Description | Source |
 |---|---|---|
-| Formula / DOT path | The C12 formula to lint, presented as the **DOT export** the C14 translator produces (the node/edge graph) — the declared input placeholder a formula node substitutes (e.g. `{formula_dot}`). | README:134 diagram; C14 (unbuilt) |
+| Formula / DOT path | The C12 formula to lint, presented as the **DOT export** the C14 translator produces (the node/edge graph) — the declared input placeholder a formula node substitutes (e.g. `{formula_dot}`). | README:134 diagram; C14 `export` (`spec/C14-formula-dot-translator.md` §3.1) |
 | Rule config | Which of the 21 rules are enabled and their severities / blocking disposition (layered TOML, C03). "Optional" ⇒ the enable/severity set is config-driven. | README:392; C03 |
 
 > [FAITHFUL-FILL] **C15 lints the DOT export, not the raw TOML.** README:134's diagram routes
@@ -102,7 +105,8 @@ realization is C02's):
 > the **C14 DOT surface**, not the TOML directly. This is the minimal consistent reading and explains the
 > `Depends on → C14` edge (lint the DOT C14 emits, don't re-parse TOML). If C14's round-trip proves a node/
 > edge model is more faithfully read from the formula AST, C15 could read the C12 structure directly; the
-> faithful default follows the diagram (DOT in). Pinned as OQ-2.
+> faithful default follows the diagram (DOT in). Pinned as OQ-2 — and the **loop-construct DOT encoding** the
+> cycle rule depends on is tracked from C14's side as **C14:OQ-2** (the same seam, named from both ends).
 
 ### 3.2 Outbound: what C15 produces
 - **Findings report** (structured): a list of findings, each with `rule_id`, `severity`

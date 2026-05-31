@@ -20,8 +20,8 @@
 > B10**; depends on **C52**; gaps **G15, G35**; foundational: no; Batch 4); ambiguities-and-gaps **G15**
 > (minor — autonomy levels assume one operator can author specs fast enough; guard "honest staffing /
 > document it") and **G35** (major — RSI/goal-subversion is the weakest acknowledged mechanism on a
-> self-modifying factory whose P11 fix-tasks auto-ship at L5); review-log **D-6** (canonical track — no
-> "Track A/B" framing).
+> self-modifying factory whose P11 fix-tasks auto-ship at L5); review-log **D-6** (single canonical track; no
+> dual-track framing).
 > Inventory ID: C56   Kind: cross-cutting (governance/policy artifact)   Status: sweep-1
 > Track: canonical (faithful posture)
 

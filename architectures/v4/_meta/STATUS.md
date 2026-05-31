@@ -21,7 +21,7 @@ Four axes: **B**uilt · **R**eviewed · **I**ncorporated · i**N**tegrated. Done
 | **2-tail** (2) | C26 C27 | ✓ | ✓ | ✓ | ✓ |
 | **3** (13) | C06 C11 C14 C15 C16 C18 C30 C31 C32 C33 C34 C35 C40 | ✓ | ✓ | ✓ | ✓ |
 | **4** (13) | C36 C37 C38 C39 C43 C44 C45 C51 C52 C53 C54 C55 C56 | ✓ | ✓ | ✓ | ✓ |
-| **5** (6) | C46 C47 C48 C49 C50 C57 | · | · | · | · |
+| **5** (6) | C46 C47 C48 C49 C50 C57 | ✓ | · | · | · |
 
 **51/57 components fully closed.** No outstanding review debt. **6 remain (Batch 5).**
 
@@ -41,4 +41,5 @@ Platform rate-limits subagent launches at ~8 concurrent. Pipeline at width ~6–
 | W0–W5 | 0–2 | Grounding, Batch-1, convergence, Batch-2-tail+review+integrator | done (PR #213, #218; D-6..D-14) |
 | W6–W8 | 2 | Batch 3 build (13) → review (13) → integrator (D-15..D-17) | done (Batch 3 closed) |
 | W9–W11 | 2 | Batch 4 build (13) → review (13) → integrator (D-18/D-19, XC-3) | done (Batch 4 closed) |
-| W12 | 2 | Batch 5 builders (6: C46–C50, C57) | ⏳ dispatching |
+| W12 | 2 | Batch 5 builders (6: C46–C50, C57) | done (6/6; **ALL 57 built**) |
+| W13 | 2 | Batch-5 review: 6 adversaries | ⏳ running |

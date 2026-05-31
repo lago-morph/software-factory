@@ -24,7 +24,9 @@ qualify-the-inference / tighten-the-citation fixes, applied in place.
 
 ## Findings
 
-### RC10-01 — major — Survivor-pass DROP #04 (vocab-lint wired to C07) is reintroduced as a co-owner responsibility, but it directly contradicts F-MODE:74 + C07's doc — needs orchestrator reconciliation, not a unilateral strip
+### RC10-01 — major — RESOLVED by D-9 — Survivor-pass DROP #04 (vocab-lint wired to C07) is reintroduced as a co-owner responsibility, but it directly contradicts F-MODE:74 + C07's doc — needs orchestrator reconciliation, not a unilateral strip
+
+> **RESOLVED by D-9 (integrator pass 2026-05-31).** F38 is **owned by C10** (F-MODE:74 + C07's frozen spec). SURVIVOR-PASS DROP #04 dropped only the C07 **machine-readable registry**, not C10's F38 duty; the F38 vocab-lint rule stays in C10 as a deterministic rule over specs against C07's **prose glossary** (no registry / content-hash machinery). Applied to C10 spec §1/§2/§3.1/§3.3/§6/§9 + plan T6.
 **Claim.** SURVIVOR-PASS C10 row #04 is **DROP — "Vocab-lint wired to C07 — No C07 machinery."** The
 faithful spec nonetheless elevates the F38 vocabulary-lint rule to a **co-equal reason-to-exist and owned
 responsibility**, threaded throughout: §1 ("C10 is the **owner** of F38"; "Run the vocabulary-lint rule

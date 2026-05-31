@@ -1,7 +1,7 @@
-# C05 — Sling / dispatch (`sling-dispatch`)  (Build Plan, Track A)
+# C05 — Sling / dispatch (`sling-dispatch`)  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C05-sling-dispatch.md`](../spec/C05-sling-dispatch.md)
-> Track A (faithful). Sweep 1. Depends on: C01 (Gas City substrate), C18 (reconciler / Health Patrol). Non-foundational routing seam in Runtime Substrate; Batch-2 per the [component inventory](../_meta/component-inventory.md) suggested batches.
+> Canonical track. Sweep 1. Depends on: C01 (Gas City substrate), C18 (reconciler / Health Patrol). Non-foundational routing seam in Runtime Substrate; Batch-2 per the [component inventory](../_meta/component-inventory.md) suggested batches.
 
 ## 1. Work breakdown
 
@@ -54,7 +54,7 @@ Freeze these earliest so dependents build against stubs in parallel:
 
 ## 5. Risks & de-risking order
 
-1. **Routing-key authority seam (OQ-1) — highest.** Spike *first* with the C09 author: confirm the faithful split (C09 resolves name→template/role; C05 routes the resolved key) before building T3, because folding resolution into C05 changes T1's inbound from "resolved template/role" to "raw formula template-name" and absorbs the §3.1 routing-key step. De-risk by freezing C05's inbound as "resolved key" under Track A and documenting the single insertion point (raw-name resolution) if an integrator later folds it in.
+1. **Routing-key authority seam (OQ-1) — highest.** Spike *first* with the C09 author: confirm the faithful split (C09 resolves name→template/role; C05 routes the resolved key) before building T3, because folding resolution into C05 changes T1's inbound from "resolved template/role" to "raw formula template-name" and absorbs the §3.1 routing-key step. De-risk by freezing C05's inbound as "resolved key" under the canonical track and documenting the single insertion point (raw-name resolution) if an integrator later folds it in.
 2. **Pool member-selection is Gas City's, not ours (OQ-2).** Risk: building a selection policy (round-robin/least-loaded/fairness) that Gas City's native sling already provides — exactly the optimized DELTA-03 dropped under the bar (SURVIVOR-PASS C05). Mitigate by shipping the single-target path (T3) first and making T4 a *pass-through* to native pool routing (route to the pool, verify one recipient), not a selection engine; any C05-visible policy deferred to sweep 2.
 3. **Back-pressure is not C05's (OQ-3).** Risk: building an internal dispatch queue v4 doesn't name (optimized admission-control DELTA-02 dropped as Gas-City-native). Mitigate by adding **no** C05 queue — Gas City native dispatch may impose back-pressure and/or the reconciler tick (C18) re-attempts next tick (spec §6 pool-exhaustion); which layer provides it is a sweep-2 question against the pinned `gc` binary.
 5. **Reconciler→dispatch trigger is inferred, not v4-stated (RC05-01).** C05's entire inbound trigger (and the F22 re-dispatch story) assumes the C18 reconciler invokes sling, which v4 implies but never states (spec §2 `[FAITHFUL-FILL]`). De-risk by carrying this as the load-bearing assumption to confirm with the C18 author when C18 is built (Batch 3): if dispatch is instead triggered by a running formula (C12) step, T1's trigger source changes. Until then, model it as reconciler-driven and flag the alternative.

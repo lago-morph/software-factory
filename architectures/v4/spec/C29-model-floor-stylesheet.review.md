@@ -100,11 +100,12 @@ verified line-by-line against the v4 docs — accurate.
 
 ## Deferred (needs orchestrator decision)
 
-- **DEFERRED — `independence_class` field (RC29-05).** Whether the canonical Phase-0 `modeldb` should
-  carry `independence_class` (per the dispatch brief + DELTA-01 *title*) or stay `{id, family, cost_tier}`
-  (per the adopted APPLY RESULTS) is an architecturally-significant labeling call that the survivor-pass
-  apply already decided one way. Not applied unilaterally — left for the orchestrator to confirm whether
-  the apply-time reduction stands or the field should be reinstated as the FE-1 seam.
+- **RESOLVED by D-10 (was: DEFERRED — `independence_class` field, RC29-05).** The canonical Phase-0
+  `modeldb` is **`{id, family, cost_tier}`** — **no `independence_class` field** (D-10, binding, per the
+  SURVIVOR-PASS apply outcome). Judge independence is expressed by the L0–L3 policy (L1 same-family default,
+  D-1), not a registry field. The apply-time reduction stands; `independence_class` is the optimized
+  sibling's L2/L3 (FE-1) axis and is not pulled into the canonical Phase-0 registry. Spec §3 already reads
+  `{id, family, cost_tier}`; the D-10 confirmation note was added to the registry row.
 
 ## Verdict
 **accept-with-fixes.** Faithful and well-traced; the bar is respected (zero over-build — all four DROP

@@ -1,7 +1,7 @@
-# C26 — OpenTelemetry Collector (`otel-collector`)  (Build Plan, Track A)
+# C26 — OpenTelemetry Collector (`otel-collector`)  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C26-otel-collector.md`](../spec/C26-otel-collector.md)
-> Track A (faithful). Sweep 1. Depends on: C25 (OTLP telemetry export). Non-foundational `component` in the Observability subsystem; the **second stage** of the C25 → C26 → C27 pipeline, exporting to LangFuse (C27) as its single sink. Batch-2 per the [component inventory](../_meta/component-inventory.md) (observability ingest C25/C26/C27/C24). **C26 IS the off-the-shelf OpenTelemetry Collector (Apache 2.0) — the build is configuration + topology, not custom software.**
+> Canonical track. Sweep 1. Depends on: C25 (OTLP telemetry export). Non-foundational `component` in the Observability subsystem; the **second stage** of the C25 → C26 → C27 pipeline, exporting to LangFuse (C27) as its single sink. Batch-2 per the [component inventory](../_meta/component-inventory.md) (observability ingest C25/C26/C27/C24). **C26 IS the off-the-shelf OpenTelemetry Collector (Apache 2.0) — the build is configuration + topology, not custom software.**
 
 ## 1. Work breakdown
 

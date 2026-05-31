@@ -1,4 +1,4 @@
-# C20 — Bead schema registry  (Spec, Track A)
+# C20 — Bead schema registry  (Spec, canonical track)
 
 > Source: AI-CONTEXT §3.2 ("nine concepts" #2 — "Bead Store: Durable typed **work-graph** (Dolt or file)"); AI-CONTEXT §16 cold-start procedure (lines 694–699: "Find its bead with `gc bd find --type factory_build_in_progress` … `transfused_from` attribution … `gc converge resume <bead_id>`"); README Part 4 P8 ("Gas City beads with type `override`"), P9 ("beads … native `created_by`"), P10 ("Persistent task graph — Tasks with **dependencies**"), P11 ("diagnosis agent writes bead of type `fix_task`", "Loop closure tracking — Custom bead chain: anomaly → diagnosis → fix → resolution … Bead schema"); README Phase 3b ("Fix-task bead schema"); component-inventory C20 row (maps `A90, A91, A92, A58b, B37-schema`; depends on C19; gaps G17, G18; foundational: yes); ambiguities-and-gaps G17 (blocker — "no schema for any of the core stores", names `override`/`fix_task`/`factory_build_in_progress`/`factory_build`), G18 (blocker — self-healing loop has no termination / loop-closure contract).
 > Inventory ID: C20   Kind: data-store   Status: sweep-1
@@ -46,7 +46,7 @@ definitions live.
   detect oscillation) is C39/C35. C20 supplies the schema slots; the loops supply the policy.
 - NOT identity/attribution (C41). C41 owns *who can act* and the `created_by` provenance semantics; C20
   merely declares `created_by` as a required envelope field (faithful to P9).
-- NOT a new bead **type system** of v4's invention. Track-A faithfulness limits C20 to the types v4
+- NOT a new bead **type system** of v4's invention. Canonical-track faithfulness limits C20 to the types v4
   actually names; it does not add speculative types (those would be Track-B deltas).
 
 ## 2. Context & dependencies

@@ -1,7 +1,7 @@
-# C27 — LangFuse trace store & browser (`langfuse-traces`)  (Build Plan, Track A)
+# C27 — LangFuse trace store & browser (`langfuse-traces`)  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C27-langfuse-traces.md`](../spec/C27-langfuse-traces.md)
-> Track A (faithful). Sweep 1. Depends on: C26 (OTel Collector — authored in parallel this wave), deployed onto the C01/C03 substrate. Non-foundational `data-store` in the Observability subsystem; the **terminal browsing sink** of the C25 → C26 → C27 OTLP pipeline. Batch-2 per the [component inventory](../_meta/component-inventory.md) (observability ingest C25/C26/C27/C24).
+> Canonical track. Sweep 1. Depends on: C26 (OTel Collector — authored in parallel this wave), deployed onto the C01/C03 substrate. Non-foundational `data-store` in the Observability subsystem; the **terminal browsing sink** of the C25 → C26 → C27 OTLP pipeline. Batch-2 per the [component inventory](../_meta/component-inventory.md) (observability ingest C25/C26/C27/C24).
 
 ## 1. Work breakdown
 

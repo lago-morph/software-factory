@@ -1,4 +1,4 @@
-# C02 — Pack & Tool-Node ABI  (Spec, Track A)
+# C02 — Pack & Tool-Node ABI  (Spec, canonical track)
 
 > Source: README §Part 4 (placement tables, lines ~107–256), §Part 5 ("Specific cautions" line 334; license-strategy table line 288), §Part 6 (Phase 0 lines 359–362; Phase 1 line 389; Phase 2 lines 424–426), §Part 7 (design bets lines 509–518), §Part 8 (line 535). AI-CONTEXT §3.4 (smallest viable install, lines 114–122), §3.5 (migration tail, line 128), §3.6 (extractability), §10.1 / decision tables (lines 439, 465, 476, 502), §13.1 (`pack.toml`/`city.toml` skeletons, lines 524–544), §13.2 (Phase-1 env + service blocks), §13.3 (rig partition + tool-node subprocess sketch, lines 599–608). F-MODE-COVERAGE F44 (per-pack production-scissors), F31 (single-adapter floor), F35/F43 (pack governance/RSI declaration). component-inventory C02 row; gaps G29, G06.
 > Inventory ID: C02   Kind: interface   Status: sweep-1
@@ -141,12 +141,14 @@ From this, the named ABI elements (faithful elaboration, sweep-1 descriptions):
 > HTTP/JSON-shaped bridge.
 > **Cross-track note:** the optimized track (C02-B DELTA-01/03) makes the structured stdin/stdout-JSON
 > envelope the *primary* path and demotes argv/`{placeholder}` to a compat shim — i.e. it promotes this
-> doc's optional Reading B to its floor. The divergence is deliberate (Track B improves freely); a reader
-> diffing the two tracks should expect opposite primary I/O channels by design.
+> doc's optional Reading B to its floor. The divergence is deliberate; a reader diffing the canonical spec
+> against the frozen `spec-optimized/` reference should expect opposite primary I/O channels by design.
 
 3. **Tool-node invariants** (sweep-1 statements):
    - A tool node is **deterministic-first**: it is the surface for steps that "don't need a model"
-     (README:154); LLM nodes are a different node kind owned by C28, not C02.
+     (README:154); LLM nodes are a different node kind owned by C28, not C02. The formula node-kind set
+     `{agent, tool, gate, sub_formula}` is **named by C12** (taxonomy home, **D-7**); C02 references C12's
+     `tool` kind here for the tool-node ABI but does **not** redefine the set.
    - A tool node is **language-agnostic** at the ABI: Go, Python ("Python tool node", README:253–255), or
      any binary that honors the subprocess contract. The "no Go import" rule (README:334) is about *Gas
      City as a library*, not about the tool node's own language.

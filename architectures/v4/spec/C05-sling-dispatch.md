@@ -1,4 +1,4 @@
-# C05 — Sling / dispatch (`sling-dispatch`)  (Spec, Track A)
+# C05 — Sling / dispatch (`sling-dispatch`)  (Spec, canonical track)
 
 > Source: AI-CONTEXT §3.2 (concept table line 92 — "8 | Dispatch (Sling) | Routes bead/wisp to agent or pool | P2, P3"); §3.3 vocab translation (line 105 `sling → dispatch / route`, line 108 `wisp → unit of dispatchable work`, line 100 `rig → agent worker role`); README §"Principle 1" (line 109 — "Gas City formulas reference templates by name; **sling routes work to agents with specific templates**"); README §"Principle 2" (lines 116–122 — provider abstraction, `claude` provider preset); README §13.1 Phase 0 (lines 361–364 — one `[[agent]]` block, "no multi-rig pool"). Companion: faithful spec [`spec/C09-prompt-template-binding.md`](./C09-prompt-template-binding.md) (the template-name binding C05 consumes at dispatch), [`spec/C01-gas-city-substrate.md`](./C01-gas-city-substrate.md) (sling is native Gas City), [`spec/C28-claude-code-agent-loop.md`](./C28-claude-code-agent-loop.md) (the agent C05 routes work to).
 > Inventory ID: C05   Kind: component   Status: sweep-1

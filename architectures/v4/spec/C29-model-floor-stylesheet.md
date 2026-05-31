@@ -1,4 +1,4 @@
-# C29 — Model floor & stylesheet routing  (Spec, Track A)
+# C29 — Model floor & stylesheet routing  (Spec, canonical track)
 
 > Source: README.md Part 4 P6 (lines 183–191), Part 4 OSS-table Fabro row (304), Phase-1 build (420–442); AI-CONTEXT.md §4.1 (Max auth), §6.2 (Fabro / CSS model stylesheet), §6.3 (Kilroy `--force-model` / `modeldb`), §7 Layer-2 table (304 "Cross-family enforcement: None / DIY / Custom model stylesheet rule"), §12 open questions (514 "specific Gas City model stylesheet syntax for judge != coder"); F-MODE-COVERAGE.md §6 F19 (71) + F31 (73), §1 F1/F27/F46/F48 (17/21/24/25); component-inventory.md C29 (maps A11b, A106, B84).
 > Inventory ID: C29   Kind: component   Status: sweep-1
@@ -45,7 +45,7 @@ C29 owns the **stylesheet artifact** (version-controlled config, not runtime sta
 | Datum | Shape (sweep-1) | Owner | Notes |
 |---|---|---|---|
 | Stylesheet | ordered list of (selector, declaration) | C29 | layered TOML under C03; section presence = active |
-| Model registry (`modeldb`) | `{id, family, cost_tier}` per model | C29 | family label is what cross-family compares (G08 — "family" undefined in v4; see §9) |
+| Model registry (`modeldb`) | `{id, family, cost_tier}` per model (**D-10** — binding; **no `independence_class` field**) | C29 | family label is what cross-family compares (G08 — "family" undefined in v4; see §9). Judge independence is expressed by the L0–L3 policy (L1 same-family default, D-1), **not** a registry field (D-10). |
 | Floor pin | `claude-code@max` identity | C29 | the declaration backing F19/F31 |
 
 ## 5. Behavior

@@ -1,4 +1,4 @@
-# C28 — Claude Code Agent Loop  (Spec, Track A)
+# C28 — Claude Code Agent Loop  (Spec, canonical track)
 
 > Source: README §"Principle 2 — Three-layer architecture" (L113–124, L60–74), §"Concrete first steps" Phase-0 checklist (L533–543), §"Cross-session continuity" (L240), §"Event substrate" (L252); AI-CONTEXT §2 (L46–56), §4 (L139–190), §13.2 (L569–580), §13.3 (L587–596), §14 (L624); one-shot-specs §"Specs library" agent-loop row (L21).
 > Inventory ID: C28   Kind: agent-role   Status: sweep-1
@@ -103,7 +103,7 @@ Persistence/continuity is delegated to C04 (resume) and CXDB (trajectory). C28 i
 > [AMBIGUITY: G13 (cost/throughput vs the $200 subscription) + G34 (agent-side scale ceiling)] **Single-Max-seat throughput & cost ceiling.** (Two distinct gaps with one shared root cause and one shared deferral; split back out into OQ2 (G13/G32) and OQ3 (G34) below.)
 > Reading A (P7 optimism): scenarios run "thousands per hour without rate limits" → no agent-side ceiling.
 > Reading B (the gap): P7's rate-limit relief is on the *twinned-dependency* side; the **coder/judge agent still hits Max rate limits** (G34), and L5-volume scenario/judge/A-B replay against one $200 Max seat has **no token-budget math anywhere** (G13/G32).
-> **Chosen:** Reading B is correct on the facts; v4 simply has not modeled it. Faithful position: C28 inherits a **single-seat throughput/cost ceiling** that v4 leaves unquantified. The minimal consistent mitigation already present in v4 is C29 (model-floor/stylesheet **cost/family-aware routing**) — i.e. v4's own answer to "don't burn the floor model on everything" — plus C04 session suspension to avoid idle burn. No new mechanism may be invented in Track A; the quantification is **deferred** (token budgets, seat-count, rate-limit backoff) to review-log.
+> **Chosen:** Reading B is correct on the facts; v4 simply has not modeled it. Faithful position: C28 inherits a **single-seat throughput/cost ceiling** that v4 leaves unquantified. The minimal consistent mitigation already present in v4 is C29 (model-floor/stylesheet **cost/family-aware routing**) — i.e. v4's own answer to "don't burn the floor model on everything" — plus C04 session suspension to avoid idle burn. No new mechanism may be invented on the canonical track; the quantification is **deferred** (token budgets, seat-count, rate-limit backoff) to review-log.
 
 **Other detection/recovery:** auth failure, MCP-connection failure, and permission-change events are all in Claude Code's native event stream (AI-CONTEXT §4.3 L173) → visible to C11 self-healing.
 

@@ -1,4 +1,4 @@
-# C13 — Molecule (instantiated workflow / runtime state)  (Build Plan, Track A)
+# C13 — Molecule (instantiated workflow / runtime state)  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C13-molecule-runtime-state.md`](C13-molecule-runtime-state.md)
 > Track: A (faithful)   Sweep: 1 (architecture altitude)

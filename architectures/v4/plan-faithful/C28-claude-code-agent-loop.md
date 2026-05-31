@@ -1,4 +1,4 @@
-# C28 — Claude Code Agent Loop  (Build Plan, Track A)
+# C28 — Claude Code Agent Loop  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C28-claude-code-agent-loop.md
 
@@ -43,7 +43,7 @@ T3 (prompt/context binding) is the join point that makes an end-to-end run; it s
 ## 5. Risks & de-risking order
 
 1. **G12 — Max subprocess-automation permanence (highest).** Spike first: confirm current Max subprocess auth works unattended; document the undesigned API-key/Agent-SDK fallback. This gates the floor's durability and everything above C28.
-2. **G13/G34 — single-seat cost/throughput ceiling.** Spike a token-budget probe + rate-limit measurement early; surface numbers to review-log (v4 gives none). Do not design horizontal scale in Track A — just quantify the ceiling.
+2. **G13/G34 — single-seat cost/throughput ceiling.** Spike a token-budget probe + rate-limit measurement early; surface numbers to review-log (v4 gives none). Do not design horizontal scale on the canonical track — just quantify the ceiling.
 3. **Hook/MCP-without-fork (T4/T5).** Prove the no-Go-fork extension claim early; it underpins the whole pack-only premise (AI-CONTEXT §3.5).
 4. **Telemetry completeness (T2).** Verify raw-API-bodies + OTLP land before downstream (C24–C27) builds on them.
 

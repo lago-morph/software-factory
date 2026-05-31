@@ -35,7 +35,17 @@ broad-tool-access read-escape is what G31/C43 closes." Wording that still reads 
 detect-only and assigns holdout enforcement to C43 in the AMBIGUITY blocks is left for the orchestrator
 (see RC42-02 DEFERRED) since it is entangled with the G21 enforcement-strength call.
 
-### RC42-02 — major — DEFERRED — The G21 AMBIGUITY block's "prevention requirement → C43, Track-B [DELTA]" disposition pre-decides a cross-component routing the inventory assigns to C34
+### RC42-02 — major — RESOLVED by D-13 — The G21 AMBIGUITY block's "prevention requirement → C43, Track-B [DELTA]" disposition pre-decides a cross-component routing the inventory assigns to C34
+
+> **RESOLVED by D-13 (integrator pass 2026-05-31).** Ownership is settled: **C34** owns holdout-integrity
+> **enforcement + after-the-fact audit** (read-isolation policy, independence checks under D-1,
+> `scenarios ∉ read_partition(worker)`); **C43** owns the *distinct* lethal-trifecta blast-radius bound
+> (Bash/net/fs typing, twin isolation; G31); **C42 provides** the role partition C34 enforces and does not
+> enforce. The RC42-01 partial-fix re-pointing holdout enforce+audit → C34 is confirmed clean and is now
+> binding. The G21 AMBIGUITY block + OQ-C42-1 were rewritten to drop the "prevention → C43 / Track-B [DELTA]"
+> framing; the only residual open item is the *substrate* question (does Gas City prevent the out-of-partition
+> read at tool-call time, or only permit-with-review so C34 detects after the fact — G11). Pre-constrains
+> unbuilt C34 (Batch 3) + C43 (Batch 4) — ledger record D-13.
 **Claim.** §6 [AMBIGUITY: G21] resolves: "route the *prevention* requirement to C43 (G31)" and
 "Making the boundary a hard tool-call-time control is exactly a Track-B `[DELTA]` candidate (… sequence
 C43 earlier)." **Evidence.** Per RC42-01 the enforcement of the holdout *read-isolation* is C34's

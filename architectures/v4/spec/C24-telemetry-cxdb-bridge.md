@@ -1,4 +1,4 @@
-# C24 — Telemetry → CXDB Ingestion Bridge  (Spec, Track A)
+# C24 — Telemetry → CXDB Ingestion Bridge  (Spec, canonical track)
 
 > Source: README §Part 6 Phase 1 (line 386 "Install OpenTelemetry Collector … `OTEL_LOG_RAW_API_BODIES=file:<dir>` for the raw-body path"; line 389 "Build the raw-API-bodies → CXDB bridge as a Gas City pack — a small standalone tool node binary that watches the `OTEL_LOG_RAW_API_BODIES` directory and posts to CXDB via HTTP/JSON :9010. Pattern transfusion from Kilroy's per-stage logging and Gas City's `internal/sessionlog` — but the bridge is a standalone binary called by Gas City as a tool node, not a Go import"; line 408 graph node "Bridge[raw-bodies → CXDB bridge pack]", line 413 "CC -->|raw bodies| Bridge --> CX"; line 541 "Install CXDB alongside, build the raw-API-bodies bridge. This is the first non-trivial integration; budget a week"); AI-CONTEXT §4.3 (line 176 "`OTEL_LOG_RAW_API_BODIES=file:<dir>` dumps untruncated request/response JSON to disk. Conversation-shaped, ideal for CXDB ingestion"; line 178 correlation attributes `prompt.id`, `session.id`, `user.account_uuid`, `organization.id`, `terminal.type`), §5.2 (lines 204–210 ingest protocols :9009/:9010), §5.4 (lines 222–232 bridge impedance table + "Recommended: raw API bodies path … standalone Go binary that watches `OTEL_LOG_RAW_API_BODIES` directory and posts to CXDB HTTP API … parent-chain via `session.id`"), §5.5 (BLAKE3 Blob CAS/dedup line 236 — the basis for the *derived* idempotent-re-post property, ratified by C21 AC-7), §11.1 (lines 463–466 "Bridge path: raw API bodies → CXDB — Yes, recommended … standalone tool-node binary in a pack", "Skip OTLP → CXDB path — Yes"), §13.2 (lines 558, 579 `[[service]] cxdb` + `OTEL_LOG_RAW_API_BODIES = "file:/var/lib/cxdb-bridge/inbox"`); component-inventory C24 row (line 36 "Standalone tool-node watching raw-API-bodies dir, posting to CXDB HTTP; defines delivery/ordering/back-pressure at the seam", maps A29b/A29c/A28c/B45, depends C21+C28, gaps G26/G27/G33, foundational no) + Batch-2 note (line 109); spec/C21 §3 (I2 HTTP ingest), §6 (G33 fail-open + idempotency, AC-7); spec/C23 §6 (G27 reading (b)); ambiguities-and-gaps G26, G27, G33; review-log D-2 (bundle-id `softwarefactory.v4.trajectory`).
 > Inventory ID: C24   Kind: interface   Status: sweep-1
@@ -132,7 +132,9 @@ defer to sweep 2 (and the type triple to C22, the ingest wire to C21).
   so correctness needs no persisted checkpoint. A durable inbox cursor (skip already-acked bodies on restart)
   is an **optional sweep-2 optimization**, not required state (G26 restart safety).
 - **INV-6 (no OTLP, no spans):** C24 posts only conversation-shaped turns from raw bodies; it never sends
-  OTLP spans to CXDB (the rejected path, AI-CONTEXT §5.4 line 230; C21 INV-6).
+  OTLP spans to CXDB (the rejected path, AI-CONTEXT §5.4 line 230; C21 INV-6). This is C24's half of the
+  two-sink rule, which per **D-12** stays as cross-referenced per-spec notes (fork at C25, anti-edge at C26,
+  C24/C27 cross-referencing) — no new shared subsystem doc.
 
 ## 4. Data model / state
 

@@ -1,4 +1,4 @@
-# C12 — Formula / Pipeline-File Format  (Build Plan, Track A)
+# C12 — Formula / Pipeline-File Format  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C12-formula-pipeline-file.md
 

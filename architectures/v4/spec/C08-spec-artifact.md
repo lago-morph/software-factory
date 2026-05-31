@@ -1,4 +1,4 @@
-# C08 — Spec artifact & format (`spec-artifact`)  (Spec, Track A)
+# C08 — Spec artifact & format (`spec-artifact`)  (Spec, canonical track)
 
 > Source: README §"Principle 1 — Specs are the source of truth" (lines 100–111); AI-CONTEXT §1 (principle table, line 31), §3.1 (coverage map, line 66), §3.4 (smallest viable install, lines 114–122), §13.1 (Phase 0 `agents/worker/prompt.template.md`, lines 542–544); one-shot-specs-and-research.md Part 1 (example one-shot specs) + Part 2 (specification-attribute research); F-MODE-COVERAGE F18, F38, F3, F36.
 > Inventory ID: C08   Kind: artifact   Status: sweep-1
@@ -25,7 +25,7 @@ In the v4 substrate, the spec format **is** Gas City's prompt-template machinery
 > - **Reading A (collapse — chosen).** The prompt-template file *is* the canonical spec artifact, because README:106 maps the "Spec format" row directly onto "Gas City prompt templates … `agents/<name>/prompt.template.md`". This is the only v4 statement that names a concrete on-disk spec **format + path**.
 > - **Reading B (standalone).** The spec is a standalone target-system Markdown document the prompt template merely *references* — the shape the cited `one-shot-specs-and-research.md` Part 1 corpus actually shows in practice (StrongDM's three markdown files; Kilroy `spec.md`+`DoD.md`, distinct from agent prompt templates).
 >
-> **Faithful pick: Reading A**, because it is the smallest choice that yields a single v4-named artifact with a v4-named path, and v4's substrate section never reconciles the corpus practice with the placement-table equation. Reading B is *better engineering* but adds an artifact and a C08↔C09 reference seam v4 does not name — that is Track B's territory (see optimized DELTA-01). This is the **load-bearing ambiguity for C08**; it is restated as OQ-1 (§9) and is the integrator's call.
+> **Faithful pick: Reading A**, because it is the smallest choice that yields a single v4-named artifact with a v4-named path, and v4's substrate section never reconciles the corpus practice with the placement-table equation. Reading B is *better engineering* but adds an artifact and a C08↔C09 reference seam v4 does not name — that is a deferred-enhancement direction (see the frozen optimized DELTA-01 reference). This is the **load-bearing ambiguity for C08**; it is restated as OQ-1 (§9) and is the integrator's call.
 
 ## 2. Context & dependencies
 

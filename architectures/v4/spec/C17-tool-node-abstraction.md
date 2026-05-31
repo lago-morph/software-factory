@@ -1,4 +1,4 @@
-# C17 — Tool-Node Abstraction  (Spec, Track A)
+# C17 — Tool-Node Abstraction  (Spec, canonical track)
 
 > Source: README §"Principle 4 — Deterministic-first" (lines 152–162; the "Tool node abstraction" row line 158 "Gas City native — tool beads … Native", and line 154 "Tool nodes are cheap and reproducible. Most steps don't need a model. Use models only where reasoning is required."), README §Part 3.1 "P4 (deterministic-first): reconciler + tool-node primitives available" (line 370), README §13.3-equivalent tool sketches (Inspect AI subprocess line 599, bridge line 389, satisfaction aggregator line 426). AI-CONTEXT §3.2 "nine concepts" concept 7 Formulas+Molecules / concept 9 Health Patrol (lines 91, 93), §3.5 P4 strength row "Strong (reconciler + tool nodes)" (line 69), §13.3 `[[tool]]` subprocess sketch (lines 599–608). F-MODE-COVERAGE F51 (Ashby-deficient probabilistic guard; line 76) and F52 (tempting-wrong-hybrid / deterministic-without-purpose; line 100). component-inventory C17 row (deps C02; gap G29; foundational yes); component-inventory-A A35 (Tool node abstraction; RM P4, AC §3.2), A17 (P4 deterministic-first cross-cutting). C02 spec `spec/C02-pack-extension-abi.md` (the ABI C17 is realized over).
 > Inventory ID: C17   Kind: component   Status: sweep-1
@@ -142,7 +142,7 @@ C17 is a **component/abstraction**, not a data store; it owns *the node definiti
   DAG) plus the C02 `[[tool]]` block it resolves to — C17 does not introduce a third file.
   > [FAITHFUL-FILL] C17 adds no new on-disk artifact; it is a *view* over C12 nodes + C02 tools. Minimal-
   > consistent because v4 calls it "native — tool beads" with no separate store, and introducing one would
-  > be an architectural addition the faithful track forbids.
+  > be an architectural addition the canonical track forbids.
 - **Per-execution state** (a tool node's invocation) belongs to **C13** (the molecule/bead the run produces)
   and **C19/C20** (the bead and its schema), carrying `created_by` (C41) and landing on the event bus (C23).
   C17 owns no runtime state of its own.

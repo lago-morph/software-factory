@@ -103,13 +103,14 @@ be a sweep-2 decision gated on the real `gc` format, not a faithful addition her
 
 ## Deferred (needs orchestrator decision)
 
-- **DEFERRED — node-kind field home (C12 vs C02).** RC12-03 corrects the *over-assertion*, but the actual
-  ruling — does the canonical node-kind tag live in the C12 formula-node entry or the C02 `[[tool]]` block? —
-  is a cross-component contract spanning C12/C16/C17/C02 and is architecturally significant. It is already an
-  OQ in C12 §9 (item 4) and C17 OQ-2. Left for the integrator pass; not unilaterally resolved here.
-- **DEFERRED — convoy/order ownership confirmation.** RC12-05 confirms C12's Reading-A *scoping* is faithful,
-  but the binding confirmation that C40 (Orders) and an as-yet-unassigned convoy owner accept the boundary
-  (C12 §9 item 3 / plan T7) is a cross-component sign-off, not a C12-local edit. Deferred to integrator.
+- **RESOLVED by D-7 — node-kind taxonomy home (C12 vs C02).** RC12-03 corrected the over-assertion; **D-7**
+  settles the ruling: the node-kind set `{agent, tool, gate, sub_formula}` is **C12's** formula-DAG vocabulary
+  (taxonomy home), and C02 *references* C12's `tool` kind for the tool-node ABI without redefining the set.
+  Applied: C12 §1, §3.1 node-set + node-kind rows, §9 item 4; C02 §tool-node-invariants one-line cross-ref.
+  *Residual (Sweep-2/G11):* the on-disk field name/shape against the real `gc` grammar.
+- **RESOLVED by D-8 — convoy/order ownership.** RC12-05 confirmed C12's Reading-A scoping; **D-8** binds it:
+  Convoy → **C05** (Gas City sling concept), Order → **C40** (durable workflow). C12 references both, defines
+  neither; C07 carries the glossary entries. Applied: C12 §9 item 3 (and §3 G06 block already scopes them out).
 
 ## Verdict
 **accept-with-fixes.** The spec is faithful, well-traced, and correctly identifies its own top risk (G11 —

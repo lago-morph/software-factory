@@ -1,4 +1,4 @@
-# C19 — Bead store / typed work-graph  (Build Plan, Track A)
+# C19 — Bead store / typed work-graph  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C19-bead-work-graph.md`](../spec/C19-bead-work-graph.md)
 

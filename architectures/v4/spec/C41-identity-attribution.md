@@ -1,4 +1,4 @@
-# C41 — Identity / actor model & attribution  (Spec, Track A)
+# C41 — Identity / actor model & attribution  (Spec, canonical track)
 
 > Source: README Part 4 **P9 — Attribution** (lines 220–231: "Every commit, task, event carries actor identity. Foundation for debug, compliance, trust"; the 4-row component table — Identity model = "Gas City `actor` schema (cities, rigs, agents)"; Action attribution = "Gas City beads, events native `created_by`" / "strongest principle match"; Audit trail = "Gas City event bus + bead history"; Identity verification = "Custom: signature on bead provenance" / "**optional, deferred**"); README:90 ("attribution is automatic"); README:371 ("P9 (attribution): native; every bead and event carries `created_by`"); AI-CONTEXT §3.1 row 9 ("**Strongest match in entire corpus** — automatic everywhere"); AI-CONTEXT §3.2 ("nine concepts" #1 Session → P9, #2 Bead Store → P9, #3 Event Bus → P9, #6 Messaging → P9); AI-CONTEXT §3.3 vocabulary table (city = workspace, rig = agent worker role); AI-CONTEXT §13.3 rig-partition skeleton (`[[rig]]` blocks); F-MODE-COVERAGE §2 (F14 "Attribution collapse" → "every bead, event, action carries actor"; F32 "Mail-injection / unsigned coordination" → "P9 attribution + optional HMAC signing layer"), §6 (F43 "RSI Board-Visibility Gap" → "P9 attribution + audit trail + bead history"), §7 (F32 revisit → "HMAC signing on mail bus"); component-inventory C41 row (maps `A43, A44, A44b, A44c, A19d, B50, B51, A22i`; depends on C01, C19, C23; gap G36; foundational: yes; critical-path note: "cross-cutting load-bearer that touches nearly everything … every action"); ambiguities-and-gaps **G36** (minor — "Attribution integrity is optional/deferred … without signed provenance, attribution is *self-asserted* … an optional guard does not address a security failure").
 > Inventory ID: C41   Kind: component   Status: sweep-1
@@ -58,7 +58,7 @@ so C41 *defines the seam* for it but does not require it (gap G36; see §6).
 - NOT secrets / credential management (G37). OAuth tokens, mTLS certs, judge-provider credentials live in
   config (C03) / env; C41 does not store or rotate them. G37 is assigned to C03/C43, not C41.
 - NOT a **mandatory cryptographic provenance** system. v4 marks identity verification "optional,
-  deferred" (README:229). Track-A faithfulness forbids C41 from *requiring* signed provenance; it defines
+  deferred" (README:229). Canonical-track faithfulness forbids C41 from *requiring* signed provenance; it defines
   the seam and flags the residual risk (G36).
 - NOT the messaging bus (C06). C06 owns Mail/Nudge and the *optional HMAC signing* of mail; C41 owns the
   identity that signing would bind to. (Inventory: C06 carries gap G36 too — the HMAC seam — but the
@@ -208,7 +208,7 @@ BUILDER-BRIEF altitude.)
 | F-mode / gap | Relevance | Handling in C41 (faithful) |
 |---|---|---|
 | **F14** Attribution collapse (F-MODE §2, "Addressed") | The core mode C41 prevents: actions losing their actor. | **Addressed conditional on OQ-C41-3** at sweep-1 altitude by the universal-attribution invariant (§3): every bead/event carries a `created_by` resolving to a valid actor; an unattributed write is invalid. This is v4's "strongest principle match" (README:231). *Caveat (RC41A-03, aligns spec with plan §5 risk 1):* the "unattributed write is invalid" guarantee is firm only if Gas City *rejects* (not merely *defaults*) an unattributed write — an unverified G11-class assumption (OQ-C41-3). If the substrate only defaults the field, F14 is discipline-dependent, not enforced. Retire OQ-C41-3 (plan T7) before declaring F14 unconditionally Addressed. |
-| **F32** Mail-injection / unsigned coordination (F-MODE §2 + §7) | Unsigned inter-agent mail can be spoofed; the guard is "optional HMAC signing." | **Addressed-on-paper-only** in the faithful reading: C41 defines the provenance-verification *seam* the HMAC layer attaches at (§3 #4, §4.3), but the signing is **optional** (G36). *Fidelity divergence (RC41A-02):* F-MODE-COVERAGE §2/§7 marks F32 **"Addressed"**, but that status is **not faithfully supportable** under C41's optional-signing reading — an optional guard "does not address a security failure" (G36). Per Track-A rule 3 this divergence is recorded (not silently resolved) and routed to C57 (F-mode owner) as a residual-risk flag; the architecture stays optional. The mail bus itself is C06; C41 supplies the actor identity the signature binds. Residual risk flagged below + §9. |
+| **F32** Mail-injection / unsigned coordination (F-MODE §2 + §7) | Unsigned inter-agent mail can be spoofed; the guard is "optional HMAC signing." | **Addressed-on-paper-only** in the faithful reading: C41 defines the provenance-verification *seam* the HMAC layer attaches at (§3 #4, §4.3), but the signing is **optional** (G36). *Fidelity divergence (RC41A-02):* F-MODE-COVERAGE §2/§7 marks F32 **"Addressed"**, but that status is **not faithfully supportable** under C41's optional-signing reading — an optional guard "does not address a security failure" (G36). Per canonical-track rule 3 this divergence is recorded (not silently resolved) and routed to C57 (F-mode owner) as a residual-risk flag; the architecture stays optional. The mail bus itself is C06; C41 supplies the actor identity the signature binds. Residual risk flagged below + §9. |
 | **F43** RSI Board-Visibility Gap (F-MODE §6, "Partial") | Need an audit trail to see what self-modifying components did. | **Partially addressed**: C41's actor-keyed audit trail (event bus + bead history, §4.2) is exactly the "P9 attribution + audit trail + bead history" mechanism. The *declaration discipline* (pack-author declares RSI status in `pack.toml`) is operator-required and out of C41's scope (it's a pack-governance concern). |
 | **G36** Attribution integrity is optional/deferred (minor) | Without signed provenance, `created_by` is self-asserted; F32's guard is "optional," which "does not address a security failure." | See the AMBIGUITY block below. Faithful resolution: C41 **defines** the verification seam and **requires** universal *self-asserted* attribution, but does **not require** verification (v4 marks it deferred). The gap is acknowledged + surfaced as residual risk, not closed. |
 
@@ -224,21 +224,21 @@ BUILDER-BRIEF altitude.)
 > a guard that may not be installed. On a self-modifying factory (F43/RSI), self-asserted attribution lets
 > a compromised or drifting actor forge `created_by`. A truly load-bearing audit trail would require
 > verification.
-> **Pick: Reading A for the *requirement*, with Reading B surfaced as named residual risk.** Track-A
+> **Pick: Reading A for the *requirement*, with Reading B surfaced as named residual risk.** Canonical-track
 > faithfulness is binding: v4 says "optional, deferred" in plain words (README:229), so C41 **cannot make
-> verification mandatory** without an architectural change (forbidden in Track A). The smallest faithful
+> verification mandatory** without an architectural change (out of scope for the canonical track). The smallest faithful
 > choice is to (1) require *self-asserted* universal attribution (which v4 does mandate — "every action
 > carries identity"), (2) fully **specify the verification seam** so the optional pack can be added without
 > rework, and (3) record the "self-asserted by default" invariant (§3) and the F32/F43 residual risk
 > (§7, §9) so no downstream component over-trusts attribution. Making verification *mandatory* is exactly
-> the kind of improvement Track B would propose as a `[DELTA]`; in Track A it is an open question routed to
+> the kind of improvement parked as a deferred enhancement (graduated-mandatory signing = **FE-3**, blocked on G37 per D-14); on the canonical track it is an open question routed to
 > review-log (OQ-C41-1), not a decision C41 may take.
 > **[AMBIGUITY resolution — D-5, chain ownership only]** Independent of the optional/mandatory question
 > above, the integrator's ruling **D-5** settles *where* any tamper-evident provenance hash-chain lives:
 > **C41 owns the provenance hash-chain**, computed over **C23-provided ordered gap-free `event_id`s** — C23
 > provides the ordered ids only, never the chain. So the (optional, deferred) provenance-verification seam
 > in §3 is C41's; if/when the chain is built, it is a C41-owned structure over C23 records, not a C23
-> feature. This does not make verification mandatory in Track A — it only fixes the ownership boundary.
+> feature. This does not make verification mandatory on the canonical track — it only fixes the ownership boundary.
 
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
@@ -292,11 +292,11 @@ the default build.)
 ## 9. Open questions
 
 - **OQ-C41-1** (→ review-log): **Should provenance verification be mandatory? (G36).** v4 says
-  "optional, deferred" (README:229), so Track-A C41 leaves it optional and defines the seam (§6 AMBIGUITY).
+  "optional, deferred" (README:229), so canonical-track C41 leaves it optional and defines the seam (§6 AMBIGUITY).
   But the Skeptic's G36 finding argues an optional guard does not address F32/F43 on a self-modifying
-  factory. This is the **top open question**: it is the load-bearing security decision and is precisely a
-  Track-B `[DELTA]` candidate (make signing mandatory at the F32/F43 surface). Track A cannot decide it
-  without an architectural change; route to review-log for the cross-track reconciler.
+  factory. This is the **top open question**: it is the load-bearing security decision and is precisely the
+  deferred-enhancement candidate (graduated-mandatory signing = **FE-3**, blocked on G37 per D-14 — make signing mandatory at the F32/F43 surface). The canonical track cannot decide it
+  without an architectural change; route to review-log for the integrator.
 - **OQ-C41-2** (→ review-log): **Is the human operator a fourth actor kind?** v4 names only city/rig/agent
   (README:226), yet operator *overrides* are first-class actions (README P8 override-log row, README:214
   "beads with type `override`") and must be attributed. The

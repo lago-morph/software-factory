@@ -1,4 +1,4 @@
-# C02 — Pack & Tool-Node ABI  (Build Plan, Track A)
+# C02 — Pack & Tool-Node ABI  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C02-pack-extension-abi.md`](../spec/C02-pack-extension-abi.md)
 

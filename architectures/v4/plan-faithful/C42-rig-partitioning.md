@@ -1,4 +1,4 @@
-# C42 — Rig / agent-role partitioning  (Build Plan, Track A)
+# C42 — Rig / agent-role partitioning  (Build Plan, canonical track)
 
 > Source / Spec ref: [C42 spec (faithful)](../spec/C42-rig-partitioning.md)
 > Track: A (faithful)   Status: sweep-1
@@ -38,7 +38,8 @@ C04 (session/worktree) ────┴─► T3
   partition real in `gc`?); T3 needs C04's worktree-per-session seam. T7's spike is gated on `gc` being
   runnable end-to-end (the same G11 assumption that blocks C01/C41).
 - **Downstream consumers waiting on these freezes:** C30 (scenario store in `scenarios` partition), C34
-  (holdout audit reads the partition labels), C43 (enforces partition confinement).
+  (holdout-integrity **enforcement + audit** reads the partition labels — D-13), C43 (bounds the residual
+  broad-tool-access blast radius — the distinct lethal-trifecta boundary, D-13).
 
 ## 3. Parallelization
 
@@ -69,9 +70,11 @@ on the T7 enforcement spike.
    model-family fallback, so a detect-only holdout boundary is the *sole* integrity guarantee. **De-risk
    first via T7's spike**: establish whether the worker subprocess is *prevented* from out-of-partition
    reads or only *audited after the fact*. If discipline-only, the residual risk must be loud in C34/C57.
-   *(Ownership of the prevention seam — C34's holdout enforcement charter per inventory vs the
-   broad-tool-access read-escape that only C43's lethal-trifecta isolation closes — is DEFERRED to the
-   orchestrator per spec review RC42-01/02; do not pre-decide it as "C43's" in this plan.)*
+   *(Ownership of the prevention seam — **RESOLVED by D-13**: holdout-integrity enforcement + audit is
+   **C34's** charter; the broad-tool-access read-escape is **C43's** distinct lethal-trifecta blast-radius
+   bound; **C42 provides** the partition C34 enforces. The residual *substrate* question — does Gas City
+   prevent the out-of-partition read at tool-call time, or only audit after the fact (G11) — stays for the
+   spike.)*
 2. **`gc` partition primitive may not exist as described (G11-class).** T1/T7 assume `[[rig]]`
    `read_partition`/`write_partition` and worktree isolation are real Gas City behavior (AI-CONTEXT §13.3 /
    F17 "native"), but this is asserted-not-run. Spike `gc` config-load with the §13.3 `[[rig]]` blocks early
@@ -92,7 +95,8 @@ forward with owner + reason).
 **Per-component (tied to spec §8 acceptance criteria):**
 - The holdout invariant is declared and a worker-reads-`scenarios` config is documented as **invalid**
   (§8.1); enforcement *strength* is recorded (T7). Holdout enforcement+audit is C34's charter; the
-  broad-tool-access read-escape is C43's blast-radius bound — the exact split is DEFERRED (RC42-01/02).
+  broad-tool-access read-escape is C43's blast-radius bound — the split is **RESOLVED by D-13** (C42 provides
+  the partition C34 enforces).
 - Role closure (§8.2), partition confinement (§8.3), and worktree disjointness (§8.4, F17) hold.
 - C34's holdout-integrity audit can consume C42's published partition policy to *detect* a `scenarios`-read
   violation (§8.5).

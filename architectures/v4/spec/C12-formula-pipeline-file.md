@@ -1,4 +1,4 @@
-# C12 — Formula / Pipeline-File Format  (Spec, Track A)
+# C12 — Formula / Pipeline-File Format  (Spec, canonical track)
 
 > Source: README §"Principle 3 — Pipeline-file as process" (lines 126–150; row 132 "Workflow format — The DAG specification — Gas City formulas (TOML) — MIT — Native", line 128 "The workflow is a DAG file, version-controlled, runner-agnostic. The methodology lives in the file, not in agent prompts."), README §Part 1 (lines 29–33, 50–55 "wrong methodology means a new pipeline file"), README Phase 0 (line 369 "P3 … basic via implicit single-step pipeline; full when formulas turn on in Phase 1"), README Phase 1 (lines 382–385 "Turn on `[formulas]`… Define one initial formula (3-step minimum)… `gc formula export <name> --format dot`"), README §509 ("TOML formulas"). AI-CONTEXT §3.1 P3 row (line 68 "Strong when `[formulas]` enabled (TOML DAGs)"), §3.2 concept 7 (line 91 "Formulas + Molecules — Formula = TOML DAG template; Molecule = instantiated bead-tree — P1, P3, P4, P12"), §3.3 vocab (line 101 "formula | pipeline file / workflow DAG template"; line 104 "convoy | batched workflow"; line 109 "order | event-triggered workflow"), §13.2 (lines 548–550 `[formulas]` enables formula DAG composition). one-shot-specs §"Gas Town/Gas City" (line 81 "work primitives are *formulas* and *protomolecules/molecules* — reusable workflow templates (design → plan → implement → review → test chains)"). F-MODE-COVERAGE F26 (line 72 "chain length is a formula property, visible and lintable"), F53 (line 77 "formula checks replace operator-voluntary discipline"). component-inventory C12 row (Maps from A33/A16/A96/B28; Depends on C01, C03; gap G06; foundational yes). component-inventory §3.2 batch placement (C12 foundational, starts Batch 1 once C01/C03 fixed; Batch 2 core build flow). Related specs: `spec/C01-gas-city-substrate.md` (substrate that runs formulas), `spec/C03-config-feature-flags.md` (`[formulas]` section-presence flag), `spec/C17-tool-node-abstraction.md` (deterministic node kind placed in a formula), `spec/C07-vocabulary-glossary.md` (G06 term ownership).
 > Inventory ID: C12   Kind: artifact   Status: sweep-1
@@ -26,10 +26,11 @@ where the human gates) is expressed declaratively so it can be diffed, linted, v
 - Be the **single home of methodology**: the chain shape (e.g. design→plan→implement→review→test, the
   Gas City protomolecule pattern, one-shot-specs:81), the loop/branch topology, and the human-gate placement
   all live *in the formula*, not in prompt templates (C09) or agent prompts (README:128; F-MODE F26 "chain
-  length is a formula property, visible and lintable"). The per-step node kind (deterministic tool node C17
-  vs. model/agent node) is also a methodology property surfaced here, **but** its canonical field home (C12
-  formula-node entry vs. C02 `[[tool]]`) is an open cross-component reconciliation, not a settled C12-owned
-  field (§3.1 node-kind row; §9 item 4).
+  length is a formula property, visible and lintable"). The per-step **node kind** — the set
+  `{agent, tool, gate, sub_formula}` — is the formula DAG's own vocabulary, **named by C12 (taxonomy home,
+  D-7)**; C02 references C12's `tool` kind for the tool-node ABI but does not redefine the set. The set + its
+  on-disk field home (C12 formula-node entry vs. C02 `[[tool]]`) remain a [FAITHFUL-FILL] pending the real
+  `gc` grammar (G11 / Sweep-2; §3.1 node-kind row; §9 item 4).
 - Provide the **named-reference surface** other components key on: a node references a prompt template (C09)
   or a tool node (C17) **by name**; a formula is referenced **by name** at dispatch and at instantiation
   (`gc formula export <name>`, README:385; the molecule C13 instantiates "a formula by name").
@@ -56,8 +57,8 @@ where the human gates) is expressed declaratively so it can be diffed, linted, v
 - NOT the **dispatch** mechanism (C05/sling). Sling routes a node's work to an agent/pool; C12 declares *what*
   the node is, not *which* worker executes it at runtime.
 - NOT a **convoy** (batched workflow) or **order** (event-triggered workflow) as distinct artifacts. v4 names
-  these as Gas City vocabulary (AI-CONTEXT §3.3); a convoy is a batching of formulas and an order is an
-  event-trigger over workflows (C40). C12 owns the single-formula DAG format; batching/eventing are separate
+  these as Gas City vocabulary (AI-CONTEXT §3.3); a convoy is a batching of formulas (a Gas City sling concept
+  referenced by **C05**, D-8) and an order is an event-trigger over workflows (owned by **C40**, D-8). C12 owns the single-formula DAG format; batching/eventing are separate
   concerns. > [FAITHFUL-FILL] — see §3.
 
 ## 2. Context & dependencies
@@ -92,9 +93,9 @@ are confirmed at sweep 2 against the real `gc` formula schema — see §9 / G11)
 | Element | Description | Source / fill |
 |---|---|---|
 | Formula identity (`name`) | The name a formula is referenced by — at `gc formula export <name>`, at dispatch, and at molecule instantiation. | README:385 |
-| Node set | The DAG's steps. Each node has an identity, a **kind** (deterministic tool node C17 vs. model/agent node), and a binding (a C17 tool-node name or a C09 prompt-template name). | README:128, :132; AI-CONTEXT §3.2 concept 7; C17 §3.1 |
+| Node set | The DAG's steps. Each node has an identity, a **kind** (from the C12-named set `{agent, tool, gate, sub_formula}` — see the node-kind row + D-7), and a binding (a C17 tool-node name or a C09 prompt-template name). | README:128, :132; AI-CONTEXT §3.2 concept 7; C17 §3.1 |
 | Edge set / ordering | The directed dependencies between nodes that make the workflow a **DAG** (acyclicity is the defining property; cycles are expressed as bounded loop constructs, not raw back-edges — see invariants). | README:128 ("DAG file"); F26 |
-| Node kind tag | Per-node marker distinguishing a deterministic tool node from a model/agent node; the field C16's discipline linter (F52) and the C17 abstraction key on. **Shared [FAITHFUL-FILL]** co-owned with C16/C17 — v4 gives no explicit node-kind field, and the field's *home* (this C12 formula-node entry vs. the C02 `[[tool]]` block) is an **open reconciliation** (§9 item 4; C17 OQ-2), not a settled C12 field. Justified solely because C16's F52 check (P4) is undefinable without one machine-readable distinction. | C17 §3.1 [FAITHFUL-FILL]; README:160 |
+| Node kind tag | Per-node marker for the kind of step a node is. **Node-kind set `{agent, tool, gate, sub_formula}`** — the formula DAG's own vocabulary, named here: `tool` = deterministic tool node (C17), `agent` = model/agent node (C09 prompt-template/C28), `gate` = synchronization / human-approval gate (`wait`), `sub_formula` = a node that invokes another formula by name. **Taxonomy home = C12 (D-7):** C12 names this set as the formula's vocabulary; C02 *references* C12's `tool` kind for the tool-node ABI but does not redefine the set. **[FAITHFUL-FILL]** — v4 gives no explicit node-kind field, so the set + the on-disk *field home* (this C12 formula-node entry vs. the C02 `[[tool]]` block) await the real `gc` formula grammar (G11 / Sweep-2; §9 item 4, C17 OQ-2). The discipline linter C16 (F52, P4) and the C17 abstraction key on this distinction. | C17 §3.1 [FAITHFUL-FILL]; README:160; D-7 |
 | Gate / wait nodes | Synchronization / human-approval gates expressed as nodes (Gas City `wait` = "gating / synchronization primitive", AI-CONTEXT §3.3). The human-gate placement is a methodology property living in the formula. | AI-CONTEXT §3.3 (`wait` is Gas City native); one-shot-specs:65 cites a `human-gate.dot` teaching example — a **non-Gas-City DOT** exemplar, corroborating only |
 | Parameters / placeholders | Run-time inputs a formula declares (e.g. `$epic_id`, `$rfc_path` — slots seen in the cited *DOT* pipeline exemplars, one-shot-specs:62–63; **not** drawn from a Gas City formula, which publishes none — one-shot-specs:81) that a molecule binds at instantiation. | one-shot-specs:62–63 (non-Gas-City exemplars) > [FAITHFUL-FILL] |
 
@@ -147,8 +148,8 @@ are confirmed at sweep 2 against the real `gc` formula schema — see §9 / G11)
 
 > [AMBIGUITY: G06] **Are "formula", "convoy", and "order" three artifacts C12 must define, or one?**
 > **Reading A** — C12 owns *only* the single-formula DAG; convoy (batched workflow) and order (event-triggered
-> workflow) are separate artifacts/components (order → C40 durable Orders; convoy → an unassigned batching
-> concept). **Reading B** — C12 is the umbrella "pipeline-file format" and must define all three TOML shapes.
+> workflow) are separate artifacts/components (order → C40 durable Orders; convoy → the C05 sling concept, **D-8**).
+> **Reading B** — C12 is the umbrella "pipeline-file format" and must define all three TOML shapes.
 > **Pick Reading A.** The inventory gives C12 the one-line "TOML DAG describing the workflow" and assigns
 > **orders** to a distinct component (C40 "Durable workflow engine (Orders)"); the vocabulary table
 > (AI-CONTEXT §3.3) lists *convoy*, *order*, and *formula* as **distinct** terms with distinct generic
@@ -276,9 +277,12 @@ Sweep-1 high-level criteria (concrete tests at sweep 2):
 2. **Loop primitive vs. pure DAG** (3.1 [FAITHFUL-FILL]) — confirm how Gas City expresses bounded iteration
    within a "DAG file" so the acyclicity claim and the loop methodologies (Ralph, self-healing re-entry)
    coexist; this drives C15's cycle/loop rules and C14's DOT mapping.
-3. **Convoy/order boundary** (3.3 [AMBIGUITY: G06]) — confirm with C40 (Orders) and C07 that C12 owns only the
-   single-formula DAG and that batching (convoy) / event-triggering (order) are layered elsewhere.
-4. **Node-kind field reconciliation** — the per-node `kind` tag must be the *same* field C17 (§3.1 fill) and
-   C16 key on; sweep 2 must reconcile its name/shape across C12/C16/C17 so there is one field, not three.
+3. **Convoy/order boundary** (3.3 [AMBIGUITY: G06]) — **RESOLVED by D-8:** Convoy is a Gas City sling concept
+   referenced by **C05**; Order (durable workflow) is owned by **C40**. C12 references both but defines
+   neither; C07 carries the glossary entries. C12 owns only the single-formula DAG.
+4. **Node-kind field reconciliation** — **taxonomy home RESOLVED by D-7:** the node-kind set
+   `{agent, tool, gate, sub_formula}` is C12's formula-DAG vocabulary (C02 references the `tool` kind, does
+   not redefine the set). *Remaining for Sweep-2/G11:* the on-disk field name/shape (one field C12/C16/C17
+   key on, not three) against the real `gc` grammar.
 5. **Parameter-binding syntax** (3.1 [FAITHFUL-FILL]) — the formula↔molecule parameter contract (`$epic_id`-
    style slots) must be pinned jointly with C13 so instantiation has a defined binding rule.

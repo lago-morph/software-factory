@@ -15,7 +15,9 @@ off-the-shelf self-hosted LangFuse (deploy + config, not custom code).
 
 ## Findings
 
-### RC27-01 — major — C26↔C27 ingestion seam is INCONSISTENT on the *signal set*: C26 pipelines metrics + logs/events + traces into LangFuse's OTLP endpoint, but LangFuse ingests TRACES ONLY. DEFERRED (joint).
+### RC27-01 — major — RESOLVED by D-11 — C26↔C27 ingestion seam is INCONSISTENT on the *signal set*: C26 pipelines metrics + logs/events + traces into LangFuse's OTLP endpoint, but LangFuse ingests TRACES ONLY.
+
+> **RESOLVED by D-11 (integrator pass 2026-05-31).** LangFuse ingests **traces only** (verified vs LangFuse OTel docs). C27 already stated traces-only; C26 §3.3/AC-5/§5/OQ-1 were updated to match — metrics/events forwarded best-effort or not routed, **not asserted in LangFuse**, **never** to CXDB. Seam transport = OTLP/HTTP + HTTP Basic auth (base64 `public:secret`); path/headers remain sweep-2.
 **Claim.** C27 §3.1 says its inbound payload is "OTLP **traces**" and OQ-1 only *hedges* that
 "non-trace OTLP signals (metrics/events) may not be browsable there." The upstream C26 spec (§3.3
 pipeline table + §8 AC-5) unconditionally routes **three** pipelines — metrics, logs/events, AND beta
@@ -56,7 +58,9 @@ the §1 FAITHFUL-FILL + §3.1 with **OTLP/HTTP (no gRPC at the LangFuse seam)** 
 exact path/version header deferred to sweep-2/OQ-1. No new capability/custom code (documents stock
 LangFuse behaviour) → applied.
 
-### RC27-03 — major — Mis-citation: the G37 secrets store is "parked as FE-3," but FE-3 is the signing/key-model enhancement, not a secrets store; no FE entry is the secrets store. (FIXED)
+### RC27-03 — major — Mis-citation: the G37 secrets store is "parked as FE-3," but FE-3 is the signing/key-model enhancement, not a secrets store; no FE entry is the secrets store. (FIXED — CONFIRMED by D-14)
+
+> **CONFIRMED by D-14 (integrator pass 2026-05-31).** G37 (secrets/credential-storage gap, owned by C03) ≠ FE-3 (graduated-mandatory signing, blocked on G37 but a distinct deferred enhancement). The RC27-03 fix is binding; specs deferring secrets cite **G37**, not FE-3. C27 §1/§6/§7/§9-OQ-4 already state the distinction.
 **Claim.** §6, §7, OQ-4 (and plan T3 / Risk 3) all state a real secrets-management layer "is parked
 as **FE-3**" / "that is FE-3, gated on a chosen store." (The prior review pass explicitly *blessed*
 this as "exactly the faithful move" — a fidelity miss this pass corrects.)
@@ -128,9 +132,9 @@ INV-1/INV-2 (single LangFuse sink + Collector✗→CXDB anti-edge) and C25 INV-1
 fallback" reading (AIC:326/374) is correctly **not** adopted and routed to OQ-2 (CXDB is L4, LangFuse
 browsing-only). License paraphrase (§1) checked against README:294 — faithful; the README-"MIT" vs
 AIC-"Apache 2.0" tension is real and correctly flagged with OQ-3 routing the SPDX pin to deploy time.
-**No fix.** Noted for the integrator: C27 OQ-2 and C26 OQ-2 both ask whether the two-sinks boundary
-should be hoisted into one shared Observability-subsystem note — that hoist spans C25/C26/C24/C27 →
-**DEFERRED** to the integrator (not a C27-local fix).
+**No fix.** Two-sinks hoist question **RESOLVED by D-12:** the rule stays as **cross-referenced per-spec
+notes** (fork stated at C25, anti-edge at C26, C24/C27 cross-referencing) — **no new shared
+Observability-subsystem doc** (avoids scope creep). C27 INV-2 carries the D-12 cross-reference note.
 
 ## Seam-consistency verdict (C26 ↔ C27)
 

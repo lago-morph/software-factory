@@ -19,7 +19,9 @@ THE BAR for C26: it IS the off-the-shelf OpenTelemetry Collector (config + pipel
 
 ## Findings
 
-### RC26-01 — major — C26 routes metrics+events to LangFuse and asserts they "appear in LangFuse" (AC-5); C27's ingestion is trace-only, so the C26→C27 seam is inconsistent on signal coverage
+### RC26-01 — major — RESOLVED by D-11 — C26 routes metrics+events to LangFuse and asserts they "appear in LangFuse" (AC-5); C27's ingestion is trace-only, so the C26→C27 seam is inconsistent on signal coverage
+
+> **RESOLVED by D-11 (integrator pass 2026-05-31).** LangFuse ingests **TRACES only** (verified vs LangFuse OTel docs). C26 exports the trace signal to C27/LangFuse; metrics/events received by C26 are **not asserted to appear in LangFuse** (forwarded best-effort, or not routed) and **never** to CXDB (two-sink anti-edge holds). Seam transport = OTLP/HTTP + HTTP Basic auth (base64 `public:secret`); only the path/headers remain for sweep-2. Applied to C26 §3.2/§3.3/§5/AC-5/OQ-1.
 **Claim.** C26 §3.3 wires **three** pipelines — metrics, logs/events, and beta traces — each terminating
 at `otlphttp → LangFuse (C27)`, and **AC-5** asserts "the metric set and event set C25 emits … traverse
 the pipeline and **appear in LangFuse**." §5 ("Export (single sink)") says "every signal accepted at the
@@ -133,13 +135,11 @@ minors (exporter-type fill labeling RC26-02, INV-1 delivery-vs-routing RC26-03, 
 RC26-04) are fidelity/hygiene-class and **fixed in place**; RC26-05 (README section-label) is recorded for
 the sweep-2 citation pass, not fixed.
 
-### DEFERRED — needs orchestrator decision (RC26-01, the C26↔C27 seam)
-The C26→C27 seam's **signal-coverage** half is left UNapplied beyond wording: v4 says "point the collector
-at LangFuse" but never resolves whether LangFuse's OTLP ingestion accepts **metrics + events** as well as
-**traces**. C26 currently wires all three signals to the LangFuse exporter; C27 ingestion is trace-only and
-C27 OQ-1 raises the same question. Resolution options for the orchestrator (jointly with the C27 author at
-sweep 2): **(A)** LangFuse ingests only traces → C26's metrics/events pipelines need a defined disposition
-(drop at the collector, or a separate/no sink — note this must **not** become a CXDB route, INV-2); **(B)**
-LangFuse's OTLP receiver does accept metrics/events → AC-5's "appear in LangFuse" can be restored for all
-signals. This is a single shared seam decision (C26 OQ-1 ≡ C27 OQ-1) and is the one item not safe to fix
-unilaterally in C26 alone.
+### RESOLVED by D-11 (was: DEFERRED — RC26-01, the C26↔C27 seam)
+The C26→C27 seam's **signal-coverage** half is now settled: **D-11 — LangFuse ingests TRACES only** (verified
+vs LangFuse OTel docs). C26 exports the trace signal to C27/LangFuse; the metrics/events pipelines are
+**forwarded best-effort or not routed** and are **not asserted to appear in LangFuse**, and **never** routed
+to CXDB (INV-2 holds — the two-sink anti-edge). Of the orchestrator's two options this is **(A)**. Seam
+transport is also settled (OTLP/HTTP + HTTP Basic auth, base64 `public:secret`; no gRPC); only the exact
+ingestion path + `x-langfuse-ingestion-version` header remain a sweep-2 exporter-mechanics detail. Applied to
+C26 §3.2/§3.3/§5/AC-5/§9 OQ-1; C27 already states traces-only (RC27-01).

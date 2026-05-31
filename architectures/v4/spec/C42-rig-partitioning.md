@@ -1,4 +1,4 @@
-# C42 — Rig / agent-role partitioning  (Spec, Track A)
+# C42 — Rig / agent-role partitioning  (Spec, canonical track)
 
 > Source: README §"Principle 5 — Scenarios as held-out test set" (L164–177: "The agent **cannot see**
 > them during work"; the 4-row table — "Scenario storage with read-isolation" = "Prevents agent from
@@ -268,10 +268,10 @@ sweep 2 per BUILDER-BRIEF altitude.)
 |---|---|---|
 | **F28** Holdout leakage (F-MODE §1 marks "Addressed") | The core mode C42's invariant targets: the implementer reading the scenarios it is judged on. | **Addressed-on-paper / detect-after-the-fact only** until OQ-C42-1 resolves and C43 lands — *lead with the caveat*: F-MODE-COVERAGE marks F28 "Addressed", but C42's contribution is the holdout invariant (§3) `scenarios ∉ read_partition(worker)`, realized by filesystem perms + repo separation (§4.3) and **enforced/audited by C34**. *Caveat (G21):* firm only if the worker subprocess cannot read outside its partition. The implementer runs as a Claude Code subprocess with broad Bash/Read tool access; nothing in faithful v4 *prevents* an out-of-partition read at tool-call time until C43 isolation lands (G31). So the realized boundary is **config + filesystem + discipline** with detect-after-the-fact audit (C34), not tool-call-time prevention. Per D-1 there is no model-family fallback, so this caveat is load-bearing — downstream (C57 register, C34) must lift the caveat with the status, not the bare "Addressed". |
 | **F17** Parallel agents on shared dirs lose data (F-MODE §3, "Addressed") | Concurrent runs clobbering each other. | **Addressed** by worktree-per-run isolation (§3 contract 3); Gas City native (F17). C42 owns the policy "one isolated writable worktree per run, scoped to the rig's partitions"; the worktree substrate is C04/Gas City. |
-| **G21** Holdout-integrity enforcement has no real mechanism (major) | Read-isolation is filesystem perms + rig config + "agent-prompt discipline"; the audit is detection, not prevention. | See the AMBIGUITY block below. Faithful resolution: C42 **declares** the partition policy and the holdout invariant and names the **primary mechanism** (rig `read_partition` + filesystem perms); enforcement + audit of the holdout read-isolation is **C34's** charter (inventory). C42 faithfully records that, against a broad-tool-access worker, the realized boundary is config + discipline with the read-escape detect-after-the-fact until C43's lethal-trifecta isolation lands. *(DEFERRED — review RC42-01/02: whether holdout **enforcement** is C34's, vs the residual broad-tool-access escape that only C43 closes, is the open ownership split; the AMBIGUITY block below still reads C34 as detect-only / routes prevention to C43 and is left for the orchestrator pending that ruling.)* Routed to C34 + C43 + review-log as residual risk. |
+| **G21** Holdout-integrity enforcement has no real mechanism (major) | Read-isolation is filesystem perms + rig config + "agent-prompt discipline"; the audit is detection, not prevention. | See the AMBIGUITY block below. Faithful resolution: C42 **declares** the partition policy and the holdout invariant and names the **primary mechanism** (rig `read_partition` + filesystem perms); enforcement + audit of the holdout read-isolation is **C34's** charter (inventory). C42 faithfully records that, against a broad-tool-access worker, the realized boundary is config + discipline with the read-escape detect-after-the-fact until C43's lethal-trifecta isolation lands. *(**RESOLVED by D-13** — review RC42-01/02: holdout-integrity **enforcement + audit is C34's** charter; the distinct lethal-trifecta blast-radius bound is **C43's** (G31); **C42 provides** the partition C34 enforces and does not enforce. Pre-constrains unbuilt C34 (Batch 3) + C43 (Batch 4).)* Routed to C34 + C43 + review-log as residual risk. |
 | **G28** Three/four mechanisms, no authority statement (major) | Separate repo / filesystem perms / rig `read_partition` / OPA-later named for one boundary with no composition rule. | **Resolved (faithful)** by the §4.3 *one-line authority note* (not a formal composition stack — DELTA-01 dropped): rig `read_partition` is the authoritative declarative unit, filesystem perms + repo realize it on disk, OPA explicitly deferred ("for finer control later", README:425); enforcement+audit is C34's. See the §6 AMBIGUITY block for both readings. |
 | **G10** "held-out" implies a guarantee the mechanism doesn't provide (minor) | The term "held-out" overstates a discipline-based boundary. | **Acknowledged**: C42 states the boundary is config + filesystem + (until C43) discipline, enforced + audited by C34 detect-after-the-fact — so "held-out" is a *policy intent verified after the fact*, not a hard guarantee, until G31/C43 closes the broad-tool-access read-escape. Surfaced as residual risk, not silently absorbed. |
-| **G31** Lethal-trifecta boundary unbuilt/last (blocker, C43) | The broad-tool-access agent has no twin isolation Phase 0→3b; the read-escape broad tool access opens is unbounded. | **Deferred to C43 (faithful — not C42's to build)**: C43 owns the lethal-trifecta blast-radius bound (a *distinct* boundary from C34's holdout enforcement — see §1/§2). C42 *declares* the partitions; against a broad-tool-access worker the realized read-escape is detect-after-the-fact / discipline-backed until C43 lands (recorded here + §7 + §9). This is the XC-8 "detection-only at Phase 0" finding applied to the broad-tool-access read-escape. *(See RC42-01: the C34-enforcement-vs-C43-blast-radius split is flagged; the AMBIGUITY blocks' "prevention → C43" disposition is DEFERRED.)* |
+| **G31** Lethal-trifecta boundary unbuilt/last (blocker, C43) | The broad-tool-access agent has no twin isolation Phase 0→3b; the read-escape broad tool access opens is unbounded. | **Deferred to C43 (faithful — not C42's to build)**: C43 owns the lethal-trifecta blast-radius bound (a *distinct* boundary from C34's holdout enforcement — see §1/§2). C42 *declares* the partitions; against a broad-tool-access worker the realized read-escape is detect-after-the-fact / discipline-backed until C43 lands (recorded here + §7 + §9). This is the XC-8 "detection-only at Phase 0" finding applied to the broad-tool-access read-escape. *(**RESOLVED by D-13** — RC42-01: the C34-enforcement-vs-C43-blast-radius split is settled — C34 owns holdout enforcement + audit, C43 owns the distinct lethal-trifecta blast-radius bound, C42 provides the partition.)* |
 
 > [AMBIGUITY: G21] **Is the holdout boundary an enforced control, or a config + discipline + detect-only
 > arrangement?**
@@ -288,15 +288,19 @@ sweep 2 per BUILDER-BRIEF altitude.)
 > holdout boundary is the *sole* thing standing between the implementer and the scenarios — a single
 > detect-only layer for a load-bearing integrity property.
 > **Pick: Reading A for the *mechanism C42 declares*, with Reading B surfaced as named residual risk.**
-> Track-A faithfulness is binding: v4 says "discipline + audit logging" and "OPA … later" in plain words
-> (README:177/425), so C42 **cannot make the boundary a hard enforced control** without an architectural
-> change (that is C43's job, and forbidden as a C42 Track-A decision). The smallest faithful choice is to
+> Canonical-track faithfulness is binding: v4 says "discipline + audit logging" and "OPA … later" in plain words
+> (README:177/425), so C42 **cannot make the boundary a hard enforced control** — enforcing the holdout
+> read-isolation is **C34's** charter and bounding the residual broad-tool-access escape is **C43's** (D-13),
+> neither a C42 canonical-track decision. The smallest faithful choice is to
 > (1) declare the partition policy + holdout invariant (which v4 does mandate — `scenarios ∉
 > read_partition(worker)`), (2) name the authoritative mechanism (§4.3 — rig `read_partition` + filesystem
-> perms), (3) publish the partition policy to C34's audit, and (4) record the detect-only / discipline-
-> backed residual risk (§7, §9) and route the *prevention* requirement to C43 (G31). Making the boundary a
-> hard tool-call-time control is exactly a Track-B `[DELTA]` candidate (e.g., enforce read-confinement in
-> the agent loop / sequence C43 earlier); in Track A it is OQ-C42-1, not a decision C42 may take.
+> perms), (3) publish the partition policy to **C34**, which owns holdout-integrity **enforcement + audit**
+> (**D-13**), and (4) record the residual broad-tool-access read-escape (§7, §9) that **C43**'s
+> lethal-trifecta blast-radius bound closes (G31) — a *distinct* boundary from C34's holdout enforcement
+> (**D-13**). C42 **provides** the partition; it does not enforce. Per D-13 the prevention/enforcement of
+> the holdout read-isolation is C34's charter (not C43's); C43 only bounds the residual blast radius once a
+> worker has broad tool access. On the canonical track this ownership split is settled by D-13; the
+> remaining "does Gas City actively reject vs. permit-with-review" sub-question is OQ-C42-1.
 
 > [AMBIGUITY: G28] **Which of the four named mechanisms is authoritative, and how do they compose?**
 > Reading A (rig-partition authoritative): the inventory frames C42 as "read/write **partitions**" and
@@ -322,8 +326,8 @@ sweep 2 per BUILDER-BRIEF altitude.)
   detect-after-the-fact / discipline-backed until C43's lethal-trifecta isolation closes the read-escape
   (G21, G31, XC-8). C42 guarantees the *policy is declared and auditable*; it does **not** itself prevent an
   out-of-partition read at tool-call time. This residual risk is the load-bearing caveat on F28's
-  "Addressed" and is surfaced to C34, C43, and review-log (§9). *(DEFERRED — RC42-01/02: the C34-enforcement
-  vs C43-blast-radius ownership split for holdout prevention is an open orchestrator decision.)*
+  "Addressed" and is surfaced to C34, C43, and review-log (§9). *(**RESOLVED by D-13** — RC42-01/02: the C34-enforcement
+  vs C43-blast-radius ownership split is settled — C34 owns holdout enforcement + audit, C43 owns the distinct lethal-trifecta blast-radius bound, C42 provides the partition.)*
 - **Cost.** Declaring partitions and one worktree per run is cheap — config + native worktree isolation
   (F17 "native"). OPA (deferred) would add policy-engine cost; v4 parks it (README:425), so the default-path
   cost is config-only.
@@ -347,7 +351,7 @@ sweep 2 per BUILDER-BRIEF altitude.)
    scenario_authoring rig may read/write `scenarios`; the implementer rig reads/writes only `code`
    (AI-CONTEXT §13.3). *(Whether Gas City actively rejects or merely permits-with-review is OQ-C42-1 / G21
    — the test asserts the *policy*; enforcement+audit is C34's, the broad-tool-access read-escape is C43's,
-   and the exact split is DEFERRED per review RC42-01/02.)*
+   and the exact split is **RESOLVED by D-13** — C42 provides the partition C34 enforces.)*
 2. **Role closure**: every running agent resolves to exactly one rig in the closed role set
    {worker/implementer, scenario-author, judge}; an agent with no rig or an out-of-set role is invalid.
 3. **Partition confinement**: a rig's declared `read_partition`/`write_partition` is the only surface it is
@@ -381,9 +385,11 @@ deliverables of C43, not C42's default build.)
   Confirm whether the worker rig subprocess is *prevented* from reading outside `read_partition` at
   tool-call time, or whether the boundary is config + filesystem + discipline with C34 detecting violations
   after the fact. Per D-1 there is **no model-family fallback**, so this single boundary carries the whole
-  holdout guarantee — making this exactly a Track-B `[DELTA]` candidate (enforce read-confinement / sequence
-  C43 earlier) and the cross-track reconciler's call. Track A cannot make the boundary a hard control
-  without an architectural change (that is C43).
+  holdout guarantee. **Ownership is settled by D-13:** holdout-integrity enforcement + audit is **C34**'s
+  charter, the residual broad-tool-access blast radius is **C43**'s (G31), and C42 only *provides* the
+  partition. What remains open here is the substrate fact — does Gas City *prevent* the out-of-partition read
+  at tool-call time, or only permit-with-review so C34 detects after the fact — which the canonical track
+  cannot settle without verifying the real `gc` binary (G11); routed to review-log.
 - **OQ-C42-2** (→ review-log): **Are `worker` and `implementer` the same role under two names?** Phase-0
   names a `worker` rig (AI-CONTEXT §13.1); Phase-2 names an `implementer` rig (§13.3). The faithful fill
   (§4.1) treats them as the same role (the Phase-0 worker *becomes* the implementer once the scenario

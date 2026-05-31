@@ -1,7 +1,7 @@
-# C29 — Model floor & stylesheet routing  (Build Plan, Track A)
+# C29 — Model floor & stylesheet routing  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C29-model-floor-stylesheet.md`](../spec/C29-model-floor-stylesheet.md)
-> Track A, sweep-1. Plan altitude matches sweep-1 spec: workstreams + contract milestones, not task-level pseudocode.
+> Canonical track, sweep-1. Plan altitude matches sweep-1 spec: workstreams + contract milestones, not task-level pseudocode.
 
 ## 1. Work breakdown
 

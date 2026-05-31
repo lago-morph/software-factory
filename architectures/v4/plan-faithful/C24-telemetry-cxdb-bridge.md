@@ -1,4 +1,4 @@
-# C24 — Telemetry → CXDB Ingestion Bridge  (Build Plan, Track A)
+# C24 — Telemetry → CXDB Ingestion Bridge  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C24-telemetry-cxdb-bridge.md
 

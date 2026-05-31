@@ -135,8 +135,10 @@ This is the contract C14 exists to guarantee. Three named properties:
    that is the exact failure G24 warns of (lossiness "asserted, not shown").
 3. **The expressive-power gap is enumerated, not hand-waved.** C14 ships (sweep-2) a **catalog of DOT
    constructs with no formula equivalent** — arbitrary edge attributes, multi-edges, ports/record shapes,
-   subgraph/cluster semantics beyond `sub_formula`, undirected edges, cycles where the formula is acyclic,
-   etc. — each marked *lowered-by-rule* or *rejected*. This catalog **is** the G24 resolution: fidelity is
+   subgraph/cluster semantics beyond `sub_formula`, undirected edges, **raw** cycles where the formula is
+   acyclic (an *unmarked* back-edge — distinct from the §3.1 **marked** bounded-loop back-edge, which is
+   *lowered-by-rule* once C12:OQ-2 lands), etc. — each marked *lowered-by-rule* or *rejected*. This catalog
+   **is** the G24 resolution: fidelity is
    *proven within a stated profile* and *bounded with a named exclusion list* outside it.
    > [AMBIGUITY: G24] **Is the asserted "lossless bidirectionality" (README:135) a property of *all* DOT, or
    > of the formula-shaped subset?** *Reading A:* lossless for arbitrary DOT↔formula (the literal reading of

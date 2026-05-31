@@ -1,6 +1,6 @@
 # C23 — Event Bus  (Spec, Track A)
 
-> Source: AI-CONTEXT §3.2 "nine concepts" (line 87 "Event Bus / Append-only JSONL with monotonic seq / P9, P10, P11"), §5.4 bridge-impedance table (line 228 "Gas City event bus JSONL → CXDB / **Lowest** / Events already attributed and trajectory-shaped"), §5.5 "what CXDB adds over plain JSONL" (lines 234–239); README §Part 4 (P9 attribution table line 228 "Audit trail / Queryable history / Gas City event bus + bead history / MIT / Native"; P11 event-substrate line 252 "Event substrate / Records every action / Gas City event bus (always), CXDB (for trajectories) / MIT / Apache 2.0 / Native + bridge"; P9 attribution narrative lines 222, 231 "Attribution flows automatically through beads and events without configuration"); spec-faithful/C01 §3 I7 (event bus seam, lines 87) + §4 (event-bus log state, line 111) + INV-3 (universal attribution); component-inventory C23 row (line 35 "Append-only JSONL with monotonic seq; records every action; lowest-impedance CXDB source", gaps A29/B46, depends C01, foundational yes), Batch-1 note (line 107); F-MODE-COVERAGE F10, F14, F11, F32, F43; ambiguities-and-gaps G27.
+> Source: AI-CONTEXT §3.2 "nine concepts" (line 87 "Event Bus / Append-only JSONL with monotonic seq / P9, P10, P11"), §5.4 bridge-impedance table (line 228 "Gas City event bus JSONL → CXDB / **Lowest** / Events already attributed and trajectory-shaped"), §5.5 "what CXDB adds over plain JSONL" (lines 234–239); README §Part 4 (P9 attribution table line 228 "Audit trail / Queryable history / Gas City event bus + bead history / MIT / Native"; P11 event-substrate line 252 "Event substrate / Records every action / Gas City event bus (always), CXDB (for trajectories) / MIT / Apache 2.0 / Native + bridge"; P9 attribution narrative lines 222, 231 "Attribution flows automatically through beads and events without configuration"); spec/C01 §3 I7 (event bus seam, lines 87) + §4 (event-bus log state, line 111) + INV-3 (universal attribution); component-inventory C23 row (line 35 "Append-only JSONL with monotonic seq; records every action; lowest-impedance CXDB source", gaps A29/B46, depends C01, foundational yes), Batch-1 note (line 107); F-MODE-COVERAGE F10, F14, F11, F32, F43; ambiguities-and-gaps G27.
 > Inventory ID: C23   Kind: data-store   Status: sweep-1
 > Track: A (faithful)
 
@@ -29,7 +29,7 @@ audit, self-healing, and the CXDB bridge all read from here.
 - **Monotonic sequence number** — each record carries a strictly-increasing `seq` that imposes a **total
   order** on events and lets consumers checkpoint and resume from a position (AI-CONTEXT §3.2 concept 3).
 - **Universal attribution** — every event carries `created_by` automatically (inherited from the substrate
-  invariant, spec-faithful/C01 INV-3; README line 231 "without configuration"). This is what makes the bus
+  invariant, spec/C01 INV-3; README line 231 "without configuration"). This is what makes the bus
   the corpus's strongest P9 match (F14).
 - **"Records every action"** — the bus is the *complete* action ledger: dispatch, gate decisions, bead
   transitions, mail/nudge, tool-node runs, healer actions all emit events (README line 252; component-
@@ -43,7 +43,7 @@ audit, self-healing, and the CXDB bridge all read from here.
 **Explicitly NOT (boundaries):**
 - **NOT factory-authored.** C23 is the Gas City event bus, adopted as part of the substrate (C01). The
   deliverable is the *seam spec + the record/ordering/attribution contract handed to C24/C41*, not a new
-  Go event-bus implementation (README line 252 "Native"; mirrors spec-faithful/C01 §1 adoption boundary).
+  Go event-bus implementation (README line 252 "Native"; mirrors spec/C01 §1 adoption boundary).
 - **NOT the bead store.** Beads (C19/C20) are the *typed work-graph* — current, mutable, query-shaped
   state. C23 is the *append-only log of actions*. They are distinct Gas City concepts (AI-CONTEXT §3.2
   concepts 2 vs 3) and address different principles (beads P1/P5/P9/P10; bus P9/P10/P11). C23 does not own
@@ -70,7 +70,7 @@ audit, self-healing, and the CXDB bridge all read from here.
 
 | Direction | Component | Relationship |
 |---|---|---|
-| Upstream (depends on) | **C01** Gas City substrate | C23 *is* the event-bus seam C01 exposes as I7 (spec-faithful/C01 §3, line 87); its append-only-JSONL log is C01-owned state (spec-faithful/C01 §4, line 111). Inventory C23 "Depends on: C01". |
+| Upstream (depends on) | **C01** Gas City substrate | C23 *is* the event-bus seam C01 exposes as I7 (spec/C01 §3, line 87); its append-only-JSONL log is C01-owned state (spec/C01 §4, line 111). Inventory C23 "Depends on: C01". |
 | External dependency | **Gas City** (MIT) | The adopted substrate providing the event-bus primitive (AI-CONTEXT §3.2 concept 3). C23 inherits Gas City's migration-tail risk (AI-CONTEXT §3.5) like C01. |
 | Tightly-coupled peer | **C41** Identity / attribution | "identity-attribution rides events" — C41 resolves the `created_by` actor that C23 carries on every record (component-inventory C41 depends-on C23; README line 227). C23 supplies the carrier; C41 supplies the value + actor schema. |
 | Downstream (consumer) | **C24** Telemetry → CXDB bridge | Treats the event-bus JSONL as its **lowest-impedance** source into CXDB (AI-CONTEXT §5.4 line 228). Reads the ordered, attributed stream; owns delivery/ordering into CXDB (G27). |
@@ -81,7 +81,7 @@ audit, self-healing, and the CXDB bridge all read from here.
 bearing schemas/interfaces everything else references". It sits *inside* the Gas City substrate (C01) but is
 specced separately because C24 (bridge), C41 (identity), and C40 (Orders) each contract directly against the
 event-record shape and ordering guarantees. It is **always-on** in every install — unlike CXDB it has no
-feature-flag gate (README line 252 "always"); even the smallest Phase-0 install emits events (spec-faithful/
+feature-flag gate (README line 252 "always"); even the smallest Phase-0 install emits events (spec/
 C01 §5 "Every action emits an event").
 
 ## 3. Interfaces / contracts
@@ -91,7 +91,7 @@ to sweep 2 (and the actor-value contract to C41, the bridge delivery seam to C24
 
 | # | Interface | Direction | Description | Owning/detailing component |
 |---|---|---|---|---|
-| I1 | **Event append** | inbound (write) | Append exactly one JSONL record for an action; assigns the next monotonic `seq`; stamps `created_by`. The substrate-internal call every action path makes (spec-faithful/C01 §5 step 4). | C23 (this) |
+| I1 | **Event append** | inbound (write) | Append exactly one JSONL record for an action; assigns the next monotonic `seq`; stamps `created_by`. The substrate-internal call every action path makes (spec/C01 §5 step 4). | C23 (this) |
 | I2 | **Ordered read / tail / replay** | inbound (read) | Read events in `seq` order from a given position to the head; replay the action history; tail live. The audit/replay surface (AI-CONTEXT §3.2 "P9, P10, P11"). | C23 (this); C24/C40/self-healing consume |
 | I3 | **Checkpoint / resume-from-seq** | inbound (read) | A consumer records its last-processed `seq` and resumes from there (the property that makes the bus a reliable bridge source). | C23 (this); C24 consumes (G27 ordering) |
 | I4 | **`created_by` attribution field** | contract | Every record carries a resolvable actor id; C23 carries it, **C41 defines/resolves** the actor schema (README line 227; "rides events"). | **C41** (value+schema), C23 (carrier) |
@@ -108,7 +108,7 @@ to sweep 2 (and the actor-value contract to C41, the bridge delivery seam to C24
   **not stated by v4** → OQ-4, to be confirmed against the pinned Gas City binary (checkpointing works
   either way: a consumer resumes from its last-seen `seq`).
 - **INV-3 (universal attribution):** every event carries a resolvable `created_by` (inherited from
-  spec-faithful/C01 INV-3; README line 231). No event is anonymous — this is the F14 guarantee.
+  spec/C01 INV-3; README line 231). No event is anonymous — this is the F14 guarantee.
 - **INV-4 (records every action):** the bus is *complete* — every factory action that mutates state or makes
   a decision emits an event; there is no action path that bypasses the log (README line 252; component-
   inventory C23). This is an **adopted Gas City property** (C23 is not factory-authored), to be *verified*
@@ -134,7 +134,7 @@ State C23 is the spec-of-record for at sweep 1:
 > but not the concrete field-level event record. The minimal faithful elaboration of one record is:
 > **`{seq, ts, created_by, action_type, target_ref?, payload}`** — where `seq` is the monotonic order key
 > (INV-2), `ts` is the wall-clock timestamp, `created_by` is the inherited universal-attribution actor
-> (spec-faithful/C01 INV-3; resolved by C41), `action_type` names the action that occurred (dispatch / gate /
+> (spec/C01 INV-3; resolved by C41), `action_type` names the action that occurred (dispatch / gate /
 > bead-transition / mail / tool-run / healer-action), `target_ref` optionally references the affected bead /
 > session / molecule, and `payload` carries action-specific detail. This is the smallest set implied by
 > "monotonic seq" + "records every action" + universal attribution + "events already attributed and
@@ -143,10 +143,10 @@ State C23 is the spec-of-record for at sweep 1:
 
 **Consistency / lifecycle.** Append-only + monotonic-seq give a **write-once, totally-ordered, replayable**
 log: a reader can deterministically reconstruct the action history and checkpoint by `seq`. The bus is
-**always-on from Phase 0** (additive to nothing — it is part of the base substrate; spec-faithful/C01 §4)
+**always-on from Phase 0** (additive to nothing — it is part of the base substrate; spec/C01 §4)
 and unlike CXDB needs no feature flag (README line 252 "always"). The log is the *source-of-truth action
 trail that survives independently of CXDB* — which is exactly why a CXDB outage is survivable (see §6, and
-spec-faithful/C21 §6 G33 reading).
+spec/C21 §6 G33 reading).
 
 ## 5. Behavior
 
@@ -226,7 +226,7 @@ C41's optional layer.
 
 **Degraded behaviour.** The event bus is the substrate's own durable log; if **CXDB** is down the event bus
 **continues** unaffected and is the surviving source-of-truth action trail (this is what makes the C21 G33
-fail-open reading hold — spec-faithful/C21 §6). If the **event log** write itself fails (disk full / I/O),
+fail-open reading hold — spec/C21 §6). If the **event log** write itself fails (disk full / I/O),
 that is a substrate-level failure (C01) — faithful handling is fail-loud at the substrate (an action that
 cannot be recorded must not be silently lost, given INV-4); the exact policy is a sweep-2 / C01 concern.
 A partial/torn final line on crash is detectable (JSONL line-framing, INV-5) and is a known recovery case.
@@ -257,7 +257,7 @@ A partial/torn final line on crash is detectable (JSONL line-framing, INV-5) and
   C24/ops monitor.
 - **Ops.** Always-on with the substrate (no separate service). Log location + rotation are the key ops
   config (C03 model). Inherits Gas City's migration-tail risk (AI-CONTEXT §3.5): a JSONL-format or seq-
-  semantics change upstream would ripple to C24/C41 — pin the Gas City version (mirrors spec-faithful/C01
+  semantics change upstream would ripple to C24/C41 — pin the Gas City version (mirrors spec/C01
   INV-1).
 
 ## 8. Acceptance criteria & test strategy
@@ -265,7 +265,7 @@ A partial/torn final line on crash is detectable (JSONL line-framing, INV-5) and
 Sweep-1 = high-level criteria (concrete tests at sweep 2).
 
 1. **AC-1 (always-on append — INV-4/I1):** in the minimal Phase-0 install, performing a unit of work
-   produces event records for each action with **no configuration** (README line 231; spec-faithful/C01 §5).
+   produces event records for each action with **no configuration** (README line 231; spec/C01 §5).
 2. **AC-2 (append-only — INV-1):** existing records are never mutated/reordered/deleted; a re-read of the log
    yields byte-identical historical records.
 3. **AC-3 (monotonic seq + total order — INV-2):** every record's `seq` is strictly greater than the prior
@@ -280,7 +280,7 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
 7. **AC-7 (audit completeness — INV-4, addresses F10):** every state-mutating/decision action emits an event;
    an audit query over the log reconstructs the action history with no silent gaps.
 8. **AC-8 (CXDB-independence — supports C21 G33):** with CXDB down, the event bus keeps appending and remains
-   the surviving source-of-truth action trail (spec-faithful/C21 §6 fail-open reading).
+   the surviving source-of-truth action trail (spec/C21 §6 fail-open reading).
 
 **Test strategy.** A **Gas-City-event-bus conformance pack** (mirroring the C01/C21 conformance shape) that
 boots the pinned Gas City substrate and asserts AC-1…AC-8 against the *real* event bus — in particular the

@@ -1,7 +1,7 @@
 # Adversarial review — C20 Bead schema registry (Track A, sweep 1)
 
 Reviewer persona: Subsystem Adversary (Persistence & Memory)
-Target: spec-faithful/C20-bead-schema.md (+ plan-faithful/C20-bead-schema.md)
+Target: spec/C20-bead-schema.md (+ plan-faithful/C20-bead-schema.md)
 
 Track A attacks **fidelity and completeness only** — not the design.
 

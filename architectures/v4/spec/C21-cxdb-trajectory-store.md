@@ -63,7 +63,7 @@ self-optimization** (counterfactual replay = re-run a trajectory from a midpoint
   invention … largely unsolved" (README line 278; AI-CONTEXT §10 line 359 "Primitive exists; driver yours").
 - **NOT the bead store / event bus.** Beads (C19/C20) are the typed work-graph; the Gas City event bus
   (C23) is the append-only JSONL action log. CXDB is a *distinct* Apache-2.0 store added in Phase 1 via a
-  bridge, not part of the Gas City substrate (README line 122; spec-faithful/C01 §1 boundary).
+  bridge, not part of the Gas City substrate (README line 122; spec/C01 §1 boundary).
 - **NOT an OTLP receiver.** CXDB has **no native OTLP receiver** and is explicitly positioned *against*
   OTel ("Spans model request trees, not conversations"); the OTLP→CXDB path is rejected (highest impedance)
   (AI-CONTEXT §5.2 line 210, §5.4 line 230; README line 466 "Skip OTLP → CXDB path"). C21 does not accept
@@ -144,13 +144,13 @@ with a `{bundle_id, type, version}` triple. A *trajectory* is a path through the
 > but not the concrete field-level turn record (e.g. turn id type, timestamp, actor, payload-key list). The
 > minimal faithful elaboration is: **a turn record = {turn_id, parent_turn_id?, payload_refs: [blake3_key
 > + type_triple], created_by}**, where `created_by` mirrors the substrate's universal-attribution invariant
-> (spec-faithful/C01 INV-3; README line 231) so trajectories are attributable. This is the smallest set
+> (spec/C01 INV-3; README line 231) so trajectories are attributable. This is the smallest set
 > implied by "parent turn pointer" (AI-CONTEXT §5.3) + "Blob CAS" + "type per payload" + the corpus-wide
 > attribution requirement; the exact wire fields are sweep-2 and the *typed payload* schemas are C22's.
 
 **Consistency / lifecycle.** Append-only `turns.log` + immutable BLAKE3-keyed blobs give a
 write-once-read-many, content-verifiable store. Branching never mutates existing turns (INV-3). The store
-is added in **Phase 1** (additive to the Phase-0 substrate; spec-faithful/C01 §4) and is "ready for P11
+is added in **Phase 1** (additive to the Phase-0 substrate; spec/C01 §4) and is "ready for P11
 anomaly clustering and P12 counterfactual replay" once standing (README line 397).
 
 ## 5. Behavior
@@ -218,7 +218,7 @@ CXDB is down mid-run?"**
 **§14 dependency risk — "CXDB stays small-team" (Medium/Medium).** Mitigation per v4: "Apache 2.0 means a
 fork is always available; design integration to minimize lock-in" (AI-CONTEXT §14 line 618). Faithful
 handling: keep the integration behind the named seams (I1–I8) so a fork/replacement is a seam-swap, and
-**pin a version** (mirrors spec-faithful/C01 INV-1) so behaviour is reproducible.
+**pin a version** (mirrors spec/C01 INV-1) so behaviour is reproducible.
 
 **G11 thread (content-addressing / unverified third-party).** Like Gas City, every claimed CXDB behaviour
 (BLAKE3 dedup, O(1) branch, p50<1ms, sub-ms TB-scale retrieval) is an *unverified upstream assumption* until

@@ -1,6 +1,6 @@
 # C10 — Spec linter (EARS / INCOSE) (`spec-linter-ears`)  (Build Plan, Track A)
 
-> Source / Spec ref: spec-faithful/C10-spec-linter-ears.md
+> Source / Spec ref: spec/C10-spec-linter-ears.md
 > Track: A (faithful). Sweep: 1 (architecture altitude — plan names the workstreams and the contracts to freeze; per-rule fixtures land at sweep 2/3).
 
 ## 1. Work breakdown

@@ -1,6 +1,6 @@
 # C02 — Pack & Tool-Node ABI  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C02-pack-extension-abi.md`](../spec-faithful/C02-pack-extension-abi.md)
+> Source / Spec ref: [`spec/C02-pack-extension-abi.md`](../spec/C02-pack-extension-abi.md)
 
 C02 is an **interface/contract** component (no runtime engine of its own — that is C01). "Building" C02
 means **specifying and freezing the two contracts** (pack bundle + tool-node ABI), then **conformance-

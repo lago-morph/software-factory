@@ -14,12 +14,12 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C01-DELTA-01 | C01 | SYSTEMIC | C04-DELTA-01, C21-DELTA-01, C28-DELTA-01 | C04, C21, C28, C17, C02 | high | spec-faithful/C01, plan-faithful/C01 | leave in Track B only |
-| C01-DELTA-02 | C01 | ISOLATED | — | C03 (conformance hook) | low | spec-faithful/C01, plan-faithful/C01 | port to faithful as-is |
-| C01-DELTA-03 | C01 | CLUSTER-2 (native-count) | C03-DELTA-05 | C03 | low | spec-faithful/C01, spec-faithful/C03, plan-faithful/C01, plan-faithful/C03 | port the cluster |
-| C01-DELTA-04 | C01 | CLUSTER-2 (tool-node-seam) | C02-DELTA-01 | C02 | medium | spec-faithful/C01, spec-faithful/C02, plan-faithful/C01, plan-faithful/C02 | port the cluster |
-| C01-DELTA-05 | C01 | CLUSTER-3 (termination) | C13-DELTA-05, C18 (policy seam) | C13, C18, C39 | medium | spec-faithful/C01, spec-faithful/C13, plan-faithful/C01, plan-faithful/C13 | port the cluster |
-| C01-DELTA-06 | C01 | CLUSTER-2 (degraded-mode) | C21-DELTA-04, C23-DELTA-01 | C21, C23, C40 | medium | spec-faithful/C01, spec-faithful/C21, plan-faithful/C01, plan-faithful/C21 | port the cluster |
+| C01-DELTA-01 | C01 | SYSTEMIC | C04-DELTA-01, C21-DELTA-01, C28-DELTA-01 | C04, C21, C28, C17, C02 | high | spec/C01, plan-faithful/C01 | leave in Track B only |
+| C01-DELTA-02 | C01 | ISOLATED | — | C03 (conformance hook) | low | spec/C01, plan-faithful/C01 | port to faithful as-is |
+| C01-DELTA-03 | C01 | CLUSTER-2 (native-count) | C03-DELTA-05 | C03 | low | spec/C01, spec/C03, plan-faithful/C01, plan-faithful/C03 | port the cluster |
+| C01-DELTA-04 | C01 | CLUSTER-2 (tool-node-seam) | C02-DELTA-01 | C02 | medium | spec/C01, spec/C02, plan-faithful/C01, plan-faithful/C02 | port the cluster |
+| C01-DELTA-05 | C01 | CLUSTER-3 (termination) | C13-DELTA-05, C18 (policy seam) | C13, C18, C39 | medium | spec/C01, spec/C13, plan-faithful/C01, plan-faithful/C13 | port the cluster |
+| C01-DELTA-06 | C01 | CLUSTER-2 (degraded-mode) | C21-DELTA-04, C23-DELTA-01 | C21, C23, C40 | medium | spec/C01, spec/C21, plan-faithful/C01, plan-faithful/C21 | port the cluster |
 
 **Notes:**
 - DELTA-01 (RuntimeSubstrate interface): Requires that C04, C21, C28 all simultaneously expose conformance-testable abstractions. Any single-component port is internally contradicted — e.g., faithful C01 saying "Gas City IS the substrate" while faithful C04 says "the SessionProvider interface" creates an incoherence. Systemic.
@@ -35,13 +35,13 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C02-DELTA-01 | C02 | CLUSTER-2 (tool-node-seam) | C01-DELTA-04 | C01, C17 | medium | spec-faithful/C02, spec-faithful/C01, plan-faithful/C02, plan-faithful/C01 | port the cluster |
-| C02-DELTA-02 | C02 | CLUSTER-3 (supply-chain) | C41-DELTA-06, C51 (provenance seam) | C41, C51, C52 | high | spec-faithful/C02, spec-faithful/C41, plan-faithful/C02, plan-faithful/C41 | leave in Track B only |
-| C02-DELTA-03 | C02 | CLUSTER-2 (typed-I/O) | C01-DELTA-04 | C01, C17 | medium | spec-faithful/C02, spec-faithful/C17, plan-faithful/C02, plan-faithful/C17 | port the cluster |
-| C02-DELTA-04 | C02 | CLUSTER-2 (capability-declaration) | C43 (isolation seam) | C43, C04 | medium | spec-faithful/C02, spec-faithful/C04, plan-faithful/C02, plan-faithful/C04 | port the cluster |
-| C02-DELTA-05 | C02 | ISOLATED | — | C01 (version axis only) | low | spec-faithful/C02, plan-faithful/C02 | port to faithful as-is |
-| C02-DELTA-06 | C02 | ISOLATED | — | — | low | spec-faithful/C02, plan-faithful/C02 | port to faithful as-is |
-| C02-DELTA-07 | C02 | ISOLATED | — | C52 (fork-trigger log) | low | spec-faithful/C02, plan-faithful/C02 | port to faithful as-is |
+| C02-DELTA-01 | C02 | CLUSTER-2 (tool-node-seam) | C01-DELTA-04 | C01, C17 | medium | spec/C02, spec/C01, plan-faithful/C02, plan-faithful/C01 | port the cluster |
+| C02-DELTA-02 | C02 | CLUSTER-3 (supply-chain) | C41-DELTA-06, C51 (provenance seam) | C41, C51, C52 | high | spec/C02, spec/C41, plan-faithful/C02, plan-faithful/C41 | leave in Track B only |
+| C02-DELTA-03 | C02 | CLUSTER-2 (typed-I/O) | C01-DELTA-04 | C01, C17 | medium | spec/C02, spec/C17, plan-faithful/C02, plan-faithful/C17 | port the cluster |
+| C02-DELTA-04 | C02 | CLUSTER-2 (capability-declaration) | C43 (isolation seam) | C43, C04 | medium | spec/C02, spec/C04, plan-faithful/C02, plan-faithful/C04 | port the cluster |
+| C02-DELTA-05 | C02 | ISOLATED | — | C01 (version axis only) | low | spec/C02, plan-faithful/C02 | port to faithful as-is |
+| C02-DELTA-06 | C02 | ISOLATED | — | — | low | spec/C02, plan-faithful/C02 | port to faithful as-is |
+| C02-DELTA-07 | C02 | ISOLATED | — | C52 (fork-trigger log) | low | spec/C02, plan-faithful/C02 | port to faithful as-is |
 
 **Notes:**
 - DELTA-02 (signed pack manifest + RSI gating): The signing trust root connects to C41 key model (DELTA-06) and C51 gene-transfusion provenance — three components must agree on what a "valid signature" means. High cost; the trust-root question alone is unresolved (OQ3 in C02).
@@ -56,12 +56,12 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C03-DELTA-01 | C03 | ISOLATED | — | C01 (precedence description) | low | spec-faithful/C03, plan-faithful/C03 | port to faithful as-is |
-| C03-DELTA-02 | C03 | ISOLATED | — | C02 (CapabilityDescriptor) | low | spec-faithful/C03, plan-faithful/C03 | port to faithful as-is |
-| C03-DELTA-03 | C03 | CLUSTER-2 (secrets) | C41-DELTA-06 | C41, G37-adjacent | medium | spec-faithful/C03, spec-faithful/C41, plan-faithful/C03, plan-faithful/C41 | port the cluster |
-| C03-DELTA-04 | C03 | ISOLATED | — | — | low | spec-faithful/C03, plan-faithful/C03 | port to faithful as-is |
-| C03-DELTA-05 | C03 | CLUSTER-2 (native-count) | C01-DELTA-03 | C01 | low | spec-faithful/C03, spec-faithful/C01, plan-faithful/C03, plan-faithful/C01 | port the cluster |
-| C03-DELTA-06 | C03 | ISOLATED | C23/C41 (emission only) | C23, C41 | low | spec-faithful/C03, plan-faithful/C03 | port to faithful as-is |
+| C03-DELTA-01 | C03 | ISOLATED | — | C01 (precedence description) | low | spec/C03, plan-faithful/C03 | port to faithful as-is |
+| C03-DELTA-02 | C03 | ISOLATED | — | C02 (CapabilityDescriptor) | low | spec/C03, plan-faithful/C03 | port to faithful as-is |
+| C03-DELTA-03 | C03 | CLUSTER-2 (secrets) | C41-DELTA-06 | C41, G37-adjacent | medium | spec/C03, spec/C41, plan-faithful/C03, plan-faithful/C41 | port the cluster |
+| C03-DELTA-04 | C03 | ISOLATED | — | — | low | spec/C03, plan-faithful/C03 | port to faithful as-is |
+| C03-DELTA-05 | C03 | CLUSTER-2 (native-count) | C01-DELTA-03 | C01 | low | spec/C03, spec/C01, plan-faithful/C03, plan-faithful/C01 | port the cluster |
+| C03-DELTA-06 | C03 | ISOLATED | C23/C41 (emission only) | C23, C41 | low | spec/C03, plan-faithful/C03 | port to faithful as-is |
 
 **Notes:**
 - DELTA-03 (SecretRef indirection): The indirection mechanism itself is isolated to C03, but the security argument depends on C41's key model (DELTA-06) being in place to make secrets actually safe. Can be ported as a structural delta without DELTA-06 by noting the residual (G37 still open); the faithful spec already flags G37.
@@ -73,12 +73,12 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C04-DELTA-01 | C04 | SYSTEMIC | C01-DELTA-01, C28-DELTA-01, C21-DELTA-01 | C01, C28, C21 | high | spec-faithful/C04, plan-faithful/C04 | leave in Track B only |
-| C04-DELTA-02 | C04 | ISOLATED | — | C19 (ResumeToken anchor) | low | spec-faithful/C04, plan-faithful/C04 | port to faithful as-is |
-| C04-DELTA-03 | C04 | ISOLATED | — | C28 (credential ladder) | low | spec-faithful/C04, plan-faithful/C04 | port to faithful as-is |
-| C04-DELTA-04 | C04 | ISOLATED | — | C28, C36 (liveness producer) | low | spec-faithful/C04, plan-faithful/C04 | port to faithful as-is |
-| C04-DELTA-05 | C04 | CLUSTER-3 (isolation-at-spawn) | C42-DELTA-05 (PartitionBinding), C43 seam | C42, C43, C28 | medium | spec-faithful/C04, spec-faithful/C42, plan-faithful/C04, plan-faithful/C42 | port the cluster |
-| C04-DELTA-06 | C04 | ISOLATED | — | C01 (pool count) | low | spec-faithful/C04, plan-faithful/C04 | port to faithful as-is |
+| C04-DELTA-01 | C04 | SYSTEMIC | C01-DELTA-01, C28-DELTA-01, C21-DELTA-01 | C01, C28, C21 | high | spec/C04, plan-faithful/C04 | leave in Track B only |
+| C04-DELTA-02 | C04 | ISOLATED | — | C19 (ResumeToken anchor) | low | spec/C04, plan-faithful/C04 | port to faithful as-is |
+| C04-DELTA-03 | C04 | ISOLATED | — | C28 (credential ladder) | low | spec/C04, plan-faithful/C04 | port to faithful as-is |
+| C04-DELTA-04 | C04 | ISOLATED | — | C28, C36 (liveness producer) | low | spec/C04, plan-faithful/C04 | port to faithful as-is |
+| C04-DELTA-05 | C04 | CLUSTER-3 (isolation-at-spawn) | C42-DELTA-05 (PartitionBinding), C43 seam | C42, C43, C28 | medium | spec/C04, spec/C42, plan-faithful/C04, plan-faithful/C42 | port the cluster |
+| C04-DELTA-06 | C04 | ISOLATED | — | C01 (pool count) | low | spec/C04, plan-faithful/C04 | port to faithful as-is |
 
 **Notes:**
 - DELTA-01 (SessionProvider contract): Directly depends on C01's RuntimeSubstrate abstraction and C28's AgentLoopProvider abstraction being defined first. SYSTEMIC — the three portability contracts (C01/C04/C28) are one architectural bet, not three independent statements.
@@ -91,12 +91,12 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C05-DELTA-01 | C05 | ISOLATED | — | C29, C42, C28 (typed RoutingDecision inputs) | low | spec-faithful/C05, plan-faithful/C05 | port to faithful as-is |
-| C05-DELTA-02 | C05 | CLUSTER-2 (admission) | C28-DELTA-02 | C28 | medium | spec-faithful/C05, spec-faithful/C28, plan-faithful/C05, plan-faithful/C28 | port the cluster |
-| C05-DELTA-03 | C05 | ISOLATED | — | — | low | spec-faithful/C05, plan-faithful/C05 | port to faithful as-is |
-| C05-DELTA-04 | C05 | CLUSTER-2 (routing-authority-split) | C09-DELTA-01 | C09, C12 | low | spec-faithful/C05, spec-faithful/C09, plan-faithful/C05, plan-faithful/C09 | port the cluster |
-| C05-DELTA-05 | C05 | ISOLATED | — | C18 (partial failure handling) | low | spec-faithful/C05, plan-faithful/C05 | port to faithful as-is |
-| C05-DELTA-06 | C05 | ISOLATED | — | C23, C19, C41 (emission) | low | spec-faithful/C05, plan-faithful/C05 | port to faithful as-is |
+| C05-DELTA-01 | C05 | ISOLATED | — | C29, C42, C28 (typed RoutingDecision inputs) | low | spec/C05, plan-faithful/C05 | port to faithful as-is |
+| C05-DELTA-02 | C05 | CLUSTER-2 (admission) | C28-DELTA-02 | C28 | medium | spec/C05, spec/C28, plan-faithful/C05, plan-faithful/C28 | port the cluster |
+| C05-DELTA-03 | C05 | ISOLATED | — | — | low | spec/C05, plan-faithful/C05 | port to faithful as-is |
+| C05-DELTA-04 | C05 | CLUSTER-2 (routing-authority-split) | C09-DELTA-01 | C09, C12 | low | spec/C05, spec/C09, plan-faithful/C05, plan-faithful/C09 | port the cluster |
+| C05-DELTA-05 | C05 | ISOLATED | — | C18 (partial failure handling) | low | spec/C05, plan-faithful/C05 | port to faithful as-is |
+| C05-DELTA-06 | C05 | ISOLATED | — | C23, C19, C41 (emission) | low | spec/C05, plan-faithful/C05 | port to faithful as-is |
 
 **Notes:**
 - DELTA-02 (admission-controlled dispatch): C28 must provide the `acquire()` governor interface. C28-DELTA-02 adds the seat governor. These two must travel together — the dispatch can't back-pressure without C28 exposing the gate.
@@ -108,12 +108,12 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C07-DELTA-01 | C07 | ISOLATED | — | — | low | spec-faithful/C07, plan-faithful/C07 | port to faithful as-is |
-| C07-DELTA-02 | C07 | ISOLATED | — | C54, C57 (rename advisory) | low | spec-faithful/C07, plan-faithful/C07 | port to faithful as-is |
-| C07-DELTA-03 | C07 | ISOLATED | — | C51 (provenance field) | low | spec-faithful/C07, plan-faithful/C07 | port to faithful as-is |
-| C07-DELTA-04 | C07 | CLUSTER-2 (vocab-lint-wiring) | C10-DELTA-04 | C10 | low | spec-faithful/C07, spec-faithful/C10, plan-faithful/C07, plan-faithful/C10 | port the cluster |
-| C07-DELTA-05 | C07 | ISOLATED | — | — | low | spec-faithful/C07, plan-faithful/C07 | port to faithful as-is |
-| C07-DELTA-06 | C07 | ISOLATED | — | C01-DELTA-01 (extraction synonym consumer), C57 | low | spec-faithful/C07, plan-faithful/C07 | port to faithful as-is |
+| C07-DELTA-01 | C07 | ISOLATED | — | — | low | spec/C07, plan-faithful/C07 | port to faithful as-is |
+| C07-DELTA-02 | C07 | ISOLATED | — | C54, C57 (rename advisory) | low | spec/C07, plan-faithful/C07 | port to faithful as-is |
+| C07-DELTA-03 | C07 | ISOLATED | — | C51 (provenance field) | low | spec/C07, plan-faithful/C07 | port to faithful as-is |
+| C07-DELTA-04 | C07 | CLUSTER-2 (vocab-lint-wiring) | C10-DELTA-04 | C10 | low | spec/C07, spec/C10, plan-faithful/C07, plan-faithful/C10 | port the cluster |
+| C07-DELTA-05 | C07 | ISOLATED | — | — | low | spec/C07, plan-faithful/C07 | port to faithful as-is |
+| C07-DELTA-06 | C07 | ISOLATED | — | C01-DELTA-01 (extraction synonym consumer), C57 | low | spec/C07, plan-faithful/C07 | port to faithful as-is |
 
 **Notes:**
 - DELTA-04 (CanonicalTermSet export): C07 exports; C10 imports. These must move together or C10 has a dangling import. But the cluster is just two files and zero structural changes to the broader system.
@@ -125,12 +125,12 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C08-DELTA-01 | C08 | CLUSTER-3 (spec-bundle-seam) | C09-DELTA-01, C05-DELTA-04 | C09, C05, C10 | medium | spec-faithful/C08, spec-faithful/C09, spec-faithful/C05, plan-faithful/C08, plan-faithful/C09, plan-faithful/C05 | port the cluster |
-| C08-DELTA-02 | C08 | CLUSTER-2 (multi-file-bundle) | C09-DELTA-01 | C09 | medium | spec-faithful/C08, spec-faithful/C09, plan-faithful/C08, plan-faithful/C09 | port the cluster |
-| C08-DELTA-03 | C08 | CLUSTER-2 (DoD) | C32, C33 (scoring surface) | C32, C33 | medium | spec-faithful/C08, plan-faithful/C08 | port to faithful as-is |
-| C08-DELTA-04 | C08 | CLUSTER-3 (content-address-identity) | C09-DELTA-03, C21 (BLAKE3 reuse) | C09, C21, C33, C46, C49 | medium | spec-faithful/C08, spec-faithful/C09, plan-faithful/C08, plan-faithful/C09 | port the cluster |
-| C08-DELTA-05 | C08 | CLUSTER-2 (required-section-schema) | C10-DELTA-02 | C10 | low | spec-faithful/C08, spec-faithful/C10, plan-faithful/C08, plan-faithful/C10 | port the cluster |
-| C08-DELTA-06 | C08 | ISOLATED | — | C09, C11 (detail_level consumer) | low | spec-faithful/C08, plan-faithful/C08 | port to faithful as-is |
+| C08-DELTA-01 | C08 | CLUSTER-3 (spec-bundle-seam) | C09-DELTA-01, C05-DELTA-04 | C09, C05, C10 | medium | spec/C08, spec/C09, spec/C05, plan-faithful/C08, plan-faithful/C09, plan-faithful/C05 | port the cluster |
+| C08-DELTA-02 | C08 | CLUSTER-2 (multi-file-bundle) | C09-DELTA-01 | C09 | medium | spec/C08, spec/C09, plan-faithful/C08, plan-faithful/C09 | port the cluster |
+| C08-DELTA-03 | C08 | CLUSTER-2 (DoD) | C32, C33 (scoring surface) | C32, C33 | medium | spec/C08, plan-faithful/C08 | port to faithful as-is |
+| C08-DELTA-04 | C08 | CLUSTER-3 (content-address-identity) | C09-DELTA-03, C21 (BLAKE3 reuse) | C09, C21, C33, C46, C49 | medium | spec/C08, spec/C09, plan-faithful/C08, plan-faithful/C09 | port the cluster |
+| C08-DELTA-05 | C08 | CLUSTER-2 (required-section-schema) | C10-DELTA-02 | C10 | low | spec/C08, spec/C10, plan-faithful/C08, plan-faithful/C10 | port the cluster |
+| C08-DELTA-06 | C08 | ISOLATED | — | C09, C11 (detail_level consumer) | low | spec/C08, plan-faithful/C08 | port to faithful as-is |
 
 **Notes:**
 - DELTA-01 (standalone spec bundle vs template-is-spec): This is the fundamental Track B spec-intake redesign — the spec becomes a separate artifact from the prompt template. It requires C09 to consume it by reference (C09-DELTA-01) and C05 to treat the binding opaquely (C05-DELTA-04). The cluster is C08+C09+C05 at minimum, with C10 needing the structured surface. Together these are a meaningful but bounded change: 3–5 spec files.
@@ -143,12 +143,12 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C09-DELTA-01 | C09 | CLUSTER-3 (spec-bundle-seam) | C08-DELTA-01, C05-DELTA-04 | C08, C05, C12 | medium | spec-faithful/C09, spec-faithful/C08, spec-faithful/C05, plan-faithful/C09, plan-faithful/C08, plan-faithful/C05 | port the cluster |
-| C09-DELTA-02 | C09 | ISOLATED | — | C13 (render variables) | low | spec-faithful/C09, plan-faithful/C09 | port to faithful as-is |
-| C09-DELTA-03 | C09 | CLUSTER-2 (content-addressed-binding) | C08-DELTA-04 | C08, C23, C19, C41 | low | spec-faithful/C09, spec-faithful/C08, plan-faithful/C09, plan-faithful/C08 | port the cluster |
-| C09-DELTA-04 | C09 | ISOLATED | — | — | low | spec-faithful/C09, plan-faithful/C09 | port to faithful as-is |
-| C09-DELTA-05 | C09 | ISOLATED | — | C28 (prompt.id correlation) | low | spec-faithful/C09, plan-faithful/C09 | port to faithful as-is |
-| C09-DELTA-06 | C09 | ISOLATED | — | C08 (detail_level input) | low | spec-faithful/C09, plan-faithful/C09 | port to faithful as-is |
+| C09-DELTA-01 | C09 | CLUSTER-3 (spec-bundle-seam) | C08-DELTA-01, C05-DELTA-04 | C08, C05, C12 | medium | spec/C09, spec/C08, spec/C05, plan-faithful/C09, plan-faithful/C08, plan-faithful/C05 | port the cluster |
+| C09-DELTA-02 | C09 | ISOLATED | — | C13 (render variables) | low | spec/C09, plan-faithful/C09 | port to faithful as-is |
+| C09-DELTA-03 | C09 | CLUSTER-2 (content-addressed-binding) | C08-DELTA-04 | C08, C23, C19, C41 | low | spec/C09, spec/C08, plan-faithful/C09, plan-faithful/C08 | port the cluster |
+| C09-DELTA-04 | C09 | ISOLATED | — | — | low | spec/C09, plan-faithful/C09 | port to faithful as-is |
+| C09-DELTA-05 | C09 | ISOLATED | — | C28 (prompt.id correlation) | low | spec/C09, plan-faithful/C09 | port to faithful as-is |
+| C09-DELTA-06 | C09 | ISOLATED | — | C08 (detail_level input) | low | spec/C09, plan-faithful/C09 | port to faithful as-is |
 
 **Notes:**
 - DELTA-04 (render sandbox): A security improvement entirely internal to C09's render logic. No structural impact on other specs.
@@ -160,12 +160,12 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C10-DELTA-01 | C10 | CLUSTER-2 (pure-node-contract) | C17-DELTA-03 | C17 | low | spec-faithful/C10, spec-faithful/C17, plan-faithful/C10, plan-faithful/C17 | port the cluster |
-| C10-DELTA-02 | C10 | CLUSTER-2 (structured-lint-surface) | C08-DELTA-05 | C08 | low | spec-faithful/C10, spec-faithful/C08, plan-faithful/C10, plan-faithful/C08 | port the cluster |
-| C10-DELTA-03 | C10 | ISOLATED | — | C08 (detail_level input) | low | spec-faithful/C10, plan-faithful/C10 | port to faithful as-is |
-| C10-DELTA-04 | C10 | CLUSTER-2 (vocab-lint-wiring) | C07-DELTA-04 | C07 | low | spec-faithful/C10, spec-faithful/C07, plan-faithful/C10, plan-faithful/C07 | port the cluster |
-| C10-DELTA-05 | C10 | ISOLATED | — | C51 (rule provenance) | low | spec-faithful/C10, plan-faithful/C10 | port to faithful as-is |
-| C10-DELTA-06 | C10 | ISOLATED | — | C46 (structural score metric) | low | spec-faithful/C10, plan-faithful/C10 | port to faithful as-is |
+| C10-DELTA-01 | C10 | CLUSTER-2 (pure-node-contract) | C17-DELTA-03 | C17 | low | spec/C10, spec/C17, plan-faithful/C10, plan-faithful/C17 | port the cluster |
+| C10-DELTA-02 | C10 | CLUSTER-2 (structured-lint-surface) | C08-DELTA-05 | C08 | low | spec/C10, spec/C08, plan-faithful/C10, plan-faithful/C08 | port the cluster |
+| C10-DELTA-03 | C10 | ISOLATED | — | C08 (detail_level input) | low | spec/C10, plan-faithful/C10 | port to faithful as-is |
+| C10-DELTA-04 | C10 | CLUSTER-2 (vocab-lint-wiring) | C07-DELTA-04 | C07 | low | spec/C10, spec/C07, plan-faithful/C10, plan-faithful/C07 | port the cluster |
+| C10-DELTA-05 | C10 | ISOLATED | — | C51 (rule provenance) | low | spec/C10, plan-faithful/C10 | port to faithful as-is |
+| C10-DELTA-06 | C10 | ISOLATED | — | C46 (structural score metric) | low | spec/C10, plan-faithful/C10 | port to faithful as-is |
 
 ---
 
@@ -173,13 +173,13 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C12-DELTA-01 | C12 | ISOLATED | — | C01 (Gas City TOML conformance) | low | spec-faithful/C12, plan-faithful/C12 | port to faithful as-is |
-| C12-DELTA-02 | C12 | CLUSTER-2 (node-taxonomy) | C16 (discipline linter surface) | C16 | low | spec-faithful/C12, plan-faithful/C12 | port to faithful as-is |
-| C12-DELTA-03 | C12 | CLUSTER-2 (parameter-binding) | C09-DELTA-01 (spec_ref param) | C09, C13 | low | spec-faithful/C12, spec-faithful/C09, plan-faithful/C12, plan-faithful/C09 | port the cluster |
-| C12-DELTA-04 | C12 | CLUSTER-2 (methodology-identity) | C55, C50 (methodology selection) | C50, C55 | low | spec-faithful/C12, plan-faithful/C12 | port to faithful as-is |
-| C12-DELTA-05 | C12 | CLUSTER-3 (DAG-invariants) | C13-DELTA-04, C15/C16 (linters) | C13, C15, C16 | medium | spec-faithful/C12, spec-faithful/C13, plan-faithful/C12, plan-faithful/C13 | port the cluster |
-| C12-DELTA-06 | C12 | ISOLATED | — | C51 (transfusion lineage) | low | spec-faithful/C12, plan-faithful/C12 | port to faithful as-is |
-| C12-DELTA-07 | C12 | CLUSTER-2 (DOT-round-trip) | C14 (translator contract) | C14 | low | spec-faithful/C12, plan-faithful/C12 | port to faithful as-is |
+| C12-DELTA-01 | C12 | ISOLATED | — | C01 (Gas City TOML conformance) | low | spec/C12, plan-faithful/C12 | port to faithful as-is |
+| C12-DELTA-02 | C12 | CLUSTER-2 (node-taxonomy) | C16 (discipline linter surface) | C16 | low | spec/C12, plan-faithful/C12 | port to faithful as-is |
+| C12-DELTA-03 | C12 | CLUSTER-2 (parameter-binding) | C09-DELTA-01 (spec_ref param) | C09, C13 | low | spec/C12, spec/C09, plan-faithful/C12, plan-faithful/C09 | port the cluster |
+| C12-DELTA-04 | C12 | CLUSTER-2 (methodology-identity) | C55, C50 (methodology selection) | C50, C55 | low | spec/C12, plan-faithful/C12 | port to faithful as-is |
+| C12-DELTA-05 | C12 | CLUSTER-3 (DAG-invariants) | C13-DELTA-04, C15/C16 (linters) | C13, C15, C16 | medium | spec/C12, spec/C13, plan-faithful/C12, plan-faithful/C13 | port the cluster |
+| C12-DELTA-06 | C12 | ISOLATED | — | C51 (transfusion lineage) | low | spec/C12, plan-faithful/C12 | port to faithful as-is |
+| C12-DELTA-07 | C12 | CLUSTER-2 (DOT-round-trip) | C14 (translator contract) | C14 | low | spec/C12, plan-faithful/C12 | port to faithful as-is |
 
 **Notes:**
 - DELTA-02 (closed node taxonomy): Provides the structured surface C16 needs — C16 is Batch 3 and not yet authored, so the taxonomy can be stated in C12 faithful with a FAITHFUL-FILL noting C16 will consume it.
@@ -191,13 +191,13 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C13-DELTA-01 | C13 | ISOLATED | — | — | low | spec-faithful/C13, plan-faithful/C13 | port to faithful as-is |
-| C13-DELTA-02 | C13 | ISOLATED | — | C12, C19 (transactional create) | low | spec-faithful/C13, plan-faithful/C13 | port to faithful as-is |
-| C13-DELTA-03 | C13 | CLUSTER-2 (molecule-root-bead) | C20-DELTA-02 (factory_build identity) | C20, C19 | low | spec-faithful/C13, plan-faithful/C13 | port to faithful as-is |
-| C13-DELTA-04 | C13 | CLUSTER-3 (tree-invariants) | C12-DELTA-05, C19-DELTA-03 | C12, C19 | medium | spec-faithful/C13, spec-faithful/C12, spec-faithful/C19, plan-faithful/C13, plan-faithful/C12, plan-faithful/C19 | port the cluster |
-| C13-DELTA-05 | C13 | CLUSTER-3 (termination) | C01-DELTA-05, C12 (gate bound) | C01, C12, C18, C39 | medium | spec-faithful/C13, spec-faithful/C01, plan-faithful/C13, plan-faithful/C01 | port the cluster |
-| C13-DELTA-06 | C13 | ISOLATED | — | C19 (dependency correction) | low | spec-faithful/C13, plan-faithful/C13 | port to faithful as-is |
-| C13-DELTA-07 | C13 | CLUSTER-2 (branch-reinstantiation) | C49 (replay primitive) | C49 | medium | spec-faithful/C13, plan-faithful/C13 | port to faithful as-is |
+| C13-DELTA-01 | C13 | ISOLATED | — | — | low | spec/C13, plan-faithful/C13 | port to faithful as-is |
+| C13-DELTA-02 | C13 | ISOLATED | — | C12, C19 (transactional create) | low | spec/C13, plan-faithful/C13 | port to faithful as-is |
+| C13-DELTA-03 | C13 | CLUSTER-2 (molecule-root-bead) | C20-DELTA-02 (factory_build identity) | C20, C19 | low | spec/C13, plan-faithful/C13 | port to faithful as-is |
+| C13-DELTA-04 | C13 | CLUSTER-3 (tree-invariants) | C12-DELTA-05, C19-DELTA-03 | C12, C19 | medium | spec/C13, spec/C12, spec/C19, plan-faithful/C13, plan-faithful/C12, plan-faithful/C19 | port the cluster |
+| C13-DELTA-05 | C13 | CLUSTER-3 (termination) | C01-DELTA-05, C12 (gate bound) | C01, C12, C18, C39 | medium | spec/C13, spec/C01, plan-faithful/C13, plan-faithful/C01 | port the cluster |
+| C13-DELTA-06 | C13 | ISOLATED | — | C19 (dependency correction) | low | spec/C13, plan-faithful/C13 | port to faithful as-is |
+| C13-DELTA-07 | C13 | CLUSTER-2 (branch-reinstantiation) | C49 (replay primitive) | C49 | medium | spec/C13, plan-faithful/C13 | port to faithful as-is |
 
 **Notes:**
 - DELTA-07 (branch/re-instantiation): C49 is Batch 5 and not yet authored. Porting the `branch()` API stub into faithful C13 is safe — it adds an interface seam without requiring C49 to exist. Low port cost but medium value because C49 is the "most unsolved" component; having the interface defined early helps.
@@ -208,12 +208,12 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C17-DELTA-01 | C17 | CLUSTER-2 (registry-and-facade) | C02-DELTA-01 (wire ABI beneath) | C02, C01 | medium | spec-faithful/C17, spec-faithful/C02, plan-faithful/C17, plan-faithful/C02 | port the cluster |
-| C17-DELTA-02 | C17 | ISOLATED | — | C02 (manifest above) | low | spec-faithful/C17, plan-faithful/C17 | port to faithful as-is |
-| C17-DELTA-03 | C17 | CLUSTER-2 (determinism-class) | C10-DELTA-01, C49 (replay) | C10, C49 | low | spec-faithful/C17, spec-faithful/C10, plan-faithful/C17, plan-faithful/C10 | port the cluster |
-| C17-DELTA-04 | C17 | ISOLATED | — | C49 (cache-vs-replay OQ) | low | spec-faithful/C17, plan-faithful/C17 | port to faithful as-is |
-| C17-DELTA-05 | C17 | ISOLATED | — | — | low | spec-faithful/C17, plan-faithful/C17 | port to faithful as-is |
-| C17-DELTA-06 | C17 | CLUSTER-2 (guard-accountability) | C12-DELTA-02 (guard position from formula), C16 | C12, C16 | low | spec-faithful/C17, spec-faithful/C12, plan-faithful/C17, plan-faithful/C12 | port the cluster |
+| C17-DELTA-01 | C17 | CLUSTER-2 (registry-and-facade) | C02-DELTA-01 (wire ABI beneath) | C02, C01 | medium | spec/C17, spec/C02, plan-faithful/C17, plan-faithful/C02 | port the cluster |
+| C17-DELTA-02 | C17 | ISOLATED | — | C02 (manifest above) | low | spec/C17, plan-faithful/C17 | port to faithful as-is |
+| C17-DELTA-03 | C17 | CLUSTER-2 (determinism-class) | C10-DELTA-01, C49 (replay) | C10, C49 | low | spec/C17, spec/C10, plan-faithful/C17, plan-faithful/C10 | port the cluster |
+| C17-DELTA-04 | C17 | ISOLATED | — | C49 (cache-vs-replay OQ) | low | spec/C17, plan-faithful/C17 | port to faithful as-is |
+| C17-DELTA-05 | C17 | ISOLATED | — | — | low | spec/C17, plan-faithful/C17 | port to faithful as-is |
+| C17-DELTA-06 | C17 | CLUSTER-2 (guard-accountability) | C12-DELTA-02 (guard position from formula), C16 | C12, C16 | low | spec/C17, spec/C12, plan-faithful/C17, plan-faithful/C12 | port the cluster |
 
 **Notes:**
 - DELTA-04 (result cache): Internally coherent once determinism class (DELTA-03) is defined. The cache OQ (C17 OQ2: does it belong in C49?) means this has an open ownership question — safer to note as FAITHFUL-FILL than to commit the full caching design.
@@ -224,13 +224,13 @@ Where a delta was part of D-2/D-3/D-4/D-5 rulings already adopted, it is marked 
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C19-DELTA-01 | C19 | ISOLATED | — | C01 (config toggle) | low | spec-faithful/C19, plan-faithful/C19 | port to faithful as-is |
-| C19-DELTA-02 | C19 | CLUSTER-2 (attribution-invariant) | C41-DELTA-02 (Actor model) | C41 | low | spec-faithful/C19, spec-faithful/C41, plan-faithful/C19, plan-faithful/C41 | port the cluster |
-| C19-DELTA-03 | C19 | CLUSTER-3 (typed-edge-taxonomy) | C13-DELTA-04, C20 (edge-kind enum) | C13, C20 | medium | spec-faithful/C19, spec-faithful/C13, spec-faithful/C20, plan-faithful/C19, plan-faithful/C13, plan-faithful/C20 | port the cluster |
-| C19-DELTA-04 | C19 | ISOLATED | — | — | low | spec-faithful/C19, plan-faithful/C19 | port to faithful as-is |
-| C19-DELTA-05 | C19 | ISOLATED | — | C23 (mutation events) | low | spec-faithful/C19, plan-faithful/C19 | port to faithful as-is |
-| C19-DELTA-06 | C19 | ISOLATED | — | C20 (validation seam) | low | spec-faithful/C19, plan-faithful/C19 | port to faithful as-is |
-| C19-DELTA-07 | C19 | ISOLATED | — | C13, C18, C35, C39 | low | spec-faithful/C19, plan-faithful/C19 | port to faithful as-is |
+| C19-DELTA-01 | C19 | ISOLATED | — | C01 (config toggle) | low | spec/C19, plan-faithful/C19 | port to faithful as-is |
+| C19-DELTA-02 | C19 | CLUSTER-2 (attribution-invariant) | C41-DELTA-02 (Actor model) | C41 | low | spec/C19, spec/C41, plan-faithful/C19, plan-faithful/C41 | port the cluster |
+| C19-DELTA-03 | C19 | CLUSTER-3 (typed-edge-taxonomy) | C13-DELTA-04, C20 (edge-kind enum) | C13, C20 | medium | spec/C19, spec/C13, spec/C20, plan-faithful/C19, plan-faithful/C13, plan-faithful/C20 | port the cluster |
+| C19-DELTA-04 | C19 | ISOLATED | — | — | low | spec/C19, plan-faithful/C19 | port to faithful as-is |
+| C19-DELTA-05 | C19 | ISOLATED | — | C23 (mutation events) | low | spec/C19, plan-faithful/C19 | port to faithful as-is |
+| C19-DELTA-06 | C19 | ISOLATED | — | C20 (validation seam) | low | spec/C19, plan-faithful/C19 | port to faithful as-is |
+| C19-DELTA-07 | C19 | ISOLATED | — | C13, C18, C35, C39 | low | spec/C19, plan-faithful/C19 | port to faithful as-is |
 
 **Notes:**
 - DELTA-02 (non-null created_by invariant): Requires C41 to have defined the Actor model — but the faithful spec can reference C41's Actor as a type. Clusters with C41-DELTA-02 since both must agree the field is non-null. Already partially addressed via D-4 (D-4 integration touched C19's attribution seam).
@@ -245,13 +245,13 @@ D-2, D-3, D-4 adoption already touched C20. The remaining deltas:
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C20-DELTA-01 | C20 | ISOLATED | — | — | low | spec-faithful/C20, plan-faithful/C20 | port to faithful as-is |
-| C20-DELTA-02 | C20 | CLUSTER-2 (lifecycle-state) | C13-DELTA-03 (molecule root) | C13, C52, C19 | low | spec-faithful/C20, spec-faithful/C13, plan-faithful/C20, plan-faithful/C13 | port the cluster |
-| C20-DELTA-03 | C20 | ISOLATED | — | — | low | spec-faithful/C20, plan-faithful/C20 | port to faithful as-is |
-| C20-DELTA-04 | C20 | CLUSTER-2 (loop-closure-schema) | C39, C18 (policy fields) | C39, C18 | medium | spec-faithful/C20, plan-faithful/C20 | port to faithful as-is |
-| C20-DELTA-05 | C20 | ISOLATED | — | C41, C51 | low | spec-faithful/C20, plan-faithful/C20 | port to faithful as-is |
-| C20-DELTA-06 | C20 | ISOLATED | — | — | low | spec-faithful/C20, plan-faithful/C20 | port to faithful as-is |
-| C20-DELTA-07 | C20 | CLUSTER-2 (CXDB-type-binding) | C22-DELTA-01, C21 (turn registration) | C22, C21 | medium | spec-faithful/C20, spec-faithful/C22, plan-faithful/C20, plan-faithful/C22 | port the cluster |
+| C20-DELTA-01 | C20 | ISOLATED | — | — | low | spec/C20, plan-faithful/C20 | port to faithful as-is |
+| C20-DELTA-02 | C20 | CLUSTER-2 (lifecycle-state) | C13-DELTA-03 (molecule root) | C13, C52, C19 | low | spec/C20, spec/C13, plan-faithful/C20, plan-faithful/C13 | port the cluster |
+| C20-DELTA-03 | C20 | ISOLATED | — | — | low | spec/C20, plan-faithful/C20 | port to faithful as-is |
+| C20-DELTA-04 | C20 | CLUSTER-2 (loop-closure-schema) | C39, C18 (policy fields) | C39, C18 | medium | spec/C20, plan-faithful/C20 | port to faithful as-is |
+| C20-DELTA-05 | C20 | ISOLATED | — | C41, C51 | low | spec/C20, plan-faithful/C20 | port to faithful as-is |
+| C20-DELTA-06 | C20 | ISOLATED | — | — | low | spec/C20, plan-faithful/C20 | port to faithful as-is |
+| C20-DELTA-07 | C20 | CLUSTER-2 (CXDB-type-binding) | C22-DELTA-01, C21 (turn registration) | C22, C21 | medium | spec/C20, spec/C22, plan-faithful/C20, plan-faithful/C22 | port the cluster |
 
 **Notes:**
 - DELTA-02 (`factory_build` as one type + lifecycle states): Already closely related to D-4 (direction ruling) and XC-2 (cold-start query compat). Clusters with C13 because the molecule root bead is a `factory_build` bead.
@@ -266,13 +266,13 @@ D-2 adoption set the bundle namespace. Remaining deltas:
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C21-DELTA-01 | C21 | SYSTEMIC | C01-DELTA-01, C04-DELTA-01, C28-DELTA-01 | C01, C04, C28 | high | spec-faithful/C21, plan-faithful/C21 | leave in Track B only |
-| C21-DELTA-02 | C21 | ISOLATED | — | C24 (retry safety) | low | spec-faithful/C21, plan-faithful/C21 | port to faithful as-is |
+| C21-DELTA-01 | C21 | SYSTEMIC | C01-DELTA-01, C04-DELTA-01, C28-DELTA-01 | C01, C04, C28 | high | spec/C21, plan-faithful/C21 | leave in Track B only |
+| C21-DELTA-02 | C21 | ISOLATED | — | C24 (retry safety) | low | spec/C21, plan-faithful/C21 | port to faithful as-is |
 | C21-DELTA-03 | C21 | CLUSTER-2 (type-bundle-naming) | C22-DELTA-01 | C22 | low | ADOPTED (D-2) | ADOPTED |
-| C21-DELTA-04 | C21 | CLUSTER-2 (degraded-mode-spool) | C01-DELTA-06, C23-DELTA-01 | C01, C23, C24 | medium | spec-faithful/C21, spec-faithful/C23, plan-faithful/C21, plan-faithful/C23 | port the cluster |
-| C21-DELTA-05 | C21 | CLUSTER-2 (branch-replay-API) | C13-DELTA-07, C49 | C13, C49, C37 | medium | spec-faithful/C21, spec-faithful/C13, plan-faithful/C21, plan-faithful/C13 | port the cluster |
-| C21-DELTA-06 | C21 | ISOLATED | — | — | low | spec-faithful/C21, plan-faithful/C21 | port to faithful as-is |
-| C21-DELTA-07 | C21 | ISOLATED | — | C49, C37, C38 | low | spec-faithful/C21, plan-faithful/C21 | port to faithful as-is |
+| C21-DELTA-04 | C21 | CLUSTER-2 (degraded-mode-spool) | C01-DELTA-06, C23-DELTA-01 | C01, C23, C24 | medium | spec/C21, spec/C23, plan-faithful/C21, plan-faithful/C23 | port the cluster |
+| C21-DELTA-05 | C21 | CLUSTER-2 (branch-replay-API) | C13-DELTA-07, C49 | C13, C49, C37 | medium | spec/C21, spec/C13, plan-faithful/C21, plan-faithful/C13 | port the cluster |
+| C21-DELTA-06 | C21 | ISOLATED | — | — | low | spec/C21, plan-faithful/C21 | port to faithful as-is |
+| C21-DELTA-07 | C21 | ISOLATED | — | C49, C37, C38 | low | spec/C21, plan-faithful/C21 | port to faithful as-is |
 
 **Notes:**
 - DELTA-01 (TrajectoryStore port abstraction): Same architectural-bet pattern as C01-DELTA-01 and C04-DELTA-01. The entire "portability contract" framing is a Track-B-wide architectural stance.
@@ -287,10 +287,10 @@ D-2, D-3 adoptions already resolved bundle namespace and ownership split. Remain
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
 | C22-DELTA-01 | C22 | CLUSTER-2 (concrete-bundle) | C21-DELTA-03 | C21, C20 | low | ADOPTED (D-2) | ADOPTED |
-| C22-DELTA-02 | C22 | ISOLATED | — | C37, C38, C49 (viewpoint consumers) | low | spec-faithful/C22, plan-faithful/C22 | port to faithful as-is |
-| C22-DELTA-03 | C22 | ISOLATED | — | C49, C37 (replay determinism) | low | spec-faithful/C22, plan-faithful/C22 | port to faithful as-is |
+| C22-DELTA-02 | C22 | ISOLATED | — | C37, C38, C49 (viewpoint consumers) | low | spec/C22, plan-faithful/C22 | port to faithful as-is |
+| C22-DELTA-03 | C22 | ISOLATED | — | C49, C37 (replay determinism) | low | spec/C22, plan-faithful/C22 | port to faithful as-is |
 | C22-DELTA-04 | C22 | CLUSTER-2 (registration-mechanism) | C20-DELTA-07 | C20 | medium | ADOPTED (D-3) | ADOPTED |
-| C22-DELTA-05 | C22 | ISOLATED | — | C21 (ingest validation) | low | spec-faithful/C22, plan-faithful/C22 | port to faithful as-is |
+| C22-DELTA-05 | C22 | ISOLATED | — | C21 (ingest validation) | low | spec/C22, plan-faithful/C22 | port to faithful as-is |
 
 ---
 
@@ -300,12 +300,12 @@ D-5 adoption set the event_id ordering contract. Remaining deltas:
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C23-DELTA-01 | C23 | CLUSTER-2 (durability-contract) | C21-DELTA-04 (spool fallback) | C21, C01 | medium | spec-faithful/C23, spec-faithful/C21, plan-faithful/C23, plan-faithful/C21 | port the cluster |
-| C23-DELTA-02 | C23 | ISOLATED | — | C24, C40 (consumer decoupling) | low | spec-faithful/C23, plan-faithful/C23 | port to faithful as-is |
-| C23-DELTA-03 | C23 | ISOLATED | — | C19, C21, C24, C40 (dedup key) | low | spec-faithful/C23, plan-faithful/C23 | port to faithful as-is |
-| C23-DELTA-04 | C23 | ISOLATED | — | — | low | spec-faithful/C23, plan-faithful/C23 | port to faithful as-is |
-| C23-DELTA-05 | C23 | ISOLATED | — | — | low | spec-faithful/C23, plan-faithful/C23 | port to faithful as-is |
-| C23-DELTA-06 | C23 | ISOLATED | — | C41 (attribution ledger) | low | spec-faithful/C23, plan-faithful/C23 | port to faithful as-is |
+| C23-DELTA-01 | C23 | CLUSTER-2 (durability-contract) | C21-DELTA-04 (spool fallback) | C21, C01 | medium | spec/C23, spec/C21, plan-faithful/C23, plan-faithful/C21 | port the cluster |
+| C23-DELTA-02 | C23 | ISOLATED | — | C24, C40 (consumer decoupling) | low | spec/C23, plan-faithful/C23 | port to faithful as-is |
+| C23-DELTA-03 | C23 | ISOLATED | — | C19, C21, C24, C40 (dedup key) | low | spec/C23, plan-faithful/C23 | port to faithful as-is |
+| C23-DELTA-04 | C23 | ISOLATED | — | — | low | spec/C23, plan-faithful/C23 | port to faithful as-is |
+| C23-DELTA-05 | C23 | ISOLATED | — | — | low | spec/C23, plan-faithful/C23 | port to faithful as-is |
+| C23-DELTA-06 | C23 | ISOLATED | — | C41 (attribution ledger) | low | spec/C23, plan-faithful/C23 | port to faithful as-is |
 
 **Notes:**
 - DELTA-01 (durability/fsync contract): The durability invariant ("Append does not return until batch is fsync'd") is what makes C21's degraded-mode spool story work (C21-DELTA-04 rests on C23 actually being durable). They must travel together.
@@ -317,12 +317,12 @@ D-5 adoption set the event_id ordering contract. Remaining deltas:
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C24-DELTA-01 | C24 | CLUSTER-2 (dual-source) | C23-DELTA-03 (at-least-once contract) | C23, C21 | medium | spec-faithful/C24, spec-faithful/C23, plan-faithful/C24, plan-faithful/C23 | port the cluster |
-| C24-DELTA-02 | C24 | CLUSTER-2 (idempotent-posting) | C21-DELTA-02 | C21 | low | spec-faithful/C24, spec-faithful/C21, plan-faithful/C24, plan-faithful/C21 | port the cluster |
-| C24-DELTA-03 | C24 | ISOLATED | — | C21 (spool durability, separate) | low | spec-faithful/C24, plan-faithful/C24 | port to faithful as-is |
-| C24-DELTA-04 | C24 | ISOLATED | — | C21 (parent-chain seam) | low | spec-faithful/C24, plan-faithful/C24 | port to faithful as-is |
-| C24-DELTA-05 | C24 | ISOLATED | — | C25 (producer-side readiness) | low | spec-faithful/C24, plan-faithful/C24 | port to faithful as-is |
-| C24-DELTA-06 | C24 | CLUSTER-2 (supervised-service-model) | C25-DELTA-01 (C25 is config-not-process) | C25, C01 | low | spec-faithful/C24, spec-faithful/C25, plan-faithful/C24, plan-faithful/C25 | port the cluster |
+| C24-DELTA-01 | C24 | CLUSTER-2 (dual-source) | C23-DELTA-03 (at-least-once contract) | C23, C21 | medium | spec/C24, spec/C23, plan-faithful/C24, plan-faithful/C23 | port the cluster |
+| C24-DELTA-02 | C24 | CLUSTER-2 (idempotent-posting) | C21-DELTA-02 | C21 | low | spec/C24, spec/C21, plan-faithful/C24, plan-faithful/C21 | port the cluster |
+| C24-DELTA-03 | C24 | ISOLATED | — | C21 (spool durability, separate) | low | spec/C24, plan-faithful/C24 | port to faithful as-is |
+| C24-DELTA-04 | C24 | ISOLATED | — | C21 (parent-chain seam) | low | spec/C24, plan-faithful/C24 | port to faithful as-is |
+| C24-DELTA-05 | C24 | ISOLATED | — | C25 (producer-side readiness) | low | spec/C24, plan-faithful/C24 | port to faithful as-is |
+| C24-DELTA-06 | C24 | CLUSTER-2 (supervised-service-model) | C25-DELTA-01 (C25 is config-not-process) | C25, C01 | low | spec/C24, spec/C25, plan-faithful/C24, plan-faithful/C25 | port the cluster |
 
 ---
 
@@ -330,11 +330,11 @@ D-5 adoption set the event_id ordering contract. Remaining deltas:
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C25-DELTA-01 | C25 | CLUSTER-2 (config-not-process) | C24-DELTA-06 | C24, C04, C28 | low | spec-faithful/C25, spec-faithful/C24, plan-faithful/C25, plan-faithful/C24 | port the cluster |
-| C25-DELTA-02 | C25 | ISOLATED | — | C26 (anti-edge to CXDB) | low | spec-faithful/C25, plan-faithful/C25 | port to faithful as-is |
-| C25-DELTA-03 | C25 | CLUSTER-2 (raw-bodies-security) | C24-DELTA-05 (readiness protocol) | C24, C43 | low | spec-faithful/C25, spec-faithful/C24, plan-faithful/C25, plan-faithful/C24 | port the cluster |
-| C25-DELTA-04 | C25 | ISOLATED | — | C04 (injection), C28 (loop safe) | low | spec-faithful/C25, plan-faithful/C25 | port to faithful as-is |
-| C25-DELTA-05 | C25 | ISOLATED | — | C26 (endpoint contract) | low | spec-faithful/C25, plan-faithful/C25 | port to faithful as-is |
+| C25-DELTA-01 | C25 | CLUSTER-2 (config-not-process) | C24-DELTA-06 | C24, C04, C28 | low | spec/C25, spec/C24, plan-faithful/C25, plan-faithful/C24 | port the cluster |
+| C25-DELTA-02 | C25 | ISOLATED | — | C26 (anti-edge to CXDB) | low | spec/C25, plan-faithful/C25 | port to faithful as-is |
+| C25-DELTA-03 | C25 | CLUSTER-2 (raw-bodies-security) | C24-DELTA-05 (readiness protocol) | C24, C43 | low | spec/C25, spec/C24, plan-faithful/C25, plan-faithful/C24 | port the cluster |
+| C25-DELTA-04 | C25 | ISOLATED | — | C04 (injection), C28 (loop safe) | low | spec/C25, plan-faithful/C25 | port to faithful as-is |
+| C25-DELTA-05 | C25 | ISOLATED | — | C26 (endpoint contract) | low | spec/C25, plan-faithful/C25 | port to faithful as-is |
 
 ---
 
@@ -342,13 +342,13 @@ D-5 adoption set the event_id ordering contract. Remaining deltas:
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C28-DELTA-01 | C28 | SYSTEMIC | C01-DELTA-01, C04-DELTA-01, C21-DELTA-01 | C01, C04, C21, C29 | high | spec-faithful/C28, plan-faithful/C28 | leave in Track B only |
-| C28-DELTA-02 | C28 | CLUSTER-2 (admission-governor) | C05-DELTA-02 | C05 | medium | spec-faithful/C28, spec-faithful/C05, plan-faithful/C28, plan-faithful/C05 | port the cluster |
-| C28-DELTA-03 | C28 | SYSTEMIC | C28-DELTA-01, C04-DELTA-01 | C01, C04, Max ToS OQ | high | spec-faithful/C28, plan-faithful/C28 | leave in Track B only |
-| C28-DELTA-04 | C28 | CLUSTER-2 (capability-profile-per-invocation) | C43, C04-DELTA-05 | C43, C04, C42 | medium | spec-faithful/C28, spec-faithful/C04, plan-faithful/C28, plan-faithful/C04 | port the cluster |
-| C28-DELTA-05 | C28 | ISOLATED | — | — | low | spec-faithful/C28, plan-faithful/C28 | port to faithful as-is |
-| C28-DELTA-06 | C28 | ISOLATED | — | C29 (floor conformance gate) | low | spec-faithful/C28, plan-faithful/C28 | port to faithful as-is |
-| C28-DELTA-07 | C28 | ISOLATED | — | C02 (pack ABI), C35 | low | spec-faithful/C28, plan-faithful/C28 | port to faithful as-is |
+| C28-DELTA-01 | C28 | SYSTEMIC | C01-DELTA-01, C04-DELTA-01, C21-DELTA-01 | C01, C04, C21, C29 | high | spec/C28, plan-faithful/C28 | leave in Track B only |
+| C28-DELTA-02 | C28 | CLUSTER-2 (admission-governor) | C05-DELTA-02 | C05 | medium | spec/C28, spec/C05, plan-faithful/C28, plan-faithful/C05 | port the cluster |
+| C28-DELTA-03 | C28 | SYSTEMIC | C28-DELTA-01, C04-DELTA-01 | C01, C04, Max ToS OQ | high | spec/C28, plan-faithful/C28 | leave in Track B only |
+| C28-DELTA-04 | C28 | CLUSTER-2 (capability-profile-per-invocation) | C43, C04-DELTA-05 | C43, C04, C42 | medium | spec/C28, spec/C04, plan-faithful/C28, plan-faithful/C04 | port the cluster |
+| C28-DELTA-05 | C28 | ISOLATED | — | — | low | spec/C28, plan-faithful/C28 | port to faithful as-is |
+| C28-DELTA-06 | C28 | ISOLATED | — | C29 (floor conformance gate) | low | spec/C28, plan-faithful/C28 | port to faithful as-is |
+| C28-DELTA-07 | C28 | ISOLATED | — | C02 (pack ABI), C35 | low | spec/C28, plan-faithful/C28 | port to faithful as-is |
 
 **Notes:**
 - DELTA-01 (AgentLoopProvider abstraction): Part of the portability-contract cluster (C01/C04/C21). Systemic — cannot port C28's provider abstraction without the whole chain.
@@ -364,12 +364,12 @@ D-1 adoption set the Phase-0 same-provider judge baseline. Remaining deltas:
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C29-DELTA-01 | C29 | ISOLATED | — | — | low | spec-faithful/C29, plan-faithful/C29 | port to faithful as-is |
-| C29-DELTA-02 | C29 | SYSTEMIC | C32, C34 (judge-independence-policy), D-1 | C32, C34, cross-track | high | spec-faithful/C29, plan-faithful/C29 | leave in Track B only |
-| C29-DELTA-03 | C29 | SYSTEMIC | C32, C34 | C32, C34 | high | spec-faithful/C29, plan-faithful/C29 | leave in Track B only |
-| C29-DELTA-04 | C29 | ISOLATED | — | C28, C23, C41 | low | spec-faithful/C29, plan-faithful/C29 | port to faithful as-is |
-| C29-DELTA-05 | C29 | CLUSTER-2 (live-budget-routing) | C46 (cost stream) | C46, C28 | medium | spec-faithful/C29, plan-faithful/C29 | port to faithful as-is |
-| C29-DELTA-06 | C29 | ISOLATED | — | C32 (fail-closed judge dispatch) | low | spec-faithful/C29, plan-faithful/C29 | port to faithful as-is |
+| C29-DELTA-01 | C29 | ISOLATED | — | — | low | spec/C29, plan-faithful/C29 | port to faithful as-is |
+| C29-DELTA-02 | C29 | SYSTEMIC | C32, C34 (judge-independence-policy), D-1 | C32, C34, cross-track | high | spec/C29, plan-faithful/C29 | leave in Track B only |
+| C29-DELTA-03 | C29 | SYSTEMIC | C32, C34 | C32, C34 | high | spec/C29, plan-faithful/C29 | leave in Track B only |
+| C29-DELTA-04 | C29 | ISOLATED | — | C28, C23, C41 | low | spec/C29, plan-faithful/C29 | port to faithful as-is |
+| C29-DELTA-05 | C29 | CLUSTER-2 (live-budget-routing) | C46 (cost stream) | C46, C28 | medium | spec/C29, plan-faithful/C29 | port to faithful as-is |
+| C29-DELTA-06 | C29 | ISOLATED | — | C32 (fail-closed judge dispatch) | low | spec/C29, plan-faithful/C29 | port to faithful as-is |
 
 **Notes:**
 - DELTA-02 (graded independence policy L0–L3): This is the Track-B response to the cross-family judge problem. D-1 resolved the Phase-0 baseline as L1 (same-provider). But DELTA-02's full graded-policy mechanism is the FE-1 seam — it is the structural element that makes L2/L3 reachable later. Porting the full mechanism into faithful would either (a) add machinery faithful v4 never described, or (b) require C32/C34 to be co-authored. Systemic because it restructures the evaluation-independence model.
@@ -384,13 +384,13 @@ D-5 adoption resolved tamper-evidence chain ownership. Remaining deltas:
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C41-DELTA-01 | C41 | SYSTEMIC | C06, C03 (signing policy), G37 | C06, C03, C43, G37 | high | spec-faithful/C41, plan-faithful/C41 | leave in Track B only |
-| C41-DELTA-02 | C41 | CLUSTER-2 (actor-taxonomy) | C19-DELTA-02 | C19, C42, C04, C28 | low | spec-faithful/C41, spec-faithful/C19, plan-faithful/C41, plan-faithful/C19 | port the cluster |
-| C41-DELTA-03 | C41 | ISOLATED | — | C19, C23 (Attribution record embed) | low | spec-faithful/C41, plan-faithful/C41 | port to faithful as-is |
+| C41-DELTA-01 | C41 | SYSTEMIC | C06, C03 (signing policy), G37 | C06, C03, C43, G37 | high | spec/C41, plan-faithful/C41 | leave in Track B only |
+| C41-DELTA-02 | C41 | CLUSTER-2 (actor-taxonomy) | C19-DELTA-02 | C19, C42, C04, C28 | low | spec/C41, spec/C19, plan-faithful/C41, plan-faithful/C19 | port the cluster |
+| C41-DELTA-03 | C41 | ISOLATED | — | C19, C23 (Attribution record embed) | low | spec/C41, plan-faithful/C41 | port to faithful as-is |
 | C41-DELTA-04 | C41 | ISOLATED | — | C23 (ADOPTED D-5) | low | ADOPTED (D-5) | ADOPTED |
-| C41-DELTA-05 | C41 | ISOLATED | — | C06, C34 | low | spec-faithful/C41, plan-faithful/C41 | port to faithful as-is |
-| C41-DELTA-06 | C41 | SYSTEMIC | C41-DELTA-01, G37, C03 | C03, G37 | high | spec-faithful/C41, plan-faithful/C41 | leave in Track B only |
-| C41-DELTA-07 | C41 | CLUSTER-2 (boundary-class) | C43 (taxonomy owner) | C43, C34 | low | spec-faithful/C41, plan-faithful/C41 | port to faithful as-is |
+| C41-DELTA-05 | C41 | ISOLATED | — | C06, C34 | low | spec/C41, plan-faithful/C41 | port to faithful as-is |
+| C41-DELTA-06 | C41 | SYSTEMIC | C41-DELTA-01, G37, C03 | C03, G37 | high | spec/C41, plan-faithful/C41 | leave in Track B only |
+| C41-DELTA-07 | C41 | CLUSTER-2 (boundary-class) | C43 (taxonomy owner) | C43, C34 | low | spec/C41, plan-faithful/C41 | port to faithful as-is |
 
 **Notes:**
 - DELTA-01 (graduated-mandatory signing): The most significant Track B change to C41. The faithful spec says "optional/deferred" (README l.229). Making it mandatory requires key infrastructure (DELTA-06), G37 to be solved, and C03's policy tier config. Without G37 (unsolved), mandatory signing is a security mechanism with no key store — the XC-6 problem. SYSTEMIC because it requires a cascade of resolved prerequisites.
@@ -403,12 +403,12 @@ D-5 adoption resolved tamper-evidence chain ownership. Remaining deltas:
 
 | delta_id | component | classification | linked_deltas | linked_components | cherry_pick_cost | port_target_files | recommendation |
 |---|---|---|---|---|---|---|---|
-| C42-DELTA-01 | C42 | CLUSTER-2 (composition-order) | C04-DELTA-05 | C04, C34 | medium | spec-faithful/C42, spec-faithful/C04, plan-faithful/C42, plan-faithful/C04 | port the cluster |
-| C42-DELTA-02 | C42 | CLUSTER-2 (OS-boundary-enforcement) | C04-DELTA-05 | C04 | medium | spec-faithful/C42, spec-faithful/C04, plan-faithful/C42, plan-faithful/C04 | port the cluster |
-| C42-DELTA-03 | C42 | ISOLATED | — | C30, C32, C34 | low | spec-faithful/C42, plan-faithful/C42 | port to faithful as-is |
-| C42-DELTA-04 | C42 | ISOLATED | — | — | low | spec-faithful/C42, plan-faithful/C42 | port to faithful as-is |
-| C42-DELTA-05 | C42 | CLUSTER-3 (prevent-then-detect) | C04-DELTA-05, C34 (PartitionBinding audit) | C04, C34 | medium | spec-faithful/C42, spec-faithful/C04, plan-faithful/C42, plan-faithful/C04 | port the cluster |
-| C42-DELTA-06 | C42 | ISOLATED | — | — | low | spec-faithful/C42, plan-faithful/C42 | port to faithful as-is |
+| C42-DELTA-01 | C42 | CLUSTER-2 (composition-order) | C04-DELTA-05 | C04, C34 | medium | spec/C42, spec/C04, plan-faithful/C42, plan-faithful/C04 | port the cluster |
+| C42-DELTA-02 | C42 | CLUSTER-2 (OS-boundary-enforcement) | C04-DELTA-05 | C04 | medium | spec/C42, spec/C04, plan-faithful/C42, plan-faithful/C04 | port the cluster |
+| C42-DELTA-03 | C42 | ISOLATED | — | C30, C32, C34 | low | spec/C42, plan-faithful/C42 | port to faithful as-is |
+| C42-DELTA-04 | C42 | ISOLATED | — | — | low | spec/C42, plan-faithful/C42 | port to faithful as-is |
+| C42-DELTA-05 | C42 | CLUSTER-3 (prevent-then-detect) | C04-DELTA-05, C34 (PartitionBinding audit) | C04, C34 | medium | spec/C42, spec/C04, plan-faithful/C42, plan-faithful/C04 | port the cluster |
+| C42-DELTA-06 | C42 | ISOLATED | — | — | low | spec/C42, plan-faithful/C42 | port to faithful as-is |
 
 **Notes:**
 - DELTA-01/02/05 all require C04 to apply the PartitionBinding at spawn. They travel together (C42+C04). C34 is Batch 3; its audit side can be noted with FAITHFUL-FILL.

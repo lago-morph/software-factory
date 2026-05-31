@@ -1,7 +1,7 @@
 # Adversarial review — C23 Event Bus (Track A, sweep 1)
 
 Reviewer persona: Subsystem Adversary — Persistence & Memory
-Target: spec-faithful/C23-event-bus.md
+Target: spec/C23-event-bus.md
 Charter: Track A → attack FIDELITY and COMPLETENESS only, not the design.
 
 ## Findings

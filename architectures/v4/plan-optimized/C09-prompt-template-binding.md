@@ -1,7 +1,7 @@
 # C09 — Prompt template & spec→execution binding (`prompt-template-binding`)  (Build Plan, Track B)
 
 > Source / Spec ref: [`spec-optimized/C09-prompt-template-binding.md`](../spec-optimized/C09-prompt-template-binding.md)
-> Companion faithful plan: none authored at sweep 1; faithful spec at [`spec-faithful/C09-prompt-template-binding.md`](../spec-faithful/C09-prompt-template-binding.md).
+> Companion faithful plan: none authored at sweep 1; faithful spec at [`spec/C09-prompt-template-binding.md`](../spec/C09-prompt-template-binding.md).
 
 ## 1. Work breakdown
 

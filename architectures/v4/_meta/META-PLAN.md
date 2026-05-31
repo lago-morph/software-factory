@@ -21,7 +21,7 @@
 
 | Track | Folder roots | Posture |
 |---|---|---|
-| **A — Faithful** | `spec-faithful/`, `plan-faithful/` | Treat the four v4 docs as a *fixed proof*. Elaborate exactly what is there. Adversarial agents flag risks but MUST NOT alter the architecture. |
+| **A — Faithful** | `spec/`, `plan-faithful/` | Treat the four v4 docs as a *fixed proof*. Elaborate exactly what is there. Adversarial agents flag risks but MUST NOT alter the architecture. |
 | **B — Optimized** | `spec-optimized/`, `plan-optimized/` | v4 is the starting point but fair game. Ruthlessly improve the design on best judgment; every deviation from v4 is recorded as an explicit, justified **delta**. |
 
 Both tracks are decomposed against the **same canonical component inventory** so they stay diffable.
@@ -47,7 +47,7 @@ A reconciler then emits the canonical `component-inventory.md` (stable IDs `C01.
 source refs, dependencies). This list is the dispatch backbone.
 
 ### Phase 1 — Scaffolding & track charters
-Write `spec-faithful/00-index.md`, `spec-optimized/00-index.md`, `plan-*/00-index.md`, each seeding the
+Write `spec/00-index.md`, `spec-optimized/00-index.md`, `plan-*/00-index.md`, each seeding the
 component list and the per-doc template. Write the Track A and Track B charters (rules each track's
 builders must obey).
 

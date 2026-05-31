@@ -1,7 +1,7 @@
 # Adversarial review — C21 CXDB Trajectory Store (Track A, sweep 1)
 
 Reviewer persona: Subsystem Adversary (Persistence & Memory)
-Target: spec-faithful/C21-cxdb-trajectory-store.md
+Target: spec/C21-cxdb-trajectory-store.md
 
 Track A = attack **fidelity & completeness only**, not the design.
 

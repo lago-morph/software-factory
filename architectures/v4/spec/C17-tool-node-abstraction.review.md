@@ -1,7 +1,7 @@
 # Adversarial review — C17 Tool-Node Abstraction (Track A, sweep 1)
 
 Reviewer persona: Subsystem Adversary (C08/C17)
-Target: spec-faithful/C17-tool-node-abstraction.md
+Target: spec/C17-tool-node-abstraction.md
 
 Track A attacks **fidelity & completeness only** — not the design. The question is never "should C17 be
 a registry with a typed descriptor and a cache" (that is Track B / DELTA territory) but "does the faithful

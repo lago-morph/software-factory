@@ -60,4 +60,4 @@ Launched (running): C01-F, C01-O, C02-F, C02-O, C03-F, C03-O, C07-F, C08-F.
 
 ## Component completion matrix
 (Populated once the canonical inventory exists: rows = component IDs, columns =
-spec-faithful / plan-faithful / spec-optimized / plan-optimized × sweep level.)
+spec / plan-faithful / spec-optimized / plan-optimized × sweep level.)

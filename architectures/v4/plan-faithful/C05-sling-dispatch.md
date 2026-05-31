@@ -1,6 +1,6 @@
 # C05 — Sling / dispatch (`sling-dispatch`)  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C05-sling-dispatch.md`](../spec-faithful/C05-sling-dispatch.md)
+> Source / Spec ref: [`spec/C05-sling-dispatch.md`](../spec/C05-sling-dispatch.md)
 > Track A (faithful). Sweep 1. Depends on: C01 (Gas City substrate), C18 (reconciler / Health Patrol). Non-foundational routing seam in Runtime Substrate; Batch-2 per the [component inventory](../_meta/component-inventory.md) suggested batches.
 
 ## 1. Work breakdown

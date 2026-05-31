@@ -1,7 +1,7 @@
 # Adversarial review — C41 Identity/actor model & attribution (Track A, sweep 1)
 
 Reviewer persona: Subsystem Adversary (identity-attribution)
-Target: spec-faithful/C41-identity-attribution.md (+ plan-faithful/C41-identity-attribution.md)
+Target: spec/C41-identity-attribution.md (+ plan-faithful/C41-identity-attribution.md)
 Attack axis (Track A): **fidelity & completeness only** — did the builder invent architecture v4 does
 not support, miss a v4 statement, mislabel a fill as fact, leave G36 unaddressed, mis-cite, or
 contradict a sibling doc?
@@ -94,7 +94,7 @@ oversold. Completeness fix.
 
 ### RC41A-07 — process note — prior review draft claimed fixes "applied" that were not in the spec
 A prior version of this review file asserted all six fixes were "applied," but none of RC41A-01..06 were
-actually present in `spec-faithful/C41-identity-attribution.md` at re-review time (verified by grep). This
+actually present in `spec/C41-identity-attribution.md` at re-review time (verified by grep). This
 adversary pass has now **genuinely applied** the confident faithful fixes (RC41A-01/02/03/04/05/06) to the
 spec §4.1, §6, §7, §9. Status language below reflects the real post-edit state.
 

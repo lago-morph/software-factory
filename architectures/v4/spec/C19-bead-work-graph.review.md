@@ -1,7 +1,7 @@
 # Adversarial review — C19 Bead store / typed work-graph (Track A, sweep 1)
 
 Reviewer persona: Subsystem Adversary — Persistence & Memory
-Target: spec-faithful/C19-bead-work-graph.md (+ plan-faithful/C19-bead-work-graph.md)
+Target: spec/C19-bead-work-graph.md (+ plan-faithful/C19-bead-work-graph.md)
 Charter: Track A — attack **fidelity & completeness**, not the design.
 
 ## Findings

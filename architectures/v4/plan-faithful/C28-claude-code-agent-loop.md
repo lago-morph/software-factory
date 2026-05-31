@@ -1,6 +1,6 @@
 # C28 — Claude Code Agent Loop  (Build Plan, Track A)
 
-> Source / Spec ref: spec-faithful/C28-claude-code-agent-loop.md
+> Source / Spec ref: spec/C28-claude-code-agent-loop.md
 
 ## 1. Work breakdown
 

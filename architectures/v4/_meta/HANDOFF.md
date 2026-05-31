@@ -11,7 +11,7 @@ This file + the other `_meta/` artifacts are sufficient to resume with zero re-g
 
 ## 1. Where we are: 23 of 57 components built (both tracks, Sweep-1 / architecture altitude)
 
-**DONE (23)** — each has 4 docs: `spec-faithful/`, `plan-faithful/`, `spec-optimized/`, `plan-optimized/`:
+**DONE (23)** — each has 4 docs: `spec/`, `plan-faithful/`, `spec-optimized/`, `plan-optimized/`:
 C01 C02 C03 C04 C05 C07 C08 C09 C10 C12 C13 C17 C19 C20 C21 C22 C23 C24 C25 C28 C29 C41 C42
 
 - **Batch 1 (C01,02,03,07,08,17,19,20,21,22,23,41)** is the gold standard: built → adversarially

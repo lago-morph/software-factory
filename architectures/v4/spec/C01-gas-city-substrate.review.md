@@ -1,7 +1,7 @@
 # Adversarial review — C01 Gas City Runtime Substrate (Tracks A + B, sweep 1)
 
 Reviewer persona: Subsystem Adversary (Runtime Substrate)
-Targets: spec-faithful/C01-gas-city-substrate.md, plan-faithful/C01-gas-city-substrate.md,
+Targets: spec/C01-gas-city-substrate.md, plan-faithful/C01-gas-city-substrate.md,
 spec-optimized/C01-gas-city-substrate.md, plan-optimized/C01-gas-city-substrate.md
 
 ## Findings — Track A (faithful: attack fidelity/completeness)

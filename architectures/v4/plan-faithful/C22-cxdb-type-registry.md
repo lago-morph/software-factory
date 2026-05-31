@@ -1,6 +1,6 @@
 # C22 — CXDB type registry & viewpoint tagging  (Build Plan, Track A)
 
-> Source / Spec ref: spec-faithful/C22-cxdb-type-registry.md
+> Source / Spec ref: spec/C22-cxdb-type-registry.md
 
 ## 1. Work breakdown
 

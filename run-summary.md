@@ -43,7 +43,7 @@ No formal two-round `auto-NNN` decision briefs were written — no decision hit 
 - **FE-1..FE-5** — the deferred future enhancements (cross-family judge, portability contracts, mandatory signing, multi-seat pool, enumerated DoD). Each has an explicit external trigger in [`FUTURE-ENHANCEMENTS.md`](architectures/v4/_meta/FUTURE-ENHANCEMENTS.md); none is pending.
 - **Sweep 2 (implementation-ready) and Sweep 3 (exhaustive).** This run was **Sweep-1 breadth only** (architecture altitude: purpose, boundaries, named interfaces, decisions, F-modes, high-level acceptance). Concrete signatures, schemas, sequence/state diagrams, error taxonomies, and acceptance tests are owed (see STATUS "Passes still owed").
 - **A whole-57 cross-batch integration pass.** Integration was done per-batch (D-6..D-19). A final cross-batch drift pass over all 57 is owed.
-- **Touch `spec-optimized/` / `plan-optimized/`** (frozen reference) or the repo-level architecture failure-mode coverage matrix (C57 is the v4-internal register, a distinct artifact).
+- **Touch `spec-optimized/` / `plan-optimized/`** (frozen reference). C57's deliverable was the v4-internal residual-risk register only; it modified no top-level coverage files.
 - **Resolve the operator-call items** (D-18, OQ-C57-3) or read the four v4 source docs into the orchestrator's context (subagents read targeted sections and returned receipts).
 
 ## Rewind points

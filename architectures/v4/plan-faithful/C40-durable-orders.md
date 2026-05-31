@@ -34,7 +34,9 @@ Temporal" threshold (OQ-1). **No Temporal integration and no custom engine/saga 
 - **Upstream of C40:** **C23** (event bus) must be standing and conformance-passed — it is the **trigger
   substrate** (spec §2; C40's sole declared dependency, component-inventory line 52) and supplies the
   ordered-read/checkpoint surface that makes triggering crash-safe (C23 I2/I3, INV-4). **C01** hosts the
-  Order primitive; **C03** supplies the `orders` enable-flag. C40 is **off until Phase 3b** (AI-CONTEXT §3.4).
+  Order primitive; **C03** supplies the `orders` enable-flag. C40 is **off at minimum** (AI-CONTEXT §3.4) and
+  **built in inventory Batch 3** so the Order seam stands before the README **Phase-3b** Healer pieces
+  (C36–C39, inventory Batch 4) consume it — "Batch *n*" and "Phase *n*" are distinct, non-aligned schemes (spec §1).
 - **Critical path:** **T1 → T3 → T5 → T7** is the gating chain. **T3** (crash-resume conformance) is the
   single most load-bearing task — it measures the *actual* durability ceiling, and **everything honest about
   C40 depends on knowing what Orders really survive**: the G33 disclosure (T5), the Temporal threshold (T7),

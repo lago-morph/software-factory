@@ -37,7 +37,7 @@ T4 (the `ScoreRecord` schema) is the **freeze-early join point** — C33, C34, a
 1. **`ScoreRecord` schema** (T4) — the single most load-bearing contract: C33 (aggregate), C34 (independence audit), and C46 (judge-FP-rate) all bind to it. Freeze first so all three build against stubs in parallel. Must carry: scenario id+version, trajectory ref, score (Inspect AI shape), judge model id + **active independence level**, ensemble disagreement. (`[FAITHFUL-FILL]` — needs a canonical schema ruling, OQ2.)
 2. **`scoreTrajectory(trajectoryRef, scenarioRef) → ScoreRecord`** (T3) — the harness entry point; freeze so C31 (runner) and any batch/replay caller can invoke C32 as the scorer.
 3. **Judge-model + independence contract** (T2) — what C32 consumes from C29 (`resolveModel` + `IndependenceConstraint`, Phase-0 `L1`). Freeze the *consumption* shape so C29 and C32 evolve independently.
-4. **Judge-rig partition contract** (T7) — the `judge` rig C42 provides and C34 audits (D-13). Freeze so C42/C34 build the partition + audit against it.
+4. **Judge-rig partition contract** (T7) — the `judge` rig (role) C42 provides and C34 audits (D-13); the exact partition read-surface (dedicated `judge` partition vs role-isolated read of `code`+scenario-outputs) is the **open** joint question OQ-C42-3/OQ-C34-3, owned by C42/C34, not frozen by C32. Freeze C32's *consumption* shape so C42/C34 build the partition + audit against it.
 
 ## 5. Risks & de-risking order
 

@@ -53,7 +53,7 @@ flowchart LR
 
 Freeze these earliest so dependents/siblings build in parallel:
 1. **Receiver endpoint (T2):** OTLP/gRPC `:4317` — already fixed by C25's `OTEL_EXPORTER_OTLP_ENDPOINT` contract (AI-CONTEXT:578); C26 simply binds it. No negotiation needed; lets C25 be exercised against a listening receiver immediately.
-2. **C26→C27 export seam (T3, with C27):** OTLP/HTTP to LangFuse's ingestion endpoint (path + ingestion-key header). The one contract that must be co-frozen with the parallel C27 author so the exporter and ingestion match (spec OQ-1).
+2. **C26→C27 export seam (T3, with C27):** OTLP/HTTP to LangFuse's ingestion endpoint (path + ingestion-key header) **and the signal set LangFuse accepts** — LangFuse is trace-oriented, so co-freezing must settle whether the **metrics/events** pipelines land there or only **traces** do (and, if only traces, the non-trace disposition — never a CXDB route). The one contract that must be co-frozen with the parallel C27 author so the exporter and ingestion match (spec OQ-1; the `otlphttp` exporter type is a faithful-fill default).
 3. **Single-sink + CXDB anti-edge (T5):** the explicit "exactly one terminal exporter = LangFuse; never a CXDB exporter" rule (G04), published as a shared Observability-subsystem invariant cross-referenced by C25/C24 (spec INV-1/INV-2).
 
 ## 5. Risks & de-risking order
@@ -70,7 +70,7 @@ Per-component DoD (ties to spec §8 acceptance criteria):
 - **T1 done:** the OSS Collector runs as a Gas City `[[service]] type = "external"` at :4317 (AI-CONTEXT:565); no custom code (spec INV-3, AC-6).
 - **T2 done:** the `otlp` receiver accepts metrics/events (and beta traces) from C25 — "events flow" verified (AC-1).
 - **T3 done:** one `otlphttp` exporter delivers to LangFuse's ingestion endpoint and "trace browsing works" (README:540; AC-2).
-- **T4 done:** per-signal pipelines connect receiver→exporter with stock defaults; signal coverage (metrics/events/beta-traces) traverses to LangFuse (AC-5).
+- **T4 done:** per-signal pipelines connect receiver→exporter with stock defaults; **beta traces** traverse and are browsable in LangFuse; the **metrics/events** pipelines traverse the collector to the LangFuse exporter, with whether LangFuse ingests/exposes those non-trace signals left to the C26↔C27 seam (spec OQ-1) — not asserted browsable here (AC-5).
 - **T5 done:** the pipeline has exactly one terminal exporter (LangFuse) and **no CXDB exporter**; no OTLP leaves C26 toward CXDB (AC-3, G04 resolved — single sink + anti-edge proven).
 - **T6 done:** correlation attributes (incl. `session.id`) arrive at LangFuse unaltered (AC-4).
 - **T7 done:** receiver TLS/mTLS and the LangFuse export auth are configured/verifiable; no new secret store introduced (spec §7).

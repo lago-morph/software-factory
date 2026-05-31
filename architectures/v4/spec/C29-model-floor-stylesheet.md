@@ -33,7 +33,7 @@ C29 is the **policy artifact + resolution rule** that decides *which concrete mo
 
 - **`stylesheet` (data, inbound).** The CSS-like rule set: ordered (selector → declaration) rules. A *selector* matches node attributes (role=coder|judge|…, stage, model-family, cost-tier). A *declaration* names a target model (or a `--force-model`-style pin) and may carry a cost-tier preference. Fabro CSS-stylesheet shape (AI-CONTEXT §6.2) is the transfusion source; Kilroy contributes `--force-model` + `modeldb` (per-model registry) shape (§6.3). `> [FAITHFUL-FILL]` — v4 gives the *concept* and source patterns, not concrete syntax; concrete grammar is sweep-2.
 - **`resolveModel(node) → modelIdentity` (rule, outbound).** Cascade/specificity resolution (CSS semantics) selecting the winning declaration for a node. Postcondition for a coder node: result ⩾ floor (never a model weaker than the declared Claude Code floor). `> [FAITHFUL-FILL]` — v4 says "floor" but not the comparison operator; "not weaker than floor" is the minimal reading of *floor*.
-- **`crossFamilyRule(coderModel) → constraint` (rule, outbound).** Emits the constraint "judge.family ≠ coder.family" used by C32/C34 (README:189,427). Invariant: for any (coder, judge) node pair in a satisfaction-measuring formula, `family(judge) ≠ family(coder)`.
+- **`crossFamilyRule(coderModel) → constraint` (rule, outbound).** Emits the independence constraint used by C32/C34 (README:189,427), carrying the **active judge-independence level**. The policy is *gradable*; the **Phase-0 default is `L1`** (same-provider judge, prompt/role/rig-isolated from the coder). The literal `family(judge) ≠ family(coder)` form (cross-family/cross-provider) is **advisory/relaxed at Phase-0 — active enforcement is FE-1** (see I2); the emitter is the clean FE-1 seam, not a Phase-0 fail-closed gate.
 - **`floorDeclaration` (invariant, outbound).** Asserts Claude Code (Max) is the floor; this is what makes F19/F31 "Addressed by declaration" (FM:71,73).
 
 **Key invariants:** (I1) coder nodes never resolve below floor; (I2) `family(judge) ≠ family(coder)` — **relaxed at Phase 0 per D-1/FE-1** (the same-provider judge is the Phase-0 baseline, isolated by rig partitioning + role/prompt rather than family diversity; the literal cross-provider form is FE-1 — see §6/§9); (I3) resolution is deterministic (same node + same stylesheet → same model) so it is lintable/auditable like other v4 deterministic rules (cf. F51 deterministic-first posture).
@@ -65,7 +65,7 @@ Sequence/state diagrams and the cascade-specificity algorithm are **sweep-2/3**;
 |---|---|---|---|
 | **F19** Model-floor dependency | FM §6:71 | The floor *declaration* is C29's deliverable | Addressed (by declaration) |
 | **F31** Substrate floor = weakest adapter | FM §6:73,148 | Single-adapter floor is well-defined *because* C29 declares one floor | Addressed (single-adapter) |
-| **F1** Hallucination loop | FM §1:17 | Cross-family judge rule (on the stylesheet) is part of the guard | Addressed |
+| **F1** Hallucination loop | FM §1:17 | At Phase-0 the active guard is the judge-independence policy at `L1` (prompt/role/rig-isolated same-provider judge); the cross-family strengthening is FE-1 | Addressed (at the v4 level per FM §1; Phase-0 mechanism = L1 isolation) |
 | **F27** Circularity / same-model build+validate | FM §1:21 | Phase-0 guard (D-1) is **rig/role/prompt isolation** of the same-provider judge; the cross-provider `crossFamilyRule` is FE-1 | Addressed at Phase-0 isolation level (cross-provider strengthening = FE-1) |
 | **F46** Single-model review blindspot | FM §1:24 | Cross-family ensembles enable the strongest form; deferred to FE-1. Phase-0 relies on prompt/role isolation | Partial at Phase-0 (full cross-family addressing = FE-1) |
 | **F48** Tacit collusion via shared context | FM §1:25 | Cross-family rule contributes; v4 marks **Partial** (shared training-distribution residual) | Partial |
@@ -75,7 +75,11 @@ Sequence/state diagrams and the cascade-specificity algorithm are **sweep-2/3**;
 > [AMBIGUITY resolution — D-1 / FE-1] The integrator's ruling **D-1** resolves this tension so the
 > cross-family rule is **no longer an unsatisfiable Phase-0 blocker**: the **Phase-0 baseline is the
 > same-provider judge** (holdout integrity comes from rig partitioning + role/prompt isolation, not family
-> diversity — see the optimized sibling's L1 default, which D-1 confirms is correct). The literal
+> diversity). **The judge-independence policy is *gradable*, and its Phase-0 default is `L1` — a
+> same-provider judge that is prompt/role/rig-isolated from the coder; cross-family and cross-provider are
+> the stronger (deferred) levels.** D-1 confirms L1 is the correct Phase-0 default. (The frozen optimized
+> sibling spells the same gradable ladder out as L0–L3, cf. `spec-optimized/C29-…` §3c — reference only;
+> the canonical level set here is "L1 default, cross-family/cross-provider = FE-1".) The literal
 > provider-level "judge.family ≠ coder.family" requirement (the README:189 reading) is reclassified as
 > **future enhancement FE-1** (`_meta/FUTURE-ENHANCEMENTS.md`), revisited when a second-provider credential
 > path exists. **Consequently `crossFamilyRule` (I2/A2) is advisory/relaxed at Phase 0, not fail-closed:**

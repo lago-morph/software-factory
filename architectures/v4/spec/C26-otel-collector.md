@@ -1,0 +1,156 @@
+# C26 — OpenTelemetry Collector (`otel-collector`)  (Spec, Track A)
+
+> Source: README §13.1 Phase 1 (lines 386, 411–412 — "Install OpenTelemetry Collector to receive Claude Code's native OTLP output"; `CC -->|OTLP| OTel`, `OTel --> LF`); README §13.1 Phase-1 install checklist (lines 539–540 — "Set up an OpenTelemetry Collector receiving Claude Code's OTLP output. Verify events flow." / "Install LangFuse self-hosted, point the OTel Collector at it."); README Part-4 OSS table (line 297 — "OpenTelemetry Collector | Apache 2.0 | Clean"); AI-CONTEXT §4.3 (lines 156–180 — Claude Code's OTLP surface: three protocols, gRPC :4317 default, signal set, correlation attributes, intervals); AI-CONTEXT §13.2 config block (lines 563–566 — the `[[service]] name = "otel_collector" type = "external" endpoint = "http://localhost:4317"` declaration; lines 575–579 — the `[[agent]] env` that points C25 at :4317); AI-CONTEXT §5.2 (line 210 — CXDB "no native OTLP receiver", positioned against OTel); AI-CONTEXT §11.1 (line 466 — "Skip OTLP → CXDB path: Yes") and §11.3 (line 497 — "OTLP path for Claude Code → CXDB" rejected); component-inventory line 38 (C26 row). Companion faithful specs: upstream [`spec/C25-otlp-telemetry-export.md`](./C25-otlp-telemetry-export.md) (emits the OTLP this collector receives, and the source of the two-sinks split — INV-1/AC-6 there), downstream [`spec/C27-langfuse-traces.md`](./C27-langfuse-traces.md) (the single OTLP sink this collector exports to — authored in parallel this wave), and the sibling [`spec/C24-telemetry-cxdb-bridge.md`](./C24-telemetry-cxdb-bridge.md) (the **separate, second** sink: raw bodies → CXDB, which does **not** flow through this collector).
+> Inventory ID: C26   Kind: component   Status: sweep-1
+> Maps from: A24, B47. Depends on: C25 (OTLP telemetry export). Key gaps: G04. Related: C27 (LangFuse, sole export target), C24 (the parallel raw-bodies→CXDB sink — not via this collector), C21 (CXDB — the anti-edge: collector must NOT route here).
+
+## 1. Purpose & responsibility
+
+C26 is the **OpenTelemetry Collector** of Software Factory v4: the **second stage of the observability pipeline** C25 → **C26** → C27 (README:411–412). It **receives** Claude Code's native OTLP stream emitted by C25 and **fans it out to LangFuse** (C27) for trace browsing and session/prompt versioning (component-inventory line 38: "Receives Claude Code OTLP, fans out to LangFuse"; README:386, 540).
+
+C26 **IS the off-the-shelf OpenTelemetry Collector** (Apache 2.0, README:297) — a mature, verbatim-OSS daemon adopted in Phase 1, the phase explicitly defined as "verbatim OSS adoption (no invention)" (AI-CONTEXT §11.1 line 474). **We do not author the Collector; we configure it.** C26's deliverable is therefore a **configuration + a pipeline topology + a small set of invariants**, not custom software:
+
+1. **Receiver config** — an OTLP receiver bound to the endpoint C25 is pointed at: gRPC on `:4317` (the v4 working default, AI-CONTEXT:164, 167, 578), optionally HTTP on `:4318` (AI-CONTEXT:167). This is the "receive Claude Code OTLP" half.
+2. **Exporter config** — an OTLP exporter aimed at LangFuse's OTLP ingestion endpoint (C27), establishing the C26 → C27 seam (README:412 `OTel --> LF`; README:540 "point the OTel Collector at it"). This is the "fan out to LangFuse" half.
+3. **Pipeline wiring** — the receiver-to-exporter pipelines (per signal: metrics, logs/events, and beta traces) that connect (1) to (2), terminating at **LangFuse only**.
+
+C26's responsibility is the **topology contract and the routing invariants**: *which receiver listens where, which exporter ships to which single sink, and — critically — which sink it must never route to.* It owns the assertion "OTLP that lands here goes to LangFuse, and nowhere else." Everything about *generating* the telemetry is C25's; everything about *storing/browsing* it is C27's; the *separate* CXDB sink is C24's and does not pass through C26.
+
+> [FAITHFUL-FILL] v4 describes C26 only as "Install OpenTelemetry Collector to receive Claude Code's native OTLP output" + "point the OTel Collector at [LangFuse]" (README:386, 540) and lists it as Apache-2.0 OSS (README:297) declared `type = "external"` in `city.toml` (AI-CONTEXT:565). The minimal faithful framing, mirroring how C25 is specced as "configuration-and-contract, not software we write," is that **C26 is the OSS Collector binary plus its receivers/exporters/pipelines YAML** — its scope is the config and the routing topology, not any custom collector code. This is the smallest scope that makes "receives OTLP, fans out to LangFuse" a self-contained, referenceable component without absorbing C25 (emit), C27 (store), or C24 (the CXDB bridge), each already its own inventory row.
+
+**What C26 is NOT:**
+
+- It is **not** custom software, a buffering layer, or a retry/back-pressure engine we author. The Collector's receivers, exporters, batching, queuing, and retry are **native OSS features** configured via YAML — v4 adopts the Collector verbatim (README:474 "no invention"). C26 adds **no custom Go/collector code**, no bespoke buffer, no hand-rolled retry machinery over what the Collector already provides. (See §6, §7.)
+- It is **not** the telemetry emitter. Configuring Claude Code's native exporter and producing the OTLP stream (and the raw-bodies escape hatch) is **C25** (inventory line 37; AI-CONTEXT §4.3). C26 *receives*; it does not emit. C25 points its `OTEL_EXPORTER_OTLP_ENDPOINT` at C26's receiver (AI-CONTEXT:578).
+- It is **not** LangFuse / the trace store. Persisting traces, the browse UI, and session/prompt versioning are **C27** (README:387; inventory line 39). C26 *exports to* C27's ingestion endpoint; it does not store or render.
+- It is **not** the raw-bodies → CXDB bridge, and the CXDB sink is **not on its pipeline**. Watching the `OTEL_LOG_RAW_API_BODIES` dir and posting to CXDB HTTP :9010 is **C24** (inventory line 39; README:389, 413). That is the **separate, second sink**, fed by C25's raw-bodies channel directly — it does **not** flow through C26. (This is the crux of G04 — see §3.4 / §6 / §9.)
+- It is **not** a route to CXDB. CXDB has **no native OTLP receiver** (AI-CONTEXT:210) and is explicitly designed *against* the OTel span-tree model; the OTLP→CXDB path is **considered and rejected** (AI-CONTEXT:466 "Skip OTLP → CXDB path: Yes", §11.3 line 497). C26 **must not** export to CXDB. This anti-edge is a first-class invariant (INV-2 / §3.4).
+- It is **not** an OTLP protocol implementation. The OTLP receiver/exporter are the Collector's own; C26 selects and binds them via config, it does not implement OTLP.
+
+## 2. Context & dependencies
+
+| Direction | Component | Relationship (v4 source) |
+|---|---|---|
+| Upstream (emits → receiver) | **C25** OTLP telemetry export | C25's native Claude Code exporter pushes metrics/events (and beta traces) over OTLP to `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` (AI-CONTEXT:164, 578) — i.e. C26's receiver. Hard inventory dependency (`Depends on: C25`). C26 is the second stage after C25 (README:411). |
+| Downstream (sole export sink) | **C27** LangFuse | C26 fans the OTLP stream out to LangFuse for trace browsing + session management (README:412 `OTel --> LF`; README:540 "point the OTel Collector at it"). **This is the one and only sink C26 exports to.** C27 is authored in parallel this wave; the C26→C27 export seam (§3.2) must align with C27's OTLP ingestion description. |
+| Carries config | **C03** config / feature-flags + Gas City service model | C26 is declared as a Gas City service: `[[service]] name = "otel_collector" type = "external" endpoint = "http://localhost:4317"` (AI-CONTEXT:563–566). `type = "external"` = an out-of-process OSS daemon Gas City points at, not a Gas City-managed process. The receiver/exporter/pipeline YAML is the Collector's own config file, version-controlled alongside (C03 convention). |
+| Anti-dependency (sink it must NOT hit) | **C21** CXDB | CXDB has no OTLP receiver (AI-CONTEXT:210) and the OTLP→CXDB path is rejected (AI-CONTEXT:466, 497). C26's pipeline **must never** include a CXDB exporter. CXDB is reached only via the *separate* C24 raw-bodies path, never through C26. |
+| Sibling (the other, separate sink) | **C24** telemetry → CXDB bridge | C24 is the parallel second sink (raw bodies → CXDB), fed directly by C25's `OTEL_LOG_RAW_API_BODIES` dir — **not** routed through C26. C26 and C24 are disjoint paths sharing only their upstream source (C25). |
+
+C26 sits in the **Observability** subsystem and is **not foundational** (inventory: Foundational? = no). It is a **Batch-2** component (inventory line 109: "observability ingest **C25, C26, C27, C24** … OTLP→collector→LangFuse, CXDB bridge"), depending only on its upstream emitter C25 and standing between C25 and C27 in the pipeline.
+
+## 3. Interfaces / contracts
+
+Sweep-1: interfaces **named + described**. The concrete receiver/exporter YAML (full option matrices), the per-signal pipeline definitions, and the exact LangFuse OTLP ingestion path/headers are deferred to sweep 2 (coordinated with C27); the names and shapes below are taken from the v4 sources.
+
+### 3.1 Inbound — OTLP receiver (C25 → C26)
+
+The OTLP receiver Claude Code is pointed at (AI-CONTEXT:164, 167, 578):
+
+| Aspect | Faithful spec (v4 source) |
+|---|---|
+| Endpoint | `:4317` (OTLP/gRPC, the v4 working default — AI-CONTEXT:164, 567, 578). Optionally `:4318` (OTLP/HTTP) is available since Claude Code supports HTTP/JSON and HTTP/protobuf on :4318 (AI-CONTEXT:167); the faithful default is gRPC :4317 to match the shipped config. |
+| Protocol(s) | OTLP — the Collector's native `otlp` receiver. v4 fixes the upstream side to gRPC :4317 (AI-CONTEXT:578); HTTP :4318 is an optional alternate the receiver can also bind (AI-CONTEXT:167). |
+| Accepted signals | **metrics**, **logs/events**, and (when `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`) **traces** — the signal set C25 emits (AI-CONTEXT:172–174). The receiver accepts all three OTLP signal types. |
+| Precondition | C25 is configured with `OTEL_EXPORTER_OTLP_ENDPOINT` pointing here (AI-CONTEXT:578) and the receiver is listening before "events flow" can be verified (README:539). |
+
+### 3.2 Outbound — OTLP exporter to LangFuse (C26 → C27)
+
+- **The single export sink.** C26 configures one OTLP **exporter** aimed at LangFuse's OTLP ingestion endpoint (C27). v4 states this seam as "point the OTel Collector at [LangFuse]" (README:540) and `OTel --> LF` (README:412). The transport is **OTLP/HTTP to LangFuse's ingestion endpoint** — LangFuse exposes an OTLP receiver as its ingestion surface, so the Collector's `otlphttp` exporter targets that endpoint (the exact path + auth header are a C27-side detail resolved at sweep 2; see §9 OQ-1).
+- **Postcondition.** Every signal accepted at the receiver (§3.1) and passed by its pipeline is delivered to LangFuse, and to LangFuse **only** (INV-1). Verifiable as "trace browsing works" in LangFuse (README:540).
+- **No second exporter.** There is exactly one terminal sink on the pipeline (C27). No CXDB exporter, no fan-out to a second store (INV-2 / §3.4). The "two sinks" of the observability path are *not* two exporters on this collector — the second sink (CXDB) is reached by the wholly separate C24 path off C25's raw-bodies channel.
+
+### 3.3 The pipeline (receiver → exporter)
+
+C26's substance is the Collector **pipeline** wiring: each OTLP signal received on :4317 is routed through the Collector's pipeline to the single LangFuse exporter.
+
+| Pipeline | Receiver | Exporter (sink) | Note |
+|---|---|---|---|
+| metrics | `otlp` :4317 | `otlphttp` → LangFuse (C27) | session/LOC/PRs/commits/cost/tokens/edits/active-time metrics (AI-CONTEXT:172). |
+| logs/events | `otlp` :4317 | `otlphttp` → LangFuse (C27) | prompts/tool-results/API/decisions/auth/MCP/plugins/skills (AI-CONTEXT:173). |
+| traces (beta) | `otlp` :4317 | `otlphttp` → LangFuse (C27) | present iff `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1` upstream (AI-CONTEXT:174); LangFuse's trace browser is the consumer of primary interest. |
+
+> [FAITHFUL-FILL] v4 names the receiver (OTLP from Claude Code) and the sink (LangFuse) but does not enumerate per-signal pipelines or name processors (batch, memory_limiter). Faithful sweep-1 reading: C26 wires **one pipeline per emitted OTLP signal**, receiver `otlp` → exporter to LangFuse, with **no processors beyond the Collector's stock defaults** unless a v4 force requires one. v4 names no transformation/redaction/sampling requirement at the collector, so none is added (THE BAR: stock batching/queueing is a native Collector capability — we do not author processors that merely do "better" what the Collector already does). Whether a `batch` processor is enabled is a stock-config tuning detail for sweep 2, not new capability.
+
+### 3.4 Invariants
+
+- **INV-1 (single sink — LangFuse only).** C26's pipeline has exactly one terminal exporter: LangFuse (C27) (README:412, 540). All received OTLP terminates at LangFuse and nowhere else. The observability path C25 → C26 → C27 is **one sink** (the OTLP sink). *(Half of the G04 resolution — see §6/§9.)*
+- **INV-2 (anti-edge — Collector ✗→ CXDB).** C26 **must not** route, copy, or fan any OTLP out to CXDB (C21). CXDB has no OTLP receiver (AI-CONTEXT:210) and the OTLP→CXDB path is the explicitly-rejected path (AI-CONTEXT:466, 497). The CXDB-bound data reaches CXDB **only** via the separate C24 raw-bodies bridge off C25, never through this collector. *(The other half of the G04 resolution; this is the anti-edge the gap warns a naive integrator will add.)*
+- **INV-3 (verbatim OSS, config-only).** C26 introduces **no custom collector code**. It is the upstream OpenTelemetry Collector binary (Apache 2.0, README:297) configured by receivers/exporters/pipelines YAML; activation/teardown is a config + service-declaration change (AI-CONTEXT:565), not a code deploy. Buffering, batching, queue-on-failure, and retry are the Collector's **native** behaviours, used as-is, not re-implemented (README:474 "no invention").
+- **INV-4 (correlation pass-through).** The correlation attributes C25 stamps on signals — `prompt.id`, `session.id`, `user.account_uuid`, `organization.id`, `terminal.type` (AI-CONTEXT:178) — pass through C26 unaltered to LangFuse, so C27 can do session/prompt grouping. C26 neither strips nor rewrites them (no processor is configured to do so — §3.3).
+
+> [FAITHFUL-FILL] INV-1…INV-4 are not stated verbatim as "invariants" in v4 but each restates an explicit v4 fact: single LangFuse sink (README:412, 540), the rejected OTLP→CXDB path (AI-CONTEXT:466, 497, 210), verbatim Apache-2.0 OSS adoption with no invention (README:297, 474), and correlation attributes that LangFuse consumes for session grouping (AI-CONTEXT:178). They are the minimal constraints that make "receives OTLP, fans out to LangFuse" well-defined and that make the G04 anti-edge explicit, without adding scope.
+
+## 4. Data model / state
+
+C26 is a **transit/routing component**, not a data store. It owns **no durable telemetry**; telemetry is owned upstream by the emitter (C25) and persisted downstream by the store (C27).
+
+| Aspect | Faithful spec (v4 source) |
+|---|---|
+| Owned durable data | **None.** C26 forwards; LangFuse (C27) persists (README:387, 412). Metric/event/trace schemas are Anthropic-defined (AI-CONTEXT:172–174), not owned here. |
+| Configuration (the real "owned" artifact) | The Collector's **receivers/exporters/pipelines YAML** (the :4317 receiver + the LangFuse exporter + the per-signal pipelines) plus the `[[service]] otel_collector` declaration in `city.toml` (AI-CONTEXT:563–566). Version-controlled config (C03 convention); this is what "building C26" produces. |
+| Transient in-flight state | Only the Collector's **native** in-memory/queue buffers for batching and export-retry (a stock Collector capability). C26 does not define a custom buffer; whatever durability exists on export failure is the Collector's configured queue behaviour (§6, INV-3). |
+| Persistence | **None owned.** OTLP is received and forwarded; the only persistence of telemetry is LangFuse's (C27). |
+| Consistency | Forwarding is best-effort per the Collector's native export semantics; the temporal consistency point upstream is C25's export cadence (metrics 60s, logs 5s — AI-CONTEXT:180). C26 adds no stronger consistency guarantee. |
+
+> [FAITHFUL-FILL] v4 gives C26 no persistence role; the only stores in the Phase-1 picture are LangFuse (traces) and CXDB (trajectories), and CXDB is fed by the *other* path (README:412–413). Faithful reading: C26 owns **configuration, not data** — the smallest claim consistent with "Collector that forwards to LangFuse." Any on-disk spool would be a Collector-native option, not a C26 invention, and is not required by v4 (so not added — THE BAR).
+
+## 5. Behavior
+
+The flow is **receive → pipeline → single export to LangFuse**:
+
+```mermaid
+flowchart LR
+    CC[C25 Claude Code<br/>native OTLP exporter] -->|OTLP gRPC :4317<br/>metrics/events/traces| RX[C26 OTel Collector<br/>otlp receiver]
+    RX --> PIPE[pipelines<br/>per signal]
+    PIPE -->|otlphttp export| LF[C27 LangFuse<br/>OTLP ingestion]
+    PIPE -. NOT routed .-x|OTLP→CXDB rejected| CX[(C21 CXDB)]
+    CC -. separate sink, not via C26 .->|raw API bodies dir| BR[C24 bridge] --> CX
+```
+
+Key flow notes:
+- **Receive.** The Collector's `otlp` receiver listens on :4317 (gRPC) for the metrics/events/traces C25 emits (AI-CONTEXT:164, 167–174, 578). Standing this up and confirming intake is the Phase-1 step "Set up an OpenTelemetry Collector receiving Claude Code's OTLP output. Verify events flow" (README:539).
+- **Pipeline.** Each received signal traverses its pipeline (§3.3) with stock defaults; correlation attributes pass through unaltered (INV-4).
+- **Export (single sink).** The OTLP exporter ships everything to LangFuse's ingestion endpoint (README:540 "point the OTel Collector at it"); verified as "trace browsing works" (README:540). **LangFuse is the only sink** (INV-1).
+- **The anti-edge.** Nothing on the pipeline targets CXDB (INV-2). The CXDB sink is reached only by the *separate* C24 path off C25's raw-bodies dir (README:413), which never traverses C26.
+- **Two sinks, but not at this collector.** The observability "two sinks" (G04) are (a) OTLP → C26 → LangFuse and (b) raw bodies → C24 → CXDB. They **diverge at C25**, not at C26: C26 carries only sink (a).
+
+## 6. Failure modes & handling
+
+| F-mode | Applies to C26 how | v4 handling (faithful) |
+|---|---|---|
+| **G04** (CXDB vs OTel framing tension) | A naive integrator adds a CXDB exporter/route to the Collector — the explicitly-rejected OTLP→CXDB path (AI-CONTEXT:210, 466, 497). | **Resolved by INV-1 + INV-2:** C26's pipeline has exactly one sink (LangFuse) and the CXDB anti-edge is a first-class invariant. The CXDB-bound data flows only via the separate C24 raw-bodies path. The spec names the anti-edge explicitly (the thing G04 says a naive reader will get wrong). See §9 OQ-2. |
+| **F42** Cognitive-Escrow Negligence | Operators stop watching traces; the pipeline runs but the surface is ignored. | Layer-3 observability + re-engagement surface (F-MODE F42, **Partial — operator-side discipline still required**). C26 *delivers* the signal to the browse surface (C27); the re-engagement UI is C27/Layer-3, not C26-native. |
+| **F22** Zombie agents (downstream enabler) | Detecting a stalled agent relies on liveness telemetry reaching the analysis surface. | "Anomaly detection on session liveness (PyOD on telemetry)" (F-MODE F22, **Addressed**) consumes telemetry that C26 must faithfully forward (session/active-time metrics, AI-CONTEXT:172). C26's contribution is lossless transit; the detection loop is downstream (Layer-4/P11). |
+| **F21** Context-window exhaustion (downstream enabler) | Detecting exhaustion needs token-usage telemetry to land where it can be observed. | "Runtime provides observability to detect exhaustion but doesn't prevent it" (F-MODE F21). C26 forwards the token-usage metrics C25 emits (AI-CONTEXT:172); prevention is methodology, not C26. |
+| **LangFuse-down / export failure** (component-local) | The LangFuse (C27) endpoint is unreachable; exports fail. | **Native Collector behaviour, used as-is (INV-3):** the OTel Collector's exporter has built-in sending-queue + retry/back-off; on a down sink it queues and retries per its stock config, dropping only when the queue is exhausted. v4 names **no** custom buffer or durability layer at the collector, and Phase 1 is "no invention" (README:474) — so C26 **adds none** (THE BAR: this is exactly the stack already satisfying the need; custom retry machinery is DROP). Tuning the queue/retry is a stock-config sweep-2 detail; cross-collector/cascading failure of the OSS stack is part of G33 (assigned to C24, not C26). **Deferred** to stock-config tuning + G33 (§9 OQ-3). |
+| **Receiver-down / dropped intake** (component-local) | The Collector is not listening (mis-config/crash); C25's exports have nowhere to land. | C25's emit-side durability when the collector is down is **C25's** open item (C25 spec OQ-3 / G33) — v4 specifies no emit-side buffer. C26's faithful obligation is simply to **be listening on :4317** (the Phase-1 "verify events flow" check, README:539). Process supervision of the `external` service is a Gas City/ops concern (AI-CONTEXT:565), not custom C26 code. |
+
+> [FAITHFUL-FILL] "LangFuse-down" and "receiver-down" are component-local conditions v4 does not write a custom story for. Faithful reading: C26's delivery semantics are **whatever the OpenTelemetry Collector natively provides** (sending-queue + retry/back-off), used with stock config — v4 adds no buffering layer at the collector (README:474 "no invention"). The minimal consistent choice is to **state this explicitly and lean on the Collector's native behaviour**, deferring durability-under-cascading-failure to G33 (which the inventory assigns to C24, where the only named integration-hardening budget lives — README:541).
+
+## 7. Cross-cutting (security / cost / scale / observability / ops)
+
+- **Security.** The receiver can require **mTLS** (the Collector's `otlp` receiver supports TLS; C25 can present client certs via `OTEL_EXPORTER_OTLP_CLIENT_KEY`/`_CERTIFICATE`, AI-CONTEXT:169) — a native config option, faithful posture for the C25→C26 hop. The C26→C27 export likewise carries whatever auth LangFuse's OTLP ingestion requires (e.g. an ingestion key in an exporter header — a stock `otlphttp` `headers` setting), resolved with C27 at sweep 2. **The OTLP stream carries full prompt/response content and identity** (`user.account_uuid`, `organization.id`, AI-CONTEXT:178) — so the LangFuse export should be over TLS and the receiver bound appropriately; these are native Collector/exporter options, **no new secret store or custom crypto** is introduced by C26.
+- **Cost.** Adoption is config-only — runtime cost is the Collector process's own footprint; no incremental API cost (the telemetry surface works under Max with no API key, AI-CONTEXT:158). C26 stores nothing, so it adds no storage cost (LangFuse owns trace retention).
+- **Scale.** Throughput is bounded by C25's export cadence (metrics 60s, logs 5s defaults — AI-CONTEXT:180) and the Collector's native batching/queue. The Collector is built for far higher volume than a single-host factory's telemetry; scaling is a stock-config concern (batch size, queue depth), not a C26 design problem. The high-volume scale concern in the observability subsystem is the *raw-bodies bridge* (C24), not C26's OTLP transit.
+- **Observability (of itself).** C26's own health is "does the Collector receive, and does LangFuse show traces?" — exactly the Phase-1 acceptance checks (README:539–540). The Collector's own internal metrics (a native feature) are available if needed; v4 requires only the end-to-end "events flow"/"trace browsing works" verification, so nothing custom is added.
+- **Ops.** C26 is a Gas City `[[service]] type = "external"` (AI-CONTEXT:565) — an out-of-process OSS daemon Gas City points at. Standing it up, pointing C25 at :4317, and pointing it at LangFuse is the Phase-1 sequence (README:539–540). Reconfiguring (different receiver port, different LangFuse endpoint, mTLS on/off) is a Collector-config edit + service restart, declarative, no code change (INV-3). Process supervision/restart is the runtime's, not custom C26 code.
+
+## 8. Acceptance criteria & test strategy
+
+Sweep-1 acceptance (high-level):
+1. **AC-1 (receives OTLP).** With the `otlp` receiver bound to :4317 and C25 pointed at it (AI-CONTEXT:578), the Collector receives metrics and events/logs (and beta traces if enabled) from a Claude Code run — "Verify events flow" (README:539; INV-3, §3.1).
+2. **AC-2 (single export to LangFuse).** The configured OTLP exporter delivers the received signals to LangFuse's ingestion endpoint, and **trace browsing works** in LangFuse (README:540; INV-1, §3.2).
+3. **AC-3 (one sink only — no CXDB).** The Collector's pipeline has exactly **one** terminal exporter (LangFuse); **no OTLP is routed to CXDB** by C26 (INV-1, INV-2; AI-CONTEXT:210, 466, 497). This is the **G04 anti-edge acceptance check** — assert there is no CXDB exporter on the pipeline and no CXDB traffic originates from C26.
+4. **AC-4 (correlation pass-through).** The correlation attributes C25 stamps (`prompt.id`, `session.id`, `user.account_uuid`, `organization.id`, `terminal.type`, AI-CONTEXT:178) arrive at LangFuse unaltered, enabling session/prompt grouping in C27 (INV-4).
+5. **AC-5 (signal coverage).** The metric set and event set C25 emits (AI-CONTEXT:172–173) traverse the pipeline and appear in LangFuse; beta traces appear iff `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1` upstream (AI-CONTEXT:174).
+6. **AC-6 (config-only adoption).** C26 is stood up and reconfigured purely via the Collector YAML + the `[[service]] otel_collector` declaration (AI-CONTEXT:565); **no custom collector code is introduced** (INV-3). Pointing it at a different LangFuse endpoint is a config edit + restart.
+7. **AC-7 (native export resilience, not custom).** When LangFuse is briefly unreachable, the Collector queues/retries per its **stock** sending-queue config and resumes delivery on recovery — with **no C26-authored buffer** (INV-3; §6). (Durability under prolonged/cascading outage is deferred to G33.)
+
+Test strategy (sweep-1): a Phase-1 fixture — the OSS Collector configured with an `otlp` :4317 receiver, one `otlphttp` exporter at a **stub LangFuse OTLP endpoint**, and the per-signal pipelines. Drive one short Claude Code (C25) run and assert (a) metrics+events arrive at the receiver (AC-1), (b) they are delivered to the stub LangFuse endpoint and only there (AC-2/AC-5), (c) **no exporter targets CXDB and no CXDB traffic leaves the collector** (AC-3 — the G04 check), (d) correlation attributes survive the hop (AC-4), and (e) bouncing the stub sink shows native queue-and-retry, not a custom buffer (AC-7). Concrete receiver/exporter YAML, the exact LangFuse OTLP ingestion path/headers, and processor (batch) tuning are deferred to sweep 2 (coordinated with C27).
+
+## 9. Open questions
+
+- **OQ-1 (→ [review-log](../_meta/review-log.md), shared with C27) — the C26→C27 OTLP ingestion seam.** v4 says "point the OTel Collector at [LangFuse]" (README:540) but not the exact LangFuse OTLP ingestion path, port, or auth header. Faithful sweep-1 disposition: assert the seam is **OTLP/HTTP to LangFuse's ingestion endpoint** and resolve the precise path + ingestion-key header jointly with the C27 author at sweep 2, so C26's exporter config and C27's ingestion description match exactly. (Reading A: LangFuse exposes a native OTLP receiver → `otlphttp` exporter straight at it; Reading B: an intermediate adapter. Faithful pick: native OTLP ingestion, the simplest path consistent with "point the collector at it.")
+- **OQ-2 (→ review-log, top open question) — G04 two-sinks/anti-edge placement.** The two-sinks rule and the Collector✗→CXDB anti-edge are asserted here (INV-1/INV-2/AC-3) and, from the emit side, in C25 (INV-1/AC-6). Open item for the reviewer: should this be hoisted into a single shared Observability-subsystem note (spanning C25/C26/C24) so all three specs assert one identical boundary, rather than each restating it? (Reading A: state once at the source — C25 — and cross-reference; Reading B: each component restates its own edge. Faithful pick: state the *split* at C25, the *anti-edge* at C26, and cross-reference — since C26 is where a naive integrator would physically add the rejected CXDB exporter, the anti-edge is load-bearing precisely here.)
+- **OQ-3 — export durability when LangFuse is down (G33).** v4 specifies no custom buffer at the collector; the faithful stance is to rely on the Collector's **native** sending-queue + retry (INV-3, §6) and add nothing. Open: is the Collector's stock queue depth sufficient for the factory's outage tolerance, or is a Collector-native on-disk spool (still no custom code) wanted before LangFuse? Resolve under G33 (the OSS-stack partial/cascading-failure story, owned at C24) — but flag here that the faithful default is **accept stock native behaviour; build no custom buffer v4 doesn't name.**

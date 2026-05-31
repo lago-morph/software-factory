@@ -39,9 +39,11 @@ C55 is the factory's **methodology-as-config experiment loop**: the thin control
 candidate methodologies — each expressed as a swappable C12 pipeline file (formula)** — runs each over the
 **same held-out scenarios (C30)** with the **same judge**, reads the resulting **satisfaction distribution
 (C33)**, and from that evidence **selects a methodology per *kind of work*** (README:31, :33). It is the
-component that operationalises v4's **central inversion and its single named principle**:
-**P-methodology-experimentation** — *"methodology is the variable, substrate is convergent; you don't choose,
-you experiment"* (README:29–31). Where v3 asked "which of the ten methodologies do we build the substrate
+component that operationalises v4's **central pivot / hypothesis** — *"methodology is the variable, substrate is
+convergent; you don't choose, you experiment"* (README:29–31; AI-CONTEXT §0/§11.1 "Pivot"; the empirical bet is
+README:512 "**Methodologies will emerge empirically**", Bet 5). (Informal shorthand below:
+*methodology-experimentation* — v4's **pivot/hypothesis**, **not** one of the El Kaim 12 principles; the
+12-principle set is P1–P12 with P12 = self-optimization.) Where v3 asked "which of the ten methodologies do we build the substrate
 for?", v4 makes that the **wrong first question** (README:27; AI-CONTEXT:501): the substrate is built once for
 the 12 principles, the ten candidates become **ten pipeline configurations on one platform**, and the choice
 becomes **empirical, per work type, with evidence instead of debate** (README:33).
@@ -131,9 +133,9 @@ it is the orchestration + the selection *contract* over capabilities the eval ti
 ("factory builds factory"), and is explicitly **post-Phase-2** work — selection happens **"After Phase 2"**
 once Layer 2 (the eval tier) is up (AI-CONTEXT:482; README:512 "Once Layer 2 is up"). It is **not foundational**
 (inventory C55: Foundational? = no): it is a *leaf consumer* of the formula artifact + the eval tier, adding
-the selection loop on top. Its whole reason to exist is **P-methodology-experimentation** — the v4 hypothesis
-that the methodology decision should be **empirical and swappable** rather than an architectural commitment
-(README:25–33). It is **feature-flag-gated** (C03): the factory runs fine without it; C55 is the apparatus that,
+the selection loop on top. Its whole reason to exist is v4's **methodology-experimentation pivot** (the
+hypothesis / Bet 5, README:512 — **not** a numbered 12-principle): the methodology decision should be
+**empirical and swappable** rather than an architectural commitment (README:25–33). It is **feature-flag-gated** (C03): the factory runs fine without it; C55 is the apparatus that,
 *when enabled*, turns the ten-candidate catalog into evidence-based per-work-type selection.
 
 ## 3. Interfaces / contracts

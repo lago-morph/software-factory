@@ -26,7 +26,7 @@
 > distribution + its threshold-free posture, G09 reading (b) — the cutline lives at C50/**C53**/C39);
 > spec/C51 §1/§3.3/§9 (the per-component **transfusion-correctness predicate** "exemplar behavior →
 > scenario → satisfaction ≥ bar" + completeness clause; "**C53 is the go/no-go milestone that consumes a
-> passing predicate**", C51:52/75; the numeric bar is C50/**C53** policy, C51:99/229); spec/C30 §1 (the
+> passing predicate**", C51:55/78; the numeric bar is C50/**C53** policy, C51:102/239); spec/C30 §1 (the
 > held-out scenario corpus organized `scenarios/<component>/` that C53's scenario-set requirement lands in);
 > F-MODE-COVERAGE F9 (spec overfitting), F47 (Goodhart / visible-metric), F54 (RSI goal-subversion over
 > cycles — the milestone is the first human-reviewed checkpoint on the self-modifying factory).
@@ -73,7 +73,7 @@ not rebuilt** (the-bar, §6).
   and **C32/C33 own the scoring**.
 - **Apply the milestone satisfaction bar (I3 — the cutline C33 defers, G09).** C33 is **threshold-free** and
   defers the "satisfied" cutline to the **decision sites C50/C53/C39** (C33 §6 reading (b)); C51 likewise
-  routes the *numeric* satisfaction bar to **C50/C53** policy (C51:99/229). **C53 is that decision site for
+  routes the *numeric* satisfaction bar to **C50/C53** policy (C51:102/239). **C53 is that decision site for
   the bootstrap milestone**: it **applies** a satisfaction cutline to C33's distribution. The cutline
   **value** is operator/integrator policy v4 does not fix (G09; OQ-1) — C53 owns *that a bar is applied
   here and what the decision rule over the distribution is*, not a hard-coded number.
@@ -95,7 +95,7 @@ not rebuilt** (the-bar, §6).
   C51:47). C53 is a **gate over existing signals**, model-free and deterministic given its inputs.
 - **NOT the per-component transfusion-correctness predicate.** The general, *every-factory-built-component*
   acceptance contract ("exemplar behavior → scenario → satisfaction ≥ bar" + completeness) is **C51's**
-  (C51 §3.3, closes G07). C53 **consumes a passing C51 predicate** for the *first* component (C51:75) and
+  (C51 §3.3, closes G07). C53 **consumes a passing C51 predicate** for the *first* component (C51:78) and
   adds the *milestone* framing (the one-time go/no-go that decides the bet) — it does not redefine the
   predicate. *C51 is the recurring gate's contract; C53 is the **one-time bootstrap milestone** that reads
   it.*
@@ -128,7 +128,7 @@ not rebuilt** (the-bar, §6).
 |---|---|---|
 | Upstream (loop + review) | **C52** Self-bootstrap recursion | Runs the factory on the first component's spec and owns the **human design-review** gate (README:498). C53 is the **milestone** C52's loop reaches once; it reads the build's `factory_build` outcome + the design-review record. Inventory C53 `depends on C52`. |
 | Upstream (satisfaction signal) | **C33** Satisfaction metric aggregator | Produces the **satisfaction distribution** over the bootstrap component's scenario trajectories that C53 applies its bar to. C33 is **threshold-free** and defers the cutline to C50/**C53**/C39 (C33 §6). Inventory C53 `depends on C33`. |
-| Upstream (acceptance predicate) | **C51** Gene-transfusion discipline | Supplies the **transfusion-correctness/completeness predicate** ("exemplar behavior → scenario → satisfaction ≥ bar"); "C53 is the go/no-go milestone that **consumes a passing predicate**" (C51:75). C53 reads the predicate verdict as a rubric input. *(Transitive via C52 → C51 in the inventory; named here because the predicate is the objective half of "if it works".)* |
+| Upstream (acceptance predicate) | **C51** Gene-transfusion discipline | Supplies the **transfusion-correctness/completeness predicate** ("exemplar behavior → scenario → satisfaction ≥ bar"); "C53 is the go/no-go milestone that **consumes a passing predicate**" (C51:78). C53 reads the predicate verdict as a rubric input. *(Transitive via C52 → C51 in the inventory; named here because the predicate is the objective half of "if it works".)* |
 | Upstream (scenario corpus) | **C30** Scenario authoring & store | Holds the **bootstrap-component scenario set** (`scenarios/<component>/`, held-out) C53 requires (README:499/526). C53 owns *that the scenarios exist*; C30 owns *the corpus*. *(Concept dependency via the eval tier; not a new inventory edge.)* |
 | Upstream (scoring tier) | **C31** runner, **C32** judge | Run the bootstrap scenarios and judge the trajectories into the scores C33 reduces. C53 reuses this tier end-to-end; it owns none of it. *(Concept dependency.)* |
 | Record host | **C20** Bead schema / **C19** Bead store | The **go/no-go verdict + evidence** is recorded on the first component's **`factory_build` bead** (the same bead C51's predicate verdict and C52's review attach to). C53 requests a schema slot; **C20 owns the schema** (D-3). *(Reference, mirroring how C51 names its verdict slot as a C20 request.)* |
@@ -283,7 +283,7 @@ altitude by making the milestone a **composition of the existing eval tier into 
   > **bar is applied at the decision site** that acts on it — here, **C53**. **Chosen: (b)** — it is the
   > reading the rest of v4 already commits to: C33 is explicitly threshold-free and routes the cutline to
   > "C50/**C53**/C39" (C33 §6 reading (b)), and C51 routes the *numeric* satisfaction bar to "C50/C53
-  > policy" (C51:99/229). So **C53 is the bootstrap milestone's cutline owner**: it **applies** a bar to
+  > policy" (C51:102/239). So **C53 is the bootstrap milestone's cutline owner**: it **applies** a bar to
   > C33's distribution (INV-5), but the **value** of that bar is **operator/integrator policy v4 does not
   > fix** (OQ-1). Reading (a) is rejected because it re-introduces the test-pass framing P6 explicitly
   > rejects (C33:G09) and contradicts both C33's and C51's resolved posture.
@@ -305,7 +305,7 @@ surfaced, INV-3 requires *a* set, but "how many scenarios make the bet credible"
   v4 silent; refusing to pass on absent evidence is the minimal honest reading of "if it works".]*
 - **C51 predicate `inconclusive` (C51 §3.3 fallback).** → treated as **not-pass** for the milestone →
   no-go / route to human design review (C52), mirroring C51's transfusion-insufficient fallback
-  (C51:174). C53 does not override C51's verdict; it consumes it.
+  (C51:184). C53 does not override C51's verdict; it consumes it.
 - **C52 review approves but the bar fails (or vice versa).** → **no-go** (the rubric is a **conjunction**,
   INV-1): a human approve does **not** override a failed satisfaction bar, and a passed bar does **not**
   skip design review (README:498 "required until P12 is mature"). *[FAITHFUL-FILL: conjunction is the

@@ -35,9 +35,9 @@ Both tracks share the inventory backbone, so per-component diffing works. 23 of 
 
 ## 2. What "optimized" is actually doing
 
-**One-sentence summary** (verbatim from the DELTA-enumeration research): *Track B has not abandoned v4; it has operationalized it.*
+**One-sentence summary** (my synthesis from the research files, not a verbatim quote): Track B has not abandoned v4; it has *operationalized* it.
 
-Track B converts v4 prose policies and assertions into typed, testable, fail-closed contracts at almost every seam. 148 named DELTAs across the 23 built components. Every component has 5–7 of them — there are no "no-delta" components in Track B.
+Track B converts v4 prose policies and assertions into typed, testable, fail-closed contracts at almost every seam. 148 named DELTAs across the 23 built components (148 raw; 4 were already adopted into both tracks via INTEGRATION-PASS-1's D-1..D-5 rulings, leaving 144 for the skeptic verdict and 129 for the independence analysis after the analyst's own additional exclusions). Every component has 5–7 deltas — there are no "no-delta" components in Track B.
 
 ### What forces motivate the deltas?
 
@@ -46,13 +46,13 @@ Track B converts v4 prose policies and assertions into typed, testable, fail-clo
 | Operability | ~41% | Naming a seam v4 left implicit; specifying a fsync contract; spelling out idempotency keys |
 | Failure | ~26% | Bounded retry counts; back-pressure semantics; degraded-mode behavior; termination invariants |
 | Security | ~15% | Move read-isolation from prompt-discipline to OS-process boundary; sign packs; signed attribution |
-| Simplicity / Parallelizability / Scale / Cost / Other | ~18% | The remaining 27 deltas, mostly clarifications and small generalizations |
+| Simplicity / Parallelizability / Scale / Cost / Other | ~18% | The remainder after the top three force buckets — mostly clarifications and small generalizations. (Force totals overlap because deltas often cite multiple forces; the 18% is the share of deltas whose *primary* force is one of these five.) |
 
 Operability dominates because v4 leaves lots of seams gestured-at and not nailed-down. Track B's first move is almost always "name the seam and write down its contract."
 
 ### Three representative DELTAs — anatomy of a good one
 
-These are the three deltas BOTH the independence analyst and the skeptic flagged as the highest-value cherry-pick candidates. They illustrate the operability/failure/security pattern.
+These are *the report's curated illustrative set* — one each from the operability / failure / security pattern. They are **not** a cross-validated convergence between the skeptic's promote-list and the independence analyst's top picks: the two lists overlap on the C42 family only (the skeptic and the independence analyst optimize for different things — gap-closing vs port cost — and so pick different specific deltas). See §5 for the ranked lists from each lens.
 
 | DELTA | Component | What v4 said | What optimized changes it to | Force |
 |---|---|---|---|---|
@@ -94,20 +94,21 @@ flowchart TD
     C41["C41 hash-chain + signing<br/>(Track B DELTA-04)"]
     KEYS["needs per-actor key storage"]
     G37["G37 secrets manager<br/>(unchosen: env / Vault / SOPS)"]
-    XC6["review-log XC-6:<br/>'signing is a mechanism,<br/>not a control, until SecretResolver lands'"]
+    BLOCK["signing is a mechanism,<br/>not a control,<br/>until secrets storage lands"]
     PHASE0["Phase-0 attribution<br/>stays self-asserted"]
     F --> C41
     C41 --> KEYS
     KEYS --> G37
-    G37 -->|blocks| XC6
-    XC6 --> PHASE0
+    G37 -->|blocks| BLOCK
+    BLOCK --> PHASE0
 ```
+*(The "mechanism not control" sentence is the verbatim XC-6 ruling from the review log.)*
 
 **Blast-radius framing.** G37 is a *Phase-1 operational blocker*, not strictly a Phase-0 one — Phase 0's only real consumer is the Max OAuth token, which Claude Code stores itself. But every "Addressed" cell in the failure-mode coverage map that depends on signing (F14, F32, F43, pack signing for self-bootstrap) is silently downgraded to "Addressed on paper only." Phase 1 forward, once CXDB / LangFuse / Collector come up multi-host, G37 becomes a real operational blocker.
 
 ### What's blocked until you pick a secrets approach
 
-10 open questions across the corpus. The headline four:
+10 open questions enumerated in [the secrets-manager research file §4](_meta/research/secrets-manager-thread.md); the four most decision-blocking:
 
 1. **C03 SecretResolver provider baseline** — env-injection or Vault/SOPS? (top open question in C03)
 2. **Signing mandatory vs optional** — Track A says optional; Track B makes it graduated-mandatory; integrator must settle
@@ -146,9 +147,9 @@ Headline: discipline is **mixed-leaning-rigorous**. Two patterns to call out:
 
 C01-DELTA-01, C04-DELTA-01, C21-DELTA-01, C23-DELTA-01, and C28-DELTA-01 all introduce an abstract interface ("X is the contract; Y is one implementation") for substrate components the factory adopts wholesale from a single upstream (Gas City + Claude Code). The skeptic's read: these are *port-shaped* abstractions over things v4 has no plan to swap. C01's own open question concedes the `RuntimeSubstrate` port may be too thick to be real portability. The rewind cost is large because all five are inter-dependent (this is the "portability-contracts" systemic cluster — see §5).
 
-### Pattern B — zero quantitative forces
+### Pattern B — quantitative forces unconnected to deltas
 
-Despite repeatedly invoking "scale" and "cost" as the justifying force, **zero deltas anywhere in the corpus cite a single quantitative number** — no scenarios/hour target, no $/satisfaction budget, no concurrency cap, no rate-limit headroom. The forces are real (v4 itself names them) but Track B's arguments lean on the v4 framing without sharpening it.
+Despite repeatedly invoking "scale" and "cost" as the justifying force, no delta cites a **throughput target, a request/second number, a concurrent-session count, or a TB figure with a timestamp**. Some perf numbers do exist in the corpus — C21's perf contract names p50 < 1 ms append for 10 KB payloads, for instance — but the skeptic's read is that these numbers are "named but not connected" to the deltas that invoke scale/cost as justification. The forces are real (v4 itself names them) but Track B's arguments lean on the v4 framing without sharpening it with delta-specific numbers.
 
 ### Skeptic's rescind picks (3, taste / build-for-unsolved-consumer)
 
@@ -172,7 +173,7 @@ These overlap perfectly with the independence analyst's top cherry-pick targets 
 
 ## 5. Can Track B be raided, or does it need to stay parallel?
 
-### Independence classification (129 deltas, excluding the 5 already adopted in both tracks)
+### Independence classification (129 deltas; the analyst's classified base after their own exclusions — see [the independence research file](_meta/research/optimized-deltas-independence.md) for the derivation from 148 raw deltas)
 
 | Class | Count | Share | Meaning |
 |---|---|---|---|
@@ -190,66 +191,78 @@ These are the only places where Track B is a meaningfully *different architectur
 ```mermaid
 flowchart LR
     SYS["4 systemic clusters<br/>(real architectural divergence)"]
-    FREE["Track-B-only<br/>1 cluster: portability contracts"]
-    BLOCKED["Blocked on external decisions<br/>3 clusters: signing, judge, supply chain"]
+    INTERNAL["Track-B-internal<br/>1 cluster: portability contracts"]
+    EXTERNAL["Blocked on external<br/>3 clusters: signing, judge, Max ToS"]
     G37["G37 secrets manager"]
     FE1["FE-1 cross-family judge"]
-    RSI["Human-held RSI trust root"]
-    SYS --> FREE
-    SYS --> BLOCKED
-    BLOCKED --> G37
-    BLOCKED --> FE1
-    BLOCKED --> RSI
+    TOS["Max ToS clarity<br/>(unattended pooling)"]
+    SYS --> INTERNAL
+    SYS --> EXTERNAL
+    EXTERNAL --> G37
+    EXTERNAL --> FE1
+    EXTERNAL --> TOS
 ```
 
-The four clusters in detail:
+The four clusters in detail (corrected per the independence file §5):
 
 | # | Cluster | Components | External dependency |
 |---|---|---|---|
-| 1 | Portability contracts | C01/C04/C21/C28 DELTA-01 | None (Track-B-only) — skeptic-flagged weakest cluster |
-| 2 | Mandatory signing | C41 DELTA-01/06 | Blocked on G37 (secrets manager) |
+| 1 | Portability contracts | C01/C04/C21/C28 DELTA-01 | None (Track-B-internal) — but skeptic-flagged weakest cluster |
+| 2 | Mandatory signing | C41 DELTA-01/06 | Blocked on G37 (secrets manager) + cascades to C03/C06 |
 | 3 | Graded judge independence | C29 DELTA-02/03 | Blocked on second-provider credential (FE-1) |
-| 4 | Supply-chain signing | C02 DELTA-02 + C41/C51 provenance | Blocked on G37 + human-held RSI trust root |
+| 4 | Multi-seat pool | C28 DELTA-03 | Blocked on Max ToS question for pooled unattended automation |
 
-Three of the four systemic clusters cannot fully ship as Track B either — they're blocked on the same external decisions (G37, judge access, RSI governance) that Track A is also waiting on. Only the portability-contracts cluster is fully Track-B-internal, and the skeptic flagged that one as the weakest-justified group of deltas in the corpus.
+Three of the four systemic clusters cannot fully ship as Track B either — they're blocked on external decisions (G37 for signing; FE-1/second-provider credential for the judge; Max-ToS clarity for the seat pool) that Track A is also waiting on. Only the portability-contracts cluster is fully Track-B-internal, and the skeptic flagged that one as the weakest-justified group of deltas in the corpus.
 
-### Top cherry-pick candidates (independence agent + skeptic agree)
+### Top cherry-pick candidates (the two lenses, side-by-side)
 
-The six highest-value, lowest-port-cost deltas to port into faithful immediately:
+The two analysis lenses don't pick the same deltas. The skeptic optimizes for *gap-closing* (which delta converts a known-G-mode from paper to enforcement?); the independence analyst optimizes for *port cost* (which delta moves to faithful in the fewest file edits?). The overlap is the C42 family. The union is the practical "immediate cherry-pick" set — six deltas across both lenses:
 
-| Delta | Component | What it does | Why now |
-|---|---|---|---|
-| C42-DELTA-02 | Rig partitioning | OS-boundary read-isolation | Only mechanism converting G21/G10 from discipline to enforcement |
-| C20-DELTA-04 | Bead schema | Bounded `attempt_no`/`max_attempts` schema invariant | Closes the G18 self-heal termination blocker |
-| C09-DELTA-04 | Prompt-template binding | Render-time FuncMap sandbox | Closes a lethal-trifecta injection hole, single file |
-| C19-DELTA-04 | Bead work-graph | fsync durability contract | Closes "scratchpad lost on restart" |
-| C23-DELTA-02/03 | Event bus | Back-pressure + at-least-once idempotency key | Direct answer to G33 (failure of OSS stack); two improvements to one file |
-| C29-DELTA-02 | Model-floor stylesheet | Graded judge independence policy L0–L3 | Confronts the cross-family judge constraint head-on |
+| Delta | Component | What it does | Why now | Lens | Cluster-dependency |
+|---|---|---|---|---|---|
+| C42-DELTA-02 | Rig partitioning | OS-boundary read-isolation | Only mechanism converting G21/G10 from discipline to enforcement | Skeptic | CLUSTER-2 — needs C04-DELTA-05 (PartitionBinding) |
+| C20-DELTA-04 | Bead schema | Bounded `attempt_no`/`max_attempts` schema invariant | Closes the G18 self-heal termination blocker | Skeptic | ISOLATED |
+| C29-DELTA-02 | Model-floor stylesheet | Graded judge independence policy L0–L3 | Confronts the cross-family judge constraint | Skeptic | SYSTEMIC — see §5; cannot truly cherry-pick without the FE-1 seam |
+| C19-DELTA-04 | Bead work-graph | fsync durability contract | Closes "scratchpad lost on restart" | Independence | ISOLATED |
+| C23-DELTA-02/03 | Event bus | Back-pressure + at-least-once idempotency key | Direct answer to G33 (failure of OSS stack); two improvements to one file | Independence | ISOLATED (pair travels together within one file) |
+| C09-DELTA-04 | Prompt-template binding | Render-time FuncMap sandbox | Closes a lethal-trifecta injection hole, single file | Independence | ISOLATED |
+
+The cluster-dependency column matters: C42-DELTA-02 looks like a one-file port but actually drags C04-DELTA-05 along; C29-DELTA-02 looks like a one-file port but is structurally Track-B-only. The reader picking deltas needs both columns.
+
+The independence analyst's broader recommendation goes further: **"raid Track B for the 35–40 highest-value isolated/cluster deltas"** — meaning the six above are the minimum-viable cherry-pick set, not the maximum-honest one. A larger cherry-pick pass would pull in the durability contracts, typed interfaces, termination invariants, vocab-lint wiring, role taxonomy, and parametric routing across roughly 35–40 deltas. That's a bigger integration pass than the six above but still bounded.
 
 ---
 
 ## 6. Decision: parallel track vs cherry-pick — the trade-off
 
-| Option | What you get | What you give up | Rewind cost if wrong |
-|---|---|---|---|
-| **A. Drop Track B; cherry-pick ~6–15 deltas into faithful** | All the operationally-valuable improvements without the cost of maintaining two parallel specs through 34 more components | The 13 systemic deltas (the 4 architectural clusters) get archived as reference, not pursued | Low — the cherry-picks are isolated; the systemic clusters live on in the existing 23 Track B specs and can be revived |
-| **B. Pause Track B; resume after faithful Sweep-1 finishes** | Foundational artifact (faithful) gets to full coverage first; Track B work resumes with the v4 picture clearer | Track B momentum lost; ~half of Track B subagent receipts will need re-grounding when work resumes | Low — paused work is not lost work |
-| **C. Continue both tracks in parallel** | Maximum exploration; both views in the inventory | Cost: every wave is 2× the subagents, 2× the review surface, 2× the integration passes; the four blocked-systemic clusters are still blocked | Medium — sunk subagent cost on track-B-only work that can't ship until external decisions land |
+The "rewind cost" question is actually two questions: *what specifically would you have to redo* if you picked wrong, and *what subagent budget is sunk* in the chosen direction. Splitting them:
+
+| Option | What you get | What you give up | If wrong: what you'd redo | Sunk subagent budget |
+|---|---|---|---|---|
+| **A. Drop Track B; cherry-pick ~6–15 named deltas (min) or ~35–40 (broad raid) into faithful** | All the operationally-valuable improvements without the cost of maintaining two parallel specs through 34 more components | The 13 systemic deltas (the 4 architectural clusters) get archived as reference, not pursued | Rerun integration-pass against the cherry-picked deltas; revive the systemic clusters from their existing 23 Track B specs (no rewrite needed but each cluster's spec is one or two batches stale by the time you revive it; cite-chains into other specs need refresh) | None new — the 23 existing Track B specs stay on disk; no future Track B subagent dispatches |
+| **B. Pause Track B; resume after faithful Sweep-1 finishes** | Foundational artifact (faithful) reaches full 57-component coverage first; Track B work resumes with the v4 picture clearer | Track B momentum lost; subagent receipts and standing briefs need re-grounding when work resumes (~3–4 subagents' worth of warm-up per wave that's been on ice) | Resume Track B Wave-2 from where it stopped; re-validate D-1..D-5 are still applicable | Modest — the warm-up cost on resume, no Track B work happens during the pause |
+| **C. Continue both tracks in parallel through Wave-1 (17 components) and beyond** | Maximum exploration; both views in the inventory; per-component Track A vs Track B diff is always current | Cost: every wave is ~2× subagents, ~2× review surface, ~2× integration passes; the four blocked-systemic clusters keep getting elaborated even while their external blockers remain unresolved | Discover during Sweep 2 / 3 that 3 of the 4 systemic clusters are blocked anyway and re-archive Track B at that point — having spent 2× subagent budget on it in the meantime | Large — every Wave-N sweep doubles the receipts you have to reconcile; conservatively a 1.6×–2× multiplier through the next 34 components |
 
 ### Speculative recommendation (this is my opinion, not synthesis)
 
-**Option A with a footnote.** Drop Track B as an active authoring track; cherry-pick the 6–15 deltas above into faithful as targeted improvements; leave the existing 23 Track B specs in place as a reference for the four systemic clusters so we can revisit when G37, FE-1, and the RSI trust-root questions get decided. The cost of carrying Track B through 34 more unbuilt components is ~2× wave concurrency; the marginal value beyond the cherry-picks is ~120 deltas, mostly micro-improvements at the operability/failure layer. Better to invest that subagent budget in Sweep 2 depth on faithful.
+**Option A, broad-raid variant.** Drop Track B as an active authoring track; do a focused **integration pass that cherry-picks roughly 35–40 deltas** into faithful (the independence analyst's "raid Track B for the 35–40 highest-value isolated/cluster deltas" framing — not just the 6 minimum-viable ones I tabled in §5). Leave the existing 23 Track B specs in place as reference for the four systemic clusters; revive them only when G37, FE-1, and the Max-ToS question get decided.
 
-**Footnote:** if you want to keep one piece of Track B alive as an authoring track, the portability-contracts cluster (C01/C04/C21/C28-DELTA-01) is the natural candidate — but I'd defer even that because the skeptic flagged it as the weakest cluster and it has no external dependency we're waiting on, so we can revive it at any time without losing optionality.
+The data this rests on:
+- §4 verdict table — 85.4% of Track B's deltas are well-justified; this means the broad raid is pulling in genuinely good engineering, not the residue. Option A is "leave 85% of well-justified work on the table" *unless* the broad-raid integration pass is done — which is why I'm recommending the broad-raid variant, not the minimum-viable one.
+- §5 independence table — only ~10% of deltas are SYSTEMIC; the other 90% have some path to faithful via isolated port or small cluster.
+- Three of the four SYSTEMIC clusters can't ship as Track B either right now (external blockers); the fourth (portability contracts) was the weakest-justified per the skeptic.
+
+**Footnote on optionality.** If you want one piece of Track B alive as an active authoring track, the portability-contracts cluster (C01/C04/C21/C28-DELTA-01) is the natural candidate — it's the only systemic cluster with no external blocker. I'd still defer it because the skeptic flagged it as the weakest cluster, and the cluster's "leave in Track B only" recommendation in the source means we lose nothing by keeping it in the existing 23 specs.
 
 ---
 
 ## 7. Honest acknowledgments
 
-- **What I read directly.** The Track-A and Track-B charters, the integration-pass-1 log, the review-log, the secrets-manager research file in full, and a representative slice of the independence research file. The DELTA enumeration (148 rows) and skeptic verdict tables I worked from the subagent receipts, not from reading every row.
-- **What I synthesized vs cited.** The "65% cherry-pickable" number, the verdict-share percentages, and the four systemic clusters all come from the independence analyst's receipt. The "thin portability port" pattern and the rescind/promote picks come from the skeptic. The secrets-manager numbers and OSS-options framing come from the secrets-manager research file.
-- **What I did not verify.** Every single DELTA — I trusted the enumeration agent's count. The Gas City native-count corrections (whether v4 says 5 or 6 principles native at Phase 0). Whether any of the 5 portability-port deltas actually has a strong defense I missed.
-- **My recommendation is opinion, not synthesis.** Section 6's "Option A with a footnote" is my read; the synthesis is the table above it.
+- **What I read directly.** The Track-A and Track-B charters, the integration-pass-1 log, the review-log, the secrets-manager research file in full, and the independence research file's per-component sections + §5 (systemic clusters) + summary verdict. The DELTA enumeration (148 rows) and the skeptic verdict tables I worked from the subagent receipts, not from reading every row.
+- **What I synthesized vs cited.** The "65% cherry-pickable" number, the verdict-share percentages, and the four systemic clusters all come from the independence analyst's source file (§5 summary). The "thin portability port" pattern and the rescind/promote picks come from the skeptic. The secrets-manager numbers and OSS-options framing come from the secrets-manager research file.
+- **Caught and corrected by adversarial review on this report.** The first draft (a) attributed a one-sentence summary as a verbatim quote from the enumeration research file when the phrase only appeared in the subagent receipt, not in the persisted file; (b) claimed the §2 three-delta exemplar set was the cross-validated convergence between the skeptic and the independence analyst when in fact only the C42 family overlaps; (c) named "supply-chain signing" as the 4th systemic cluster when the source actually names "multi-seat pool (C28-DELTA-03)". All three are fixed; this disclosure is the kind of synthesis error the §7 disclosure section exists to flag.
+- **What I did not verify.** Every single DELTA — I trusted the enumeration agent's count. The Gas City native-count corrections (whether v4 says 5 or 6 principles native at Phase 0). Whether any of the 5 portability-port deltas the skeptic flagged actually has a strong defense I missed.
+- **My recommendation is opinion, not synthesis.** Section 6's "Option A, broad-raid variant" is my read; the data tables and trade-off framing it cites are synthesis from the research files.
 
 ---
 

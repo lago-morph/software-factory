@@ -2,11 +2,11 @@
 
 > **Purpose.** Decide, per Track-B delta, whether to fold a minimal form into the canonical `spec/` track or to drop it as scope creep. Drives the convergence to one track.
 
-> **The bar (from operator, this session):** *"We are building thin glue on a stack of existing software (Gas City + libraries like prometheus / scikit-learn / PyOD / opentelemetry / sigstore / etc.). For each delta, ask: would ANY part of the principle this delta touches be at least partially satisfied by that stack + small glue? If yes → DROP. Only KEEP-MINIMAL if the principle would get NO satisfaction without custom code. Partial satisfaction counts. Perfection is not the bar. Scope creep is very very bad."*
+> **The bar (from operator, this session, refined):** *"Does this addition give us MORE CAPABILITY tied to a specific 12-principle? Polish or hardening that just does the same thing 'better' in a non-principle way → DROP. Genuine, low-effort custom-coding addition where some part of a principle could not be met without it → KEEP. Partial satisfaction by the existing stack (Gas City + libraries like prometheus/scikit-learn/PyOD/opentelemetry/sigstore/etc.) counts — we don't add custom code to harden what the stack already does."*
 
 > **Three test outcomes per delta:**
-> - **DROP** — hardening / enforcement on top of upstream code, or adds requirements v4 didn't require, or defensive structure not needed yet
-> - **KEEP-MINIMAL** — needed because the principle would otherwise get NO satisfaction; pulled in *minimal form* (a slot, a name, a contract — not enforcement, not validation gates, not exhaustive taxonomy)
+> - **DROP** — does not add new capability for a specific 12-principle; or is polish/hardening on top of upstream code; or adds defensive structure not yet needed
+> - **KEEP-MINIMAL** — adds capability for a *named* principle that the stack does not provide. Pulled in *minimal form* (a slot, a name, a contract — not enforcement, not validation gates, not exhaustive taxonomy). Every KEEP names which P1–P12 it serves
 > - **ALREADY IN** — folded into faithful via INTEGRATION-PASS-1 (D-1..D-5)
 
 > **Pre-decided drops (operator rulings this session):**
@@ -421,22 +421,35 @@ Stack: OS filesystem permissions, git worktrees (native to gas city). v4 says "f
 
 | Category | Count | % of 148 |
 |---|---|---|
-| KEEP-MINIMAL | 26 | 17.6% |
+| KEEP-MINIMAL | 25 | 16.9% |
 | ALREADY IN (D-1..D-5) | 5 | 3.4% |
-| DROP | 117 | 79.0% |
+| DROP | 118 | 79.7% |
 
-**117 drops, 26 minimal-form keeps, 5 already integrated.**
+**The 25 KEEP-MINIMAL deltas, mapped to the 12-principle each adds capability for:**
 
-The 26 KEEP-MINIMAL deltas cluster around components that are genuinely OUR code:
-- **C20 bead schema** (5) — G17 blocker: v4 names types without defining them
-- **C24 telemetry bridge** (4) — listed as a deliverable in v4, custom code
-- **C08 spec artifact** (3) — P1: specs are the source of truth, structural
-- **C10 spec linter** (3) — our linter
-- **C25 OTLP config** (2) — clarifies which-thing-feeds-what
-- **C29 model floor** (2) — D-1 L1 baseline + minimal slot
-- One each for C01 (tool-node seam), C02 (wire protocol), C09 (spec_id binding), C17 (tool registry), C19 (points at C20 schemas), C42 (3-role taxonomy)
+| Delta(s) | Component | Principle served | Capability gained |
+|---|---|---|---|
+| DELTA-04 | C01 | **P4** deterministic-first | Defines the tool-node call seam (we have to call our tool nodes somehow) |
+| DELTA-01 | C02 | **P4** | Wire protocol for invoking tool nodes |
+| DELTA-01/02/03 | C08 | **P1** specs-are-SOT + **P5** Ashby | Spec structure + DoD that satisfaction scoring can read |
+| DELTA-01 | C09 | **P1** | Spec→execution link via `spec_id` reference |
+| DELTA-01/02/03 | C10 | **P1** | Linter (our quality gate on specs) — report shape + bundle target + severities |
+| DELTA-01 | C17 | **P4** | Tool-node registry (name → invocation) |
+| DELTA-06 | C19 | **P10** persistent-task-graph | Pointer-only: validation seam for C20 schemas |
+| DELTA-01/02/03 | C20 | **P10** + **P11** loop-closure | Bead-type catalog closing G17 (we cannot write `fix_task`/`override`/`factory_build` beads without schemas) |
+| DELTA-04 | C20 | **P11** | Termination slots on fix-task chain (closes G18; without these, no loop-closure capability) |
+| DELTA-05 | C20 | **P9** attribution | `created_by` + `transfused_from` required on our bead types |
+| DELTA-01/02/04/05 | C24 | **P12** observability | Telemetry→CXDB bridge components (we're building this; v4 lists as Phase-1 custom code) |
+| DELTA-01/02 | C25 | **P12** | Telemetry topology (config is not daemon; Two-Sink Invariant) |
+| DELTA-01 | C29 | **P2** provider-abstraction | `model_family` field needed for model selection |
+| DELTA-02 (L1) | C29 | **P5** Ashby / judge | L1 baseline already in faithful via D-1; KEEP only the "policy is gradable" slot |
+| DELTA-03 | C42 | **P5** | 3-role taxonomy (worker/scenario-author/judge) — needed to express holdout integrity in our roles |
 
-The 117 drops cluster around components that are mostly Gas City wrappers (C01, C03, C04, C05, C12, C13, C19, C21, C23, C28) where Track B was hardening upstream code, plus C41 (signing dropped) and C07 (vocabulary machinery dropped).
+**The 118 drops failed the "adds capability for a principle" test in one of three ways:**
+
+1. **Hardening over Gas City / upstream:** the stack already provides partial satisfaction. C01/C03/C04/C05/C12/C13/C19/C21/C23/C28 deltas — typed contracts, fsync guarantees, back-pressure semantics, validation gates over what Gas City does natively.
+2. **Dropped per operator bet decisions:** the 4 bets (portability contracts, mandatory signing, L2/L3 judge, multi-seat pool) plus skeptic-rescind.
+3. **Polish/non-principle improvement:** schema versioning machinery, conformance test suites, deterministic routing functions, FuncMap sandboxing, defensive audit logs — make existing capability "better" without adding capability tied to a 12-principle.
 
 ---
 

@@ -1,6 +1,6 @@
 # Decisions to make — v4 Sweep-1 review items
 
-> **What this is:** the handful of open questions the spec sweep surfaced that are genuinely *yours* to decide — written in plain language, not spec-ese. **What it's not:** the spec corpus itself (that's the machine-readable underlay). **How to read it:** each item is a question, with background, why it matters, the options with trade-offs, and my recommendation (clearly marked as opinion). Skim the summary table, then read the two security ones.
+> **What this is:** the handful of open questions the build surfaced that are genuinely *yours* to decide — written in plain language, not spec-ese. **What it's not:** the spec corpus itself (that's the machine-readable underlay). **How to read it:** each item is a question, with background, why it matters, the options with trade-offs, and my recommendation (clearly marked as opinion). Skim the summary table, then read the two security ones.
 
 A few terms used throughout, defined once:
 

@@ -2,7 +2,7 @@
 
 **What this is, in one paragraph.** Software Factory v4 is a *design corpus* (not running code yet) for a mostly-autonomous pipeline that takes a single human-written **spec** and produces working, tested software — and then turns that pipeline on *itself*, building and improving its own components. The whole thing is organized as three independently-reasoned layers (**discipline**, **methodology**, **substrate**), driven by a **spec-in → software-out** spine, kept honest by a **held-out** evaluation stream that scores **satisfaction**, made resilient by a **self-heal** loop, and made recursive by a **bootstrap** loop (the riskiest bet). Most of the substrate is off-the-shelf OSS; three pieces are genuinely new. Nothing runs unattended until a safety **fence** (the lethal-trifecta control) is in place — that gate was pulled forward to a precondition by an adopted operator decision.
 
-> This guide is the engineer-level companion to the outsider build-order primer (`build-order-plain-english.md`, the intended sibling at the repo root). It leans on the architecture itself: [`architectures/v4/README.md`](architectures/v4/README.md) and the expert-panel risk read [`architectures/v4/_meta/panel/VERDICT.md`](architectures/v4/_meta/panel/VERDICT.md).
+> This guide is the engineer-level companion to the outsider build-order primer ([`build-order-plain-english.md`](build-order-plain-english.md), the sibling at the repo root). It leans on the architecture itself: [`architectures/v4/README.md`](architectures/v4/README.md) and the expert-panel risk read [`architectures/v4/_meta/panel/VERDICT.md`](architectures/v4/_meta/panel/VERDICT.md).
 
 ---
 
@@ -159,4 +159,4 @@ Straight from the [panel verdict](architectures/v4/_meta/panel/VERDICT.md):
 - The architecture itself: [`architectures/v4/README.md`](architectures/v4/README.md)
 - The component map (57 components across the three layers): [`architectures/v4/_meta/component-inventory.md`](architectures/v4/_meta/component-inventory.md)
 - The risk read: [`architectures/v4/_meta/panel/VERDICT.md`](architectures/v4/_meta/panel/VERDICT.md)
-- The plain-English outsider primer: `build-order-plain-english.md` (intended repo-root sibling to this guide)
+- The plain-English outsider primer: [`build-order-plain-english.md`](build-order-plain-english.md) (repo-root sibling to this guide)

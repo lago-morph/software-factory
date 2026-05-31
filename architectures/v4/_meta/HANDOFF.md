@@ -1,87 +1,58 @@
 # HANDOFF — v4 Spec & Plan run (resume from here)
 
-**Last updated:** 2026-05-31.
-**Status:** Tracks converged to one canonical `spec/`. Apply pass complete (no spec edits needed; faithful already had the keeps in minimal form). 34 components remain unbuilt — that is the next work.
-**Working tree:** clean and pushed. PR #218 contains the convergence work.
+**Last updated:** 2026-05-31 (Sweep-1 complete).
+**Status:** **Sweep-1 is COMPLETE — all 57 components built + adversary-reviewed + integrated** on the single canonical `spec/` + `plan-faithful/` track. Next work is **Sweep 2 (implementation-ready depth)**.
+**Working tree:** clean and pushed. The Sweep-1 build is PR #220 on `claude/epic-fermat-LTO4V`.
 
-This file + the other `_meta/` artifacts are sufficient to resume with zero re-grounding.
+This file + the other `_meta/` artifacts are sufficient to resume with zero re-grounding. Start with the run summary at [`run-summary.md`](../../../run-summary.md) and the coverage ledger [`STATUS.md`](./STATUS.md).
 
 ---
 
-## 1. Where we are: 23 of 57 components built; **one canonical track**
+## 1. Where we are: 57 of 57 components built — one canonical track
 
-**Track convergence (2026-05-31):** the run used to author both `spec/` (formerly `spec-faithful/`) and `spec-optimized/` in parallel. As of 2026-05-31 there is **one canonical track** — `spec/` + `plan-faithful/`. `spec-optimized/` and `plan-optimized/` are frozen reference (per-directory READMEs explain). The four architectural bets in the optimized track are parked as FE-1..FE-4 in [`FUTURE-ENHANCEMENTS.md`](./FUTURE-ENHANCEMENTS.md); rationale in [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md).
+**One canonical track** — `spec/` + `plan-faithful/`. `spec-optimized/` + `plan-optimized/` are frozen reference. Every component (C01–C57) has `spec/<ID>-<slug>.md` + `plan-faithful/<ID>-<slug>.md` + `spec/<ID>-<slug>.review.md` (**57 / 57 / 57**). All adversary verdicts across the run were **accept-with-fixes** (0 blockers, 0 needs-rework). The live per-component four-axis state (Built / Reviewed / Incorporated / iNtegrated) is in [`STATUS.md`](./STATUS.md) — all 57 are ✓ on all four.
 
-**DONE (23) on the canonical track** — each has `spec/<ID>-<slug>.md` + `plan-faithful/<ID>-<slug>.md`:
-C01 C02 C03 C04 C05 C07 C08 C09 C10 C12 C13 C17 C19 C20 C21 C22 C23 C24 C25 C28 C29 C41 C42
+Sweep-1 was produced in batches (build → adversary-review → integrator), each batch's cross-component findings recorded as ledger decisions: **D-1..D-5** (Batch 1 / Integration-Pass-1), **D-6..D-14** (Batch 2), **D-15..D-17** (Batch 3), **D-18..D-19 + XC-3 resolved** (Batch 4), OQ-harvest only (Batch 5). Detail in [`review-log.md`](./review-log.md).
 
-- **Batch 1 (C01,02,03,07,08,17,19,20,21,22,23,41)** — built → adversarially reviewed (`.review.md`) → Integration Pass 1 applied D-1..D-5 ([`INTEGRATION-PASS-1.md`](./INTEGRATION-PASS-1.md)). Gold standard.
-- **Batch 2 partial (C04,05,09,10,12,13,24,25,28,29,42)** — built; **NOT yet adversary-reviewed** on the canonical track.
+## 2. The bar (operator's — still in force for every sweep)
 
-**NOT BUILT (34)** — id [slug] — build in this batch order:
+> *"Does this addition give us MORE CAPABILITY tied to a specific 12-principle? Polish/hardening that does the same thing 'better' in a non-principle way → DROP. Genuine, low-effort custom code where some part of a principle could not be met without it → KEEP. Partial satisfaction by the existing software stack (Gas City + libraries like prometheus / scikit-learn / PyOD / opentelemetry / sigstore / Inspect AI / DSPy / LocalStack / etc.) counts — we don't add custom code to harden what the stack already does."*
 
-| Batch | Components (id [slug]) |
-|---|---|
-| 2 tail | C26 [otel-collector], C27 [langfuse-traces] |
-| 3 | C06 [agent-messaging], C11 [intent-intake], C14 [formula-dot-translator], C15 [workflow-linter], C16 [discipline-linter], C18 [reconciler-convergence], C30 [scenario-store], C31 [scenario-runner], C32 [judge-harness], C33 [satisfaction-metric], C34 [holdout-integrity], C35 [override-why-loop], C40 [durable-orders] |
-| 4 | C36 [anomaly-detection], C37 [trajectory-clustering], C38 [diagnosis-agent], C39 [fix-task-loop-closure], C43 [isolation-boundary], C44 [digital-twin], C45 [twin-fidelity], C51 [gene-transfusion], C52 [self-bootstrap], C53 [bootstrap-validation], C54 [phase-plan], C55 [methodology-experiment], C56 [autonomy-ladder] |
-| 5 | C46 [meta-metrics], C47 [variant-identification], C48 [ab-routing-stats], C49 [counterfactual-replay], C50 [promotion-gate], C57 [failure-mode-coverage] |
+When in doubt: DROP. Grounding + worked examples in [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md). This bar held across all 57 — Sweep 2/3 must keep applying it (don't let implementation-depth reintroduce dropped hardening).
 
-(Full descriptions, dependencies, and per-component gap IDs are in [`component-inventory.md`](./component-inventory.md).)
+## 3. Passes still owed (next runs)
 
-## 2. The bar (operator's, from convergence session)
+1. **Whole-57 cross-batch integration pass** — integration was done per-batch; a final drift pass over all 57 (esp. seams frozen "→ Sweep-2 joint freeze": C12/C14/C15 loop-DOT encoding D-16; C42/C34/C32 judge read-surface D-17; C36↔C37 population seam; C38↔C39 / C48↔C55 / C46 dep-edge OQ-6).
+2. **Sweep 2 (implementation-ready):** concrete signatures, data schemas, API/message contracts, sequence/state diagrams (Mermaid), error taxonomies, concrete acceptance tests — re-enter every component. This is the next work.
+3. **Sweep 3 (exhaustive):** pseudocode/algorithms, skeletons, edge-case catalogs, perf/security/ops.
+4. **Final cross-cutting pass:** whole-system consistency, critical-path/parallelism analysis, top-level README/index.
 
-Every spec/plan claim, fill, and addition must pass:
+## 4. How to resume (Sweep 2)
 
-> *"Does this addition give us MORE CAPABILITY tied to a specific 12-principle? Polish/hardening that does the same thing 'better' in a non-principle way → DROP. Genuine, low-effort custom code where some part of a principle could not be met without it → KEEP. Partial satisfaction by the existing software stack (Gas City + libraries like prometheus / scikit-learn / PyOD / opentelemetry / sigstore / etc.) counts — we don't add custom code to harden what the stack already does."*
+1. Read [`run-summary.md`](../../../run-summary.md) (what the run did + morning-review items), this file, then [`STATUS.md`](./STATUS.md) (coverage ledger) and [`review-log.md`](./review-log.md) (D-1..D-19 + ~196 harvested OQs — the OQs are the Sweep-2 work list). Do **NOT** read the four v4 source docs into primary context — subagents do that.
+2. Resolve the **morning-review items first** (run-summary §"Morning-review"): D-18 (C43 split-sequencing), OQ-C57-3 (F54 ownership), OQ-6 (C46 dep edge) — these shape Sweep-2 dependencies.
+3. Use the standing briefs [`BUILDER-BRIEF.md`](./BUILDER-BRIEF.md) + [`ADVERSARY-BRIEF.md`](./ADVERSARY-BRIEF.md) (single-track banners). Dispatch one builder per component at **Sweep 2** depth; concurrency cap ~8; pipeline; subagents persist to disk + return receipts; **primary owns all git**; commit+push every wave.
+4. Each component's `spec/<ID>-*.md` already carries its Sweep-1 OQs inline + its `.review.md` — Sweep 2 starts from those, not a blank page.
 
-This bar is *stricter* than faithful's original "elaborate v4 with minimal fills" charter. When in doubt: DROP. Scope creep is the dominant failure mode to avoid. Grounding + worked examples in [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md).
+## 5. Binding decisions (do not relitigate) — detail in [`review-log.md`](./review-log.md)
 
-## 3. Then: passes still owed
+D-1 same-provider judge (cross-family→FE-1) · D-2 bundle-id namespace `softwarefactory.v4.{beads,trajectory,packs}` · D-3 C20 authors bead schemas / C22 mechanism · D-4 C20→C19 · D-5 C41 hash-chain over C23 · D-6 "canonical track" nomenclature · D-7 node-kind home=C12 · D-8 convoy→C05 / Order→C40 · D-9 F38 vocab-lint=C10 · D-10 modeldb=`{id,family,cost_tier}` · D-11 LangFuse traces-only seam · D-12 two-sink cross-refs · D-13 holdout C34(enforce+audit)/C43(lethal-trifecta) · D-14 G37(secrets)≠FE-3(signing) · D-15 satisfaction holistic (FE-5 deferred) · D-16 loop-DOT encoding=C12 · D-17 judge read-surface · **D-18 (PROVISIONAL — operator confirm)** C43 split-sequencing · **D-19** methodology significance→C48 · **XC-3 RESOLVED** C39 owns G18 numeric policy.
 
-1. **Build sweep-1 specs + plans for the 34 unbuilt components** on the canonical track, in the batch order above, under the bar in §2.
-2. **Adversary review wave** for Batch 2 already-built (C04,05,09,10,12,13,24,25,28,29,42) — never done on the canonical track.
-3. **Adversary review** for Batches 2-tail / 3 / 4 / 5 as each is built.
-4. **Integration Pass 2+:** re-run integrator after each batch to catch new cross-component drift.
-5. **Sweep 2 (implementation-ready):** concrete signatures, schemas, sequence/state diagrams, error taxonomies, acceptance tests — re-enter every component once Sweep-1 breadth is complete.
-6. **Sweep 3 (exhaustive):** pseudocode, skeletons, edge-case catalogs, perf/sec/ops.
-7. **Final cross-cutting pass:** whole-system consistency, critical-path/parallelism analysis, top-level README/index.
+## 6. Deferred capabilities (do not build) — detail in [`FUTURE-ENHANCEMENTS.md`](./FUTURE-ENHANCEMENTS.md)
 
-## 4. How to resume (exact procedure)
+FE-1 cross-provider judge · FE-2 portability contracts · FE-3 graduated-mandatory signing (needs G37) · FE-4 multi-seat pool · FE-5 enumerated per-criterion DoD — **resolved by D-15** (holistic satisfaction; revisit only when C46 needs per-criterion diagnosis). Each has a specific external trigger; none pending.
 
-1. Read this file, then [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md) (apply outcome + the bar), then [`META-PLAN.md`](./META-PLAN.md) (process — but note the two-track sections are superseded), then [`component-inventory.md`](./component-inventory.md) (backbone). Do **NOT** read the four v4 source docs into primary context — subagents do that.
-2. Use the standing briefs: [`BUILDER-BRIEF.md`](./BUILDER-BRIEF.md), [`ADVERSARY-BRIEF.md`](./ADVERSARY-BRIEF.md). Both carry a convergence banner: **dispatch single-track only** — file paths to write are `spec/<ID>-<slug>.md` + `plan-faithful/<ID>-<slug>.md`. Ignore Track A/B legacy text below the banner.
-3. Dispatch one builder per component with a tiny prompt: id+slug+one-liner, sweep level, and the bar in §2.
-4. **Concurrency cap is ~8** (platform rate-limits beyond that). Pipeline at width 6–8; let it drain to ~2 then dispatch the next chunk.
-5. **Subagents never run git.** Primary commits + pushes between waves. Retry push with backoff.
-6. After each batch builds, run the adversary wave, then the integrator to apply any new rulings.
+## 7. Key residual risks (carried into Sweep 2 + the C57 register)
 
-## 5. Binding decisions already made (do not relitigate) — detail in [`review-log.md`](./review-log.md)
-
-- **D-1** same-provider judge baseline; cross-provider judge → FE-1.
-- **D-2** one namespace: `softwarefactory.v4.{beads,trajectory,packs}` (no vendor `strongdm.*`).
-- **D-3** C20 authors bead-type schemas; C22 = registration mechanism + CXDB-turn types only.
-- **D-4** C20 depends on C19 (co-foundational; M1 interface freeze + no-op `validate` stub).
-- **D-5** C41 owns the provenance hash-chain over C23-provided ordered `event_id`s.
-
-## 6. Deferred capabilities (do not build now) — detail in [`FUTURE-ENHANCEMENTS.md`](./FUTURE-ENHANCEMENTS.md)
-
-- **FE-1** cross-provider/cross-family judge — needs a second-provider credential.
-- **FE-2** substrate portability contracts — only if a concrete second-vendor plan exists.
-- **FE-3** graduated-mandatory signing — needs G37 secrets store AND a threat model that warrants it.
-- **FE-4** multi-seat pool — needs concurrency outgrowing manual management AND Max ToS clarity.
-- **FE-5** enumerated per-criterion DoD inside spec artifact — decide when C32/C33 are authored.
-
-Nothing in this list is pending action right now; each has a specific external trigger.
-
-## 7. Key risks the Skeptic flagged (still true; must be designed for in the unbuilt components)
-
-- **G11** — entire plan assumes Gas City exists/behaves as described; every "Native" claim unverified. Sweep 2 must freeze real `gc` schemas (formula/molecule/bead) before dependents bind. Hits C12/C13/C14/C15.
-- **G18** — self-healing loop (C36–C39) needs a termination bound + fix-authorization contract; schema slots exist (C20) but the numeric policy is owed by **C39** (unbuilt).
-- **G31** — lethal-trifecta isolation window; C04/C42 shrink it at spawn but the real fix is **C43** (unbuilt).
+- **G11** — every "Native" Gas City claim is still unverified against a real `gc`; Sweep 2 MUST freeze real `gc` schemas (formula/molecule/bead/Order/reconciler) before dependents bind. Touches C01/C12/C13/C14/C18/C40 + the prevent-vs-detect OQ (C43/C34).
+- **G18** — **CLOSED in design:** C39 owns the numeric termination policy (N→escalate, F52 oscillation, L5 ship-auth) over C20 slots; C18 owns the loop. (XC-3 resolved.)
+- **G31** — lethal-trifecta has a deterministic boundary-typing **design** (C43) but the bound is aspirational until C44 twins land (the XC-8 P0–P3b exposure window); see D-18 (C43 pull-forward, operator-confirm).
+- **G19** — counterfactual replay (C49) is **framed honestly, not solved**: deterministic-slice replay is tractable now; full LLM-step counterfactual is deferred (best-effort + human-reviewed). v4's riskiest leaf.
+- **F54** — objective-drift audit registered UNBUILT (C57 / OQ-C57-3) — loudest residual after G31 on a self-modifying L5 factory. Operator call.
+- **G37** — no secrets store (owned by C03); blocks FE-3 signing; keeps several controls "detect not prevent".
 
 ## 8. Artifact map (`architectures/v4/_meta/`)
 
-META-PLAN · TRACK-CHARTERS · DOC-TEMPLATES · BUILDER-BRIEF · ADVERSARY-BRIEF · component-inventory (+ -A/-B raw) · ambiguities-and-gaps · review-log · INTEGRATION-PASS-1 · **SURVIVOR-PASS** (convergence apply) · **FUTURE-ENHANCEMENTS** (deferred FE-1..5) · STATUS · HANDOFF (this).
+META-PLAN · TRACK-CHARTERS · DOC-TEMPLATES · BUILDER-BRIEF · ADVERSARY-BRIEF · component-inventory (+ -A/-B raw) · ambiguities-and-gaps · **review-log** (D-1..D-19 + harvested OQs) · INTEGRATION-PASS-1 · SURVIVOR-PASS · FUTURE-ENHANCEMENTS · **RUN-SCOPE-2026-05-31** (this run's scope envelope) · **STATUS** (coverage ledger) · HANDOFF (this). Run summary at repo root: [`run-summary.md`](../../../run-summary.md).
 
-Frozen reference (do not author here): `spec-optimized/` + `plan-optimized/` (each carries a `README.md` pointing back to the canonical track).
+Frozen reference (do not author here): `spec-optimized/` + `plan-optimized/`.

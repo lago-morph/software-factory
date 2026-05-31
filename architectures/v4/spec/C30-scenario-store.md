@@ -183,11 +183,15 @@ the *enforcement/audit* contract to C34, the *partition* contract to C42).
 - **INV-3 (partition placement):** every stored scenario is in the **`scenarios` partition** C42 defines, so
   the holdout invariant `scenarios ∉ read_partition(worker)` (C42) and C34's audit have a well-defined
   target. C30 places; it does not enforce (D-13).
-- **INV-4 (day-0 signed):** every scenario is signed at authoring time; an unsigned or signature-mismatched
-  scenario is detectable as tampered/un-provenanced (F9, F7). *(Verification + key custody are downstream —
-  C34 / C03; INV-4 is "C30 signs on store".)*
-- **INV-5 (DSL-faithful):** scenarios are valid Inspect AI `Task` artifacts; C30 stores no bespoke
-  scenario format (README:170). The corpus is Inspect-AI-native.
+- **INV-4 (git-revision integrity):** every scenario has an immutable, content-addressed **git commit
+  identity** in the separate repo, so a tampered/edited scenario is detectable as a history change and is
+  attributable to the committing rig (AI-CONTEXT:236/404; INV-1/INV-6). *(Cryptographic per-scenario signing
+  is DEFERRED → FE-3, blocked on G37/D-14; it is **not** an INV-4 obligation at sweep 1. The git-revision
+  identity is the Phase-0/2 mechanism F7 baselining verifies against.)*
+- **INV-5 (DSL-faithful):** scenarios validate against the **pinned** Inspect AI `Task` schema; C30
+  introduces no bespoke scenario format (README:170). *(Task validity is an **adopted-upstream property**
+  verified by the conformance pack / version pin, G11 — not a format C30 itself defines; the corpus is
+  Inspect-AI-native.)*
 - **INV-6 (versioned, append-growing):** the corpus is version-controlled and grows additively over time
   (README:526); scenario history is preserved (git), not overwritten.
 
@@ -205,7 +209,7 @@ C30 *owns the scenario corpus + its layout + signatures*; the *partition policy*
 | **Scenario repo** | The separate git repo holding all scenarios (README:171/425). | Git repository (separate from code). | C30 |
 | **`scenarios/<component>/` layout** | Per-component scenario directories (AI-CONTEXT §16.4 L698); the path the runner/judge/audit resolve. | Files in the scenario repo. | C30 |
 | **Inspect AI `Task` scenarios** | The scenario bodies, authored in the Inspect AI Task DSL (README:170). | Python files under the layout. | Inspect AI (format); C30 (corpus) |
-| **Day-0 signatures** | Per-scenario signature for tamper-evidence/provenance (F9). | Sidecar/embedded signature in the repo. | C30 (produce); C03 (key, G37) |
+| **Git-revision integrity** | Content-addressed commit identity per scenario = Phase-0/2 tamper-evidence/provenance (AI-CONTEXT:236/404). *(Cryptographic signing DEFERRED → FE-3/G37, D-14.)* | Git commit history of the separate repo. | C30 (git); *FE-3/C03 (signing+key, deferred)* |
 | **`[[service]] type="inspect_ai"` pack** | The Gas City pack exposing Inspect AI as a provider + the `inspect_eval` tool node (README:424; AI-CONTEXT §13.3). | Version-controlled pack (TOML + glue). | C30 (this); C02/C17 (ABI/abstraction) |
 | **`[[rig]] scenario_authoring` binding** | *Reference only* — the rig C30 authors in. The block itself is **C42-owned** (`city.toml`, AI-CONTEXT §13.3). | C42 config. | **C42** (owns); C30 (binds) |
 

@@ -13,8 +13,7 @@ visualization" (the *export/visualize* direction is the delivered, near-native o
 (b) to give the factory **bidirectional DOT↔formula interop** so DOT-ecosystem tooling — chiefly the
 Mammoth-derived 21-rule linter (C15) — can be brought to bear on v4's workflows (README:135, :538;
 AI-CONTEXT:469). The bidirectional/import half is the "small Go side project" that "doesn't have to be
-perfect" (README:538); its guarantee is not Phase-1 "delivered-full" but the **G24 round-trip proof** below. v4 frames it as a *small* artifact: "~few hundred LOC Go" (README:135), "a small Go side
-project" that "doesn't have to be perfect" (README:538).
+perfect" (README:538); its guarantee is not Phase-1 "delivered-full" but the **G24 round-trip proof** below. v4 frames the whole artifact as *small*: "~few hundred LOC Go" (README:135).
 
 The load-bearing obligation — and C14's whole reason to be a *spec'd component* rather than a throwaway
 script — is **round-trip fidelity (G24)**: the corpus asserts lossless bidirectionality between two formats
@@ -83,7 +82,7 @@ formula's steps and whose edges are its dependencies. Sweep-1 mapping (named, no
 | Formula concept (C12) | DOT rendering (described) | Note |
 |---|---|---|
 | Node identity | DOT node id | 1:1; ids must survive the round trip (canonical-form key). |
-| Node **kind** `{agent, tool, gate, sub_formula}` | DOT node attribute (e.g. a `kind=` attr) **+** a visual style (shape/color) for graphviz | Kind values are **C12's** (D-7); C14 only chooses the attribute encoding. |
+| Node **kind** `{agent, tool, gate, sub_formula}` | DOT node attribute (e.g. a `kind=` attr) **+** a visual style (shape/color) for graphviz | Kind values are **C12's** (D-7); C14 only chooses the attribute encoding. *(The set literal here is reproduced from C12, not defined by C14, and is itself a C12 sweep-2/G11 [FAITHFUL-FILL] — C14 tracks whatever C12 freezes; see §8 AC-7.)* |
 | Node binding (C17 tool name / C09 template name) | DOT node attribute | Preserved verbatim for round-trip. |
 | Edge / dependency | DOT directed edge | Edge direction = dependency direction. |
 | **Loop / back-edge marker** (bounded-iteration construct) | DOT **marked back-edge** (a back-edge carrying an attribute that flags it as a *sanctioned bounded loop*, distinct from a raw cycle) | **The C14→C15 seam element.** C15 must distinguish a sanctioned bounded loop from a raw back-edge in the DOT it lints (C15 §3.3 rule 1; C15 §9 OQ-2 names "loop-construct markers" as part of the surface it needs). The **concrete encoding is deferred to C12:OQ-2** (the loop primitive is unfrozen — §3.4); this row freezes the *obligation* (export must emit a marked, lintable loop) so C15's loop-lint capability is not silently dropped. |

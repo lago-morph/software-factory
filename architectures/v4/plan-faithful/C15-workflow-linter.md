@@ -33,10 +33,11 @@ Ordered tasks. Size S/M/L. Prerequisites by task id / component id.
 - **C17 / C02** tool-node abstraction + ABI (declared input → status + output) — frozen.
 - **C03** config layering (the optional-enable + blocking disposition) — shape known.
 
-**Critical path:** C14 DOT-surface contract (**T3**, gated on C14 being specced) → **T1** (I/O contract) →
-**T2** (report schema) → **T4** (rule table) → **T5/T6** (detectors + front-end) → **T8** (pack) → **T9**
-(acceptance). **T0-license** runs in parallel from the start and must land before T4/T8 finalize. The single
-biggest schedule risk is **C14**: T3 cannot fully freeze until C14 exists, so stub-against-contract early.
+**Critical path:** C14 DOT-surface contract (**T3**, gated on C14's *sweep-2* attribute encoding + C14:OQ-2
+loop markers) → **T1** (I/O contract) → **T2** (report schema) → **T4** (rule table) → **T5/T6** (detectors +
+front-end) → **T8** (pack) → **T9** (acceptance). **T0-license** runs in parallel from the start and must land
+before T4/T8 finalize. The single biggest schedule risk is **C14**: T3 cannot fully freeze until C14's
+attribute-level DOT surface + loop encoding (C14:OQ-2) land at sweep-2, so stub-against-contract early.
 
 **Can run concurrently with C15:** **C16** discipline linter (sibling on the same formula, disjoint concern)
 and **C14** itself (C15 consumes C14's output but the two can be built in parallel against the frozen T3
@@ -81,10 +82,11 @@ Spike in this order to retire the most uncertainty:
    commit to **pattern-reimplementation** (the structural rules are textbook DAG algorithms — see risk 3),
    recording `transfused_from` as pattern-only. Also document the **exact 21 rules** (AI-CONTEXT §509 open
    item), since the rule table (T4) and `transfused_from` record depend on it.
-2. **OQ-2 / C14 DOT surface** — the load-bearing dependency. C14 has no spec; confirm the DOT export carries
-   the node ids, edges, and **loop-vs-back-edge** distinction C15's cycle rule needs. If C14's round-trip is
-   lossy on that topology, fall back to reading the C12 AST directly. Spike against a hand-written DOT export
-   of a real formula early.
+2. **OQ-2 / C14 DOT surface** — the load-bearing dependency. C14 **is specced at sweep-1** (named surface:
+   node ids, `kind=` attr, edges), but its **attribute-level encoding is C14 sweep-2** and the
+   **loop-vs-back-edge marker is C14:OQ-2**; confirm the DOT export will carry the node ids, edges, and the
+   loop-vs-back-edge distinction C15's cycle rule needs. If C14's round-trip is lossy on that topology, fall
+   back to reading the C12 AST directly. Spike against a hand-written DOT export of a real formula early.
 3. **Re-implementability of the 21 rules** — prototype 3–4 representative rules (cycle detect, reachability,
    chain-length) to confirm they are mechanically detectable from topology alone (they are — standard graph
    algorithms). This both sizes T5 *and* de-risks the G30 license fallback (proving C15 is buildable without
@@ -112,5 +114,6 @@ positive+negative fixture; T6 with the un-parseable-DOT clean-fail case; T9 with
 the C15/C16 split.
 
 **Carried to sweep 2:** the per-rule (21× `rule_id`→detector+severity) table from the Mammoth source
-(OQ-3), findings serialization choice shared with C10 (OQ-4), the frozen C14 DOT-surface contract once C14 is
-specced (OQ-2), the sequence diagram, and concrete rule-by-rule fixtures.
+(OQ-3), findings serialization choice shared with C10 (OQ-4), the frozen C14 DOT-surface contract once C14's
+sweep-2 attribute encoding + C14:OQ-2 loop markers land (OQ-2), the sequence diagram, and concrete
+rule-by-rule fixtures.

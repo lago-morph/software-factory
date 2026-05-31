@@ -14,7 +14,7 @@ C11 is a **pack + a fixed field schema**, not a running service: "building C11" 
 | **T3 — Minimal conformant exemplar record** | Author one valid 9-field intent record (all slots filled) that anchors a trivial C08 spec; the model dependents/authors build against. | S | T1 |
 | **T4 — Negative exemplar record** | Author a deliberately incomplete record (a missing slot) to anchor AC-2 and give a failure fixture. | S | T1, T3 |
 | **T5 — C11→C08 anchor seam** | Freeze the single load-bearing outbound contract (spec §3.2): how a completed record anchors C08 authoring — which field maps to which part of the C08 spec (goal/scope/DoD). Sweep-1 names + describes it; sweep-2 makes the mapping concrete. | M | T1 |
-| **T6 — Provenance + attribution wiring** | Document that each record carries `transfused_from` (GF-C lineage, **owned by C51**) and `created_by` (C41), and is versioned in git like C08 (INV-4). No new tooling — convention + verification that pack/git + C51/C41 deliver it. | S | T1 |
+| **T6 — Provenance + attribution wiring** | Document that each *record* carries `created_by` (C41) and is versioned in git like C08, and that the GF-C `transfused_from` lineage rides the **crucible pack** at component grain (A93: per-component, **owned by C51**) — **not** per record (INV-4). No new tooling — convention + verification that pack/git + C51/C41 deliver it. | S | T1 |
 | **T7 — G23 rubric-material seam (to C53)** | Document + fixture the AC-6 seam: field #7 (acceptance criteria / DoD) is exposed as candidate rubric input to **C53**; C11 does **not** build the validation gate. The deliverable is the *contract that intent arrives with an explicit DoD*, not the gate. | S | T1, T3 |
 | **T8 — Acceptance fixtures** | Encode AC-1…AC-6 (spec §8) as checkable fixtures, **including the negative AC-5** (assert C11 ships no elicitation workflow / no semantic gate / no separate store / no field-DSL). | M | T2, T3, T4, T5, T7 |
 
@@ -60,7 +60,7 @@ Freeze these first (though few external consumers depend on them — C11 is a le
 
 1. **M1 — Field schema (from T1).** "Intent is a fixed 9-field record: goal, scope, non-goals, actors, inputs/preconditions, constraints, acceptance-criteria/DoD, known-ambiguities, exemplar-reference." Everything else references this. *Contingent on T-R1* (real GF-C names may rename/regroup slots; count stays 9).
 2. **M2 — C11→C08 anchor seam (from T5).** The single load-bearing outbound contract: completed record → anchors C08 spec authoring. This is the one seam worth freezing for downstream coherence (it is what makes the C08 spec "anchored not guessed").
-3. **M3 — Provenance convention (from T6).** `transfused_from` (GF-C, owned by C51) + `created_by` (C41) + git-versioned, like C08.
+3. **M3 — Provenance convention (from T6).** Per-record `created_by` (C41) + git-versioned, like C08; the GF-C `transfused_from` lineage is **pack/component-level** (owned by C51, A93), not on each record.
 4. **M4 — G23 rubric-material seam (from T7).** The DoD field is exposed to **C53**; C11 does not own the gate.
 
 Milestone order: M1 → (M2 ∥ M3 ∥ M4). Because no component stubs against C11, milestone *timing* is low-pressure; milestone *correctness* (M1's field set) is the thing to get right.
@@ -83,7 +83,7 @@ Spike in this order to retire the most uncertainty earliest:
 - T3 done ⇒ AC-4 input (conformant record exists and anchors a trivial C08 spec).
 - T4 done ⇒ AC-2 (negative): missing-slot record is flagged incomplete.
 - T5 done ⇒ AC-4 + M2 frozen: the C11→C08 anchor seam is documented (fields → C08 prose).
-- T6 done ⇒ AC-3 (versioned + attributable): a record resolves to a commit carrying `created_by` (C41) + `transfused_from` (GF-C, C51).
+- T6 done ⇒ AC-3 (versioned + attributable): a record resolves to a commit carrying `created_by` (C41); the crucible pack (not the record) carries `transfused_from` (GF-C, C51/A93) at component grain.
 - T7 done ⇒ AC-6 (G23 seam): the DoD field is exposed as candidate rubric material to C53; the gate itself is **not** built here.
 - T8 done ⇒ all of AC-1…AC-6 are mechanically checkable, **including the negative AC-5** (no elicitation engine / no semantic gate / no separate store / no field-DSL).
 

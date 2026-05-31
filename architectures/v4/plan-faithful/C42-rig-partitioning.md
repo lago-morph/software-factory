@@ -16,8 +16,8 @@ correspondingly small; the load-bearing work is **freezing contracts** that C30/
 | **T1** | **Freeze the rig/role-declaration contract** — closed role set {worker/implementer, scenario-author, judge}, `[[rig]]` shape (`name`, `read_partition`, `write_partition`). (Spec §3.1, §4.1) | S | C01 partition primitive confirmed |
 | **T2** | **Freeze the partition model + holdout invariant** — partition = label-addressed r/w region; named `code`/`scenarios`; `scenarios ∉ read_partition(worker)`. (Spec §3.2, §4.2) | S | T1 |
 | **T3** | **Freeze the worktree-isolation contract** — one isolated writable worktree per run, scoped to rig partitions (F17). (Spec §3.3) | S | C04 session/worktree seam |
-| **T4** | **Freeze the holdout-audit feed contract** — per-rig role + partition labels + r/w policy published for C34's audit (detect-only seam). (Spec §3.4) | S | T1, T2 |
-| **T5** | **Write the G28 composition/authority statement** — layered defense: rig `read_partition` authoritative → filesystem perms + repo backstop → OPA deferred → audit detect-only. (Spec §4.3) | S | T2 |
+| **T4** | **Freeze the holdout-policy feed contract** — per-rig role + partition labels + r/w policy published for **C34 (holdout integrity & isolation enforcement)** to enforce + audit; residual broad-tool-access read-escape is detect-after-the-fact until C43. (Spec §3.4) | S | T1, T2 |
+| **T5** | **Write the one-line G28 authority note** — which mechanism is the declarative unit (rig `read_partition`); filesystem perms + repo realize it on disk; OPA deferred; enforcement+audit is C34's. A sweep-1 clarification, **not** a frozen composition contract (DELTA-01 "composition order" was dropped). (Spec §4.3) | S | T2 |
 | **T6** | **Author `[[rig]]` config exemplars** — `scenario_authoring` + `implementer` blocks per AI-CONTEXT §13.3, plus the invalid (worker-reads-scenarios) negative example. | S | T1, T2 |
 | **T7** | **Resolve enforcement-strength OQ (G21/OQ-C42-1)** — spike: does Gas City *reject* a config where worker `read_partition` includes `scenarios`, or merely permit-with-review? Does the worker subprocess get *prevented* from out-of-partition reads, or is it discipline + C34 detect? Feeds the C43 hand-off. | M | T2; G11-class `gc` availability |
 | **T8** | **Resolve role-naming + judge-partition OQs** — OQ-C42-2 (worker≡implementer?), OQ-C42-3 (judge partition), OQ-C42-4 (`[rigs]`/`[[rig]]` spelling, XC-9). | S | T1 |
@@ -58,7 +58,7 @@ C04 (session/worktree) ────┴─► T3
 | **M1 (earliest, load-bearing)** | Holdout invariant + partition model (T2) — `scenarios ∉ read_partition(worker)`, named partitions `code`/`scenarios` | C30 (scenario partition), C34 (what "violation" means) |
 | **M2** | Holdout-audit feed contract (T4) — per-rig partition policy surface | C34 builds its detector against the published labels |
 | **M3** | Worktree-isolation contract (T3) | C04 ↔ C42 boundary on worktree-per-run scoping |
-| **M4** | Composition/authority statement (T5) | C43 (what it must *enforce*), C57 (residual-risk register) |
+| **M4** | One-line G28 authority note (T5) | C57 (residual-risk register). *(Not "what C43 must enforce" — holdout enforcement+audit is C34's per inventory; C43 owns the lethal-trifecta blast-radius bound. See spec review RC42-01.)* |
 
 Freeze M1 first: it is the clause F28/C34/D-1 all rest on. M2 and M4 let C34 and C43 start without waiting
 on the T7 enforcement spike.
@@ -67,15 +67,18 @@ on the T7 enforcement spike.
 
 1. **(Highest) Enforcement is discipline-only, not a real control (G21/G31/OQ-C42-1).** Per D-1 there is no
    model-family fallback, so a detect-only holdout boundary is the *sole* integrity guarantee. **De-risk
-   first via T7's spike** + the C43 hand-off: establish whether the worker subprocess is *prevented* from
-   out-of-partition reads or only *audited after the fact*. If discipline-only, the residual risk must be
-   loud in C34/C57 and route the prevention requirement to C43 (a Track-B `[DELTA]` candidate).
+   first via T7's spike**: establish whether the worker subprocess is *prevented* from out-of-partition
+   reads or only *audited after the fact*. If discipline-only, the residual risk must be loud in C34/C57.
+   *(Ownership of the prevention seam — C34's holdout enforcement charter per inventory vs the
+   broad-tool-access read-escape that only C43's lethal-trifecta isolation closes — is DEFERRED to the
+   orchestrator per spec review RC42-01/02; do not pre-decide it as "C43's" in this plan.)*
 2. **`gc` partition primitive may not exist as described (G11-class).** T1/T7 assume `[[rig]]`
    `read_partition`/`write_partition` and worktree isolation are real Gas City behavior (AI-CONTEXT §13.3 /
    F17 "native"), but this is asserted-not-run. Spike `gc` config-load with the §13.3 `[[rig]]` blocks early
    (T7) — same uncertainty that blocks C01/C41.
-3. **Mechanism-composition ambiguity (G28) leaves downstream unsure what enforces the boundary.** De-risk
-   via T5's explicit layered/authority statement before C30/C34/C43 build.
+3. **Mechanism-authority ambiguity (G28) leaves downstream unsure what is authoritative today.** De-risk
+   via T5's one-line authority note (rig `read_partition` = declarative unit; perms/repo realize it; OPA
+   deferred; enforcement+audit is C34's) before C30/C34/C43 build — a note, not a composition stack.
 4. **Role-naming drift (worker vs implementer; `[rigs]` vs `[[rig]]`, XC-9).** Low impact but cheap to
    retire — T8 early so config exemplars (T6) and C07's glossary use one canonical spelling.
 
@@ -88,11 +91,12 @@ forward with owner + reason).
 
 **Per-component (tied to spec §8 acceptance criteria):**
 - The holdout invariant is declared and a worker-reads-`scenarios` config is documented as **invalid**
-  (§8.1); enforcement *strength* is recorded (T7) and the prevention path handed to C43.
+  (§8.1); enforcement *strength* is recorded (T7). Holdout enforcement+audit is C34's charter; the
+  broad-tool-access read-escape is C43's blast-radius bound — the exact split is DEFERRED (RC42-01/02).
 - Role closure (§8.2), partition confinement (§8.3), and worktree disjointness (§8.4, F17) hold.
 - C34's holdout-integrity audit can consume C42's published partition policy to *detect* a `scenarios`-read
   violation (§8.5).
-- The G28 composition/authority statement and the G21/G31 detect-only residual-risk caveat are explicit and
-  discoverable by C30/C34/C43/C57 (§8.6, §8.7).
+- The G28 one-line authority note and the G21/G31 detect-after-the-fact residual-risk caveat are explicit
+  and discoverable by C30/C34/C43/C57 (§8.6, §8.7).
 - All four OQs are in review-log with owners (OQ-C42-1 → reconciler/C43; OQ-C42-2/3 → C42+C34; OQ-C42-4 →
   C07/integrator).

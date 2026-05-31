@@ -64,6 +64,8 @@ ENFORCES+AUDITS** the holdout read-isolation (after-the-fact detection of a scen
 the broad-tool-access blast radius at the external surface (twin-by-default + deterministic boundary type) —
 the residual that neither C42's declaration nor C34's audit can themselves *prevent* (D-13, XC-8).
 
+> **Wrap-up decision (D-20, ADOPTED 2026-05-31; confirms D-18, flips PROVISIONAL→ADOPTED).** C43's split-sequencing is now **binding, not provisional**: the **boundary-typing / blast-radius half** (depends only on C42 + the P4 primitives, NOT twins) is a **Phase-2 entry precondition** — a gate the factory MUST pass before running unattended (P2) or self-modifying (P3b); the **twin-isolation half** (blocked on C44) stays at **Phase 3c**. The "accept detection-only Phase 0" alternative is REJECTED. See [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25).
+
 > [FAITHFUL-FILL] **C43 = the boundary *typing declaration* + the default-twin *routing rule*; NOT a custom
 > isolation kernel, capability-grant engine, or OS-enforcement layer.** Per the capability-for-principle bar,
 > three would-be C43 mechanisms were explicitly **DROPPED**: a C43 *capability-grant* layer over pack
@@ -427,7 +429,10 @@ format, the C45/C57 feed schemas, and the deterministic-typing classification ru
   real `gc`/twin stack (**G11**). Same enforcement-strength uncertainty as C34's OQ-C34-1.
 - **OQ-C43-2** (→ review-log): **Does C43's exposure window (Phase 0→3b) need an interim bound before C44
   twins land, or is detection-only (C34 audit + capability-breach detection, XC-8) the accepted Phase-0
-  posture?** G31's substance is that the real fix is unbuilt for the whole early period. Confirm whether the
+  posture?** **RESOLVED by D-20 (ADOPTED 2026-05-31):** the window gets an interim bound — the
+  boundary-typing / blast-radius fence is pulled forward to a **Phase-2 entry precondition**; detection-only
+  Phase 0 is REJECTED (XC-8 closed). The twin-isolation half stays Phase 3c. See [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25).
+  G31's substance is that the real fix is unbuilt for the whole early period. Confirm whether the
   orchestrator accepts detection-only-until-C44 (the faithful reading) or wants C43 sequenced earlier / an
   interim isolation (an architectural change the canonical track may not take unilaterally). *(This is the
   XC-8 "sequence C43 earlier or accept detection-only Phase 0" decision applied to the broad-tool-access

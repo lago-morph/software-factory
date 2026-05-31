@@ -358,7 +358,7 @@ nothing else (C49 is the last leaf) but is itself the **heaviest-human-review** 
   what N, what variance bound, what judge-FP guard (C46/C32)? Is the honest Phase-3d posture **"deterministic
   slice automated + LLM slice human-reviewed-only"** until this is answered? *This is the riskiest open
   question in v4* (component-inventory line 127) and the one the "heaviest human review" (README line 470) is
-  for. **Frame, don't pretend to close.**
+  for. **Frame, don't pretend to close.** **Disposition ADOPTED per D-22 (2026-05-31):** the deterministic-tool / twin slice is automated + reproducible now (feeds C48/C50); the LLM-step slice ships best-effort, variance-bounded, human-reviewed, and is **NEVER auto-promoted on its own**; LLM-half calibration is deferred and the optimization loop is not gated on it. C49's honest split-framing stands. See [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25).
 - **OQ-2 (→ review-log): replay-job/result persistence.** Is a replay job/result persisted as a **bead** (a new
   `factory_build`/experiment slot → C20 change request) or kept **transient** with the **CXDB variant branch
   as the durable artifact** (the leaner default)? Freeze sweep-2 with C20/C48.

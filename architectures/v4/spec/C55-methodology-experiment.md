@@ -315,10 +315,10 @@ review-log decision** (OQ-4) — not (yet) a pre-existing logged ruling.
 > per-work-type** selection rather than a fixed architectural commitment. C55 also surfaces the
 > **methodology-misfit** risk (v4's whole pivot rationale, AI-CONTEXT:19: misfit is "Low — rewrites a pipeline
 > file") as a *measured* signal (a low-satisfaction candidate is visible, not silently shipped). C55 defers the
-> canonical F-mode mapping to C57.
+> canonical F-mode mapping to C57. *(C57 is a later-batch component; C55 names the seam, does not block on it.)*
 
-**The bar — what got DROPPED.** Per the ruthless bar, C55 is held to *only* the P-methodology-experimentation
-capability — the **methodology-as-data** loop: ten v3 candidates **as swappable C12 formula files**, run through
+**The bar — what got DROPPED.** Per the ruthless bar, C55 is held to *only* the methodology-experimentation
+(pivot/Bet-5) capability — the **methodology-as-data** loop: ten v3 candidates **as swappable C12 formula files**, run through
 the **existing** eval tier, **empirically selected per work type**. **Dropped / refused as non-principle or
 already-in-the-stack:** (1) any **methodology *engine* / new runner or scorer** — candidates run on the existing
 C12 formula swap + C30/C31/C32/C33 eval tier; C55 adds *orchestration*, not an engine; (2) any **bespoke
@@ -347,14 +347,15 @@ single existing component provides**.
   gap — ambiguities-and-gaps). v4 asserts "the substrate cost amortizes across all of them" (README:512) **with
   no number**. C55's design response is to keep the loop *thin* and *incremental* (re-derivable, INV-6 — run a
   candidate when ready, accumulate evidence over time, don't re-run all cells eagerly) and to **surface sample
-  counts** (INV-5) so cost-vs-evidence is legible; the **cost model itself is C46/G32's**, not C55's. *[FLAG:
+  counts** (INV-5) so cost-vs-evidence is legible; the **cost model itself is C46/G32's**, not C55's *(C46 is a
+  later-batch component; C55 names the seam, does not block on it)*. *[FLAG:
   over-budget risk — experiment fan-out × single-seat throughput is the real scaling tension; quantify with C46
   before running the full ten-candidate × work-type grid. → OQ-3 / review-log.]*
 - **Scale.** Experiment cells fan out as (candidates × work-types × scenarios); the honest scale posture is
   **incremental, evidence-accumulating** runs (INV-6) rather than an eager full-grid sweep — a sweep-2/ops
   concern, not a Sweep-1 design force. No bespoke scaling machinery is warranted (the bar).
 - **Observability.** C55's selection evidence (per-cell satisfaction, sample counts, the chosen mapping) *is*
-  the headline P-methodology-experimentation signal and is worth emitting as events for auditability (why a
+  the headline methodology-experimentation (pivot) signal and is worth emitting as events for auditability (why a
   methodology was selected for a work type). C55 is mostly a *reader* of C33's signal, not a heavy emitter.
 - **Ops.** Pack-delivered loop, enabled in Phase 3 after Layer 2 (AI-CONTEXT:482). Pin the eval-tier versions
   (Inspect AI via C30/C33) so cross-candidate comparisons are reproducible (inherits the eval-tier version-pin

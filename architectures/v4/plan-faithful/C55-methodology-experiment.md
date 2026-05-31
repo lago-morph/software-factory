@@ -12,7 +12,7 @@
 | T4 | **Work-type key (I2, addresses G05)** — define the `work_type` dimension selection is computed per ("which kind of work", README:33); name the key + its role; leave the canonical taxonomy to sweep-2 (OQ-2). | S | T1 |
 | T5 | **Experiment-run orchestration (I3/INV-2)** — for each (candidate formula × work_type), drive the **eval tier** (C30 held-out scenarios → C31 runner → C32 judge → C33 satisfaction) to produce a **C33 distribution + sample count per cell**, **same scenarios + same judge** for all candidates of a work type (README:31). C55 orchestrates; runs/judges/aggregates nothing itself. | M | T3, T4, C30/C31/C32/C33 contracts |
 | T6 | **Per-work-type selection rule (I4/INV-3, D-15)** — rank candidates for a work type by **holistic C33 satisfaction**; select the best; record the choice. "GF-M first" is ordering, not a pre-decided winner (INV-3). | M | T5 |
-| T7 | **C48 significance consultation (I4/INV-4 — the routing ruling)** — **consult C48** for "is the leading candidate actually better"; build **no** significance machinery. Until C48 exists (Batch 5), surface raw per-cell distributions + sample counts and **withhold** the significance claim (never fabricate one). | S | T6, C48 (forward; not a blocker) |
+| T7 | **C48 significance consultation (I4/INV-4 — C55's significance→C48 scope boundary)** — **consult C48** for "is the leading candidate actually better"; build **no** significance machinery. Until C48 exists (Batch 5), surface raw per-cell distributions + sample counts and **withhold** the significance claim (never fabricate one). | S | T6, C48 (forward; not a blocker) |
 | T8 | **Selection output (I5)** — emit the `work_type → methodology` mapping + supporting evidence + sample counts (INV-5) as the tool-node declared output; shape it for the dispatch tier (which formula to run for which kind of work). | S | T6, T7 |
 | T9 | **Fairness + thin-evidence honesty (INV-2/INV-5)** — exclude failed-to-evaluate candidates from a cell (with reason); flag selections on thin/uneven evidence as provisional; re-run affected candidates if the C30 corpus changed between runs (the "same scenarios" guarantee). | S | T5, T6 |
 | T10 | **Methodology-experiment pack (AC-1…AC-9)** — harness registering ≥2 candidate **formula files** (a GF-M stand-in + one other) over ≥2 work types, against synthetic held-out C30 scenarios + synthetic C33 outputs (clear-winner, tie, failed candidate, thin-evidence cell), driving all acceptance tests — especially candidate-as-swapped-formula, same-scenarios/same-judge, empirical-per-work-type with **GF-M-first ≠ GF-M-wins**, **significance-consulted-from-C48/withheld-until-C48**, and **no-custom-engine**. | L | T3–T9, synthetic eval-tier fixtures |
@@ -26,7 +26,7 @@
 - **C02/C17** (pack + tool-node ABI to package/invoke) + **C03** (feature-flag gate).
 
 **Consulted (forward reference, NOT a blocker):**
-- **C48** (A/B statistical significance — "was the variant actually better"; **Batch 5, unbuilt**). C55 (Batch 4) **names the seam** and runs with significance withheld until C48 lands (the routing ruling). C55 must not block on C48.
+- **C48** (A/B statistical significance — "was the variant actually better"; **Batch 5, unbuilt**). C55 (Batch 4) **names the seam** and runs with significance withheld until C48 lands (C55's scope boundary, grounded in C48's inventory mandate + the C33 precedent; to be recorded as a review-log decision — OQ-4). C55 must not block on C48.
 
 **C55 must precede (the choice is consumed downstream):**
 - the **factory dispatch tier** (C05 sling, via the chosen C12 formula name) — which formula to dispatch for which kind of work.
@@ -68,7 +68,7 @@ C32/C33/C48 firm up — C55's real risk is the *selection contract*, not the eva
   is registered.
 - **M3 — empirical selection + significance routing fixed (T6/T7, G05):** selection is **empirical C33
   satisfaction per work type** (D-15), **GF-M-first ≠ GF-M-wins** (INV-3), and **significance is C48's**
-  (consulted, not computed — the routing ruling) — frozen before the dispatch tier reasons over the selection.
+  (consulted, not computed — C55's significance→C48 scope boundary, §6) — frozen before the dispatch tier reasons over the selection.
 
 ## 5. Risks & de-risking order
 
@@ -79,7 +79,7 @@ C32/C33/C48 firm up — C55's real risk is the *selection contract*, not the eva
    selects *relatively* best per work type). This retires the central G05 ambiguity and fixes C55's scope; a
    wrong call would re-introduce the v3 "pick a methodology" framing v4 calls the *wrong question*
    (AI-CONTEXT:501).
-2. **Confirm — significance routing to C48 (T7/OQ-4, the binding ruling).** Verify "was the variant actually
+2. **Confirm — significance routing to C48 (T7/OQ-4, C55's binding scope boundary — to be recorded in the review-log).** Verify "was the variant actually
    better" lives at **C48** (Batch 5) and C55 builds **no** significance machinery; confirm C55's interim
    behavior (raw distributions + **withheld** significance until C48 exists) is acceptable. A wrong call here
    would have C55 grow a stats engine the bar forbids (and C48 already owns).
@@ -104,7 +104,7 @@ eval-tier outputs — **methodology-as-data** (each candidate a swappable C12 fo
 **same-scenarios/same-judge** comparison (INV-2), a **C33 satisfaction distribution per (candidate, work-type)
 cell** with **no C55 model call / metric** (I3), **empirical per-work-type selection** with **GF-M-first ≠
 GF-M-wins** (INV-3, addresses G05), **significance consulted from C48 / withheld until C48** with **no custom
-stats** (INV-4, the routing ruling), **sample counts surfaced** (INV-5), **re-derivable** with **no
+stats** (INV-4, C55's significance→C48 scope boundary), **sample counts surfaced** (INV-5), **re-derivable** with **no
 source-of-truth** (INV-6), and a `work_type → methodology` output consumable by the dispatch tier (I5). C55 is a
 small Gas City pack loop containing **no runner, scorer, metric, or significance engine**.
 
@@ -114,7 +114,7 @@ small Gas City pack loop containing **no runner, scorer, metric, or significance
 - T4: `work_type` key named + its selection role fixed; taxonomy deferred to sweep-2 (OQ-2).
 - T5: a synthetic (candidate × work_type) cell yields a C33 distribution + sample count via the eval tier; **same scenarios + same judge** enforced across candidates (AC-2/AC-3).
 - T6: per-work-type selection on **holistic C33 satisfaction** (D-15); GF-M-first ≠ GF-M-wins (AC-4).
-- T7: significance **consulted from C48** / **withheld until C48**; **no** p-value computed (AC-5, the routing ruling).
+- T7: significance **consulted from C48** / **withheld until C48**; **no** p-value computed (AC-5, C55's significance→C48 scope boundary).
 - T8: emitted `work_type → methodology` mapping consumable by the dispatch tier (AC-9).
 - T9: failed candidate excluded-with-reason; thin/uneven evidence flagged provisional; corpus-change re-run (AC-2/AC-6 fairness).
 - T10: full AC suite green; **must pass before the dispatch tier acts on the selection**.

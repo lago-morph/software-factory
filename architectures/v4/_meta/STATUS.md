@@ -2,6 +2,9 @@
 
 Live state of the v4 spec & plan run. Updated by the primary agent every wave.
 
+## ✅ TRACKS CONVERGED (2026-05-31) — single canonical track is `spec/`
+Track A (faithful) was renamed `spec/` and adopted as the **one canonical track**. Track B (optimized) is frozen as reference (`spec-optimized/`, `plan-optimized/`). A survivor pass under the operator's capability-for-principle bar found all 25 must-have deltas **already present** in `spec/` in minimal form (zero spec edits); 117 hardening deltas were dropped and the 4 architectural "bets" deferred. See [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md) and [`FUTURE-ENHANCEMENTS.md`](./FUTURE-ENHANCEMENTS.md) (FE-1..FE-5). The build target for the 34 unbuilt components is now `spec/`.
+
 ## ⏹ SESSION ENDED at token limit (2026-05-30). PR #213 MERGED. See `_meta/HANDOFF.md` to resume.
 
 ## Current phase

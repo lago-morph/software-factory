@@ -460,3 +460,46 @@ Stack: OS filesystem permissions, git worktrees (native to gas city). v4 says "f
 3. Archive `spec-optimized/` and `plan-optimized/` to `_meta/optimized-reference/` (don't delete — reference for future revisits of the 4 bets).
 4. Full cross-spec re-read to verify consistency.
 5. Then: author the 34 unbuilt components on the single canonical track, applying the same bar.
+
+---
+
+# APPLY RESULTS (Phase 2 — 2026-05-31)
+
+**Headline: zero spec content edits were needed. 21 of the 25 KEEP-MINIMAL deltas were already present in the canonical (faithful) `spec/` track in minimal form; the remaining 4 (the C08/C09 cluster) reclassified on close read (below).**
+
+## Why no edits
+The faithful charter ("elaborate v4 with the minimal `[FAITHFUL-FILL]`s needed for consistency") already arrived at the same minimal-capability forms the survivor pass identified as worth keeping. The 117 dropped optimized deltas were hardening/enforcement *on top of* those forms. Verified by reading all 12 keep-bearing canonical specs:
+
+| Keep(s) | Canonical `spec/` location confirming presence |
+|---|---|
+| C01-04 tool-node seam | C01 §3 I3 (tool-node ABI named, owned by C02) |
+| C02-01 wire protocol | C02 §3.2 (subprocess ABI; args+files+exit-code floor) |
+| C10-01/02/03 linter shape | C10 §3.2 findings report (rule_id/severity/location/message) + INV-3 advisory/blocking |
+| C17-01 tool registry | C17 §3.1 tool-node abstraction (name→`[[tool]]` binding) |
+| C19-06 validation seam | C19 §2 + OQ-C19-1 (C20 `validate` seam, D-4) |
+| C20-01/02/03 catalog | C20 §4.2 closed bead-type catalog (G17) |
+| C20-04 termination slots | C20 §4.3 (attempt count / terminal-state / escalation marker; G18) |
+| C20-05 created_by required | C20 §4.1 envelope (`created_by` mandatory) |
+| C24-01/02/04/05 bridge | C24 §3 I1–I5 + INV-1/2/4 (watch→parse→post; at-least-once; parent-chain; complete-file) |
+| C25-01/02 topology | C25 §1 (config not daemon) + INV-1 (two-sink, never crossed) |
+| C29-01 model_family | C29 §4 `modeldb` registry `{id, family, cost_tier}` |
+| C29-02 L1 judge | already in via D-1 |
+| C42-03 3-role taxonomy | C42 §4.1 closed role set + holdout invariant `scenarios ∉ read_partition(worker)` |
+
+## C08/C09 reclassification (close-read correction — supersedes their KEEP entries above)
+On re-reading faithful C08/C09 during apply, the C08 cluster keeps conflicted with the refined bar **and** with faithful's deliberate design. **This supersedes my earlier "no decisions change under the refined bar" statement** — these four change:
+
+- **C08-01 (standalone spec bundle), C08-02 (multi-file bundle) → DROP.** Organizational re-architecture (split spec from prompt template). Under the refined bar they add no new *capability* for a principle — they reorganize the same P1 capability "better." Applying them would *reverse* faithful C08's deliberate Reading-A collapse (the `prompt.template.md` file **is** the spec), which faithful flagged as the integrator's load-bearing call (C08 OQ-1). The canonical track keeps the collapse.
+- **C09-01 (bind by `spec_id`) → DROP (moot).** The Reading-B binding mechanism that only exists if the standalone bundle is adopted. With the collapse kept, there is no separate `spec_id` to bind; C09's binding capability is already present via the collapse (C09 §3.1 / INV-2).
+- **C08-03 (enumerated per-criterion DoD) → DEFER (FE-5).** This one *does* add a real capability for P5 (satisfaction scoring needs scoreable criteria). But its consumers — C32 (judge harness), C33 (satisfaction metric) — are among the unbuilt 34. Defining the DoD interface now gets ahead of its consumer. Deferred to when C32/C33 are authored (see `FUTURE-ENHANCEMENTS.md` FE-5). Does **not** require the standalone-bundle split (dropped); a DoD can attach to the Reading-A collapsed spec.
+
+**Revised tally:** 21 already-present (no edit) · 3 reclassified DROP · 1 deferred (FE-5). Net spec content edits: **0**.
+
+## Archive decision (in-place, not physically moved)
+Phase-0 plan said "archive `spec-optimized/` + `plan-optimized/` to `_meta/optimized-reference/`." On inspection, physically moving them would require rewriting depth-changed relative links across ~46 moved files plus ~20 inbound references (cross-track provenance notes in canonical specs, the research files, STATUS/HANDOFF/META-PLAN) — error-prone churn for cosmetic benefit, against the "don't break things" preference. **Archived in place instead:** `spec/` is declared the single canonical track (STATUS.md banner); `spec-optimized/` and `plan-optimized/` carry a FROZEN-REFERENCE `README.md` pointing at the canonical track and the deferred bets. The cross-track provenance links in canonical specs stay valid.
+
+## Net state after Phase 2
+- **One canonical track:** `spec/` (+ its `plan-faithful/` build companion — rename to `plan/` is an open follow-up).
+- **Frozen reference:** `spec-optimized/`, `plan-optimized/` (deferred bets FE-1..FE-4; cross-track provenance).
+- **Deferred capabilities recorded:** `FUTURE-ENHANCEMENTS.md` FE-1 (judge L2/L3), FE-2 (portability), FE-3 (signing), FE-4 (multi-seat), FE-5 (enumerated DoD).
+- **Ready:** author the 34 unbuilt components on `spec/` under the capability-for-principle bar.

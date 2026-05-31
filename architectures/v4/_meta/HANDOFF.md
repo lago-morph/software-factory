@@ -7,6 +7,13 @@
 
 This file + the other `_meta/` artifacts are sufficient to resume with zero re-grounding.
 
+> **⚠ SUPERSEDED IN PART (2026-05-31): tracks converged.** The two-track structure described below is the
+> *historical* state of the run that produced the 23 components. Since then, Track A was renamed `spec/` and
+> adopted as the **single canonical track**; Track B (`spec-optimized/`, `plan-optimized/`) is frozen
+> reference. Build the 34 unbuilt components on `spec/` under the capability-for-principle bar. Current state
+> and per-delta disposition: [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md); deferred bets:
+> [`FUTURE-ENHANCEMENTS.md`](./FUTURE-ENHANCEMENTS.md) (FE-1..FE-5).
+
 ---
 
 ## 1. Where we are: 23 of 57 components built (both tracks, Sweep-1 / architecture altitude)

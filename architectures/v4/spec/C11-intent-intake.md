@@ -2,7 +2,7 @@
 
 > Source: F-MODE-COVERAGE F41 (line 91: "Under-defined-intent debt — **Intent Crucible pack (gene transfusion from GF-C) — 9-field structured intake** — Addressed"); one-shot-specs-and-research.md Part 2 "Research on Spec Attributes vs. Code-Generation Success" (lines 86–122 — the **completeness / ambiguity / specificity / requirement-classes** attributes that causally affect how far an AI gets, esp. HumanEvalComm arXiv:2406.00215 and the class-level-completeness "sweet spot" arXiv:2510.26130) + Part 1 (the DoD / acceptance-criteria practice: Kilroy `DoD.md`, line 29; StrongDM three-spec shape, line 14); component-inventory C11 row (line 23: subsystem **Spec Intake**; kind **component**; maps **A97, A149**; depends **C08**; key gap **G23**; foundational **no**); gene-transfusion discipline C51 (the `transfused_from` + exemplar-correctness + license posture the GF-C transfusion is governed by). Sibling specs: `spec/C08-spec-artifact.md` (the artifact the crucible feeds), `spec/C10-spec-linter-ears.md` (the *after-the-fact* prose checker, contrasted in C10 §"NOT"), `spec/C09-prompt-template-binding.md` §1 (names C11 as "the intent crucible", not the binder).
 > Inventory ID: C11   Kind: component   Status: sweep-1
-> Track: canonical (per **D-6**: one track; no "Track A/B" framing)
+> Track: canonical (per **D-6**: one track)
 
 ## 1. Purpose & responsibility
 

@@ -20,7 +20,7 @@
 > ambiguities-and-gaps G33; review-log D-6 (canonical track), D-8 (Order owned by C40; C07 glossary entry,
 > C12 references but does not define).
 > Inventory ID: C40   Kind: component   Status: sweep-1
-> Track: canonical (per D-6 — no Track-A/B framing)
+> Track: canonical (per D-6)
 
 ## 1. Purpose & responsibility
 

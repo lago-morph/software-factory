@@ -37,13 +37,21 @@ Like C23 (event bus) and C01 (substrate), C40 is **owned by the adopted Gas City
 factory-authored: **Gas City Orders are NATIVE** (durable, event-triggered, crash-surviving) (README line 258
 "Orders native"). C40's deliverable is therefore **the seam spec of-record for the Order primitive** — what
 an Order *is*, how it is triggered off C23 events, what state survives a crash, and the contract handed to
-its P11 consumer (C39 fix-task loop-closure, which is the workflow an Order most naturally drives). Per
+its P11 consumer (C39 fix-task loop-closure — *inferred* as the workflow an Order most naturally drives:
+v4 states only "Orders subscribing to crashes/gates" (AI-CONTEXT §3.1 line 76), and C39's own declared
+deps are C38/C20/C08, so this launch coupling is C40's faithful inference, not a v4-stated wiring — see
+§2 and OQ-4). Per
 **D-8**, "Order" (durable event-triggered workflow) is **owned by C40** (this component is its home); C12
 formula files *reference* Orders but do not define them; **C07 carries the glossary entry** (C07 line 125).
 
 C40 is **NOT foundational** (component-inventory line 52, "foundational? no") and is **off at minimum
-install** — the `orders` block is in Phase-0's "Explicitly off" list (AI-CONTEXT §3.4). It turns on in
-**Batch 3 / Phase 3b** when the self-healing loop is built (component-inventory line 111; README line 459).
+install** — the `orders` block is in Phase-0's "Explicitly off" list (AI-CONTEXT §3.4). It is **built in
+inventory Batch 3** (component-inventory line 111, the workflow-tooling batch — "…durable Orders") so the
+Order seam is *standing before* the **README Phase-3b** P11 Healer pieces (anomaly/clustering/diagnosis/
+fix-task/loop-closure = C36–C39, inventory Batch 4) turn on and consume it. NB: inventory "Batch *n*" and
+README "Phase *n*" are **distinct, non-aligned** decompositions — C40 is *not* itself one of the README
+Phase-3b build bullets (which are the Healer pieces, README lines 459–466); Orders appear only as the P11
+*capability* row, README line 258. The Order capability is enabled when the self-healing loop is built.
 
 **Responsibilities (what C40 is the spec-of-record for):**
 - **Event-trigger binding** — an Order declares a *trigger condition over C23 events* (e.g. an event of a

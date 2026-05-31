@@ -34,9 +34,10 @@ C33 is the **spec-of-record for the satisfaction-metric definition (G09)**: what
 *is* (the judge's score), how a population of them is *reduced* (the distribution + its summary statistics),
 and — explicitly bounded below — what is **deferred** (the pass/fail *threshold* / "satisfied" cutline, which
 v4 never defines). It is **deliberately thin**: v4 names the engine as **Inspect AI score reduction** (a mature
-MIT capability, AI-CONTEXT:302) wrapped as a Gas City pack; C33's *custom* surface is only the **distribution
-shape + the bead-population read/aggregate glue** that Inspect AI's per-task reduction does not by itself span
-(README:426 "small Go tool node … computing distributions").
+MIT capability, AI-CONTEXT:302; v4's named companion is **MLflow tracking**, AI-CONTEXT:393) wrapped as a Gas
+City pack; C33's *custom* surface is only the **distribution shape + the bead-population read/aggregate glue**
+that Inspect AI's per-task reduction does not by itself span (README:426 "small Go tool node … computing
+distributions").
 
 **Responsibilities (what C33 is the spec-of-record for):**
 - **Read judge outputs for a trajectory population (I1).** Pull the per-trajectory judge results — scores +
@@ -46,13 +47,19 @@ shape + the bead-population read/aggregate glue** that Inspect AI's per-task red
   **judge score** (C32's output) — a graded value, *not* a boolean test-pass (README:181; P6). C33 owns the
   **normalisation contract** (what scale judge scores are reduced on); the score *value* is C32's.
 - **Reduce the population into a *distribution* + summary statistics (I2).** Compute, over the population of
-  per-trajectory scores, the **satisfaction distribution** and its summary statistics (mean/median, spread,
-  quantiles, satisfaction-rate-above-an-operator-supplied-cutline, sample count) — the "distribution over
-  trajectory population" of README:188. This is **Inspect AI score reduction** plus a stats library
-  (numpy/scipy/pandas), not a custom statistics engine.
+  per-trajectory scores, the **satisfaction distribution** and its summary statistics (count, mean/median,
+  spread, quantiles; and — *only if* an optional reporting cutline is configured — rate-above-cutline) — the
+  "distribution over trajectory population" of README:188. The engine is v4's named **Inspect AI score
+  reduction** (README:188; AI-CONTEXT:302/393), plus a **thin stats helper** for the distribution summaries
+  Inspect AI's per-task reduction does not itself emit — **not** a custom statistics engine.
+  > [FAITHFUL-FILL] v4 names **only** "Inspect AI score reduction" (companion: MLflow tracking, AI-CONTEXT:393)
+  > for C33's aggregation; `numpy`/`pandas` appear nowhere in v4 and `scipy` is named in v4 specifically as
+  > **C48**'s A/B significance engine (README:275; AI-CONTEXT:360/421). So any stats library behind Inspect
+  > AI's reduction is a minimal *helper* inference for quantiles/spread, NOT a v4-stated C33 engine and
+  > explicitly NOT the scipy significance machinery (that is C48). Concrete library choice is sweep-2.
 - **Define the population/grouping key (I3).** What set of trajectories one distribution is computed over —
-  **per spec-revision** (the unit C08 §"observability" names: "a spec revision is the unit a satisfaction
-  metric (C33) … are computed *against*"), optionally sliced per scenario / per run-cohort.
+  **per spec-revision** (the unit C08 §7 obs names: "A spec revision is the unit a satisfaction metric (C33)
+  … are computed *against*", C08:112), optionally sliced per scenario / per run-cohort.
 - **Emit the satisfaction metric as a typed result (I4).** Surface the distribution + statistics as the tool
   node's declared output, consumable by **C46** (meta-metrics: cost-per-satisfaction, time-to-threshold —
   README:269), **C53** (bootstrap-validation gate — inventory C53 `depends on C33`), and **C55** (methodology
@@ -70,10 +77,12 @@ shape + the bead-population read/aggregate glue** that Inspect AI's per-task red
 - **NOT the meta-metric stream.** cost-per-satisfaction, time-to-threshold, and judge-false-positive-rate over
   *time* are **C46** (README:269; inventory C46 `depends on C33`). C33 produces the *satisfaction* term C46
   divides cost by; it does not model cost, time, or trend.
-- **NOT a custom statistics engine.** The reduction is **Inspect AI score reduction** + numpy/scipy/pandas
-  (AI-CONTEXT:302/393). C33 introduces **no bespoke estimator, bootstrap, or significance machinery** — A/B
-  significance testing lives in **C48** (scipy/Evidently). If a future need arises for confidence intervals on
-  the satisfaction rate, that is C48/C46 territory, not a C33-owned stats engine (§6, the-bar note).
+- **NOT a custom statistics engine.** The reduction is v4's named **Inspect AI score reduction**
+  (AI-CONTEXT:302/393) plus a thin distribution-summary helper ([FAITHFUL-FILL]; v4 names no stats library for
+  C33 — see I2). C33 introduces **no bespoke estimator, bootstrap, or significance machinery** — A/B
+  significance testing lives in **C48** (the v4-named scipy/Evidently engine, README:275). If a future need
+  arises for confidence intervals on the satisfaction rate, that is C48/C46 territory, not a C33-owned stats
+  engine (§6, the-bar note).
 - **NOT the trajectory store or the judge-output schema.** Trajectories live in **C21** (CXDB); the
   judge-output *bead* shape is **C20**'s schema over **C19** (C33 *reads* it, does not define it). C33 owns the
   *aggregation* contract, not the storage or the input record format.
@@ -89,7 +98,7 @@ shape + the bead-population read/aggregate glue** that Inspect AI's per-task red
 | Upstream (judge output) | **C32** Judge harness | Produces the per-trajectory **judge score** C33 reduces. Same provider/family as coder (D-1) — does not change C33, which is provider-agnostic (it consumes scores, not models). Inventory C33 `depends on C32`. |
 | Upstream (population source) | **C19** Bead work-graph | The durable store where C32's judge outputs land as beads; C33 **reads the judge-output beads** for a population ("reading judge outputs from beads", README:426). Inventory C33 `depends on C19`. |
 | Input-record schema | **C20** Bead schema registry | Owns the judge-output bead *type/payload* (score + run/scenario identity) C33 reads. C33 uses the registered type; it does not define it. |
-| Reduction engine | **Inspect AI score reduction** (pack-wrapped) | The MIT, "mature within framework" reducer (AI-CONTEXT:302) C33 wraps as a Gas City pack; plus numpy/scipy/pandas for distribution statistics. Pattern/engine reuse, not custom stats. |
+| Reduction engine | **Inspect AI score reduction** (pack-wrapped) | The MIT, "mature within framework" reducer (AI-CONTEXT:302; v4's named companion is MLflow tracking, AI-CONTEXT:393) C33 wraps as a Gas City pack; plus a thin stats helper for distribution summaries (`[FAITHFUL-FILL]` — v4 names no stats library for C33; scipy is C48's). Pattern/engine reuse, not custom stats. |
 | Packaging host | **C02** Pack/tool-node ABI, **C17** Tool-node abstraction | C33 is a **small Go tool node in a Gas City pack** (README:426/440), invoked via the tool-node protocol. *(Related interface, not a dependency edge; mirrors how C24 names C02/C17.)* |
 | Downstream (meta-metrics) | **C46** Meta-metric stream | Consumes the satisfaction term to compute cost-per-satisfaction / time-to-threshold (README:269). Inventory C46 `depends on C33`. |
 | Downstream (bootstrap gate) | **C53** Bootstrap-validation milestone | The go/no-go gate that needs a satisfaction rubric, not "looks good" (G23); reads C33's distribution. Inventory C53 `depends on C33`. |
@@ -112,8 +121,8 @@ Inspect AI).
 | # | Interface | Direction | Description | Owning/detailing component |
 |---|---|---|---|---|
 | I1 | **Judge-output population read** | inbound (read) | Query C19 for the judge-output beads constituting a population (by grouping key, I3); each carries a per-trajectory **score** + run/scenario identity (README:426). | C33 (this); **C19/C20** (store + record) |
-| I2 | **Score reduction → distribution + statistics** | internal | Reduce the population of scores into the **satisfaction distribution** and summary statistics (count, mean/median, spread, quantiles, rate-above-supplied-cutline). **Inspect AI score reduction** + numpy/scipy/pandas — no custom estimator. | C33 (this); Inspect AI (engine) |
-| I3 | **Population / grouping key** | input (config) | Defines the trajectory set one distribution spans — default **per spec-revision** (C08 §obs), optionally sliced per scenario / cohort. Sweep-1 names the key; the canonical slice taxonomy is sweep-2. | C33 (this) |
+| I2 | **Score reduction → distribution + statistics** | internal | Reduce the population of scores into the **satisfaction distribution** and summary statistics (count, mean/median, spread, quantiles; rate-above-cutline only if a cutline is configured). Engine = v4-named **Inspect AI score reduction** + a thin distribution-summary helper (`[FAITHFUL-FILL]`; v4 names no stats library for C33, scipy is C48's) — no custom estimator. | C33 (this); Inspect AI (engine) |
+| I3 | **Population / grouping key** | input (config) | Defines the trajectory set one distribution spans — default **per spec-revision** (C08 §7 obs, C08:112), optionally sliced per scenario / cohort. Sweep-1 names the key; the canonical slice taxonomy is sweep-2. | C33 (this) |
 | I4 | **Satisfaction-metric result output** | outbound (data) | The tool node's declared output: the distribution + statistics + population identity (which spec-revision/scenario set, sample count), surfaced via the tool-node ABI and consumable by C46/C53/C55. | C33 (this); C02/C17 (surfacing) |
 | I5 | **Tool-node lifecycle (pack)** | inbound (ops) | Packaged + invoked as a Gas City tool node (C02/C17 ABI); configured via pack TOML (population default, the optional reporting cutline, the score-normalisation rule). | C02/C17 (ABI); C33 (config) |
 
@@ -123,7 +132,9 @@ Inspect AI).
   boolean. This is the load-bearing P6/Ashby's-law property (README:181; AI-CONTEXT:36).
 - **INV-2 (no scoring — verdict comes pre-computed).** Every input score is **C32's**; C33 performs **no model
   call and no per-trajectory judgement**. C33 is a pure reduction over given scores (deterministic given its
-  inputs + config). (Mirrors C31 INV-4 "verdict-blind" on the producer side.)
+  inputs + config). (C33 *reduces* scores but, like the C31 runner's INV-4, renders **no pass/fail verdict** —
+  INV-3; the cutline/decision is C50/C53/C39's. C31:159 hands the scoring layer to C32/C33; C33 then defers
+  the pass/fail cutline onward.)
 - **INV-3 (threshold-free computation — G09).** C33 **computes** the distribution **without** depending on a
   "satisfied" cutline. A reporting cutline, if supplied, only produces an *additional statistic*
   (rate-above-cutline); it is **never** required for the metric to be well-defined and C33 renders **no**
@@ -171,9 +182,10 @@ wired downstream of C32 (judge outputs land on C19) and upstream of C46/C53/C55.
    optionally a scenario/cohort slice).
 2. **Read judge outputs (I1):** query C19 for that population's judge-output beads; collect per-trajectory
    scores + identities.
-3. **Reduce (I2):** apply Inspect AI score reduction + a stats library to produce the **satisfaction
-   distribution** and summary statistics (count, central tendency, spread, quantiles, and — if a reporting
-   cutline is configured — rate-above-cutline). No model call (INV-2); no pass/fail verdict (INV-3).
+3. **Reduce (I2):** apply v4's named Inspect AI score reduction + a thin distribution-summary helper
+   (`[FAITHFUL-FILL]`; no v4-named stats library for C33) to produce the **satisfaction distribution** and
+   summary statistics (count, central tendency, spread, quantiles, and — if a reporting cutline is configured
+   — rate-above-cutline). No model call (INV-2); no pass/fail verdict (INV-3).
 4. **Emit (I4):** surface the distribution + statistics + population identity (incl. sample count, INV-4) as
    the tool-node output, for C46 (meta-metrics), C53 (bootstrap gate), C55 (methodology selection).
 
@@ -265,8 +277,9 @@ capability, but a **C08 change**)?
 **The bar — what got DROPPED.** Per the ruthless bar, C33 is held to *only* the P5/P6-tied capability (compute
 the satisfaction **distribution** — the variety-of-outcomes measure) plus the low-effort bead-read/aggregate
 glue v4 explicitly names as custom ("small Go tool node", README:426). **Dropped / refused as non-principle or
-not-C33's:** (1) any **custom statistics engine** — bootstrap/CI/significance machinery is *partial-satisfied
-by scipy* and, where genuinely needed for A/B, is **C48's**, not a new C33 estimator; (2) a built-in **pass/fail
+not-C33's:** (1) any **custom statistics engine** — bootstrap/CI/significance machinery is the v4-named
+**scipy/Evidently** stack assigned to **C48** (README:275; AI-CONTEXT:360/421), not a new C33 estimator (C33
+adds only a thin summary helper behind Inspect AI's reduction — `[FAITHFUL-FILL]`, §1/I2); (2) a built-in **pass/fail
 "satisfied" verdict / threshold** — that re-introduces test-pass (anti-P6) and belongs to the C50/C53/C39
 decision sites (G09 reading (b)); (3) **trend/cost modelling** (cost-per-satisfaction, time-to-threshold over
 time) — that is **C46**; (4) **unilateral enumerated-DoD in C08** — deferred to the integrator (FE-5). What is
@@ -281,7 +294,7 @@ bead-population read/reduce glue Inspect AI's per-task reduction does not by its
 - **Cost.** A local Go tool node doing a stats reduction over beads — **negligible compute, no model tokens, no
   managed store** (consistent with the no-managed-DB stance). The *judge* tokens are C32's cost; C33 adds none.
   C33 produces the **satisfaction term** C46 later divides cost by (README:269) but models **no** cost itself.
-- **Scale.** Reduction cost is linear in population size and trivially handled by numpy/pandas; the only honest
+- **Scale.** Reduction cost is linear in population size and trivially handled by the thin stats helper; the only honest
   scale note is that very large populations (many trajectories per spec-revision under L5 volume) should be
   reduced **incrementally / streamed** rather than fully materialised — a sweep-2/perf concern (OQ-2), not a
   Sweep-1 design force. No bespoke scaling machinery is warranted (the bar).
@@ -312,8 +325,9 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
 7. **AC-7 (consumable downstream — I4):** the emitted metric (distribution + statistics + population identity)
    is consumable by **C46** (meta-metrics), **C53** (bootstrap gate), **C55** (methodology selection) per their
    inventory dependencies.
-8. **AC-8 (engine-reuse, no custom stats — the bar):** the reduction is **Inspect AI score reduction +
-   numpy/scipy/pandas** (AI-CONTEXT:302/393); no bespoke estimator/significance engine is present (significance
+8. **AC-8 (engine-reuse, no custom stats — the bar):** the reduction is v4's named **Inspect AI score
+   reduction** (AI-CONTEXT:302/393) + a thin distribution-summary helper (`[FAITHFUL-FILL]` — v4 names no
+   stats library for C33; scipy is C48's); no bespoke estimator/significance engine is present (significance
    is C48).
 9. **AC-9 (FE-5 holistic baseline — addresses FE-5):** satisfaction is computed against the **existing C08
    spec** (holistic judge rubric) with **no C08 change**; per-criterion aggregation is *absent* at Sweep-1 and

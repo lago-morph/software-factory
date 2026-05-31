@@ -42,8 +42,11 @@ twin of service X) is one instantiation.
 - **Expose the twin as a C17 tool node** — the twin is reached through the deterministic-step abstraction
   (C17) over the pack ABI (C02), placed via a per-twin Gas City `[[service]]` block (README:200 "Per-twin Gas
   City `[[service]]` block"; line 202 "Per-twin Go binary"). The agent calls the twin exactly as it would the
-  real dependency's tool node; **service selection (twin vs real) is the caller's/scenario's choice**, not
-  C44's.
+  real dependency's tool node; **C44 is the addressable target, never the selector**. Two distinct selection
+  axes sit above C44: (a) **C43** owns the deterministic *twin-by-default routing* for the broad-tool agent —
+  external dependencies resolve to a C44 twin unless a per-pack production-scissors declaration opts into
+  `production` (F44; C43 §3.2, INV "twin-by-default"); and (b) in an **eval context** the scenario/runner
+  selects the *run target* (C31:OQ-5). Neither axis is C44's.
 - **Capture record/replay fixtures** — the recorded real-service traffic the replay layer serves, plus the
   seed/known-state the stateful layer starts from. These fixtures are C44-owned data.
 - **Transfuse the LocalStack pattern** — follow LocalStack's shape for "clone a service from its contract"

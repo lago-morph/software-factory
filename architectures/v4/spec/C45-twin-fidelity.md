@@ -398,10 +398,12 @@ per BUILDER-BRIEF altitude.)
    can still diverge on un-probed inputs (finite corpus vs unbounded environment surface, F3/F13), and (b) the
    recorded reference can drift from the evolving real service (F55/OQ-C45-2). "Addressed" for F12/F33/F44/F56
    is recorded as **conditional on a current passing verdict**, not unconditional.
-8. **No tooling-rebuild over-build (bar)**: C45 contains **no** custom contract-testing engine, schema-diff
-   library, or mocking runtime — the checks are stack OSS (Pact/schemathesis/Prism/record-replay,
-   README:201/199; AI-CONTEXT:343–344); the **only** custom code is the fidelity predicate + the
-   combine-and-gate wiring (AI-CONTEXT:347 "DIY").
+8. **No tooling-rebuild over-build (bar)**: C45 contains **no** custom contract-testing engine, record/replay
+   capturer, or mocking runtime — the stack-provided parts are **Pact / schemathesis** (contract,
+   README:201/AI-CONTEXT:344) + **record/replay** reference capture (VCR/go-vcr/polly, README:199); the
+   **only** custom code is the fidelity predicate + the **tolerance-scored behaviour diff** + the
+   combine-and-gate wiring — the "Manual diff tooling / DIY" parts (AI-CONTEXT:347). *(Prism, AI-CONTEXT:343,
+   is C44's OpenAPI mock, not a C45 check.)*
 
 (Concrete fidelity-predicate schema + default tolerance catalog, the contract-check adapter contract, the
 behaviour-diff record schema, and the verdict/report bead types are sweep-2 deliverables.)

@@ -1,4 +1,4 @@
-# C07 — Vocabulary & Glossary  (Spec, Track A)
+# C07 — Vocabulary & Glossary  (Spec, canonical track)
 
 > Source: README §Part 4 (Gas City placement tables, lines ~104–278), README §Part 5 (risk register: "Vocabulary lock-in to Gas City", line 516; mitigation "Glossary; pair sessions", line 622), README line 384 (gene-transfusion def), README line 664 (v3 vocabulary reference); AI-CONTEXT §3.2 ("nine concepts" table, lines 79–93), §3.3 (vocabulary translation table, lines 95–112), §3.4 (smallest-install term inventory, lines 114–122), §3.6 (vocabulary-free runtime, lines 131–135); component-inventory C07 row (line 19); ambiguities-and-gaps §G06 (line 23); v3 `architectures/v3/build-guide/01-vocabulary.md` (corpus-name discipline + translation tables).
 > Inventory ID: C07   Kind: cross-cutting   Status: sweep-1
@@ -119,7 +119,7 @@ the load-bearing README Part 4 terms named in **G06**. The authoritative seed se
 | City | A workspace | workspace | AI-CONTEXT §3.3 |
 | Rig | An agent worker role | agent worker role | AI-CONTEXT §3.3 |
 | Pack | Distributable methodology bundle (TOML + tool-node binaries + templates) | methodology bundle / plugin | AI-CONTEXT §3.3; C02 |
-| Convoy | Batched workflow | batched workflow | AI-CONTEXT §3.3 |
+| Convoy | Batched workflow (atomic multi-bead dispatch — a Gas City sling concept referenced by C05) | batched workflow | AI-CONTEXT §3.3; C05 (D-8) |
 | Wisp | Unit of dispatchable work | dispatchable work unit | AI-CONTEXT §3.3 |
 | Wait | Gating / synchronization primitive | sync primitive | AI-CONTEXT §3.3 |
 | Order | Event-triggered workflow (survives crashes/retries) | durable/event-triggered workflow | AI-CONTEXT §3.3; C40 (Gas City Orders) |
@@ -218,7 +218,7 @@ automated CI gate are sweep 2.)
 - **OQ-C07-1 (→ review-log):** The "layer" collision (G01: three-layer vs Layer 0–6) and the "phase"
   collision (G02) are vocabulary defects that surface in C07's scope, but resolving them re-architects
   meaning owned by other docs. Should C07 (a) record both readings and defer, or (b) be granted
-  authority to pin the canonical reading? Track A's faithful default is (a) — record + defer — but this
+  authority to pin the canonical reading? The canonical track's faithful default is (a) — record + defer — but this
   leaves two genuinely ambiguous terms in the canonical glossary. **Top open question.**
 - **OQ-C07-2:** Registry file format and location (TOML registry assumed as [FAITHFUL-FILL]) needs
   ratification with C03 (config) so linters load it uniformly. Deferred to sweep 2.

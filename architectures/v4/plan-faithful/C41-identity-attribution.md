@@ -1,4 +1,4 @@
-# C41 — Identity / actor model & attribution  (Build Plan, Track A)
+# C41 — Identity / actor model & attribution  (Build Plan, canonical track)
 
 > Source / Spec ref: [spec/C41-identity-attribution.md](../spec/C41-identity-attribution.md)
 
@@ -75,9 +75,9 @@ Freeze these early so dependents (C20, C23, C42, C06) can build against stubs:
    universal `created_by` or merely defaults it (OQ-C41-3). If it only defaults, the F14 invariant is
    discipline-dependent, which materially affects M2 and bears on the whole G36 security story. Retire
    this before declaring F14 "Addressed."
-2. **Resolve G36 ownership early (OQ-C41-1) → review-log.** Whether verification stays optional (Track A)
-   or becomes mandatory (likely Track B delta) is the load-bearing decision. Track A holds it optional per
-   README:229, but the cross-track reconciler needs T5's seam fully specified to evaluate the delta. Author
+2. **Resolve G36 ownership early (OQ-C41-1) → review-log.** Whether verification stays optional (canonical
+   track) or becomes mandatory (a deferred enhancement — graduated-mandatory signing = FE-3, blocked on G37 per D-14) is the load-bearing decision. The canonical track holds it optional per
+   README:229, but the integrator needs T5's seam fully specified to evaluate the enhancement. Author
    the seam (T5) even though the pack is deferred, precisely so the decision can be made cheaply later.
 3. **Operator-as-actor (OQ-C41-2).** Confirm with C42 whether the human operator needs a fourth actor kind
    before freezing M1 — a late addition to the kind set would churn the encoding (M1) everywhere.

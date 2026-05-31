@@ -1,4 +1,4 @@
-# C08 — Spec artifact & format (`spec-artifact`)  (Build Plan, Track A)
+# C08 — Spec artifact & format (`spec-artifact`)  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C08-spec-artifact.md`](../spec/C08-spec-artifact.md)
 > Inventory: C08, Spec Intake, artifact, foundational=yes. Depends on: C03. Track: A (faithful). Sweep: 1.
@@ -66,7 +66,7 @@ Spike in this order to retire the most uncertainty earliest:
 
 1. **R1 — The spec/prompt-template collapse (spec OQ-1, highest).** v4 equates "spec" with `prompt.template.md`, but the one-shot-specs corpus shows real dark-factory specs as *standalone target-system Markdown* the prompt template may merely reference. **De-risk first:** prototype T2 as both (a) a self-contained prompt-template spec and (b) a prompt template that *references* a larger spec doc, and confirm which the faithful README:106 reading supports before freezing M1. Getting this wrong reshapes every dependent. (→ review-log.)
 2. **R2 — INV-2 renderability as a hard gate.** [FAITHFUL-FILL] in spec §3.3 — v4 doesn't state "must parse as a valid Go template" explicitly. T3 (negative exemplar) is the spike that confirms C09 can't render a malformed template, validating the inferred invariant before dependents assume it.
-3. **R3 — Internal-schema temptation.** Spec §4 holds the body free-form (faithful). Risk is a dependent (C10/C11) *requiring* structure and back-pressuring a schema into C08 (an architectural addition Track A may not make). De-risk by documenting in M3 that structure is C10's optional concern, not a C08 format change.
+3. **R3 — Internal-schema temptation.** Spec §4 holds the body free-form (faithful). Risk is a dependent (C10/C11) *requiring* structure and back-pressuring a schema into C08 (an architectural addition the canonical track may not make). De-risk by documenting in M3 that structure is C10's optional concern, not a C08 format change.
 4. **R4 — C03 coupling.** C08's storage location depends on C03's pack-section model. Low risk (both Batch-1), but confirm the path/section shape with the C03 author before T4 finalizes.
 
 ## 6. Definition of done

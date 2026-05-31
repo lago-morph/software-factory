@@ -1,14 +1,14 @@
-# C29 — Model floor & stylesheet routing  (Build Plan, Track A)
+# C29 — Model floor & stylesheet routing  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C29-model-floor-stylesheet.md`](../spec/C29-model-floor-stylesheet.md)
-> Track A, sweep-1. Plan altitude matches sweep-1 spec: workstreams + contract milestones, not task-level pseudocode.
+> Canonical track, sweep-1. Plan altitude matches sweep-1 spec: workstreams + contract milestones, not task-level pseudocode.
 
 ## 1. Work breakdown
 
 | Task | Description | Size | Prereqs |
 |---|---|---|---|
 | T1 | **Floor declaration.** Encode "Claude Code @ Max = capability floor" as the single sanctioned coder adapter; this is the artifact that makes F19/F31 "Addressed by declaration". | S | C28 model identity known |
-| T2 | **Model registry (`modeldb`-shaped).** `{id, family(provider-level), cost_tier}` per model; family label is the cross-family comparison key. Transfusion: Kilroy `modeldb` (AI-CONTEXT §6.3). | S | T1 |
+| T2 | **Model registry (`modeldb`-shaped).** `{id, family, cost_tier}` per model; the `family` label is the cross-family comparison key (granularity is a sweep-2 detail). **Per D-1, Phase-0 is the same-provider judge — G08 reading (b)**; the provider-granularity reading (a) is the cross-provider/FE-1 form, not the Phase-0 contract (see T5). Transfusion: Kilroy `modeldb` (AI-CONTEXT §6.3). | S | T1 |
 | T3 | **Stylesheet schema + parser.** CSS-like (selector → declaration), layered TOML under C03. Transfusion: Fabro CSS model stylesheet (AI-CONTEXT §6.2). | M | C03 config shape; T2 |
 | T4 | **`resolveModel(node)` cascade.** CSS specificity resolution → winning model; clamp coder nodes to floor (I1). | M | T3 |
 | T5 | **`crossFamilyRule` (seam) — Phase-0 same-provider baseline per D-1/FE-1.** Phase 0 routes a same-provider judge that is rig/role/prompt-isolated from the coder and emits the active independence constraint; I2 is **relaxed (advisory, not fail-closed)** at Phase 0. Keep the `family` registry field + constraint emitter as the clean seam; the literal `family(judge) ≠ family(coder)` cross-provider enforcement (README:427) is **FE-1 (future)**, switched on when a second-provider family is registered. | M | T2, T4 |
@@ -36,7 +36,7 @@ C03 (config shape) ─────────────────▶ T3
 
 ## 4. Interfaces-first / contract milestones (freeze early)
 
-1. **`modeldb` entry shape** `{id, family, cost_tier}` with **family at provider granularity** (resolves G08 reading (a)). Freeze first — C32/C34 compare on this.
+1. **`modeldb` entry shape** `{id, family, cost_tier}`. The `family` label is frozen first — C32/C34 compare on it. **Per D-1, Phase-0 resolves G08 to reading (b)** (same-provider judge; independence from rig/role/prompt isolation, not family diversity); **provider-granularity cross-family/cross-provider enforcement is FE-1**, not the Phase-0 contract. The field is the clean FE-1 seam (it can be switched to a provider-granularity comparison once a second-provider family is registered) — it does **not** freeze reading (a) as a Phase-0 requirement.
 2. **`resolveModel(node) → modelIdentity`** signature + the floor-clamp postcondition (I1).
 3. **Independence-constraint contract** (the `crossFamilyRule` seam). Phase-0 (D-1/FE-1): emit the active same-provider isolation constraint; I2 is advisory/relaxed at Phase 0. The fail-closed cross-provider form is FE-1. C32/C34 build against this stub immediately.
 4. **Floor declaration** identity string. Downstream attribution (C41) and F19/F31 coverage cite it.

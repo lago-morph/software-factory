@@ -1,4 +1,4 @@
-# C22 — CXDB type registry & viewpoint tagging  (Spec, Track A)
+# C22 — CXDB type registry & viewpoint tagging  (Spec, canonical track)
 
 > Source: AI-CONTEXT §5.3 ("Event schema — the 'turn' model", lines 212–220: "Dynamic type system: `{bundle_id, type, version}` per payload"; "Type registry: JSON bundles like `mycompany.agents.v1` with `mycompany:DeployEvent` schemas"; "Storage layout: `turns.log`, `blobs.pack`, `registry/`"); AI-CONTEXT §5.1 (line 200: CXDB composition includes a "type registry"); AI-CONTEXT §5.5 (line 238: "Type-aware projection → … UI can render typed payloads structurally"); F-MODE-COVERAGE §2 F50 (line 36: "Architecture/spec confusion in typed objects → CXDB type registry with viewpoint tagging on bundles → Addressed"; line 149: "F50 … CXDB type registry enforces viewpoint separation"); component-inventory C22 row (maps `A21f`; depends on C21; gaps G17; foundational: yes; one-liner "Dynamic `{bundle_id,type,version}` type system; viewpoint tagging resolves architecture/spec confusion"); ambiguities-and-gaps G17 (blocker — "the v4-specific type bundle (`{bundle_id, type, version}`) that v4 must register is never specified").
 > Inventory ID: C22   Kind: data-store   Status: sweep-1
@@ -196,7 +196,7 @@ mechanism* for F50 (F-MODE-COVERAGE §2 line 36, §11 line 149). Addressing: man
 marks F50 **Addressed**, but the mechanism is *tagging + query discipline*, not enforcement that a
 writer chooses the *correct* viewpoint — a writer can still mis-tag a spec assertion as architecture.
 This is the same detect-vs-prevent gap pattern the Skeptic flags elsewhere (G21/G36); recorded as an
-open question, not resolved, since Track A may not redesign.
+open question, not resolved, since the canonical track may not redesign.
 
 **Other handling**
 - **Unregistered/invalid type (I1 violation).** Reject at write with a typed error; never silently
@@ -205,7 +205,7 @@ open question, not resolved, since Track A may not redesign.
   resolving — preserves C21 replay (C49) and tamper-evidence (§5.5).
 - **Missing viewpoint (I3 violation).** Reject; "untagged" is not legal.
 - **Registry unavailable / payload references a version not yet replicated.** Faithfully undefined by
-  v4 (part of G33 — no partial-failure story for the OSS stack). Deferred with reason: Track A cannot
+  v4 (part of G33 — no partial-failure story for the OSS stack). Deferred with reason: the canonical track cannot
   invent a replication/degradation design v4 does not state; noted as open question.
 
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
@@ -241,8 +241,8 @@ Sweep-1 (high-level; concrete tests at sweep 2):
 
 - **OQ1 (→ review-log).** F50 is marked **Addressed**, but C22's mechanism is *tagging + query
   separation*, not enforcement that the *correct* viewpoint is chosen at write time. Is detect-and-label
-  sufficient to call F50 "Addressed", or does it share the detect-vs-prevent weakness of G21/G36? Track
-  A flags; resolution belongs to Track B / the residual-risk register (C57).
+  sufficient to call F50 "Addressed", or does it share the detect-vs-prevent weakness of G21/G36? The
+  canonical track flags; resolution belongs to a future enhancement / the residual-risk register (C57).
 - **OQ2 (→ RESOLVED by D-3).** C20 (bead type registry) and C22 (CXDB type registry) are parallel
   registries on two stores; this faithful reading is upheld. The integrator's ruling **D-3** confirms
   the ownership split: **C20 authors the bead-type payload schemas**; **C22 owns the registration

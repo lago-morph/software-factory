@@ -1,4 +1,4 @@
-# C01 — Gas City Runtime Substrate  (Spec, Track A)
+# C01 — Gas City Runtime Substrate  (Spec, canonical track)
 
 > Source: README §Part 4 (Layer/principle placement tables — Pipeline engine line 121, Tool node / reconciler lines 158–160, attribution lines 226–228, memory lines 239–242, event substrate line 252), §Part 6 Phase 0 (lines 353–374) and Phase 1 (lines 376–399); AI-CONTEXT §2 (three-layer + persistence shape, lines 46–54), §3 (Gas City as load-bearing dependency: §3.1 coverage map lines 62–77, §3.2 "nine concepts" lines 79–93, §3.3 vocabulary lines 95–112, §3.4 smallest viable install lines 114–122, §3.5 migration tail lines 124–129, §3.6 extractability lines 131–135), §11 decisions (lines 463–476, 494–502), §13.1 Phase 0 skeleton (lines 522–544), §13.2 Phase 1 additions (lines 546–580), §14 risk register (line 616); component-inventory C01 row (line 13) + critical-path notes; ambiguities-and-gaps G11, G03.
 > Inventory ID: C01   Kind: subsystem   Status: sweep-1

@@ -1,4 +1,4 @@
-# C04 — Session & Provider Runtime  (Build Plan, Track A)
+# C04 — Session & Provider Runtime  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C04-session-provider.md
 
@@ -13,8 +13,8 @@
 | T5 | **Continuity: detach/suspend.** Prove a session outlives client detach and can be suspended without teardown (I2; the idle-burn lever). | M | T1 |
 | T6 | **Resume by id.** Wire `gc bd find --type factory_build_in_progress` → `gc converge resume <bead_id>` so a session re-binds by id after restart with session-id unchanged (AI-CONTEXT §16; README L240). Transfuse Kilroy multi-mode resume pattern (§6.3). | M | T4, T5, C19/C20 |
 | T7 | **Provider conformance harness.** Stand up `runtimetest/conformance.go` against the tmux Provider as the per-Provider acceptance gate (AI-CONTEXT §3.6); proves I1 seam isolation. | M | T1 |
-| T8 | **Alternate-Provider stubs (k8s/subprocess/exec).** Confirm the seam is substrate-agnostic by sketching a second Provider that passes the conformance suite (no production k8s build in Track A — proof of swappability only). | M | T7 |
-| T9 | **Gap spike (G12).** Document (not design) where a future Provider/auth swap lands behind C04's seam if Max subprocess automation is restricted; capture for review-log. *No API-key auth design in Track A.* | S | T7 |
+| T8 | **Alternate-Provider stubs (k8s/subprocess/exec).** Confirm the seam is substrate-agnostic by sketching a second Provider that passes the conformance suite (no production k8s build on the canonical track — proof of swappability only). | M | T7 |
+| T9 | **Gap spike (G12).** Document (not design) where a future Provider/auth swap lands behind C04's seam if Max subprocess automation is restricted; capture for review-log. *No API-key auth design on the canonical track.* | S | T7 |
 
 ## 2. Dependency graph
 
@@ -56,7 +56,7 @@ T2 (env) and T3 (partition) are small, run parallel to all three as soon as T1 l
 1. **G12 — Max subprocess-automation permanence (highest, shared with C28).** Spike first: confirm tmux +
    `claude` provider runs unattended under Max; document where a Provider/auth fallback would plug into the
    seam. C04 is the *location* of the fallback; the fallback auth itself is undesigned in v4 — record, do
-   not invent (Track A).
+   not invent (canonical track).
 2. **Resume fidelity (T6).** The riskiest functional claim — "session-id unchanged + Claude Code context
    restored" across restart. Spike against a real restart + sandbox-death scenario early; v4 asserts
    "Native" but the multi-mode detail is unspecified (OQ2). De-risk before sweep-2.

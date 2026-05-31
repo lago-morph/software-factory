@@ -1,4 +1,4 @@
-# C22 — CXDB type registry & viewpoint tagging  (Build Plan, Track A)
+# C22 — CXDB type registry & viewpoint tagging  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C22-cxdb-type-registry.md
 

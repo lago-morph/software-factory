@@ -1,4 +1,4 @@
-# C10 — Spec linter (EARS / INCOSE) (`spec-linter-ears`)  (Build Plan, Track A)
+# C10 — Spec linter (EARS / INCOSE) (`spec-linter-ears`)  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C10-spec-linter-ears.md
 > Track: A (faithful). Sweep: 1 (architecture altitude — plan names the workstreams and the contracts to freeze; per-rule fixtures land at sweep 2/3).
@@ -14,7 +14,7 @@ Ordered tasks. Size S/M/L. Prerequisites by task id / component id.
 | T3 | **Author the rule-set definition** (the in-pack rule table): enumerate the EARS patterns + INCOSE R7–R35 rules, each as `rule_id` + default severity + mechanically-checkable flag. (Sweep-2 deepens to per-rule detectors.) | L | spec §3.3 |
 | T4 | **Implement EARS pattern conformance detectors** (ubiquitous / event `When` / state `While` / unwanted `If…then` / optional `Where`; single actor; measurable "shall" response). | L | T3 |
 | T5 | **Implement INCOSE R7–R35 structural detectors** (active voice, vague-term list, escape clauses, compound and/or, defined-terms, pronouns, units, negation). Mechanically-checkable rules first; heuristic/best-effort rules flagged. | L | T3 |
-| T6 | **Implement the F38 vocab-lint rule** against C07's TOML term registry: load registry, flag undefined terms / non-canonical aliases; graceful skip-with-warning if registry absent. | M | C07 §3.2 registry; T2 |
+| T6 | **Implement the F38 vocab-lint rule** against C07's **prose glossary**: load the glossary terms, flag undefined terms / non-canonical aliases; graceful skip-with-warning if the glossary is absent. **RESOLVED by D-9:** C10 owns F38; SURVIVOR-PASS C10 #04 dropped only the C07 **machine-readable registry** (`CanonicalTermSet`/content-hash machinery), not C10's F38 duty — so the rule reads C07 as prose data, with **no registry machinery**. T6 + Workstream C + AC-4 stay. | M | C07 §3.3 glossary; T2 |
 | T7 | **Requirement-statement extraction** over free-form Markdown (heuristic per spec §3.3 / OQ-3): identify candidate requirement sentences/list-items; warn (not error) on un-parseable prose. | M | T1 |
 | T8 | **Blocking/advisory disposition** wiring to C03 config (INV-3): default advisory (zero exit + report); per-rule-class opt-in to blocking (nonzero exit). | S | T1, C03 |
 | T9 | **Package as a Gas City pack** with a `[[tool]] type="subprocess"` declaration (C02) so it places as a C17 deterministic node; record `transfused_from` (gene-transfusion of an existing EARS implementation, C51). | M | T1, T4–T6 |

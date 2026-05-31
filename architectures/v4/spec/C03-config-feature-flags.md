@@ -1,4 +1,4 @@
-# C03 — Layered config / feature-flag model  (Spec, Track A)
+# C03 — Layered config / feature-flag model  (Spec, canonical track)
 
 > Source: AI-CONTEXT §3.2 ("nine concepts" #4 — "Config: Layered TOML; section presence = feature flag"); AI-CONTEXT §3.4 (smallest viable install / "Explicitly off" list); AI-CONTEXT §3.1 (coverage map — "Strong when `[formulas]` enabled"); AI-CONTEXT §13.1/§13.2/§13.3 (concrete `pack.toml`/`city.toml` skeletons per phase); AI-CONTEXT §11.1 ("6 of 12 principles natively"); README Part 6 Phase 0/Phase 1 ("Turn on `[formulas]`", "What you do NOT install"); component-inventory C03 row (`A26`, `B70`; depends on C01; gaps G03, G37).
 > Inventory ID: C03   Kind: data-store   Status: sweep-1
@@ -153,7 +153,7 @@ C03 has no control loop; its behavior is **load-time** and **authoring-time**:
 
 - **Security**: C03 is the locus of G37 — `[[service]]` endpoints and per-agent `env = { … }` carry
   endpoints and (implicitly) credentials in plaintext version-controlled TOML. v4 gives no secrets story;
-  C03 surfaces this as residual risk (§9) rather than resolving it (Track-A faithfulness).
+  C03 surfaces this as residual risk (§9) rather than resolving it (Canonical-track faithfulness).
 - **Cost**: negligible direct cost; config is small (~30 lines at Phase 0, AI-CONTEXT §13.1). Its cost
   leverage is indirect — it gates which (costly) services are wired in.
 - **Scale**: config is human-authored and small; no scale concern of its own. It bounds runtime scale by
@@ -185,7 +185,7 @@ C03 has no control loop; its behavior is **load-time** and **authoring-time**:
 - **OQ-C03-1** (→ review-log): **G37 secrets.** v4 puts OAuth/CXDB/LangFuse/OTel-mTLS credentials in
   version-controlled `city.toml`/`env` with no secrets manager. Faithful spec records the risk and defers;
   is even a minimal faithful elaboration (e.g. `env` values referencing an external secret source) in
-  scope, or is that an architectural change reserved for Track B? Flagged, not silently resolved.
+  scope, or is that an architectural change deferred as a future enhancement? Flagged, not silently resolved.
 - **OQ-C03-2** (→ review-log): **Layer-merge precedence is inferred** (§4 FAITHFUL-FILL). v4 never states
   whether imported-pack config deep-merges or is replaced by local `city.toml`, nor array-section
   (`[[service]]`, `[[rig]]`) merge semantics. Needs the actual Gas City precedence rule (G11 — Gas City

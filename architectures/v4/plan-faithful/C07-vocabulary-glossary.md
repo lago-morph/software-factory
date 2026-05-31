@@ -1,4 +1,4 @@
-# C07 — Vocabulary & Glossary  (Build Plan, Track A)
+# C07 — Vocabulary & Glossary  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C07-vocabulary-glossary.md
 > Track: A (faithful)   Sweep: 1
@@ -9,7 +9,7 @@
 |---|---|---|---|
 | T1 | **Seed the canonical term set.** Extract every term from AI-CONTEXT §3.2 (nine concepts) + §3.3 (translation table) + the G06 list (README Part 4 load-bearing terms). Produce the master list. | S | spec §4.1 |
 | T2 | **Define each term.** For every seeded term: canonical one-line definition, generic equivalent, provenance (Gas City runtime / corpus author / v4 convention), and pointer to the owning component spec where the deep definition lives. | M | T1 |
-| T3 | **Resolve / flag collisions.** Walk the cross-term defects (G01 "layer", G02 "phase", and any same-word-two-meanings). For each: record both readings, pick the v4-consistent one *or* flag + defer to the owning doc per Track-A discipline. | M | T2 |
+| T3 | **Resolve / flag collisions.** Walk the cross-term defects (G01 "layer", G02 "phase", and any same-word-two-meanings). For each: record both readings, pick the v4-consistent one *or* flag + defer to the owning doc per canonical-track discipline. | M | T2 |
 | T4 | **Choose registry shape + author it.** Ratify the TOML term-registry format (the [FAITHFUL-FILL]); write one entry per term with fields `term, definition, generic_equivalent, provenance, principles[], aliases[], status`. | M | T2, (coordinate C03) |
 | T5 | **Generate the human-facing glossary doc** from the registry; make it the single artifact README links to (the G06 one-hop fix). | S | T4 |
 | T6 | **Wire historical aliases.** Carry the v3 translation-table mappings (v3-pipeline jargon → plain name) and any deprecated terms as `aliases`/`status=deprecated` so older artifacts still resolve. | S | T4 |
@@ -55,7 +55,7 @@ Freeze early so dependents can build against stubs:
 
 | Risk | De-risk action (order) |
 |---|---|
-| **Term collisions (G01 layer / G02 phase) leave the glossary ambiguous** — highest uncertainty. | Spike T3 *first*, in parallel: produce the both-readings write-up and the recommended Track-A disposition (resolve vs defer) before the registry is filled. |
+| **Term collisions (G01 layer / G02 phase) leave the glossary ambiguous** — highest uncertainty. | Spike T3 *first*, in parallel: produce the both-readings write-up and the recommended canonical-track disposition (resolve vs defer) before the registry is filled. |
 | **Registry format churn** with C03 (AI-CONTEXT §3.5 warns of breaking config/schema changes). | Ratify T4 format with C03 early; keep entries format-portable (flat fields) so a migration is mechanical. |
 | **Definitions duplicate / drift from owning component specs** (C19 beads, C40 Orders, C29 stylesheet, C18 convergence). | Lock the "one-liner + pointer" convention (milestone 3) so C07 never becomes a second copy of the substrate. |
 | **Incomplete G06 coverage** (a Part-4 term silently missing). | T7 grep-based diff against README Part 4 as a hard gate. |

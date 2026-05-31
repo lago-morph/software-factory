@@ -103,7 +103,7 @@ spec §4.1, §6, §7, §9. Status language below reflects the real post-edit sta
 **accept-with-fixes.** The faithful spec is genuinely faithful: it does **not** invent the signing model
 (it holds verification optional per README:229, which is the verbatim corpus position), it handles G36
 correctly by recording both readings under an [AMBIGUITY] block and picking the optional reading as
-required by Track-A rule 3, and the carrier-vs-resolver split with C19/C23 is consistent. The findings
+required by canonical-track rule 3, and the carrier-vs-resolver split with C19/C23 is consistent. The findings
 are completeness/precision tightenings (RC41A-02 and -03 are the substantive ones: the spec should not
 let the corpus's "Addressed" F32 status and its own "Addressed" F14 status stand unqualified when both
 rest on optional/unverified mechanisms). All six fixes applied in place; **no DEFERRED items** — the one

@@ -1,4 +1,4 @@
-# C21 — CXDB Trajectory Store  (Build Plan, Track A)
+# C21 — CXDB Trajectory Store  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C21-cxdb-trajectory-store.md
 > Sources cited in spec: README §Part 4 (lines 122, 241–242, 252, 261, 274–278, 290, 302), §Part 6 Phase 1 (lines 388–397), §Part 7 (lines 500, 541); AI-CONTEXT §5.1–§5.5, §10, §11, §13.2, §14, §15.2; inventory C21 row (line 33) + critical-path notes (lines 107, 123); gaps G17, G33 (and the G11 content-addressing thread).

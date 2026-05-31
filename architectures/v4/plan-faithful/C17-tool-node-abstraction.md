@@ -1,4 +1,4 @@
-# C17 — Tool-Node Abstraction  (Build Plan, Track A)
+# C17 — Tool-Node Abstraction  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C17-tool-node-abstraction.md`](../spec/C17-tool-node-abstraction.md)
 > Depends on: [`spec/C02-pack-extension-abi.md`](../spec/C02-pack-extension-abi.md) (ABI), C01 (substrate), C12/C13 (formula/molecule consumers), C16 (discipline linter consumer).

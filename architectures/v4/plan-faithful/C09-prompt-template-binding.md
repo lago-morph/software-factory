@@ -1,7 +1,7 @@
-# C09 — Prompt template & spec→execution binding (`prompt-template-binding`)  (Build Plan, Track A)
+# C09 — Prompt template & spec→execution binding (`prompt-template-binding`)  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C09-prompt-template-binding.md`](../spec/C09-prompt-template-binding.md)
-> Track A (faithful). Sweep 1. Depends on: C08 (spec artifact), C05 (sling/dispatch). Foundational interface in Spec Intake; Batch-2 per the [component inventory](../_meta/component-inventory.md) suggested batches.
+> Canonical track. Sweep 1. Depends on: C08 (spec artifact), C05 (sling/dispatch). Foundational interface in Spec Intake; Batch-2 per the [component inventory](../_meta/component-inventory.md) suggested batches.
 
 ## 1. Work breakdown
 
@@ -54,7 +54,7 @@ Freeze these earliest so dependents build against stubs in parallel:
 
 ## 5. Risks & de-risking order
 
-1. **C08↔C09 seam (OQ-1) — highest.** Spike *first*: confirm the faithful collapse (template file = spec artifact) with the C08 author before building T3, because the optimized track's DELTA-01 (`spec_id` reference) would add an inbound resolution step to T3. De-risk by freezing the inbound contract as "template body = spec" under Track A and documenting the single insertion point (resolve `spec_id`) if the integrator later adopts the split.
+1. **C08↔C09 seam (OQ-1) — highest.** Spike *first*: confirm the faithful collapse (template file = spec artifact) with the C08 author before building T3, because the optimized track's DELTA-01 (`spec_id` reference) would add an inbound resolution step to T3. De-risk by freezing the inbound contract as "template body = spec" under the canonical track and documenting the single insertion point (resolve `spec_id`) if the integrator later adopts the split.
 2. **Template-variable namespace (OQ-2).** Risk: building variable substitution before any consumer needs variables. Mitigate by shipping Phase-0 pass-through (T3 first slice) and deferring the variable schema to sweep 2 — v4 names no variables, so this is low at sweep 1.
 3. **Binding-registry vs. convention (OQ-3).** Risk: over-building a registry v4 doesn't name. Mitigate by implementing the naming convention (pack layout) and only revisiting if a many-templates-per-role need appears.
 4. **Render/binding fail-loud semantics.** Risk: a malformed template silently yielding a degraded prompt (the F37-adjacent failure). De-risk early with the negative fixtures (T8 AC-4/AC-5) so fail-loud is proven, not assumed.

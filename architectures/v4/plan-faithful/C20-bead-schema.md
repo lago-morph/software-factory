@@ -1,4 +1,4 @@
-# C20 — Bead schema registry  (Build Plan, Track A)
+# C20 — Bead schema registry  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C20-bead-schema.md`](../spec/C20-bead-schema.md)
 

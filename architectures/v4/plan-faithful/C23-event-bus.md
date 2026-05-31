@@ -1,4 +1,4 @@
-# C23 — Event Bus  (Build Plan, Track A)
+# C23 — Event Bus  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C23-event-bus.md
 > Sources cited in spec: AI-CONTEXT §3.2 (concept 3, line 87), §5.4 (impedance table line 228, bridge line 232), §5.5 (lines 234–239); README §Part 4 (lines 222, 227–228, 231, 252); spec/C01 §3 I7 (line 87) + §4 (line 111) + INV-3; component-inventory C23 row (line 35) + Batch-1 (line 107); F-MODE-COVERAGE F10/F14/F11/F32/F43; gap G27.

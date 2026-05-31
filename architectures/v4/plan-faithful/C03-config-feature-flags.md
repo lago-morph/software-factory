@@ -1,4 +1,4 @@
-# C03 — Layered config / feature-flag model  (Build Plan, Track A)
+# C03 — Layered config / feature-flag model  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C03-config-feature-flags.md`](../spec/C03-config-feature-flags.md)
 

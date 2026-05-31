@@ -1,0 +1,73 @@
+# C18 — Reconciler / Health Patrol loop (`reconciler-convergence`)  (Build Plan, canonical track)
+
+> Source / Spec ref: [`spec/C18-reconciler-convergence.md`](../spec/C18-reconciler-convergence.md)
+> Canonical track. Sweep 1. Depends on: C01 (Gas City substrate). Non-foundational control-loop in the Workflow Engine; **Batch-3** per the [component inventory](../_meta/component-inventory.md) (reconciler lands alongside workflow tooling + the P8 loop).
+
+## 1. Work breakdown
+
+| Task | Description | Size | Prerequisites |
+|---|---|---|---|
+| **T1** Freeze the per-tick convergence contract | Define the inbound desired-vs-actual read over the molecule/bead-tree (C13/C19/C20) and the per-pass shape: `tick → read(desired, actual) → converge → (re)dispatch \| bound-reached` (spec §3.1, §5). Names what a pass consumes; introduces **no new state store** (INV-4). | S | C13/C19/C20 molecule + bead-graph read shape |
+| **T2** Freeze the deterministic-first gate-ordering contract | Define how C18 orders the gate set (C16/C17) **deterministic-first**, admitting an LLM step **only where a deterministic gate cannot decide** (spec §3.1, INV-1; README:154). This is the kept **P4** property — the contract, not the gate predicates (those are C16/C17). | M | C16/C17 gate/tool-node surface; AI-CONTEXT:187 hook semantics |
+| **T3** Freeze the bound + bound-reached seam with C39 | Define the **injected-bound** parameter interface (C39 → C18, via C20 `attempt_no`/`max_attempts`) and the **bound-reached signal** (C18 → C39). C18 enforces *that a bound holds*; **C39 owns the numbers** (N → escalate, oscillation, L5 authz) — **XC-3 / G18** (spec §3.1, §3.2, §9 OQ-1). | M | C39 policy-owner shape; C20 schema slots |
+| **T4** Deterministic-first convergence pass (over native Health Patrol) | Implement the in-pass discipline: read delta → run deterministic gates first → admit LLM step only where reasoning is required → take a step toward desired (INV-1, INV-3). **Wraps Gas City's native reconciler; no new loop/scheduler** (spec §5, README:159 Native; bar §7). | M | T1, T2, native Health Patrol tick (C01) |
+| **T5** Bound enforcement + bound-reached emission | Enforce the injected bound per pass; on reaching it without convergence, **emit bound-reached to C39** and stop — **do not** count toward N, detect oscillation, or authorize a ship (INV-2; XC-3). | S | T3, T4 |
+| **T6** Inferred (re)dispatch trigger to C05 | When the delta means "work should run but is not", issue a (re)dispatch to sling (C05). **Mark the trigger edge `[FAITHFUL-FILL]` — v4 inference, not sourced fact (RC05-01)**; do not assert it (spec §3.2, §5). | S | T4, C05 dispatch-request contract |
+| **T7** Verify native convergence observability | Verify "tick ran / gate passed-failed / pass converged or hit bound" is observable via the **native** event bus (C23, monotonic seq) — C18 writes **no record of its own** (spec §3.2, §4, INV-4). | S | T4, C23 native event append |
+| **T8** Acceptance fixtures | The §8 fixtures: deterministic-first ordering (+ no-deciding-gate counterpart), non-convergent-to-bound termination + bound-reached emission, delta-increasing convergence fault, two-tick unavailable-agent re-dispatch, native-observability/no-C18-record check. | M | T4–T7 |
+
+Most C18 work is **thin contract over Gas City's native Health Patrol** (the reconciler is a built-in derived mechanism, AI-CONTEXT:93; "Native", README:159) plus two genuinely-v4 properties: the **deterministic-first gate ordering** (the kept P4 concern, T2/T4) and **bounded iteration with a bound-reached handoff to C39** (T3/T5). The faithful scope deliberately introduces **no new control loop, scheduler, tick engine, queue, or convergence checkpoint**, and **invents no `gc` reconciler internals** (G11) — the loop is a per-tick decision over native state, with the numeric termination policy routed to C39 (XC-3).
+
+## 2. Dependency graph
+
+- **Hard upstream:** C01 (the reconciler is hosted by Gas City — the native Health Patrol C18 specs over; C18 cannot tick without it).
+- **Policy boundary (bidirectional seam):** C39 owns the numeric bound C18 enforces and consumes C18's bound-reached signal (XC-3). C18 can be built against a **stub bound** (a fixed `max_attempts`) until C39 lands in Batch 4 — C18 (Batch 3) leads C39, so the seam must be frozen as a contract, not a live dependency.
+- **Reference upstream:** C13/C19/C20 (the molecule/bead-graph state the loop reads — stub with a fixed desired/actual fixture) and C16/C17 (the gate set — stub with one deterministic gate + one LLM step).
+- **Downstream consumers:** C05 (receives the **inferred** (re)dispatch trigger — RC05-01), and the Healer pieces C36–C39 that *ride on* this loop ("P11 (partial)", AI-CONTEXT:93). These build against a C18 stub once T1/T3 contracts are frozen.
+- **Critical path:** T1 (convergence contract) + T2 (gate-ordering contract) → T4 (deterministic-first pass) → T5 (bound + bound-reached) → T8 (fixtures). T3 (C39 seam) gates T5; T6 (C05 trigger) and T7 (observability) hang off T4 and are not on the longest chain.
+
+```mermaid
+flowchart LR
+    T1[T1 convergence contract] --> T4[T4 deterministic-first pass]
+    T2[T2 gate-ordering contract] --> T4
+    T3[T3 bound + C39 seam] --> T5[T5 bound enforce + emit]
+    T4 --> T5
+    T4 --> T6[T6 inferred C05 trigger]
+    T4 --> T7[T7 native observability]
+    T5 --> T8[T8 fixtures]
+    T6 --> T8
+    T7 --> T8
+```
+
+## 3. Parallelization
+
+- **T1 (convergence contract)**, **T2 (gate-ordering contract)**, and **T3 (C39 bound seam)** are independent and can be authored concurrently — they touch disjoint surfaces (the desired-vs-actual read vs. the deterministic-first gate ordering vs. the C39 numeric-policy seam).
+- **T6 (inferred C05 trigger)** and **T7 (native observability)** are independent branches off T4 and can be built in parallel with each other and with T5 — all hang off the T4 pass, not on each other.
+- **Fan-out point:** freezing T1 + T2 + T3 (interfaces-first) unblocks C13/C39/C05/C36–C39 to build against a C18 stub *and* unblocks C18's own T4 — the highest-leverage early milestone. T3 in particular must be frozen early because **C18 (Batch 3) precedes C39 (Batch 4)**: the bound/bound-reached contract has to exist before its owner does.
+
+## 4. Interfaces-first / contract milestones
+
+Freeze these earliest so dependents build against stubs in parallel:
+1. **Per-tick convergence contract (T1):** `tick → read(desired, actual) over C13/C19/C20 → converge → {(re)dispatch | bound-reached}`; converges toward desired (INV-3), owns no state (INV-4). Lets C13 stub a state read and C36–C39 stub a loop to ride on.
+2. **Deterministic-first gate-ordering contract (T2):** the order in which C18 evaluates the C16/C17 gate set — **deterministic gates first, LLM step only where a deterministic gate cannot decide** (INV-1; README:154). The single load-bearing **P4** contract; lets C16/C17 know the ordering C18 expects.
+3. **Bound + bound-reached seam with C39 (T3):** C39 injects the bound (`max_attempts`, via C20); C18 enforces it and emits **bound-reached**; **C39 owns N / oscillation / L5 authorization** (XC-3 / G18). Freeze this **before C39 exists** (batch-order inversion) so C39 builds to a fixed contract. Publish: "C18 owns the loop + bound enforcement + the signal; C39 owns the numbers."
+4. **Inferred (re)dispatch trigger to C05 (T6, flagged):** the C18→C05 dispatch edge, **marked `[FAITHFUL-FILL]` (RC05-01)** — frozen as the modelled trigger, with the C12-formula-step alternative documented so it can be re-pointed if an integrator disagrees. Nothing asserted as sourced fact.
+
+## 5. Risks & de-risking order
+
+1. **G18 numeric-policy ownership boundary (OQ-1 / XC-3) — highest.** Spike *first* with the C39 author: confirm the faithful split (**C18 owns the bounded loop + bound-reached signal; C39 owns N → escalate, F52 oscillation detection, L5 ship authorization**, backed by C20's `attempt_no`/`max_attempts`/`escalated`/`closes`). De-risk by freezing T3 as "C39 injects the bound, consumes the signal; C18 holds none of the numbers" under the canonical track. If any numeric policy is folded back into C18, INV-2 grows from "enforce an injected bound + signal" to "own N + detect oscillation + authorize ship" — a materially larger C18 that **XC-3 currently routes away**. This is the load-bearing reconciliation item shared with the C39 author.
+2. **Building a custom control loop / scheduler — the bar's primary DROP.** Risk: reimplementing the per-tick reconciler, tick scheduler, or convergence-gate slot that Gas City Health Patrol already provides Native (README:159; AI-CONTEXT:93) — and which "modified reconciler" is called out only as a *source-level fork* trigger v4 does **not** need (README:334/518, AI-CONTEXT:439/476). Mitigate by making T4 a **thin wrapper over native Health Patrol** (spec the *contract* — deterministic-first ordering, bounded pass, signal — not the engine) and **inventing no `gc` reconciler internals** (G11) — confirm the hook surface against the **pinned `gc` binary** at sweep 2.
+3. **Reconciler→dispatch trigger is inferred, not v4-stated (RC05-01).** Risk: asserting the C18→C05 trigger as sourced fact when v4 never states it (the reconciler and sling never co-occur causally). Mitigate by carrying T6 with the trigger edge **marked `[FAITHFUL-FILL]`**, modelling it as reconciler-driven, and documenting the running-C12-formula-step alternative so the edge can be re-pointed. Confirm with the C05 author (already mirrored as RC05-01 on the C05 side).
+4. **Deterministic-first becoming discipline-without-purpose (F52).** Risk: the kept P4 ordering accreting deterministic gates that catch nothing — exactly the "more controller patches" trap (F-MODE-COVERAGE:100). Mitigate by binding T2/T4 to the F52 discipline ("**every deterministic guard must point at a specific scenario it catches; no guard without a falsifying scenario**", F-MODE-COVERAGE:100/170) — note that **oscillation detection itself is C39's** (XC-3); C18 only surfaces a delta-increasing/bound-reached pass.
+5. **Batch-order inversion (C18 Batch 3 precedes C39 Batch 4).** Risk: C18's bound/bound-reached seam has no live owner when C18 is built. Mitigate by freezing T3 as a **contract against a stub** (a fixed `max_attempts`) early, so C39 builds to it in Batch 4 rather than C18 waiting — the interfaces-first fan-out (§3) is what makes this safe.
+
+## 6. Definition of done
+
+Per-component DoD (ties to spec §8 acceptance criteria):
+- **T1/T2/T3 done:** the per-tick convergence contract, the deterministic-first gate-ordering contract, and the C39 bound/bound-reached seam are frozen and published for dependents (AC-1, AC-3, AC-5).
+- **T4 done:** a convergence pass evaluates **deterministic gates before any LLM step** and admits an LLM step **only where a deterministic gate cannot decide**, taking a step toward desired (AC-1, AC-2, AC-4; INV-1, INV-3).
+- **T5 done:** a non-convergent pass **terminates at the injected bound and emits bound-reached to C39**, without C18 counting toward N, detecting oscillation, or authorizing a ship (AC-3, AC-5; INV-2; XC-3).
+- **T6 done:** a desired-vs-actual delta meaning "work should run but is not" issues a (re)dispatch to C05, with the trigger edge **marked `[FAITHFUL-FILL]` (RC05-01)** and not asserted as sourced (AC-6, F22 recovery).
+- **T7 done:** tick / gate / convergence events are observable via the **native** event bus (C23) with **no C18-owned record** (AC-7; INV-4).
+- **T8 done:** all §8 fixtures pass.
+- **Component done:** AC-1…AC-7 pass; **OQ-1 (G18 / XC-3) explicitly resolved with the C39 author** (C39 owns the numeric policy; C18 owns the loop + bound enforcement + signal); **no new control loop, scheduler, tick engine, queue, or convergence checkpoint introduced**, and no invented `gc` reconciler internal (beyond native Health Patrol + the C13/C19/C20 state read + the C16/C17 gate set).

@@ -1,4 +1,4 @@
-# C13 — Molecule (instantiated workflow / runtime state)  (Build Plan, Track A)
+# C13 — Molecule (instantiated workflow / runtime state)  (Build Plan, canonical track)
 
 > Source / Spec ref: [`spec/C13-molecule-runtime-state.md`](C13-molecule-runtime-state.md)
 > Track: A (faithful)   Sweep: 1 (architecture altitude)
@@ -18,7 +18,7 @@ molecule/`gc converge` model is unverified (G11).
 | T3 | **Define the run identity / resume contract** — root-bead handle, `factory_build_in_progress` resume fields (C20), `gc converge resume <bead_id>` re-attach semantics from persisted bead state. | S | C20 resume contract; T2 |
 | T4 | **Define the frontier / readiness computation** — runnable set = node-beads whose dependency edges are all `done`; the derived (not stored) topological-readiness over the formula DAG. | S | T1, T2 |
 | T5 | **Define the wisp surface to Sling (C05)** — what a runnable frontier node exposes for routing (its formula-node binding: C17 tool node or C09 template name); confirm wisp = dispatch view of a node-bead (not a separate object). | S | T4; C05 contract (sweep 2) |
-| T6 | **Define the molecule lifecycle state machine** — instantiated → converging → paused/resumable → converged / failed-escalated; the transition guards consumed by C18's tick. | M | T2, T3; C18 reconciler contract |
+| T6 | **Name the molecule lifecycle** — the minimal set of states the *cited* `gc` operations imply (instantiate / per-tick converge / resume): instantiated → converging → paused/resumable → converged / failed-escalated; the transition guards consumed by C18's tick. This is **co-owned with C18**, not a new FSM C13 introduces — the molecule lifecycle and the reconciler tick are one joint contract (spec §4 FAITHFUL-FILL; the concrete state machine is `gc`'s, G11-gated). | M | T2, T3; C18 reconciler contract |
 | T7 | **Bounded-loop termination handling** — track iteration counter vs formula-declared bound; terminate/escalate at the bound (policy is C39/C18, slots are here). | S | T1 (C12 loop construct), T6 |
 | T8 | **Sweep-2 schema freeze against real `gc`** *(deferred — G11 gate)* — concrete molecule/`gc converge` signatures, `status` enum values, wisp shape, instantiation/resume test vectors. | L | G11 retired (an author has run `gc`); T1–T7 |
 
@@ -35,8 +35,9 @@ all of T1–T7 ──▶ T8 (gated on G11)
 ```
 
 **Critical path:** C12/C19/C20 frozen → **T1 → T2 → T6** (instantiation → state-on-beads → lifecycle), because
-the lifecycle state machine is what C18 (the driver) binds to and is the most contract-entangled piece. T3/T4
-hang off T2; T5 additionally waits on the C05 wisp contract; T7 hangs off T1+T6.
+the lifecycle (the minimal state set the cited `gc` operations imply) is the seam C18 (the driver) binds to and
+is the most contract-entangled piece — co-owned with C18, not a new FSM C13 authors. T3/T4 hang off T2; T5
+additionally waits on the C05 wisp contract; T7 hangs off T1+T6.
 
 **External blockers:** (a) **C18 has no spec at sweep-1** — its reconciler contract (tick cadence,
 frontier-advance, gate evaluation, tick serialization) must land before T6 can be finalized (OQ-C13-2).
@@ -74,7 +75,7 @@ Freeze these early so dependents build against stubs in parallel:
 | Order | Risk | De-risk action |
 |---|---|---|
 | 1 | **G11 — real Gas City molecule/`gc converge` model unverified.** Every concrete shape (instantiation verb, `status` enum, wisp, resume) is Gas City's, asserted not run. | Spike: obtain `gc`, instantiate a 3-step formula, inspect the resulting bead-tree + `gc converge resume`. This is the shared Workflow-Engine spike (C12 §9 OQ-1) — coordinate, don't duplicate. Until then, keep T1–T7 at named-contract altitude. |
-| 2 | **C18 reconciler contract absent at sweep-1.** T6 (lifecycle) cannot finalize without the tick/frontier-advance/gate/serialization contract. | Co-design the C13 lifecycle state machine *with* the C18 author; treat the molecule lifecycle and the reconciler tick as one joint contract (the molecule is the subject; the tick is the verb). |
+| 2 | **C18 reconciler contract absent at sweep-1.** T6 (lifecycle) cannot finalize without the tick/frontier-advance/gate/serialization contract. **C18 also lands a batch later (Batch 3) than C13 (Batch 2)** — sweep-1 freezes the contract; the live driver follows. | Co-design the C13 lifecycle *with* the C18 author — the lifecycle is the minimal state set the cited `gc` operations imply, **co-owned with C18**, not an FSM C13 authors alone; treat the molecule lifecycle and the reconciler tick as one joint contract (the molecule is the subject; the tick is the verb). |
 | 3 | **`status` / loop-counter field drift across C12/C13/C20.** Three specs could name three fields. | Reconciliation task T2 + the C12 §9 / C20 OQ cross-refs; pin ONE `status` field on the C20 envelope and ONE loop construct in C12, both reused verbatim by C13. |
 | 4 | **Shadow-store temptation.** Implementers may add a separate molecule store, breaking resume + duplicating C19. | The T2 invariant ("rooted C19 subgraph, no separate store") is the explicit guard; AC-2 tests it. |
 | 5 | **Wisp under-definition (C05 seam).** | Stub the wisp from C13's side (frontier node → routable unit) so C05 isn't blocked; finalize jointly at sweep 2. |

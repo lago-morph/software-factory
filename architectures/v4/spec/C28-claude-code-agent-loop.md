@@ -1,12 +1,12 @@
-# C28 — Claude Code Agent Loop  (Spec, Track A)
+# C28 — Claude Code Agent Loop  (Spec, canonical track)
 
-> Source: README §"Principle 2 — Three-layer architecture" (L113–124, L60–74); AI-CONTEXT §2 (L46–56), §4 (L139–190), §13.2 (L569–580), §14 (L624); one-shot-specs L21, L119–124, L212–218, L240, L289, L336.
+> Source: README §"Principle 2 — Three-layer architecture" (L113–124, L60–74), §"Concrete first steps" Phase-0 checklist (L533–543), §"Cross-session continuity" (L240), §"Event substrate" (L252); AI-CONTEXT §2 (L46–56), §4 (L139–190), §13.2 (L569–580), §13.3 (L587–596), §14 (L624); one-shot-specs §"Specs library" agent-loop row (L21).
 > Inventory ID: C28   Kind: agent-role   Status: sweep-1
 > Maps from: A04, A04b, A05, A28d, A28e, A28f, A28g, A28h, B20, B21. Depends on: C04. Key gaps: G12, G13, G34.
 
 ## 1. Purpose & responsibility
 
-C28 is the **implementer worker**: the agent that turns a dispatched unit of work (a bead/wisp carrying a spec or sub-task) into running, tested software through **multi-turn reasoning + tool dispatch**. In the convergent four-layer shape (AI-CONTEXT §2, L48–52) it occupies **layers 1+2 simultaneously** — it is both the *LLM client* (provider abstraction) and the *agent loop* (multi-turn reasoning + tool dispatch) — because v4 fixes both to **Claude Code CLI under a Claude Max subscription** (README L119–120: "Use Claude Code directly via Gas City tmux runtime", "Gas City `claude` provider preset").
+C28 is the **implementer worker**: the agent that turns a dispatched unit of work (a bead/wisp carrying a spec or sub-task) into running, tested software through **multi-turn reasoning + tool dispatch**. In v4's convergent **three-layer-plus-persistence** shape (AI-CONTEXT §2 L48–52 "Three-layer + persistence"; README §"Principle 2 — Three-layer architecture" L113–115) it occupies **layers 1+2 simultaneously** — it is both the *LLM client* (provider abstraction, list item 1) and the *agent loop* (multi-turn reasoning + tool dispatch, list item 2) — because v4 fixes both to **Claude Code CLI under a Claude Max subscription** (README L119–120: "Use Claude Code directly via Gas City tmux runtime", "Gas City `claude` provider preset").
 
 It is responsible for:
 - Running the **Claude Code CLI as a subprocess** under Max-OAuth auth (AI-CONTEXT §4.1 L141–147), driven by the Gas City `claude` provider preset inside a C04 session.
@@ -16,11 +16,11 @@ It is responsible for:
 
 **What it is explicitly NOT:**
 - NOT the **provider/session runtime** — process lifecycle, tmux/k8s/subprocess backing, resume, and cross-session continuity belong to **C04** (component-inventory C04 row; AI-CONTEXT §3.2 concept 1). C28 *runs inside* a C04 session.
-- NOT the **pipeline/workflow engine** — DAG orchestration, formulas, molecules, dispatch ordering belong to Gas City (C01) / Sling (C05). C28 executes one dispatched node; it does not own the graph (one-shot-specs L121; README L60–74 places AL *below* PE).
+- NOT the **pipeline/workflow engine** — DAG orchestration, formulas, molecules, dispatch ordering belong to Gas City (C01) / Sling (C05). C28 executes one dispatched node; it does not own the graph (README L60–74 places AL *below* PE in the layer diagram).
 - NOT the **model-routing policy** — which model/family/cost tier handles a given bead is **C29** (model floor & stylesheet). C28 is the floor C29 declares and routes *to*.
 - NOT the **telemetry exporter or CXDB bridge** — C28 only *emits* native OTLP/raw-API-bodies; **C25** owns the export config and **C24** owns the bridge to CXDB.
 - NOT the **tool-node implementations** — deterministic steps are C02/C17 tool nodes; C28 *dispatches* tools but does not define the tool-node ABI.
-- NOT a **judge/scenario** role — that is a different rig (C42 partitioning, C32 judge). C28 is partitioned to `read/write = code` and explicitly excludes `scenarios` (AI-CONTEXT §13.3 L592–597).
+- NOT a **judge/scenario** role — that is a different rig (C42 partitioning, C32 judge). C28 is partitioned to `read/write = code` and explicitly excludes `scenarios` (AI-CONTEXT §13.3 L592–596, the `implementer` rig block).
 
 ## 2. Context & dependencies
 
@@ -43,7 +43,7 @@ It is responsible for:
 **Outbound:**
 4. **Tool-dispatch contract** — C28 calls tools via (a) Claude Code built-in tools, (b) MCP servers, (c) subprocess tool nodes (C02 ABI). Hooks gate each call (PreToolUse → allow/deny; PostToolUse → observe).
 5. **Telemetry emission contract** — native OTLP (metrics 60s, logs 5s; traces under `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`) + raw-API-bodies JSON to a watched dir. Correlation attrs: `prompt.id`, `session.id`, `user.account_uuid`, `organization.id`, `terminal.type` (AI-CONTEXT §4.3 L171–180). Consumed by C25.
-6. **Work-product contract** — code edits, commits, PRs, and bead state transitions, attributed via session-id (one-shot-specs L240 cross-session continuity).
+6. **Work-product contract** — code edits, commits, PRs, and bead state transitions, attributed via session-id (README L240 "Cross-session continuity — Resume after agent restarts ... Gas City session resume + Claude Code session-id").
 
 **Extension-surface contracts (Max, AI-CONTEXT §4.4):**
 - **Skills** — multi-step workflow definitions in `.claude/skills/`.
@@ -56,7 +56,7 @@ It is responsible for:
 **Invariants:**
 - I1: C28 authenticates **only** via Max OAuth picked up from Claude Code login; OAuth tokens are **never** used outside Claude Code/claude.ai (AI-CONTEXT §4.1 L147 — a ToS hard constraint).
 - I2: C28 runs **inside** a C04 session; it never owns process lifecycle directly.
-- I3: Every C28 action is attributed (session-id) and telemetered (raw API bodies) — no silent turns.
+- I3: Every C28 action is attributed (session-id) and telemetered (raw API bodies) — no silent turns. The no-bypass *totality* of this is not C28's to enforce: it rests on **C04 injecting the full OTEL env at every session start/resume** (C04 I3) and is verified by C04's `runtimetest/conformance.go` gate; C28 only *emits* given that injection.
 - I4: C28 partition is `code`; it has **no read access to `scenarios`** (held-out integrity, AI-CONTEXT §13.3).
 
 ## 4. Data model / state
@@ -70,7 +70,7 @@ C28 owns **little durable state**; it is a compute role, not a store.
 | Skills / hooks / MCP config | `.claude/` + pack (C02) | Declarative, version-controlled; not runtime-mutable by the loop. |
 | Work-graph state (beads) | C01/C20 beads, not C28 | C28 transitions beads but does not own the ledger. |
 
-Persistence/continuity is delegated to C04 (resume) and CXDB (trajectory). C28 is restart-safe insofar as C04 + Claude Code session-id resume restore context (one-shot-specs L240).
+Persistence/continuity is delegated to C04 (resume) and CXDB (trajectory). C28 is restart-safe insofar as C04 + Claude Code session-id resume restore context (README L240 "Cross-session continuity").
 
 ## 5. Behavior
 
@@ -100,10 +100,10 @@ Persistence/continuity is delegated to C04 (resume) and CXDB (trajectory). C28 i
 > Reading B: §14 (L624) rates "Claude Code Max policy changes" Low/High with mitigation "have API-key fallback ready" — but §4.1 (L144) says "No separate API key issued" under Max, so the fallback contradicts the auth model and is **named but not designed**.
 > **Chosen (most consistent with v4):** Reading A is the operating assumption — v4 commits to Max-supported subprocess automation as the floor (it is the basis of P2, F31, and the whole single-adapter argument). The API-key fallback is recorded as a **latent, undesigned contingency** triggered only on a policy change. C28's spec therefore assumes Max-OAuth subprocess auth (I1) and treats provider-swap as out-of-scope until the Agent SDK Max path (June 15 2026, §4.2 L151) or an API-key path is actually designed. *This is a deferral, not a resolution — escalated to review-log.*
 
-> [AMBIGUITY: G34 / G13] **Single-Max-seat throughput & cost ceiling.**
+> [AMBIGUITY: G13 (cost/throughput vs the $200 subscription) + G34 (agent-side scale ceiling)] **Single-Max-seat throughput & cost ceiling.** (Two distinct gaps with one shared root cause and one shared deferral; split back out into OQ2 (G13/G32) and OQ3 (G34) below.)
 > Reading A (P7 optimism): scenarios run "thousands per hour without rate limits" → no agent-side ceiling.
 > Reading B (the gap): P7's rate-limit relief is on the *twinned-dependency* side; the **coder/judge agent still hits Max rate limits** (G34), and L5-volume scenario/judge/A-B replay against one $200 Max seat has **no token-budget math anywhere** (G13/G32).
-> **Chosen:** Reading B is correct on the facts; v4 simply has not modeled it. Faithful position: C28 inherits a **single-seat throughput/cost ceiling** that v4 leaves unquantified. The minimal consistent mitigation already present in v4 is C29 (model-floor/stylesheet **cost/family-aware routing**) — i.e. v4's own answer to "don't burn the floor model on everything" — plus C04 session suspension to avoid idle burn. No new mechanism may be invented in Track A; the quantification is **deferred** (token budgets, seat-count, rate-limit backoff) to review-log.
+> **Chosen:** Reading B is correct on the facts; v4 simply has not modeled it. Faithful position: C28 inherits a **single-seat throughput/cost ceiling** that v4 leaves unquantified. The minimal consistent mitigation already present in v4 is C29 (model-floor/stylesheet **cost/family-aware routing**) — i.e. v4's own answer to "don't burn the floor model on everything" — plus C04 session suspension to avoid idle burn. No new mechanism may be invented on the canonical track; the quantification is **deferred** (token budgets, seat-count, rate-limit backoff) to review-log.
 
 **Other detection/recovery:** auth failure, MCP-connection failure, and permission-change events are all in Claude Code's native event stream (AI-CONTEXT §4.3 L173) → visible to C11 self-healing.
 
@@ -117,8 +117,8 @@ Persistence/continuity is delegated to C04 (resume) and CXDB (trajectory). C28 i
 
 ## 8. Acceptance criteria & test strategy (sweep-1, high level)
 
-- **AC1:** A bead dispatched to the `claude` agent starts a Claude Code subprocess in its C04 session, runs a multi-turn loop, dispatches at least one tool, and emits a work product attributed by `session.id`. (one-shot-specs L537: "Verify Claude Code runs in the Gas City tmux runtime with attribution flowing into beads.")
-- **AC2:** With the §13.2 env block set, native OTLP events + a raw-API-bodies file appear for the run and are consumable by C25/C26 (one-shot-specs L539).
+- **AC1:** A bead dispatched to the `claude` agent starts a Claude Code subprocess in its C04 session, runs a multi-turn loop, dispatches at least one tool, and emits a work product attributed by `session.id`. (README L537, Phase-0 checklist: "Verify Claude Code runs in the Gas City tmux runtime with attribution flowing into beads. This is your first checkpoint.")
+- **AC2:** With the §13.2 env block set, native OTLP events + a raw-API-bodies file appear for the run and are consumable by C25/C26 (README L539, Phase-0 checklist: "Set up an OpenTelemetry Collector receiving Claude Code's OTLP output. Verify events flow.").
 - **AC3:** A registered PreToolUse hook can deny a tool call and a PostToolUse hook observes a result (override-detection surface for C35).
 - **AC4:** A Skill and an MCP server declared via config/`.claude/` are usable by the loop without any Go fork.
 - **AC5:** C28 in the `implementer` rig has no read access to the `scenarios` partition.

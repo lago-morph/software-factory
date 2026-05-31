@@ -10,7 +10,7 @@
 | T2 | **Cluster + CXDB read-tool wiring.** Wire the diagnosis role's **read-only** access to a C37 cluster (members/exemplars) and the cluster's CXDB trajectory turn-DAGs (query tools, I3) — no write tools on the trajectories it diagnoses. | S | C37, C21, C17 |
 | T3 | **Diagnosis-model binding (C29/D-1).** Consume `resolveModel(diagnosis/healer node)` and run the role as the **Claude Code** investigator (same provider, Phase-0, D-1) — a distinct *role*, not a distinct provider. | S | C29, C28 |
 | T4 | **`diagnoseCluster(clusterRef) → Diagnosis` core.** Bind (cluster + its CXDB context) into one investigation run → one structured `Diagnosis`. The genuine custom glue C38 adds beyond the stack (the engine is C28; the *focused work* is this + T1). | M | T1, T2, T3 |
-| T5 | **`Diagnosis` emission (→ C39).** Emit one structured, attributed (C41) `Diagnosis` per cluster — `{cluster_id, root_cause, evidence_refs[], confidence, proposed_remedy, transfused_from}` — to a bead/CXDB turn for **C39** to mint a `fix_task`. **C38 stops at the diagnosis; it does NOT write `fix_task` (I2, XC-3→C39).** | M | T4, C41, C19/C21 |
+| T5 | **`Diagnosis` emission (→ C39).** Emit one structured, attributed (C41) `Diagnosis` per cluster — `{cluster_id, root_cause, evidence_refs[], confidence, proposed_remedy}` — to a bead/CXDB turn for **C39** to mint a `fix_task`. (Build-time `transfused_from` provenance is on C38's `factory_build` bead per T7, NOT a field of this runtime record — C20/C51, D-3.) **C38 stops at the diagnosis; it does NOT write `fix_task` (I2, XC-3→C39).** | M | T4, C41, C19/C21 |
 | T6 | **Degraded / inconclusive paths.** Diagnosis-model-unavailable or CXDB-evidence-miss → undiagnosed + bead/gate event; insufficient signal → explicit **low-confidence/inconclusive** verdict; never a fabricated cause (I4/I5). | S | T4, T5 |
 | T7 | **Provenance + license flag (G30, framework C51).** Stamp `transfused_from = Tracker Diagnose/Audit/Doctor` + the **pattern-vs-code** flag; default pattern-only until Tracker license is verified permissive (AI-CONTEXT:625). Route the license-clearance *framework* + correctness *predicate* to **C51** (G07/G30); do not build them here. | S | T1, C51 (records into) |
 | T8 | **Healer scenario hook (G07 acceptance seam).** Leave the seam by which C38 is evaluated against the **adversarial Healer scenario set** — "manually-clustered failure trajectories; ensure its diagnoses match the human" (README:499) — scored by the evaluation tier (C30–C33). C38 supplies the diagnosis-under-test; the bar/threshold is C53/C51's, not C38's. | S | T5, C30–C33 (consume) |
@@ -59,7 +59,9 @@ T5 (the `Diagnosis` schema) is the **freeze-early join point** — **C39** build
    (C37 owns the cluster schema; C38 consumes it).
 4. **Diagnosis→C39 handoff** (T5) — does C39 *poll* `Diagnosis` beads, or does C38 *hand* the `Diagnosis`
    to a C39 entry? Freeze C38's *emit* shape so C39 builds the `fix_task` minting + termination against it
-   (the numeric policy is C39's, XC-3). (OQ1 — overlaps C39, whose spec is not yet on disk.)
+   (the numeric policy is C39's, XC-3). (OQ1 — the C38/C39 *ownership split* is confirmed on disk by
+   [`spec/C39-fix-task-loop-closure.md`](../spec/C39-fix-task-loop-closure.md) §1/§3.1; only the *handoff
+   mechanism* — poll vs hand-off — is the open sweep-2 detail.)
 
 ## 5. Risks & de-risking order
 
@@ -76,9 +78,13 @@ T5 (the `Diagnosis` schema) is the **freeze-early join point** — **C39** build
    root cause rather than emitting a plausible prose opinion — this is what makes the diagnosis checkable by
    C39 and a human, and is the core of the Tracker transfusion. Spike: reject any `Diagnosis` with an empty
    evidence set (AC3) and measure how often the model produces grounded evidence.
-4. **C38↔C39 seam (OQ1).** README reads as "diagnosis agent writes `fix_task`" but the inventory splits
-   C38/C39. Confirm the handoff *contract* with the C39 author (poll vs hand-off; who owns the `fix_task`
-   minting + the numeric termination policy, XC-3) before sweep-2 — a wrong split strands the loop-closure.
+4. **C38↔C39 seam (OQ1) — *mechanism* only; split confirmed.** README reads as "diagnosis agent writes
+   `fix_task`" but the inventory splits C38/C39, and that split is now **confirmed on disk** by
+   [`spec/C39-fix-task-loop-closure.md`](../spec/C39-fix-task-loop-closure.md) §1/§3.1 (C39 consumes the
+   diagnosis and mints the `fix_task`; C39 owns the numeric termination policy, XC-3). The residual risk is
+   narrower than "wrong split": freeze the handoff *transport* (does C39 poll `Diagnosis` beads, or does C38
+   hand the `Diagnosis` to a C39 entry?) with the C39 author before sweep-2 so the emit shape and the
+   `fix_task`-minting intake agree.
 5. **Shared-seat cost/throughput (OQ5, with C28 G13/G34, G32).** An LLM root-cause investigation **per
    cluster** competes with build + judge calls for the single Phase-0 Max seat. Per-cluster (not
    per-trajectory) is the natural rate-limiter (clustering, C37, is *upstream* for this reason). Quantify a

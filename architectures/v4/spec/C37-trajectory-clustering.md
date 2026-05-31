@@ -95,7 +95,7 @@ algorithm, which are the libraries' job.
 | Direction | Component | Relationship |
 |---|---|---|
 | Upstream (data source) | **C21** CXDB trajectory store | The content-addressed store C37 **reads trajectories from** via the replay/retrieval seam (spec/C21 I6; spec/C21 §2 lists C36/C37/C38 as P11 consumers). **The sole inventory dependency** (inventory C37 `Depends on: C21`). |
-| Upstream (population selector) | **C36** Anomaly detection | Flags the anomalous trajectory window typically fed to C37. *Seam, not an inventory dep edge of C37* (C37's only listed dep is C21); the exact C36→C37 hand-off is OQ-1. |
+| Upstream (population selector) | **C36** Anomaly detection | Flags the anomalous trajectories fed to C37 via its **`anomaly` signal (spec/C36 I3)** — the carrier spec/C36 commits as "the anomaly→cluster trigger seam"; its record shape is co-frozen with C37 (spec/C36 data-model). *Seam, not an inventory dep edge of C37* (C37's only listed dep is C21); the open residual is the **granularity** (aggregated window vs per-anomaly signals) — OQ-1. |
 | Trajectory schema | **C22** CXDB type registry/bundle | Owns the turn/payload schema C37's representation step (I2) reads. C37 uses the registered types; it does not define them. *(Referenced, not a C37 dep edge — mirrors how C21 names C22.)* |
 | Embedding engine | **sentence-transformers** (`github.com/UKPLab/sentence-transformers`, Apache 2.0) | The v4-named, mature, clean-licensed embedder (README:254/312; AI-CONTEXT:329/649). Off-the-shelf; C37 pins + invokes it. |
 | Clustering engine | **HDBSCAN** (`github.com/scikit-learn-contrib/hdbscan`, BSD) + scikit-learn | The v4-named, mature, clean-licensed density clusterer (README:255/313; AI-CONTEXT:330/650). Off-the-shelf; C37 pins + invokes it. |
@@ -119,11 +119,11 @@ C22, the read seam to C21 I6).
 
 | # | Interface | Direction | Description | Owning/detailing component |
 |---|---|---|---|---|
-| I1 | **Trajectory population read** | inbound (read) | Retrieve the set of trajectories to cluster from **CXDB (C21)** via its replay/retrieval seam (spec/C21 I6); the *which* set is an input selector (typically C36's anomalous window). | C37 (this); **C21** (store), C36 (selector) |
+| I1 | **Trajectory population read** | inbound (read) | Retrieve the set of trajectories to cluster from **CXDB (C21)** via its replay/retrieval seam (spec/C21 I6); the *which* set is an input selector driven by **C36's `anomaly` signal (spec/C36 I3)** — typically C36's anomalous window. The selector's aggregation granularity (window vs per-anomaly signals) is OQ-1. | C37 (this); **C21** (store), **C36** (selector via I3) |
 | I2 | **Trajectory → embeddable representation** | internal | Project each trajectory (a CXDB turn-DAG path) into the **document/text the embedder consumes** (the G32 representation decision — what part of a trajectory carries the failure signal). Sweep-1 names the seam + the default; the canonical representation is sweep-2. | C37 (this) |
 | I3 | **Embed (sentence-transformers)** | internal | Embed each representation into a fixed-length vector with the v4-named **sentence-transformers** (README:254; AI-CONTEXT:329). C37 owns model-pin + invocation, not the model. | C37 (this); sentence-transformers (engine) |
 | I4 | **Cluster (HDBSCAN)** | internal | Cluster the embeddings with the v4-named **HDBSCAN** (README:255; AI-CONTEXT:330) → a **cluster label per trajectory**, including HDBSCAN's native **noise/outlier** label. C37 owns parameter-binding + invocation, not the algorithm. | C37 (this); HDBSCAN (engine) |
-| I5 | **Cluster-set output (→ C38)** | outbound (data) | The tool node's declared output: per cluster, a **cluster record** = member trajectory ids + size + a **representative/exemplar** (e.g. medoid); plus the noise set. The contract **C38** diagnoses per-cluster against (inventory C38 `depends on C37`). | C37 (this); C02/C17 (surfacing), C38 (consumer) |
+| I5 | **Cluster-set output (→ C38)** | outbound (data) | The tool node's declared output: per cluster, a **cluster record** = member trajectory ids + size + a **representative/exemplar** (e.g. medoid); plus the noise set. The contract **C38** diagnoses per-cluster against (inventory C38 `depends on C37`). *Seam note:* spec/C38 §3.1 lists a per-cluster "**shared-failure signal**" among the cluster-level features it expects C37 to attach — beyond the structural fields above; the **sweep-2 cluster-record freeze (joint with C38, M2)** must reconcile whether such a shared-feature descriptor is in the contract. | C37 (this); C02/C17 (surfacing), C38 (consumer) |
 | I6 | **Tool-node lifecycle (pack)** | inbound (ops) | Packaged + invoked as a **Python** Gas City tool node (C02/C17 ABI); configured via pack TOML (embedding-model id/pin, HDBSCAN params, the representation rule, the population selector). | C02/C17 (ABI); C37 (config) |
 
 **Invariants C37 must uphold:**
@@ -222,14 +222,17 @@ is named as an unmodeled cost. ADDRESSED HERE (bounded + deferred to C46).**
 > **C46's**, not C37's. **Chosen: (b).** It is most consistent with v4: C37 sits in the loop **after** anomaly
 > detection ("Observability → **anomaly** → diagnosis", README:248; build order README:466), so the natural
 > input is the flagged window, not the entire store; and v4 explicitly places the **cost-per-satisfaction
-> model** at the meta-metric layer (**C46**, inventory `C29:G32 — cost-per-satisfaction model deferred to
-> C46`), not inside a P11 stage. Faithful handling: (1) C37 embeds **the supplied population** (bounded by the
+> model** at the meta-metric layer (**C46** — whose inventory row is "Records cost-per-satisfaction … needs a
+> defined cost model" and which carries G32 alongside C37; the explicit deferral ruling is review-log:154
+> "C29:G32 — cost-per-satisfaction model deferred to C46"), not inside a P11 stage. Faithful handling: (1) C37
+> embeds **the supplied population** (bounded by the
 > selector, default = the anomalous set), not the whole corpus; (2) embeddings **may be cached** (content-keyed
 > on the trajectory) so re-clustering does **not** re-pay embedding — a cheap, faithful cost lever using
 > sentence-transformers as-is, no custom infra; (3) the **cost figure itself** (tokens/compute per embedding ×
-> population size) is **surfaced to C46** and **not modelled in C37** (OQ-3). Note the embedding model is
-> **local/CPU-capable** (sentence-transformers needs no judge-provider tokens), so this cost is compute, not
-> per-call LLM spend — materially cheaper than the C32 judge or C38 diagnosis costs. *Whether an embed-all
+> population size) is **surfaced to C46** and **not modelled in C37** (OQ-3). Note that the named library runs
+> **local embedding models** (sentence-transformers is local/CPU-capable and needs no judge-provider tokens —
+> a property of the library, not a v4 statement), so this cost is compute, not per-call LLM spend — materially
+> cheaper than the C32 judge or C38 diagnosis costs. *Whether an embed-all
 > background mode is ever needed (reading (a)) is a sweep-2/C46 question, not a Sweep-1 design force.*
 
 **G33 (major) — no story for partial/cascading failure of the OSS stack; specifically "When a Python tool node
@@ -346,18 +349,25 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
 **Test strategy.** A **trajectory-clustering pack** that seeds a synthetic trajectory population in CXDB (C21) —
 several *known* failure families plus some singleton/odd trajectories and a few malformed ones — and drives
 AC-1…AC-9: in particular that **known-similar failures land in the same cluster** (AC-1, the headline behaviour;
-adversarial check per README:499 "feed it failure trajectories the team manually clustered, ensure its clusters
-match"), that **noise is surfaced** (AC-5), that the clustering is **reproducible** (AC-6) and uses the
+the *clustering-match* half of v4's **Healer-scenario** check, README:499 "feed it failure trajectories the team
+manually clustered, ensure its clusters match" — a line v4 attributes to the Healer scenario set, shared with
+**C38** which owns the *diagnosis-match* half; C37 owns the clustering-fidelity half it rests on), that **noise
+is surfaced** (AC-5), that the clustering is **reproducible** (AC-6) and uses the
 **off-the-shelf** engines (AC-3), and that it **fail-isolates** on a down store / malformed record (AC-9). This
 suite **must pass before C38 consumes C37's clusters**, since C38 assumes the per-cluster contract is the unit
 of diagnosis — and it runs **only after C21's conformance suite passes** (spec/C21 §8).
 
 ## 9. Open questions
 
-- **OQ-1 (→ review-log, top): C36↔C37 population seam.** Does **C36** (anomaly detection) **select** the
-  trajectory population C37 clusters (the natural reading — "anomaly → diagnosis", README:248), or does C37
-  cluster a broader trajectory set with C36 scoring numerically in parallel? The exact hand-off (what C36 passes
-  C37) is unspecified in v4 and shapes I1; freeze at sweep-2 with C36.
+- **OQ-1 (→ review-log, top): C36↔C37 population seam.** C36's side already commits the *carrier*: spec/C36 I3
+  emits a typed **`anomaly` signal** (carrying a trajectory pointer into C21) and names "the **anomaly→cluster
+  trigger seam is C36's signal (I3)**", with C37 consuming it (spec/C36 §1/§2); spec/C36 also co-freezes the
+  `anomaly`-record shape "with C37/C38, the principal consumers". So the carrier into I1 is **C36's `anomaly`
+  signal (C36 I3)**, not an open question. What *remains* open is the **granularity/aggregation**: does C37's I1
+  input arrive as the **aggregated anomalous window** (C37 batches the individual per-anomaly C36 signals into a
+  population to cluster) or does C36 hand C37 a window directly — i.e. does C37 cluster exactly C36's flagged set
+  or a broader set C36 merely scores ("anomaly → diagnosis", README:248)? This shapes I1 and is **co-owned with
+  C36 OQ-2** (the signal carrier C20-bead-vs-C23-event + record shape); freeze jointly with C36 at sweep-2.
 - **OQ-2 (→ review-log): trajectory representation (I2/G32) + HDBSCAN parameters + distribution of clusters.**
   The Sweep-1 default embeds trajectory-as-text; the canonical representation (turn text vs tool-call sequences
   vs error signatures vs last-N turns), the embedding-model id, and the HDBSCAN parameter set (min cluster size,

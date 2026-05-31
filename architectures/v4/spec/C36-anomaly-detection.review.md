@@ -28,16 +28,21 @@ C37 clusters "the flagged failures" to "C37 consumes C36's anomaly signal; **whe
 The *signal contract* (I3 carries what/score/provenance) is unchanged and kept — only the unstated claim that
 the signal **scopes C37's input** is demoted to the OQ it is.
 
-### RC36-02 — minor — §10 license-table line citations (310/311) point at the wrong rows
-**Claim.** The §"Source" header cites "§10 license table (line 310 'PyOD | BSD-2-Clause | Clean'; line 311
-'Anomalib | Apache 2.0 | Clean')."
-**Evidence.** AI-CONTEXT:310 is `LLM instrumentation | OpenLLMetry, OpenInference | Apache 2.0 | Mature` and
-:311 is `Claude Code instrumentation | Native OTLP via env vars | n/a (Anthropic) | Native` — neither is the
-PyOD/Anomalib license row. The license *values* (PyOD BSD-2, Anomalib Apache-2.0) are nonetheless correct and
-are supported by the rows that the spec **does** cite accurately (README:253 "BSD / Apache 2.0"; AI-CONTEXT:327
-"BSD-2/Apache 2.0"). So this is a stray wrong line-number, not a wrong fact.
-**Fix (applied).** Replaced the bogus "line 310/311" parenthetical with the correct supporting cites
-(README:253; AI-CONTEXT:327) so the license claim is traceable and no citation points at an unrelated row.
+### RC36-02 — minor — the "§10 license table (line 310/311)" cite is mislabelled: the line numbers + row text are README's (Part 5), but the label and placement attribute them to AI-CONTEXT §10, where 310/311 are unrelated rows
+**Claim.** The §"Source" header cites "**§10** license table (line 310 'PyOD | BSD-2-Clause | Clean'; line 311
+'Anomalib | Apache 2.0 | Clean')," placed *between* the AI-CONTEXT §Phase-3b and AI-CONTEXT §15.2 cites — i.e.
+read as AI-CONTEXT §10.
+**Evidence.** The line numbers and row texts are **exactly correct for README**: README:310 = "PyOD |
+BSD-2-Clause | Clean" and README:311 = "Anomalib | Apache 2.0 | Clean" (README "Part 5 — License hygiene",
+header at README:282). But **AI-CONTEXT §10** is "License caveats" at AI-CONTEXT:434 — it has no line-310/311
+license table; AI-CONTEXT:310/311 are the `LLM instrumentation` / `Claude Code instrumentation` rows. So the
+cite is internally inconsistent: a README locator wearing an AI-CONTEXT "§10" label, sandwiched among
+AI-CONTEXT references. Either way it does not resolve as written. (The license *values* are correct and are
+independently supported by the accurately-cited README:253 / AI-CONTEXT:327 rows — this is a locator defect,
+not a wrong fact.)
+**Fix (applied).** Relabelled the cite to **README §"Part 5 — License hygiene" (line 310 PyOD; line 311
+Anomalib)** — where those exact line numbers and row texts live — and moved the §15.2-repos cite under its
+correct owner (AI-CONTEXT) so the source line no longer attributes a README locator to AI-CONTEXT §10.
 
 ### RC36-03 — minor — "a future-track item" (line 86) lightly resurrects the retired Track-A/B vocabulary (D-6)
 **Claim.** §1 boundary: the LLM-trajectory/semantic anomaly layer "is a later P11 surface (**a future-track

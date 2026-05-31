@@ -10,8 +10,8 @@
 > loop (P11)" (line 327 "**Numeric anomaly detection | PyOD, Anomalib | BSD-2/Apache 2.0 | Mature generic**";
 > line 328 "LLM-trajectory anomaly | None turnkey | DIY | **Compose on generic**"), §Phase-1 (line 397 "CXDB
 > substrate ready for **P11 anomaly clustering**"), §Phase-3b (lines 403–406 "Anomaly detection: **Anomalib
-> (PyTorch), PyOD, Prometheus alerting patterns**"), §10 license table (line 310 "PyOD | BSD-2-Clause | Clean";
-> line 311 "Anomalib | Apache 2.0 | Clean"), §15.2 repos (line 647 "PyOD: `github.com/yzhao062/pyod`"; line 648
+> (PyTorch), PyOD, Prometheus alerting patterns**"); README §"Part 5 — License hygiene" (line 310 "PyOD |
+> BSD-2-Clause | Clean"; line 311 "Anomalib | Apache 2.0 | Clean"); AI-CONTEXT §15.2 repos (line 647 "PyOD: `github.com/yzhao062/pyod`"; line 648
 > "Anomalib: `github.com/openvinotoolkit/anomalib`"); component-inventory C36 row (line 48 "Detects unusual
 > patterns on telemetry/quality metrics (PyOD/Anomalib); **first/simplest P11 piece**"; maps A56/B33; depends
 > **C24, C21**; gap **G33**; foundational no) + Batch-4 note (line 113 "Anomaly→cluster→diagnose→fix
@@ -82,8 +82,8 @@ becomes a signal that opens the heal loop (a candidate `anomaly` record / event 
 - **NOT the LLM-trajectory anomaly composer.** v4 distinguishes **numeric** anomaly detection (PyOD/Anomalib,
   "Mature generic", **C36**) from **LLM-trajectory anomaly** ("None turnkey / DIY / **Compose on generic**",
   AI-CONTEXT:328). C36 is the **numeric** detector that the LLM-trajectory layer *composes on* — it is the
-  "generic" base, not the composed semantic detector. The semantic/LLM-trajectory layer is a later P11 surface
-  (a future-track item; it composes *on* C36, OQ-3), not C36's Sweep-1 scope.
+  "generic" base, not the composed semantic detector. The semantic/LLM-trajectory layer is a later/deferred P11
+  surface (it composes *on* C36, OQ-3), not C36's Sweep-1 scope.
 - **NOT the telemetry store or the ingest bridge.** Trajectories live in **C21** (CXDB); the telemetry→CXDB
   **bridge** is **C24** (write-side). C36 is a **read-side consumer** — it reads metric series via C21 and does
   not store, ingest, or own the metric record's schema. (spec/C24:65 "C36 … read from C21, not from C24".)
@@ -105,7 +105,7 @@ becomes a signal that opens the heal loop (a candidate `anomaly` record / event 
 | Upstream (read seam) | **C21** CXDB trajectory store | The content-addressed store C36 **reads** metric series from, via replay/retrieval + HTTP/JSON query (C21 I6/I2; spec/C21:103 "C36/C37/C38/C49 consume"). C21 fails *open* on outage (spec/C21 §6); C36 inherits that posture (§6, G33). Inventory C36 `depends on C21`. |
 | External (detector engines) | **PyOD / Anomalib** (`github.com/yzhao062/pyod` BSD-2; `github.com/openvinotoolkit/anomalib` Apache-2.0) | The v4-named "Mature generic" numeric anomaly detectors C36 wraps (AI-CONTEXT:327; README:253; AI-CONTEXT:647–648). Engine reuse — **not** custom code. |
 | External (alerting pattern) | **Prometheus alerting patterns** | Threshold/rate-style alarms v4 names for the same layer (AI-CONTEXT:405). Pattern reuse for simple threshold alarms alongside the PyOD/Anomalib statistical detectors. |
-| Downstream (clustering) | **C37** Trajectory clustering | Consumes C36's anomaly signal — embeds + clusters the flagged failures (README:255; inventory line 49). C37's inventory `depends on C21`; the **anomaly→cluster trigger seam is C36's signal (I3)**. |
+| Downstream (clustering) | **C37** Trajectory clustering | Consumes C36's anomaly signal (README:255; inventory line 49). C37's inventory `depends on C21` (it reads trajectories from C21 directly), so **whether C36's flagged set *selects* C37's clustering population, or C37 clusters a broader trajectory set read from C21 in parallel while C36's signal is a per-trajectory pointer, is the C36↔C37 population seam — OQ-5 (= C37 OQ-1), unresolved in v4**. The anomaly-signal *contract* (I3) is C36's; whether that signal also *scopes* C37's input is the open seam. |
 | Downstream (diagnosis) | **C38** Diagnosis agent (Healer) | The LLM root-cause analysis the anomaly signal ultimately drives (README:248 "anomaly → diagnosis"; inventory line 50). C38 reads clustered failures (via C37), so C36 reaches C38 **through** C37 in the canonical chain. |
 | Packaging host | **C02** Pack/tool-node ABI, **C17** Tool-node abstraction | C36 is a **Python** tool node in a Gas City pack (README:253), invoked via the tool-node protocol. *(Related interface, not a dependency edge; mirrors how C24/C33 name C02/C17.)* |
 
@@ -128,7 +128,7 @@ C21, the detector API to PyOD/Anomalib).
 |---|---|---|---|---|
 | I1 | **Telemetry / quality-metric read** | inbound (read) | Read the numeric metric series C36 scores — per-run/per-session telemetry + quality metrics — from **CXDB trajectories (via C21 I6/I2)** (and any already-materialised metric series). C36 owns the reduction of trajectories/telemetry into the numeric vectors the detectors take; the **store/retrieval** is C21's, the **landing** is C24's. | C36 (this); **C21** (read seam), **C24** (provenance) |
 | I2 | **Numeric anomaly scoring** | internal | Score the series with **PyOD / Anomalib** (AI-CONTEXT:327) and/or **Prometheus-style threshold alerting** (AI-CONTEXT:405); produce an **anomaly verdict + score** per series/window. Engine = the v4-named detectors; **no custom estimator** (the bar). | C36 (this); **PyOD/Anomalib** (engine) |
-| I3 | **Anomaly signal (loop trigger)** | outbound (data/event) | When a value is flagged, emit the **anomaly signal** that opens the heal loop: *what* (metric/series + run/trajectory pointer into C21), *score/severity*, *when*. The **trigger** C37/C38 consume (README:248). This is C36's load-bearing custom surface — the wiring of detection → downstream. | C36 (this); **C37/C38** (consumers) |
+| I3 | **Anomaly signal (loop trigger)** | outbound (data/event) | When a value is flagged, emit the **anomaly signal** that opens the heal loop: *what* (metric/series + run/trajectory pointer into C21), *score/severity*, *when*. The signal C37/C38 consume to open diagnosis (README:248 "anomaly → diagnosis"). This is C36's load-bearing custom surface — the wiring of detection → downstream. *(Whether this signal also **selects the population** C37 clusters, or is only a per-trajectory pointer alongside an independent C37 read from C21, is OQ-5.)* | C36 (this); **C37/C38** (consumers) |
 | I4 | **Watched-metric + detector config** | input (config) | The set of watched metric streams, the chosen detector(s), and the sensitivity/contamination/threshold params — **pack TOML**, not code. | C02/C03 (model); C36 (binding) |
 | I5 | **Tool-node lifecycle (pack)** | inbound (ops) | Packaged + invoked as a **Python** Gas City tool node (C02/C17 ABI); configured via pack TOML; operated with the self-healing pack in Phase 3b (README:253,459). | C02/C17 (ABI); C36 (config) |
 
@@ -258,7 +258,9 @@ inheritance**, not a new mechanism:
 
 > F-mode applicability is owned by **C57** (coverage map). C36 underwrites the **numeric-detection half** of
 > several P11 modes — **F22** (zombie agents: "anomaly detection on session liveness (PyOD on telemetry)",
-> F-MODE-COVERAGE:44 — the mode most directly named to C36), **F4** (code-quality teardown: anomaly detection
+> F-MODE-COVERAGE:44 — the mode most directly named to C36; C36 owns only the **PyOD-on-telemetry detection
+> half**, and F22's **Addressed** status is *joint* with C38's "Tracker-style diagnosis" half, not C36's
+> alone), **F4** (code-quality teardown: anomaly detection
 > on quality metrics, Partial per F4), **F8** (stale-knowledge: anomaly detection on knowledge-store freshness,
 > F-MODE-COVERAGE:85), and the **drift-detection** inputs to **F24/F40/F57/F7** (gate-relaxation / shipping-rate
 > / classification-threshold / acceptance-threshold drift — C36 *detects* the numeric drift; the *Healer
@@ -365,3 +367,11 @@ trigger.
   emits, but F4 flags the *definition* of a quality metric as unsolved (F-MODE-COVERAGE:42). Confirm **which
   quality series exist** for C36 to watch at Phase 3b (and that defining new quality metrics is out of C36's
   scope), so F4 coverage is honestly scoped as Partial.
+- **OQ-5 (→ review-log): the C36↔C37 population seam (= C37 OQ-1).** Does C36's flagged set **select** the
+  trajectory population C37 clusters (the natural "anomaly → diagnosis" reading, README:248), or does C37 read
+  a broader trajectory set from C21 directly (C37 `depends on C21`, not C36) with C36's anomaly signal serving
+  only as a per-trajectory pointer/score? v4 states only the *ordering*, not that the anomaly detector hands
+  the clustering stage its population; C37 raises the identical question as its OQ-1 ("what C36 passes C37 …
+  unspecified in v4 … freeze at sweep-2 with C36"). Freeze **jointly with C37** at sweep 2. *(This is the
+  signal-as-pointer vs signal-as-population-selector distinction; C36's I3 contract is fixed either way, only
+  the input-scoping of C37 is open.)*

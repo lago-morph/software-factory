@@ -48,7 +48,9 @@ the focused work", README:261) — the one node in the loop the existing stack d
 gene-transfusion source", AI-CONTEXT:331).
 
 The agent is built **on the existing stack, not from scratch**. The *investigator* is **Claude Code
-itself** — the same provider/family as the coder (review-log **D-1**), driven by C28's multi-turn
+itself** — the same provider/family as the coder (review-log **D-1** governs the *judge* provider verbatim;
+the same Phase-0 same-provider posture is applied to the diagnosis role per the C38 dispatch brief, with a
+cross-provider diagnosis model deferred to FE-1), driven by C28's multi-turn
 reasoning + tool-dispatch loop with read access to CXDB query tools ("Custom **Claude Code agent** with
 CXDB query tools", README:256). C38's own genuine deliverable is the thin glue the stack does not provide:
 **(a) the diagnosis prompt/agent role** — what to investigate, over which cluster, with which read tools,
@@ -89,12 +91,13 @@ Code investigation patterns visible in Claude Code itself" (README:462).
   before escalation, oscillation detection when a fix *creates* a new anomaly, who authorizes a fix to ship
   at L5) are **C39's** (inventory C39; G18/G35; review-log **XC-3** routes the numeric heal-loop policy to
   C39, not the diagnosis step). C38 *emits a diagnosis*; it does **not** write `fix_task`, does **not**
-  decide attempt budgets, does **not** authorize shipping. `> [AMBIGUITY: G07-adjacent]` — README:257 says
+  decide attempt budgets, does **not** authorize shipping. `> [SEAM: OQ1]` — README:257 says
   "**diagnosis agent writes bead of type `fix_task`**", which reads as C38 writing the bead; but the
   inventory splits C38 (diagnosis) from **C39** (fix-task generation & loop-closure, which *depends on
   C38*). Minimal consistent reading with the inventory + C39's deps: **C38 emits the `Diagnosis`; C39 mints
   the `fix_task` from it.** The README "writes" is the loop *as a whole*; the inventory's C38/C39 split is
-  authoritative for the seam. (See §9 OQ1.)
+  authoritative for the seam, and is **confirmed on disk** by [`spec/C39-fix-task-loop-closure.md`](./C39-fix-task-loop-closure.md) §1/§3.1 (C39 *consumes* the diagnosis; "Diagnosis-intake contract (C38 → C39)").
+  (See §9 OQ1.)
 - **NOT clustering / embedding / anomaly detection (C37, C36).** *Embedding trajectories and grouping
   similar failures* is **C37** (sentence-transformers + HDBSCAN); *numeric anomaly detection* is **C36**
   (PyOD). C38 *consumes* a finished cluster; it neither embeds nor clusters nor detects the anomaly.
@@ -193,7 +196,8 @@ trajectories in C21, the `fix_task` + loop-closure chain in C39/C20.
 
 | Datum | Shape (sweep-1) | Owner | Notes |
 |---|---|---|---|
-| `Diagnosis` (per cluster) | `{cluster_id, root_cause, evidence_refs[] (CXDB turn/span), confidence, proposed_remedy, transfused_from}` | C38 (emits) → persisted on bead/CXDB | The record C39 consumes to mint a `fix_task`. `> [FAITHFUL-FILL]` — minimal field set, modeled on the Tracker JSON failure-report shape; sweep-2 fixes schema vs the verified Tracker API. |
+| `Diagnosis` (per cluster) | `{cluster_id, root_cause, evidence_refs[] (CXDB turn/span), confidence, proposed_remedy}` | C38 (emits) → persisted on bead/CXDB | The record C39 consumes to mint a `fix_task`. `> [FAITHFUL-FILL]` — minimal field set, modeled on the Tracker JSON failure-report shape; sweep-2 fixes schema vs the verified Tracker API. **Build-time transfusion provenance (`transfused_from` + pattern-vs-code flag) is NOT a field of this runtime record — it lives on C38's `factory_build` bead (C20/C51, D-3); see the next row.** |
+| Transfusion provenance (build-time) | `transfused_from = Tracker Diagnose/Audit/Doctor` (+ Claude Code investigation patterns) + the **pattern-vs-code** flag, on C38's **`factory_build`** bead | C20 schema / C51 framework | A one-time *build* fact about building C38, graded by C51's predicate (G07) under the G30 license verdict — not stamped onto each per-cluster `Diagnosis`. C38 records it; C51 owns the framework (I6). |
 | Diagnosis-agent pack | Claude Code diagnosis-role **prompt + role + read-tool wiring**, shipped as a "Specialized Gas City agent pack" (README:256) | C02/C17 + C38 | Declarative; the investigation engine (C28) + CXDB tools (C21) are adopted, not authored. **This prompt/role is C38's primary deliverable.** |
 | Cluster + trajectory context (transient) | the cluster + its CXDB turn-DAGs, loaded read-only for one run | C37 / C21 | Held only for the duration of a diagnosis run. |
 | Diagnosis-model identity (transient) | from C29 per run (Phase-0 Claude Code, D-1) | C29 | Recorded into the `Diagnosis`/attribution; not owned. |
@@ -335,13 +339,15 @@ flow, and the Healer scenario fixtures are **sweep-2**.
 
 ## 9. Open questions (→ review-log)
 
-- **OQ1 (C38↔C39 seam — who writes `fix_task`?, top).** README:257 reads as "**diagnosis agent writes bead
-  of type `fix_task`**", but the inventory splits **C38 (diagnosis)** from **C39 (fix-task generation &
-  loop-closure, depends on C38)**. Sweep-1 takes the **inventory split** as authoritative: **C38 emits the
-  `Diagnosis`; C39 mints the `fix_task`** from it (the README "writes" is the loop as a whole). Confirm the
-  exact handoff contract (does C39 *poll* C38's `Diagnosis` beads, or does C38 *hand* the `Diagnosis` to a
-  C39 entry?) at sweep-2 (overlaps C39, whose spec is not yet on disk). *This is the load-bearing downstream
-  seam.*
+- **OQ1 (C38↔C39 seam — handoff *mechanism*; ownership split now confirmed, top).** README:257 reads as
+  "**diagnosis agent writes bead of type `fix_task`**", but the inventory splits **C38 (diagnosis)** from
+  **C39 (fix-task generation & loop-closure, depends on C38)**. Sweep-1 takes the **inventory split** as
+  authoritative: **C38 emits the `Diagnosis`; C39 mints the `fix_task`** from it (the README "writes" is the
+  loop as a whole). **This split is now confirmed on disk by [`spec/C39-fix-task-loop-closure.md`](./C39-fix-task-loop-closure.md)** (§1 "takes a **diagnosis** (from C38) … generates a `fix_task` bead"; §1 "Explicitly
+  NOT … the **diagnosis** … C39 *consumes* a diagnosis"; §3.1 contract 1 "Diagnosis-intake contract
+  (C38 → C39)") — the ownership question is settled, not merely inferred. What remains open is the *handoff
+  mechanism*: does C39 *poll* C38's `Diagnosis` beads, or does C38 *hand* the `Diagnosis` to a C39 entry?
+  Freeze that transport detail at sweep-2. *This is the load-bearing downstream seam.*
 - **OQ2 (G30 — Tracker license verdict, framework C51).** The Tracker license is **unverified** (likely MIT
   by 2389 convention, but "verify before adoption", README:292). Until verified, C38 transfuses the
   diagnosis discipline **pattern-only** (legal regardless). The *verdict* + the license-hygiene framework are

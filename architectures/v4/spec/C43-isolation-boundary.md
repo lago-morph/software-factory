@@ -45,8 +45,8 @@ of an agent that holds **broad Bash / network / filesystem tool access** (the im
 load-bearing deliverable is **deterministic boundary typing** — every external-interaction surface (a Bash
 invocation, a network egress, a filesystem path) carries a **deterministic boundary type** that
 classifies it as *twin / isolated / production*, **decided by a deterministic rule, not an LLM judgment**
-(README:152–162 P4 "deterministic-first"; F-MODE-COVERAGE F12/F33/F51 "boundary typing (CaMeL pattern) …
-deterministic boundary typing is the primary guard"). Paired with that typing is the **default-twin routing
+(README:152–162 P4 "deterministic-first"; F-MODE-COVERAGE F12 "boundary typing (CaMeL pattern)", corroborated
+by F33/F51 "deterministic boundary typing is the primary guard"). Paired with that typing is the **default-twin routing
 rule** (F44 "Production-Scissors Default"): external dependencies resolve to a **C44 digital twin by
 default**, and reaching real production requires an **explicit per-pack declaration**. Together these two
 deterministic declarations are what let v4 mark the lethal-trifecta modes (F12/F44/F56) "Addressed" —
@@ -85,7 +85,8 @@ the residual that neither C42's declaration nor C34's audit can themselves *prev
   no production reach), **`production`** (real external system) — and the rule that the type is assigned
   **deterministically** (a static classification of the target, not an LLM decision) so the guard is
   Ashby-sufficient (F51: "deterministic boundary typing is the primary guard; LLM-judge is secondary").
-  This is the "boundary typing (CaMeL pattern)" v4 names for F12/F33 (README:152–162 P4).
+  This is the "boundary typing (CaMeL pattern)" v4 names at F12 (and the "deterministic boundary typing"
+  primary guard at F33/F51; README:152–162 P4).
 - **Own the default-twin / production-scissors routing rule (the P7 keep, F44).** Assert the **substrate
   default: external dependencies resolve to a C44 twin**; reaching real production is a **non-default,
   explicit per-pack declaration** ("production scissors require explicit declaration per pack",
@@ -151,10 +152,9 @@ the residual that neither C42's declaration nor C34's audit can themselves *prev
 | Direction | Component | Relationship |
 |---|---|---|
 | Upstream (declared dep) | **C42** Rig / agent-role partitioning | Per **D-13** C42 **provides** the role partition + read/write partition model. C43 consumes the partition as the *baseline* scope and layers external-surface boundary typing on top of it. C43 `depends on C42`. |
-| Upstream (declared dep) | **C44** Digital twin (per service) | C44 **builds** the per-service behavioral clone. C43's `twin`-typed surfaces **route to** C44 twins, and the default-twin rule (F44) is what makes twins the substrate default. C43 declares the typing/routing; C44 supplies the clone. C43 `depends on C44`. |
+| Upstream (declared dep) | **C44** Digital twin (per service) | C44 **builds** the per-service behavioral clone. C43's `twin`-typed surfaces **route to** C44 twins, and the default-twin rule (F44) is what makes twins the substrate default. The `twin` boundary type **is the signal** that a surface must be served by a C44 twin; C44 is the implementation the route resolves to — C43 owns the *type and default*, C44 owns the *twin*. C43 declares the typing/routing; C44 supplies the clone. C43 `depends on C44`. |
 | Upstream (substrate boundaries) | **C04** Session & provider runtime · **C01** Gas City substrate | > [FAITHFUL-FILL] — **not declared inventory edges** (inventory C43 `depends on` = C42, C44); faithful fill. The **mechanical** process / network / filesystem isolation C43's typing *relies on* is the OS/process boundary Gas City/C04 give natively (SURVIVOR-PASS C04-05 "we trust process boundaries Gas City gives"). C43 does not build these; it types/routes the surface they bound. |
 | Upstream (typed tool surface) | **C28** Claude Code agent loop · **C02** Pack / tool-node ABI | > [FAITHFUL-FILL] — faithful fill (not a declared edge). The **broad Bash/network/fs tool access** C43 bounds is C28's (the implementer worker's hooks/Bash/Read surface); the per-pack production-scissors declaration attaches at the **pack** level (C02). C43 types *their* external surface; it does not redefine the tool ABI or the agent loop, and the capability-grant wiring is **dropped** (C02-04). |
-| Downstream (binds twins) | **C44** Digital twin | (also a dep — bidirectional at the seam) C43's `twin` boundary type is the signal that a surface must be served by a C44 twin; C44 is the implementation the route resolves to. The default-twin rule is C43's; the twin behavior is C44's. |
 | Downstream (verifies usage) | **C45** Twin contract & fidelity verification | C45 verifies "twin usage matches service promises and twin behavior matches the real service". C43's boundary-typing/scissors declaration is *what* a surface's intended (twin vs production) usage is; C45 checks reality against it. C45 `depends on C44` (and reads C43's declared typing). |
 | Downstream (records the mechanism + residual) | **C57** Failure-mode coverage & residual-risk register | C57 records C43's boundary-typing + default-twin routing as the F12/F44/F56/F33/F51 mechanism, **and** the G31 residual-exposure caveat (the Phase 0→3b window before twins land). C57 `depends on C43`. |
 | Downstream (blast-radius half of autonomy) | **C56** Autonomy ladder · **C39** Fix-task loop-closure | C43's blast-radius bound is what makes higher autonomy rungs (L4/L5, README:90) survivable: more autonomy ⇒ more potential blast radius, capped by C43's twin-by-default posture. The *objective-drift / fix-ship-authorization* half of G35 is C39/C56/C35's, not C43's. |
@@ -203,7 +203,10 @@ sweep-2 deliverables.
   the clause F44/F56 "bounded blast radius" rests on.)
 - **Deterministic typing.** A surface's boundary type is decided by a **deterministic rule** over the
   target, never by an LLM/agent decision (F51 "deterministic boundary typing is the primary guard; LLM-judge
-  is secondary"). An LLM-assigned boundary type is an invalid (Ashby-deficient) configuration.
+  is secondary"). An LLM-assigned boundary type is an invalid (Ashby-deficient) configuration. *(The closed
+  type set treats `twin`/`production` as v4-named (F44) and **`isolated` as a FAITHFUL-FILL third type** whose
+  status — a *label* on the C42/C04 worktree boundary vs a distinct C43 sandbox — is **OQ-C43-3**, §4.1; the
+  closed set is needed for this invariant to be well-defined, but its third element rests on the fill.)*
 - **Blast-radius bound (D-13).** An agent with broad Bash/network/fs tool access can by default reach only
   `twin`/`isolated` surfaces; `production` is reachable **only** through declared scissors. This bounds the
   blast radius of prompt-injection / stress-compliance failure (F12/F56).
@@ -263,7 +266,7 @@ production at surface X." Absent it, the surface is `twin`.
 
 | Layer | Mechanism | Owner today | v4 source / ruling |
 |---|---|---|---|
-| typing | deterministic boundary type (`twin`/`isolated`/`production`) over the external surface | **C43** (the keep) | F12/F33/F51 "boundary typing (CaMeL pattern)"; P4 |
+| typing | deterministic boundary type (`twin`/`isolated`/`production`) over the external surface | **C43** (the keep) | F12 "boundary typing (CaMeL pattern)"; F33/F51 "deterministic boundary typing"; P4 |
 | routing | twin-by-default; production-scissors explicit per pack | **C43** (the keep) | F44 |
 | twin impl | the per-service behavioral clone the `twin` type routes to | **C44** | README P7; inventory C44 |
 | mechanical isolation | OS process / network / filesystem boundaries; run-worktree scope | **C04 / C42 / Gas City** (not C43) | SURVIVOR-PASS C04-05 |
@@ -323,7 +326,8 @@ BUILDER-BRIEF altitude.)
 > [AMBIGUITY: G31] **Is the lethal-trifecta bound a realized control, or a deterministic-typing
 > *declaration* whose realization waits on C44 twins (unbuilt and last)?**
 > Reading A (faithful — typing/routing design now, realization on C44): F-MODE-COVERAGE marks F12/F44/F56
-> "Addressed" via "twins … boundary typing (CaMeL pattern)" (F12/F44), but the twins are **Phase 3c**
+> "Addressed" via "twins … boundary typing (CaMeL pattern)" (F12) + the twin-by-default/production-scissors
+> default (F44), but the twins are **Phase 3c**
 > (README:468) and "the most labor-intensive principle … No turnkey OSS" (README:204); the ambiguities doc
 > states plainly the mechanism "is unbuilt and last" and the factory runs with Bash/network/fs and "no twin
 > isolation" Phase 0→3b (G31). On this reading C43 **owns the deterministic boundary-typing + default-twin

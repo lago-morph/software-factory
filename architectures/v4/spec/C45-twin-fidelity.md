@@ -50,22 +50,29 @@ verify behavioral fidelity against the real service"). C45 is **kind: invariant*
 service: it owns the **fidelity predicate** (the bar) and the **gate** that asserts the invariant, not the
 twin (C44) and not the scenarios (C30).
 
-C45 exists because **G22 is the genuine unsolved deliverable**. v4 names mature OSS for the two *verification
-techniques* — Pact/schemathesis for contract verification, Prism for OpenAPI-conformance (README:201,
-AI-CONTEXT:343–344) — but for the actual *acceptance bar* it says **"Behavioral fidelity testing | None
-turnkey | DIY | Manual diff tooling"** (AI-CONTEXT:347). The over-build trap is to re-build the
-contract-testing/schema-diff tooling the stack already provides; the genuine KEEP is the **definition of
+C45 exists because **G22 is the genuine unsolved deliverable**. v4 names mature OSS for the *contract-
+verification technique* — **Pact / schemathesis** ("Contract verification — Verify usage matches service
+promises", README:201, AI-CONTEXT:344; schemathesis being the OpenAPI-conformance/property tester) — but for
+the *behavioural-fidelity diff* and the actual *acceptance bar* it says **"Behavioral fidelity testing | None
+turnkey | DIY | Manual diff tooling"** (AI-CONTEXT:347). (Prism, AI-CONTEXT:343, is an OpenAPI-driven **mock**
+— C44's twin-construction surface, a *subject* of verification, **not** a C45 conformance checker.) The
+over-build trap is to re-build the contract-testing tooling the stack already provides; the genuine KEEP is
+the **definition of
 "close enough"** — the fidelity predicate over a fidelity-probe corpus, plus the wiring that gates a twin as
 fit-for-substitution — which no OSS supplies. F-MODE-COVERAGE §4 marks **F12/F33/F44/F56 "Addressed" purely
 on the strength of twins** that "remove the deploy-to-production vector"; without C45's bar those four
 "Addressed" cells rest on twins of *unknown* fidelity (G22), which is exactly the gap C45 closes.
 
 > [FAITHFUL-FILL] **C45 is the fidelity *bar + gate*, not a new contract-testing engine.** Per the
-> capability-for-principle bar, contract verification (Pact/schemathesis, README:201/AI-CONTEXT:344),
-> OpenAPI-conformance checking (Prism, AI-CONTEXT:343), and HTTP record/replay diffing (VCR/go-vcr,
-> README:199) are **mature stack tooling C45 *invokes*, not custom code C45 *writes***. The one thing v4
-> says has **no turnkey OSS** is the *fidelity bar itself* — "how close is close enough" (G22;
-> AI-CONTEXT:347 "None turnkey / DIY"). The minimal faithful reading of C45's "invariant" (inventory kind)
+> capability-for-principle bar, contract verification (**Pact / schemathesis**, README:201/AI-CONTEXT:344 —
+> schemathesis = OpenAPI conformance) and HTTP record/replay **reference capture** (VCR/go-vcr/polly,
+> README:199 "capture and replay") are **mature stack tooling C45 *invokes*, not custom code C45 *writes***.
+> The two things v4 says have **no turnkey OSS** are the *behavioural-fidelity diff* and the *fidelity bar
+> itself* — "Behavioral fidelity testing | None turnkey | DIY | Manual diff tooling" / "how close is close
+> enough" (G22; AI-CONTEXT:347). So the tolerance-scored **behaviour diff/compare over the recorded reference
+> is part of C45's DIY KEEP**, not an off-the-shelf engine (record/replay supplies the reference + replay, not
+> the compare). (Prism, AI-CONTEXT:343, is an OpenAPI-driven *mock* — C44's twin surface, not a C45 verifier.)
+> The minimal faithful reading of C45's "invariant" (inventory kind)
 > is therefore: C45 **owns the fidelity predicate** (the threshold + the probe-corpus contract that defines
 > "close enough" per twin) and **owns the verification wiring** (run the contract check + the
 > behaviour-diff, combine them against the predicate, emit a pass/fail fidelity verdict). C45 does **not**
@@ -82,9 +89,9 @@ on the strength of twins** that "remove the deploy-to-production vector"; withou
   no OSS (AI-CONTEXT:347) and the inventory says C45 "needs" (the "how close is close enough" bar).
 - **Verify twin-usage-vs-service-promises (contract half — A63/README:201).** C45 runs the **contract
   verification** that the agent's usage of the twin conforms to the real service's published contract
-  (Pact/schemathesis, README:201/AI-CONTEXT:344; or OpenAPI conformance via Prism, AI-CONTEXT:343), so a
-  twin cannot accept a request shape, auth, or response the real service would reject. The *tool* is stack
-  OSS; C45 owns *that the check runs and feeds the predicate*.
+  (**Pact / schemathesis**, README:201/AI-CONTEXT:344 — schemathesis providing OpenAPI conformance/property
+  testing), so a twin cannot accept a request shape, auth, or response the real service would reject. The
+  *tool* is stack OSS; C45 owns *that the check runs and feeds the predicate*.
 - **Verify twin-behavior-vs-real-service (behaviour half — README:499).** C45 runs the **behavioural
   fidelity check**: the twin's responses over the fidelity-probe corpus are compared against a **reference**
   of real-service behaviour (recorded interactions / golden responses — record/replay, README:199), and the
@@ -107,12 +114,14 @@ on the strength of twins** that "remove the deploy-to-production vector"; withou
   fidelity-probe scenarios in the isolated rig (README:499 "the twins' scenarios"; inventory C30). C45
   **consumes** the probe corpus to evaluate the predicate; it does not author or store scenarios. (Inventory:
   C45 `depends on C30`.)
-- **NOT a new contract-testing / schema-diff / mocking engine (bar — the over-build trap).** Pact,
-  schemathesis, Prism, and HTTP record/replay diff tooling are **mature OSS** (README:199/201,
-  AI-CONTEXT:343–344) that C45 **invokes**. C45 does **not** re-implement contract testing, schema
-  diffing, or response mocking; building any of those is polish/what-the-stack-already-does → **DROP**
-  (capability-for-principle bar). C45's only custom surface is the **fidelity predicate + the
-  combine-and-gate wiring** that no OSS provides (AI-CONTEXT:347).
+- **NOT a new contract-testing / schema-diff / mocking engine (bar — the over-build trap).** **Pact /
+  schemathesis** (contract verification, README:201/AI-CONTEXT:344) and **HTTP record/replay** (reference
+  capture + replay, VCR/go-vcr/polly, README:199) are **mature OSS** that C45 **invokes**; **Prism**
+  (AI-CONTEXT:343) is an OpenAPI-driven *mock* belonging to C44's twin, not a C45 tool. C45 does **not**
+  re-implement contract testing or record/replay capture; building any of those is polish/what-the-stack-
+  already-does → **DROP** (capability-for-principle bar). C45's only custom surface is the **fidelity
+  predicate + the tolerance-scored behaviour diff + the combine-and-gate wiring** — the parts v4 says have no
+  turnkey OSS ("Manual diff tooling / DIY", AI-CONTEXT:347).
 - **NOT the isolation / lethal-trifecta boundary (C43).** C43 owns the deterministic boundary typing and
   twin *isolation* that bounds blast radius for Bash/network/fs access (G31; inventory C43). C45 establishes
   *whether a twin is faithful enough to substitute*; C43 establishes *that the agent is confined to the twin
@@ -163,11 +172,12 @@ adapter contract, the behaviour-diff record schema, and the verdict bead schema 
    C45 "needs" and AI-CONTEXT:347 says has no OSS. (Sweep-1: named + its dimensions enumerated; the concrete
    tolerance schema is sweep-2.)
 2. **Contract-verification check (twin-usage-vs-service-promises — A63/README:201).** A named check that
-   the twin honours the real service's published contract: a **Pact/schemathesis** consumer-contract or
-   schema-conformance run, or **Prism** OpenAPI-conformance (README:201/AI-CONTEXT:343–344), against the
-   twin's endpoint. Input: the service contract/OpenAPI (from C44) + the agent's usage interactions. Output:
-   a per-dimension **contract-conformance result** feeding the predicate. *Tool is stack OSS; C45 owns the
-   wiring + the result mapping.*
+   the twin honours the real service's published contract: a **Pact** consumer-contract run or a
+   **schemathesis** OpenAPI-conformance/property run (README:201/AI-CONTEXT:344), against the twin's endpoint.
+   Input: the service contract/OpenAPI (from C44) + the agent's usage interactions. Output: a per-dimension
+   **contract-conformance result** feeding the predicate. *Tool is stack OSS; C45 owns the wiring + the result
+   mapping.* *(Prism, AI-CONTEXT:343, is an OpenAPI **mock** in C44's twin — a subject of this check, not the
+   checker.)*
 3. **Behavioural-fidelity check (twin-vs-real-service — README:499).** A named check that compares the
    **twin's responses** over the fidelity-probe corpus against a **reference** of real-service behaviour
    (recorded/golden interactions — record/replay, README:199), producing a **behaviour diff** scored against
@@ -195,10 +205,12 @@ adapter contract, the behaviour-diff record schema, and the verdict bead schema 
 - **Bar-is-explicit invariant (G22).** Every certified twin has an **explicit, recorded** predicate (the
   tolerances and the probe corpus), not an implicit "looks right". The bar must be a written artifact so a
   pass is auditable and a residual (twin below bar / stale reference) is discoverable in C57.
-- **No-engine-rebuild invariant (bar).** C45 verifies using **stack tooling** (Pact/schemathesis/Prism/
-  record-replay diff); it contains **no** custom contract-testing engine, schema-diff library, or mocking
-  runtime (README:199/201, AI-CONTEXT:343–344). The only custom code is the predicate + the
-  combine-and-gate wiring.
+- **No-engine-rebuild invariant (bar).** C45 verifies using **stack tooling** for the parts the stack
+  provides — **Pact / schemathesis** (contract verification, README:201/AI-CONTEXT:344) and **record/replay**
+  reference capture (VCR/go-vcr/polly, README:199) — and contains **no** custom contract-testing engine,
+  record/replay capturer, or mocking runtime. The custom code is the predicate + the **tolerance-scored
+  behaviour diff** + the combine-and-gate wiring — the "Manual diff tooling / DIY" parts v4 says have no
+  turnkey OSS (AI-CONTEXT:347).
 
 ## 4. Data model / state
 
@@ -242,8 +254,8 @@ recorded reference corpus's *authoring* (captured via record/replay; home is OQ-
 
 | Half | What it checks | Tool (stack OSS) | C45's custom part |
 |---|---|---|---|
-| usage-vs-promises | agent usage / twin responses conform to the real service contract | **Pact / schemathesis** (README:201/AI-CONTEXT:344); **Prism** OpenAPI conformance (AI-CONTEXT:343) | wire the check; map result to the predicate dimension |
-| twin-vs-real | twin behaviour matches recorded real-service behaviour over the probe corpus | **record/replay diff** (VCR/go-vcr/polly, README:199); golden-response compare | the **tolerance scoring** + the probe corpus (C30) |
+| usage-vs-promises | agent usage / twin responses conform to the real service contract | **Pact / schemathesis** — schemathesis = OpenAPI conformance (README:201/AI-CONTEXT:344) *(Prism, AI-CONTEXT:343, is an OpenAPI **mock** in C44's twin, not a verifier)* | wire the check; map result to the predicate dimension |
+| twin-vs-real | twin behaviour matches recorded real-service behaviour over the probe corpus | **record/replay** reference capture + replay (VCR/go-vcr/polly, README:199); the **diff/compare** itself is DIY ("Manual diff tooling", AI-CONTEXT:347) | the **golden-compare + tolerance scoring** + the probe corpus (C30) |
 | the bar | combine both into `pass\|fail` at a stated tolerance | **None turnkey — DIY** (AI-CONTEXT:347) | **the fidelity predicate (G22) — the genuine KEEP** |
 
 ### 4.4 Persistence & consistency

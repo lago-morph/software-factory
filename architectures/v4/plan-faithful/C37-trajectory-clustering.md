@@ -71,11 +71,15 @@ WS-A and WS-B meet at the T4→T5 handoff (the per-trajectory representation fee
    build. This retires the foundational read dependency.
 2. **Spike — representation + cluster quality (T4/T6/OQ-2).** The **one genuinely-custom decision** is the
    trajectory→document representation; cluster *quality* depends on it + the HDBSCAN params. De-risk with the
-   adversarial check v4 names (README:499: "feed it failure trajectories the team manually clustered, ensure its
-   clusters match") on a small labelled set, against the **pinned** sentence-transformers + HDBSCAN, so no custom
-   algorithm creeps in (the bar / AC-3).
-3. **Confirm — C36↔C37 population seam (T1/OQ-1).** Resolve whether **C36** selects the population C37 clusters
-   (the natural "anomaly → diagnosis" reading) or C37 clusters a broader set — it shapes I1 and the cost bound.
+   **clustering-match** half of v4's Healer-scenario check (README:499: "feed it failure trajectories the team
+   manually clustered, ensure its clusters match" — v4 frames this as the Healer scenario set, shared with C38;
+   C37 owns the clustering-fidelity half) on a small labelled set, against the **pinned** sentence-transformers
+   + HDBSCAN, so no custom algorithm creeps in (the bar / AC-3).
+3. **Confirm — C36↔C37 population seam (T1/OQ-1).** The carrier is settled on C36's side — C37's I1 selector is
+   **C36's `anomaly` signal (spec/C36 I3)**, the committed "anomaly→cluster trigger seam", record shape
+   co-frozen with C37. The open residual is the **granularity**: whether C37 batches per-anomaly C36 signals
+   into the population or C36 hands a window directly (and whether C37 clusters exactly the flagged set or a
+   broader one) — it shapes I1 and the cost bound; freeze jointly with C36 OQ-2.
 4. **Bound — G32 cost (T3/T5/OQ-3).** Confirm C37 embeds the **bounded anomalous window** (not the corpus) and
    that the **cost-per-satisfaction** accounting lives at **C46**, not C37; verify **embedding caching** is the
    cheap, off-the-shelf cost lever (no custom infra).

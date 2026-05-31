@@ -23,7 +23,7 @@
 - **C46** (meta-metric stream) — supplies the **metric panel + cost model** C50's multi-metric rule + Goodhart guard read.
 - **C33** (satisfaction metric) — the **threshold-free** distribution whose cutline routes to **C50** (C33 §6); reachable via C46.
 - **C12** (formula) — the **variant** being promoted *is* a formula; C50 flips the **default formula reference** (with C03 config).
-- **C49** (counterfactual replay) — produces comparable variant evidence consumed *via* C48 (not a direct edge; G19, the hard unsolved invention the whole P12 batch waits on).
+- **C49** (counterfactual replay) — reaches C50 only *transitively via C48* (**not** a C50 dependency edge — C50's inventory deps are C48/C12); it produces the comparable variant evidence C48's significance verdict is computed over (G19, the hard unsolved invention the whole P12 batch waits on).
 - **C20/C19** (bead schema + store the decision is recorded on) + **C41** (attribution) + **C02/C03** (pack + config to host/configure the gate).
 - **C56** (autonomy ladder) — the policy seam gating auto-flip vs. human ratification (not a hard inventory dep; parity with C39's L5 ship-auth).
 

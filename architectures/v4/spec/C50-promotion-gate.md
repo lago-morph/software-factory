@@ -75,8 +75,8 @@ load-bearing capability that does not exist anywhere else (the-bar, §6).
   challenger formula must clear to promote: **(a)** C48 reports the variant is **statistically better**
   (significance verdict, D-19) on the primary objective, **(b)** a **panel of C46 meta-metrics** moves
   **coherently** — the improvement is real across *multiple* metrics, **and (c)** the **Goodhart guard**
-  holds — **no guard metric materially regresses** (improving satisfaction while cost-per-satisfaction or a
-  held-out-scenario signal degrades is **not** a promotion). C50 owns the *composition + the guard*; each
+  holds — **no guard metric materially regresses** (improving satisfaction while cost-per-satisfaction or
+  time-to-threshold degrades is **not** a promotion). C50 owns the *composition + the guard*; each
   *metric* is owned by C46 and the *significance* by C48.
 - **Apply the satisfaction cutline as a decision-site (I2, D-15/G09).** C33 is **threshold-free** and
   **routes the "satisfied" cutline to the decision sites C50/C53/C39** (C33 §6). C50 is that decision site
@@ -317,8 +317,8 @@ guard at C50 by name: *"promotion gate requires multiple metrics moving together
 *"… moving coherently. Goodhart applies and v4 should not pretend otherwise"* (F-MODE-COVERAGE:174), B78
 *"multi-metric mandatory; no single visible target"*. C50 closes F47 at the promotion site by making the
 criterion **multi-metric + guard-checked** (INV-1): a challenger that buys one visible metric (satisfaction)
-by regressing another (cost-per-satisfaction, time-to-threshold, judge-FP-rate, or a held-out signal) **does
-not promote**. C50 does **not** eliminate Goodhart — "Goodhart applies recursively to meta-metrics"
+by regressing another of C46's named meta-metrics (cost-per-satisfaction, time-to-threshold, judge-FP-rate)
+**does not promote**. C50 does **not** eliminate Goodhart — "Goodhart applies recursively to meta-metrics"
 (F-MODE-COVERAGE:63) — it makes the *promotion decision* resistant to single-metric gaming and **recorded**
 so a drift is auditable.
 
@@ -337,8 +337,8 @@ audit pack (G35).
   silent; refusing to promote without a significant C48 verdict is the minimal honest reading of "statistical
   gate", README:276, and is exactly D-19's significance→C48 boundary.]*
 - **A guard metric regresses while the primary improves.** → **`hold`** — the Goodhart guard is part of the
-  **conjunction** (INV-1): a satisfaction gain does **not** override a cost-per-satisfaction (or held-out)
-  regression. *(This is the F47 guard made load-bearing, F-MODE-COVERAGE:174.)*
+  **conjunction** (INV-1): a satisfaction gain does **not** override a cost-per-satisfaction (or
+  time-to-threshold) regression. *(This is the F47 guard made load-bearing, F-MODE-COVERAGE:174.)*
 - **Thin A/B sample.** → n is surfaced (inheriting C33:INV-4 via C46); a too-small sample is weak evidence
   and holds (no promotion) until C48's significance verdict is credible. *(Sample-honesty mirrors C53:INV
   small-n handling.)*
@@ -348,8 +348,9 @@ audit pack (G35).
   decision, OQ-3 — C50 does not build a rollback engine at sweep-1.)*
 
 > F-mode applicability is owned by **C57**. C50 underwrites the property that promotions are **multi-metric +
-> Goodhart-guarded** (F47), **significance-gated** (against F9 spec-overfitting — a variant that overfits
-> held-out scenarios should not clear C48's significance + the held-out guard metric), and **recorded +
+> Goodhart-guarded** (F47), **significance-gated** (against F9 spec-overfitting — a variant that overfits the
+> held-out scenarios should not clear **C48's significance verdict** computed over those held-out runs, so
+> the F9-resistance flows through the C48 term, not a standing C46 metric), and **recorded +
 > reversible** (F54 — promotion is a self-modification of the factory; the recorded, evidence-anchored,
 > reversible decision *reduces blast radius* but does **not** *enforce* against objective drift — that is
 > C43 / the F54 audit pack, G35). C50 defers the canonical F-mode mapping to C57.
@@ -415,7 +416,7 @@ Sweep-1 = high-level criteria (concrete tests at sweep-2).
    (C48 verdict, C46 panel + guard check, variant id + replaced incumbent, n) on a bead (C20/C19),
    attributable (C41); a promotion **retains the prior default** so it can be backed out.
 6. **AC-6 (Goodhart guard is load-bearing — INV-1):** a satisfaction gain does **not** override a guard-metric
-   (e.g. cost-per-satisfaction or held-out) regression — the rule is a **conjunction** including the guard.
+   (e.g. cost-per-satisfaction or time-to-threshold) regression — the rule is a **conjunction** including the guard.
 7. **AC-7 (recurring, not one-time — INV-6):** C50 fires for **each** challenger that clears C48; a promoted
    formula becomes the incumbent the next challenger is measured against. (Distinct from C53's one-time gate.)
 8. **AC-8 (no fix-loop policy — INV-6/XC-3):** C50 owns **no** N-attempts/oscillation/L5-ship policy — that

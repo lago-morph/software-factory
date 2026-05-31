@@ -18,7 +18,7 @@ are ordered to **prove the cheap/safe parts first** and **isolate the unsolved p
 | **T0 — Contract freeze (interfaces-first)** | Freeze the C49 contract surface against the spec: I1 replay-request (trajectory+midpoint+variant), I5 paired-result record, **I6 fidelity-tag taxonomy** (`deterministic-tool-replay` vs `counterfactual-reexecution`). Publish so C47/C48 can build against stubs. | S | C21 I5/I6 frozen; spec §3 |
 | **T1 — Branch-at-midpoint over C21 I5** | Implement I2: given (trajectory, turn T), invoke C21 I5 to O(1)-fork a branch rooted at T (INV-1/INV-2). The low-risk, primitive-driven core. | S | T0; **C21 I5/INV-3** |
 | **T2 — Variant binding (I3)** | Bind a variant spec onto the branch at T: substitute prompt (C09) / model-route (C29) / hyperparam / workflow step (C12). | M | T0, T1; C47 variant-spec shape (OQ-4) |
-| **T3 — Deterministic-tool replay engine (I4, `deterministic-tool-replay`)** | Re-execute forward from T for continuations touching **only deterministic tool nodes + twin-served deps**; reproduce original outcome (INV-5) and produce a clean variant diff. **The tractable-now KEEP.** | M | T1, T2; **C44 twins**, **C43 routing** |
+| **T3 — Deterministic-tool replay engine (I4, `deterministic-tool-replay`)** | Re-execute forward from T for continuations touching **only deterministic, input-closed tool nodes + twin-served deps** (node classification consumed from C12/C16, D-7); the **control re-execution reproduces** the original outcome (INV-5) so a variant yields a clean, attributable diff. **The tractable-now KEEP.** | M | T1, T2; **C44 twins**, **C43 routing** |
 | **T4 — Isolation + fail-closed guard (INV-4)** | Wire re-execution behind **C43** (twin-by-default routing); route all external calls to **C44 twins**; **fail closed** on any non-twinnable external effect (never touch production). The security de-risker. | M | T3; **C43** (D-13), **C44** |
 | **T5 — Paired-outcome result + fidelity stamping (I5/I6)** | Emit (original, variant) outcome over T in a C48-comparable / C32-C33-scorable shape; stamp the fidelity tag (INV-3). | S | T0, T3 |
 | **T6 — Best-effort LLM-counterfactual path (`counterfactual-reexecution`)** | Re-execute continuations involving **LLM steps**: produce a result **labeled best-effort**, with a repeat-N variance estimate; **claim no reproduction** (INV-3). **Built last; heaviest human review.** | L | T3, T4, T5; **OQ-1 open** |
@@ -76,10 +76,11 @@ Freeze early so siblings build against stubs in parallel:
 Prototype/spike in this order — **retire the cheap/safe uncertainty first, isolate the unsolved core last:**
 1. **Spike T1 (branch-at-midpoint):** confirm C21 I5 forks at an arbitrary midpoint turn O(1) with no history
    copy and a clean independent branch (C21 AC-4). *Lowest risk; pure primitive validation.*
-2. **Spike T3 (deterministic-tool replay):** prove a deterministic-tool-only continuation **reproduces** the
-   original post-T outcome and a variant produces a clean diff (INV-5). **This is the make-or-break de-risker
-   for the tractable slice — if even this doesn't reproduce, the whole concept is in doubt.** (Analog: git
-   cherry-pick / Temporal replay, AI-CONTEXT §10:423.)
+2. **Spike T3 (deterministic-tool replay):** prove a deterministic, input-closed tool-only continuation has a
+   **control re-execution that reproduces** the original post-T outcome (so a variant produces a clean,
+   attributable diff — INV-5). **This is the make-or-break de-risker for the tractable slice — if even the
+   control doesn't reproduce, the whole concept is in doubt.** (Analog: git cherry-pick / Temporal replay,
+   AI-CONTEXT §10:423 — whose no-wall-clock/RNG determinism rule is the "input-closed" condition.)
 3. **Spike T4 (fail-closed production guard):** prove a non-twinnable external effect **fails closed** and a
    twinned one routes to C44 (never production). *Security-critical; gates any LLM-counterfactual work.*
 4. **Spike T6 (LLM-counterfactual variance):** measure how much an LLM step's outcome varies on re-run from a
@@ -98,8 +99,9 @@ contingent on solving force 1 — that would contradict v4.
 - **T0 done:** contract (I1/I5/**I6 fidelity taxonomy**) frozen + published; C47/C48 can compile against stubs.
 - **T1 done:** **AC-1** (branch-at-midpoint via C21 I5, no history copy) + **AC-2** (variant isolated to branch).
 - **T2 done:** a variant (prompt/model/hyperparam/step) binds onto the branch at T (feeds AC-3/AC-6).
-- **T3 done:** **AC-3** — deterministic-tool-only continuation **reproduces** original outcome + clean variant
-  diff (INV-5). *The load-bearing "it works for the tractable slice" gate.*
+- **T3 done:** **AC-3** — deterministic-tool-only continuation's **control re-execution reproduces** the
+  original outcome ⇒ clean, attributable variant diff (INV-5). *The load-bearing "it works for the tractable
+  slice" gate.*
 - **T4 done:** **AC-4** — all external calls route to C44 twins; non-twinnable effect **fails closed**; no
   production side effect.
 - **T5 done:** **AC-6** — paired (original, variant) result emitted in a C48-comparable / C32-C33-scorable

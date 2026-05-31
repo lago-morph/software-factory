@@ -83,8 +83,10 @@ tested in isolation against the same synthetic C46 signal.
    variant-search contract is reproducible and **no custom optimizer creeps in** (the bar / AC-2). Mirrors C36's
    PyOD/Anomalib version-pin discipline.
 3. **Spike — the C47→C48 hand-off (T7/T1/OQ-2).** Freeze the **variant-set record shape** + **carrier** (C20
-   bead vs C23 event), and whether the set carries **only the candidate list** or also the **experiment design**
-   C48 routes. C48 is unbuilt (Batch 5) — name the seam and stub against it; do not block on C48.
+   bead vs C23 event). Per the spec's narrowed OQ-2, the **experiment/routing design is C48's** (routing
+   strategy, arm-mapping, sample-size/α — C48 §3/§4), so the spike scope is **how much provenance/metadata each
+   candidate carries** for C48 to build its design, **not** whether C47 owns the design. C48 is unbuilt
+   (Batch 5) — name the seam and stub against it; do not block on C48.
 4. **Confirm — propose-only boundary (T8/INV-2).** Verify C47 renders **no** routing, **no** significance
    verdict, **no** promotion — the clean P12-pipeline split (C47 proposes → C48 routes+compares → C50 promotes;
    C49 replays). Run C47 with no router/comparator/promoter configured (AC-4).

@@ -84,6 +84,12 @@ A/B routing").
   better* (scipy.stats / Evidently, README:275) is **C48** (inventory C48 "determines whether a variant was
   actually better"; review-log **D-19** routes all self-optimization significance to C48). C47 *poses*
   candidates; the **significance verdict is C48's**. C47 builds **no** p-value / CI / regression machinery.
+  *(Note: AI-CONTEXT:377 lists DSPy under two L6 slots — "variant identification **+ statistical comparison
+  (prompt-programs)**". C47 uses DSPy only for the **variant-identification** half; the canonical split routes
+  **all** self-optimization significance — including over prompt-program variants — to **C48** per **D-19**,
+  and C48's own spec claims significance as its load-bearing capability. So DSPy's stats-adjacent capability is
+  not exercised by C47; if C48 elects to run DSPy's prompt-program comparison, it does so as a C48 engine
+  choice, not a C47 surface.)*
 - **NOT the promotion gate.** Deciding a variant *becomes the default* — the statistical, **multi-metric**
   gate that guards Goodhart (README:276; F47 "multi-metric mandatory", F-MODE-COVERAGE:103) — is **C50**
   (inventory C50). C47 neither promotes nor demotes; it only proposes.
@@ -391,10 +397,13 @@ C48 assumes C47's set is the canonical experiment input (B64; D-19).
 - **OQ-2 (→ review-log): the C47→C48 hand-off contract + variant-set carrier.** The canonical **variant-set
   record shape** (each entry = a concrete prompt-program and/or hyperparameter-config change + provenance) and
   **whether it is a C20 bead type or a C23 event** (the carrier to C48 — parity with C36's OQ-2 carrier
-  question). Also: does C47's set carry **only the candidate list**, or also the **experiment design** (sample
-  size / which scenarios / replay plan) that C48 routes? v4 states the *boundary* (C47 identifies, C48 routes +
-  compares) but not the hand-off shape. Freeze at sweep 2 **with C48** (the principal consumer) + C20/C23 (the
-  carrier).
+  question). On the candidate-list-vs-experiment-design split, the faithful reading is **C47 emits the
+  candidate list; the experiment/routing design is C48's**: C48's spec already owns the *routing strategy*
+  (flag-split vs bandit), the *arm→variant mapping*, the *sample-size/α*, and *which scenarios* (C48 §3 I1 +
+  §4 "Experiment / routing binding"). So the open residual is narrower than a two-way seam — it is only
+  **how much provenance/metadata C47 attaches to each candidate** so C48 can build its design, not *whether
+  C47 owns the design*. v4 states the *boundary* (C47 identifies, C48 routes + compares) but not the exact
+  record shape. Freeze at sweep 2 **with C48** (the principal consumer) + C20/C23 (the carrier).
 - **OQ-3 (→ review-log): search trigger + engine selection + fan-out budget.** When does C47 search — **on a
   schedule, on a C46-signal trigger, or on operator demand**? Which **DSPy compiler** (Bootstrap /
   BootstrapFewShot / MIPRO, AI-CONTEXT:418) and which **Optuna/Ray-Tune sampler/scheduler** per variant class?

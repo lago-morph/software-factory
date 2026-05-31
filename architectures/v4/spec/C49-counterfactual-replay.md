@@ -10,10 +10,15 @@ C49 is the factory's **counterfactual-replay driver**: the component that, given
 **midpoint turn** within it, **re-runs the trajectory forward from that midpoint under a variant** (a changed
 prompt, model, hyperparameter, or workflow step) and **makes the variant's outcome comparable to the
 original's** (README line 274 "Re-run from trajectory midpoint"). It is the **driver half** of v4's "**Bridge +
-driver**" entry for counterfactual replay (README line 274): the **bridge/primitive** — content-addressed
-turns + **O(1) trajectory branching** — is owned by **C21 (CXDB I5/I6, INV-3)**; **C49 is the orchestration
-glue that drives that primitive** to answer "what would have happened from turn T if we had changed X?"
-(AI-CONTEXT §5.5 line 237; §10 line 359 "**Primitive exists; driver yours**").
+driver**" entry for counterfactual replay (README line 274). *Reading the Implementation column faithfully:* in
+v4's vocabulary "**Bridge pack**" is the trajectory-landing bridge — README line 241 tags the CXDB store
+"Bridge pack" and README line 408 names it "**raw-bodies → CXDB bridge pack**", i.e. the telemetry→CXDB
+**bridge is C24** — so "**Bridge + driver**" decomposes as the **bridge that lands trajectories in CXDB (C24)**
++ the **driver (C49)**, both sitting over **C21**'s store. The **store + O(1)-branch primitive** C49 actually
+re-runs against — content-addressed turns + **O(1) trajectory branching** — is owned by **C21 (CXDB I5/I6,
+INV-3)**; **C49 is the orchestration glue that drives that primitive** to answer "what would have happened from
+turn T if we had changed X?" (AI-CONTEXT §5.5 line 237; §10 line 359 "**Primitive exists; driver yours**").
+C49 owns **only the driver** and reuses C21's primitive; it is not the bridge (C24) and not the store (C21).
 
 C49 is the **keystone of P12 (self-optimization)** and v4 names it the system's "**most significant
 invention**" (README line 278), to be "**built last, after Layers 1-5 are solid**" and given the "**heaviest
@@ -121,7 +126,7 @@ wire to C21, the variant schema to C47, the comparison contract to C48).
 | I3 | **Variant binding** | internal | Bind the variant onto the branch: substitute the prompt (C09), model/route (C29), hyperparameter, or workflow step (C12) that the post-T continuation will use. | C49 (this) |
 | I4 | **Counterfactual re-execution (forward from T)** | internal + outbound | Drive the continuation from the branched state under the variant, producing post-T turns on the new branch. **Runs behind C43 isolation, against C44 twins for external deps.** *The fidelity-bounded step — see I6, §6.* | C49 (this); **C43/C44** (boundary/state) |
 | I5 | **Paired-outcome result record** | outbound | Emit a **counterfactual result**: (original-branch outcome, variant-branch outcome) over midpoint T, in a shape C48 can compare and C32/C33 can score. Carries the fidelity tag (I6). | C49 (this); consumed by **C48**, **C32/C33** |
-| I6 | **Replay fidelity / mode tag** | internal/state (stamped on I5) | Declare the replay's fidelity class — **`deterministic-tool-replay`** (re-run touches only deterministic tool nodes / twin-served deps → high-fidelity, reproducible) vs **`counterfactual-reexecution`** (re-run involves LLM steps and/or non-twinned effects → best-effort, fidelity-bounded). A consumer **MUST** honor this label (INV-3). | C49 (this) |
+| I6 | **Replay fidelity / mode tag** | internal/state (stamped on I5) | Declare the replay's fidelity class — **`deterministic-tool-replay`** (re-run touches only deterministic, input-closed tool nodes / twin-served deps → high-fidelity, reproducible control) vs **`counterfactual-reexecution`** (re-run involves LLM steps and/or non-twinned effects → best-effort, fidelity-bounded). A consumer **MUST** honor this label (INV-3). *The "is this step deterministic?" classification that picks the class is **consumed from C12's node-kind taxonomy (`tool` vs `agent`, D-7) + C16's discipline check**, not defined by C49.* | C49 (this); **C12/C16** (classification) |
 | I7 | **Pack/tool-node lifecycle** | inbound (ops) | Delivered + invoked as a Gas City pack / tool node(s) in Phase 3d; feature-gated with the self-optimization layer. | C02/C17 (ABI), C49 (config) |
 
 **Invariants C49 must uphold:**
@@ -149,10 +154,19 @@ wire to C21, the variant schema to C47, the comparison contract to C48).
   C43** (twin-by-default routing) and hits **C44 twins**, never production. A replay that *cannot* be routed
   to a twin/isolated surface for some external effect **must fail closed** (refuse to replay that step) rather
   than touch production. (D-13; spec/C43 §1.)
-- **INV-5 (deterministic-replay slice is exactly reproducible):** when a replay's post-T continuation touches
-  **only deterministic tool nodes and twin-served dependencies**, re-execution reproduces the original
-  post-T outcome on the original branch and yields a clean variant comparison (this is the `deterministic-
-  tool-replay` class, I6). This slice is the **tractable-now** deliverable (§6).
+- **INV-5 (deterministic-replay slice — reproducible control ⇒ attributable variant):** when a replay's
+  post-T continuation touches **only deterministic, input-closed tool nodes and twin-served dependencies**,
+  the **no-change control re-execution reproduces** the original post-T outcome (it is a *pure function* of
+  the branched state); **because** the control is byte-reproducible, a **variant's** difference is a *clean,
+  attributable* diff rather than re-execution noise (this is the `deterministic-tool-replay` class, I6). Note
+  the variant leg does **not** "reproduce" — it changes the outcome by design; only the control reproduces.
+  This slice is the **tractable-now** deliverable (§6).
+  > [FAITHFUL-FILL] "input-closed" (no wall-clock / RNG / ambient-state reads) is borrowed from the
+  > deterministic-replay analog v4 names — Temporal workflow replay forbids non-deterministic calls in
+  > replayed code (AI-CONTEXT §10 line 423). v4 does not state it; it is the minimal condition under which
+  > "deterministic tool node ⇒ pure function of branched state" actually holds. *Which* nodes qualify as
+  > deterministic + input-closed is **not C49's to define** — it consumes C12's node-kind taxonomy (`tool`
+  > kind, review-log D-7) + C16's discipline check (LLM-where-tool); see §6.
 
 ## 4. Data model / state
 
@@ -195,9 +209,10 @@ branch/replay), to C43/C44 (the replay runs behind isolation against twins), and
    shares turns ≤ T with the original by construction (INV-1).
 3. **Bind variant** (I3): map the change-under-test onto the branch (prompt/model/hyperparam/step).
 4. **Re-execute forward from T** (I4) — **behind C43, against C44 twins** (INV-4):
-   - If the post-T continuation touches **only deterministic tool nodes / twin-served deps** → the
-     **`deterministic-tool-replay`** path: re-execution is reproducible (INV-5); the variant comparison is
-     clean. **This is the tractable-now slice.**
+   - If the post-T continuation touches **only deterministic, input-closed tool nodes / twin-served deps**
+     (the node classification consumed from C12/C16, D-7) → the **`deterministic-tool-replay`** path: the
+     **control re-execution reproduces** (INV-5) so the variant comparison is clean/attributable. **This is
+     the tractable-now slice.**
    - If the continuation involves **LLM steps and/or non-twinned external effects** → the
      **`counterfactual-reexecution`** path: re-execution is **best-effort, fidelity-bounded** (§6); C49 stamps
      the result accordingly (I6) and **does not claim reproduction**. If an external effect cannot be routed
@@ -206,8 +221,9 @@ branch/replay), to C43/C44 (the replay runs behind isolation against twins), and
    comparison and the eval tier (C32/C33) for scoring. C49 makes **no** better/worse or promotion decision.
 
 > The variant-injection mechanism, the counterfactual-result record schema, the fidelity-tag taxonomy, the
-> deterministic-vs-LLM step classification rule, the fail-closed external-effect detection, and sequence/state
-> diagrams (Mermaid) are **sweep-2+**, and the deepest (LLM-step) parts are **research-deferred** (§6, OQ-1).
+> deterministic-vs-LLM step classification rule (**consumed from C12 node-kinds + C16 discipline, D-7 — C49
+> does not own a classifier**), the fail-closed external-effect detection, and sequence/state diagrams
+> (Mermaid) are **sweep-2+**, and the deepest (LLM-step) parts are **research-deferred** (§6, OQ-1).
 > The branch/replay wire is **C21**; the variant schema is **C47**; the comparison contract is **C48**.
 
 ## 6. Failure modes & handling
@@ -246,7 +262,7 @@ faithful reconstruction in the general case:
 
 | Slice | Fidelity | Status | Why |
 |---|---|---|---|
-| **TRACTABLE NOW — `deterministic-tool-replay`** | High / reproducible (INV-5) | **Buildable in Phase 3d** | When the post-T continuation touches **only deterministic tool nodes and twin-served dependencies**, re-execution is a *pure* function of the branched state: CXDB reconstructs the prefix exactly (C21 INV-1), C44 reconstructs external state, and there is **no LLM in the replayed segment**. Variant tests over **deterministic workflow steps / hyperparameters affecting deterministic nodes** are genuinely comparable. This is the analog of git cherry-pick / Temporal workflow replay (AI-CONTEXT §10 line 423) — the prior art that *does* exist. **This is the real, low-risk KEEP.** |
+| **TRACTABLE NOW — `deterministic-tool-replay`** | High — **reproducible control ⇒ attributable variant diff** (INV-5) | **Buildable in Phase 3d** | When the post-T continuation touches **only deterministic, input-closed tool nodes and twin-served dependencies**, the **control re-execution is a *pure* function** of the branched state: CXDB reconstructs the prefix exactly (C21 INV-1), C44 reconstructs external state, and there is **no LLM in the replayed segment** — so the control reproduces byte-for-byte and a **variant's** difference is a *clean, attributable* diff (not re-execution noise). The honest claim is **reproducible-control + attributable-variant**, *not* "the counterfactual reproduces." Variant tests over **deterministic workflow steps / hyperparameters affecting deterministic nodes** are genuinely comparable. This is the analog of git cherry-pick / Temporal workflow replay (AI-CONTEXT §10 line 423) — the prior art that *does* exist (and whose determinism constraint — no wall-clock/RNG/ambient reads — is exactly the "input-closed" condition). The deterministic/LLM node classification is **C12/C16's** (D-7), consumed here. **This is the real, low-risk KEEP.** |
 | **DEFERRED — `counterfactual-reexecution` (full LLM-step counterfactual)** | Best-effort, fidelity-bounded (INV-3) | **Open research bet → OQ-1** | Re-running **LLM steps** from a midpoint under a variant is the unsolved core (force 1). C49 ships it **labeled best-effort** with mitigations (multiple re-runs to estimate variance; twin-served deps; fail-closed on non-twinned effects) but **claims no deterministic reproduction**. v4's "heaviest human review" (README line 470) applies *here*. Quantifying when a best-effort LLM-counterfactual is *trustworthy enough* to feed C48/C50 is **the open question** (OQ-1). |
 
 **Other failure cases.**
@@ -302,10 +318,13 @@ honest framing).
    at T via C21 I5 with **no history copy** (C21 INV-3 / AC-4); the branch shares turns ≤ T with the original.
 2. **AC-2 (variant isolated — INV-2):** applying a variant on the branch leaves the original trajectory and
    sibling branches byte-identical (the factual record is uncorrupted).
-3. **AC-3 (deterministic-tool replay reproduces — INV-5, the tractable slice):** for a post-T continuation
-   touching **only deterministic tool nodes + twin-served deps**, re-execution **reproduces** the original
-   post-T outcome (and a variant change produces a *clean, attributable* difference). This is the load-bearing
-   "it actually works for the tractable slice" test.
+3. **AC-3 (deterministic-tool replay — reproducible control ⇒ attributable variant — INV-5, the tractable
+   slice):** for a post-T continuation touching **only deterministic, input-closed tool nodes + twin-served
+   deps**, the **no-change control re-execution reproduces** the original post-T outcome byte-for-byte, **and
+   because** it reproduces, a variant change produces a *clean, attributable* difference. The AC asserts
+   **reproducible-control + attributable-variant**, *not* that the variant re-execution "reproduces." This is
+   the load-bearing "it actually works for the tractable slice" test. (Node deterministic/LLM classification:
+   consumed from C12/C16, D-7 — not C49-defined.)
 4. **AC-4 (no production side effect — INV-4):** a replay routes all external calls to **C44 twins** (never
    production); a step with a non-twinnable external effect **fails closed**, not through to production.
 5. **AC-5 (fidelity labeled — INV-3, the honesty AC):** every result (I5) carries a fidelity tag (I6); a replay

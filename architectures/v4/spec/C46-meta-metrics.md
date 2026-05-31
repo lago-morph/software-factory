@@ -1,6 +1,6 @@
 # C46 — Meta-Metric Stream  (Spec, canonical track)
 
-> Source: README §"Principle 12 — Self-optimization" (line 263 "The system **measures its own
+> Source: README §"Principle 12 — Self-optimization" (line 263 §-header; line 265 "The system **measures its own
 > meta-performance and improves it over time**"; line 269 table row "**Meta-metric definition** | What
 > 'better' means | **Custom: cost-per-satisfaction, time-to-threshold, judge false-positive rate** | n/a (your
 > work) | **Configuration**"; line 270 "**Meta-metric tracking** | Records meta-metrics over time | **MLflow,
@@ -92,11 +92,16 @@ and the satisfaction term (C33) together into one recorded series. It computes *
   *spend* tokens or *route* models. Model-routing cost-awareness is **C29** (which carries a `cost_tier`, D-10,
   but explicitly defers the cost-per-satisfaction *model* to C46 — spec/C29 §1/§6/§9). The judge/coder/embed
   tokens are C32/C28/C37's spend; C46 only **reads** what they cost (I2).
-- **NOT the source of the raw cost/usage signal.** The per-run usage (tokens, latency) lands via the
-  **telemetry path** — Claude Code OTLP/usage + the **C24 telemetry→CXDB bridge** (inventory C46 `depends on
-  C24`; spec/C24 §1). C46 **reads** the recorded usage; it does not capture or emit telemetry (that is
-  C25/C26/C24). *(Dollar cost is a derived function of tokens × the model's price, not a separately metered
-  feed — see I1/G32.)*
+- **NOT the source of the raw cost/usage signal.** The per-run usage lands via the **telemetry path**, and v4
+  splits that path two ways: **token-usage + cost are native Claude Code OTLP *metrics*** (AI-CONTEXT:172
+  "Metrics: … costs, token usage … active time"), emitted on the OTLP channel (**C25**) into the OTel
+  Collector (**C26**); the **C24 raw-API-bodies→CXDB bridge** carries the *conversation bodies* (request/
+  response JSON), from which token counts are also recoverable. C46 **reads** the recorded usage; it does not
+  capture or emit telemetry (that is C25/C26/C24). *(Which telemetry surface C46 reads its cost signal
+  from — the OTLP-metrics path vs the CXDB-stored bodies — is OQ-6; the inventory pins C46's dep as **C24**,
+  but the CXDB read seam is **C21** (spec/C24 §1: "C36/C37/C38/C49 read from C21, not from C24"), so the read
+  side mirrors how the sibling metric-reader C36 names C21 with C24 as provenance.)* *(Dollar cost is a derived
+  function of tokens × the model's price, not a separately metered feed — see I1/G32.)*
 - **NOT the statistical-comparison engine.** Whether a meta-metric *moved significantly* between variants is
   **C48** (scipy/Evidently — README:275; **D-19**, mirroring C33's identical significance→C48 boundary). C46
   records the series and may show a raw trend; it runs **no** significance test, CI, or hypothesis test. (This
@@ -120,7 +125,9 @@ and the satisfaction term (C33) together into one recorded series. It computes *
 | Direction | Component | Relationship |
 |---|---|---|
 | Upstream (satisfaction term) | **C33** Satisfaction-metric aggregator | Produces the **satisfaction distribution** C46 divides cost by and watches for time-to-threshold. C46 reads C33's *holistic* distribution (D-15). Inventory C46 `depends on C33`. C46 is the principal consumer C33's distribution-record schema is frozen with (spec/C33 §4). |
-| Upstream (cost/usage signal) | **C24** Telemetry→CXDB bridge | The seam where per-run usage telemetry (tokens, latency, conversation bodies) lands in CXDB; C46 **reads** recorded usage to compute the cost vector (I2). Inventory C46 `depends on C24`. |
+| Upstream (cost/usage signal — pinned dep) | **C24** Telemetry→CXDB bridge | The bridge that lands the per-run **conversation bodies** in CXDB; C46's pinned dep (inventory C46 `depends on C24`). Note C24 is the *write* bridge — its §1 boundary says downstream consumers "read from C21, not from C24", so C46's actual CXDB *read* seam is **C21** with C24 as provenance (see C21 row; OQ-6). |
+| Upstream (token/cost metrics) | **C25** OTLP export → **C26** OTel Collector | The OTLP-metrics channel where **token usage + cost** are natively emitted (AI-CONTEXT:172; spec/C25 §3.3). The native home of C46's primary cost signal. *(Related interface — the metrics path; the inventory dep is C24/C33, so the metrics-vs-bodies source split is OQ-6.)* |
+| Upstream (CXDB read seam) | **C21** CXDB store/retrieval | The read-facing CXDB query seam over stored trajectories/bodies (spec/C24 §1; spec/C21 I6). C46 reads recorded usage **through C21**, mirroring sibling metric-reader **C36** (which reads from C21, provenance C24). *(Related interface; not the pinned dep edge — OQ-6.)* |
 | Cost-signal corroborator | **C29** Model-floor/stylesheet | Carries each model's `cost_tier` (D-10); C29 is cost-*aware at routing*, C46 is the cost-*meter over time*. C29 explicitly defers the cost-per-satisfaction model to C46 (spec/C29 §1/§6). *(Related interface — the price/tier reference — not a C46 dependency edge; deps are C33/C24.)* |
 | Tracking/storage engine | **MLflow / Aim / W&B** (pack-wrapped) | The mature, "your work = Gas City pack" experiment-tracking / time-series store C46 logs the streams to (README:270; AI-CONTEXT:353/378). Engine reuse, **not** a custom metrics DB. |
 | Packaging host | **C02** Pack/tool-node ABI, **C17** Tool-node abstraction; config via **C03** | C46 is the **meta-metric pack** (README:470) — its *definitions* are **Configuration** (README:269), surfaced/run via the tool-node + config model. *(Related interface, mirrors how C33/C24 name C02/C17/C03.)* |
@@ -145,7 +152,7 @@ exact statistic and tag set defer to sweep 2 (frozen with C33's distribution-rec
 | # | Interface | Direction | Description | Owning/detailing component |
 |---|---|---|---|---|
 | I1 | **Cost-model definition (G32)** | definition/config | The spec-of-record for what cost *is*: the per-run **cost vector {tokens, dollars, wall-clock time}**, the **attribution rule** (cost → trajectory/spec-revision), and the **reduction** to cost-per-satisfaction (vector ÷ C33 term). A **definition/Configuration** artifact (README:269), not an engine. | **C46 (this)** |
-| I2 | **Cost/usage signal read** | inbound (read) | Read the recorded per-run usage (tokens, latency) from the telemetry path (C24→CXDB; Claude Code usage). Dollars = tokens × model price (C29 `cost_tier`/price ref). C46 **reads + derives**; it does not meter. | C46 (this); **C24/CXDB** (source), C29 (price ref) |
+| I2 | **Cost/usage signal read** | inbound (read) | Read the recorded per-run usage — **token usage + cost are native OTLP metrics** (C25 emit → C26 collector; AI-CONTEXT:172), and/or recovered from the **CXDB-stored bodies read via C21** (the bridge is C24, the read seam C21 — spec/C24 §1). Dollars = tokens × model price (C29 `cost_tier`/price ref). C46 **reads + derives**; it does not meter. *(Metrics-path vs CXDB-bodies source split = OQ-6.)* | C46 (this); **C25/C26** (metrics), **C21** (CXDB read; C24 provenance), C29 (price ref) |
 | I3 | **Satisfaction-term read** | inbound (read) | Read C33's satisfaction **distribution** (the term divided into; the series watched for threshold-crossing). Holistic at Sweep-1 (D-15). | C46 (this); **C33** (producer) |
 | I4 | **Meta-metric stream record/track** | internal → store | Compute the three series (cost-per-satisfaction, time-to-threshold, judge-FP-rate) per run/spec-revision and **log them as time-series** via the v4-named MLflow/Aim/W&B pack (README:270). C46 owns the **logged schema**; the store is off-the-shelf. | C46 (this); MLflow/Aim/W&B (engine) |
 | I5 | **Meta-metric stream output / query** | outbound (data) | Surface the recorded series + trend for C47 (variant-ID), C48 (significance — D-19), C50 (promotion gate, multi-metric F47). Read-surface over the tracked store. | C46 (this); C47/C48/C50 (consumers) |
@@ -186,7 +193,7 @@ satisfaction is C33's; the raw usage is the telemetry path's (C24/CXDB); the tim
 | **Cost-model definition (I1)** | The per-run cost vector {tokens, $, time}, attribution rule, and reduction to cost-per-satisfaction. The **core G32 deliverable** — a definition/config artifact. | Pack TOML / config (C03; "Configuration", README:269). | **C46 (this)** |
 | **Meta-metric series (the three streams)** | cost-per-satisfaction, time-to-threshold, judge-FP-rate as time-series points (value + provenance + timestamp). C46 owns the **logged schema**; values are derived on each run. | Logged to the **MLflow/Aim/W&B** tracking store (README:270) — off-the-shelf, not C46-built. Re-derivable from C24 usage + C33 satisfaction. | C46 (schema); MLflow/Aim/W&B (store) |
 | **Metric + tracking config** | Which metrics are recorded (the three named + any operator-added — AI-CONTEXT:516), the supplied time-to-threshold cutline, the cost-vector dimensions, attribution + cohort keys. | Pack TOML (C02/C03 model). | C02/C03 (model); C46 (binding) |
-| **Cost/usage signal (read-only input)** | Recorded per-run tokens/latency. **Owned by the telemetry path (C24/CXDB)**, read-only to C46. | CXDB / telemetry store (C24). | **C24/C21** |
+| **Cost/usage signal (read-only input)** | Recorded per-run token usage + cost. **Owned by the telemetry path** — natively OTLP metrics (C25→C26; AI-CONTEXT:172) and/or recoverable from CXDB-stored bodies. Read-only to C46. | OTel metrics (C25/C26) / CXDB read via **C21** (bridge = C24). | **C25/C26**, **C21** (C24 bridge) |
 | **Satisfaction distribution (read-only input)** | C33's holistic distribution + n. **Owned by C33**, read-only to C46. | C33 output (re-computable). | **C33** |
 
 > [FAITHFUL-FILL] v4 specifies the *behavior* ("records cost-per-satisfaction, time-to-threshold, judge-FP-rate
@@ -219,9 +226,10 @@ C33 (satisfaction), C24/CXDB (usage), and C39/C35 (judge-outcome labels), and up
 **Record path (per run / per spec-revision iteration).**
 1. **Read the satisfaction term (I3):** pull C33's holistic distribution for the run/spec-revision (the
    satisfaction the factory just produced); carry its sample count n (INV-5).
-2. **Read + derive cost (I1/I2):** read the run's recorded usage (tokens, latency) from the telemetry path
-   (C24/CXDB); derive dollars (tokens × C29 price) and assemble the **cost vector {tokens, $, time}**,
-   attributed to the trajectory/spec-revision.
+2. **Read + derive cost (I1/I2):** read the run's recorded usage — **token usage + cost from the OTLP-metrics
+   path** (C25→C26; AI-CONTEXT:172) and/or recovered from the CXDB-stored bodies (read via **C21**, the C24
+   bridge being the writer); derive dollars (tokens × C29 price) and assemble the **cost vector {tokens, $,
+   time}**, attributed to the trajectory/spec-revision (OQ-6).
 3. **Compute the three series points (I4):**
    - **cost-per-satisfaction** = cost vector ÷ the C33 satisfaction term;
    - **time-to-threshold** = elapsed time/run-count for the spec-revision's satisfaction to cross the
@@ -255,9 +263,14 @@ C46"). **Faithful resolution — C46 defines the cost model:**
 - **The cost MODEL is a per-run cost vector {tokens, dollars, wall-clock time}.** These are the three cost
   dimensions v4 gestures at: **tokens** (the missing "token-budget math", G13/G32), **dollars** (a derived
   function of tokens × the model's price — C29 carries the `cost_tier`, D-10 — not a separately metered feed),
-  and **wall-clock time** (the basis for time-to-threshold). Cost is **attributed** to a trajectory/spec-revision
-  via the run identity on the telemetry (C24). *This is the smallest model that makes all three named
-  meta-metrics computable and is fully consistent with v4's "Configuration / your work" placement (README:269).*
+  and **wall-clock time** (each run's *elapsed duration* — the time a unit of work *cost*; AI-CONTEXT:172
+  "active time"). *Note this per-run-duration cost dimension is distinct from the **time-to-threshold** metric's
+  clock, which is cumulative elapsed time/run-count **across** the run-sequence for satisfaction to cross a
+  cutline — a trend over many runs, not one run's duration.* Cost is **attributed** to a trajectory/spec-revision
+  via the run identity carried on the telemetry (the OTLP correlation attrs — `prompt.id`/`session.id`,
+  AI-CONTEXT:178 — and the same identity on the CXDB-stored body read via C21). *This is the smallest model
+  that makes all three named meta-metrics computable and is fully consistent with v4's "Configuration / your
+  work" placement (README:269).*
   > [FAITHFUL-FILL] v4 names **no** cost dimensions explicitly; it only names *cost-per-satisfaction* as the
   > metric and "$200/month Max" as the one figure (G32). {tokens, $, time} is the minimal set that (a) covers
   > every unmodeled cost G32 enumerates (suite/ensemble/replay/embedding/judge tokens are all *token* costs),
@@ -421,3 +434,14 @@ since the self-optimization loop assumes C46's series are the canonical "is the 
 - **OQ-5 (→ review-log): judge-FP label source + latency (I6).** Judge-FP-rate needs *labelled* outcomes
   (judge passed, later found bad). Confirm the label sources (C39 loop-closure failure, C35 override, human
   review) and how the **trailing** FP-rate handles label latency without mispresenting unlabelled passes.
+- **OQ-6 (→ review-log): cost-signal telemetry source + read seam (vs the pinned C24 dep).** v4 emits
+  **token usage + cost as native OTLP metrics** (AI-CONTEXT:172, C25→C26) — a *different* path from the C24
+  raw-API-bodies→CXDB bridge, which carries conversation bodies (token counts recoverable from the body JSON).
+  The inventory pins C46's dep as **C24**, but C24's own §1 boundary says consumers "read from **C21**, not
+  from C24" (the bridge is the writer, C21 the read seam — sibling reader C36 reads C21 with C24 as
+  provenance). **Two coupled questions for the integrator:** (a) does C46 take its cost signal from the
+  OTLP-metrics path (C25/C26) or from the CXDB-stored bodies (read via C21)? and (b) should C46's pinned
+  dependency edge read **C21** (and/or **C25/C26**) rather than/in addition to **C24**? Sweep-1 keeps the
+  inventory's C24 edge and reads via C21 as provenance-faithful; the metrics-path edge + the dep-set
+  correction are an **architecturally-significant** call deferred to the integrator. *(This does not change the
+  cost MODEL (I1) — only where its raw token/cost inputs are read from.)*

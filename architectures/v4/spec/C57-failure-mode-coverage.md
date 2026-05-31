@@ -195,7 +195,7 @@ beads; residuals in review-log / FE-doc); C57 is the **consolidated, human-reada
 
 ### 4.1 Coverage status (the closed enum)
 
-| Status | Meaning (from F-MODE-COVERAGE §0 legend, verbatim intent) | Honesty rule |
+| Status | Meaning (from F-MODE-COVERAGE preamble legend, lines 6–9, verbatim intent) | Honesty rule |
 |---|---|---|
 | `addressed` | v4 has a concrete mechanism that mitigates the failure | must name the owning component; if the mechanism is unbuilt/detection-only, must carry the caveat (§3 invariant) |
 | `partial` | v4 reduces but does not eliminate the failure | must state the residual (what remains) |
@@ -203,7 +203,8 @@ beads; residuals in review-log / FE-doc); C57 is the **consolidated, human-reada
 | `caution` | v4's design choices could *worsen* this failure if not actively guarded | must state the required discipline + its owner |
 
 > [FAITHFUL-FILL] **Status set = {`addressed`, `partial`, `gap`, `caution`}, taken verbatim from
-> F-MODE-COVERAGE §0.** v4 already defines exactly these four; C57 adopts the closed set unchanged so the
+> F-MODE-COVERAGE's preamble legend (lines 6–9; the doc has no numbered §0 — sections run §1–§12).** v4
+> already defines exactly these four; C57 adopts the closed set unchanged so the
 > map is a faithful successor. The single-status invariant (§3) is what makes the set *closed per mode* —
 > the defect C57 fixes is that F-MODE-COVERAGE let three modes hold two statuses at once (G40), not the enum
 > itself.

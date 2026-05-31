@@ -7,59 +7,151 @@ capability-for-principle bar (HANDOFF §2): flag any addition that hardens exist
 capability rather than delivering new principle-tied capability. THE BAR for C27: it IS
 off-the-shelf self-hosted LangFuse (deploy + config, not custom code).
 
+> **Re-review note (supersedes the prior pass on disk).** A previous review of this component tagged
+> its fixes "(applied)" but **none of those edits were present in the spec/plan on disk** — the docs
+> were still the original builder text. This pass re-derives the findings, **grounds the LangFuse OTLP
+> facts against the LangFuse docs (verified 2026‑05‑31)**, **corrects one fidelity miss the prior pass
+> blessed** (the G37→FE-3 cross-reference — RC27-06), and **actually applies** the confident fixes.
+
 ## Findings
 
-### RC27-01 — major — C26↔C27 ingestion seam is internally INCONSISTENT on the *signal set*: C26 pipelines metrics + logs/events + traces into LangFuse's OTLP endpoint; C27 describes that endpoint as trace-oriented and flags non-trace signals may not be browsable. The two specs do not agree, and their AC tables actively conflict.
-**Claim.** C27 §3.1 says its inbound payload is "OTLP **traces** (LangFuse ingests OTLP-trace spans)" and OQ-1 warns "non-trace OTLP signals (metrics/events) may not be browsable there." But the upstream C26 spec (§3.3 pipeline table + §8 AC-5) unconditionally routes **three** pipelines — metrics, logs/events, AND beta traces — all into the single LangFuse OTLP exporter, and C26 AC-5 asserts "the metric set and event set C25 emits … traverse the pipeline and **appear in LangFuse**." LangFuse's native OTLP ingestion surface (`/api/public/otel`, the endpoint C27 §1 FAITHFUL-FILL adopts) is a **trace** receiver; metrics/events pushed at it are not a documented LangFuse-native capability. So C26 ships a signal set C27's own ingestion contract does not claim to store/browse, and C26 AC-5 ("metrics+events appear in LangFuse") contradicts C27 AC-3/AC-4 (which only assert traces/sessions browse).
-**Evidence/reasoning.** v4 says only "point the OTel Collector at it" (README:540) and never enumerates *which signals* cross the seam — so neither "all three signals" (C26) nor "traces only" (C27) is a stated v4 fact; both are fills. The two builders made *different* fills for the same seam. This is exactly the seam the brief asks be resolved jointly (OQ-1). C27 correctly identifies the trace-orientation of LangFuse; C26 does not honor it. The resolution must be one of: (a) C26 routes **only** the traces pipeline to LangFuse and metrics/events terminate elsewhere or nowhere on the OTLP path (LangFuse is trace-oriented; this matches C27's reading and AI-CONTEXT:374 "L3 storage + browsing" being trace/observation-shaped); or (b) it is asserted (with a LangFuse-version citation) that the chosen LangFuse release ingests metrics/events via OTLP too, in which case C27 §3.1 must broaden its payload row and C27 must add browse-ACs for them. Architecturally significant and cross-component → **DEFERRED** to joint C26/C27 orchestrator resolution; not unilaterally patched in C27.
-**Fix.** DEFERRED — needs orchestrator decision (joint C26↔C27 seam). Sharpened C27 §3.1 + OQ-1 to state the mismatch explicitly and name it as the seam to resolve with the C26 author (so the open item is unambiguous and points at C26 §3.3/AC-5), without choosing the resolution. See applied edit to §3.1 / OQ-1.
+### RC27-01 — major — C26↔C27 ingestion seam is INCONSISTENT on the *signal set*: C26 pipelines metrics + logs/events + traces into LangFuse's OTLP endpoint, but LangFuse ingests TRACES ONLY. DEFERRED (joint).
+**Claim.** C27 §3.1 says its inbound payload is "OTLP **traces**" and OQ-1 only *hedges* that
+"non-trace OTLP signals (metrics/events) may not be browsable there." The upstream C26 spec (§3.3
+pipeline table + §8 AC-5) unconditionally routes **three** pipelines — metrics, logs/events, AND beta
+traces — all into the single LangFuse OTLP exporter, and C26 §3.2 asserts "**every** signal accepted
+at the receiver … is delivered to LangFuse" with AC-5 claiming "metrics+events … **appear in
+LangFuse**." So C26 ships a signal set that the C27 sink does not actually store, and C26 AC-5
+directly conflicts with C27 AC-3/AC-4 (which only browse traces/sessions).
+**Evidence/reasoning.** LangFuse's native OTLP ingestion endpoint (`/api/public/otel`, signal path
+`/api/public/otel/v1/traces`) implements OTLP **trace** ingestion only — metrics and logs are not
+ingested there (LangFuse OpenTelemetry docs, verified 2026‑05‑31). v4 itself says only "point the OTel
+Collector at it" (README:540) and never enumerates the signal set, so neither "all three" (C26) nor
+"traces only" (C27) is a stated v4 fact — both are fills, and the two builders filled the same seam
+differently. This is exactly the OQ-1 sub-question ("what happens to metrics/events vs traces"). The
+faithful seam is **traces-only at C27**; the disposition of metrics/logs (drop at C26, or route to a
+non-LangFuse sink) edits **C26's** pipeline and must be ruled jointly so C26's export description and
+C27's ingestion contract are one contract.
+**Fix.** **DEFERRED — needs orchestrator decision (joint C26↔C27 seam).** C27-side only: upgraded
+§3.1's payload row and OQ-1 from the soft "may not be browsable" hedge to the **grounded fact**
+(LangFuse OTLP ingests **traces only**; C27's inbound contract is **traces-only**) and named the
+concrete C26-side consequence (C26's metrics+logs pipelines / AC-5 cannot land in LangFuse as specced)
+as the joint item to resolve. The *direction* of the corrective edit lands in C26 §3.3/AC-5 (out of
+bounds for this reviewer) → left deferred; C27's files now state the fact, not the resolution.
 
-### RC27-02 — major — Auth mechanism for the ingestion seam is described INCONSISTENTLY across the two specs (LangFuse "project/public+secret API keys" vs C26's generic "ingestion key header") — load-bearing for G37 and for whether C26 can build its exporter against a stable contract.
-**Claim.** C27 §3.1 Auth row: "LangFuse **project/public+secret API keys** (provisioned at deploy); C26's exporter presents them." C26 §3.2/§7 describe the same hop as "whatever auth LangFuse's OTLP ingestion requires (e.g. an ingestion key in an exporter header)" — i.e. C26 has *not* committed to the public+secret key pair shape, and LangFuse's OTLP endpoint specifically authenticates with HTTP **Basic** auth built from the public+secret key pair (base64), not an arbitrary bearer "ingestion key." The two specs are close but not identical, and the precise header construction is the thing C26's `otlphttp` `headers:` block needs frozen (plan-faithful T5 / C26 OQ-1).
-**Evidence/reasoning.** v4 does not specify the auth at all (README:540 silent) — both are fills. C27's "public+secret API keys" is the more accurate LangFuse-native description and should be the published contract C26 binds to; C26's "ingestion key header" is vaguer. This is consistent with the *direction* (C27 publishes the ingestion contract, C26 consumes it — both specs agree C27 owns the seam's far side). The fix is to make C27's auth row the precise, authoritative shape (public+secret pair → Basic auth header) so C26 has a stable target. Confirmation that this exactly matches the pinned LangFuse release's auth is a sweep-2 detail, but the *shape* should be pinned now.
-**Fix (applied).** Tightened C27 §3.1 Auth row to name the LangFuse public+secret **key pair** as the authoritative ingestion-auth shape C26 binds against (Basic-auth header at sweep 2), and cross-referenced it as the contract C26's exporter consumes — making C27 the single source of the seam's auth shape. Left the exact header encoding to sweep 2 (matches C27 OQ-1 / C26 OQ-1). Not architecturally significant (it sharpens, doesn't change, the agreed direction), so applied rather than deferred.
+### RC27-02 — major — Ingestion-auth/transport shape is described vaguely and (across specs) inconsistently; the grounded LangFuse shape (HTTP Basic auth, OTLP/HTTP only) should be C27's published contract. (FIXED)
+**Claim.** C27 §3.1 Auth row says only "LangFuse **project/public+secret API keys** … C26's exporter
+presents them"; C26 §3.2/§7 describe the same hop as "an ingestion key in an exporter header." Close,
+but neither pins the actual construction C26's `otlphttp` `headers:` block needs frozen.
+**Evidence/reasoning.** LangFuse's OTLP ingestion authenticates with **HTTP Basic auth** built from a
+base64-encoded `public_key:secret_key` pair (plus an `x-langfuse-ingestion-version` header), over
+**OTLP/HTTP only — HTTP/JSON or HTTP/protobuf; gRPC is not supported** (LangFuse OTel docs, verified
+2026‑05‑31). v4 specifies none of this (README:540 silent) — it is a fill, but a *knowable* one that
+sharpens (not contradicts) the seam: it matches C26 calling the exporter `otlphttp` and C26 §7's
+"ingestion key in an exporter header." C27 owns the far side of the seam, so C27 should publish the
+precise shape for C26 to bind against; the exact path/version header stays sweep-2 (OQ-1).
+**Fix (applied).** Tightened C27 §3.1's Auth row to name **HTTP Basic auth from the base64
+`public:secret` key pair** as the authoritative ingestion-auth shape C26 binds against, and annotated
+the §1 FAITHFUL-FILL + §3.1 with **OTLP/HTTP (no gRPC at the LangFuse seam)** — tagged LangFuse-native,
+exact path/version header deferred to sweep-2/OQ-1. No new capability/custom code (documents stock
+LangFuse behaviour) → applied.
 
-### RC27-03 — minor — `session.id` is cited as "AI-CONTEXT:178" but the C26 spec enumerates the correlation-attribute set (`prompt.id`, `session.id`, `user.account_uuid`, `organization.id`, `terminal.type`) at the same cite; C27 should mirror that set, not just the two attributes it happens to name, so the INV-4 grouping claim is complete.
-**Claim.** C27 §3.1/§4/INV-4 lean on `session.id` (and name `user.account_uuid`, `organization.id` for sensitivity) citing AI-CONTEXT:178. C26 §3.4 INV-4 enumerates the full pass-through set at the same source. C27's session-grouping invariant depends on the *upstream* set arriving intact; naming only `session.id` understates the dependency and risks a reader thinking C27 needs only that one attribute.
-**Evidence/reasoning.** Not a fidelity error (the cite is right and `session.id` IS the grouping key) — a completeness gap. The minimal faithful fix is to note INV-4 depends on the correlation set C26 passes through unaltered (C26 INV-4), of which `session.id` is the grouping key, so the two specs' correlation contracts are visibly one contract.
-**Fix (applied).** Added a half-line to INV-4 and §3.1 Correlation row noting the dependency is on the full upstream correlation set that C26 forwards unaltered (C26 INV-4), with `session.id` as the grouping key — tying the two specs' correlation story together. Faithful, non-architectural → applied.
+### RC27-03 — major — Mis-citation: the G37 secrets store is "parked as FE-3," but FE-3 is the signing/key-model enhancement, not a secrets store; no FE entry is the secrets store. (FIXED)
+**Claim.** §6, §7, OQ-4 (and plan T3 / Risk 3) all state a real secrets-management layer "is parked
+as **FE-3**" / "that is FE-3, gated on a chosen store." (The prior review pass explicitly *blessed*
+this as "exactly the faithful move" — a fidelity miss this pass corrects.)
+**Evidence/reasoning.** FUTURE-ENHANCEMENTS.md **FE-3** is **"Graduated-mandatory signing + per-actor
+key model"** (deferred from C41 DELTA-01/06). It is *blocked on* G37 ("no secrets store; plaintext keys
+make signing theater") but is **not itself** the deferred secrets store; **no** FE entry is (FE-1 judge
+family, FE-2 substrate portability, FE-4 seat pool, FE-5 enumerated DoD). The home of the
+unbuilt-secrets-store question is the **open gap G37 itself**, whose canonical resolution OQ-4 already
+correctly assigns to **C03** (the config owner). Citing FE-3 as the parking lot is a fill mislabeled as
+a cross-reference fact, repeated 4× across the two docs.
+**Fix (applied).** Replaced every "parked as FE-3 / that is FE-3, gated on a chosen store" with the
+faithful statement: the secrets-store gap is **tracked as the open gap G37 (canonical resolution owned
+by C03 per OQ-4); FE-3 (signing) is itself blocked on G37**. The (correct) note-and-defer / build-no-
+secrets-layer posture is unchanged.
 
-### RC27-04 — minor — Non-trace OTLP exclusion (the metrics/events question) is raised in OQ-1 as a sub-clause but, given it is the crux of the seam (RC27-01), the spec should state the *faithful default disposition* (exclude from LangFuse / not browsable) rather than only flagging it as open.
-**Claim.** OQ-1 mentions "what happens to metrics/events vs traces … non-trace OTLP signals may not be browsable there" but offers no default reading, unlike OQ-2/OQ-5/OQ-6 which each state a faithful pick. For consistency with the rest of §9 (every other OQ commits to a faithful default and defers only the confirmation) and to give C26 a default to build against, C27 should state the faithful default: LangFuse is trace-oriented, so the browsing contract C27 guarantees covers **traces/observations/sessions**; metrics/events are not asserted browsable in LangFuse at sweep 1 (their browse home, if any, is a seam question). This does not resolve RC27-01 (which is about what C26 *sends*), but it makes C27's *guarantee* explicit.
-**Evidence/reasoning.** Faithful, and it strengthens the bar posture (it declines to promise a metrics/events browsing capability v4 never claims for LangFuse — AI-CONTEXT:374 scopes LangFuse to L3 trace/session/prompt). Stating the default is in-scope; choosing what C26 emits is the deferred part.
-**Fix (applied).** Added the faithful default to OQ-1 (C27 guarantees trace/observation/session browsing; metrics/events browsability in LangFuse is not asserted at sweep 1 and is part of the deferred seam) and a one-line scoping note at §3.1. The *resolution of what C26 forwards* stays DEFERRED (RC27-01).
+### RC27-04 — minor — OQ-4's "shared across C03/C24/C26/C27/C41/C43" over-claims which components carry G37 as a key gap. (FIXED)
+**Claim.** OQ-4 says "G37 is shared across **C03/C24/C26/C27/C41/C43**."
+**Evidence/reasoning.** The inventory's key-gap column lists **G37** only on **C03, C27, C43**.
+C24/C26 carry **G33** (OSS-stack failure), not G37; C41 carries none of G37/G33 as a key gap. The
+narrative point (many components *touch* plaintext creds) is fine, but conflating "touches credentials"
+with "carries G37 as a key gap" mis-states the inventory. Minor, non-load-bearing.
+**Fix (applied).** Softened OQ-4 to "G37 is a key gap on **C03 (config owner), C27, C43**, and the
+plaintext-credential surface it names is touched by the OTel/Max/judge paths too" — matching the
+inventory's gap assignment while keeping the cross-cutting note.
 
-### RC27-05 — minor — INV-3 / §1 "we add no hardening over what LangFuse provides natively" is the correct bar posture; verified no over-build. One residual: confirm the "initial admin" credential and operator-auth (§3.2) aren't quietly inviting a custom auth story.
-**Claim.** §3.2 says the operator "authenticates and browses"; §3.3/§4 list an "initial admin" credential. This is LangFuse-native auth (it ships its own login/RBAC), so it passes the bar — but the spec should be explicit that operator authentication is LangFuse-native (no factory-authored auth/SSO), to pre-empt a reader adding one.
-**Evidence/reasoning.** No violation found — the spec already frames the UI as "off-the-shelf" and credentials as LangFuse's. This is a belt-and-suspenders completeness nit so the "no custom code" boundary is airtight on the auth axis too (the one place a builder might be tempted to bolt on SSO).
-**Fix (applied).** Added a clause to §3.2 stating operator authentication is LangFuse-native (its own login/RBAC); C27 authors no auth/SSO layer — same INV-3 posture. Faithful, reinforces the bar → applied.
+### RC27-05 — minor — G33 attribution overstated: §6/OQ-6 say the inventory assigns G33 to "C24/C26"; it assigns G33 to C24 (not C26). (FIXED)
+**Claim.** §6 (LangFuse-down row + trailing FAITHFUL-FILL) and OQ-6 say availability/retention "fall
+under G33, assigned by the inventory to **C24/C26**."
+**Evidence/reasoning.** Inventory G33 owners: **C21, C24, C36, C37, C40, C57** — **not** C26 (C26's
+only key gap is G04). C26's spec elects to *discuss* G33, but the inventory does not assign it there.
+Minor — C27's disposition (build no buffer; defer the OSS-stack failure story) is correct regardless.
+**Fix (applied).** Tightened the "C24/C26" attributions to **C24 (the integration-hardening budget)**,
+keeping "shared with C26" only where C27 genuinely co-defers the *exporter*-side behaviour (a C26
+concern). Matches the inventory.
 
-### RC27-06 — minor — G37 disposition is correct and well-scoped (note + defer to FE-3, build nothing); two cite tightenings.
-**Claim.** §6/§7/§9-OQ-4 and plan T3 note G37 (LangFuse DB password + API keys plaintext in `city.toml`/env per AI-CONTEXT §13.2), build no secrets layer, and park a real store as FE-3. I verified this against the sources: G37 is a *minor* gap "secret/credential handling is absent … env={…} in TOML implies plaintext" (ambiguities-and-gaps), and FE-3 in FUTURE-ENHANCEMENTS is explicitly "blocked on G37 (no secrets store)" and deferred by user decision 2026-05-31. C27's posture (reference creds from config, build nothing, cross-ref FE-3, let C03 own the canonical resolution) is exactly the faithful + bar-compliant move. **No over-build of a secrets story** — passes the bar. Two minor cite points: (a) §6 lists "Max OAuth tokens" among the co-located secrets — that is accurate per G37's enumeration but is C25/C41/C04's secret, not C27's; fine as context but should read as "co-located with" not "owned by" C27; (b) OQ-4's list of sharers ("C03/C24/C26/C27/C41/C43") is a helpful cross-ref and matches the inventory G37 rows (C03, C43 carry G37; C24/C26 carry G33 not G37 in the inventory) — so the "shared across" list slightly over-claims which components carry G37 as a *key gap*.
-**Evidence/reasoning.** Inventory: G37 is a key gap on C03, C27, C43 (and per-AI-CONTEXT enumeration touches LangFuse/OTel/Max/judge creds). C24/C26 carry **G33** (OSS-stack failure), not G37, as their key gaps. C27's OQ-4 narrative is directionally right (these components all *touch* plaintext creds) but conflates "touches credentials" with "carries G37 as a key gap." Minor, non-load-bearing.
-**Fix (applied).** (a) Reworded §6 G37 row so co-located secrets (OTel mTLS certs, Max OAuth tokens) read as "alongside, owned elsewhere," not C27-owned. (b) Softened OQ-4's "shared across C03/C24/C26/C27/C41/C43" to "touches credentials handled by C03 (config owner), C27, C43 and the OTel/Max/judge surfaces" so it no longer implies all those rows carry G37 as a key gap. Faithful cite-hygiene → applied.
+### RC27-06 — minor — INV-4 / §3.1 name only `session.id`; the upstream correlation contract C26 forwards is a set — mirror it so the two specs' correlation story is visibly one contract. (FIXED)
+**Claim.** §3.1/§4/INV-4 lean on `session.id` (and name `user.account_uuid`, `organization.id` for
+sensitivity) citing AIC:178. C26 §3.4 INV-4 enumerates the full pass-through set (`prompt.id`,
+`session.id`, `user.account_uuid`, `organization.id`, `terminal.type`) at the same source.
+**Evidence/reasoning.** Not a fidelity error (the cite is right; `session.id` IS the grouping key) — a
+completeness gap. Naming only `session.id` understates that INV-4 depends on the *upstream* set
+arriving intact (C26 INV-4 pass-through).
+**Fix (applied).** Added a half-line to INV-4 and the §3.1 Correlation row: the dependency is on the
+full upstream correlation set C26 forwards unaltered (C26 INV-4), with `session.id` as the grouping
+key. Faithful, non-architectural → applied.
 
-### RC27-07 — minor — Terminal-sink / two-sinks (INV-1/INV-2, AC-6, plan T8) is correct and consistent with C26's anti-edge; no C27→CXDB crossing. Verified clean.
-**Claim.** C27 asserts it is a terminal sink (no C27→CXDB/beads/bus), that the OTLP path ends at LangFuse, and that CXDB is fed only by C24 — the C27 half of the G04 two-sinks rule. I cross-checked C26 §3.4 INV-1/INV-2 (single LangFuse sink + the explicit Collector✗→CXDB anti-edge) and C25's INV-1/AC-6: the three specs assert one consistent boundary. C27 correctly does **not** adopt the "weak L4 fallback" reading (AI-CONTEXT:326/374) and routes it to OQ-2 with the right faithful pick (CXDB is L4; LangFuse browsing-only). **No crossing, no over-claim.**
-**Evidence/reasoning.** This is the strongest part of the spec — the two-sinks invariant is stated, the anti-edge is acknowledged as living at C26 (where a naive integrator would physically add it), and C27 owns only its own terminal-sink half. Consistent with C26 OQ-2's "state the split at C25, the anti-edge at C26, cross-reference" disposition.
-**Fix.** None needed (no defect). Noted for the integrator: C27 OQ-2 and C26 OQ-2 both ask whether the two-sinks boundary should be hoisted into one shared Observability-subsystem note — that hoist is an orchestrator call spanning C25/C26/C24/C27, **DEFERRED** to the integrator (not a C27-local fix).
+### RC27-07 — minor — Operator auth (§3.2) should be explicitly LangFuse-native, so the "no custom code" boundary is airtight on the auth axis too. (FIXED)
+**Claim.** §3.2 says the operator "authenticates and browses"; §3.3/§4 list an "initial admin"
+credential — a natural spot for a builder to bolt on SSO.
+**Evidence/reasoning.** No violation found — the spec already frames the UI as off-the-shelf and
+credentials as LangFuse's. A belt-and-suspenders nit to pre-empt a custom auth/SSO story (passes the
+bar — LangFuse ships its own login/RBAC).
+**Fix (applied).** Added a clause to §3.2: operator authentication is **LangFuse-native (its own
+login/RBAC); C27 authors no auth/SSO layer** — same INV-3 posture.
 
-### RC27-08 — minor — Availability / retention / HA correctly deferred (no buffer/HA/rotation built) — passes the bar; one consistency point with C26 on where G33 lives.
-**Claim.** §6 (LangFuse-down, trace-store growth), §7, OQ-5/OQ-6, and plan risk-5 all defer availability/retention/HA to "LangFuse-native + ops/G33" and explicitly build no custom buffer/HA/retention — citing that adding HA/buffering over LangFuse is stack-hardening that fails the capability-for-principle bar. This is correct and well-argued. C27 states G33 is "assigned by the inventory to C24/C26, not C27" — I verified: the inventory gives C24 G26/G27/G33 and C26 G04 (G33 via the subsystem narrative), and C27 only G37. So C27 deferring its service-local availability to the G33 story owned elsewhere is faithful.
-**Evidence/reasoning.** No over-build (the brief's explicit "no HA-buffering / retention-rotation machinery" red flag is cleanly avoided — C27 names these as LangFuse-native/ops and builds nothing). One tightening: §6 says G33 is assigned "to C24/C26"; the inventory lists G33 as a key gap on **C24** (and C21), with C26 carrying it via the subsystem narrative rather than as a key-gap cell. Minor; doesn't change the disposition.
-**Fix (applied).** Adjusted the two §6 parentheticals that read "G33, assigned by the inventory to C24/C26" to "G33 — owned at C24 (the integration-hardening budget), shared with C26" so the gap-ownership cite matches the inventory exactly. Faithful cite-hygiene → applied.
+### RC27-08 — minor — §6 G37 row reads co-located secrets (OTel mTLS, Max OAuth) as if C27-adjacent state; clarify they are owned elsewhere. (FIXED)
+**Claim.** §6 G37 row lists "the co-located OTel mTLS certs / Max OAuth tokens" alongside LangFuse's
+own creds.
+**Evidence/reasoning.** Accurate per G37's enumeration, but those are C25/C41/C04 secrets, not C27's;
+reading them as "co-located with C27" risks implying C27 touches them. Trivial hygiene.
+**Fix (applied).** Reworded so co-located secrets read as "alongside, owned elsewhere," not C27-owned.
+
+### RC27-09 — minor (no defect) — Off-the-shelf / config-only posture, terminal-sink, and availability/retention deferral all pass the bar. Verified.
+**Claim/Evidence.** INV-3 + the §1 NOT-list + every plan task forbid a custom store/UI/receiver/
+retention/HA/secrets layer; §6/OQ-5/OQ-6 DEFER availability/retention/HA to LangFuse-native + ops and
+build nothing (adding any of them would be the exact stack-hardening the bar drops). Terminal-sink /
+two-sinks (INV-1/INV-2, AC-6) is asserted with **no C27→CXDB crossing**, consistent with C26 §3.4
+INV-1/INV-2 (single LangFuse sink + Collector✗→CXDB anti-edge) and C25 INV-1/AC-6; the "weak L4
+fallback" reading (AIC:326/374) is correctly **not** adopted and routed to OQ-2 (CXDB is L4, LangFuse
+browsing-only). License paraphrase (§1) checked against README:294 — faithful; the README-"MIT" vs
+AIC-"Apache 2.0" tension is real and correctly flagged with OQ-3 routing the SPDX pin to deploy time.
+**No fix.** Noted for the integrator: C27 OQ-2 and C26 OQ-2 both ask whether the two-sinks boundary
+should be hoisted into one shared Observability-subsystem note — that hoist spans C25/C26/C24/C27 →
+**DEFERRED** to the integrator (not a C27-local fix).
+
+## Seam-consistency verdict (C26 ↔ C27)
+
+**Consistent on mechanism; mismatched on signal set.** Both specs name the **same** seam (LangFuse's
+native OTLP-trace ingestion endpoint, OTLP/HTTP, ingestion-key/Basic-auth header, exact path deferred
+to a **joint** sweep-2 resolution under shared OQ-1) — that half aligns, and RC27-02 sharpens it. The
+unresolved half: **C26 forwards metrics + logs + traces to LangFuse, but LangFuse ingests traces
+only** (RC27-01), and C26 AC-5 ("metrics+events appear in LangFuse") conflicts with C27's browse ACs.
+Faithful seam = **traces-only at C27**; the metrics/logs disposition is a C26-pipeline decision
+**DEFERRED** to the orchestrator (edits C26 §3.3/AC-5, out of bounds here). C27 remains a **terminal
+sink** — no C27→CXDB crossing — so the two-sink rule (G04) is not violated by either side.
 
 ## Verdict
-**accept-with-fixes.** C27 is a faithful, bar-compliant spec: it correctly frames the component as
-off-the-shelf self-hosted LangFuse (deploy + config, near-zero custom-code budget), invents **no** custom
-store/UI/receiver/HA/buffer/retention/secrets machinery (the bar's red flags are all cleanly avoided),
-notes-and-defers G37 to FE-3 without over-building a secrets story, and asserts the terminal-sink/two-sinks
-boundary consistently with C26 and C25 (no C27→CXDB crossing). The applied fixes are cite-hygiene and
-contract-sharpening (auth shape, correlation set, faithful-default for non-trace signals, G37/G33
-ownership). **One major item is DEFERRED to joint orchestrator resolution: the C26↔C27 ingestion seam
-disagrees on the signal set** — C26 pipelines metrics + logs/events + traces into LangFuse's
-trace-oriented OTLP endpoint, while C27 (correctly) scopes its ingestion/browse to traces and even C26's
-own AC-5 ("metrics+events appear in LangFuse") conflicts with C27's browse ACs. That seam must be
-resolved as one contract (exclude non-trace from the LangFuse path, or prove the release ingests them and
-broaden C27's contract). No fidelity blockers; the only non-applied item is the genuinely cross-component
+**accept-with-fixes.** C27 is a faithful, bar-compliant spec: off-the-shelf self-hosted LangFuse
+(deploy + config, near-zero custom-code budget), inventing **no** custom store/UI/receiver/HA/buffer/
+retention/secrets machinery (every red flag the brief names is cleanly avoided), with terminal-sink/
+two-sinks asserted consistently with C26 and C25. Applied fixes are cite-hygiene + contract-sharpening:
+the **G37→FE-3 mis-citation** (RC27-03, a fidelity error the prior pass missed), the grounded
+LangFuse ingestion auth/transport shape (RC27-02), the traces-only sharpening of the seam on the C27
+side (RC27-01), the G37/G33 ownership cites (RC27-04/05), and three completeness nits (RC27-06/07/08).
+**One architecturally-significant item is DEFERRED to joint orchestrator resolution: the C26↔C27
+metrics/logs signal-set mismatch** (RC27-01) — its corrective edit lands in C26's pipeline and must be
+ruled as one contract. No fidelity blockers; the only non-applied item is the genuinely cross-component
 seam, correctly left for the integrator.

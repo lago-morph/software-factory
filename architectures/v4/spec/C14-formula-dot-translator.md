@@ -274,14 +274,17 @@ Sweep-1 high-level criteria (concrete tests at sweep-2):
    DOT emitter (over an off-the-shelf writer, README:384). Resolve by running `gc` (the same G11 spike
    C01/C02 need); until then C14 binds to observable `--format dot` output if present, else emits DOT via an
    off-the-shelf writer. Either way C14 never reinvents a *native* exporter and never binds to `gc` internals.
-2. **[OQ-2] Loop / bounded-iteration primitive (C12:OQ-2).** C12 has not frozen how a formula expresses
-   iteration in a DAG file; this "drives C15/C14" (review-log). C14 cannot round-trip a loop construct it
-   cannot encode in DOT. **This is the load-bearing C14→C15 seam contract:** C15 §9 OQ-2 needs C14's DOT to
+2. **[OQ-2 — scoped by D-16] Loop / bounded-iteration primitive (C12:OQ-2).** C12 has not frozen how a formula
+   expresses iteration in a DAG file; this "drives C15/C14" (review-log). C14 cannot round-trip a loop construct
+   it cannot encode in DOT. **This is the load-bearing C14→C15 seam contract:** C15 §9 OQ-2 needs C14's DOT to
    carry **loop-construct markers** so C15 §3.3 rule 1 can distinguish a sanctioned bounded loop from a raw
-   cycle. C14's §3.1 export surface therefore freezes the *obligation* (export a **marked** loop) now; the
-   *concrete encoding + inverse* freeze the moment C12 freezes the primitive. Until then, an unencodable loop
-   is a *rejected* catalog entry (fail loud, not lossy) — the **interim** state, **not** C14's end-state
-   (end-state = marked back-edge, *lowered-by-rule*, so C15 can lint loops; see §3.4).
+   cycle. **Per D-16:** the **DOT encoding is owned by C12** (C12:OQ-2) and frozen **jointly by C12/C14/C15 at
+   Sweep-2**, blocked on the real `gc` loop primitive; C14's role is to **name the back-edge marker as a seam
+   element** (interim **fail-loud** → end-state **marked-back-edge**), not to invent the encoding. C14's §3.1
+   export surface therefore freezes the *obligation* (export a **marked** loop) now; the *concrete encoding +
+   inverse* freeze the moment C12 freezes the primitive. Until then, an unencodable loop is a *rejected* catalog
+   entry (fail loud, not lossy) — the **interim** state, **not** C14's end-state (end-state = marked back-edge,
+   *lowered-by-rule*, so C15 can lint loops; see §3.4).
 3. **Exact canonical form for equality.** The precise normalization (node/edge ordering, attribute
    canonicalization, which presentation attrs are "noise") that makes `import(export(f)) = f` decidable is a
    sweep-2 deliverable; sweep-1 only asserts it must exist and be the basis of the CI gate.

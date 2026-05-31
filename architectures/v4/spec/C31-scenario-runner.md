@@ -21,7 +21,7 @@
 > abstraction; C17 lists C31 as an instance, line 64), spec/C02 (subprocess ABI); ambiguities-and-gaps G25;
 > review-log D-6 (canonical track), D-13 (C34 owns read-isolation enforcement; C42 provides the partition).
 > Inventory ID: C31   Kind: component   Status: sweep-1
-> Track: A (faithful)
+> Track: canonical (per D-6)
 
 ## 1. Purpose & responsibility
 
@@ -45,8 +45,8 @@ build**:
 
 C31 is **half of the P5 mechanism** (the *execution* half). P5's other halves are owned elsewhere: scenario
 **authoring + storage with read-isolation** is **C30**, and **holdout-integrity enforcement/audit** is **C34**
-(D-13). C31 only **runs** the scenarios C30 stores; it is a leaf component delivered in **Batch 3 / Phase 2**
-(component-inventory line 111; README Phase 2).
+(D-13). C31 only **runs** the scenarios C30 stores; it is a leaf component built in inventory **Batch 3**
+(component-inventory line 111), which delivers the README **Phase-2** Layer-2 tier (README:417) — distinct schemes that coincide here, not one milestone.
 
 **Responsibilities (what C31 is the spec-of-record for):**
 - **Wrap Inspect AI as a scenario provider** — the `[[service]] type="inspect_ai"` block (A28j) and the
@@ -105,7 +105,7 @@ C31 is **half of the P5 mechanism** (the *execution* half). P5's other halves ar
 | Governed-by (positional) | **C34** Holdout enforcement, **C42** Role/rig partition | C34 enforces `scenarios ∉ read_partition(worker)` + audits leakage (D-13); C42 provides the partition. C31 *runs inside* the `scenarios` work-partition they govern; it does not enforce. |
 | Packaging host | **C02/C17** pack + tool-node ABI | C31 ships as a Gas City pack (the `[[service]] type="inspect_ai"` + `[[tool]]` blocks), not a Go/Python import (README:177; C17 §1). |
 
-**Position in the system.** C31 is **Batch 3 / Phase 2** (component-inventory line 111; README:417): it stands
+**Position in the system.** C31 **builds in inventory Batch 3** (component-inventory line 111) and delivers part of the **README Phase-2** Layer-2 scenario/judge tier (README:417) — two distinct decompositions (inventory "Batch N" ≠ README "Phase N") that coincide for this tier, not one milestone: it stands
 up once Inspect AI is installed and C30's scenario store + C17/C02 tool-node ABI exist. It is **not
 foundational** (inventory C31): it is a leaf of the evaluation tier that the bootstrap-validation milestone
 exercises (README:429 "Run the factory on the spec"). v4 flags that "the harder parts are the **Inspect AI

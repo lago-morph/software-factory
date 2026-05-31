@@ -17,7 +17,7 @@
 > on); spec/C08 §8 (the spec's acceptance/DoD surface C33 scores *against* — Reading A collapsed spec);
 > F-MODE-COVERAGE F2/F39/F47/F60 (satisfaction-over-population as the reward-hacking / region-mismatch /
 > Goodhart / compounding-error guard); ambiguities-and-gaps G09; review-log D-1 (judge same-provider),
-> D-6 (canonical track); FUTURE-ENHANCEMENTS FE-5 (enumerated per-criterion DoD — decision below).
+> D-6 (canonical track); **D-15 (RESOLVED — satisfaction is holistic at Sweep-1 against C08's free-form DoD; FE-5 enumerated per-criterion DoD stays DEFERRED to Sweep-2)**; FUTURE-ENHANCEMENTS FE-5 (enumerated per-criterion DoD — decision below).
 > Inventory ID: C33   Kind: component   Status: sweep-1
 
 ## 1. Purpose & responsibility
@@ -88,8 +88,9 @@ distributions").
   *aggregation* contract, not the storage or the input record format.
 - **NOT the spec's Definition-of-Done.** What a trajectory is scored *against* is the **C08 spec** (its
   acceptance/DoD surface) interpreted by the **C32 judge** — C33 never reads the spec. The FE-5 question (does
-  satisfaction require *enumerated per-criterion* DoD in C08?) is addressed in §6 and **flagged to the
-  integrator; C33 does not unilaterally change C08**.
+  satisfaction require *enumerated per-criterion* DoD in C08?) is **RESOLVED by D-15** (§6): Sweep-1 scores
+  **holistically** against C08's free-form DoD; enumerated per-criterion DoD stays DEFERRED to Sweep-2; C33
+  does not unilaterally change C08.
 
 ## 2. Context & dependencies
 
@@ -226,7 +227,13 @@ thresholds never defined). Faithful resolution, in two parts:
   > does not fix (OQ-1). C33 may *report* a rate-above-a-supplied-cutline as one statistic, but it neither
   > decides nor acts on the cutline.
 
-**FE-5 (per-criterion DoD) — DECISION POINT, addressed; recommendation = minimal path; flagged to integrator.**
+**FE-5 (per-criterion DoD) — RESOLVED by D-15 (Sweep-1 = holistic; enumerated DoD stays DEFERRED).**
+> **RESOLVED by D-15:** satisfaction is computed **holistically** at Sweep-1 — a graded judge (C32) over C08's
+> existing **free-form** Definition-of-Done — exactly the baseline C33 is written to (recommendation below).
+> **FE-5 (enumerated per-criterion DoD inside the spec artifact) stays DEFERRED to Sweep-2**: it is a
+> coordinated C08+C32+C33 change whose primary beneficiary (C46 per-criterion diagnosis) is built last;
+> revisit when C46 needs per-criterion granularity. The decision record below is retained for traceability.
+
 FE-5 (enumerated per-criterion Definition-of-Done living *inside* the spec artifact, with stable per-criterion
 IDs that P5/P6 scoring reads) was deferred "to decide when C32/C33 are authored" (FUTURE-ENHANCEMENTS FE-5) —
 that is now. C33 scores **against** the C08 spec's DoD. The question: can satisfaction be computed against the
@@ -250,10 +257,10 @@ capability, but a **C08 change**)?
   the spec artifact) **plus** a C32 judge contract that scores per-criterion **plus** a C33 reduction that
   aggregates per-criterion as well as per-trajectory. That is a multi-component change (C08 + C32 + C33) and
   per the brief **C33 must not unilaterally add enumerated-DoD to C08**.
-- **`FE-5 → orchestrator/integrator decision` (flagged).** The Batch-3 integrator should rule whether Sweep-1
-  ships **holistic-only** (recommended: cheapest, no C08 change) or commits the **enumerated-per-criterion**
-  path (C08 + C32 + C33 change). C33's spec is written to the **holistic** baseline; per-criterion aggregation
-  is a clean sweep-2 extension to I2/I3 **iff** the integrator rules enumerated-DoD in. (OQ-3.)
+- **`FE-5 → RESOLVED by D-15`.** The Batch-3 integrator ruled (**D-15**): Sweep-1 ships **holistic-only**
+  (the recommended path — no C08 change), and the **enumerated-per-criterion** path (the coordinated C08 + C32
+  + C33 change) **stays DEFERRED to Sweep-2**. C33's spec is written to the **holistic** baseline; per-criterion
+  aggregation is the clean sweep-2 extension to I2/I3, revisited when C46's per-criterion diagnosis needs it. (OQ-3.)
 
 **Other failure cases.**
 - **Empty / too-small population (I1 returns 0 or n<small).** Emit an explicit *insufficient-sample* result
@@ -330,9 +337,9 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
    reduction** (AI-CONTEXT:302/393) + a thin distribution-summary helper (`[FAITHFUL-FILL]` — v4 names no
    stats library for C33; scipy is C48's); no bespoke estimator/significance engine is present (significance
    is C48).
-9. **AC-9 (FE-5 holistic baseline — addresses FE-5):** satisfaction is computed against the **existing C08
-   spec** (holistic judge rubric) with **no C08 change**; per-criterion aggregation is *absent* at Sweep-1 and
-   gated on the integrator's FE-5 ruling (OQ-3).
+9. **AC-9 (FE-5 holistic baseline — RESOLVED by D-15):** satisfaction is computed against the **existing C08
+   spec** (holistic judge rubric) with **no C08 change** — the Sweep-1 baseline D-15 ratifies; per-criterion
+   aggregation is *absent* at Sweep-1 and DEFERRED to Sweep-2 (enumerated DoD = FE-5, still deferred; OQ-3).
 
 **Test strategy.** A **satisfaction-aggregation pack** that seeds a synthetic population of judge-output beads
 on C19 (varied scores, including malformed/missing and small-n cases) and drives AC-1…AC-9 — in particular
@@ -350,10 +357,10 @@ metric**, since they assume C33's distribution is the canonical satisfaction num
 - **OQ-2 (→ review-log): distribution representation + statistic set.** Continuous distribution vs binned
   histogram vs both; the canonical summary-statistic set (which quantiles, which spread measure); and whether
   large populations are reduced incrementally/streamed. Freeze at sweep 2 with C46 (principal consumer).
-- **OQ-3 (→ review-log): FE-5 — enumerated per-criterion DoD.** **`FE-5 → orchestrator/integrator decision`:**
-  ship **holistic-only** (recommended — no C08 change) or commit the **enumerated-per-criterion** path (a
-  coordinated C08 + C32 + C33 change). C33's Sweep-1 is the holistic baseline; per-criterion aggregation is a
-  clean I2/I3 sweep-2 extension **iff** ruled in. (Mirrors the FE-5 decision the C32 builder also surfaces.)
+- **OQ-3 — RESOLVED by D-15: FE-5 — enumerated per-criterion DoD.** **D-15** rules Sweep-1 = **holistic-only**
+  (no C08 change), which is C33's baseline; the **enumerated-per-criterion** path (a coordinated C08 + C32 + C33
+  change) **stays DEFERRED to Sweep-2** (primary beneficiary = C46 per-criterion diagnosis, built last).
+  Per-criterion aggregation is the clean I2/I3 sweep-2 extension when revisited. (Same FE-5 ruling C32 surfaces.)
 - **OQ-4 (→ review-log): score model + ensemble collapse (C32 boundary).** The per-trajectory **score scale**
   and how a **multi-judge ensemble** (README:187) collapses to one trajectory score are **C32's** contract;
   C33's normalisation rule (I2) must be frozen against C32's actual output shape at sweep 2 (incl. how judge

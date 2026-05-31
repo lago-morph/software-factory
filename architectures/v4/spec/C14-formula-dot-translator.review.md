@@ -127,12 +127,13 @@ faithful image so C15's findings concern the real workflow.
 
 ## Deferred (architecturally significant — needs human/orchestrator decision)
 
-- **DEFERRED-A — the loop/back-edge DOT encoding itself (RC14-01's resolution).** Naming the marker in
-  the seam contract is applied; *which* DOT encoding represents a sanctioned bounded loop (a marked
-  back-edge attribute? a synthetic loop-controller node?) is **blocked on C12:OQ-2** (C12 has not frozen
-  the iteration primitive) and is a joint C12/C14/C15 freeze. C14 cannot and must not invent it. Left as
-  C14 OQ-2; flagged here so the integrator sequences the C12 loop-primitive decision before C14/C15
-  sweep-2, since it is the single contract gating C15's loop-linting.
+- **DEFERRED-A — SCOPED BY D-16 (Sweep-2 joint freeze).** Naming the marker in the seam contract is applied;
+  *which* DOT encoding represents a sanctioned bounded loop (a marked back-edge attribute? a synthetic
+  loop-controller node?) is **scoped by D-16**: the **DOT encoding is owned by C12** (C12:OQ-2) and frozen
+  **jointly by C12/C14/C15 at Sweep-2**, blocked on the real `gc` loop primitive. C14's Sweep-1 role is to
+  **name the back-edge marker as a seam element** (interim fail-loud → end-state marked-back-edge); C15
+  consumes it; none invents the encoding. Carried as C14 OQ-2. The integrator sequencing concern (C12
+  loop-primitive decision before C14/C15 sweep-2) is now the D-16 joint-freeze plan.
 
 ## Verdict
 **accept-with-fixes.** A strong, faithful, well-traced spec+plan: the bar is cleanly satisfied (wraps

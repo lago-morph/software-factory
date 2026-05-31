@@ -303,9 +303,11 @@ fixtures (the 21 specific Mammoth rules) deferred to sweep 2 alongside the rule_
    (`spec/C14-formula-dot-translator.md`), so the *named* surface (node ids, `kind=` attr, directed edges)
    exists — but C14's **exact DOT-attribute encoding is a C14 sweep-2 item**, and whether the DOT carries the
    **loop-construct markers** C15's cycle rule needs is tracked as **C14:OQ-2** (which defers to C12:OQ-2 for
-   the loop primitive). This is the load-bearing contract C15 needs C14 to freeze at sweep-2. If C14's
-   round-trip proves lossy on the topology C15 checks, C15 may read the C12 AST directly. Resolve jointly
-   with C14:OQ-2 / C12:OQ-2.
+   the loop primitive). This is the load-bearing contract C15 needs C14 to freeze at sweep-2. **Per D-16:** the
+   **DOT encoding of the loop / back-edge marker is owned by C12** (C12:OQ-2) and frozen **jointly by C12/C14/C15
+   at Sweep-2**, blocked on the real `gc` loop primitive; **C15 consumes the marker, does not invent the
+   encoding**. If C14's round-trip proves lossy on the topology C15 checks, C15 may read the C12 AST directly.
+   Resolve jointly with C14:OQ-2 / C12:OQ-2 (the D-16 joint freeze).
 2. **OQ-1 — blocking vs. advisory disposition** (§3.4 [AMBIGUITY]). README marks the linter "optional";
    sweep-1 picks **advisory-by-default, blocking-by-config** (parity with C10 OQ-1). Sweep 2 must confirm
    with C03 whether any structural class (e.g. a true cycle) should hard-block by default, given C01's loader

@@ -121,11 +121,13 @@ guarantee no longer hard-codes the deferred partition shape. Behavior unchanged.
 - RC32-05: inline-marked the relaxed "different family" quote in the header.
 - RC32-06: de-hardcoded the deferred partition from the fail-closed degraded path.
 
-**Deferred (needs orchestrator decision):**
-- **OQ5 / RC32-02 (architecturally significant cross-component seam).** The exact judge **partition**
-  (a dedicated `judge` partition vs role-isolated read of `code`+scenario-outputs) is jointly **OQ-C42-3 +
-  OQ-C34-3** — it must be settled across C42/C34/C32 together, not by C32 alone. Left `DEFERRED — needs
-  orchestrator decision`; C32 now matches its peers' open-question posture instead of pre-deciding it.
+**Deferred (now SCOPED BY D-17):**
+- **OQ5 / RC32-02 (architecturally significant cross-component seam) — SCOPED BY D-17.** The exact judge
+  **partition** (a dedicated `judge` partition vs role-isolated read of `code`+scenario-outputs) is jointly
+  **OQ-C42-3 + OQ-C34-3 + C32-OQ5** — **D-17** unifies them: a **Sweep-1 read-default** is fixed (judge MAY
+  read trajectories + scenarios; worker MUST NOT read the judge rig or scenarios) and the partition **shape** is
+  frozen **jointly by C42 (provides) + C34 (enforces+audits) + C32 (judge) at Sweep-2**. C32 carries the Sweep-1
+  default + defers the shape — no longer an open orchestrator call.
 - **OQ2 (ScoreRecord schema)** and **OQ4 (C31↔C32 runner/scorer seam)** were already correctly flagged by
   the builder as sweep-2 cross-component freezes; verified consistent with C33 (reads judge-output beads,
   README:426) and C31 (verdict-blind, emits trajectory for C32 to score). No change needed — they are

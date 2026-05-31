@@ -152,9 +152,10 @@ diversity; C30's contribution to that guarantee is *correct placement of the cor
 
 **Position in the system.** C30 is **foundational** (inventory: yes) within the Evaluation & Judge
 subsystem and is the **head of the evaluation tier** — C31 (runner), C32 (judge), C33 (satisfaction), C34
-(holdout enforcement) all sit downstream of "scenarios exist, authored in isolation." It is delivered in
-**Phase 2 / Batch 3** ("Layer 2 (scenarios + judge)", README:417), whose "harder parts are the Inspect AI
-wrap and the scenario isolation policy" (README:442). Because D-1 removes the model-family fallback, the
+(holdout enforcement) all sit downstream of "scenarios exist, authored in isolation." It **builds in inventory
+Batch 3** and delivers part of the README **Phase-2** "Layer 2 (scenarios + judge)" tier (README:417) — two
+distinct decompositions (inventory "Batch N" ≠ README "Phase N") that coincide for this tier, not one
+milestone — whose "harder parts are the Inspect AI wrap and the scenario isolation policy" (README:442). Because D-1 removes the model-family fallback, the
 *correctness of C30's placement* (scenarios in the right repo/partition/rig) is load-bearing for the whole
 holdout claim — but the *enforcement* of that placement is C34's, and the *partition* is C42's (D-13).
 

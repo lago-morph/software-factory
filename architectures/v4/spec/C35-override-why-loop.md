@@ -39,7 +39,7 @@ It is responsible for:
 | Lateral (reuse) | **C37** trajectory clustering | For *semantic* recurring-pattern surfacing, C35 reuses C37's embedding/clustering rather than its own (the simple case stays SQL/DuckDB per README L215). |
 | Lateral (operator) | **Operator workflow** | The human-in-the-loop review that approves a surfaced pattern → enforced rule (README L216). |
 
-C35 is **not foundational** (inventory) and lands in **Batch 3 / Phase 3a** (README L457) — it depends on C28's hook surface and C20's schema both existing first.
+C35 is **not foundational** (inventory). It **builds in inventory Batch 3** (component-inventory L111, the workflow-tooling / override-discipline batch) and **delivers the README Phase-3a P8 capability** (README L457 — the override-detection hooks + periodic-surfacing pack). These are two *distinct* decompositions (the inventory "Batch N" is not the README "Phase N" scheme) that happen to coincide for C35; they are not equated. C35 depends on C28's hook surface and C20's schema both existing first.
 
 ## 3. Interfaces / contracts (sweep-1: named + described)
 

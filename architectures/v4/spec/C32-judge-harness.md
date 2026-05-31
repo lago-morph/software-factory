@@ -125,7 +125,7 @@ for the aggregator (C33) and the holdout audit (C34).
 | Reads (trajectory source) | **C21** CXDB / **C19** beads | The trajectory C32 scores is the recorded turn-DAG (CXDB) / bead work-product. `> [FAITHFUL-FILL]` — inventory names only C30/C29 as deps, but "Scores **trajectories**" requires a trajectory source; CXDB is the canonical trajectory store (inventory C21). Read-only; minimal. |
 | Consumed by | **C33** Satisfaction metric aggregator | Reads C32's per-trajectory score records ("judge outputs from beads", README:426) and computes the satisfaction distribution. |
 | Consumed by / audited by | **C34** Holdout integrity & audit | Audits judge-independence (D-1) and isolation after the fact (D-13). C32 emits the judge identity + active independence level into each score so C34 *can* audit; C34 owns the audit, not C32. |
-| Runs inside | **C42** Rig partitioning + **C28** agent loop | The judge runs as the **judge rig** — a distinct *role* from the implementer (the `judge` role is grounded in the **inventory C42 row** "Worker/scenario/judge roles" + **spec/C42** which fixes the role set `{worker/implementer, scenario-author, judge}`; AI-CONTEXT §13.3 supplies the `scenario_authoring`/`implementer` rigs + the `inspect_eval` tool node, **not** a judge rig). The LLM grader is a Claude Code agent loop (C28) under D-1. `> [FAITHFUL-FILL]` — the judge's *partition read-surface* (own `judge` partition vs role-isolated read of `code`+scenario-outputs) is **OQ-C42-3/OQ-C34-3**, deferred (OQ5); see §6. |
+| Runs inside | **C42** Rig partitioning + **C28** agent loop | The judge runs as the **judge rig** — a distinct *role* from the implementer (the `judge` role is grounded in the **inventory C42 row** "Worker/scenario/judge roles" + **spec/C42** which fixes the role set `{worker/implementer, scenario-author, judge}`; AI-CONTEXT §13.3 supplies the `scenario_authoring`/`implementer` rigs + the `inspect_eval` tool node, **not** a judge rig). The LLM grader is a Claude Code agent loop (C28) under D-1. `> [FAITHFUL-FILL]` — **per D-17** the Sweep-1 default is: the judge MAY read the worker's trajectories + held-out scenarios (to score), the worker MUST NOT read the judge rig or scenarios (holdout); the judge's exact *partition shape* (own `judge` partition vs role-isolated read of `code`+scenario-outputs) is the joint **OQ-C42-3/OQ-C34-3/OQ5** freeze (C42+C34+C32, Sweep-2); see §6. |
 | Realized over | **C17/C02** Tool-node / pack ABI | The Inspect AI scorer is exposed as a Gas City pack/tool node ("Inspect AI provides the bulk … Gas City pack", README:185,191; the `inspect_eval` `[[tool]]`, AI-CONTEXT §13.3). |
 | Feeds (meta) | **C46** Meta-metrics | "judge false-positive rate" is a P12 meta-metric (README:269); C32's scores + disagreement are an input. (Downstream; not a build dep.) |
 
@@ -352,11 +352,13 @@ judge-FP-rate test fixtures are **sweep-2**.
 - **OQ4 (runner↔scorer split).** Inspect AI bundles runner+scorer but v4's inventory splits them (C31 runner,
   C32 judge). The exact seam — does C31 *invoke* C32 as the scorer, or does C32 score post-hoc from CXDB, or
   both? — is `[FAITHFUL-FILL]`; confirm the C31↔C32 contract at sweep-2 (overlaps C31).
-- **OQ5 (judge partition read-surface — `DEFERRED — needs orchestrator decision`).** The judge *role* is
-  grounded (inventory C42 row "Worker/scenario/judge roles" + spec/C42's role set), but the judge's exact
-  **partition** — a dedicated `judge` partition vs a role-isolated read of `code`+scenario-outputs — is **not**
-  settled by v4 and is the **joint open question OQ-C42-3 + OQ-C34-3**. AI-CONTEXT §13.3 names only the
-  `scenario_authoring`/`implementer` rigs (+ the `inspect_eval` tool), **not** a judge rig; it is therefore
-  not the source for the judge partition. C32 must not pre-decide this — it asserts only the judge's *role/
-  prompt isolation* and defers the partition shape to the C42/C34 joint ruling. (Resolving it pins how I3 and
-  AC2 read at sweep-2.)
+- **OQ5 (judge partition read-surface — SCOPED BY D-17).** **Sweep-1 default (D-17):** the judge (C32) **MAY
+  read** the worker's trajectories + the held-out scenarios (to score); the worker **MUST NOT read** the judge
+  rig or the scenarios (holdout). The judge's exact **partition SHAPE** — a dedicated `judge` partition vs a
+  role-isolated read of `code`+scenario-outputs — is **not** settled by v4 and is the **joint open question
+  OQ-C42-3 + OQ-C34-3 + this C32-OQ5**, which **D-17 unifies** and routes to a **joint C42 (provides partition)
+  + C34 (enforces+audits) + C32 (judge) Sweep-2 freeze**. AI-CONTEXT §13.3 names only the
+  `scenario_authoring`/`implementer` rigs (+ the `inspect_eval` tool), **not** a judge rig; it is therefore not
+  the source for the judge partition. C32 does not pre-decide the shape — it asserts the judge's *role/prompt
+  isolation* + the D-17 Sweep-1 read-default, and defers the partition shape to the joint freeze. (Resolving it
+  pins how I3 and AC2 read at sweep-2.)

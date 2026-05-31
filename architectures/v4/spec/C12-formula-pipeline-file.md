@@ -276,7 +276,11 @@ Sweep-1 high-level criteria (concrete tests at sweep 2):
    uncertainty for the whole Workflow Engine subsystem.
 2. **Loop primitive vs. pure DAG** (3.1 [FAITHFUL-FILL]) — confirm how Gas City expresses bounded iteration
    within a "DAG file" so the acyclicity claim and the loop methodologies (Ralph, self-healing re-entry)
-   coexist; this drives C15's cycle/loop rules and C14's DOT mapping.
+   coexist; this drives C15's cycle/loop rules and C14's DOT mapping. **Per D-16:** the **DOT encoding** of
+   the sanctioned bounded loop / back-edge marker is **owned by C12** (this OQ-2 — the formula grammar) and
+   frozen **jointly with C14 (translator) + C15 (linter) at Sweep-2**, blocked on the real `gc` loop primitive
+   (this OQ-2). Sweep-1: C14 names the back-edge marker as a seam element, C15 consumes it; none invents the
+   encoding.
 3. **Convoy/order boundary** (3.3 [AMBIGUITY: G06]) — **RESOLVED by D-8:** Convoy is a Gas City sling concept
    referenced by **C05**; Order (durable workflow) is owned by **C40**. C12 references both but defines
    neither; C07 carries the glossary entries. C12 owns only the single-formula DAG.

@@ -40,6 +40,12 @@ this file is written by the primary or a single collector agent per pass.
 - **D-13 — Holdout enforcement ownership.** C34 owns holdout-integrity ENFORCEMENT + after-the-fact AUDIT (read-isolation policy, independence checks under D-1, `scenarios ∉ read_partition(worker)`). C43 owns the distinct lethal-trifecta blast-radius bound (Bash/net/fs typing, twin isolation; G31). C42 PROVIDES the role partition C34 enforces; C42 does not enforce. Pre-constrains unbuilt C34 (Batch 3) + C43 (Batch 4). (from RC42-01/02)
 - **D-14 — G37 (secrets) ≠ FE-3 (signing).** G37 = open secrets/credential-storage gap (owned by C03; plaintext `city.toml`/env today). FE-3 = graduated-mandatory signing, BLOCKED ON G37 but a distinct deferred enhancement. Specs deferring secrets cite **G37**, not FE-3. Signing stays deferred (Bet 2 → FE-3); resolves the old "signing mandatory vs optional" → optional/deferred (README:229), revisit at FE-3's trigger. (from RC27-03)
 
+### Batch-3 review integration (2026-05-31) — D-15..D-17
+
+- **D-15 — Satisfaction is HOLISTIC at Sweep-1 (FE-5 resolution).** C33 computes the satisfaction distribution by a graded judge (C32) over C08's existing free-form Definition-of-Done — NOT against enumerated per-criterion DoD. **FE-5 (enumerated per-criterion DoD inside the spec artifact) stays DEFERRED**; it is a coordinated C08+C32+C33 change whose primary beneficiary (C46 per-criterion diagnosis) is built last. Revisit at Sweep-2 / when C46 needs per-criterion granularity. (C33 builder + adversary concur.)
+- **D-16 — Loop-primitive DOT encoding owned by C12; joint C12/C14/C15 Sweep-2 freeze.** The DOT encoding of a sanctioned bounded loop / back-edge marker (so C15 can distinguish a bounded loop from a raw cycle) is owned by C12 (formula grammar) and frozen jointly with C14 (translator) + C15 (linter) at Sweep-2, blocked on the real `gc` loop primitive (C12:OQ-2). Sweep-1: C14 names the back-edge marker as a seam element (interim fail-loud → end-state marked-back-edge); C15 consumes it; none invents the encoding. (C14↔C15 seam.)
+- **D-17 — Judge read-surface: Sweep-1 default + joint C42/C34/C32 Sweep-2 freeze.** Sweep-1 default: the judge (C32) MAY read the worker's trajectories + the held-out scenarios (to score); the worker MUST NOT read the judge rig or the scenarios (holdout). The exact judge-partition SHAPE (separate rig vs shared scenario partition; precise read-surface) is settled jointly by C42 (provides partition) + C34 (enforces+audits) + C32 (judge) at Sweep-2 — unifies OQ-C42-3 + OQ-C34-3 + C32-OQ5. (C32 DEFERRED.)
+
 ## Cross-component issues (raised during Sweep 1 builds)
 
 - **XC-1 — C19↔C20 dependency direction contradiction.** The canonical inventory lists C20→C19
@@ -149,5 +155,62 @@ _Batch-2 + tail review wave (2026-05-31 harvest):_
 - C29:OQ — concrete stylesheet "judge != coder" grammar (AI-CONTEXT:514) → named rule here, grammar sweep-2.
 - C42:OQ-1 — holdout enforce vs declare ownership RESOLVED by D-13 (C34 enforces+audits; C43 blast-radius; C42 provides); residual = does Gas City prevent at tool-call time or audit-after (G11/G21).
 - C42:OQ-2 — are `worker` and `implementer` the same role under two names (Phase-0 vs Phase-2 rigs)?
-- C42:OQ-3 — is the judge a third partition, or does it read `code` + scenario outputs role-isolated from the worker (D-1)?
+- C42:OQ-3 — judge partition shape — SCOPED BY D-17 (Sweep-1 read-default fixed; partition SHAPE = unified OQ-C42-3+OQ-C34-3+C32-OQ5, joint C42/C34/C32 Sweep-2 freeze).
 - C42:OQ-4 — canonical `[rigs]` vs `[[rig]]` spelling inconsistent across C01/C03/C42 (XC-9).
+
+_Batch-3 review wave (2026-05-31 harvest) — D-15/D-16/D-17 applied:_
+- C06:OQ-1 — F32 "Addressed" but integrity half (HMAC mail signing) optional/deferred (G36→FE-3, blocked on G37); when does signing become mandatory? *(seam: signature attaches at C06 Mail envelope, binds to C41 provenance.)*
+- C06:OQ-2 — Mail retention / dead-letter / expiry policy for a recipient that never returns — inherited from substrate or C06-defined? sweep-2.
+- C06:OQ-3 — is Nudge independently feature-gated or always-on once coordination config present? v4 gates `[mail]`, silent on Nudge.
+- C06:OQ-4 — addressing granularity: recipients by individual `session.id` vs C42 role vs broadcast? sweep-2.
+- C11:OQ-1 — the 9 field NAMES are FAITHFUL-FILL; GF-C exemplar is undefined in all four docs (count-9 is the only anchor). Locate real GF-C, confirm field set/grouping at sweep-2. *(load-bearing for C11.)*
+- C11:OQ-2 — crucible record vs C08 spec: one artifact or two (co-versioned)? Contingent on C08:OQ-1; integrator call.
+- C11:G23 — bootstrap-validation success criteria subjective; C11 supplies the DoD field (#7), gate/threshold deferred to C53 (asserted from inventory routing; confirm vs C53 spec, later-batch).
+- C14:OQ-1 — is `gc formula export --format dot` native `gc` or v4-supplied? Corpus two-sided (README:385 "Add" vs :133/:384 "Custom/Build"); resolve via `gc` G11 spike; bar default = wrap-not-reinvent.
+- C14:OQ-2 — loop/back-edge DOT encoding — **RESOLVED-scoped by D-16** (encoding owned by C12:OQ-2; joint C12/C14/C15 Sweep-2 freeze; C14 names marker, interim fail-loud → end-state marked-back-edge).
+- C14:OQ-3 — exact canonical form (normalization) that makes `import(export(f))=f` decidable — sweep-2.
+- C14:OQ-4 — the C14 DOT-profile grammar (restricted DOT subset `import` accepts + exclusion list) vs Attractor/Mammoth-shaped DOT — sweep-2.
+- C14:OQ-5 — DOT encoding of node bindings + formula parameters; tracks C12 on-disk field decisions (C12:OQ-4) — sweep-2.
+- C15:OQ-2 (top) — does C15 lint the C14 DOT export or the C12 formula directly? Default DOT-in via C14; loop-marker encoding = C14:OQ-2 → C12:OQ-2 (**D-16** joint freeze).
+- C15:OQ-1 — blocking vs advisory disposition (README "optional"); sweep-1 picks advisory-default/blocking-by-config (parity C10:OQ-1); confirm sweep-2.
+- C15:OQ-3 — Mammoth license (unverified, likely-MIT by 2389 convention — README:301 "verify") + the 21-rule enumeration (G30 boundary inherited from C38 Tracker transfusion); code-port iff verified MIT, else pattern-reimplement.
+- C15:OQ-4 — findings serialization JSON vs SARIF vs text (constrained by C02 output ABI) — sweep-2.
+- C16:OQ-G18 (top) — confirm **C39** (not C16) owns the heal-loop numeric policy (G18 / XC-3); non-reverting fail-safe (if C39/C18 disclaim, G18 needs a new home, NOT C16). C39 spec absent on disk — confirm sweep-2. *(C39-ownership confirmation; shared with C18:OQ-1.)*
+- C16:OQ-1 — blocking vs advisory disposition (P4 "small add"); advisory-default/blocking-by-config (mirrors C10:OQ-1).
+- C16:OQ-2 — concrete LLM-where-tool heuristic table + false-positive measurement (README names property, not detectors) — sweep-2.
+- C16:OQ-3 — justification-annotation ("why a model is required here") on-disk home, joint with C12 — sweep-2.
+- C16:OQ-4 — findings serialization incl. `falsifying_scenario` field (JSON/SARIF/text) — sweep-2.
+- C18:OQ-1 (top) — confirm **C39** owns numeric termination policy (G18/XC-3); C18 owns loop + bound-reached signal + injected-bound enforcement only; C39 spec absent — confirm sweep-2. *(C39-ownership confirmation; shared with C16:OQ-G18.)*
+- C18:OQ-2 — reconciler→C05 (re)dispatch trigger is inferred not v4-stated (RC05-01); confirm with C05 author (alt: C12-formula-step drives dispatch); flag as inference until pinned.
+- C18:OQ-3 — native Health Patrol internals unverified (G11); C18 specs the contract (deterministic-first ordering, bounded pass, bound-reached), not the engine — confirm vs pinned `gc`.
+- C30:OQ-1 (top) — scenario record fields + corpus manifest (Task file under `scenarios/<component>/`, provenance = git commit identity; explicit `created_by`?); freeze sweep-2 before C31/C32/C34 build. *(signing NOT part of record — DEFERRED→FE-3/G37, D-14.)*
+- C30:OQ-2 — D-13 storage/enforcement seam: confirm C30 stores/authors, C34 enforces+audits, C42 provides partition.
+- C30:OQ-3 — scenario signing DEFERRED confirmed (FE-3/G37, D-14); Phase-0 integrity = git content-addressing + rig isolation.
+- C30:OQ-4 — CXDB vs git for scenario metadata; sweep-1 keeps authoritative home in separate git repo; confirm metadata home sweep-2.
+- C31:OQ-1 (top) — session-id adapter depth (G25): does Inspect AI let the caller set/propagate `session.id`? thin 1:1 vs thick id-map — spike.
+- C31:OQ-2 — exact `session.id` injection mechanism (given OQ-1) — sweep-2.
+- C31:OQ-3 — one scenario → one `session.id` granularity (does one `inspect eval` map to one parent-chained trajectory?) — C24 G26 seam.
+- C31:OQ-4 — `inspect eval` CLI surface + trajectory-log schema (exact flags + log shape) — sweep-2.
+- C31:OQ-5 — run target / twin selection: confirm scenario/task (C30), not C31, selects the run target/twin.
+- C32:OQ1 (top) — same-family judge bias residual (D-1): F48 stays Partial; when does it trigger FE-1 (cross-family), and what measurement (judge-FP via C46?) makes the call?
+- C32:OQ2 — `ScoreRecord` schema seam (C33 aggregate + C34 audit + C46 FP-rate all bind); freeze early sweep-2.
+- C32:OQ3 — cost/throughput for judge-suite + ensemble on single Phase-0 Max seat (shared C28 G13/G34, G32); quantify (→C46) before throughput claims.
+- C32:OQ4 — runner↔scorer split (C31 runner, C32 judge): does C31 invoke C32, or C32 score post-hoc from CXDB, or both? confirm C31↔C32 contract sweep-2.
+- C32:OQ5 — judge partition read-surface — **SCOPED BY D-17** (Sweep-1 default: judge MAY read trajectories+scenarios, worker MUST NOT read judge rig/scenarios; partition SHAPE = joint C42/C34/C32 freeze, unifies OQ-C42-3+OQ-C34-3).
+- C33:OQ-1 (top) — G09 threshold value + ownership: C33 is threshold-free; cutline lives at C50/C53/C39; confirm value is operator/integrator policy.
+- C33:OQ-2 — distribution representation + statistic set (continuous vs binned; which quantiles/spread; streamed?); freeze sweep-2 with C46.
+- C33:OQ-3 — FE-5 enumerated per-criterion DoD — **RESOLVED by D-15** (Sweep-1 = holistic against C08 free-form DoD; enumerated DoD DEFERRED to Sweep-2, beneficiary C46).
+- C33:OQ-4 — score scale + ensemble-collapse-to-one-score is C32's contract; C33 normalisation (I2) frozen against C32 output shape sweep-2.
+- C34:OQ-C34-1 (top) — does Gas City PREVENT the worker's out-of-partition read at tool-call time, or permit-with-detect (G21 enforcement-strength, gated on G11)? Reading A (config+perms+detect) is the build; Reading B (hard-control) = residual → C43.
+- C34:OQ-C34-2 — is the read/tool-call trail complete enough to make the audit sound? source = C23 bus / C25 OTLP / CXDB / C41 attribution (C41 supplies attribution, not the read trail) — sweep-2.
+- C34:OQ-C34-3 — independence predicate for same-provider judge (distinct rig+prompt+partition; no shared context window) — **judge read-surface SCOPED BY D-17** (partition SHAPE = unified OQ-C42-3+OQ-C34-3+C32-OQ5, joint Sweep-2 freeze); "no shared context window" detection still open.
+- C34:OQ-C34-4 — when FE-1 lands, does the family-difference check move into C34 or stay advisory in C29? (today relaxed per D-1.)
+- C35:OQ1 (top, G43) — P8 maturity disagreement across 4 docs; spec rules automated scope = detect→why→log→surface, conversion operator-gated; confirm F10 "Addressed" valid only from Phase 3a, no earlier phase relies on the loop.
+- C35:OQ2 — override-recognition predicate boundary (operator deny? edit-against-gate? force past failing linter?) + hook event-payload fields — the lone custom piece; sweep-2.
+- C35:OQ3 — is the recurring-pattern report persisted as a bead (new C20 type) or transient? sweep-1 transient; persisted type = C20 change request (D-3).
+- C35:OQ4 — rule-conversion encoding per sink + **which sinks are in scope**: v4 names only the C30 Inspect-AI rubric (PRIMARY); C10 (EARS) + C15 (Mammoth) sinks are a FAITHFUL-FILL inference (not v4-named, not C35 deps). Confirm with orchestrator whether the loop converts to C10/C15 at all or only the rubric. *(C35 C10/C15 sink scope.)*
+- C35:OQ5 — recurrence threshold + false-positive policy for the predicate (how many recurrences = a pattern) — unquantified; sweep-2.
+- C40:OQ-1 (top) — the "Orders prove insufficient → Temporal" trigger is undefined (AI-CONTEXT:486 defers Temporal but states no falsifiable trigger); convert deferred-Temporal bet into a falsifiable condition.
+- C40:OQ-2 — Order-definition syntax + trigger-predicate grammar (`{trigger,launches,retry}`; how a trigger matches a C23 event) must bind to pinned `gc` — sweep-2.
+- C40:OQ-3 — durability-ceiling depth (G33) unverified: crash-resume mid-step or step-boundary? re-launch idempotent? default retry bound? — sweep-2.
+- C40:OQ-4 — C40↔C39 launch seam: confirm the contract by which an Order *drives* a C39 fix-task chain (the coupling is C40's faithful inference; C39 deps don't list C40). *(C40/C39 launch-seam confirmation.)*

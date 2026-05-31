@@ -420,11 +420,14 @@ are deliverables of C43, not C34's default build.)
   source supplies the trail (Gas City event bus / OTLP raw bodies / CXDB / C41 attribution) and whether it
   captures filesystem reads (not just tool invocations) is open — a worker could read by a path the trail
   misses until C43 isolation constrains the surface (G21). Confirm the read-event source + completeness.
-- **OQ-C34-3** (→ review-log): **What is the independence predicate, exactly, for a same-provider judge
-  (D-1)?** Independence is by isolation (rig/role/prompt), but the precise predicate — distinct rig +
-  distinct prompt + partition distinct from the worker + no shared context window — needs definition,
-  including the judge's partition (this is also C42's OQ-C42-3: is the judge a third partition, or does it
-  read `code` + scenario *outputs* role-isolated from the worker?). Confirm with C42/C32.
+- **OQ-C34-3** (→ review-log; **judge read-surface scoped by D-17**): **What is the independence predicate,
+  exactly, for a same-provider judge (D-1)?** Independence is by isolation (rig/role/prompt), but the precise
+  predicate — distinct rig + distinct prompt + partition distinct from the worker + no shared context window —
+  needs definition, including the judge's partition (this is also C42's OQ-C42-3: is the judge a third
+  partition, or does it read `code` + scenario *outputs* role-isolated from the worker?). **Per D-17:** the
+  Sweep-1 read-default is fixed (judge MAY read trajectories + scenarios; worker MUST NOT read the judge rig or
+  scenarios), and the exact **partition SHAPE** is the **unified OQ-C42-3 + OQ-C34-3 + C32-OQ5**, frozen
+  **jointly by C42 (provides) + C34 (enforces+audits) + C32 (judge) at Sweep-2**. Confirm with C42/C32.
 - **OQ-C34-4** (→ review-log / FE-1): **When cross-family (FE-1) lands, does the family-difference check
   move into C34 or stay advisory in C29?** Today (D-1) it is relaxed to C29's advisory model-stylesheet
   rule. If FE-1 makes a different-family judge real, confirm whether the *enforcement* of the family

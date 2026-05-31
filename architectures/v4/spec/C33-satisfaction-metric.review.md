@@ -90,7 +90,11 @@ accurate** against C08 §1 OQ-1, §4 [FAITHFUL-FILL], §6 F18, and §8 AC-1…AC
 entry ("a DoD can attach to the Reading-A collapsed spec; does NOT require C08's standalone-bundle split").
 No fix needed; recorded for the integrator's FE-5 ruling.
 
-## FE-5 view (for the integrator)
+## FE-5 view (for the integrator) — RESOLVED by D-15
+> **Integrator ruling (D-15):** Sweep-1 satisfaction is **holistic** against C08's free-form DoD (exactly the
+> recommendation below); **FE-5 (enumerated per-criterion DoD) stays DEFERRED to Sweep-2** (primary beneficiary
+> C46, built last). The recommendation text below is what D-15 adopted.
+
 **Holistic is the sound Sweep-1 baseline; P5 does NOT *require* enumerated per-criterion DoD now.** A graded
 LLM judge over the free-form C08 prose *is* "satisfaction not test-pass" (P6), and the population distribution
 of those holistic scores already delivers the P5 variety-of-outcomes measure C33 exists for — at zero C08

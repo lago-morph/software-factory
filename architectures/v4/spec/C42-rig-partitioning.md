@@ -394,10 +394,13 @@ deliverables of C43, not C42's default build.)
   names a `worker` rig (AI-CONTEXT §13.1); Phase-2 names an `implementer` rig (§13.3). The faithful fill
   (§4.1) treats them as the same role (the Phase-0 worker *becomes* the implementer once the scenario
   partition exists). Confirm, and confirm the canonical role↔rig-name mapping for the closed role set.
-- **OQ-C42-3** (→ review-log): **Is the judge a third partition, or does it read `code` + scenario
-  *results*?** v4 names `scenario_authoring` and `implementer` rigs (§13.3) but does not give the judge
+- **OQ-C42-3** (→ review-log; **scoped by D-17**): **Is the judge a third partition, or does it read `code` +
+  scenario *results*?** v4 names `scenario_authoring` and `implementer` rigs (§13.3) but does not give the judge
   rig's `read_partition` explicitly. The judge must read the trajectory/output to score it but must remain
-  role-isolated from the worker (D-1). Confirm the judge rig's partition (and whether the same-provider
-  judge per D-1 needs its own partition label distinct from `code`/`scenarios`).
+  role-isolated from the worker (D-1). **Per D-17:** the Sweep-1 read-default is fixed (judge MAY read the
+  worker's trajectories + held-out scenarios; worker MUST NOT read the judge rig or scenarios), and the exact
+  **partition SHAPE** is the **unified OQ-C42-3 + OQ-C34-3 + C32-OQ5**, frozen **jointly by C42 (provides
+  partition) + C34 (enforces+audits) + C32 (judge) at Sweep-2**. Confirm the judge rig's partition (and whether
+  the same-provider judge per D-1 needs its own partition label distinct from `code`/`scenarios`).
 - **OQ-C42-4** (→ review-log, XC-9): **Canonical `[rigs]` vs `[[rig]]` spelling.** Inconsistent across
   C01/C03/C42; C42 uses `[[rig]]` per AI-CONTEXT §13.3. Owner: C07/integrator — pick one and propagate.

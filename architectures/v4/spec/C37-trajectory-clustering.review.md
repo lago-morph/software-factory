@@ -4,123 +4,131 @@ Reviewer persona: Subsystem Adversary — Self-Healing Loop (P11)
 Target: `spec/C37-trajectory-clustering.md` (+ `plan-faithful/C37-trajectory-clustering.md`)
 Posture: canonical track (D-6) → attack FIDELITY and COMPLETENESS only, not the design; PLUS the
 capability-for-principle bar (flag any addition that hardens existing stack capability rather than
-delivering new capability tied to a 12-principle).
+delivering new capability tied to a 12-principle). Assigned gaps: **G32, G33** only. Binding: D-1..D-17
+(relevant D-6 — satisfied; docs say "canonical track").
+
+> **Note on a prior review pass.** An earlier `C37-…review.md` existed whose findings were sound in spirit
+> but (a) mis-diagnosed RC37-01 below as a *fabricated* quote ("no such string exists") — it is in fact a
+> **mis-attributed real** quote (lives in review-log:154, not the inventory), so the correct severity is
+> **minor**, not major; and (b) marked its fixes "applied" when **none had actually landed** in the spec/plan
+> (verified: the original builder text was unchanged at every cited line). This pass re-grounds the findings
+> and **actually applies** the confident fixes.
+
+## What holds (the bar)
+The bar is held cleanly. INV-1/AC-3 forbid any custom embedder/distance/clusterer; §6 "what got DROPPED"
+enumerates the refusals (no custom algorithm; cost model → C46; in-stage HA → C40+C21; quality/auto-tune →
+sweep-2) — exemplary capability-for-principle discipline. The "transfusion from sentence-transformers +
+HDBSCAN" framing mirrors README:461 *verbatim* (v4 itself uses "transfusion" loosely for wrapping these
+mature libs, exactly as "transfusion from PyOD" for C36), and the spec correctly treats them as off-the-shelf
+wraps, **not** as C51-gated gene-transfusion exemplars. G32 (reading (b): bound to the supplied/anomalous
+population; cost figure → C46) and G33 (reading (b): fail-isolated, best-effort loop; durability = C40+C21)
+are both **ADDRESSED-with-reason**, consistent with the C21/C24/C36/C38 siblings. C37's "sole dep = C21"
+claim is faithful (inventory: C37 depends on C21 only; C36 is a seam, not a dep edge — correct, not
+challenged). All load-bearing README (248/254/255/256/261/312–313/461/466/499) and AI-CONTEXT
+(327/329/330/406/649–650) citations verified exact against `architectures/v4/{README,AI-CONTEXT}.md`.
 
 ## Findings
 
-### RC37-01 — major — `[AMBIGUITY: G32]` fabricates an inventory quote for the C46 deferral target
-**Claim.** §6 G32 routes the cost-per-satisfaction model to **C46** and cites it as
-`(C46, inventory \`C29:G32 — cost-per-satisfaction model deferred to C46\`)`. **Evidence.** No such
-string exists in `_meta/component-inventory.md`. The inventory carries G32 on **C29, C37, C46, C48,
-C57** rows; C46's row reads "Meta-metric stream … Records **cost-per-satisfaction**, time-to-threshold,
-judge-FP-rate over time; **needs a defined cost model**". So routing the cost model to C46 is
-**well-supported** by the actual inventory text — but the *quoted* inventory fragment is invented, which
-is exactly the "mislabel a fill as a cited fact" failure the bar targets. **Fix (applied).** Replaced the
-fabricated quote with the real basis: C46 is the meta-metric stream whose own inventory row names
-"cost-per-satisfaction … needs a defined cost model", and C46 carries G32 in the inventory alongside
-C37. The (b) reading and the C46 routing are sound and kept.
+### RC37-01 — major — the C36↔C37 population seam is under-committed on C37's side relative to what C36 already commits; C37 never names C36's `anomaly` signal (C36 I3) as the carrier of its population selector
+**Claim.** C37 framed the entire C36→C37 hand-off as open (OQ-1: "does C36 select the population, or does C37
+cluster a broader set?") and described C36 only as a "population selector … *Seam, not a dep edge* … exact
+hand-off is OQ-1" (§2 row; I1), naming **no** concrete carrier. **Evidence.** spec/C36 commits definitely on
+its side: C36 I3 emits a typed **`anomaly` signal** carrying "the **pointer back to the offending trajectory
+in C21**" (C36 §3 I3; INV-3), and C36 §2 states "the **anomaly→cluster trigger seam is C36's signal (I3)**"
+with C37 "Consumes C36's anomaly signal — embeds + clusters the flagged failures" (C36 §1, lines 73–75; §2
+line 108). C36's data-model further co-freezes "the `anomaly`-signal record shape … with C37/C38, the
+principal consumers". So C36 has already declared (a) C37 consumes C36's `anomaly` signal as the trigger, and
+(b) the signal shape is co-frozen *with C37* — yet C37 acknowledged neither, leaving the seam asymmetric (one
+side committed, the other treating it as wholly unresolved). The **carrier** (C36 I3) is settled and should be
+named; the genuinely-open residual is narrower — the **granularity/aggregation** (does C37 batch the
+individual per-anomaly C36 signals into the population, or does C36 hand a window directly; does C37 cluster
+exactly the flagged set or a broader one). This is the SEAM the brief specifically flags, and the most serious
+finding. **Fix (applied).** Named **C36's `anomaly` signal (C36 I3)** as the I1 selector carrier in the §2
+C36 row, I1, and (sharpened) OQ-1; recorded the record-shape co-freeze with C36; recast OQ-1 to the
+granularity question and bound it to **C36 OQ-2** (carrier + record shape) for a joint sweep-2 freeze. Plan
+risk-3 updated to match. Additive only — **no** dependency-graph change (C21 stays C37's sole dep edge).
 
-### RC37-02 — major — README:499 ("ensure its clusters match") is the **Healer's** scenario line, cited as C37's own adversarial check
-**Claim.** §8 (test strategy) and plan T10/R-2/R-5 cite README:499 — "feed it failure trajectories the
-team manually clustered, ensure its clusters match" — as **C37's** headline adversarial acceptance check.
-**Evidence.** README:499 reads in full: "**The Healer agent's scenarios** are adversarial — feed it
-failure trajectories that the team has manually clustered, ensure its clusters match." The sentence
-attributes the scenario set to **the Healer agent** (the C38 diagnosis surface), and **C38's** spec cites
-the *same* line (C38 §6 G07, AC2) as *its* held-out acceptance. So README:499 is a **shared** citation
-whose grammatical owner is the Healer, not the clustering stage. The behaviour it describes (a clustering
-that matches human-assigned clusters) *is* legitimately a clustering-quality check, so the check itself is
-faithful to C37's job — but presenting README:499 as *C37's* line, unqualified, overstates the citation
-and silently double-claims a v4 sentence already claimed by C38. **Fix (applied).** Re-tagged both C37
-citations of README:499 as the **shared Healer-evaluation** line it is: C37 surfaces the *clusters-match*
-property as its own AC (legitimate, since the clustering is what the Healer's "clusters match" rests on),
-while noting README:499's grammatical owner is the Healer scenario set (C38), so the citation is not read
-as a C37-exclusive v4 directive. The AC content (known-similar failures co-cluster) is correct and kept.
+### RC37-02 — minor — README:499 ("ensure its clusters match") is framed in v4 as *the Healer agent's* scenarios; C37 presented it as unambiguously C37's adversarial check (and C38 also claims it)
+**Claim.** C37 invoked README:499 ("feed it failure trajectories the team manually clustered, ensure its
+clusters match") as *C37's* headline adversarial validation in §8 (test strategy) and plan T10/risk-2/DoD-T10.
+**Evidence.** README:499 reads in full: "**The Healer agent's scenarios** are adversarial — feed it failure
+trajectories that the team has manually clustered, ensure its clusters match." The pronoun "its" refers to the
+**Healer** (the C38 diagnosis agent); spec/C38 indeed claims the *same* line as **its** G07 acceptance (C38
+AC2: "On the adversarial Healer scenario set — README:499 — C38's root-cause diagnoses match the human-assigned
+root cause"). So one v4 sentence is cited by two components as their own. The reading is defensible (the
+*clusters-match* half most naturally exercises the *clustering* stage, C37; the *diagnoses-match* half
+exercises C38) — not a contradiction — but C37 overstated by presenting the check as solely its own.
+**Fix (applied).** Recast both spec and plan README:499 references as v4's **Healer-scenario** set (shared
+with C38, which owns the diagnosis-match half); C37 owns the **clustering-match / clustering-fidelity** half it
+rests on — so the cross-component attribution is explicit and consistent with C38 AC2. AC content (known-
+similar failures co-cluster) unchanged.
 
-### RC37-03 — minor — C36↔C37 population seam: the two specs agree on the *direction* but not the *unit*, and only C37 flags it
-**Claim.** §1/§2/OQ-1 treat the C36→C37 hand-off as open (does C36 select the population, or does C37
-cluster a broader set?). **Evidence.** Cross-checking C36: C36 §1 states plainly "**C36 *feeds* C37**";
-C36 I3 emits an `anomaly` signal carrying "the **pointer back to the offending trajectory in C21**" —
-i.e. C36's natural output granularity is **per-anomalous-trajectory (or per-value)**, whereas C37's I1
-input is a **set/window** of trajectories to cluster. The two specs are **consistent on direction**
-(C36→C37, anomaly→cluster) and both **defer the exact contract**, but C36's OQ-2 frames the signal
-**carrier** (C20 bead vs C23 event) without naming the *aggregation* into the set C37 consumes, and C36
-does **not** list the C36→C37 hand-off as a top OQ. So the seam is genuinely two-sided-open, but the
-**granularity mismatch** (per-trajectory signal vs population-to-cluster) is implicit. This is a
-completeness gap, not a contradiction. **Fix (applied).** Sharpened OQ-1 to name the *granularity*
-question explicitly — whether C37's I1 input is the **aggregated anomalous window** (C37 batches the
-individual C36 signals into a population) or whether C36 emits a window directly — and noted the seam is
-co-owned with **C36 OQ-2** (the signal carrier), so the sweep-2 freeze is joint with C36. No design
-change; the direction (C36 feeds C37) is preserved.
+### RC37-03 — minor — the `C29:G32 — cost-per-satisfaction model deferred to C46` citation was attributed to "inventory" but is from review-log:154
+**Claim.** §6 [AMBIGUITY: G32] grounded the "cost-per-satisfaction model lives at C46" reading by citing
+`inventory \`C29:G32 — cost-per-satisfaction model deferred to C46\``. **Evidence.** That exact string is
+**not** in component-inventory.md; it is verbatim in `_meta/review-log.md:154` ("C29:G32 — cost-per-
+satisfaction model deferred to C46 (C29 is cost-aware only)"). (This corrects the prior pass, which called the
+quote *fabricated* after searching only the inventory.) The *conclusion* is independently well-grounded — the
+inventory's C46 row (line 58) reads "Records cost-per-satisfaction … **needs a defined cost model**" and C46
+carries G32 — so only the **source label** is wrong (review-log, not inventory). A mis-attributed source is a
+Track-A fidelity defect even when the claim is true. **Fix (applied).** Re-attributed the citation to
+**review-log:154** (its real home) and added the supporting inventory C46-row evidence.
 
-### RC37-04 — minor — cluster output (I5) is silent on attribution/provenance, where the sibling C38 record is explicitly attributed
-**Claim.** I5 / the data-model "Cluster set (output)" defines the per-cluster record as members + size +
-representative + noise set, with no provenance/attribution field. **Evidence.** The downstream sibling
-C38 stamps **`created_by`** (C41) on every `Diagnosis` (C38 I4 "attributed, no silent diagnosis") and
-records `transfused_from`. v4 does **not** state an attribution requirement for C37's *clustering* output
-specifically (P9/C41 `created_by` is "on every action", README:229, but C37 is a derived view, and the
-spec already binds C37 to own no source-of-truth, INV-5). So this is **not** a fidelity violation — v4
-imposes no C37-specific attribution clause — but the loop-auditability story (F54 objective-drift audit,
-which §6 says C37 "underwrites") is cleaner if the emitted clustering carries the config-pin/run identity
-that produced it (so a re-derived view is traceable to the models/params that made it, INV-5). **Fix
-(applied).** Added one clause to I5/the cluster-set state noting that the emitted clustering is *labelled
-with the run's pinned config identity* (embedding-model id + HDBSCAN param-set + population selector) so
-the derived view is reproducibly traceable (INV-5/§7 observability) — framed as an observability/trace
-property, **not** a new `created_by` attribution mechanism (which stays C41's and is not asserted as a v4
-requirement on C37). Left as the minimal trace; no new capability.
+### RC37-04 — minor — C38 expects a per-cluster "shared-failure signal" feature that C37's I5 cluster record does not provide
+**Claim.** C37's emitted cluster record (I5 / §4) is {member ids, size, representative/exemplar, noise set} —
+structural fields only. **Evidence.** spec/C38 §3 inbound-contract-1 enumerates what it reads from a C37
+cluster as "its id, its member trajectories …, and whatever cluster-level features C37 attaches (size,
+centroid/exemplar, **the shared-failure signal**)". The "shared-failure signal" — some per-cluster
+characterization of *what* the members share — is on C38's wishlist but in **no** C37 interface/data-model
+field. C38 rightly defers ("Concrete cluster schema is C37's (sweep-2 seam)"), so this is a seam-completeness
+gap to reconcile at the sweep-2 cluster-record freeze, not a present contradiction. **Fix (applied).** Added a
+seam note at I5 flagging C38 §3.1's expectation and routing the reconcile to the **sweep-2 cluster-record
+freeze (joint with C38, M2)** — surfacing the asymmetric expectation now rather than silently shipping a
+narrower record.
 
-### RC37-05 — minor — "(spec/C21 §8)" conformance-gate citation is leaned on heavily; confirm the cited clause actually enumerates C37
-**Claim.** §2, §5, §8, and the plan repeatedly gate C37 on "C21's conformance suite **must pass before …
-C36–C38 … build on C21** (spec/C21 §8)". **Evidence.** This is a load-bearing sequencing claim cited
-five-plus times. The *quoted* clause "must pass before C22, C24, C36–C38 … build on C21" appears in the
-C37 source header itself and in C36's spec identically, so the two siblings agree — but the review's
-scope forbids editing C21, and I cannot fully re-verify C21 §8's exact enumeration from C37's files alone.
-The claim is **internally consistent** across C36/C37 and is the natural reading of a conformance gate.
-**Fix (not applied — verification note only).** No edit; flagging that the "spec/C21 §8 enumerates
-C36–C38" citation should be spot-checked against C21's actual §8 text at integration (it is asserted
-consistently by both P11 siblings, so low risk). Not a DEFERRED architectural item — a citation-audit
-note.
+### RC37-05 — minor — "local/CPU-capable … no judge-provider tokens" embedder claim was stated as fact with more certainty than v4 backs
+**Claim.** §6 G32 (and §7) asserted the sentence-transformers embedder is "**local/CPU-capable**" and needs
+"**no judge-provider tokens**". **Evidence.** This is **true of sentence-transformers as a library** (it runs
+local models) and is the correct capability-for-principle reading (the embed step is compute, not LLM spend —
+distinct from the C32 judge / C38 diagnosis token cost). But v4 states only the library + "standard recipe"
+(AI-CONTEXT:406); "local/CPU" is a **faithful inference about the named library**, not a v4 statement, and was
+phrased as a flat assertion. **Fix (applied).** Qualified the §6 claim as a property of the **named library**
+(sentence-transformers runs local embedding models) rather than an unattributed v4 fact. The cost conclusion
+(compute, not provider tokens; cheaper than judge/diagnosis) and the D-1-irrelevance point are sound and kept.
+(The §7 one-liner "A local/CPU sentence-transformers embedding" is brief, derives from the now-qualified §6,
+and reads as a cost-note rather than a cited v4 fact — left as-is to avoid churn.)
 
-### RC37-06 — minor — "local/CPU-capable … no judge-provider tokens" embedder claim is a reasonable fill but stated with more certainty than v4 backs
-**Claim.** §6 G32 and §7 (cost/security) assert the sentence-transformers embedder is
-**"local/CPU-capable"**, needs "**no judge-provider tokens**", and that D-1 (judge provider) is therefore
-"irrelevant to C37". **Evidence.** This is **true of sentence-transformers as a library** (it runs local
-models), and it is the correct *capability-for-principle* reading (the embed step is compute, not LLM
-spend — materially distinct from the C32 judge / C38 diagnosis token cost). v4 itself does not *state*
-"local/CPU" for the embedder; it states the library + "standard recipe" (AI-CONTEXT:406). So this is a
-**faithful inference about the named library**, not a v4 fact — currently phrased as flat assertion.
-**Fix (applied).** Lightly qualified the "local/CPU" claim as the property of the **named library**
-(sentence-transformers runs local embedding models) rather than an unattributed v4 statement, so it is not
-read as a v4 directive. The cost conclusion (compute, not provider tokens; cheaper than judge/diagnosis)
-is sound and kept; the D-1-irrelevance point is correct and kept.
+### RC37-06 — minor — verification note: the "spec/C21 §8 / §6" and "C40 durable Orders" cross-refs are leaned on heavily and cannot be re-verified from C37's files (edit scope = C37 only)
+**Claim.** §2/§5/§8/plan gate C37 on "C21's conformance suite must pass before … C36–C38 … build on C21
+(spec/C21 §8)" (5+ times), and §6 G33 grounds fail-isolation in "spec/C21 chose the same fail-open reading
+(spec/C21 §6)" + "durability seam is **C40 (Orders)**". **Evidence.** These are internally consistent across
+the P11 siblings: spec/C36 cites C21 §8's "must pass before … C36–C38" and C21 §6 fail-open **identically**,
+and spec/C38 §1/§6 routes durable re-launch to C40 ("C40 = durable carrier; C38 = content"). So the citations
+are sibling-corroborated and low-risk, but the brief restricts edits to C37's files and I cannot re-verify
+C21 §6/§8 or C40's text directly. **Fix (not applied — verification note).** No edit; flag for an integration
+spot-check that C21 §8 actually enumerates C36–C38 and C21 §6 is the "fail-open reading (a)". Not a DEFERRED
+architectural item — a citation-audit note.
 
-### RC37-07 — minor — G33 reading-(b) leans on "spec/C21 chose the same fail-open reading" and "C40 durable Orders" — confirm both cross-refs
-**Claim.** §6 G33 grounds C37's fail-isolation in "spec/C21 chose the same fail-open reading for
-CXDB-down" and "the durability seam is **C40 (Orders)**". **Evidence.** Cross-checking siblings: **C36**
-§6 makes the identical move ("C21 fails *open* on outage, spec/C21 §6 reading (a)"; "durability is C24's
-inbox-spool + C21's fail-open"), and C38 §1/§6 routes durable re-launch to **C40** ("C40 = durable
-carrier; C38 = content"). So C37's G33 posture is **consistent with all three P11 siblings** and with the
-capability-for-principle bar (no in-stage HA — that's C40 + C21). The C21 §6 "reading (a) fail-open" and
-C40-as-durable-carrier citations are asserted consistently across C36/C37/C38; same caveat as RC37-05 (I
-cannot re-verify C21 §6 / C40 from C37's files). **Fix (not applied — verification note only).** No edit;
-the G33 reading is faithful and sibling-consistent. Flag for integration spot-check that C21 §6 is indeed
-"fail-open reading (a)" (C36 cites it identically, so low risk).
+### Considered and declined (not applied, by design)
+- **Adding a config-pin "trace identity" clause to the I5 output contract.** Tempting (so a re-derived
+  clustering is traceable to the models/params that made it), but the spec **already** carries this via
+  **INV-5** (same population + pinned models/params ⇒ same clustering) and **§7 Observability/Ops** ("pin the
+  embedding-model id + versions … reproducible"; health events worth emitting). Enlarging the *cross-component*
+  I5 contract with a field neither v4 requires nor C38 asked for is exactly the hardening-beyond-the-principle
+  the bar cautions against — declined deliberately (not a deferral). The reproducibility/trace property stands
+  on INV-5 + §7 without growing the contract.
 
 ## Verdict
-
-**accept-with-fixes.** The spec is strong, faithful, and correctly minimal: it holds C37 to the
-off-the-shelf **sentence-transformers + HDBSCAN** recipe (INV-1, AC-3), keeps the genuine custom surface
-to the three load-bearing seams the brief names — the **wiring** (read C21 → embed → cluster → emit), the
-**representation choice** (I2/G32, defaulted minimally to trajectory-as-text), and the **per-cluster
-contract handed to C38** (I5/INV-2) — and introduces **no** custom embedding/distance/clustering algorithm
-and **no** in-stage HA (the capability-for-principle bar is respected; the §6 "what got DROPPED" list is
-exemplary). G32 (cost) and G33 (partial-failure) are both **ADDRESSED-with-reason**, not merely deferred,
-with the cost model correctly routed to C46 and durability to C40 + C21. The C36↔C37 population seam is
-consistent in direction with C36's side and the residual (granularity) is now explicitly OQ'd.
-
-No blockers. Two **major** fidelity fixes applied in place — a fabricated inventory quote (RC37-01) and a
-double-claimed/mis-attributed README:499 citation (RC37-02) — plus three minor qualify-the-inference /
-sharpen-the-seam fixes (RC37-03/04/06). Two minor items (RC37-05, RC37-07) are **citation-audit notes**
-against C21 §6/§8 and C40 that cannot be re-verified from C37's own files (asserted consistently by the
-C36/C38 siblings, so low risk) — these are verification notes, not DEFERRED architectural decisions.
-**Nothing architecturally significant is deferred**; the OQ-1 granularity sharpening and the I5 trace
-clause are faithful tightenings, not design changes.
+**accept-with-fixes.** Faithful, well-traced, and correctly minimal: the off-the-shelf
+**sentence-transformers + HDBSCAN** recipe is held (INV-1/AC-3), the keep is exactly the three load-bearing
+seams the brief names — **wiring** (read C21 → embed → cluster → emit), the **G32 representation choice**
+(I2, defaulted to trajectory-as-text), and the **per-cluster contract to C38** (I5/INV-2) — with **no** custom
+algorithm and **no** in-stage HA. G32 and G33 are ADDRESSED-with-reason (cost → C46, durability → C40+C21).
+No blockers. One **major** seam fix applied (RC37-01 — C37 now names C36's committed `anomaly`-signal carrier
+and the granularity residual is jointly OQ'd with C36); four **minor** fidelity fixes applied in place (RC37-02
+Healer-scenario attribution, RC37-03 review-log re-attribution, RC37-04 cluster-record seam note, RC37-05
+qualify the local/CPU inference). RC37-06 is a citation-audit verification note (C21 §6/§8, C40) that cannot
+be re-verified from C37's files — sibling-corroborated, low-risk, **not** a DEFERRED decision. **Nothing
+architecturally significant is deferred**; every applied fix is additive or a citation correction and changes
+no dependency edge, no chosen G32/G33 reading, and no design decision. OQ-1..OQ-4 remain the correctly-open
+items (OQ-1 now sharpened to the granularity question).

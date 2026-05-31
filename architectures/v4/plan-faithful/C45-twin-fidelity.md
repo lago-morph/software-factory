@@ -6,10 +6,11 @@
 C45 is the **twin-fidelity invariant** (inventory kind): it defines the **"how close is close enough" bar**
 (**G22**) and wires the two verifications that assert it — **twin-usage-vs-service-promises** (contract,
 README:201) and **twin-behavior-vs-real-service** (behaviour, README:499). It is **not** a service, a twin,
-or a new test framework: the contract check (Pact/schemathesis/Prism) and the behaviour diff (record/replay)
-are **mature stack OSS** that C45 *invokes* (README:199/201, AI-CONTEXT:343–344); the **only custom code is
-the fidelity predicate + the combine-and-gate wiring** — the one thing v4 says has "**None turnkey / DIY**"
-(AI-CONTEXT:347). The plan is correspondingly small; the load-bearing work is **defining the per-service
+or a new test framework: the contract check (**Pact / schemathesis**, README:201/AI-CONTEXT:344) and the
+**record/replay** reference capture the behaviour diff runs over (VCR/go-vcr/polly, README:199) are **mature
+stack OSS** that C45 *invokes*; the **only custom code is the fidelity predicate + the tolerance-scored
+behaviour diff + the combine-and-gate wiring** — the parts v4 says are "**Manual diff tooling / None turnkey /
+DIY**" (AI-CONTEXT:347). *(Prism, AI-CONTEXT:343, is C44's OpenAPI-driven mock, not a C45 check.)* The plan is correspondingly small; the load-bearing work is **defining the per-service
 fidelity predicate (G22)** and **freezing the verdict feed** that C31/C43/C57/C53 consume, plus retiring two
 uncertainties — the **reference-capture/drift** question (OQ-C45-2) and the **probe run-target** seam
 (OQ-C45-3, mirrors C31:OQ-5). Per AI-CONTEXT:487 twins are built **just-in-time per dependency**, so C45 is

@@ -21,7 +21,7 @@ fidelity-gate-first — small in code (README:135 "~few hundred LOC"), heavy in 
 | **T7** Build the exclusion catalog | Enumerate every DOT construct with no formula equivalent → *lowered-by-rule* or *rejected*. Includes the **loop primitive** entry (OQ-2). | M | T3, T6 |
 | **T8** **Round-trip fidelity gate (G24)** | Property-based generator of valid C12 formulas + corpus formulas; CI check `import(export(f)) ≟ f` under canonical form; mismatch fails build with a diff. **The load-bearing deliverable.** | L | T4, T5, T6 |
 | **T9** Ship as a C02 pack | Wrap export/import as `[[tool]]` subprocess tool nodes; manifest + reference invocation; lock to a C12 `schema_version`. | S | T5, T6, C02 ABI |
-| **T10** C15 hand-off contract | Confirm the emitted DOT parses in the Mammoth-derived linter (C15) and its findings map to real formula properties. | S | T5, C15 spec |
+| **T10** C15 hand-off contract | Confirm the emitted DOT parses in the Mammoth-derived linter (C15) and its findings map to real formula properties. **Freeze the C14→C15 DOT-surface contract**: node ids, edges, node-kind tag, **and the loop/back-edge marker** (so C15 §3.3 rule 1 can tell a sanctioned bounded loop from a raw cycle — C15 §9 OQ-2). The loop-marker's concrete encoding is gated on C12:OQ-2; T10 freezes the *contract shape*, not the encoding. | S | T5, C15 spec |
 
 ## 2. Dependency graph
 
@@ -73,7 +73,7 @@ fidelity** is the trailing, load-bearing work.
 |---|---|---|
 | 1 | **G24 — lossless bidirectionality across unequal formats may not hold.** The reason C14 is spec'd. | Stand up T4 (canonical form) + T8 (property-based round-trip gate) **first**, against the corpus formulas, before polishing either direction. If `import(export(f)) ≠ f` somewhere, that's a real finding to fold into the exclusion catalog — *prove it where it holds, bound it where it doesn't* (spec §3.3). |
 | 2 | **OQ-1 — is `--format dot` native `gc` or v4-supplied?** Wrong guess → reinventing a native exporter (violates the bar) or binding to a non-existent command (G11). | T1: run `gc formula export --format dot` on the §383 3-step formula; wrap if it works, emit otherwise. Bind to *observable output*, never `gc` internals. |
-| 3 | **C12:OQ-2 — loop primitive has no settled DAG/DOT form** ("drives C15/C14"). Breaks the round trip on every iterative formula. | Until C12 freezes it, make loops a **rejected** catalog entry (fail loud). Re-open T7/T8 when C12 lands the primitive; freeze the DOT encoding + inverse together. |
+| 3 | **C12:OQ-2 — loop primitive has no settled DAG/DOT form** ("drives C15/C14"). Breaks the round trip on every iterative formula, and is the **C14→C15 seam contract** (C15 needs a loop marker to lint loops — C15 §9 OQ-2). | **Interim** (C12:OQ-2 unfrozen): loops are a **rejected** catalog entry (fail loud — refuse rather than emit a raw back-edge C15 would mis-flag). **End-state** (C12 lands): loops become a **marked back-edge** (*lowered-by-rule*), re-open T7/T8, freeze the DOT encoding + inverse together so C15's loop-lint is restored. Fail-loud is the temporary blocker, not C14's end-state. T10 freezes the marker's *contract slot* now. |
 | 4 | **Expressive-power overflow on import** (arbitrary DOT). | Restrict `import` to the T3 profile from day one; out-of-profile constructs reject by name — never silently coerce (spec §6). |
 | 5 | **C12 schema drift** (AI-CONTEXT §3.5, breaking formula-format changes). | T9 locks the mapping to a `schema_version`; an unknown version is rejected, not mistranslated. |
 

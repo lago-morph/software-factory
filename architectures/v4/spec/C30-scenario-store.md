@@ -236,10 +236,11 @@ signed at day-0. A *scenario suite* is the set of scenarios for a component (or 
 > for C30 at sweep 1.
 
 **Consistency / lifecycle.** The corpus is **version-controlled and append-growing** (README:526): scenarios
-are authored in the `scenario_authoring` rig, signed, and committed to the separate repo; the corpus is read
-(never written) by the runner/judge/audit. The store is added in **Phase 2** (additive to the Phase-0/1
-substrate; README:417). Because scenarios "grow over time" (README:526) and "factory-built components have
-their own scenarios" (README:499), the corpus has no fixed size — only the *layout* and *signing* are fixed.
+are authored in the `scenario_authoring` rig and committed to the separate repo (the commit *is* the
+provenance + tamper-evidence record); the corpus is read (never written) by the runner/judge/audit. The store
+is added in **Phase 2** (additive to the Phase-0/1 substrate; README:417). Because scenarios "grow over time"
+(README:526) and "factory-built components have their own scenarios" (README:499), the corpus has no fixed
+size — only the *layout* is fixed (cryptographic signing is a deferred FE-3 addition, not a sweep-1 fixture).
 
 ## 5. Behavior
 
@@ -252,10 +253,11 @@ a held-out scenario corpus standing alongside the runner/judge tier, ready for P
 **Author a scenario.**
 1. The **`scenario_authoring` rig** (never the implementer) writes an Inspect AI `Task` under
    `scenarios/<component>/…` (AI-CONTEXT §13.3, §16.4).
-2. C30 **signs** the scenario at authoring time (day-0 signature; F9) and records `created_by` (the
-   scenario-author rig).
-3. The scenario is committed to the **separate repo** (INV-1/INV-6). It is now resolvable by path by the
-   runner/judge/audit.
+2. The scenario is **committed to the separate repo** by the `scenario_authoring` rig (INV-1/INV-6). The
+   **git commit identity** is the scenario's Phase-0/2 provenance + tamper-evidence record (immutable,
+   content-addressed, attributing the commit to the rig — AI-CONTEXT:236/404); no separate signing step
+   runs at sweep 1 *(cryptographic signing DEFERRED → FE-3/G37, D-14)*.
+3. The scenario is now resolvable by path by the runner/judge/audit at its committed git revision.
 
 **Hold out from the implementer (relied-upon, not owned).** The implementer rig's `read_partition` excludes
 `scenarios` (C42 invariant); the implementer cannot read the corpus. **C30 does not enforce this** — it
@@ -264,8 +266,9 @@ the `scenarios` partition / separate repo so that exclusion is well-defined (INV
 
 **Serve to runner/judge/audit.** C31 resolves a component's scenarios by path and executes them; C32 scores
 trajectories against them; **C34** compares actual implementer reads against the scenario paths to *detect*
-a holdout violation after the fact, and may *verify the day-0 signatures* during baselining (F7). C30
-*publishes the corpus + signatures*; it does not run the runner, the judge, or the audit.
+a holdout violation after the fact, and may *verify the corpus against its git revision* during baselining
+(F7). C30 *publishes the corpus + its git-revision identity*; it does not run the runner, the judge, or the
+audit. *(Cryptographic signature verification is an FE-3 addition, not a sweep-1 path.)*
 
 > Sequence/state diagrams (Mermaid), the exact `Task`/repo/signature wire contracts, and the pack manifest
 > are **sweep-2+**. The *execution* contract is owned by **C31**; the *enforcement/audit* contract by **C34**;

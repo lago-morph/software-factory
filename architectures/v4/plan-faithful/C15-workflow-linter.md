@@ -64,8 +64,9 @@ rule_id** — the rule table (T4) is the contract that lets the 21 detectors be 
 
 Freeze these first so dependents and parallel streams build against stubs:
 1. **C14 DOT-surface contract (T3):** stable node ids + edge set + loop-construct markers. **The top
-   milestone** — C15's whole input depends on it, and C14 is unbuilt, so pin it as the interface C14 must
-   satisfy (OQ-2). Lets C15 build against a stub DOT before C14 ships.
+   milestone** — C15's whole input depends on it; C14 is specced at sweep-1 but its **attribute-level
+   encoding + loop markers are C14 sweep-2 / C14:OQ-2**, so pin the attribute contract C15 needs against
+   that surface (OQ-2). Lets C15 build against a stub DOT before C14's sweep-2 encoding freezes.
 2. **C15 tool-node I/O contract (T1):** declared input (`formula_dot`, config) → exit-code status +
    findings-report output, in the C17/C02 vocabulary. Lets C15 be *placed in a formula* before any detector
    exists.

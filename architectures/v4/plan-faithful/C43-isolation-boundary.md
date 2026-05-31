@@ -3,6 +3,8 @@
 > Source / Spec ref: [C43 spec (canonical)](../spec/C43-isolation-boundary.md)
 > Track: canonical   Status: sweep-1
 
+> **Wrap-up decision (D-20, ADOPTED 2026-05-31; confirms D-18).** C43's split is now **binding, not provisional**: the **boundary-typing / blast-radius half** is a **Phase-2 entry precondition** (a gate before unattended/self-modifying operation); the **twin-isolation half** stays at **Phase 3c** (blocked on C44). The detection-only-Phase-0 alternative is REJECTED. See [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25).
+
 C43 is **policy/declaration**, not a service: it defines the closed boundary-type set
 (`twin`/`isolated`/`production`), the **twin-by-default / production-scissors** routing rule (F44), the
 **blast-radius invariant** for a broad-tool-access agent (D-13), and the Bash/network/fs security posture.
@@ -22,7 +24,7 @@ build against and **carrying the G31 exposure-window residual honestly** until C
 | **T4** | **Write the Bash/network/fs security-posture statement** — per-surface default posture, with enforcement substrate identified as C04/C42 + C44 (not C43-built). (Spec §3.4) | S | T1, T2 |
 | **T5** | **Write the one-line G31 authority note + residual feed** — typing/routing is C43's keep; mechanical isolation is the stack's; enforcement/grant layer + OS jail + OPA + tags dropped; the bound is *aspirational until C44 twins land*. A sweep-1 clarification + a residual feed to C57, **not** a control plane. (Spec §4.3, §3.5) | S | T2 |
 | **T6** | **Author boundary-type + scissors config exemplars** — a `twin`-default surface, an `isolated` surface, and a `production` surface *with* its explicit per-pack scissors declaration; plus the invalid (production-by-default / LLM-typed) negative examples. | S | T1, T2 |
-| **T7** | **Resolve enforcement-strength + exposure-window OQs (G31/OQ-C43-1/OQ-C43-2)** — spike: does the pack/`gc` loader *reject* a production-defaulted or LLM-typed surface, or permit-with-review? Is detection-only-until-C44 the accepted Phase-0 posture, or must C43 be sequenced earlier? Feeds the C57 residual + the orchestrator decision. | M | T2; G11-class `gc`/twin availability; C44 status |
+| **T7** | **Resolve enforcement-strength + exposure-window OQs (G31/OQ-C43-1/OQ-C43-2)** — spike: does the pack/`gc` loader *reject* a production-defaulted or LLM-typed surface, or permit-with-review? *(Exposure-window half RESOLVED by D-20, ADOPTED 2026-05-31: the boundary-typing/blast-radius fence is a Phase-2 entry precondition, NOT detection-only; twin-isolation half stays P3c — see [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25).)* Feeds the C57 residual + the orchestrator decision. | M | T2; G11-class `gc`/twin availability; C44 status |
 | **T8** | **Resolve the boundary OQs** — OQ-C43-3 (`isolated` vs C42/C04 worktree scope — label-only vs new sandbox), OQ-C43-4 (scissors grammar + attach point in C02/C03, not the dropped grant engine). | S | T1, T2 |
 
 ## 2. Dependency graph

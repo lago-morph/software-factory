@@ -186,6 +186,7 @@ C03 has no control loop; its behavior is **load-time** and **authoring-time**:
   version-controlled `city.toml`/`env` with no secrets manager. Faithful spec records the risk and defers;
   is even a minimal faithful elaboration (e.g. `env` values referencing an external secret source) in
   scope, or is that an architectural change deferred as a future enhancement? Flagged, not silently resolved.
+  **Wrap-up decision (D-25, ADOPTED 2026-05-31):** posture is settled — **keep config/env now**, and adopt a **minimal off-the-shelf secrets approach (env-injection or SOPS-encrypted files) at the first real credential**; no premature secrets build. This is the **G37** posture (G37 ≠ FE-3 signing, per D-14). See [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25).
 - **OQ-C03-2** (→ review-log): **Layer-merge precedence is inferred** (§4 FAITHFUL-FILL). v4 never states
   whether imported-pack config deep-merges or is replaced by local `city.toml`, nor array-section
   (`[[service]]`, `[[rig]]`) merge semantics. Needs the actual Gas City precedence rule (G11 — Gas City

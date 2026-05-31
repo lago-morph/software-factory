@@ -343,7 +343,7 @@ cost-aware reward), and the **verdict contract** — the load-bearing seam C50 a
 - **Ops.** Pack-delivered router + Python stats tool node, operated **behind a feature flag** with the rest of
   P12 in Phase 3d (README:470), **built last** (README:278). **Pin** scipy/statsmodels/Evidently and the router
   versions so the significance contract + routing behavior are reproducible (inherits the version-pin
-  discipline). Heaviest human review applies (README:470) — the verdict is advisory evidence to a human-reviewed
+  discipline). **Wrap-up decision (D-25, ADOPTED 2026-05-31):** the A/B-router flag lib (Unleash) is pinned to a **known-open (Apache-2.0) version, or an unambiguously-open alternative**; the pinned-open verdict + version-pin home is the C57 license-hygiene register + the Sweep-2 version-pin step. See [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25). Heaviest human review applies (README:470) — the verdict is advisory evidence to a human-reviewed
   C50 gate, not an autonomous promote.
 
 ## 8. Acceptance criteria & test strategy

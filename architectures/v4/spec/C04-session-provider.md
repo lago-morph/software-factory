@@ -25,7 +25,7 @@ It is responsible for:
   Code session-id** (README L240, "Native", MIT). The session survives agent process restarts and sandbox
   death; a later attach resumes the same logical session.
 - **Carrying the session-log seam** — `internal/sessionlog` parses the backing process's Claude Code JSONL
-  (AI-CONTEXT §5.4 L232, §3.6 L133); C04's session-id is the parent-chain key downstream stores key on.
+  (AI-CONTEXT §5.4 L229, §3.6 L133); C04's session-id is the parent-chain key downstream stores key on.
 
 **What it is explicitly NOT:**
 - NOT the **agent loop** (C28). C04 starts/hosts/resumes the process; the multi-turn reason→tool→observe
@@ -50,7 +50,7 @@ It is responsible for:
 | Upstream (asks C04 to host) | **C05 Sling / C01 dispatch** | Routes a bead/wisp to an agent/pool; C04 starts or resumes the session that runs it. |
 | Upstream (configures C04) | **C03 config / C42 rig** | `[[agent]] provider=…` + `env` (C03, AI-CONTEXT §13.2); `read/write_partition` + worktree (C42, §13.3). |
 | Downstream (runs inside C04) | **C28 agent loop** | The Claude Code subprocess C04 launches/resumes; C28 consumes the Provider surface and the injected env. |
-| Downstream (keys on C04's id) | **C06 messaging, C24 bridge, C21 CXDB** | `session.id` is the attribution + parent-chain key (AI-CONTEXT §5.4 L232); C24 maps it to CXDB parent-turn pointer. |
+| Downstream (keys on C04's id) | **C06 messaging, C24 bridge, C21 CXDB** | `session.id` is the attribution + parent-chain key (AI-CONTEXT §5.4 L229); C24 maps it to CXDB parent-turn pointer. |
 
 C04's sole *declared* dependency is **C01** (component-inventory). It is **not foundational** but it is
 **C28's sole declared dependency** — the execution context the agent loop runs in.
@@ -92,7 +92,7 @@ a `runtimetest/conformance.go` contract suite travels with it (AI-CONTEXT §3.6 
 **Outbound contracts:**
 - **Provider surface to C28** — the running process + its stdio; C28 runs its loop inside it.
 - **Session-id emission** — a stable id keyed on by C06 (messaging), C24 (bridge → CXDB parent-turn),
-  C21/C22 (trajectory parent-chain). (AI-CONTEXT §5.4 L232 "parent-chain via `session.id`".)
+  C21/C22 (trajectory parent-chain). (AI-CONTEXT §5.4 L229 "parent-chain via `session.id`".)
 - **Resume handle** — `gc converge resume <bead_id>` is the operator-facing resume entry (AI-CONTEXT §16
   L699); the in-progress build is found via its `factory_build_in_progress` bead (§16 L695) and resumed.
 
@@ -101,9 +101,15 @@ a `runtimetest/conformance.go` contract suite travels with it (AI-CONTEXT §3.6 
   kind is swappable without changing C28/C05/C03 (AI-CONTEXT §3.6 — the deliberately vocabulary-free
   runtime). The `runtimetest/conformance.go` suite is the proof obligation for any Provider.
 - **I2 (continuity):** a session outlives any single client connection and survives an agent-process
-  restart; resume by id restores the same logical session (README L240).
-- **I3 (env injection is total):** the OAuth-derived auth + full OTEL env block is present in every
-  started/resumed session, so no turn runs un-telemetered or unauthenticated (C28 I1/I3 depend on this).
+  restart; resume by id restores the same logical session (README L240). Restoration is faithfully
+  **Partial** for a *crashed* (vs cleanly detached) session — the durable session context (work-graph
+  linkage + Claude Code session-id) is restored, but in-flight-turn / KV-cache state is not guaranteed
+  to survive (F16, §6).
+- **I3 (env injection is total):** C04 injects the OAuth-derived auth + full OTEL env block (§13.2) at
+  every session start/resume, so that — to the extent the adopted Gas City session-config mechanism applies
+  the `env` map without bypass — no turn runs un-telemetered or unauthenticated (C28 I1/I3 depend on this).
+  The *injection* is C04's; the *no-bypass totality* is an adopted-substrate property verified by the
+  `runtimetest/conformance.go` gate (AC5), not a guarantee C04-the-spec independently enforces.
 - **I4 (id stability):** the session-id that downstream stores key on is stable across detach/resume.
 
 ## 4. Data model / state
@@ -141,10 +147,13 @@ and idle-burn is avoided (the suspension lever C28 §6 leans on for the single-s
 
 **Resume (cold-pickup path, AI-CONTEXT §16):**
 1. Find the in-progress build's bead: `gc bd find --type factory_build_in_progress` (§16 L695).
-2. `gc converge resume <bead_id>` (§16 L699) → C04 re-binds the session by id and restores Claude Code
-   session context (Gas City session resume + Claude Code session-id, README L240).
+2. `gc converge resume <bead_id>` (§16 L699) is the **workflow-level** resume entry (§16 step 5); it drives
+   C04 to re-bind the session by id and restore Claude Code session context (Gas City session resume +
+   Claude Code session-id, README L240). (The §16 command resumes the *build workflow*; the session re-bind
+   is the C04-owned action it triggers — these are distinct seams, named here so they are not conflated.)
 3. C28's loop continues from the restored context; the session-id is unchanged (I4), so downstream
-   trajectory parent-chaining stays intact.
+   trajectory parent-chaining stays intact. Restoration is **Partial** (F16, §6): durable session context
+   is restored, KV-cache / in-flight-turn state may be lost.
 
 **Degraded behavior:** if the backing process dies, the session is recoverable by resume so long as the
 session-id ↔ bead linkage survives (it lives in the durable bead store, not in C04). If resume fails, the
@@ -154,8 +163,9 @@ work re-enters via its bead — but v4 does not specify a resume-failure escalat
 
 | F-mode | Applies how | Handling per v4 |
 |---|---|---|
-| **F31** Substrate safety floor = weakest adapter | C04 *is* the substrate adapter layer; the default Provider is tmux and the only agent is Claude Code, so the floor is single and well-defined | Addressed by the single-adapter / single-Provider choice (F-MODE-COVERAGE; AI-CONTEXT §3.6 recommendation L135). |
-| **F-(crash/restart)** loss of in-flight work on process/sandbox death | A run's process or the whole sandbox can die mid-build | Addressed by I2 continuity: session resume + session-id restore (README L240); cold-pickup via `gc converge resume` (§16). The durable linkage lives in beads, not C04. |
+| **F31** Substrate safety floor = weakest adapter | C04 *is* the substrate adapter layer; the default Provider is tmux and the only agent is Claude Code, so the floor is single and well-defined | Addressed by the single-adapter / single-Provider choice (F-MODE-COVERAGE L73, L148: "v4 uses only Claude Code via Gas City tmux runtime; floor is well-defined and stable"). |
+| **F16** Resume-fidelity decay | C04 owns resume; a process/sandbox death mid-build is recovered by re-binding the session by id, but a *crashed* (vs detached) session is restored from the durable bead + Claude Code session-id, not a live backing process | **Partial** per F-MODE-COVERAGE L33 ("CXDB trajectory replay + Gas City session resume; **Partial — KV cache loss inherent**"). C04 restores the durable session context (work-graph linkage + Claude Code session-id, README L240) so net work is not lost and downstream parent-chaining stays intact (I4); but the in-flight-turn / KV-cache state is **not** guaranteed to survive — resume is faithfully *Partial*, not lossless. C04 does **not** build a fidelity-token mechanism for this (that is a Track-B `[DELTA]`); it records the canonical Partial rating and defers an explicit fidelity contract + resume-failure escalation to sweep-2 (OQ2). |
+| **F22** Zombie agents | A run's process can stall/silently die while the session is "in flight"; the *session liveness* C04 hosts is the signal source | **Addressed at the loop level** per F-MODE-COVERAGE L44 ("Anomaly detection on session liveness (PyOD on telemetry)") — **not C04-native**. C04 hosts the session whose liveness is observed and surfaces session status (§4 handle `status`); the *detection* is anomaly-detection's (C36) and the *re-dispatch* is the reconciler's (C18) re-invoking C05 (C05 §6 F22 — C05's contribution is being re-invokable). C04 must **not** build heartbeat/zombie machinery (that is the dropped Track-B DELTA-04); it provides the session-status surface those consumers read. |
 
 **Gap-driven failure mode (assigned: G12):**
 

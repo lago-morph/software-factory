@@ -24,10 +24,12 @@ where the human gates) is expressed declaratively so it can be diffed, linted, v
   **nodes** (steps) and **edges** (dependencies/ordering), version-controlled and runner-agnostic
   (README:128, :132).
 - Be the **single home of methodology**: the chain shape (e.g. design→plan→implement→review→test, the
-  Gas City protomolecule pattern, one-shot-specs:81), the loop/branch topology, the human-gate placement,
-  and the per-step node kind (deterministic tool node C17 vs. model/agent node) all live *in the formula*,
-  not in prompt templates (C09) or agent prompts (README:128; F-MODE F26 "chain length is a formula
-  property, visible and lintable").
+  Gas City protomolecule pattern, one-shot-specs:81), the loop/branch topology, and the human-gate placement
+  all live *in the formula*, not in prompt templates (C09) or agent prompts (README:128; F-MODE F26 "chain
+  length is a formula property, visible and lintable"). The per-step node kind (deterministic tool node C17
+  vs. model/agent node) is also a methodology property surfaced here, **but** its canonical field home (C12
+  formula-node entry vs. C02 `[[tool]]`) is an open cross-component reconciliation, not a settled C12-owned
+  field (§3.1 node-kind row; §9 item 4).
 - Provide the **named-reference surface** other components key on: a node references a prompt template (C09)
   or a tool node (C17) **by name**; a formula is referenced **by name** at dispatch and at instantiation
   (`gc formula export <name>`, README:385; the molecule C13 instantiates "a formula by name").
@@ -71,7 +73,7 @@ where the human gates) is expressed declaratively so it can be diffed, linted, v
 | Downstream (lints discipline) | **C16** discipline linter | Flags LLM nodes where a deterministic tool node would suffice — keys on the per-node *kind* C12 records (README:160; inventory C16 depends on C12). |
 | Downstream (places nodes) | **C17** tool-node abstraction, **C09** prompt template | A formula node references a C17 deterministic tool node **or** a C09 prompt template by name. |
 | Downstream (swaps) | **C55** methodology-as-config experiment loop | v3's candidate methodologies run "as swappable pipeline files"; empirical results select methodology per work type (inventory C55 depends on C12). |
-| Downstream (gate) | **C50** promotion gate | A promotion gate is itself "a Gas City formula with a statistical gate" (README:276; inventory C50 depends on C12). |
+| Downstream (gate) | **C50** promotion gate | A promotion gate is itself "a Gas City formula with a statistical gate" (README:276; inventory C50 depends on C12). C50 is therefore *an instance of* the formula format (like any authored formula), not a consumer of a dedicated C12 interface. |
 
 C12 is **foundational** (inventory: yes). It can start authoring in **Batch 1** "once C01/C03 shape is
 fixed" and lands fully in **Batch 2** as part of the core build flow (inventory §"Suggested build/spec
@@ -92,23 +94,30 @@ are confirmed at sweep 2 against the real `gc` formula schema — see §9 / G11)
 | Formula identity (`name`) | The name a formula is referenced by — at `gc formula export <name>`, at dispatch, and at molecule instantiation. | README:385 |
 | Node set | The DAG's steps. Each node has an identity, a **kind** (deterministic tool node C17 vs. model/agent node), and a binding (a C17 tool-node name or a C09 prompt-template name). | README:128, :132; AI-CONTEXT §3.2 concept 7; C17 §3.1 |
 | Edge set / ordering | The directed dependencies between nodes that make the workflow a **DAG** (acyclicity is the defining property; cycles are expressed as bounded loop constructs, not raw back-edges — see invariants). | README:128 ("DAG file"); F26 |
-| Node kind tag | Per-node marker distinguishing a deterministic tool node from a model/agent node; the field C16's discipline linter (F52) and the C17 abstraction key on. | C17 §3.1 [FAITHFUL-FILL]; README:160 |
-| Gate / wait nodes | Synchronization / human-approval gates expressed as nodes (Gas City `wait` = "gating / synchronization primitive", AI-CONTEXT §3.3). The human-gate placement is a methodology property living in the formula. | AI-CONTEXT §3.3; one-shot-specs:65 (human-gate pipeline) |
-| Parameters / placeholders | Run-time inputs a formula declares (e.g. `$epic_id`, `$rfc_path` in the exemplar pipelines, one-shot-specs:62–63) that a molecule binds at instantiation. | one-shot-specs:62–63 > [FAITHFUL-FILL] |
+| Node kind tag | Per-node marker distinguishing a deterministic tool node from a model/agent node; the field C16's discipline linter (F52) and the C17 abstraction key on. **Shared [FAITHFUL-FILL]** co-owned with C16/C17 — v4 gives no explicit node-kind field, and the field's *home* (this C12 formula-node entry vs. the C02 `[[tool]]` block) is an **open reconciliation** (§9 item 4; C17 OQ-2), not a settled C12 field. Justified solely because C16's F52 check (P4) is undefinable without one machine-readable distinction. | C17 §3.1 [FAITHFUL-FILL]; README:160 |
+| Gate / wait nodes | Synchronization / human-approval gates expressed as nodes (Gas City `wait` = "gating / synchronization primitive", AI-CONTEXT §3.3). The human-gate placement is a methodology property living in the formula. | AI-CONTEXT §3.3 (`wait` is Gas City native); one-shot-specs:65 cites a `human-gate.dot` teaching example — a **non-Gas-City DOT** exemplar, corroborating only |
+| Parameters / placeholders | Run-time inputs a formula declares (e.g. `$epic_id`, `$rfc_path` — slots seen in the cited *DOT* pipeline exemplars, one-shot-specs:62–63; **not** drawn from a Gas City formula, which publishes none — one-shot-specs:81) that a molecule binds at instantiation. | one-shot-specs:62–63 (non-Gas-City exemplars) > [FAITHFUL-FILL] |
 
-> [FAITHFUL-FILL] **Parameters/placeholders as a formula element.** v4 does not enumerate formula fields, but
-> the exemplar pipeline files it cites (`"Implement epic $epic_id"`, `"Break $rfc_path into an epic"`,
-> one-shot-specs:62–63) are parameterized templates, and a molecule must bind *something* per run. The
-> minimal faithful fill is "a formula declares named parameters that the molecule binds at instantiation,"
-> because instantiation (C13) is meaningless if a template carries no slots. The concrete binding syntax is
-> deferred to C13 + sweep 2 (it is Gas City's, not invented here).
+> [FAITHFUL-FILL] **Parameters/placeholders as a formula element.** v4 does not enumerate formula fields. The
+> parameterized exemplars it cites (`"Implement epic $epic_id"`, `"Break $rfc_path into an epic"`,
+> one-shot-specs:62–63) are **DOT `pipeline.dot` files from attractor-pi-dev / Fabro — not Gas City formulas**
+> (one-shot-specs:81 explicitly: "Gas Town / Gas City … publish no one-shot application specs"). They are
+> therefore *cross-implementation evidence that DAG-pipeline formats carry run-time slots*, not proof of the
+> Gas City TOML shape. The fill rests on its own logic: a molecule must bind *something* per run, so the
+> minimal faithful element is "a formula declares named parameters that the molecule binds at instantiation,"
+> because instantiation (C13) is meaningless if a template carries no slots. The concrete binding syntax
+> (whether `$slot`, `{slot}`, or other) is Gas City's, unverified (G11), and deferred to C13 + sweep 2 — not
+> invented here, and explicitly **not** assumed to match the non-Gas-City `$slot` exemplars above.
 
-> [FAITHFUL-FILL] **Loop topology under acyclicity.** v4 names the artifact a **DAG** (README:128) yet the
-> exemplar formulas it cites include Ralph-loop "one issue at a time" pipelines (one-shot-specs:62) and v4
-> leans on closed-loop self-healing. The minimal faithful reconciliation is: a formula is a DAG of *step
-> types*, and iteration is a **bounded loop construct** (a node that re-enters under a gate/condition), not a
-> raw graph cycle — preserving the "DAG file" claim while admitting the loop methodologies v4 explicitly
-> runs. The exact loop primitive is Gas City's; C12 only requires that iteration be a declared, bounded,
+> [FAITHFUL-FILL] **Loop topology under acyclicity.** v4 names the artifact a **DAG** (README:128) yet v4
+> leans on closed-loop self-healing (README P11), and the Ralph-loop "one issue at a time" exemplar
+> (one-shot-specs:62) is a `pipeline.dot` from **attractor-pi-dev — a non-Gas-City DOT pipeline**
+> (one-shot-specs:81). So the tension (a "DAG file" that must express iteration) is real *within v4's own
+> self-healing requirement*, and the DOT exemplar is corroborating cross-implementation evidence, not a Gas
+> City formula. The minimal faithful reconciliation is: a formula is a DAG of *step types*, and iteration is
+> a **bounded loop construct** (a node that re-enters under a gate/condition), not a raw graph cycle —
+> preserving the "DAG file" claim while admitting the loop methodologies v4 explicitly runs. The exact loop
+> primitive is Gas City's and unverified (G11); C12 only requires that iteration be a declared, bounded,
 > lintable construct (so F26 "chain length is a formula property, visible and lintable" holds).
 
 ### 3.2 Inbound: who produces / authors a formula
@@ -123,8 +132,10 @@ are confirmed at sweep 2 against the real `gc` formula schema — see §9 / G11)
 
 ### 3.3 Outbound: what C12 guarantees to consumers
 
-- To **C01/C18** (runtime): a TOML DAG that the DOT-shaped workflow runner can read and execute node-by-node,
-  with acyclicity guaranteeing a topological execution order.
+- To **C01/C18** (runtime): a TOML DAG that the DOT-shaped workflow runner can read and execute node-by-node.
+  Acyclicity is the defining *property* a well-formed formula has (so a topological execution order exists);
+  C12 introduces no validator of its own — well-formedness checking is the Gas City loader's (C01) and C15's,
+  not a C12 capability.
 - To **C13** (molecule): a named, parameterized template that can be instantiated into a bead-tree, with every
   node resolvable to a concrete binding (C17 tool node or C09 template) and every parameter declared.
 - To **C14** (translator): a structure with a well-defined node/edge model so a *lossless* round-trip to DOT
@@ -158,13 +169,20 @@ C12 is an **artifact** (a file format), not a data store; it owns the *static te
 - **Lifecycle:** authored → (linted C15/C16, visualized C14) → enabled by `[formulas]` (C03) → instantiated
   into a molecule (C13) per run → swapped/promoted as methodology evidence accrues (C55/C50). The formula
   file itself changes only by version-controlled edit (a new pipeline file, README:51), never by a run.
+  "Version-controlled" here means the file lives in git / a Gas City pack (existing-stack property); C12
+  introduces **no per-formula schema-version field or migration contract of its own** at sweep-1 (the
+  upstream pack/formula-format migration tail is C01's, AI-CONTEXT §3.5; any schema-version field would be a
+  sweep-2 decision against the real `gc` format, not a faithful addition here).
 - **Identity & attribution:** a formula is referenced by `name`; authorship of a formula edit is an actor
   action carried via C41 (`created_by`) like any other artifact change. > [FAITHFUL-FILL] (consistency with
   P9 native attribution; C12 introduces no new identity concept).
-- **Consistency requirement:** the **acyclicity invariant** (DAG) and **node-binding resolvability** (every
-  node resolves to a C17 tool node or C09 template; every parameter is declared) are the static invariants a
-  formula must satisfy before it is runnable — enforced by C15 (structure) and the linters, not by C12 at
-  runtime.
+- **Consistency requirement:** **acyclicity** (the DAG property) and **node-binding resolvability** (every
+  node resolves to a C17 tool node or C09 template; every parameter is declared) are the static *properties*
+  a well-formed formula has before it is runnable. C12 **names** them as the format's defining properties (so
+  C13/C14/C15 can rely on the word "DAG"); it defines and enforces **no validator of its own**. Enforcement is
+  owned downstream: the Gas City loader (C01) + C15 (structure) + C16 (discipline) + C13 (instantiation-time
+  binding-resolution). Adding a C12-owned well-formedness checker would be *hardening on existing stack
+  capability* (the runner's load-check + Mammoth's 21-rule linter already do this), not new capability.
 
 ## 5. Behavior
 
@@ -199,7 +217,7 @@ voluntary discipline").
 | **F26** Telephone / sustained inter-agent chain | An over-long agent→agent handoff chain degrades like a game of telephone. | v4's answer is *exactly* C12: "Pipeline-file (P3) controls handoff patterns; chain length is a **formula property, visible and lintable**" (F-MODE:72). C12 makes chain length a structural property of the file so C15 can lint it. (Addressed by being the formula.) |
 | **F53** Voluntary-discipline fragility | Methodology enforced by operator goodwill erodes. | "Substrate-triggered structural controls (… formula checks) replace operator-voluntary discipline" (F-MODE:77). Because methodology lives in the formula (not prompts), it is structurally checkable, not voluntary. |
 | **F52** Tempting-wrong-hybrid (deterministic-without-purpose) | Nodes/guards added with no falsifying scenario. | C12 records the per-node **kind** (3.1) so C16's discipline linter can enforce "no LLM node where a tool node suffices; every guard points at a scenario" (F-MODE:100). C12 *exposes* the kind; the policy is C16's. |
-| **Malformed / cyclic formula** | A formula with a raw cycle, unresolved node binding, or undeclared parameter. | Detection is C15 (structure) + C16 (discipline) + instantiation-time binding-resolution (C13), not a C12 runtime check. C12's contribution is to define the **acyclicity + binding-resolvability invariants** (4) the linters check against. > [FAITHFUL-FILL]: v4 names a linter (C15) but no in-format validator; the faithful floor is "C12 defines the invariants; C15/C16/C13 enforce them." |
+| **Malformed / cyclic formula** | A formula with a raw cycle, unresolved node binding, or undeclared parameter. | Detection is the Gas City loader (C01) + C15 (structure) + C16 (discipline) + instantiation-time binding-resolution (C13), **not** a C12 check — C12 has no runtime and no validator. C12's only contribution is to *name* acyclicity + binding-resolvability as the format's defining properties (4) so those owners have a well-defined target. > [FAITHFUL-FILL]: v4 names a linter (C15) and DOT-ecosystem lint (README:134) but no in-format validator; the faithful floor is "C12 names the properties; the loader + C15/C16/C13 enforce them." A C12-owned validator would be hardening (the stack already validates), not a principle-tied capability. |
 | **Methodology-in-prompt leakage** | Author puts workflow logic in agent prompts (C09) instead of the formula. | The P3 invariant — "methodology lives in the file, not in agent prompts" (README:128) — is the guard; it is a *discipline* surfaced by review/lint, not a mechanical C12 check. > [FAITHFUL-FILL]: no automated detector specified in v4; deferred to C16/C10 review discipline. |
 
 > [FAITHFUL-FILL] **G06 (undefined terms)** is C12's only assigned gap; it is addressed in §3.3 [AMBIGUITY:
@@ -228,8 +246,9 @@ voluntary discipline").
 
 Sweep-1 high-level criteria (concrete tests at sweep 2):
 
-1. **A formula is a valid TOML DAG** — a 3-step formula (README:383 "3-step minimum to validate") parses,
-   declares nodes + edges, and is acyclic; the runner (C01) executes its nodes in a topological order.
+1. **A formula is a valid TOML DAG** — a 3-step formula (README:383 "3-step minimum to validate") parses and
+   declares nodes + edges; a *well-formed* one is acyclic, and the runner (C01) executes its nodes in a
+   topological order. (Acyclicity is a property the runner/C15 check, not a C12-enforced invariant — see §4.)
 2. **Methodology lives in the file** — the chain shape, gate placement, and per-node kind are read from the
    formula, with no workflow logic required in agent prompts (README:128); swapping methodology is a formula
    edit, not a prompt or substrate change (README:51).

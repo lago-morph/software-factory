@@ -1,6 +1,6 @@
 # C24 — Telemetry → CXDB Ingestion Bridge  (Spec, Track A)
 
-> Source: README §Part 6 Phase 1 (line 386 "Install OpenTelemetry Collector … `OTEL_LOG_RAW_API_BODIES=file:<dir>` for the raw-body path"; line 389 "Build the raw-API-bodies → CXDB bridge as a Gas City pack — a small standalone tool node binary that watches the `OTEL_LOG_RAW_API_BODIES` directory and posts to CXDB via HTTP/JSON :9010. Pattern transfusion from Kilroy's per-stage logging and Gas City's `internal/sessionlog` — but the bridge is a standalone binary called by Gas City as a tool node, not a Go import"; line 408 graph node "Bridge[raw-bodies → CXDB bridge pack]", line 413 "CC -->|raw bodies| Bridge --> CX"; line 541 "Install CXDB alongside, build the raw-API-bodies bridge. This is the first non-trivial integration; budget a week"); AI-CONTEXT §4.3 (line 176 "`OTEL_LOG_RAW_API_BODIES=file:<dir>` dumps untruncated request/response JSON to disk. Conversation-shaped, ideal for CXDB ingestion"; line 178 correlation attributes `prompt.id`, `session.id`, `user.account_uuid`, `organization.id`, `terminal.type`), §5.2 (lines 204–210 ingest protocols :9009/:9010), §5.4 (lines 222–232 bridge impedance table + "Recommended: raw API bodies path … standalone Go binary that watches `OTEL_LOG_RAW_API_BODIES` directory and posts to CXDB HTTP API … parent-chain via `session.id`"), §5.5 (BLAKE3 idempotency), §11.1 (lines 463–466 "Bridge path: raw API bodies → CXDB — Yes, recommended … standalone tool-node binary in a pack", "Skip OTLP → CXDB path — Yes"), §13.2 (lines 558, 579 `[[service]] cxdb` + `OTEL_LOG_RAW_API_BODIES = "file:/var/lib/cxdb-bridge/inbox"`); component-inventory C24 row (line 36 "Standalone tool-node watching raw-API-bodies dir, posting to CXDB HTTP; defines delivery/ordering/back-pressure at the seam", maps A29b/A29c/A28c/B45, depends C21+C28, gaps G26/G27/G33, foundational no) + Batch-2 note (line 109); spec/C21 §3 (I2 HTTP ingest), §6 (G33 fail-open + idempotency, AC-7); spec/C23 §6 (G27 reading (b)); ambiguities-and-gaps G26, G27, G33; review-log D-2 (bundle-id `softwarefactory.v4.trajectory`).
+> Source: README §Part 6 Phase 1 (line 386 "Install OpenTelemetry Collector … `OTEL_LOG_RAW_API_BODIES=file:<dir>` for the raw-body path"; line 389 "Build the raw-API-bodies → CXDB bridge as a Gas City pack — a small standalone tool node binary that watches the `OTEL_LOG_RAW_API_BODIES` directory and posts to CXDB via HTTP/JSON :9010. Pattern transfusion from Kilroy's per-stage logging and Gas City's `internal/sessionlog` — but the bridge is a standalone binary called by Gas City as a tool node, not a Go import"; line 408 graph node "Bridge[raw-bodies → CXDB bridge pack]", line 413 "CC -->|raw bodies| Bridge --> CX"; line 541 "Install CXDB alongside, build the raw-API-bodies bridge. This is the first non-trivial integration; budget a week"); AI-CONTEXT §4.3 (line 176 "`OTEL_LOG_RAW_API_BODIES=file:<dir>` dumps untruncated request/response JSON to disk. Conversation-shaped, ideal for CXDB ingestion"; line 178 correlation attributes `prompt.id`, `session.id`, `user.account_uuid`, `organization.id`, `terminal.type`), §5.2 (lines 204–210 ingest protocols :9009/:9010), §5.4 (lines 222–232 bridge impedance table + "Recommended: raw API bodies path … standalone Go binary that watches `OTEL_LOG_RAW_API_BODIES` directory and posts to CXDB HTTP API … parent-chain via `session.id`"), §5.5 (BLAKE3 Blob CAS/dedup line 236 — the basis for the *derived* idempotent-re-post property, ratified by C21 AC-7), §11.1 (lines 463–466 "Bridge path: raw API bodies → CXDB — Yes, recommended … standalone tool-node binary in a pack", "Skip OTLP → CXDB path — Yes"), §13.2 (lines 558, 579 `[[service]] cxdb` + `OTEL_LOG_RAW_API_BODIES = "file:/var/lib/cxdb-bridge/inbox"`); component-inventory C24 row (line 36 "Standalone tool-node watching raw-API-bodies dir, posting to CXDB HTTP; defines delivery/ordering/back-pressure at the seam", maps A29b/A29c/A28c/B45, depends C21+C28, gaps G26/G27/G33, foundational no) + Batch-2 note (line 109); spec/C21 §3 (I2 HTTP ingest), §6 (G33 fail-open + idempotency, AC-7); spec/C23 §6 (G27 reading (b)); ambiguities-and-gaps G26, G27, G33; review-log D-2 (bundle-id `softwarefactory.v4.trajectory`).
 > Inventory ID: C24   Kind: interface   Status: sweep-1
 > Track: A (faithful)
 
@@ -32,8 +32,9 @@ integration; budget a week**" (README line 541) precisely because the hard parts
   389; C21 I2).
 - **Own the delivery contract at the seam (G26)** — ordering, at-least-once delivery, handling of
   partially-written body files, and the `session.id` → parent-turn mapping rule.
-- **Own buffer / retry / back-pressure (G26/G33)** — when CXDB is down or slow, buffer un-posted bodies and
-  retry; do not crash the run (C21 fail-open) and do not silently drop trajectories.
+- **Own retain / retry / back-pressure (G26/G33)** — when CXDB is down or slow, **retain un-posted bodies in
+  the inbox** (the inbox dir is the durable spool; no separate queue) and retry; do not crash the run (C21
+  fail-open) and do not silently drop trajectories.
 - **Be a pack-delivered tool node** — packaged + invoked per the pack/tool-node ABI (C02/C17); **not** a Go
   import of Gas City code (README line 389; AI-CONTEXT §11.1 line 465).
 - **Transfuse the parse pattern** from Gas City `internal/sessionlog` + Kilroy per-stage logging (README
@@ -53,11 +54,13 @@ integration; budget a week**" (README line 541) precisely because the hard parts
 - **NOT the event bus.** The Gas City event-bus JSONL → CXDB path (C23) is the *lowest-impedance source* but
   is **not the path v4 wires** (G27, resolved below); C23 remains an available source the bridge MAY also
   consume but the canonical C24 input is raw API bodies.
-- **NOT the OTLP exporter.** Claude Code's emission of raw bodies to disk (the producer side) is **C25**
-  (`otlp-telemetry-export` / raw-bodies escape hatch); C24 is the *consumer* that watches the dir C25
-  configures. The `OTEL_LOG_RAW_API_BODIES` env binding lives in the agent session config (C04/C28; AI-
-  CONTEXT §13.2). *(C24's inventory `depends on` lists C21+C28; the producer is C28's raw-body emission via
-  the C25 escape-hatch config.)*
+- **NOT the OTLP exporter / escape-hatch config.** The producer-side split is: **C28** (the Claude Code agent
+  loop) is the *process that emits* the raw bodies to disk; **C25** (`otlp-telemetry-export`) owns the
+  *escape-hatch activation contract* (the `OTEL_LOG_RAW_API_BODIES` binding + emission guarantees, per C25
+  §3.1/INV-3); the env var physically lives in `[[agent]] env` carried by **C03/C04** (AI-CONTEXT §13.2).
+  C24 is the *consumer* that watches the dir those produce. *(C24's inventory `depends on` lists **C21 (sink)
+  + C28 (emitter)** — not C25; C25 is the related interface that defines the file/`session.id` contract C24
+  reads, OQ-2.)*
 - **NOT the counterfactual-replay / self-healing readers.** C24 is write-side only (telemetry → store);
   C36/C37/C38/C49 read from C21, not from C24.
 - **NOT a span/trace processor.** No OTLP span-tree → turn-DAG translation (the explicitly-rejected mapping,
@@ -67,7 +70,8 @@ integration; budget a week**" (README line 541) precisely because the hard parts
 
 | Direction | Component | Relationship |
 |---|---|---|
-| Upstream (producer) | **C28** Claude Code agent loop (+ **C25** raw-bodies escape hatch) | C28, run with `OTEL_LOG_RAW_API_BODIES=file:<dir>` (AI-CONTEXT §13.2 line 579), dumps untruncated request/response JSON to the inbox dir. C24 watches that dir. Inventory C24 "Depends on: C28". |
+| Upstream (emitter) | **C28** Claude Code agent loop | C28 is the *process* that, run with the escape hatch active (`OTEL_LOG_RAW_API_BODIES=file:<dir>`, AI-CONTEXT §13.2 line 579), dumps untruncated request/response JSON to the inbox dir. C24 watches that dir. Inventory C24 "Depends on: C28". |
+| Producer contract | **C25** OTLP telemetry export | Owns the *escape-hatch activation contract* — the `OTEL_LOG_RAW_API_BODIES` env binding + the emission/`session.id` guarantees (C25 §3.1/INV-3) — and the raw-body file contract C24 reads. The env var lives in C03/C04 `[[agent]] env`. *Related interface, not a C24 dependency edge.* |
 | Downstream (sink) | **C21** CXDB trajectory store | C24 posts turns to C21's HTTP/JSON ingest :9010 (C21 I2; AI-CONTEXT §5.4 line 232). C21 owns dedup/branch/storage; defers delivery/back-pressure to C24 (spec/C21 §6 G33). Inventory C24 "Depends on: C21". |
 | Type provider | **C22** CXDB type registry & viewpoint tagging | Supplies the `{bundle_id,type,version}` triple (`softwarefactory.v4.trajectory`, review-log D-2) C24 stamps on each posted turn. |
 | Alternative source (latent) | **C23** Event bus | The *lowest-impedance* CXDB source (AI-CONTEXT §5.4 line 228), but **not the wired path** (G27 reading (b)). C23 guarantees a bridgeable stream (C23 I5); C24 MAY also consume it, but the canonical input is raw bodies. |
@@ -93,34 +97,40 @@ defer to sweep 2 (and the type triple to C22, the ingest wire to C21).
 | I2 | **Body → turn parse/shape** | internal | Parse one untruncated request/response JSON body into a CXDB turn payload (conversation-shaped); attach the `{bundle_id,type,version}` triple from C22. Transfused parse pattern from `internal/sessionlog` (README line 389). | C24 (this); **C22** (triple) |
 | I3 | **`session.id` → parent-turn mapping** | internal/state | Maintain per-`session.id` head pointer so successive bodies chain into one trajectory ("parent-chain via `session.id`", AI-CONTEXT §5.4 line 229); resolve the parent-turn pointer for each new turn. The G26 mapping rule lives here. | C24 (this) |
 | I4 | **CXDB HTTP/JSON post (:9010)** | outbound (write) | POST the shaped turn to CXDB's HTTP ingest (C21 I2; AI-CONTEXT §5.4 line 232). Idempotent at the store (BLAKE3 content-addressing makes a re-post a no-op — C21 INV-1/AC-7). | C21 (sink), C24 (caller) |
-| I5 | **Durable buffer + retry / back-pressure** | internal/state | Persist un-acked bodies; retry on CXDB unavailability with bounded back-pressure; advance a checkpoint of last-successfully-posted body so a restart resumes without re-scanning or dropping (G26/G33). | C24 (this) |
+| I5 | **Retain-in-inbox + retry / back-pressure** | internal/state | The **inbox dir is the durable spool** (the OS filesystem already persists a complete body); a complete-but-not-yet-acked body is **left in the inbox** and retried on CXDB unavailability with bounded back-pressure, then removed/advanced only after CXDB acks (G26/G33). **No separate durable buffer/queue is introduced** — the spool is the inbox. A persisted cursor of last-acked body is an *optional* sweep-2 optimization (re-scan-on-restart + store idempotency is the correct baseline; INV-5). | C24 (this) |
 | I6 | **Tool-node lifecycle (pack)** | inbound (ops) | Packaged + invoked as a Gas City tool node (C02/C17 ABI); configured via the pack's TOML; operated alongside CXDB in Phase 1 (README line 389). | C02/C17 (ABI), C24 (config) |
 
 **Invariants C24 must uphold (bridge-level):**
 - **INV-1 (no silent drop — at-least-once):** every *complete* body file is delivered to CXDB at least once,
-  or retained in the buffer until it can be; a body is removed from the buffer only after CXDB acks
+  or **retained in the inbox spool** until it can be; a body is removed/advanced only after CXDB acks
   (addresses G26 delivery + G33 "trajectories the loops depend on must not silently drop").
   > [FAITHFUL-FILL] v4 names the bridge but does not state at-least-once vs exactly-once. **At-least-once** is
-  > the minimal faithful choice because v4 *already* makes re-delivery safe: CXDB is BLAKE3 content-addressed,
-  > so re-posting the same turn is a no-op (AI-CONTEXT §5.5; spec/C21 §6 AC-7). At-least-once +
+  > the minimal faithful choice because re-delivery is safe: CXDB's BLAKE3 Blob CAS + dedup (AI-CONTEXT §5.5
+  > line 236) means re-posting the same turn is a **no-op** — a derived idempotency property *ratified by C21
+  > AC-7* (it is C21's faithful reading, not a verbatim v4 "idempotency" statement). At-least-once +
   > store-side idempotency = effectively-once with the simplest bridge — exactly-once delivery would require
   > distributed coordination v4 never mentions. (Per-`session.id` ordering is the only ordering v4 implies via
   > the parent-chain.)
 - **INV-2 (parent-chain integrity per session):** turns for one `session.id` are posted with parent pointers
   that reconstruct the conversation order; a later body's turn points at the prior body's turn for that
-  session (AI-CONTEXT §5.4 line 229). Cross-session ordering is **not** constrained (independent trajectories).
-- **INV-3 (fail-open to the run):** if CXDB is down/unreachable, C24 buffers and retries; it **never crashes
-  or blocks the agent run** — the run proceeds on beads+events (spec/C21 §6 reading (a); G33). The
-  bridge is best-effort to the *run* but durable for the *trajectory*.
+  session (AI-CONTEXT §5.4 line 229). Cross-session ordering is **not** constrained (independent
+  trajectories). The per-session head (which prior turn to parent) is **required state** — *not* recoverable
+  from store idempotency — but whether it is held as a **bridge-local durable map** or **re-queried from CXDB
+  on restart** is OQ-3 (v4 forces neither).
+- **INV-3 (fail-open to the run):** if CXDB is down/unreachable, C24 **leaves bodies in the inbox spool** and
+  retries; it **never crashes or blocks the agent run** — the run proceeds on beads+events (spec/C21 §6
+  reading (a); G33). The bridge is best-effort to the *run* but durable for the *trajectory* (durability =
+  the inbox dir, not a custom queue).
 - **INV-4 (complete-file only):** C24 ingests a body only once it is fully written; a partially-written body
   file is detected and deferred, never posted truncated (G26 "partially-written body files").
   > [FAITHFUL-FILL] v4 (G26) flags partial-file handling as undefined. The minimal faithful rule — *wait for a
   > completeness signal (e.g. rename/close/size-stable) before ingest* — is the smallest choice that prevents
   > posting a torn turn; the exact completeness mechanism (atomic rename vs fsnotify-close vs size-stability)
   > is sweep-2 and depends on how C25/Claude Code writes the files (OQ-2).
-- **INV-5 (checkpoint / resumable):** C24 persists which bodies have been posted so a restart neither
-  re-scans the whole inbox nor drops un-posted bodies (G26 restart safety; mirrors the C23 I3 checkpoint
-  property).
+- **INV-5 (restart-safe / resumable):** a restart **loses no complete body and produces no duplicate turn**.
+  The faithful baseline is **re-scan the inbox + re-post** — store idempotency (INV-1) makes re-posts no-ops,
+  so correctness needs no persisted checkpoint. A durable inbox cursor (skip already-acked bodies on restart)
+  is an **optional sweep-2 optimization**, not required state (G26 restart safety).
 - **INV-6 (no OTLP, no spans):** C24 posts only conversation-shaped turns from raw bodies; it never sends
   OTLP spans to CXDB (the rejected path, AI-CONTEXT §5.4 line 230; C21 INV-6).
 
@@ -131,24 +141,31 @@ C21's. State C24 is the spec-of-record for at sweep 1:
 
 | State | Description | Persistence | Detailed by |
 |---|---|---|---|
-| **Inbox cursor / processed set** | Which body files have been successfully posted (checkpoint for restart, INV-5). | Durable local file (alongside the pack's working dir). | C24 |
-| **Per-`session.id` head map** | The current CXDB head turn per active session, to resolve the parent pointer (INV-2). | Durable local state (must survive restart to keep chaining). | C24 |
-| **Pending/retry buffer** | Complete-but-not-yet-acked bodies awaiting CXDB (INV-1/INV-3). | Durable local buffer (file or queue dir). | C24 |
+| **Durable spool = the inbox dir itself** | Complete-but-not-yet-acked bodies awaiting CXDB are **left in the inbox** until acked (INV-1/INV-3). **No separate buffer/queue store** — the OS filesystem inbox *is* the spool. | The `OTEL_LOG_RAW_API_BODIES` inbox dir (OS-durable). | C25 (writes it), C24 (drains it) |
+| **Per-`session.id` head map** | The current CXDB head turn per active session, to resolve the parent pointer (INV-2). **Required state** — *not* reconstructible from store idempotency. | Either bridge-local durable state or re-queried from CXDB for the session head on restart — **mechanism is OQ-3** (not settled). | C24 |
+| **Inbox cursor / processed set** *(optional optimization)* | Which body files have already been acked, to skip re-scanning on restart. **Not required**: re-scan-on-restart + store idempotency (INV-1) is the correct baseline; a persisted cursor is a *sweep-2 performance optimization only* (INV-5). | Optional durable local file. | C24 |
 | **Pack/tool-node config** | Inbox dir path, CXDB :9010 endpoint, type-bundle id, retry/back-pressure params. | Pack TOML (C02/C03 model). | C02/C03 (model), C24 (binding) |
 | **Posted turn** | The CXDB turn (payload + triple + parent ptr) — *owned/stored by C21*, *typed by C22*. | CXDB (`turns.log`/`blobs.pack`). | **C21** (store), **C22** (triple) |
 
 > [FAITHFUL-FILL] v4 specifies the bridge *behavior* (watch dir → post HTTP) but not its persisted runtime
-> state. The minimal faithful set is **{inbox cursor, per-session head map, pending buffer}** — each is
-> directly forced by a v4-named requirement: the cursor by restart-safety (G26), the head map by
-> "parent-chain via `session.id`" (AI-CONTEXT §5.4), the buffer by "back-pressure when CXDB is down" (G26).
-> Exact on-disk formats are sweep-2.
+> state. The minimal faithful set is just the **per-`session.id` head map** — the *only* state directly
+> forced by a v4-named requirement ("parent-chain via `session.id`", AI-CONTEXT §5.4) that is **not**
+> otherwise recoverable. The "back-pressure when CXDB is down" requirement (G26) is satisfied with **no new
+> store**: the inbox dir is already an OS-durable spool, so a complete body simply stays in the inbox until
+> acked (a separate durable buffer/queue would be the DROPPED custom-spool — the OS filesystem *is* the
+> spool). Restart-safety (G26) is satisfied by **re-scan + store idempotency** (re-posting a turn is a no-op,
+> INV-1) — a persisted cursor is only an optional optimization, not required state. Exact on-disk formats
+> (and whether the head map is bridge-local or re-queried from CXDB) are sweep-2 (OQ-3).
 
 **Consistency / lifecycle.** C24 stands up in **Phase 1** with CXDB (additive to Phase 0; README line 388).
-Its state is **derived/transient** — it can be rebuilt by re-scanning the inbox (CXDB idempotency makes
-re-posts no-ops), so the cursor/head-map are an *optimization for correctness-under-restart*, not an
-independent source of truth. The **source-of-truth trajectory survives in CXDB**; the **source-of-truth
-action trail survives in beads+events** regardless of C24. C24 is therefore a *replayable, restartable
-courier*, which is exactly what at-least-once + store idempotency (INV-1) buys.
+Its delivery state is **derived/transient** — un-acked work lives in the inbox spool, and on restart the
+inbox can simply be **re-scanned and re-posted** (CXDB idempotency makes re-posts no-ops, INV-1), so an
+inbox cursor is at most an *optimization*, not an independent source of truth. The only state that is *not*
+re-derivable from idempotency is the **per-session head map** (which prior turn a new body parents) — and
+even that may be re-queried from CXDB rather than persisted locally (OQ-3). The **source-of-truth trajectory
+survives in CXDB**; the **source-of-truth action trail survives in beads+events** regardless of C24. C24 is
+therefore a *replayable, restartable courier*, which is exactly what at-least-once + store idempotency
+(INV-1) buys — with the OS filesystem inbox as the durable spool and no custom queue.
 
 ## 5. Behavior
 
@@ -163,16 +180,18 @@ courier*, which is exactly what at-least-once + store idempotency (INV-1) buys.
    the `{bundle_id,type,version}` triple from C22 and the body's `session.id` (AI-CONTEXT §4.3 line 178).
 3. **Resolve parent** (I3): look up the per-`session.id` head; set the new turn's parent pointer; this is the
    `session.id` → parent-turn mapping rule (G26).
-4. **Post** (I4): POST the turn to CXDB :9010 (C21 I2). On ack, advance the session head + inbox cursor and
-   drop the body from the buffer (INV-1/INV-5).
-5. **On failure** (I5): CXDB down/slow/error → retain in the buffer, back off and retry; do **not** crash the
-   run (INV-3). Re-posts are safe (CXDB BLAKE3 idempotency, INV-1).
+4. **Post** (I4): POST the turn to CXDB :9010 (C21 I2). On ack, advance the session head and **remove the body
+   from the inbox** (INV-1/INV-5).
+5. **On failure** (I5): CXDB down/slow/error → **leave the body in the inbox**, back off and retry; do **not**
+   crash the run (INV-3). Re-posts are safe (CXDB BLAKE3 CAS/dedup ⇒ idempotent per C21 AC-7, INV-1).
 
-**Restart.** On restart, C24 resumes from the persisted cursor + head map; un-acked buffered bodies are
-re-posted (idempotent). No inbox re-scan-from-zero is required, and no complete body is lost (INV-5).
+**Restart.** On restart, C24 **re-scans the inbox** and re-posts any un-acked bodies (idempotent, so harmless
+duplicates); the per-session head is restored (bridge-local map or CXDB re-query, OQ-3). No complete body is
+lost and no duplicate turn results (INV-5). An optional persisted cursor can skip already-acked bodies, but
+is not required for correctness.
 
 > Sequence/state diagrams (Mermaid), the file-completeness detection algorithm, the exact `session.id`→
-> parent-turn rule, the retry/back-pressure schedule (back-off curve, buffer bound, circuit-breaker), and the
+> parent-turn rule, the retry/back-pressure schedule (back-off curve, inbox-capacity bound, circuit-breaker), and the
 > body-JSON → turn-payload field mapping are **sweep-2+**. The type triple is **C22**; the ingest wire is **C21**.
 
 ## 6. Failure modes & handling
@@ -211,16 +230,18 @@ back-pressure. ADDRESSED HERE.** v4 leaves all five seam questions undefined (G2
 - **`session.id` → parent-turn mapping:** maintain a **per-session head pointer** (I3); each new body's turn
   parents the prior session turn. The exact rule (first body of a session → root turn; subsequent →
   prior head) is the §5.4-line-229 chain made concrete; precise mechanism is sweep-2 (OQ-3).
-- **Back-pressure:** **durable buffer + bounded retry** (I5), fail-open to the run (INV-3).
+- **Back-pressure:** **retain-in-inbox + bounded retry** (I5) — the inbox dir is the durable spool (no custom
+  queue), fail-open to the run (INV-3).
 
 **G33 (major) — partial/cascading OSS-stack failure; "what happens when CXDB is down mid-run?" ADDRESSED
 HERE (the seam v4 locates it at).** C21 §6 places the *durability obligation* on the bridge; C24 discharges
-it: **CXDB down ⇒ C24 buffers + retries, the run continues on beads+events (fail-open, INV-3), and buffered
-trajectories are delivered when CXDB returns (idempotent re-post, INV-1).** No trajectory the self-healing/
-optimization loops depend on is silently dropped *as long as the buffer holds* — the **buffer bound** is the
-one honest limit (a sufficiently long CXDB outage exceeding the buffer can still lose the oldest window; v4
-prescribes no unbounded durable queue, so this is a **known limitation → OQ-4**, the faithful posture given
-v4's "no Postgres/Redis/Kafka" stance, AI-CONTEXT §5.3).
+it: **CXDB down ⇒ C24 retains bodies in the inbox + retries, the run continues on beads+events (fail-open,
+INV-3), and retained trajectories are delivered when CXDB returns (idempotent re-post, INV-1).** No trajectory
+the self-healing/optimization loops depend on is silently dropped *as long as the inbox holds them* — the
+**inbox disk capacity** (and the body writer outpacing the drain) is the one honest limit (a CXDB outage long
+enough to fill the inbox can still lose the oldest window; v4 prescribes no unbounded durable queue, so this
+is a **known limitation → OQ-4**, the faithful posture given v4's "no Postgres/Redis/Kafka" stance,
+AI-CONTEXT §5.3). The inbox *is* the spool — C24 adds no custom durable queue on top of it.
 
 **Other failure cases.**
 - **Malformed / unparseable body** → quarantine (move aside) + emit an event; do not block the inbox
@@ -246,13 +267,14 @@ v4's "no Postgres/Redis/Kafka" stance, AI-CONTEXT §5.3).
   through to the turn but does not itself sign (C41's optional layer).
 - **Cost.** Bridge is a local Go process tailing files + posting HTTP; no managed-store fees (consistent with
   the CXDB no-managed-DB stance, AI-CONTEXT §5.3). The *storage* cost is C21's; v4 gives no bridge cost model.
-- **Scale.** Throughput must keep up with raw-body emission volume across all C28 sessions; the buffer bound
-  + inbox growth are the scale limits (G33/OQ-4). The HTTP path (:9010) is the *recommended* (not the
-  high-throughput :9009 binary) path — for very high volume the binary path is the latent alternative (C21
-  I1; OQ-5, interacts with G26 back-pressure).
-- **Observability.** C24's own health (inbox lag, buffer depth, last-acked cursor, CXDB up/down, post error
-  rate) is the key operational signal — it is what tells ops whether trajectories are landing. Emitting these
-  as events on C23 keeps the bridge auditable.
+- **Scale.** Throughput must keep up with raw-body emission volume across all C28 sessions; **inbox growth /
+  disk capacity** (the OS spool's natural bound) is the scale limit (G33/OQ-4) — there is no separate buffer
+  to bound. The HTTP path (:9010) is the *recommended* (not the high-throughput :9009 binary) path — for very
+  high volume the binary path is the latent alternative (C21 I1; OQ-5, interacts with G26 back-pressure).
+- **Observability.** C24's own health (inbox depth/lag, last-acked position, CXDB up/down, post error rate)
+  is the key operational signal — it is what tells ops whether trajectories are landing. Inbox depth is the
+  natural back-pressure gauge (it grows when CXDB is down). Emitting these as events on C23 keeps the bridge
+  auditable.
 - **Ops.** Pack-delivered tool node operated alongside CXDB in Phase 1 (README line 389). "First non-trivial
   integration; budget a week" (README line 541) — the de-risking work *is* this seam. Pin the CXDB version
   (inherits C21's version-pin invariant) so the :9010 ingest contract is reproducible.
@@ -273,11 +295,13 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
 5. **AC-5 (at-least-once + idempotent — INV-1, addresses G26):** every complete body lands in CXDB at least
    once; re-posting the same body (e.g. after restart) is a **no-op** at the store (BLAKE3, C21 AC-7) — no
    duplicate turn.
-6. **AC-6 (fail-open + buffer/retry — INV-3/INV-5, addresses G33):** with CXDB **down**, the agent run
-   continues (no crash/block); bodies accumulate in the durable buffer; when CXDB returns, all buffered
-   bodies are delivered and the trajectories are complete (within the buffer bound).
+6. **AC-6 (fail-open + retain/retry — INV-3/INV-5, addresses G33):** with CXDB **down**, the agent run
+   continues (no crash/block); complete bodies **accumulate in the inbox** (the durable spool); when CXDB
+   returns, all retained bodies are delivered and the trajectories are complete (within inbox disk capacity).
 7. **AC-7 (restart-resumable — INV-5, addresses G26):** killing and restarting the bridge mid-stream loses
-   no complete body and produces no duplicate turn; it resumes from the persisted cursor + head map.
+   no complete body and produces no duplicate turn; the baseline mechanism is **re-scan inbox + idempotent
+   re-post** (a persisted cursor, if present, only skips already-acked bodies — it is not required to pass
+   this AC).
 8. **AC-8 (no OTLP/spans — INV-6, honors G27 reading):** C24 ingests only raw-body turns; no OTLP span is
    ever posted to CXDB (the rejected path, AI-CONTEXT §5.4 line 230; C21 INV-6).
 9. **AC-9 (path binding — addresses G27):** the wired source is the **raw-API-bodies** inbox, not the event
@@ -299,12 +323,17 @@ README line 541's "first non-trivial integration; budget a week."
 - **OQ-2 (→ review-log): file-completeness detection (G26).** How does Claude Code / the C25 escape hatch
   signal a raw-body file is fully written (atomic rename? close? size-stability?)? The INV-4 mechanism
   depends on this and must be confirmed against the real emitter at sweep 2.
-- **OQ-3 (→ review-log): exact `session.id` → parent-turn rule (G26).** First-body-of-session → root vs.
-  attach to an existing session trajectory across bridge restarts; and whether one body maps to exactly one
-  turn or splits request/response into separate turns. Freeze at sweep 2 with C21/C22.
-- **OQ-4: buffer bound / durability ceiling (G33).** What is the maximum CXDB-outage window before the buffer
-  overflows and the oldest trajectories are lost? v4 prescribes no durable unbounded queue (no Kafka, §5.3) —
-  is a bounded local buffer acceptable for P11/P12, or does the optimized track need a spill-to-disk/WAL?
+- **OQ-3 (→ review-log): exact `session.id` → parent-turn rule + head-map persistence (G26).** First-body-of-
+  session → root vs. attach to an existing session trajectory across bridge restarts; **and** whether the
+  per-session head is held as a bridge-local durable map or **re-queried from CXDB** on restart (v4 forces
+  neither — the head map is the one piece of required state not recoverable from store idempotency); and
+  whether one body maps to exactly one turn or splits request/response into separate turns. Freeze at sweep 2
+  with C21/C22.
+- **OQ-4: inbox-capacity / durability ceiling (G33).** What is the maximum CXDB-outage window before the
+  **inbox dir** (the durable spool) fills and the oldest trajectories are lost? v4 prescribes no durable
+  unbounded queue (no Kafka, §5.3) — is in-inbox retention bounded by disk acceptable for P11/P12, or does the
+  optimized track later need a spill-to-disk/WAL? *(Note: the faithful design adds **no** custom buffer on top
+  of the inbox; this OQ is about the inbox/disk bound, not a bridge-owned queue.)*
 - **OQ-5: HTTP (:9010) vs binary (:9009) ingest under load.** v4 recommends HTTP for the bridge (AI-CONTEXT
   §5.4 line 232) but the binary path is the high-throughput one (C21 I1); freeze which C24 uses at sweep 2
   (interacts with G26 back-pressure and the §13.2 dual-endpoint config). (Mirrors C21 OQ-4.)

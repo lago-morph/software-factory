@@ -18,8 +18,9 @@ Its reason to exist is two named failure modes:
 - **F18 — Prose specs lack rigor.** C10 is the *structural* half of the F18 mitigation (the other half is
   satisfaction-not-test-pass, P6 / C32–C33). It catches the deterministically-detectable rigor defects
   (passive voice, vague terms, missing actor, compound "and/or" requirements, no measurable response).
-  F-MODE-COVERAGE marks F18 **Partial** — "fundamental prose ambiguity remains" — and C10 owns exactly the
-  *detectable* portion, not the residual semantic ambiguity (F-MODE:20).
+  F-MODE-COVERAGE marks F18 **Partial** — "fundamental prose ambiguity remains" — and C10 owns the
+  deterministically-*detectable* subset; the residual semantic ambiguity is **conceded, not closed** (this
+  detectable/undetectable framing is the faithful gloss on F-MODE:20's *Partial*, not a v4-stated partition).
 - **F38 — Vocabulary lint debt.** C10 is the **owner** of F38 (F-MODE:74 "Addressed", "deterministically
   detectable"). It flags terms used in a spec that are not in the canonical term registry (C07 §3.2), or
   used via a non-canonical alias. C07 supplies the allow-list; C10 supplies the verdict (C07 §3.3 lint-time
@@ -56,12 +57,20 @@ Its reason to exist is two named failure modes:
 | Direction | Component | Relationship (source) |
 |---|---|---|
 | Upstream (input artifact) | **C08** spec artifact | C10's input surface is the C08 Markdown body; C08 §3.2 names the "lint contract (artifact → C10)" and AC-4 "lintable surface". |
-| Upstream (term data) | **C07** vocabulary-glossary | C10's vocab-lint rule (F38) keys against C07's machine-readable term registry (C07 §3.2, §3.3, §49 "Consumed by C10"). |
-| Upstream (built-as) | **C17** tool-node abstraction | C10 is "a tool node" built over C17's deterministic-node abstraction (C17 §1 "NOT the individual deterministic tools themselves (the EARS spec linter C10 …)"; C17 §64 lists C10 as an instance). |
+| Upstream (term data) | **C07** vocabulary-glossary | C10's vocab-lint rule (F38) keys against C07's machine-readable term registry (C07 §3.2 registry, §3.3 consumption/lint-time contract; C07 §2 deps table, line 49 "Consumed by C10"). *See RC10-01 — this edge is contested vs. survivor-pass DROP #04; it is a derived, not an inventory, dependency.* |
+| Upstream (built-as) | **C17** tool-node abstraction | C10 is "a tool node" built over C17's deterministic-node abstraction (C17 §1 "NOT the individual deterministic tools themselves (the EARS spec linter C10 …)"; C17 §2 instances row, line 64, lists C10 as an instance). |
 | Upstream (wire/pack) | **C02** pack/tool-node ABI | The Gas City pack + `[[tool]] type="subprocess"` declaration C10's binary is invoked through (README:108 "Gas City pack with deterministic tool node"; via C17). |
 | Upstream (config) | **C03** config/feature-flags | Whether the linter runs, and at what severity/blocking disposition, is layered TOML config — it is "optional" (README:108, 111). |
 | Downstream (consumes findings) | spec authoring loop / **C39** fix-task | Findings route back to the human (or fix-task loop) to revise the **spec**, consistent with Principle 1 "fix the spec" (README:102). |
 | Lateral (companion in F18) | **C32 / C33** judge + satisfaction | C10 is the *deterministic* half of F18; the *semantic* half is the cross-family judge + satisfaction metric (F-MODE:20). They are complementary, not coupled. |
+
+> **Dependency-footprint note (fidelity).** The component-inventory C10 row states a single *formal*
+> dependency: **C08** (`Depends on → C08`). C07 (vocab data), C17/C02 (the tool-node abstraction + ABI
+> C10 is built *as*), and C03 (the "optional" enable/severity config) are **derived/soft** upstreams this
+> faithful reading introduces — each traced through the *other* component's doc, not asserted as an
+> inventory edge. In particular **C07 is not an inventory dependency of C10**; the C07 vocab-lint edge is
+> the contested item flagged in the review (RC10-01 / OQ-1-vocab). Read the table above as "C08 = stated
+> dependency; the rest = consistent-elaboration upstreams."
 
 C10 is **not foundational** (inventory: no) and lives in **Batch 2** (component-inventory line 109:
 "spec-linter" alongside session/sling/prompt-binding), because it depends on the **Batch 1** artifacts
@@ -95,7 +104,8 @@ binary. Per the C17/C02 contract it receives (sweep-1 named; wire-level realizat
 > name *which rule* fired and *where*, or its output is not actionable as a "fix the spec" signal
 > (Principle 1). This mirrors the universally-shared shape of every lint tool (the "transfusion target: any
 > EARS-rule implementation", README:108, all carry rule-id + location + message). The exact serialization
-> (JSON vs. SARIF vs. text) is deferred to sweep 2 and constrained only by the C02 output ABI.
+> (JSON, SARIF, or text — equal candidates; v4 names none) is deferred to sweep 2 and constrained only by
+> the C02 output ABI; no format is pre-selected here.
 
 ### 3.3 The rule set (EARS + INCOSE R7–R35)
 C10's substance is a **fixed, ordered, deterministic rule set**. v4 names the source bodies but not the
@@ -113,6 +123,19 @@ individual rules in line; faithfully, the rule set is the union of:
 3. **Vocabulary-lint rule (F38).** Any term used in the spec that is not in C07's registry (or used via a
    non-canonical alias) is a finding. This is the "deterministically detectable" F38 rule (F-MODE:74; C07
    §3.3 lint-time).
+
+> **DEFERRED — needs orchestrator decision (review RC10-01).** SURVIVOR-PASS C10 row #04 is **DROP —
+> "Vocab-lint wired to C07 — No C07 machinery."** This rule (and the C07 term-registry input, §3.1) is the
+> reintroduction of that dropped item — yet dropping it conflicts with **F-MODE:74** (which assigns F38, the
+> "Vocabulary lint debt" mode, to the *spec linter* as **Addressed**) and with **C07's own frozen spec**
+> ("F38 … owned by C10's EARS linter; C07 is the data, the linters are the consumers", C07 §1/§3.3/line 49/
+> §6). Choosing either way edits the cross-component contract, so it is **left as-authored and flagged**, not
+> resolved here. Likely intended scope of DROP #04: the *elaborate C07 `CanonicalTermSet` content-hash
+> machinery* (survivor-C07's registry format is itself a `[FAITHFUL-FILL]`/OQ), **not** the existence of an
+> F38 vocab rule — which is already how this spec reads (C07 is a *soft data* dependency for *one* rule;
+> vocab-lint degrades to skip-with-warning if the registry is absent, §6). Orchestrator to confirm: keep the
+> F38 rule + scope DROP #04 to the machinery, OR uphold DROP #04 literally and amend F-MODE:74 + C07 in the
+> same pass. See OQ-1-vocab (§9).
 
 > [FAITHFUL-FILL] **The R7–R35 rules are referenced by number, not enumerated inline in v4.** README:108
 > cites "INCOSE R7-R35" as an external, named, stable rule corpus (the INCOSE *Guide to Writing
@@ -196,7 +219,7 @@ Key flow (sweep-1 narrative; sequence diagram at sweep 2):
 |---|---|---|
 | **F18** Prose specs lack rigor | C10 is the **deterministic structural** half of the mitigation. | Run the EARS/INCOSE rule set; emit findings. **Partial** — C10 catches structurally-detectable rigor defects only; "fundamental prose ambiguity remains" (F-MODE:20). The *semantic* half is P6 satisfaction (C32–C33), not C10. C10 does **not** claim to close F18. |
 | **F38** Vocabulary lint debt | C10 is the **owner**. | Vocab-lint rule keys against C07's registry; undefined/non-canonical terms are findings. "Deterministically detectable", **Addressed** (F-MODE:74). |
-| **F51** Ashby-deficient probabilistic guard | C10 is a deterministic guard, the **primary** kind P4 wants. | Being a no-model tool node, C10 is exactly the deterministic boundary-typing guard F51 favors over an LLM check (F-MODE:76). |
+| **F51** Ashby-deficient probabilistic guard | C10 is *an instance of* the deterministic-first posture F51 credits — not the boundary-typing guard F51 names. | Being a no-model tool node, C10 is a deterministic, reproducible guard, the kind P4 (deterministic-first) makes primary. F-MODE:76 credits this *category* ("deterministic boundary typing is the primary guard; LLM-judge is secondary"); the boundary-typing guard *per se* is C17/C43, not the spec linter. C10 is a P4 exemplar, not the specific mechanism F-MODE:76 names. |
 | **Un-parseable / non-requirement prose** | A spec body that isn't recognizable requirement statements. | Warn, do not error: C10 lints recognizable requirements and surfaces a low-severity "could not parse as requirement" note rather than failing the run (§3.3 fill; consistent with C08 free-form body). |
 | **Stale / missing term registry** | C07 registry absent or out of date when the vocab rule runs. | The vocab rule degrades to skipped-with-warning rather than crashing; the structural EARS/INCOSE rules still run. > [FAITHFUL-FILL]: v4 specifies no behavior here; minimal-consistent is graceful degradation (C10 still useful without C07), since C07 is a *data* dependency for one rule, not for the whole linter. |
 
@@ -207,8 +230,8 @@ detectable subset and explicitly does not claim the rest.
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
 - **Security.** As a C17/C02 subprocess tool node, C10 runs in its `work_partition`, read-only over the
-  spec; it carries no model-prompt-injection surface (it makes no model call — the F51 reason deterministic
-  guards are primary, C17 §7).
+  spec; it carries no model-prompt-injection surface (it makes no model call — the P4/deterministic-first
+  reason no-model guards are primary, the category F-MODE:76 credits; C17 §7).
 - **Cost / scale.** **Zero token cost** (no model call) — "tool nodes are cheap and reproducible"
   (README:154). Cost is process-startup + linear text scan; negligible for a single spec file.
 - **Observability.** A C10 run is an actor action: it lands as a bead (C19/C20) carrying `created_by`
@@ -259,6 +282,9 @@ the Rxx→detector table.
    section schema, C08 §4/OQ-2). C10's heuristic for "what counts as a requirement statement" (§3.3 fill)
    depends on whether C08 ever gains an optional structure. If C08 OQ-2 resolves toward allowing required
    structure, C10 can tighten extraction; the faithful default assumes none.
-4. **OQ-4 — findings serialization.** JSON vs. SARIF vs. text for the report (§3.2 fill) — constrained only
-   by the C02 output ABI; pick at sweep 2 (SARIF is the natural transfusion-friendly choice but v4 names
-   none).
+4. **OQ-4 — findings serialization.** JSON vs. SARIF vs. text for the report (§3.2 fill) — equal candidates,
+   constrained only by the C02 output ABI; pick at sweep 2. v4 names no format, so sweep-1 pre-selects none.
+5. **OQ-1-vocab — does the F38 vocab-lint rule stay in C10? (DEFERRED — orchestrator; review RC10-01).**
+   SURVIVOR-PASS C10 #04 drops "vocab-lint wired to C07", but F-MODE:74 and C07's frozen spec both assign
+   F38 ownership to C10. The §3.3-rule-3 DEFERRED note states the tension and the recommended resolution
+   (keep the rule; scope the DROP to the C07 *machinery*). Integrator's call; not resolved at sweep 1.

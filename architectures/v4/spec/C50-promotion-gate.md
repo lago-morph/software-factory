@@ -21,7 +21,7 @@
 > gate deciding a new variant becomes the default … Custom Gas City formula with stat gate; **multi-metric
 > mandated (F47)**"), B78 ("**F47 caution — Goodhart on meta-metrics** … Explicit visible meta-metrics
 > invite Goodharting recursively. **Guard: multi-metric mandatory; no single visible target**").
-> Binding decisions obeyed: **D-6** (single canonical track; no Track A/B framing). **D-15 / G09:** C50 is a
+> Binding decisions obeyed: **D-6** (single canonical track; no Track-A/B framing). **D-15 / G09:** C50 is a
 > **cutline DECISION SITE** — the satisfaction-threshold *value* is operator policy; C50 *applies* it (it
 > does not define it, and does not push it back into C33, which stays threshold-free). **D-19:** C50
 > **consumes C48's significance verdict** ("was the variant actually better?") and does **not** re-run
@@ -31,8 +31,9 @@
 > being promoted *is* a formula — methodology is the variable), [`spec/C33-satisfaction-metric.md`](./C33-satisfaction-metric.md)
 > (threshold-free distribution; routes the cutline to **C50**/C53/C39, C33 §6), [`spec/C39-fix-task-loop-closure.md`](./C39-fix-task-loop-closure.md)
 > (the sibling G18 gate it is NOT), [`spec/C53-bootstrap-validation.md`](./C53-bootstrap-validation.md) (the
-> sibling one-time gate it is NOT). C48 (A/B + significance) and C46 (meta-metric stream) are Batch-5 peers
-> not yet on disk; referenced by inventory mandate.
+> sibling one-time gate it is NOT). [`spec/C48-ab-routing-stats.md`](./C48-ab-routing-stats.md) (A/B +
+> significance) and [`spec/C46-meta-metrics.md`](./C46-meta-metrics.md) (meta-metric stream) are Batch-5
+> peers (now on disk, sweep-1); C50's dependency on their contracts is per the inventory mandate.
 > Inventory ID: C50   Kind: control-loop   Status: sweep-1
 > Track: canonical
 

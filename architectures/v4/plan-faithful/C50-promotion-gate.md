@@ -80,8 +80,8 @@ Once **T1 (seam freeze)** and **T2 (skeleton + config)** land, two thin workstre
 2. **Confirm — the C48 significance seam (T3/D-19).** C50 **consumes** C48's "was it actually better?"
    verdict and must **not** re-run statistics (D-19 routes significance to C48). Pin the verdict contract
    (verdict + sample/effect stats) *before* deep build so C50 stays a decision-over-signals, not a second
-   stats engine. (C48 is a Batch-5 peer not yet on disk — build against a synthetic verdict; freeze the
-   contract when C48 is authored.)
+   stats engine. (C48 is now on disk as a Batch-5 peer — pin against C48's authored verdict contract
+   (its §3/§4 verdict + sample/effect-stats binding); freeze the exact contract jointly at sweep-2.)
 3. **Confirm — the multi-metric rule shape (T5/OQ-2).** How "**moving coherently**" / "**materially
    regressed**" is operationalised over C46's statistics (per-metric bar vector? Pareto-dominance? weighted
    composite under a no-regression constraint?) is unfixed. Pin the *requirement* (it MUST stay multi-metric

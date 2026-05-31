@@ -310,7 +310,11 @@ bound" concern, and the routing is already settled:
   > recorded), which is the promotion loop's "stated bound" (it cannot promote without clearing the gate,
   > and every cycle ends in a recorded verdict). Reading (a) is rejected because the inventory **explicitly
   > tags C50 with G18** and frames C50 as a *gate* (a stopping rule by nature); reading (b) is the minimal
-  > way to honour that tag **without** colliding with C39's owned numeric policy (XC-3).
+  > way to honour that tag **without** colliding with C39's owned numeric policy (XC-3). **Note** the G18 gap
+  > *text* (ambiguities-and-gaps:51) names only the fix loop and says nothing of promotion — so C50's G18
+  > tag rests on the **inventory tag + C50's gate-by-nature role**, not on the gap text; the **numeric
+  > fix-loop** half (N-attempts / oscillation / L5-ship) stays entirely C39's, and C50 adds only the
+  > promotion loop's recorded stopping rule.
 
 **F47 (Goodhart on visible metrics) — ADDRESSED HERE (this is C50's reason to exist).** v4 mandates the
 guard at C50 by name: *"promotion gate requires multiple metrics moving together"* (F-MODE-COVERAGE:103),

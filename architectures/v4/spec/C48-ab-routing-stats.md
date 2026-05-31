@@ -39,11 +39,13 @@ Principle 12 (self-optimization)** that v4 names as a single inventory row (READ
 does exactly two things, and the seam between them is the point of the component:
 
 1. **Routes traffic between variants (the *router*).** Given a set of candidate variants (C47's prompt/
-   hyperparameter variants; or C55's methodology candidates), C48 **decides which variant serves a given unit
-   of work** — via **feature-flag routing (Unleash / GrowthBook / Flagsmith / OpenFeature)** for fixed-split
-   A/B, or via a **multi-armed bandit (MABWiser / Vowpal Wabbit)** for adaptive exploration (README:273;
-   AI-CONTEXT:358/361; A69/A72c). This is the "cost-routing covered" half that v4 says already exists in the
-   stack (AI-CONTEXT:286).
+   hyperparameter variants), C48 **decides which variant serves a given unit of work** — via **feature-flag
+   routing (Unleash / GrowthBook / Flagsmith / OpenFeature)** for fixed-split A/B (README:273; AI-CONTEXT:358),
+   or via a **multi-armed bandit (MABWiser / Vowpal Wabbit)** for adaptive exploration (AI-CONTEXT:361; A72c).
+   This is the "cost-routing covered" half that v4 says already exists in the stack (AI-CONTEXT:286). *(The
+   router serves the **C47** live-A/B variant set; C55's methodology candidates are **not** routed by C48 — C55
+   runs its own candidates through the eval tier and consults C48 only for the significance verdict; see I4, §2,
+   and the C55 boundary below.)*
 2. **Determines whether a variant was *actually* better (the *judge of variants*).** Given the per-variant
    outcomes that accrue (C33 satisfaction distributions + C46 meta-metrics), C48 runs the **statistical
    significance test** — **scipy.stats / statsmodels** for the hypothesis test, **Evidently AI** for

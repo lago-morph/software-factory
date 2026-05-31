@@ -20,7 +20,7 @@ Four axes: **B**uilt · **R**eviewed (`.review.md`) · **I**ncorporated (finding
 | **2-partial** (11) | C04 C05 C09 C10 C12 C13 C24 C25 C28 C29 C42 | ✓ | ✓ | ✓ | ✓ |
 | **2-tail** (2) | C26 C27 | ✓ | ✓ | ✓ | ✓ |
 | **3** (13) | C06 C11 C14 C15 C16 C18 C30 C31 C32 C33 C34 C35 C40 | ✓ | ✓ | ✓ | ✓ |
-| **4** (13) | C36 C37 C38 C39 C43 C44 C45 C51 C52 C53 C54 C55 C56 | · | · | · | · |
+| **4** (13) | C36 C37 C38 C39 C43 C44 C45 C51 C52 C53 C54 C55 C56 | ✓ | · | · | · |
 | **5** (6) | C46 C47 C48 C49 C50 C57 | · | · | · | · |
 
 **38/57 components fully closed** (Batches 1, 2, 3). No outstanding review debt. **19 remain** (Batch 4: 13, Batch 5: 6).
@@ -42,4 +42,5 @@ Platform rate-limits subagent launches at **~8 concurrent**. Pipeline at width ~
 | W6 | 2 | Batch 3 builders (13) | done (13/13 built) |
 | W7 | 2 | Batch-3 review: 13 adversaries | done (13/13 accept-with-fixes) |
 | W8 | 2 | Integrator: D-15..D-17 + 55 OQs | done (Batch 3 closed) |
-| W9 | 2 | Batch 4 builders (13) | ⏳ dispatching |
+| W9 | 2 | Batch 4 builders (13) | done (13/13 built) |
+| W10 | 2 | Batch-4 review: 13 adversaries (chunk 8+5) | ⏳ running |

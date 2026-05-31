@@ -3,6 +3,16 @@
 > The plan for producing the plan. This document is the orchestration contract for
 > the primary agent and every subagent. It is itself a deliverable and is kept current.
 
+> **⚠ PARTIALLY SUPERSEDED (2026-05-31): tracks converged.** §1 ("two tracks") and the Phase-2
+> wave structure (build × track) below describe the *original* parallel-track plan that produced
+> the first 23 components. The run has since converged to a **single canonical track** — `spec/`
+> (formerly `spec-faithful/`) and its build companion `plan-faithful/`. `spec-optimized/` and
+> `plan-optimized/` are frozen reference. For the remaining 34 components, dispatch one builder
+> per component, single-track, under the capability-for-principle bar. See
+> [`HANDOFF.md`](./HANDOFF.md) §2 for the bar and [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md) for
+> the convergence rationale. The phases, personas, parallelism model, and context-preservation
+> protocol below remain in force.
+
 ## 0. Mandate (from the user)
 
 - Produce an **incredibly detailed spec** and an **incredibly detailed plan** for **every

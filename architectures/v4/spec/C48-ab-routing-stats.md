@@ -312,8 +312,8 @@ traffic between variants** (Unleash/bandit) **+ determine whether a variant was 
 binds the OSS engines. **Dropped / refused as non-principle or already-in-the-stack:** (1) any **custom
 statistics engine** — the significance test is the v4-named **scipy.stats / statsmodels / Evidently** stack
 (README:275/320–321), not a bespoke estimator/bootstrap/test (C48 adds only test-selection + wiring); (2) any
-**custom routing engine** — feature-flag routing is **Unleash/GrowthBook/Flagsmith** and adaptive routing is
-**MABWiser/Vowpal Wabbit** (README:273; AI-CONTEXT:361), not a hand-rolled splitter/bandit; (3) the
+**custom routing engine** — feature-flag routing is **Unleash/GrowthBook/Flagsmith** (README:273) and adaptive
+routing is **MABWiser/Vowpal Wabbit** (AI-CONTEXT:361; A72c), not a hand-rolled splitter/bandit; (3) the
 **promotion decision** ("becomes the default") — that is the **C50** Gas City formula + statistical gate
 (README:276); C48 supplies evidence, not the policy; (4) a **bespoke cost *model*** — that is **C46**'s (G32 on
 C46); C48 only *uses* C46's cost signal (G32 reading (b)); (5) the **counterfactual-replay driver** (C49) and
@@ -354,8 +354,8 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
    verdict declares "better" **only** when the comparison is statistically significant (effect size + p/CI); a
    non-significant difference yields **inconclusive**, never a win (README:275; B63).
 2. **AC-2 (routes between variants — I1):** C48 routes a unit of work to a variant arm via **feature flag**
-   (Unleash) for a fixed split **or** via a **bandit** (MABWiser) for adaptive exploration (README:273;
-   AI-CONTEXT:361).
+   (Unleash) for a fixed split (README:273) **or** via a **bandit** (MABWiser) for adaptive exploration
+   (AI-CONTEXT:361).
 3. **AC-3 (multi-metric — INV-2, F47):** the verdict is over **multiple metrics** (satisfaction + cost + the
    C46 set), never a single visible target — supporting C50's "multiple metrics moving together"
    (F-MODE-COVERAGE:174).

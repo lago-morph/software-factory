@@ -1,7 +1,7 @@
 # Next-session prompt — close out v4 spec/planning, prep for implementation
 
 > **What this is:** a ready-to-paste prompt for the next session. It gets the operator's open
-> decisions, runs the cleanup that finishes the Sweep-1 spec/planning pass (whole-corpus consistency
+> decisions, runs the cleanup that finishes the Sweep-1 planning pass (whole-corpus consistency
 > check, an expert panel on whether the architecture is right, two reader guides), and leaves the
 > effort ready for detailed design + per-component implementation. Authored at the close of the
 > Sweep-1 build session (PR #220 merged). Paste everything in the fenced block below.

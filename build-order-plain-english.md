@@ -28,12 +28,12 @@ flowchart LR
 
 - The **workshop and plumbing** — the runtime the whole thing sits on, plus the AI worker.
 - The **spec intake** — a structured way to write down what you want, clear enough to act on.
-- The **path from spec to running software** — the wiring that turns your written spec into instructions the AI worker carries out.
+- The **path from spec to running software** — the wiring that turns what you wrote into instructions the AI worker carries out.
 - The **memory** — durable records of every task and every step the workers took, so nothing is lost between sessions.
 - **Proof-readers** — automated checks that flag a malformed spec or a malformed workflow before any work starts.
 - **Basic visibility** — so you can see what happened.
 
-**What you can do at the end of Phase 1:** sit at the wheel, hand the factory a spec, watch it work, and review what it produced — with everything recorded. Useful, but it needs you watching.
+**What you can do at the end of Phase 1:** sit at the wheel, feed it a spec, watch it work, and review what it produced — with everything recorded. Useful, but it needs you watching.
 
 **What's still manual:** judging whether the result is good; catching and fixing failures; deciding what to try next.
 
@@ -59,7 +59,7 @@ flowchart LR
 **What gets built:**
 
 - **Borrow-from-the-best discipline** — every new piece the factory builds must be modeled on a proven existing example *and* pass a test that it actually behaves like that example. ("The factory built it" must never mean "nobody checked it.")
-- **The self-build loop** — the factory writes a spec for its *own* next component, builds it the normal way, and a human reviews it before it goes live.
+- **The self-build loop** — it writes a spec for its *own* next component, builds it the normal way, and a human reviews it before it goes live.
 - **Practice environments (twins) + the full safety fence** — realistic fakes of outside services so the factory can rehearse risky operations safely, plus the complete isolation that bounds the blast radius.
 - **Self-improvement** — it tries variations of how it works, measures whether a variation was *actually* better (not just lucky), and promotes the winners — guarded so it can't "improve" by gaming its own score.
 - The **drift-watcher** *(this is decision #2)* — a check that the factory is still pursuing what you asked for as it rewrites itself.

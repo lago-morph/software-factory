@@ -100,8 +100,8 @@ it is the orchestration + the selection *contract* over capabilities the eval ti
   the same sense C31 is verdict-blind.
 - **NOT the satisfaction metric.** The satisfaction *distribution* per cell is **C33**'s output (C33 §1 names
   C55 as a consumer). C55 *reads* the distribution to compare candidates; it neither computes nor re-defines
-  satisfaction, and it inherits C33's **threshold-free** posture (the "is this good enough" cutline is not
-  C55's).
+  satisfaction, and it inherits C33's **threshold-free invariant** (C33 INV-3 / D-15 — an upstream property C55
+  relies on, not one it establishes; the "is this good enough" cutline is not C55's).
 - **NOT the A/B statistical-significance engine.** Deciding **whether a methodology variant is actually better**
   (the significance test) is **C48** (a/b-routing + scipy/Evidently, Batch 5; inventory C48 "determines whether
   a variant was actually better"). C55 *poses* the comparison and *consults* C48's verdict; it builds **no**
@@ -269,9 +269,10 @@ criterion is never pinned**. Faithful resolution:
   taxonomy** is **sweep-2** (OQ-2) — v4 names the dimension but not its values (only F-MODE F20's
   greenfield/brownfield split is named in the corpus as one such axis).
 - **The *threshold* (what counts as "good enough" to select) — DEFERRED, not C55's.** C55 *ranks* candidates by
-  satisfaction and *selects the best for each work type*; it inherits C33's **threshold-free** posture (C33 §6,
-  G09): the "is this methodology good enough in absolute terms" cutline is a **decision-site** question (C50
-  promotion gate / operator policy), not C55's. C55 selects the **relatively** best candidate per work type from
+  satisfaction and *selects the best for each work type*; it inherits C33's **threshold-free invariant**
+  (C33 INV-3 / §6, G09 — and the threshold *value* is undefined in v4): the "is this methodology good enough in
+  absolute terms" cutline is a **decision-site gate** question (C50 promotion gate / C53 / C39, or operator
+  policy — C33's stated owner-set), not C55's. C55 selects the **relatively** best candidate per work type from
   the evidence; an absolute go/no-go cutline is out of scope (OQ-1).
 
 **Routing — A/B *significance* is C48, not C55 (C55's binding scope boundary).** Whether a leading candidate's

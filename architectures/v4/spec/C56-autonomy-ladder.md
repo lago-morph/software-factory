@@ -143,9 +143,9 @@ authorization table's machine form, and the audit-pack interface are sweep-2 del
    described as a table (§4.2); the precise per-action predicate form is sweep-2.*
 3. **Current-authorized-level read (the runtime output).** A single read-only value — *the level the
    operator has authorized right now* — that any consumer reads to gate out-of-loop behavior (C39's ship
-   gate reads exactly this; C39 §3 contract 4 "Current-autonomy-level read (C56 → C39)"). **Operator-set,
-   monotone-not-assumed: a consumer that cannot read it, or reads an undefined value, MUST treat the level
-   as the safe default (≤ L4, i.e. *not L5*)** — fail-safe (README:527 "no commitment to L5").
+   gate reads exactly this; C39 §3 contract 4 "Current-autonomy-level read (C56 → C39)"). **Operator-set;
+   a consumer that cannot read it, or reads an undefined/garbled value, MUST treat the level as the safe
+   default (≤ L4 — never L5)** — the §3 "Fail-safe default" invariant, README:527 ("no commitment to L5").
 4. **L4-default declaration.** The binding statement that the **default operating level is L4** (batched
    review), and that L5 is opt-in requiring P12 maturity + trust (README:498/527). Consumers use this to
    pick the safe behavior when the level is unset.

@@ -105,7 +105,7 @@ it is the orchestration + the selection *contract* over capabilities the eval ti
 - **NOT the A/B statistical-significance engine.** Deciding **whether a methodology variant is actually better**
   (the significance test) is **C48** (a/b-routing + scipy/Evidently, Batch 5; inventory C48 "determines whether
   a variant was actually better"). C55 *poses* the comparison and *consults* C48's verdict; it builds **no**
-  bespoke significance machinery (this is the explicit routing ruling — §6). C55's own selection is the
+  bespoke significance machinery (C55's significance→C48 scope boundary — §6). C55's own selection is the
   per-work-type *mapping* given that evidence.
 - **NOT the general self-optimization / variant-search loop.** Open-ended prompt/hyperparameter variant
   *discovery* (DSPy/Optuna) is **C47**; A/B *traffic routing* is **C48**; the *promotion gate* is **C50**;
@@ -124,7 +124,7 @@ it is the orchestration + the selection *contract* over capabilities the eval ti
 | Upstream (held-out test set) | **C30** Scenario store | The **same held-out scenarios** every candidate is measured against (README:31). C55 runs candidates over C30's corpus; C30 authors/stores/isolates them. Inventory C55 `depends on C30`. |
 | Upstream (the metric) | **C33** Satisfaction metric | The **satisfaction distribution** per (methodology, work-type) cell that C55 selects on (D-15). C33 §1 names C55 as a consumer. Inventory C55 `depends on C33`. |
 | Eval-tier (run + score) | **C31** Scenario runner, **C32** Judge harness | The runner that executes a candidate over a scenario and the judge that scores it. C55 drives them via the eval tier; "same … judge" (README:31). *(Transitive through C30/C33's contracts; C55's direct deps are C12/C30/C33.)* |
-| Significance (consulted) | **C48** A/B routing & statistical comparison | **Decides whether a candidate is actually better** (the significance test, Batch 5). C55 **consults** C48's verdict; it implements no significance machinery (routing ruling, §6). *(Forward reference: C48 is unbuilt — Batch 5; C55 names the seam, does not block on it.)* |
+| Significance (consulted) | **C48** A/B routing & statistical comparison | **Decides whether a candidate is actually better** (the significance test, Batch 5). C55 **consults** C48's verdict; it implements no significance machinery (C55's scope boundary, §6). *(Forward reference: C48 is unbuilt — Batch 5; C55 names the seam, does not block on it.)* |
 | Packaging host | **C02** Pack/tool-node ABI, **C17** Tool-node abstraction | C55's loop is realised as pack-delivered tool nodes invoked via the tool-node ABI (mirrors C33's packaging note). *(Related interface, not a dependency edge.)* |
 | Config gate | **C03** Layered config | C55 exists only when the experiment capability is enabled (section-presence flag); the candidate-catalog + work-type config live in pack TOML. *(Related interface.)* |
 | Downstream (the choice) | the **factory dispatch** (C05 sling, via C12) | Consumes the `work_type → methodology` selection to dispatch the chosen formula for a kind of work. *(C55 produces the mapping; acting on it — which formula to dispatch — is the dispatch tier's, via the chosen C12 formula name.)* |
@@ -274,11 +274,13 @@ criterion is never pinned**. Faithful resolution:
   promotion gate / operator policy), not C55's. C55 selects the **relatively** best candidate per work type from
   the evidence; an absolute go/no-go cutline is out of scope (OQ-1).
 
-**Routing — A/B *significance* is C48, not C55 (binding).** Whether a leading candidate's satisfaction advantage
-for a work type is **statistically real** is the **A/B statistical-comparison** question, owned by **C48**
-(a/b-routing + scipy/Evidently; inventory C48 "determines whether a variant was actually better"; Batch 5).
-**C55 builds no significance machinery** — it *poses* the candidate-vs-candidate comparison and *consults* C48's
-verdict (INV-4). This is the explicit "route significance testing to C48" ruling.
+**Routing — A/B *significance* is C48, not C55 (C55's binding scope boundary).** Whether a leading candidate's
+satisfaction advantage for a work type is **statistically real** is the **A/B statistical-comparison** question,
+owned by **C48** (a/b-routing + scipy/Evidently; inventory C48 "determines whether a variant was actually
+better"; Batch 5). **C55 builds no significance machinery** — it *poses* the candidate-vs-candidate comparison
+and *consults* C48's verdict (INV-4). This routing is grounded in C48's inventory mandate and mirrors C33's own
+significance→C48 boundary; it is **C55's binding scope boundary and should be recorded as a numbered
+review-log decision** (OQ-4) — not (yet) a pre-existing logged ruling.
 > [FAITHFUL-FILL] **C48 is unbuilt (Batch 5)** and C55 is **Batch 4** — C55 must not block on it. Sweep-1
 > contract: C55 **names the C48 significance seam** (I4) and, until C48 lands, surfaces the **raw per-cell C33
 > distributions + sample counts** and **withholds** any "statistically better" claim (it never fabricates a
@@ -320,7 +322,7 @@ the **existing** eval tier, **empirically selected per work type**. **Dropped / 
 already-in-the-stack:** (1) any **methodology *engine* / new runner or scorer** — candidates run on the existing
 C12 formula swap + C30/C31/C32/C33 eval tier; C55 adds *orchestration*, not an engine; (2) any **bespoke
 statistical-significance machinery** — "was the variant actually better" is the v4-named **C48** scipy/Evidently
-stack (Batch 5), not a new C55 estimator (the explicit routing ruling); (3) any **absolute satisfaction
+stack (Batch 5), not a new C55 estimator (the significance→C48 scope boundary, §6); (3) any **absolute satisfaction
 threshold / go-no-go cutline** — that re-introduces test-pass (anti-P6) and is a C50/operator decision-site
 concern (C33's threshold-free posture inherited); (4) the **general self-optimization / variant-search** loop
 (C47 variant ID, C48 routing, C49 replay, C50 gate) — C55 is the narrower fixed-catalog methodology-experiment,
@@ -372,7 +374,7 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
 4. **AC-4 (empirical per-work-type selection — INV-3, addresses G05):** the `work_type → methodology` choice is
    made **from satisfaction evidence**, per work type; "GF-M first" is *ordering only* and does **not**
    pre-determine the winner.
-5. **AC-5 (significance routed to C48 — INV-4, the routing ruling):** C55 computes **no** p-value/CI; it
+5. **AC-5 (significance routed to C48 — INV-4, C55's scope boundary §6):** C55 computes **no** p-value/CI; it
    **consults C48** for "is the variant actually better," and — until C48 exists — surfaces raw distributions +
    sample counts and **withholds** the significance claim (never fabricates one).
 6. **AC-6 (sample-honest — INV-5):** every selection carries the **per-cell sample counts**; a selection on thin
@@ -414,4 +416,6 @@ that the loop is **re-derivable** with **no custom engine** (AC-7/AC-8). This su
 - **OQ-4 (→ review-log): the C48 significance seam (forward dependency).** C48 is **Batch 5** (unbuilt); C55 is
   Batch 4. Confirm the **C55→C48** consultation contract (what comparison C55 poses; what verdict C48 returns)
   to be frozen at sweep-2 when C48 is authored, and that C55's interim behavior (raw distributions + withheld
-  significance) is acceptable until then.
+  significance) is acceptable until then. **Also record the significance→C48 routing as a numbered review-log
+  decision** — it is C55's binding scope boundary (grounded in C48's inventory mandate + the C33 precedent) but
+  is not yet a logged D-x ruling.

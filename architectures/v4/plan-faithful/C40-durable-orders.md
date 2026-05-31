@@ -42,8 +42,9 @@ Temporal" threshold (OQ-1). **No Temporal integration and no custom engine/saga 
   C40 depends on knowing what Orders really survive**: the G33 disclosure (T5), the Temporal threshold (T7),
   and the contract C39 relies on (T6) are all unsound until T3 reports the real ceiling. T6 (frozen Order +
   trigger contract) gates the downstream consumer.
-- **Downstream of C40 (blocked until T6/T8):** **C39** (fix-task loop-closure) — the canonical workflow an
-  Order drives; it cannot rely on Orders for durable re-entry until the trigger/launch contract is frozen and
+- **Downstream of C40 (blocked until T6/T8):** **C39** (fix-task loop-closure) — the *inferred* canonical
+  workflow an Order drives (coupling not v4-stated; confirmed jointly at OQ-4/T8 — spec §2); it cannot rely
+  on Orders for durable re-entry until the trigger/launch contract is frozen and
   the ceiling is known (so C39 knows what it must *itself* handle for termination/escalation, G35).
 
 ## 3. Parallelization

@@ -22,7 +22,7 @@
 
 **Must precede C46:**
 - **C33** (the satisfaction **term** C46 divides cost by + watches for threshold-crossing — the metric C46 consumes; D-15 holistic).
-- **C24** (the telemetry→CXDB bridge — where the per-run usage/cost signal lands; C46 reads it).
+- **C24** (the telemetry→CXDB bridge — C46's *pinned* dep; it lands the conversation bodies. NB C24 is the **writer**: C46's CXDB *read* seam is **C21** (spec/C24 §1), and token usage + cost are natively **OTLP metrics** on the C25→C26 path (AI-CONTEXT:172). Source-path + dep-edge correction = OQ-6, integrator call.).
 - **C29** (the model `cost_tier`/price reference for the dollar dimension — related interface, not a build-blocking dep edge).
 - **MLflow/Aim/W&B** (the time-series/experiment-tracking store, version-pinned) + **C02/C17/C03** (pack + tool-node ABI + config to package/run, "Configuration").
 - **C39/C35** (the judge-outcome label sources for judge-FP-rate — I6; available in earlier batches by the time C46 builds).
@@ -130,4 +130,6 @@ consumable by **C47/C48/C50**. C46 is the Gas City meta-metric pack (README:470)
 operator price reference under flat Max; shared cutline-value with C33:OQ-1), OQ-2 (which meta-metrics beyond
 the three — AI-CONTEXT:516 "values question", config-extensible), OQ-3 (per-criterion meta-metrics — FE-5/D-15
 beneficiary, Sweep-2 extension), OQ-4 (C46↔C48 compare-contract + C46↔C33 logged-record schema freeze), OQ-5
-(judge-FP label source + trailing-rate latency).
+(judge-FP label source + trailing-rate latency), **OQ-6 (cost-signal telemetry source — OTLP-metrics path
+C25/C26 vs CXDB-stored bodies — + the C24-vs-C21/C25 dep-edge correction; architecturally-significant,
+integrator call; spec §1/§9).**

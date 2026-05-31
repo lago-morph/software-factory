@@ -63,10 +63,11 @@ project — Unleash/MABWiser for routing, scipy/Evidently for significance. C48'
 and C55 (methodology experiment, per D-19) consume. It builds **no** routing engine and **no** statistics engine.
 
 **Responsibilities (what C48 is the spec-of-record for):**
-- **Define & operate the variant-routing decision (I1).** Bind a candidate variant set (from C47/C55) to a
-  **routing strategy** — fixed-split feature-flag (Unleash, README:273) or adaptive **bandit** (MABWiser,
-  AI-CONTEXT:361; A72c) — and decide, per unit of work, **which variant serves it**. C48 wraps the OSS router;
-  it owns the *binding + config*, not the flag/bandit algorithm.
+- **Define & operate the variant-routing decision (I1).** Bind a candidate variant set (from **C47** — the
+  live-A/B variant set) to a **routing strategy** — fixed-split feature-flag (Unleash, README:273) or adaptive
+  **bandit** (MABWiser, AI-CONTEXT:361; A72c) — and decide, per unit of work, **which variant serves it**. C48
+  wraps the OSS router; it owns the *binding + config*, not the flag/bandit algorithm. *(Routing is over C47's
+  variants; C55's methodology candidates are run by C55 via the eval tier and only consult C48's verdict — I4.)*
 - **Collect per-variant outcomes for comparison (I2).** Read the outcomes that accrue per variant arm — the
   **C33 satisfaction distribution** (the primary outcome — D-15 holistic satisfaction) **and** the **C46
   meta-metrics** (cost-per-satisfaction, time-to-threshold, judge-FP-rate — README:269). C48 does **not**
@@ -144,7 +145,7 @@ verdict-consumer contracts).
 
 | # | Interface | Direction | Description | Owning/detailing component |
 |---|---|---|---|---|
-| I1 | **Variant-routing decision** | inbound (config) + outbound (route) | Bind a candidate variant set (C47/C55) to a **routing strategy** — fixed-split **feature flag** (Unleash, README:273) or adaptive **bandit** (MABWiser, AI-CONTEXT:361) — and decide, per unit of work, **which arm serves it**. C48 owns the binding/config + the route call; the flag/bandit **algorithm** is the OSS engine's. | C48 (binding); Unleash/MABWiser (engine) |
+| I1 | **Variant-routing decision** | inbound (config) + outbound (route) | Bind a candidate variant set (**C47** — live-A/B variants) to a **routing strategy** — fixed-split **feature flag** (Unleash, README:273) or adaptive **bandit** (MABWiser, AI-CONTEXT:361) — and decide, per unit of work, **which arm serves it**. C48 owns the binding/config + the route call; the flag/bandit **algorithm** is the OSS engine's. *(C55's methodology candidates are not routed here — C55 runs them via the eval tier and consults I4 only.)* | C48 (binding); Unleash/MABWiser (engine) |
 | I2 | **Per-variant outcome read** | inbound (data) | Read the outcomes that accrue per arm: the **C33 satisfaction distribution** (primary, D-15) **and** the **C46 meta-metrics** (cost-per-satisfaction, time-to-threshold, judge-FP-rate — README:269), keyed by variant arm + experiment. C48 reads; it computes neither. | C48 (read); **C33/C46** (produce) |
 | I3 | **Significance determination** | internal | Apply **scipy.stats / statsmodels** (hypothesis test) + **Evidently** (distribution-shift / regression) to the arms' outcome distributions → per metric: **effect size + p-value/CI + significance decision** ("was the variant *actually* better"). Off-the-shelf engine; C48 owns the *wiring + test selection*, not the math. | C48 (wiring); scipy/Evidently (engine) |
 | I4 | **Comparison verdict** | outbound (data) | The component's declared output: per metric — winning arm, effect size, significance (p/CI), sample sizes; plus an **overall multi-metric reading** (no single target, F47); plus the **cost effect** (G32). Consumable by **C50** (promotion gate evidence) and **C55** (methodology significance, D-19). C48 emits the verdict; **C50 decides promotion**. | C48 (this); **C50/C55** (consumers) |
@@ -183,7 +184,7 @@ C47's. State C48 is the spec-of-record for at sweep 1:
 
 | State | Description | Persistence | Detailed by |
 |---|---|---|---|
-| **Experiment / routing binding** | Which variant set (C47/C55) is under test, the **routing strategy** (flag split or bandit), and the arm→variant mapping. The router's live config. | Pack TOML (C02/C03) + the OSS router's own store (Unleash/MABWiser state). | C48 (binding); Unleash/MABWiser (engine state) |
+| **Experiment / routing binding** | Which **C47** variant set is under test, the **routing strategy** (flag split or bandit), and the arm→variant mapping. The router's live config. *(Routing binds C47 variants; a C55 methodology comparison is posed at the verdict, not routed.)* | Pack TOML (C02/C03) + the OSS router's own store (Unleash/MABWiser state). | C48 (binding); Unleash/MABWiser (engine state) |
 | **Bandit arm state (if bandit)** | Per-arm reward statistics the **MABWiser/VW** engine maintains to adapt routing (e.g. satisfaction-per-dollar reward, G32). **Owned by the bandit engine**, not a bespoke C48 store. | Bandit engine state (re-derivable from the C33/C46 outcome history). | MABWiser/VW (engine); C48 (reward def) |
 | **Comparison verdict** | The computed per-metric verdict (winning arm, effect size, p/CI, sample sizes) + overall multi-metric reading + cost effect. The component's *output*, re-derivable from C33/C46. | Emitted as tool-node output; optionally recorded (MLflow/bead) for C50/audit — an *optimization*, re-computable (INV-4). | C48 (shape); **C50/C55** (consumers) |
 | **Significance config** | The test selection + significance level (α), the multi-metric policy, the cost-aware routing policy (G32). | Pack TOML (C02/C03 model). | C48 (binding) |
@@ -206,9 +207,10 @@ router engine; §6).
 ## 5. Behavior
 
 **Stand up (Phase 3d / Batch 5).** The router pack + stats tool node are installed behind a feature flag (C03).
-C48 is configured with the variant set under test (from C47, or C55's methodology candidates), the routing
-strategy (flag split or bandit), the significance test + α, the multi-metric policy (INV-2), and the
-cost-aware policy (G32, I5). It is wired downstream of C47/C46/C33 (inputs) and upstream of C50/C55 (verdict).
+C48 is configured with the **C47** variant set under test, the routing strategy (flag split or bandit), the
+significance test + α, the multi-metric policy (INV-2), and the cost-aware policy (G32, I5). It is wired
+downstream of C47/C46/C33 (inputs) and upstream of C50/C55 (verdict consumers). *(C55 supplies no routing
+input — it consults C48 for significance over distributions it produced via the eval tier; I4, §2.)*
 
 **Route path (steady state).**
 1. **Resolve the arm (I1):** for a unit of work, the **feature flag** (Unleash) returns the assigned arm for a

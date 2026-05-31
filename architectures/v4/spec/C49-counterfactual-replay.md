@@ -63,10 +63,11 @@ fresh live traffic.
   treat a best-effort replay as ground truth (§6, INV-3).
 
 **Explicitly NOT (boundaries):**
-- **NOT the branching primitive / the store.** O(1) fork, content-addressing, the turn-DAG, replay
-  retrieval are **C21's** (I5/I6, INV-1/INV-3). C49 *calls* them; it stores no trajectories of its own
-  (README line 274 "Bridge + driver" — C49 is the driver; the bridge/primitive is CXDB; README line 500
-  "factory builds the orchestration glue, not the foundations").
+- **NOT the branching primitive / the store, and NOT the trajectory-landing bridge.** O(1) fork,
+  content-addressing, the turn-DAG, replay retrieval are **C21's** (I5/I6, INV-1/INV-3); the raw-bodies→CXDB
+  **bridge pack is C24** (the "Bridge" in README line 274's "Bridge + driver"; README line 408). C49 *calls*
+  C21's primitive and stores no trajectories of its own — C49 is the **driver**, not the bridge (C24) or the
+  store (C21) (README line 500 "factory builds the orchestration glue, not the foundations").
 - **NOT variant identification.** *What* prompt/hyperparameter/topology to try is **C47** (DSPy/Optuna);
   C49 replays a variant C47 (or an investigator) hands it. (inventory C47.)
 - **NOT statistical comparison or promotion.** "Was the variant better?" is **C48** (scipy/Evidently);

@@ -302,7 +302,10 @@ table below is the sweep-1 register entry for each.
 > or only to *register* it as unbuilt and homed here?** Reading A (register-only): C52:OQ6/C56:OQ-3/C39:OQ3
 > route the F54 *residual home* to C57 so it is "explicitly homed, not assumed-covered"; the audit mechanism
 > itself is "unbuilt, Batch 5" and C57 is a documentation artifact, so C57 owns the *ledger entry*, not the
-> mechanism. Reading B (build it): C57 could be read as the place the audit-pack lives. **Pick: Reading A —
+> mechanism. Reading B (build it): C57 could be read as the place the audit-pack lives — and this reading is
+> not merely loose: C56:OQ-3 *literally* routes "**C57** = objective-drift audit register **+ mechanism**
+> (unbuilt, Batch 5)" (review-log), where the "+ mechanism" clause is the exact wording that creates the
+> build-vs-register tension. **Pick: Reading A —
 > C57 registers the F54 residual as unbuilt + homed; it does not build the audit-pack.** C57 is explicitly a
 > register/coverage-map *artifact* (brief; inventory kind cross-cutting/documentation), and the bar DROPS a
 > coverage-enforcement engine — an objective-drift *audit* is a running mechanism, not a register. The
@@ -391,6 +394,11 @@ altitude.)
   security residual after G31) needs the audit-pack *built* by someone eventually. Confirm whether the
   orchestrator schedules a Batch-5 F54 audit component/pack (and who owns it), or accepts the residual as a
   permanent caveat on L5 autonomy. This is the residual most likely to be wrongly read as "covered."
+  **DEFERRED — needs orchestrator decision.** The contested wording is C56:OQ-3's "C57 = objective-drift
+  audit register **+ mechanism** (unbuilt, Batch 5)": sweep-1 reads the "+ mechanism" clause as Reading A
+  (C57 homes the *register entry*; the audit mechanism is a separate unbuilt Batch-5 component C57 points
+  at), but whether the mechanism gets a real owner — or C57 is itself that owner — is an architectural
+  scheduling call above this register's altitude.
 - **OQ-C57-4** (→ review-log): **Does the G39 re-tally (Reading A, §4.3) belong at sweep-2 as a pure
   editorial pass, or does it need each owning component to re-confirm its mode's status first?** The faithful
   reading is that C57 re-tallies from the components' current spec §6 statuses (the owners are authoritative);

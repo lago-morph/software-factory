@@ -351,8 +351,9 @@ per BUILDER-BRIEF altitude.)
   so it inherits P7's core cost win — fidelity probes run against the rate-limit-free twin, not the real
   service (README:195) — **except** the out-of-band **reference capture**, which does touch the real service
   occasionally (record/replay) and is the one place real-service cost/rate-limit applies (bounded by capture
-  cadence, OQ-C45-2). C45 adds **no policy-engine / framework runtime cost**: the checks are stack OSS
-  (Pact/schemathesis/Prism), the custom part is the predicate + wiring.
+  cadence, OQ-C45-2). C45 adds **no policy-engine / framework runtime cost**: the contract check is stack OSS
+  (Pact/schemathesis) over record/replay-captured references, the custom part is the predicate + the
+  behaviour diff + wiring.
 - **Scale.** No new store; verdicts/reports are beads (C19/C20), the predicate is per-service config. C45 is
   instantiated **per twinned dependency, just-in-time** (AI-CONTEXT:487), so it scales with the number of
   twinned services × probe-corpus size, not with traffic. The probe corpus's scale story is C30's; C45 adds a
@@ -375,9 +376,9 @@ per BUILDER-BRIEF altitude.)
    auditable artifact, **not** an implicit/"looks right" judgement. A twin with **no** predicate cannot be
    certified.
 2. **Usage-vs-promises verified (contract half, README:201)**: C45 runs the contract verification
-   (Pact/schemathesis/Prism) of the twin against the real service's contract and produces a per-dimension
-   contract-conformance result; a twin that accepts a request/auth/response the real contract forbids yields
-   a contract-dimension **fail**.
+   (**Pact / schemathesis**, README:201/AI-CONTEXT:344) of the twin against the real service's contract and
+   produces a per-dimension contract-conformance result; a twin that accepts a request/auth/response the real
+   contract forbids yields a contract-dimension **fail**.
 3. **Twin-vs-real verified (behaviour half, README:499)**: C45 drives the C30 fidelity-probe corpus at the
    twin and diffs responses against the recorded reference, scoring against tolerance; a twin whose behaviour
    breaches a dimension's tolerance yields a behaviour-dimension **fail**. (Reference is recorded/golden, not

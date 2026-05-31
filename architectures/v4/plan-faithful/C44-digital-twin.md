@@ -83,8 +83,10 @@ the I8 seam, C43 against the I1/I2 substitution surface — rather than waiting 
 4. **Confirm — reset/state-isolation under concurrent scenarios (T4/OQ-3)** so "thousands per hour" repeatable
    runs (README:195) are deterministic; interacts with C42 run isolation.
 5. **Confirm the deferrals hold (G22→C45, G31→C43, D-13):** C44 provides the twin + seams and asserts **no**
-   fidelity verdict and **no** blast-radius bound. If C45/C43 (not yet on disk) disclaim, the gap needs a home —
-   it must **not** silently fall back into C44 (OQ-1).
+   fidelity verdict and **no** blast-radius bound. C45/C43 are now **on disk (sweep-1) and accept these seams**
+   (C45 owns the fidelity predicate, not the twin; C43 owns the blast-radius bound + twin-by-default routing) —
+   so the residual is the **sweep-2 shape freeze**, not a missing owner. The gap must still **not** silently
+   fall back into C44 if a later sweep narrows either sibling (OQ-1).
 
 ## 6. Definition of done
 
@@ -108,6 +110,7 @@ satisfied as *seams*, with the verdicts owned by C45 and C43 respectively.**
 - T9: full AC-1…AC-8 suite green with real dependency unreachable; harness re-runnable per instantiated twin; **must pass before C45 verifies fidelity and C43 isolates behind the twin**.
 
 **Open questions to resolve before sweep 2** (mirrored to review-log): OQ-1 (G22/G31 cross-component seams —
-C45 fidelity bar + C43 isolation, both not yet on disk; D-13), OQ-2 (three-mode precedence + match/merge rule),
+C45 fidelity bar + C43 isolation, both **on disk sweep-1 and confirming this attribution**; residual = the
+sweep-2 shape freeze; D-13), OQ-2 (three-mode precedence + match/merge rule),
 OQ-3 (session-state + reset granularity / concurrent-scenario isolation), OQ-4 (`[[service]]` TOML + fixture/
 cassette schema), OQ-5 (record-replay + stateful + OpenAPI engine choice per twin / per SDK language).

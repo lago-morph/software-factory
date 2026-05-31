@@ -117,4 +117,6 @@ bad-value honesty, and **simplest-first scope** (no clustering/diagnosis/fix-gen
 boundary + inherited G33 ceiling + which metric series), OQ-2 (detector selection + signal carrier [C20 bead
 vs C23 event] + thresholds + quantified FP/recurrence policy + batch-vs-streamed scoring), OQ-3 (LLM-trajectory
 / semantic anomaly boundary — C36 is the numeric generic base, semantic layer composes *on* it), OQ-4 (F4
-quality-metric scope — which quality series exist at Phase 3b).
+quality-metric scope — which quality series exist at Phase 3b), OQ-5 (the C36↔C37 population seam = C37 OQ-1:
+does C36's flagged set *select* C37's clustering population, or does C37 read a broader set from C21 in parallel
+with C36's signal as a per-trajectory pointer — freeze jointly with C37 at sweep 2).

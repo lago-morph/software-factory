@@ -21,12 +21,18 @@ is *not* forced by the dependency graph. v4 itself only states the ordering "Obs
 diagnosis" (README:248); it never says the anomaly detector hands the clustering step its population. So C36's
 spec takes one side of a two-sided, explicitly-open seam and states it as established — the precise "silently
 assumed instead of named as an OQ" failure this review is charged to catch. (The brief's SEAM check.)
-**Fix (applied).** (a) Added **OQ-5** to §9 naming the C36↔C37 population seam and cross-referencing C37 OQ-1
-("freeze jointly at sweep-2"). (b) Softened the §2 downstream-C37 row and the I3 description from asserting
-C37 clusters "the flagged failures" to "C37 consumes C36's anomaly signal; **whether C36's flagged set
-*selects* C37's clustering population or C37 reads a broader set from C21 in parallel is OQ-5 (= C37 OQ-1)**."
-The *signal contract* (I3 carries what/score/provenance) is unchanged and kept — only the unstated claim that
-the signal **scopes C37's input** is demoted to the OQ it is.
+**Fix (applied) + resolution DEFERRED.** Applied in place: (a) added **OQ-5** to §9 naming the C36↔C37
+population seam, cross-referencing C37 OQ-1, with the signal-as-pointer-vs-signal-as-population-selector
+distinction made explicit and "freeze jointly with C37 at sweep 2"; (b) rewrote the §2 downstream-C37 row from
+"embeds + clusters **the flagged failures** … the anomaly→cluster trigger seam **is** C36's signal (I3)" to
+state that C37 `depends on C21` (reads trajectories directly) and that **whether C36's flagged set *selects*
+C37's population or C37 reads a broader set from C21 in parallel is OQ-5 (= C37 OQ-1)**; (c) softened the **I3**
+description from "**The trigger** C37/C38 consume" to "the signal C37/C38 consume to open diagnosis," with a
+parenthetical demoting the population-scoping claim to OQ-5. The **signal contract itself** (I3 carries
+what/score/provenance into C21) is unchanged and kept — only the unstated claim that the signal **scopes C37's
+input** is demoted. The seam's *resolution* (which reading wins; whether C37 re-reads independently from C21)
+is architecturally significant and left **DEFERRED — needs orchestrator decision** (joint C36/C37 sweep-2
+freeze, now recorded as OQ-5 rather than silently decided).
 
 ### RC36-02 — minor — the "§10 license table (line 310/311)" cite is mislabelled: the line numbers + row text are README's (Part 5), but the label and placement attribute them to AI-CONTEXT §10, where 310/311 are unrelated rows
 **Claim.** The §"Source" header cites "**§10** license table (line 310 'PyOD | BSD-2-Clause | Clean'; line 311

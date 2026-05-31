@@ -147,6 +147,13 @@ the `factory_build` bead (C20 §4.2; D-3) at the **component grain**:
 > verdict** that C52's gate and C53's milestone can read. These are C20 schema-slot requests (like
 > C20's own G18 slots); concrete field shape is C20's sweep-2 deliverable. No richer provenance model is
 > invented — the grain stays **component-level** per RC11-01.
+>
+> **Slot-request status (do not mistake for existing C20 fields).** C20 today carries **only
+> `transfused_from`** on the `factory_build` bead (`spec/C20-bead-schema.md` §4); `transfusion_license`
+> (grounded in AI-CONTEXT:429 prose), `transfusion_mode`, and `transfusion_verdict` do **not** yet exist
+> as C20 fields. This table lists values C51 **gives meaning to and requests as C20 slots**, not fields
+> C20 already provides; C20 §4.2 authors the on-disk shape at sweep-2 (D-3). C52 §3 corroborates ("the
+> verdict … Recorded on the `factory_build` bead (C20 slot per C51 §4)").
 
 > [FAITHFUL-FILL] **`transfused_from` cardinality = "≥1", set-valued.** README:497 writes the field
 > singular (`transfused_from: <url>`) but README:496 / AI-CONTEXT §9.1 routinely name **multiple**

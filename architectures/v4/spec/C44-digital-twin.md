@@ -353,12 +353,15 @@ instantiated twin (README:468 "Repeat per dependency").
 
 ## 9. Open questions
 
-- **OQ-1 (→ review-log, top): G22/G31 cross-component seams (C45 fidelity, C43 isolation) not yet on disk.**
+- **OQ-1 (→ review-log, top): G22/G31 cross-component seams (C45 fidelity, C43 isolation) — sweep-2 joint freeze.**
   §6 binds, from C44's side, that **C45 owns the fidelity bar** (G22) and **C43 owns the isolation/blast-radius
   bound** (G31, per D-13), with C44 providing the twin + declared cloned-surface contract (I2) + fidelity seam
-  (I8) + isolation-ready call surface (I1). Both siblings are the same batch but **not yet written**; confirm
-  the I2/I8 contract shape with C45 and the I1/I2 substitution contract with C43 at their build, and confirm
-  C44 carries no fidelity bar and no enforcement teeth.
+  (I8) + isolation-ready call surface (I1). Both siblings are the same batch and are **on disk (sweep-1) and
+  already confirm this attribution** (C45 §1/§3 owns the fidelity predicate, not the twin; C43 §1/§3 owns the
+  blast-radius bound + twin-by-default routing) — so OQ-1 is no longer "confirm the sibling is written" but
+  **cross-check the concrete shape at the joint sweep-2 freeze**: the I2/I8 contract vs C45 §3 (incl. whether
+  C45's recorded reference consumes C44's I3 capture, C45:OQ-C45-2), and the I1/I2 substitution contract vs C43
+  §3, with C44 carrying **no** fidelity bar and **no** enforcement teeth confirmed against both.
 - **OQ-2 (→ review-log): three-mode precedence + match/merge rule (G22-adjacent).** The
   replay→stateful→OpenAPI ordering (INV-1) is a FAITHFUL-FILL; the exact request-match rule (replay), the
   stateful-vs-replay merge, and when to prefer a stale fixture over a fresh OpenAPI mock interact with C45's

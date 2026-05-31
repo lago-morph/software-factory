@@ -33,7 +33,7 @@ Here is the same picture in a table, so you can compare the phases side by side.
 | **(before Phase 1)** | A person, checking the engine | Confirm the off-the-shelf engine does what it claims | Nothing — this is the first step |
 | **Phase 1: Human drives** | A person, every step | The hand-driven loop; the corpus | The engine check passed |
 | **Phase 2: Batched review** | A person, in batches | Batched-review loop; human "are the goals still right?" checkpoint | The **safety fence is up** |
-| **Phase 3: Builds itself** | The factory itself | The twins; the automated drift detector | Fence proven in Phase 2; automated drift detector built |
+| **Phase 3: Builds itself** | The factory itself | Practice stand-ins for outside services (the twins); the automated drift detector | Fence proven in Phase 2; automated drift detector built |
 
 ---
 
@@ -85,7 +85,7 @@ Phase 3 is full lights-out: the factory takes on work, does it, checks it, and o
 
 **What gets built in Phase 3.**
 
-- **The twins.** Two copies of the factory that check each other's work. (The "twins" are a build-and-verify pair: one proposes, one independently confirms — so no single copy gets the last word.)
+- **The twins.** Realistic stand-ins for the outside services the factory has to work with — convincing fakes it can rehearse risky operations against before it ever touches the real thing. (Think a dummy of a cloud service or a payment system: the factory practices on the dummy, so a mistake hits the fake, not the real production system.)
 - **The automated objective-drift detector.** The automated version of the Phase 2 goal checkpoint. Before we go fully lights-out, the factory needs a machine that watches for the goals quietly drifting — because once a person is no longer reviewing each batch, there is no human left to ask "are the goals still right?" The factory cannot police its own goals until this detector exists, so it is a requirement *before* Phase 3 begins, not something we hope to add during it.
 
 ---
@@ -117,7 +117,7 @@ The order matters most at two points: the engine check has to come first (or the
 
 ## How this maps to the engineer guide
 
-Every plain-language term here has a precise counterpart in the [engineer-level architecture guide](./architecture-guide-for-engineers.md): "the fence" maps to the specific lethal-trifecta controls, "the twins" to the build-and-verify pair, "the autonomy ladder" to the staged-autonomy components, and "the off-the-shelf engine" to the named runtime. The decisions that fixed the build order — fence-before-unattended, the goals checkpoint, and engine-check-first — are recorded in [the decisions doc](./decisions-to-make.md).
+Every plain-language term here has a precise counterpart in the [engineer-level architecture guide](./architecture-guide-for-engineers.md): "the fence" maps to the specific lethal-trifecta controls, "the twins" to the digital-twin practice environments (fakes of external services), "the autonomy ladder" to the staged-autonomy components, and "the off-the-shelf engine" to the named runtime. The decisions that fixed the build order — fence-before-unattended, the goals checkpoint, and engine-check-first — are recorded in [the decisions doc](./decisions-to-make.md).
 
 ---
 

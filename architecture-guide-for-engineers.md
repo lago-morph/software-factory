@@ -112,7 +112,7 @@ The corpus is deliberately honest here: most of the substrate is glue over exist
 | Storage / vector | **Off-the-shelf (OSS)** | Standard substrate concerns |
 | **Counterfactual replay** | **Genuinely new** | Re-run a past decision point with one input changed to attribute outcomes (debugging the factory's own decisions) |
 | **Gene-transfusion predicate** | **Genuinely new** | The formal "at least as good" gate for self-built components; the crux of the bootstrap claim |
-| **Objective-drift handling** | **Genuinely new** | Detect/correct slow divergence of effective from stated objective over self-build cycles |
+| **Objective-drift handling** | **Genuinely new (still a residual — no built mechanism yet)** | Detect/correct slow divergence of effective from stated objective over self-build cycles; today a registered residual with a human checkpoint, the automated detector is required before full lights-out (adopted decision) |
 
 Bottom line: the *substrate* is largely solved-by-others; the *methodology's* self-improvement and self-attribution machinery is where the original work lives.
 
@@ -133,7 +133,7 @@ flowchart TD
 
 - **Lethal trifecta + the fence.** Danger arises when a system simultaneously has private-data access, untrusted-content exposure, and the ability to communicate externally. The **fence** breaks at least one leg. Per the adopted operator decision, the fence is **pulled forward** to a *precondition before any unattended running* — not a later add-on. This is the first gate on the **autonomy ladder** (autonomy is earned rung by rung; lower rungs need human approval per task, higher rungs permit unattended operation).
 - **Holdout integrity.** No path may leak held-out criteria into a builder; a leak silently voids the satisfaction signal.
-- **Objective drift.** The effective objective can slowly diverge from the stated one across self-build cycles; a monitor watches for it — but the detection mechanism is itself unproven.
+- **Objective drift.** The effective objective can slowly diverge from the stated one across self-build cycles. Today this is a *registered residual*: a cheap human checkpoint catches it while a person still reviews batches, and an automated detector is a required precondition for full lights-out (an adopted operator decision) — but that detector is unbuilt and unproven.
 - **Unverified substrate caveat.** Many capabilities are claimed "Gas City does X natively." Treat every such claim as *a claim to test, not a fact* — a wrong assumption here invalidates everything built on top of it.
 
 ---

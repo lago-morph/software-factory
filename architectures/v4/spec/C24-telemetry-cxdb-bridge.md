@@ -309,7 +309,7 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
 
 **Test strategy.** A **bridge integration pack** that boots the pinned CXDB (C21 conformance prerequisite),
 points the bridge at a synthetic inbox, and drives AC-1…AC-9 — in particular the parent-chain mapping, the
-complete-file gate, the at-least-once/idempotent delivery, and the **CXDB-down fail-open/buffer/recover**
+complete-file gate, the at-least-once/idempotent delivery, and the **CXDB-down fail-open/retain-in-inbox/recover**
 cycle (the G33 de-risker). This suite **must pass before the P11 self-healing readers (C36/C37/C38) rely on
 trajectories landing in CXDB**, since they assume C24 delivered them. It is the concrete realization of
 README line 541's "first non-trivial integration; budget a week."

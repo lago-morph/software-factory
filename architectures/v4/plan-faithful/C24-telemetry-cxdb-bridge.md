@@ -14,7 +14,7 @@
 | T6 | **CXDB HTTP poster (I4)** — POST turn to :9010 (C21 I2); handle ack/error; rely on BLAKE3 idempotency for safe re-post (INV-1). | S | T4, C21 I2 |
 | T7 | **Retain-in-inbox + retry/back-pressure (I5/INV-3, addresses G33)** — leave un-acked complete bodies **in the inbox** (the inbox dir is the durable spool — **no separate queue/buffer store**); bounded retry/back-off when CXDB down; fail-open to the run; honest limit is inbox disk capacity (OQ-4). | M | T6 |
 | T8 | **Restart-resume + per-session head recovery (INV-5)** — restart baseline = **re-scan inbox + idempotent re-post** (store idempotency makes re-posts no-ops; no persisted cursor needed for correctness); restore per-session head (bridge-local map **or** CXDB re-query — OQ-3). An optional inbox cursor to skip already-acked bodies is a sweep-2 perf add, not required. | M | T5, T7 |
-| T9 | **Quarantine + bridge-health events** — quarantine unparseable bodies; emit inbox-lag / buffer-depth / CXDB-up-down / error-rate events to C23 for observability. | S | T6, C23 I1 |
+| T9 | **Quarantine + bridge-health events** — quarantine unparseable bodies; emit inbox-depth/lag / CXDB-up-down / error-rate events to C23 for observability. | S | T6, C23 I1 |
 | T10 | **Integration pack (AC-1…AC-9)** — synthetic-inbox harness + pinned CXDB; drive all acceptance tests, especially the CXDB-down fail-open/recover cycle. | L | T3–T8, C21 conformance pack |
 
 ## 2. Dependency graph
@@ -93,5 +93,5 @@ the §13.2 inbox/endpoint binding.
 - T10: full AC suite green; **must pass before C36/C37/C38/C46/C49 build on landed trajectories**.
 
 **Open questions to resolve before sweep 2** (mirrored to review-log): OQ-1 (G27 residual / event-bus
-latency), OQ-2 (file-completeness mechanism), OQ-3 (exact `session.id`→parent rule), OQ-4 (buffer bound /
-durability ceiling), OQ-5 (HTTP :9010 vs binary :9009 under load).
+latency), OQ-2 (file-completeness mechanism), OQ-3 (exact `session.id`→parent rule + head-map persistence),
+OQ-4 (inbox-capacity / durability ceiling), OQ-5 (HTTP :9010 vs binary :9009 under load).

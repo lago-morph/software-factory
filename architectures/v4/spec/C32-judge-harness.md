@@ -94,7 +94,7 @@ for the aggregator (C33) and the holdout audit (C34).
   audit — Detects if isolation has been violated", README:173). Per **D-13**: **C34 owns** holdout-integrity
   enforcement + audit (incl. judge-independence checks under D-1); **C42 provides** the partition; C32 merely
   *consumes* its constrained judge identity and *emits* a score C34 can audit. C32 runs in the **judge rig**
-  with its own partition; it is not the boundary policeman.
+  (role-isolated from the implementer; its exact partition is OQ5/OQ-C42-3); it is not the boundary policeman.
 - **NOT the model router / independence policy (C29).** *Which* model the judge runs on, the floor, and the
   `family(judge) ≠ family(coder)` constraint (and its Phase-0 relaxation) are **C29's**. C32 *asks C29 for*
   the judge model + constraint and *honors* them; it does not decide them. (Inventory: C32 depends on C29.)
@@ -120,7 +120,7 @@ for the aggregator (C33) and the holdout audit (C34).
 
 | Direction | Component | Relationship |
 |---|---|---|
-| Depends on | **C30** Scenario store | Supplies the held-out scenario (Inspect AI `Task` + rubric) at `scenarios/<component>/` that C32 scores a trajectory against. C32 reads scenarios via the judge rig's partition. |
+| Depends on | **C30** Scenario store | Supplies the held-out scenario (Inspect AI `Task` + rubric) at `scenarios/<component>/` that C32 scores a trajectory against. C32 reads scenarios through the judge's role-isolated read surface (exact partition = OQ5). |
 | Depends on | **C29** Model floor & stylesheet | Supplies the **judge model identity** (`resolveModel(judge node)`) and the **independence constraint** (`crossFamilyRule`/`IndependenceConstraint`, Phase-0 default `L1`, D-1). C32 honors both; it does not pick the model. |
 | Reads (trajectory source) | **C21** CXDB / **C19** beads | The trajectory C32 scores is the recorded turn-DAG (CXDB) / bead work-product. `> [FAITHFUL-FILL]` — inventory names only C30/C29 as deps, but "Scores **trajectories**" requires a trajectory source; CXDB is the canonical trajectory store (inventory C21). Read-only; minimal. |
 | Consumed by | **C33** Satisfaction metric aggregator | Reads C32's per-trajectory score records ("judge outputs from beads", README:426) and computes the satisfaction distribution. |
@@ -207,7 +207,8 @@ C32 is **restart-safe**: scoring is re-runnable (idempotent at the bookkeeping l
 1. A trajectory becomes scoreable (a build bead completes, or C31 finishes a scenario run, or a
    batch/replay requests scoring). The (trajectory, scenario) pair is the unit.
 2. C32 obtains the **judge model identity + independence constraint** from C29 (`resolveModel(judge node)`;
-   Phase-0 `L1`, D-1) and resolves the held-out **scenario** + rubric from C30 (judge-rig partition).
+   Phase-0 `L1`, D-1) and resolves the held-out **scenario** + rubric from C30 (judge's role-isolated read
+   surface; exact partition = OQ5).
 3. C32 runs the **Inspect AI scorer** with the LLM grader (Claude Code, judge rig, D-1) bound to the
    trajectory + rubric → a satisfaction score.
 4. *(Ensemble, optional)* C32 runs N judges and reduces to a disagreement signal (README:187).
@@ -351,3 +352,11 @@ judge-FP-rate test fixtures are **sweep-2**.
 - **OQ4 (runner↔scorer split).** Inspect AI bundles runner+scorer but v4's inventory splits them (C31 runner,
   C32 judge). The exact seam — does C31 *invoke* C32 as the scorer, or does C32 score post-hoc from CXDB, or
   both? — is `[FAITHFUL-FILL]`; confirm the C31↔C32 contract at sweep-2 (overlaps C31).
+- **OQ5 (judge partition read-surface — `DEFERRED — needs orchestrator decision`).** The judge *role* is
+  grounded (inventory C42 row "Worker/scenario/judge roles" + spec/C42's role set), but the judge's exact
+  **partition** — a dedicated `judge` partition vs a role-isolated read of `code`+scenario-outputs — is **not**
+  settled by v4 and is the **joint open question OQ-C42-3 + OQ-C34-3**. AI-CONTEXT §13.3 names only the
+  `scenario_authoring`/`implementer` rigs (+ the `inspect_eval` tool), **not** a judge rig; it is therefore
+  not the source for the judge partition. C32 must not pre-decide this — it asserts only the judge's *role/
+  prompt isolation* and defers the partition shape to the C42/C34 joint ruling. (Resolving it pins how I3 and
+  AC2 read at sweep-2.)

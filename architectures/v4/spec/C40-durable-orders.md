@@ -112,8 +112,10 @@ Phase-3b build bullets (which are the Healer pieces, README lines 459–466); Or
 | Peer (vocabulary) | **C07** glossary; **C12** formula | C07 carries the *Order* glossary entry (D-8; C07 line 125). C12 *references* Orders but defines them here (D-8; C12 §1 line 59). The workflow an Order launches is typically a C12 formula / C13 molecule. |
 | Upgrade path (deferred) | **Temporal** (MIT) | The optional fallback if Orders prove insufficient (AI-CONTEXT §11.1 line 486); **not built** at sweep 1. Also the transfusion exemplar for durable-workflow patterns (§9.1 line 408). |
 
-**Position in the system.** C40 sits in the **Self-Healing Loop** subsystem and is built in **Batch 3 /
-Phase 3b** (component-inventory line 111; README line 459 "Each piece is a separate factory build"). It is a
+**Position in the system.** C40 sits in the **Self-Healing Loop** subsystem and is built in **inventory
+Batch 3** (component-inventory line 111), ahead of the **README Phase-3b** Healer pieces (C36–C39,
+inventory Batch 4; README lines 459–466 "Each piece is a separate factory build") that consume it — the
+two numbering schemes are distinct and not 1:1 (see §1). It is a
 **thin seam over a native Gas City primitive** — its job is to specify *how* the self-healing workflows are
 triggered-and-survived, not to add an engine. It is **off until P11 is built** (Phase-0 "Explicitly off"
 list, AI-CONTEXT §3.4); the minimal factory never instantiates an Order.
@@ -128,7 +130,7 @@ do not bind to invented `gc` Order internals**; names below are *roles*, not ass
 |---|---|---|---|---|
 | I1 | **Order definition / registration** | inbound (config) | Declare an Order: a **trigger predicate over C23 events** + the **workflow it launches** + a **retry policy**. Enabled by the `orders` config block (off at minimum). Concrete TOML shape = sweep-2 / pinned `gc`. | C40 (seam); C03 (flag); C01 (host) |
 | I2 | **Event-trigger subscription** | inbound (read) | C40 consumes C23's **ordered-read / tail / checkpoint** surface (C23 I2/I3) to watch for events matching an Order's trigger predicate; fires the Order on a match. Resumes from its last-processed `seq` after a restart (the property that makes triggering crash-safe). | **C23** (provides stream + checkpoint), C40 (subscriber) |
-| I3 | **Order execution / launch** | outbound | On trigger, the Order **launches its workflow** — typically a C12 formula instantiated as a C13 molecule, or a C39 fix-task chain. C40 owns *that the launch happens durably*; the launched workflow's steps are owned downstream. | C40 (launch), C12/C13/C39 (workflow content) |
+| I3 | **Order execution / launch** | outbound | On trigger, the Order **launches its workflow** — *inferred* target: a C12 formula instantiated as a C13 molecule, or a C39 fix-task chain. (This launch target is the faithful composition of "Order = event-triggered **workflow**", AI-CONTEXT §3.3 line 109, with "formula/molecule = the workflow primitive", §3.2 concept 7; v4 does not state the wiring directly — it is pinned to the pinned-`gc` `orders` semantics at sweep 2, and the C39 leg is confirmed at OQ-4.) C40 owns *that the launch happens durably*; the launched workflow's steps are owned downstream. | C40 (launch), C12/C13/C39 (workflow content) |
 | I4 | **Durable state / resume** | internal (state) | The Order's **in-flight progress** is persisted by Gas City so a crash/restart **resumes** it (what survived is the durability ceiling, §4/§6). C40 specs the *contract* ("progress survives crash"); the backing store is Gas City's. | **Gas City** (mechanism), C40 (contract) |
 | I5 | **Retry policy** | internal (config) | A failed step is retried per the Order's policy (README line 258 "retries"). The policy is an Order property; defaults + bounds are Gas City's. | **Gas City** (mechanism), C40 (contract) |
 | I6 | **Temporal upgrade seam (latent)** | outbound (deferred) | The named, **unbuilt** fallback: if Orders prove insufficient, the durable-workflow role is satisfied by Temporal behind this same triggering/durability contract (AI-CONTEXT §11.1 line 486). Documented, not wired. | (deferred) |
@@ -173,14 +175,16 @@ the **event stream it reads is C23's**. State C40 is the spec-of-record for at s
 **Consistency / lifecycle.** An Order is **declared once** (config), then **dormant** until its trigger
 fires; on a matching C23 event it **launches** its workflow and **persists progress** until completion;
 across a crash it **resumes**. The Order primitive is **additive and off by default** (Phase-0 "Explicitly
-off", AI-CONTEXT §3.4) — nothing in the minimal factory creates an Order; the capability is *enabled* in
-Phase 3b when the self-healing loop is built. The durability is **as deep as Gas City Orders go and no
+off", AI-CONTEXT §3.4) — nothing in the minimal factory creates an Order; the capability is *enabled*
+when the self-healing loop is built. The durability is **as deep as Gas City Orders go and no
 deeper** — see §6 (G33 ceiling): C40 does not add replication, exactly-once, or cross-process saga semantics.
 
 ## 5. Behavior
 
-**Enable (Phase 3b).** Orders are turned on via the `orders` config block (off at minimum, AI-CONTEXT §3.4);
-this is part of building the self-healing loop (README line 459 "Each piece is a separate factory build").
+**Enable (when the self-healing loop is built).** Orders are turned on via the `orders` config block (off at
+minimum, AI-CONTEXT §3.4); this is part of building the self-healing loop (README lines 459–466 "Each piece
+is a separate factory build") — C40 is the Batch-3 seam that must be standing before the Phase-3b Healer
+pieces consume it (see §1).
 
 **Declare an Order (config path).** An operator/pack declares an Order via I1: a trigger predicate over C23
 events (e.g. `action_type = crash` / a failed-gate event), the workflow it launches (a C12 formula or C39
@@ -280,7 +284,8 @@ build store-replication here (the ceiling, above).
   itself recorded on the C23 event bus (every action emits an event, C23 INV-4) — so Orders are observable
   through the same audit trail, and their progress is visible to the P11 loop they serve.
 - **Ops.** **Off at minimum** (`orders` in the Phase-0 "Explicitly off" list, AI-CONTEXT §3.4); enabling it
-  is a Phase-3b step. Inherits Gas City's **migration-tail risk** (AI-CONTEXT §3.5): an Order-semantics or
+  is part of standing up the self-healing loop (C40 builds in Batch 3, ahead of the Phase-3b Healer pieces
+  that consume it — see §1). Inherits Gas City's **migration-tail risk** (AI-CONTEXT §3.5): an Order-semantics or
   config-format change upstream would ripple here — **pin the Gas City version** (mirrors spec/C01 INV-1,
   spec/C23 §7). The "Orders insufficient → Temporal" upgrade is an ops/architecture decision, deferred
   (AI-CONTEXT §11.1 line 486).
@@ -310,7 +315,11 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2, against the **pinned**
    HA / cross-process saga no → that is the Temporal-deferral trigger). Verified as a **documentation/review
    gate**, not by hardening.
 8. **AC-8 (drives the P11 workflow — I3):** an Order can launch its workflow (a C12 formula/C13 molecule or a
-   C39 fix-task chain) on trigger, so the self-healing loop's response runs durably (README §3b).
+   C39 fix-task chain) on trigger, so the self-healing loop's response runs durably. *(The specific
+   Order→C39 launch coupling is C40's inference — v4 states only "Orders subscribing to crashes/gates",
+   AI-CONTEXT §3.1 line 76, and lists the Healer pieces at README Phase 3b without naming Orders as their
+   carrier — so AC-8 is verified against whatever launch surface the pinned `gc` Orders expose, and the
+   C39 leg is confirmed jointly with C39 at OQ-4, not assumed.)*
 
 **Test strategy.** A **Gas-City-Orders conformance pack** (mirroring the C01/C21/C23 conformance shape) that
 boots the **pinned** Gas City substrate with the `orders` block enabled and asserts AC-1…AC-8 against the

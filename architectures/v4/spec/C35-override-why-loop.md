@@ -7,7 +7,7 @@
 
 ## 1. Purpose & responsibility
 
-C35 is the **"why" discipline control-loop** (P8): the mechanism by which an **operator override of the system becomes institutional knowledge**. It closes the loop *override → why → bead → pattern → rule*: it (1) **detects** when an operator bypassed/overrode what the factory would have done, (2) **prompts for the "why"**, (3) **logs** the override + rationale as a durable `override` bead, (4) **surfaces recurring override patterns** across the accumulated log, and (5) **converts a recurring pattern into a new validation rule** that feeds the spec linter (C10) / workflow linter (C15) so the same class of override stops being necessary.
+C35 is the **"why" discipline control-loop** (P8): the mechanism by which an **operator override of the system becomes institutional knowledge**. It closes the loop *override → why → bead → pattern → rule*: it (1) **detects** when an operator bypassed/overrode what the factory would have done, (2) **prompts for the "why"**, (3) **logs** the override + rationale as a durable `override` bead, (4) **surfaces recurring override patterns** across the accumulated log, and (5) **converts a recurring pattern into a new validation rule** — v4's named sink is a new Inspect-AI rubric (C30, README L216); spec-/workflow-structural classes are faithfully inferred to feed the spec linter (C10) / workflow linter (C15) (§3 contract 6) — so the same class of override stops being necessary.
 
 This is the genuine P8 capability — *institutional learning from human corrections* — that no piece of the stack delivers on its own. README L208 states the thesis verbatim: "If you can articulate why something looks wrong, you've described a validation rule. Capture overrides, surface patterns, convert to rules." C35 is the orchestration that wires the stack's parts (Claude Code native hooks for detection, C20 `override` beads for storage, a query/clustering pack for surfacing) into that loop and carries the small custom glue between them.
 
@@ -75,7 +75,7 @@ C35 owns **almost no durable state of its own**; it is a control-loop over state
 | `created_by` attribution on each override | **C41** | Stamped by the identity layer; C35 supplies the actor context from the hook. |
 | Hook registration (`.claude/` + pack) | **C02 pack / C28** | Declarative, version-controlled; C35 contributes the handler, not the hook engine. |
 | Recurring-pattern report | **transient** (query output) | Re-derivable from the `override` log on each periodic run; C35 holds it only across one surfacing→review cycle. (May be persisted as a bead at sweep-2; not owned-state in sweep-1.) |
-| Converted/proposed rules | **C10 / C15 / C30** | Once emitted, the rule lives in the sink's own store; C35 keeps only a provenance back-reference (which `override` cluster produced which rule). |
+| Converted/proposed rules | **C30** (v4-named rubric sink); **C10 / C15** (inferred sinks, §3 contract 6) | Once emitted, the rule lives in the sink's own store; C35 keeps only a provenance back-reference (which `override` cluster produced which rule). |
 
 The **override-recognition predicate** and the **recurrence threshold** are C35's two pieces of genuine policy/config (carried in C03 / the pack), but they are configuration, not a persistent store. The loop is otherwise **stateless between runs** — its memory *is* the C20 `override` log.
 

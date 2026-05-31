@@ -155,8 +155,8 @@ the **trajectory** is C21's. State C33 is the spec-of-record for at sweep 1:
 |---|---|---|---|
 | **Satisfaction-metric result** | The computed distribution + summary statistics + population identity (grouping key, sample count). The component's *output*, derivable on demand from C19. | Emitted as tool-node output; optionally recorded as a bead/CXDB result for C46 trend use (an *optimization*, not required — re-computable from inputs, INV-5). | C33 (shape); C46 (trend consumer) |
 | **Reduction config** | Population-default grouping key, score-normalisation rule, the optional reporting cutline, the statistic set to emit. | Pack TOML (C02/C03 model). | C02/C03 (model); C33 (binding) |
-| **Judge-output beads (read-only input)** | Per-trajectory score + run/scenario identity — the population C33 reduces. **Owned by C20/C19**, read-only to C33. | C19 (bead store). | **C20** (schema), **C19** (store) |
-| **Trajectory (referenced, not read)** | The scored run; lives in CXDB (C21), reachable via the judge output's run identity. C33 does **not** read trajectory bodies — only the scores about them. | CXDB (C21). | **C21** |
+| **Judge-output beads (read-only input)** | Per-trajectory score + run/scenario identity — the population C33 reduces. **Owned by C20/C19**, read-only to C33. C19 is a C33 dependency edge (inventory); C20 is a *referenced* schema owner (D-3), not a C33 dep. | C19 (bead store). | **C20** (schema), **C19** (store) |
+| **Trajectory (referenced, not read)** | The scored run; lives in CXDB (C21), reachable via the judge output's run identity. C33 does **not** read trajectory bodies — only the scores about them. C21 is a *reference*, not a C33 dependency edge (deps are C32/C19). | CXDB (C21). | **C21** |
 
 > [FAITHFUL-FILL] v4 specifies the *behavior* ("read judge outputs from beads, compute distributions",
 > README:426) but not C33's persisted state. The minimal faithful set is **none that is source-of-truth**: the

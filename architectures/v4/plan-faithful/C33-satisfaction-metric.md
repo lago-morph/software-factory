@@ -9,7 +9,7 @@
 | T1 | **Freeze the metric seam contract (M1)** — the input contract (judge-output bead shape from C32/C20: per-trajectory **score** + run/scenario identity), the population/grouping key (I3, default per spec-revision), and the **output** contract (satisfaction distribution + statistics + population identity, I4). This is the interface C46/C53/C55 build against. | S | C32 judge-output shape, C20 bead type, C19 read API |
 | T2 | **Pack/tool-node skeleton** — package C33 as a small Go Gas City tool node per C02/C17 ABI; config surface (population default, score-normalisation rule, optional reporting cutline, statistic set) per C03 model (README:426 "small Go tool node"). | S | C02/C17 ABI, T1 |
 | T3 | **Judge-output population read (I1)** — query C19 for a population's judge-output beads by grouping key; collect scores + identities; exclude malformed/missing beads with a counted exclusion (fail-open per record). | M | T2, C19 read API, C20 type |
-| T4 | **Score reduction → distribution + statistics (I2/INV-1)** — wrap **Inspect AI score reduction** + numpy/scipy/pandas to produce the distribution + summary statistics (count, central tendency, spread, quantiles). **No custom estimator** (the bar). | M | T1, T3, Inspect AI pinned |
+| T4 | **Score reduction → distribution + statistics (I2/INV-1)** — wrap v4's named **Inspect AI score reduction** (companion: MLflow tracking, AI-CONTEXT:393) + a thin distribution-summary helper (`[FAITHFUL-FILL]`: v4 names no stats library for C33; scipy is C48's significance engine, README:275) to produce the distribution + summary statistics (count, central tendency, spread, quantiles). **No custom estimator** (the bar). | M | T1, T3, Inspect AI pinned |
 | T5 | **Population/grouping key resolver (I3)** — resolve the trajectory set per spec-revision (default), with optional scenario/cohort slices; surface **sample count** with every result (INV-4). | S | T3 |
 | T6 | **Threshold-free reporting + optional cutline (INV-3, addresses G09)** — distribution is well-defined with **no** cutline; a supplied reporting cutline adds a rate-above-cutline statistic only, never a pass/fail verdict. | S | T4 |
 | T7 | **Metric result output (I4)** — emit distribution + statistics + population identity (incl. n) as the tool-node declared output; shape it for C46/C53/C55 consumption. | S | T4, T5, T6 |
@@ -73,8 +73,9 @@ WS-A and WS-B meet at the T3→T4 handoff (the collected score population).
 4. **Confirm — judge-output score model + ensemble collapse (T3/OQ-4, C32 boundary).** Freeze the per-trajectory
    **score scale** and how a **multi-judge ensemble** collapses to one score against C32's real output before
    the normalisation rule (I2) sets.
-5. **Measure — population scale (OQ-2).** Confirm numpy/pandas reduction is fine at L5-volume populations, or
-   whether incremental/streamed reduction is needed at sweep 2 (no bespoke scaling machinery at Sweep-1).
+5. **Measure — population scale (OQ-2).** Confirm the Inspect-AI-reduction + thin-stats-helper path is fine at
+   L5-volume populations, or whether incremental/streamed reduction is needed at sweep 2 (no bespoke scaling
+   machinery at Sweep-1).
 
 ## 6. Definition of done
 
@@ -82,7 +83,7 @@ WS-A and WS-B meet at the T3→T4 handoff (the collected score population).
 population — distribution-not-boolean (P6), reads judge outputs from C19 beads, **no model call / pre-computed
 verdict**, **threshold-free** (cutline only as an optional reported statistic), **n always surfaced** with an
 explicit insufficient-sample path, **reproducible** reduction owning no source-of-truth, consumable by
-C46/C53/C55, **off-the-shelf reducer** (Inspect AI + numpy/scipy/pandas, no custom stats engine), and the
+C46/C53/C55, **off-the-shelf reducer** (v4-named Inspect AI score reduction + a thin stats helper [FAITHFUL-FILL]; no custom stats engine — scipy significance is C48's), and the
 **FE-5 holistic baseline** computed against the existing C08 spec with **no C08 change**. C33 is a small Go
 tool node in a Gas City pack.
 

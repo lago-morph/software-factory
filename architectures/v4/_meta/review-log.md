@@ -46,6 +46,12 @@ this file is written by the primary or a single collector agent per pass.
 - **D-16 — Loop-primitive DOT encoding owned by C12; joint C12/C14/C15 Sweep-2 freeze.** The DOT encoding of a sanctioned bounded loop / back-edge marker (so C15 can distinguish a bounded loop from a raw cycle) is owned by C12 (formula grammar) and frozen jointly with C14 (translator) + C15 (linter) at Sweep-2, blocked on the real `gc` loop primitive (C12:OQ-2). Sweep-1: C14 names the back-edge marker as a seam element (interim fail-loud → end-state marked-back-edge); C15 consumes it; none invents the encoding. (C14↔C15 seam.)
 - **D-17 — Judge read-surface: Sweep-1 default + joint C42/C34/C32 Sweep-2 freeze.** Sweep-1 default: the judge (C32) MAY read the worker's trajectories + the held-out scenarios (to score); the worker MUST NOT read the judge rig or the scenarios (holdout). The exact judge-partition SHAPE (separate rig vs shared scenario partition; precise read-surface) is settled jointly by C42 (provides partition) + C34 (enforces+audits) + C32 (judge) at Sweep-2 — unifies OQ-C42-3 + OQ-C34-3 + C32-OQ5. (C32 DEFERRED.)
 
+### Batch-4 review integration (2026-05-31) — D-18..D-19 + XC-3 resolved
+
+- **XC-3 RESOLVED — G18 numeric termination policy owned by C39.** C39 (fix-task-loop-closure) owns the numeric termination/escalation policy (N-attempts→escalate, F52 oscillation detection, L5 ship-authorization) over C20's bounded slots; **C18** owns the convergence loop + the bound-reached signal; **C20** owns the schema slots. Verified across the C16/C18/C20/C39 reviews and against C39's now-on-disk spec (§1/§3.2 contract 7/§6 "CRITICAL — XC-3"). Closes the XC-3 routing that C16/C18/C20 deferred to C39. (See the updated XC-3 entry in the Cross-component-issues section.)
+- **D-18 (PROVISIONAL — operator confirmation requested; morning-review item) — C43 split-sequencing.** C43 (isolation-boundary) splits across phases: its **boundary-typing + blast-radius half** (depends only on C42 + the P4 deterministic-first reconciler/tool-node primitives, NOT twins) pulls forward to a **Phase-2 entry precondition**; its **twin-isolation half** (blocked on C44 twins) stays at **Phase 3c**. Rationale: the P0–P3b window scales the factory unattended (P2) and self-modifies (P3b) with only after-the-fact detection (C34) and no blast-radius bound — the XC-8/F12/F44 hazard; the boundary-typing half closes most of it without waiting on twins. Aligns with XC-8 + D-13. Security risk-tolerance call → operator confirms (or, per XC-8's alternative, explicitly "accept detection-only Phase 0"). The faithful P3c manifest is preserved + annotated, not re-sequenced. (from C54 OQ-3 / RC54-05 + adversary split recommendation.)
+- **D-19 — Methodology significance testing → C48.** C55 (methodology-experiment) computes per-(methodology × work-type) satisfaction distributions via the existing eval tier (C30/C32/C33) but does NOT perform statistical significance testing — routed to **C48** (Batch 5). C55 names the seam and withholds the significance claim (surfaces raw distributions + sample counts) until C48 lands; it does not reimplement stats. Mirrors C33's identical significance→C48 boundary; grounded in C48's inventory mandate ("determines whether a variant was actually better"). (from RC55-02 — was builder-asserted/adversary-softened, now logged.)
+
 ## Cross-component issues (raised during Sweep 1 builds)
 
 - **XC-1 — C19↔C20 dependency direction contradiction.** The canonical inventory lists C20→C19
@@ -72,9 +78,12 @@ this file is written by the primary or a single collector agent per pass.
   "prevention" claims are really detection at Phase 0; adversary softened wording. Real fix = sequence
   C43 earlier or accept detection-only Phase 0. Owner: C43 + integrator.
 - **XC-9 — `[rigs]`/`[[rig]]` spelling inconsistent** across C01/C03/C42. Pick canonical. Owner: C07/integrator.
-- **XC-3 — G18 numeric policy ownership.** C20 provides boundable schema slots
+- **XC-3 — RESOLVED by D-18-block (see "Batch-4 review integration" above: "XC-3 RESOLVED — G18 numeric
+  termination policy owned by C39").** C20 provides boundable schema slots
   (`attempt_no`/`max_attempts`/`escalated`/`closes`); the numeric policy (N attempts → escalate, F52
-  oscillation detection, L5 ship authorization) is deferred to C39 (and possibly C18). Confirm C39 owns it.
+  oscillation detection, L5 ship authorization) is owned by **C39** (confirmed against C39's on-disk spec);
+  **C18** owns the convergence loop + emits the bound-reached signal (C39 injects the per-pass bound C18
+  enforces), **C20** owns the slots. Was: "deferred to C39 (and possibly C18) — confirm C39 owns it" — now confirmed.
 
 - **XC-5 — C41↔C23 tamper-evidence chain ownership (blocker, from adversary).** C41-B DELTA-04 claims
   tamper-evidence "anchored in C23," but C23-B defers record hash-chaining (its OQ3). F14 "RESOLVED" rests
@@ -214,3 +223,70 @@ _Batch-3 review wave (2026-05-31 harvest) — D-15/D-16/D-17 applied:_
 - C40:OQ-2 — Order-definition syntax + trigger-predicate grammar (`{trigger,launches,retry}`; how a trigger matches a C23 event) must bind to pinned `gc` — sweep-2.
 - C40:OQ-3 — durability-ceiling depth (G33) unverified: crash-resume mid-step or step-boundary? re-launch idempotent? default retry bound? — sweep-2.
 - C40:OQ-4 — C40↔C39 launch seam: confirm the contract by which an Order *drives* a C39 fix-task chain (the coupling is C40's faithful inference; C39 deps don't list C40). *(C40/C39 launch-seam confirmation.)*
+
+_Batch-4 review wave (2026-05-31 harvest) — D-18/D-19 applied; XC-3 resolved:_
+
+- **RESOLVED-update (Batch-3 rows):** C16:OQ-G18 and C18:OQ-1 (above) — both deferred the G18 numeric-policy ownership to C39 with the fail-safe "if C39 disclaims, G18 needs a new home." **RESOLVED by the XC-3-resolution / D-18-block:** C39's on-disk spec (§1/§3.2 contract 7/§6) explicitly accepts ownership; C18 owns loop + bound-reached; C20 owns slots. No new home needed.
+- **Cross-component OQ — prevent-vs-detect (C43:OQ-C43-1 ≡ C34:OQ-C34-1).** Does `gc`/the pack loader *PREVENT* an out-of-partition read / a production-typed surface at tool-call / config-load time, or only permit-with-detect (audit after)? Settles whether C43's typing is a *control* or a *declaration*. Gated on **G11** (real `gc`); ownership already settled by D-13. **Both components share this identical substrate question** — freeze jointly.
+- **Cross-component OQ — C36↔C37 population seam (C36:OQ-2 / C37:OQ-1).** The *carrier* is settled (C36's `anomaly` signal, C36 I3); the open residual is **granularity/aggregation**: does C37 cluster exactly C36's flagged set (C36 selects the population) or a broader set read from C21 (C37 `depends on C21`) with C36 scoring per-trajectory? Joint **sweep-2 freeze** of the `anomaly`-record shape + the selector granularity (C36 OQ-2 carrier/shape ⋈ C37 OQ-1 granularity).
+- **Cross-component OQ-5 — G14 class-level transfusion-failure hedge (C52:OQ5 / C51:OQ-C51-2 / C54:OQ-5).** If a whole P3 sub-phase's transfusion bet fails (Healer/P3b, twins/P3c, self-opt/P3d), does the phase plan re-sequence/defer that sub-phase, or hand-build it? C51 + C52 route it to **C54**; C54 records it as OQ-5 but flags G14 is **outside its four assigned gaps** (G01/G02/G03/G31) — DEFERRED, needs orchestrator to home G14 explicitly across C51/C52/C54.
+- **Cross-component OQ — C52/XC-2 build-state transition (= C20:OQ-3).** The `factory_build_in_progress` → completed `factory_build` advance form — a `type`-flip on one record vs a `status` transition (which also decides whether `factory_build_in_progress` stays a distinct `type`) — is **C20:OQ-3**. C52 commits only to *reaching* the completed state, never the mechanism (RC52-01); co-owner of XC-2.
+- C36:OQ-1 — metric-stream read seam (C24 = provenance/lands stream, C36 reads via C21; inventory lists both as deps); confirm watched-metric set (CXDB/C24 side vs OTLP C25/C26) + G33 ceiling inherited (no C36-side durability).
+- C36:OQ-2 — detector selection per metric class + the `anomaly`-signal record shape + **C20-bead-vs-C23-event carrier** + thresholds / FP-recurrence policy (F52); freeze sweep-2 with C37/C38/C20/C23.
+- C36:OQ-3 — LLM-trajectory/semantic anomaly boundary: confirm C36 is the numeric generic base only; semantic layer is a separate later P11 surface ("compose on generic", AI-CONTEXT:328).
+- C36:OQ-4 — F4 quality-metric scope: which quality series exist for C36 to watch at P3b (defining new quality metrics is out of scope); F4 honestly Partial.
+- C36:OQ-5 — C36↔C37 population seam (= C37:OQ-1) — see cross-component row above.
+- C37:OQ-1 — C36↔C37 population seam granularity (carrier = C36 I3 settled) — see cross-component row above; co-owned with C36:OQ-2.
+- C37:OQ-2 — trajectory representation (I2/G32: turn-text vs tool-call-seq vs error-sig) + embedding-model id + HDBSCAN parameter set; freeze sweep-2 with C38 against real trajectories.
+- C37:OQ-3 — G32 cost-figure ownership → C46 (cost-per-embedding); confirm no embed-all background mode required (reading (b): bounded anomalous population).
+- C37:OQ-4 — G33 OOM ceiling / batch size for a large anomalous window; durability seam = C40 Orders + C21 fail-open, not in-stage HA.
+- C38:OQ1 — C38↔C39 seam: ownership split **confirmed on disk** (C38 emits `Diagnosis`, C39 mints `fix_task`); only the *handoff mechanism* (C39 polls vs C38 hands off) is the sweep-2 residual.
+- C38:OQ2 — G30 Tracker license verdict unverified (pattern-only until verified); framework + verdict → C51.
+- C38:OQ3 — G07 diagnosis-correctness predicate + bar: local AC = match-the-human (README:499); general predicate → C51, threshold → C53.
+- C38:OQ4 — `Diagnosis` schema seam: concrete schema (the contract C39 binds to + a human reviews) is FAITHFUL-FILL; freeze sweep-2 vs verified Tracker field shape.
+- C38:OQ5 — cost/throughput for LLM root-cause per cluster on the single Phase-0 Max seat (shared C28 G13/G34, G32); per-cluster rate-limiter; quantify → C46.
+- C39:OQ1 — G18 ownership confirmation: **C39 accepts the numeric termination policy** over C20 slots, consuming C18's bound-reached (XC-3 RESOLVED); confirm C20's slot set is sufficient else C39 files a C20 change request.
+- C39:OQ2 — G18 policy *values* (N, oscillation window, L4-vs-L5 cadence) unquantified by v4; shape fixed sweep-1, values are operator/integrator config (confirm home = C03).
+- C39:OQ3 — G35 fix-authorization: ship-without-review gated on C56 level (L5 dark only); multi-cycle F54 drift audit = C56/C57; confirm C39 reads level from C56 (named, not hard dep). *(reciprocal of C56:OQ-3.)*
+- C39:OQ4 — C40↔C39 launch seam (= C40:OQ-4): does an Order launch/retry the heal chain or only persist it? sweep-2.
+- C39:OQ5 — closure-verdict source: does C39 read satisfaction (C33), judge (C32), anomaly detector (C36), or all three? + "anomaly no longer fires" detection mechanism; sweep-2.
+- C43:OQ-C43-1 — prevent-vs-detect (≡ C34:OQ-C34-1) — see cross-component row above. **Top OQ.**
+- C43:OQ-C43-2 — does the P0→P3b exposure window need an interim bound before C44 twins, or is detection-only the accepted Phase-0 posture? *(XC-8 applied; informs D-18 confirmation.)*
+- C43:OQ-C43-3 — exact boundary between C43's `isolated` type and C42/C04 worktree/process scope (label-on-C42/C04 vs distinct C43 sandbox — the latter an over-build); sweep-2 with C42/C04.
+- C43:OQ-C43-4 — production-scissors declaration grammar + where it attaches (pack/`city.toml`, C02/C03); NOT wired to the dropped capability-grant engine (C02-04); sweep-2.
+- C44:OQ-1 — G22/G31 sibling cross-check (C45 owns fidelity bar, C43 owns blast-radius/isolation): both **on disk and confirm** C44's attribution; cross-check concrete I2/I8 vs C45 §3 + I1/I2 substitution vs C43 §3 at joint sweep-2 freeze.
+- C44:OQ-2 — three-mode precedence (replay→stateful→OpenAPI) + request-match/merge rule (G22-adjacent); freeze sweep-2 with C45.
+- C44:OQ-3 — twin session-state + reset granularity (per-scenario vs per-step; concurrent-scenario state isolation) — interacts with C42 run-isolation + throughput claim; sweep-2.
+- C44:OQ-4 — per-twin packaging schema (`[[service]]` TOML + fixture/cassette format), constrained by VCR/WireMock/Prism + C02/C17 ABI; sweep-2.
+- C44:OQ-5 — which engine per twin (record/replay + stateful + OpenAPI choice); Go-native bias (go-vcr/HoverFly) per the per-twin Go binary; per-instance at instantiation.
+- C45:OQ-C45-1 — G22 bar: concrete default fidelity dimensions + tolerance values + per-service-class starter templates (shape fixed sweep-1); sweep-2 per first real twin (C44). **Top OQ.**
+- C45:OQ-C45-2 — real-service reference capture + drift refresh: where stored (**C44's record/replay capture?** C30 corpus? CXDB?) + refresh cadence (stale reference ⇒ F55 residual). *(C44 I3 is the candidate source — C44:OQ-1.)*
+- C45:OQ-C45-3 — does C45 invoke C31 to drive probes at the twin, or run the probe corpus itself as a pack tool node? (mirrors C31:OQ-5.)
+- C45:OQ-C45-4 — is `fidelity_pass` a hard gate on twin substitution or advisory? differs for scenario-runs (C31) vs production-default substitution (F44/C43)?
+- C51:OQ-C51-1 — "named exemplar behaviors" extraction (the completeness anchor): operator at C11 intake? exemplar tests/docs? FAITHFUL-FILL → sweep-2. Without an anchor, "complete" is subjective (residual edge of G07). **Top OQ.**
+- C51:OQ-C51-2 — G14 class-level fallback ownership → C54 (= cross-component OQ-5 above).
+- C51:OQ-C51-3 — numeric satisfaction bar/threshold owner (shared G09): cutline at C53/C50 as operator policy; same C33 statistic C51's predicate reads. (parity C33:OQ-1.)
+- C51:OQ-C51-4 — license census authority + staleness (G30, shared with C57): confirm C57 owns the census + verification workflow; adding an exemplar's license is a pre-transfusion step; no Phase-0 SBOM scanner.
+- C51:OQ-C51-5 — transfusion-record signing (G36/G37/FE-3): `transfused_from` + verdict self-asserted (D-14); confirm Phase-0-acceptable and signing is FE-3 (blocked on G37), not Phase-0.
+- C52:OQ1 — G23: C52 owns loop + mandatory review gate; **C53 owns rubric/scenario-set/pass bar**; C11 supplies next-component intent — confirm C53 is the authoritative bootstrap-bar home.
+- C52:OQ2 — `C52-gate` decomposition: the inventory `C52-gate` dep is the C52-internal design-review gate (rubric→C53, level→C56), not a separate component — confirm so it isn't mistaken for an unbuilt dep.
+- C52:OQ3 — gate decision-record home (new `factory_build` slot = C20 change request / C53 record / review bead) + **build-state advance = C20:OQ-3** (RC52-01; = XC-2 cross-component row above); sweep-2.
+- C52:OQ4 — resume-failure escalation: AI-CONTEXT §16 gives only the happy path; unrecoverable `factory_build_in_progress` (missing handle / dangling pointer) → restart-from-spec sweep-1; escalation contract sweep-2. *(parallels C04:OQ-2 + XC-2.)*
+- C52:OQ5 — G14 class-level fallback (shared with C51) → C54 (= cross-component OQ-5 above).
+- C52:OQ6 — F54 audit-pack ownership: confirm owner (C43 isolation / **C57** residual register / dedicated pack) of the multi-cycle goal-comparison audit (G35) so F54 residual is explicitly homed, not assumed-covered by C52's gate.
+- C53:OQ-1 — G09/G23 milestone bar *value* + decision rule (single quantile? distribution-shape? multi-term predicate over C33?): cutline at C53 (not C33), value is policy (shared C33:OQ-1 / C51:OQ-C51-3 / C50); freeze sweep-2 with C33/C51. **Top OQ.**
+- C53:OQ-2 — fail-branch attempt bound + "add substrate" authorizer (README:519 "after a few attempts" fixes no count/authorizer); C53 requires *a* bound, value+authorizer = operator policy (relates to C56 ladder); sweep-2.
+- C53:OQ-3 — bootstrap scenario-set sufficiency: how many scenarios / what coverage make the go/no-go credible for bet #3 (too-small set meets bar but is weak evidence); minimum-evidence guideline sweep-2 with C30/C51.
+- C53:OQ-4 — C52/C51/C53 seam: who records what on the `factory_build` bead (C51 verdict + C52 review record + C53 go/no-go); slot ownership + grain (one decision per first-component build) + C20 slot requests; sweep-2 with C20/C51/C52.
+- C54:OQ-1 — G01: two "layer" vocabularies ("three-layer + persistence" vs "Layer 0–6") never reconciled corpus-wide; C54 resolves locally (Reading A); architecture-wide rename → integrator/C57.
+- C54:OQ-2 — may a later phase's *authoring* pipeline while an earlier phase's *exit gate* is pending (overlap), or strict end-to-end (INV-1)? faithful pick strict; operability relaxation = integrator call.
+- C54:OQ-3 — **RESOLVED (provisional) by D-18** — C43 split-sequencing (boundary-typing→P2 entry precondition; twin-isolation→P3c). Operator-confirm pending (security risk-tolerance; or "accept detection-only Phase 0" per XC-8).
+- C54:OQ-5 — G14 class-level transfusion-failure hedge ownership (inbound from C52:OQ5 + C51:OQ-C51-2) — see cross-component OQ-5 above; G14 outside C54's four assigned gaps, DEFERRED to orchestrator.
+- C55:OQ-1 — G05: confirm empirical per-work-type selection (not a soft GF-M pre-commitment), "GF-M first ≠ GF-M chosen"; absolute cutline is C50/operator, not C55. **Top OQ.**
+- C55:OQ-2 — work-type taxonomy: v4 names the *dimension* (README:33) not the *values* (only F20 greenfield/brownfield axis named); freeze canonical `work_type` set sweep-2 (source = C30 scenario families? separate axis?).
+- C55:OQ-3 — experiment fan-out cost vs single-seat throughput (G32/G34): ten candidates × work-types × suite is multiplicative on one Max seat, "cost amortizes" (README:512) has no number; quantify with C46 before full grid.
+- C55:OQ-4 — C48 significance seam (forward dep): the significance→C48 *routing* is now **recorded as D-19**; the residual open item is the C55→C48 *consultation-contract freeze* at sweep-2 when C48 is authored (interim withheld-significance behavior).
+- C56:OQ-1 — G15: is the one-operator spec-authoring bottleneck a precondition C56 merely documents, or does sustained L4/L5 need a design response? does C52 (factory-builds-factory) eventually relieve the load? → C57 + review-log. **Top OQ.**
+- C56:OQ-2 — G11/sweep-2: where the current authorized level lives + read API (single C03-layered operator value, read at the gated action for downgrade-safe re-read); confirm representation (`[autonomy] level` vs C56 surface). *(shared seam with C39 §3 contract 4.)*
+- C56:OQ-3 — G35 ownership split + F54 audit-pack home: C56 = ladder + which-level-auto-ships + L4-default + named F54 obligation; C43 = blast radius; C39 = per-fix ship-gate; **C57** = objective-drift audit register + mechanism (unbuilt, Batch 5). *(reciprocal of C39:OQ3.)*
+- C56:OQ-4 — is L5 promotion gated by anything machine-checkable (F54 audit-pack present+green) or purely an operator decision (README:498 "P12 mature and trusted" is a judgment)? sweep-2.

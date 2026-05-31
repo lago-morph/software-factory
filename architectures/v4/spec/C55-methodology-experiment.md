@@ -280,8 +280,8 @@ satisfaction advantage for a work type is **statistically real** is the **A/B st
 owned by **C48** (a/b-routing + scipy/Evidently; inventory C48 "determines whether a variant was actually
 better"; Batch 5). **C55 builds no significance machinery** — it *poses* the candidate-vs-candidate comparison
 and *consults* C48's verdict (INV-4). This routing is grounded in C48's inventory mandate and mirrors C33's own
-significance→C48 boundary; it is **C55's binding scope boundary and should be recorded as a numbered
-review-log decision** (OQ-4) — not (yet) a pre-existing logged ruling.
+significance→C48 boundary; it is **C55's binding scope boundary, now recorded as review-log decision D-19**
+(was builder-asserted/adversary-softened to "to be recorded", per RC55-02).
 > [FAITHFUL-FILL] **C48 is unbuilt (Batch 5)** and C55 is **Batch 4** — C55 must not block on it. Sweep-1
 > contract: C55 **names the C48 significance seam** (I4) and, until C48 lands, surfaces the **raw per-cell C33
 > distributions + sample counts** and **withholds** any "statistically better" claim (it never fabricates a
@@ -418,6 +418,6 @@ that the loop is **re-derivable** with **no custom engine** (AC-7/AC-8). This su
 - **OQ-4 (→ review-log): the C48 significance seam (forward dependency).** C48 is **Batch 5** (unbuilt); C55 is
   Batch 4. Confirm the **C55→C48** consultation contract (what comparison C55 poses; what verdict C48 returns)
   to be frozen at sweep-2 when C48 is authored, and that C55's interim behavior (raw distributions + withheld
-  significance) is acceptable until then. **Also record the significance→C48 routing as a numbered review-log
-  decision** — it is C55's binding scope boundary (grounded in C48's inventory mandate + the C33 precedent) but
-  is not yet a logged D-x ruling.
+  significance) is acceptable until then. The significance→C48 routing is **now recorded as review-log
+  decision D-19** (C55's binding scope boundary, grounded in C48's inventory mandate + the C33 precedent;
+  the C55→C48 consultation-contract freeze itself remains the open sweep-2 seam).

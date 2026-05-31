@@ -26,7 +26,7 @@
 - **C02/C17** (pack + tool-node ABI to package/invoke) + **C03** (feature-flag gate).
 
 **Consulted (forward reference, NOT a blocker):**
-- **C48** (A/B statistical significance — "was the variant actually better"; **Batch 5, unbuilt**). C55 (Batch 4) **names the seam** and runs with significance withheld until C48 lands (C55's scope boundary, grounded in C48's inventory mandate + the C33 precedent; to be recorded as a review-log decision — OQ-4). C55 must not block on C48.
+- **C48** (A/B statistical significance — "was the variant actually better"; **Batch 5, unbuilt**). C55 (Batch 4) **names the seam** and runs with significance withheld until C48 lands (C55's scope boundary, grounded in C48's inventory mandate + the C33 precedent; recorded as review-log decision **D-19**). C55 must not block on C48.
 
 **C55 must precede (the choice is consumed downstream):**
 - the **factory dispatch tier** (C05 sling, via the chosen C12 formula name) — which formula to dispatch for which kind of work.
@@ -79,7 +79,7 @@ C32/C33/C48 firm up — C55's real risk is the *selection contract*, not the eva
    selects *relatively* best per work type). This retires the central G05 ambiguity and fixes C55's scope; a
    wrong call would re-introduce the v3 "pick a methodology" framing v4 calls the *wrong question*
    (AI-CONTEXT:501).
-2. **Confirm — significance routing to C48 (T7/OQ-4, C55's binding scope boundary — to be recorded in the review-log).** Verify "was the variant actually
+2. **Confirm — significance routing to C48 (T7/OQ-4, C55's binding scope boundary — recorded as review-log D-19).** Verify "was the variant actually
    better" lives at **C48** (Batch 5) and C55 builds **no** significance machinery; confirm C55's interim
    behavior (raw distributions + **withheld** significance until C48 exists) is acceptable. A wrong call here
    would have C55 grow a stats engine the bar forbids (and C48 already owns).

@@ -21,8 +21,8 @@ Critical path: **C28 hook surface + C20 `override` schema → T1 → T3 → T4 �
 - T1 is the gate: no override is detectable until the native hook handler is registered (needs C28's surface + C02 pack ABI).
 - T3 cannot write until C20's `override` schema is frozen (D-3) and C19/C41 exist.
 - T4 (surfacing) needs an `override` log to read, so it serializes after T3 — but can be developed against a seeded fixture log in parallel.
-- T6 (conversion) needs all three rule sinks (C10, C15, C30) to have a rule-registration contract.
-- **Must precede C35:** C28 (hook surface), C20 (schema), C19/C41 (store + attribution). **Soft/lateral:** C37 (only for semantic surfacing — the SQL case has no C37 dependency), C10/C15/C30 (only the *conversion* end T6 needs them).
+- T6 (conversion) needs its rule sink(s) to have a rule-registration contract — **C30** (the v4-named Inspect-AI rubric sink) and, only if the inferred sinks are retained (spec OQ4), C10/C15.
+- **Must precede C35:** C28 (hook surface), C20 (schema), C19/C41 (store + attribution). **Soft/lateral:** C37 (only for semantic surfacing — the SQL case has no C37 dependency), C30 (the conversion sink; an inventory dependency), and C10/C15 (the *inferred* conversion sinks — only if retained; not C35 inventory dependencies).
 - **Nothing depends on C35 internally** (inventory: C35 has no downstream C-IDs); it *feeds* C10/C15/C30 new rules, but those components exist independently of C35.
 
 ## 3. Parallelization

@@ -209,8 +209,9 @@ thresholds never defined). Faithful resolution, in two parts:
 - **The metric *definition* — RESOLVED.** Satisfaction is operationalised exactly as v4 states: **one
   trajectory's satisfaction = its judge score (C32); the population metric = the distribution of those scores +
   summary statistics** (README:188; AI-CONTEXT:36). This is the smallest faithful reading and is fully
-  buildable with Inspect AI score reduction + a stats library (AI-CONTEXT:302). **C33 is the spec-of-record for
-  this definition.**
+  buildable with the v4-named **Inspect AI score reduction** (AI-CONTEXT:302) plus a thin distribution-summary
+  helper (`[FAITHFUL-FILL]`; v4 names no stats library for C33 — §1/I2). **C33 is the spec-of-record for this
+  definition.**
 - **The *threshold* / "satisfied" cutline — DEFERRED (not C33's to own).**
   > [AMBIGUITY: G09] v4 references a satisfaction *threshold* (README:269 "time-to-threshold"; F40/F47) but
   > **never defines the cutline or what "satisfied" means**. Two readings: **(a)** C33 owns a pass/fail

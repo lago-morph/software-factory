@@ -126,7 +126,7 @@ starter predicate against the first real twin exist; T7/T8/T9 are done when the 
 - The **fidelity bar is an explicit, per-service, written predicate** (named dimensions + tolerances + probe
   corpus + pass rule) — "how close is close enough" is auditable, not implicit; a twin with no predicate
   cannot be certified (§8.1, the G22 KEEP).
-- The **contract check** (usage-vs-promises, Pact/schemathesis/Prism) yields a conformance result and **fails**
+- The **contract check** (usage-vs-promises, Pact/schemathesis) yields a conformance result and **fails**
   on a request/auth/response the real contract forbids (§8.2).
 - The **behaviour check** (twin-vs-real, vs recorded reference) yields a match result and **fails** on a
   tolerance breach (§8.3) — reference recorded/golden, not a live call (OQ-C45-2).
@@ -138,8 +138,9 @@ starter predicate against the first real twin exist; T7/T8/T9 are done when the 
 - **Version-keying invalidates stale certification** (twin/contract/reference change ⇒ re-verify) and the
   **G22 residuals are routed to C57** — finite-corpus-vs-environment (F3/F13) + reference-drift (F55); "Addressed"
   for F12/F33/F44/F56 is recorded as **conditional on a current passing verdict** (§8.6, §8.7).
-- **No tooling-rebuild over-build** is present; the checks are stack OSS (Pact/schemathesis/Prism/record-
-  replay), the only custom code is the predicate + the combine-and-gate wiring (§8.8, AI-CONTEXT:347).
+- **No tooling-rebuild over-build** is present; the stack-provided parts are Pact/schemathesis (contract) +
+  record/replay reference capture, and the only custom code is the predicate + the tolerance-scored behaviour
+  diff + the combine-and-gate wiring — the "Manual diff tooling / DIY" parts (§8.8, AI-CONTEXT:347).
 - All four OQs are in review-log with owners (OQ-C45-1 → C45 + first real twin C44, the G22 bar default;
   OQ-C45-2 → C45 + reference-capture owner C44/C30/CXDB; OQ-C45-3 → C45 + C31; OQ-C45-4 → C45 + C43 + operator
   policy).

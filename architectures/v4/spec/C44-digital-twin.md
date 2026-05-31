@@ -10,7 +10,7 @@ factory's agents and scenarios can call the twin **instead of the real service**
 critical external dependencies. Lets scenarios run thousands per hour without rate limits" (README:195).
 It is the **LocalStack-shaped** answer to P7 / Layer 5: a per-service component that **records and replays**
 the dependency's traffic, **holds the dependency's state** across a session, and **answers per its OpenAPI/SDK
-contract**, exposed to the workflow as a **C17 tool node** (README:199–202; AI-CONTEXT §7 lines 341–345).
+contract**, exposed to the workflow as a **C17 tool node** (README:199–202; AI-CONTEXT §7 lines 341–343, the three twin-mode rows).
 
 C44 is **the spec-of-record for the twin's construction and its contract surface** — *what slice of the real
 service this twin clones, and how that clone is exposed and assembled from off-the-shelf parts*. v4 is explicit
@@ -20,7 +20,7 @@ seam is therefore **not** a mocking engine (those are off-the-shelf) but the **a
 selecting and wiring the record/replay layer (VCR.py/go-vcr/HoverFly), the stateful-mock layer
 (WireMock/Mountebank/Mockoon), and the OpenAPI-mock layer (Prism/Stoplight) into **one named, callable twin of
 one service**, with a declared cloned-surface, transfused from the LocalStack pattern (README:199–202;
-AI-CONTEXT §7 lines 341–346; C51 transfusion discipline).
+AI-CONTEXT §7 lines 341–343 the three modes, line 345 the LocalStack exemplar; C51 transfusion discipline).
 
 **This component is a per-service template, instantiated once per twinned dependency.** "Repeat per
 dependency" (README:468). C44 specifies the *shape every twin instance follows*; each concrete twin (the
@@ -119,7 +119,7 @@ to C45).
 | I5 | **OpenAPI-driven mock** | internal | Contract-shaped responses to in-scope requests with no recorded fixture, driven by the service's OpenAPI spec (Prism/Stoplight). The fall-through that keeps the twin answering on-contract. | C44 (this) |
 | I6 | **Twin session-state lifecycle** | internal/state | Initialize from seed/known-state, evolve within a run, reset between runs/scenarios (so each scenario sees a clean, deterministic twin). | C44 (this) |
 | I7 | **`[[service]]` placement + config** | inbound (ops) | Per-twin Gas City `[[service]]` block (README:200): which service, fixture source, OpenAPI spec ref, mode precedence (replay→stateful→OpenAPI), reset policy. | C03 (config model), C44 (binding) |
-| I8 | **Fidelity-observation hook** | outbound | Expose the twin's request/response trail (and a real-vs-twin diff seam) so **C45** can verify behavioral fidelity (AI-CONTEXT §7 line 347 "manual diff tooling"; README:201 contract verification). C44 *exposes*; C45 *judges*. | C44 provides; **C45** owns the bar |
+| I8 | **Fidelity-observation hook** | outbound | Expose the twin's *live* request/response trail (and a real-vs-twin diff seam) so **C45** can verify behavioral fidelity (AI-CONTEXT §7 line 347 "manual diff tooling"; README:201 contract verification). Distinct from the I3 *recorded* fixtures, which are a candidate source for C45's golden *reference* (C45:OQ-C45-2). C44 *exposes*; C45 *judges*. | C44 provides; **C45** owns the bar |
 
 **Invariants C44 must uphold (twin-construction level):**
 - **INV-1 (on-contract within the declared surface):** for any request inside the declared cloned surface

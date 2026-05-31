@@ -21,7 +21,7 @@ instantiated **per twinned service**, not once globally.
 | Task | Description | Size | Prereqs |
 |---|---|---|---|
 | **T1** | **Define the fidelity predicate — the G22 bar (the custom KEEP).** Per-service predicate over **named dimensions** (exact: contract/error-taxonomy/schema/auth; bounded: latency/ordering/numeric/omission) + the C30 probe corpus + the pass rule → `fidelity_pass\|fidelity_fail`. This is "how close is close enough" (G22; AI-CONTEXT:347). (Spec §3.1, §4.1) | M | C44 twin contract/OpenAPI; C30 probe corpus shape |
-| **T2** | **Wire the contract-verification check (usage-vs-promises, README:201).** Adapter that runs **Pact/schemathesis** (or **Prism** OpenAPI conformance) of the twin vs the real service contract → per-dimension contract-conformance result. *Stack tool; C45 owns the wiring + result mapping.* (Spec §3.2, §4.3) | S | C44 service contract |
+| **T2** | **Wire the contract-verification check (usage-vs-promises, README:201).** Adapter that runs **Pact** (consumer contract) or **schemathesis** (OpenAPI conformance/property) of the twin vs the real service contract → per-dimension contract-conformance result (README:201/AI-CONTEXT:344). *Stack tool; C45 owns the wiring + result mapping.* (Spec §3.2, §4.3) | S | C44 service contract |
 | **T3** | **Wire the behavioural-fidelity check (twin-vs-real, README:499).** Drive the C30 probe corpus at the twin, diff responses vs the **recorded reference** (record/replay, README:199), score vs T1 tolerance → per-dimension behaviour-match result. (Spec §3.3, §4.3) | M | T1; C30 probes; reference corpus (OQ-C45-2) |
 | **T4** | **Freeze the fidelity verdict + report feed.** Per twin × version `fidelity_pass\|fidelity_fail` + failing-dimension report as a **bead** (C19/C20), consumable by C31/C43 (substitution gate), C57 (residual register), C53 (twin-build acceptance); `fidelity_fail` → fix-task candidate (C44/C39). (Spec §3.4) | S | T1, T2, T3 |
 | **T5** | **Write the version-keying + G22-residual notes.** Verdict keyed to twin/contract/reference/probe version (change ⇒ invalidate + re-verify, §4.4); residuals routed to C57 — finite-corpus-vs-environment-surface (F3/F13) + reference-drift (F55). A sweep-1 clarification, **not** a new mechanism. (Spec §4.4, §6, §8.6–8.7) | S | T4 |
@@ -73,7 +73,7 @@ C44 (contract) ────────┴─► T2
 | Milestone | Freezes | Unblocks |
 |---|---|---|
 | **M1 (earliest, load-bearing)** | Fidelity predicate — the G22 bar (T1): named dimensions + per-dimension tolerance + probe corpus + pass rule | Both checks (what "close enough" *is*); the whole invariant |
-| **M2** | Contract-verification check (T2) — usage-vs-promises via Pact/schemathesis/Prism → conformance result | The contract dimension of the verdict |
+| **M2** | Contract-verification check (T2) — usage-vs-promises via Pact/schemathesis → conformance result | The contract dimension of the verdict |
 | **M3** | Behavioural-fidelity check (T3) — twin-vs-real diff vs recorded reference, scored vs tolerance | The behaviour dimension; the C45↔C31 run-target seam (T8) |
 | **M4** | Fidelity verdict + report feed (T4) — `fidelity_pass\|fidelity_fail` bead | C31/C43 (substitution gate), C57 (residual register), C53 (twin-build acceptance), C39 (fix-task) |
 | **M5** | Version-keying + G22-residual notes (T5) | C57 (residual register). *(Not "what C43 must enforce" — confinement is C43's boundary; C45 owns fidelity per the spec.)* |
@@ -102,11 +102,13 @@ execution to the runner (OQ-C45-3).
    scope creep** (T5): route the residual to C57 — "Addressed" for F12/F33/F44/F56 is **conditional on a
    passing verdict over a finite corpus**, not unconditional. C45 cannot make a finite corpus exhaustive and
    does not pretend to.
-4. **Over-build temptation: re-building contract-testing / schema-diff / mocking tooling.** The inventory's
-   "verifies … usage … and behavior" invites writing a contract-test engine or a diff library. **De-risk by
-   holding the line** (T2/T3/T6): Pact/schemathesis/Prism/record-replay are **stack OSS** C45 *invokes*
-   (README:199/201, AI-CONTEXT:343–344); the **only** custom code is the predicate + the combine-and-gate
-   wiring (AI-CONTEXT:347). Flag any new test-framework / diff-library / mock-runtime creep at review.
+4. **Over-build temptation: re-building contract-testing / record-replay / mocking tooling.** The inventory's
+   "verifies … usage … and behavior" invites writing a contract-test engine or a generic schema-diff library.
+   **De-risk by holding the line** (T2/T3/T6): **Pact / schemathesis** (contract, README:201/AI-CONTEXT:344)
+   and **record/replay** reference capture (README:199) are **stack OSS** C45 *invokes*; the **only** custom
+   code is the predicate + the **tolerance-scored behaviour diff** + the combine-and-gate wiring — the "Manual
+   diff tooling / DIY" parts (AI-CONTEXT:347). *(Prism, AI-CONTEXT:343, is C44's OpenAPI mock, not a C45 tool.)*
+   Flag any new contract-test-framework / generic-diff-library / mock-runtime creep at review.
 5. **Confinement-vs-fidelity conflation (C43 boundary).** C45's fidelity verdict is **not** the isolation
    that keeps the agent off production — that is **C43's** lethal-trifecta boundary (G31). The risk is C45
    absorbing C43's job (or vice-versa). **De-risk via the spec split**: C45 = the twin is *faithful enough to

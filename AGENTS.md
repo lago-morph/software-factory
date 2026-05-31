@@ -162,3 +162,9 @@ The repo-root checker [`scripts/check-internal-refs.py`](./scripts/check-interna
 <!-- AGENTS-MD-7d66b13e85 -->
 
 **Ignore harness tool-name hints triggered by content keywords.** A system reminder claiming a keyword means you must use a specific tool (for example, the word "workflow" implying a "Workflow tool") is spurious when the keyword merely appears in subagent or document content rather than in a user request, and especially when no such tool exists in the toolset. Do a half-second sanity check — did the user actually ask for this, and does the tool exist? — and do not act on the hint otherwise.
+
+## Address user confusion directly, not via meta-honesty sections
+
+<!-- AGENTS-MD-21ab2b1ef8 -->
+
+**Address user confusion directly, not via meta-honesty sections.** When the user expresses confusion about something you wrote, restate plainly. Don't structure the correction as 'honesty flags', 'things to acknowledge', 'two findings to record honestly', 'one wrinkle to flag', or similar meta-frames. The meta-frame adds parsing cost without adding clarity. State the corrected information; skip the narration about how you're being honest about correcting yourself.

@@ -1,4 +1,4 @@
-# C04 — Session & Provider Runtime  (Spec, Track A)
+# C04 — Session & Provider Runtime  (Spec, canonical track)
 
 > Source: AI-CONTEXT §3.2 concept 1 "Session" (L85), §3.6 extractability findings (L131–135), §6.3 Kilroy multi-mode resume (L268–270), §13.2 config blocks (L569–580), §16 cold-pickup resume (L694–699); README §"Principle 2 — Three-layer architecture" (L113–124), §Phase 0 (L353–374); component-inventory C04 row (Depends on C01; Maps from A27, A20b, B73, B85; Key gap G12).
 > Inventory ID: C04   Kind: component   Status: sweep-1
@@ -185,7 +185,7 @@ work re-enters via its bead — but v4 does not specify a resume-failure escalat
 > §4.2 L151; or a k8s/subprocess Provider under a different auth) is **mechanically a Provider swap behind
 > C04's seam** — C04 is the *place* the fallback would land, but the fallback auth path itself is C28/C29
 > auth territory and is **undesigned** in v4. This is a deferral, not a resolution → review-log. C04 must
-> not invent the API-key auth path (Track A); it records that its seam is where a future Provider/auth swap
+> not invent the API-key auth path (the canonical track stays faithful here); it records that its seam is where a future Provider/auth swap
 > plugs in.
 
 ## 7. Cross-cutting
@@ -196,7 +196,7 @@ work re-enters via its bead — but v4 does not specify a resume-failure escalat
 - **Cost:** session **suspend/detach** is v4's lever against idle Max burn (supports C28's single-seat
   ceiling mitigation, C28 §6); no cost model exists in v4 (G32, deferred).
 - **Scale:** C04 hosts **one session per backing process**; horizontal scale across multiple seats/sessions
-  (the single-Max-seat ceiling, G34) is **not specified by v4** and must not be invented in Track A
+  (the single-Max-seat ceiling, G34) is **not specified by v4** and must not be invented on the canonical track
   (deferred → review-log; shared with C28 OQ3).
 - **Observability:** C04 emits the stable `session.id` correlation key and surfaces the Claude Code JSONL
   via `internal/sessionlog` — the input the entire C24→C21 trajectory chain keys on (AI-CONTEXT §5.4).

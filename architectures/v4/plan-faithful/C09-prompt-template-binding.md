@@ -1,6 +1,6 @@
 # C09 — Prompt template & spec→execution binding (`prompt-template-binding`)  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C09-prompt-template-binding.md`](../spec-faithful/C09-prompt-template-binding.md)
+> Source / Spec ref: [`spec/C09-prompt-template-binding.md`](../spec/C09-prompt-template-binding.md)
 > Track A (faithful). Sweep 1. Depends on: C08 (spec artifact), C05 (sling/dispatch). Foundational interface in Spec Intake; Batch-2 per the [component inventory](../_meta/component-inventory.md) suggested batches.
 
 ## 1. Work breakdown

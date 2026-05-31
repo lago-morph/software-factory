@@ -1,6 +1,6 @@
 # C13 — Molecule (instantiated workflow / runtime state)  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C13-molecule-runtime-state.md`](C13-molecule-runtime-state.md)
+> Source / Spec ref: [`spec/C13-molecule-runtime-state.md`](C13-molecule-runtime-state.md)
 > Track: A (faithful)   Sweep: 1 (architecture altitude)
 
 C13 is the runtime-state join between three already-specced primitives — the formula (C12) it instantiates,

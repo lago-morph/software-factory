@@ -1,7 +1,7 @@
 # C17 — Tool-Node Abstraction  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C17-tool-node-abstraction.md`](../spec-faithful/C17-tool-node-abstraction.md)
-> Depends on: [`spec-faithful/C02-pack-extension-abi.md`](../spec-faithful/C02-pack-extension-abi.md) (ABI), C01 (substrate), C12/C13 (formula/molecule consumers), C16 (discipline linter consumer).
+> Source / Spec ref: [`spec/C17-tool-node-abstraction.md`](../spec/C17-tool-node-abstraction.md)
+> Depends on: [`spec/C02-pack-extension-abi.md`](../spec/C02-pack-extension-abi.md) (ABI), C01 (substrate), C12/C13 (formula/molecule consumers), C16 (discipline linter consumer).
 
 ## 1. Work breakdown
 
@@ -60,7 +60,7 @@ Freeze early so dependents build against stubs:
 **Per-component:**
 - All six spec §8 acceptance criteria expressible as tests (uniform cross-language placement; deterministic
   run via C02; machine-readable node-kind; safe re-run; clean failure surfacing; no new on-disk artifact).
-- The §3.2 [AMBIGUITY: G29] split is pinned (M1) and cited consistently with `spec-faithful/C02-pack-extension-abi.md` §3.2.
+- The §3.2 [AMBIGUITY: G29] split is pinned (M1) and cited consistently with `spec/C02-pack-extension-abi.md` §3.2.
 - The node-kind tag (M3) is reconciled with C12 (formula node schema) and C16 (discipline linter).
 - Open questions in spec §9 are mirrored into [`_meta/review-log.md`](../_meta/review-log.md).
 

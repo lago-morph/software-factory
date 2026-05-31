@@ -1,6 +1,6 @@
 # C25 — OTLP telemetry export (`otlp-telemetry-export`)  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C25-otlp-telemetry-export.md`](../spec-faithful/C25-otlp-telemetry-export.md)
+> Source / Spec ref: [`spec/C25-otlp-telemetry-export.md`](../spec/C25-otlp-telemetry-export.md)
 > Track A (faithful). Sweep 1. Depends on: C28 (Claude Code agent loop), with config carried by C03/C04. Non-foundational `interface` in the Observability subsystem; first stage of the C25 → C26 → C27 pipeline and the C25 → C24 raw-bodies feed. Batch-2 per the [component inventory](../_meta/component-inventory.md) (observability ingest C25/C26/C27/C24).
 
 ## 1. Work breakdown

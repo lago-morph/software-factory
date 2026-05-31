@@ -1,7 +1,7 @@
 # Adversarial review — C07 Vocabulary & Glossary (Tracks A + B, sweep 1)
 
 Reviewer persona: Subsystem Adversary (Runtime Substrate)
-Targets: spec-faithful/C07-vocabulary-glossary.md, plan-faithful/C07-vocabulary-glossary.md,
+Targets: spec/C07-vocabulary-glossary.md, plan-faithful/C07-vocabulary-glossary.md,
 spec-optimized/C07-vocabulary-glossary.md, plan-optimized/C07-vocabulary-glossary.md
 
 ## Findings — Track A (faithful: attack fidelity/completeness)

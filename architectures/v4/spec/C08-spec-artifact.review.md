@@ -1,7 +1,7 @@
 # Adversarial review — C08 Spec artifact & format (Track A, sweep 1)
 
 Reviewer persona: Subsystem Adversary (C08/C17)
-Target: spec-faithful/C08-spec-artifact.md (+ plan-faithful/C08-spec-artifact.md)
+Target: spec/C08-spec-artifact.md (+ plan-faithful/C08-spec-artifact.md)
 
 Track A attacks **fidelity & completeness only** — not the design. The question is never "is collapsing
 spec into `prompt.template.md` a good idea" (that is Track B's fight) but "is it the *most faithful*

@@ -2,11 +2,11 @@
 
 Live state of the v4 spec & plan run. Updated by the primary agent every wave.
 
-## ⏹ SESSION ENDED at token limit (2026-05-30). PR #213 MERGED. See `_meta/HANDOFF.md` to resume.
+## ✅ TRACKS CONVERGED (2026-05-31) — single canonical track is `spec/`
+Track A (faithful) was renamed `spec/` and adopted as the **one canonical track**. Track B (optimized) is frozen as reference (`spec-optimized/`, `plan-optimized/`). A survivor pass under the operator's capability-for-principle bar found all 25 must-have deltas **already present** in `spec/` in minimal form (zero spec edits); 117 hardening deltas were dropped and the 4 architectural "bets" deferred. See [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md) and [`FUTURE-ENHANCEMENTS.md`](./FUTURE-ENHANCEMENTS.md) (FE-1..FE-5). The build target for the 34 unbuilt components is now `spec/`.
 
-## Current phase
-**Phase 2 — Sweep 1 (architecture foundation), STOPPED at 23/57 components.** All built work is committed,
-pushed, and merged to `main`. The other 34 components were never built (out of session budget).
+## Current state (2026-05-31)
+**Phase 2 — Sweep 1 (architecture foundation), 23/57 components built; 34 remain.** Tracks have converged: one canonical `spec/` + `plan-faithful/`. The next work is authoring the unbuilt 34 on the canonical track under the capability-for-principle bar (see `HANDOFF.md` §2). PR #213 (original 23) merged; PR #218 (convergence) merging into `main` as of this update.
 
 ## Completed (Sweep-1, both tracks) — 23 components, 4 docs each
 - **Batch 1 ✅ BUILT + ADVERSARIALLY REVIEWED + INTEGRATED (consistent).** C01 C02 C03 C07 C08 C17 C19 C20
@@ -60,4 +60,4 @@ Launched (running): C01-F, C01-O, C02-F, C02-O, C03-F, C03-O, C07-F, C08-F.
 
 ## Component completion matrix
 (Populated once the canonical inventory exists: rows = component IDs, columns =
-spec-faithful / plan-faithful / spec-optimized / plan-optimized × sweep level.)
+spec / plan-faithful / spec-optimized / plan-optimized × sweep level.)

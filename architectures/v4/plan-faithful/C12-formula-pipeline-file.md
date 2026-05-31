@@ -1,6 +1,6 @@
 # C12 — Formula / Pipeline-File Format  (Build Plan, Track A)
 
-> Source / Spec ref: spec-faithful/C12-formula-pipeline-file.md
+> Source / Spec ref: spec/C12-formula-pipeline-file.md
 
 ## 1. Work breakdown
 

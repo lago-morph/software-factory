@@ -1,6 +1,6 @@
 # C24 — Telemetry → CXDB Ingestion Bridge  (Build Plan, Track A)
 
-> Source / Spec ref: spec-faithful/C24-telemetry-cxdb-bridge.md
+> Source / Spec ref: spec/C24-telemetry-cxdb-bridge.md
 
 ## 1. Work breakdown
 

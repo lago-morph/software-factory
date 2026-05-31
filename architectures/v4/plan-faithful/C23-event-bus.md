@@ -1,7 +1,7 @@
 # C23 — Event Bus  (Build Plan, Track A)
 
-> Source / Spec ref: spec-faithful/C23-event-bus.md
-> Sources cited in spec: AI-CONTEXT §3.2 (concept 3, line 87), §5.4 (impedance table line 228, bridge line 232), §5.5 (lines 234–239); README §Part 4 (lines 222, 227–228, 231, 252); spec-faithful/C01 §3 I7 (line 87) + §4 (line 111) + INV-3; component-inventory C23 row (line 35) + Batch-1 (line 107); F-MODE-COVERAGE F10/F14/F11/F32/F43; gap G27.
+> Source / Spec ref: spec/C23-event-bus.md
+> Sources cited in spec: AI-CONTEXT §3.2 (concept 3, line 87), §5.4 (impedance table line 228, bridge line 232), §5.5 (lines 234–239); README §Part 4 (lines 222, 227–228, 231, 252); spec/C01 §3 I7 (line 87) + §4 (line 111) + INV-3; component-inventory C23 row (line 35) + Batch-1 (line 107); F-MODE-COVERAGE F10/F14/F11/F32/F43; gap G27.
 
 ## 1. Work breakdown
 
@@ -17,7 +17,7 @@ build against, and surface the G27 CXDB-path contradiction to the bridge seam.
 | **T2** Conformance: append-only + seq | Conformance pack asserting AC-1 (always-on emit, no config), AC-2 (append-only — records never mutated/reordered/deleted), AC-3 (strictly-increasing monotonic `seq`, total order). | M | T1 |
 | **T3** Conformance: universal attribution | Assert AC-4 (every event carries a **resolvable `created_by`**; no anonymous events) against the real bus — the F14 guarantee (README line 231). Joint check with C41. | M | T1, C41 actor-schema available |
 | **T4** Conformance: ordered read + checkpoint | Assert AC-5 (read from a checkpointed `seq` to head in order; resume from last-processed `seq` after restart) and AC-7 (audit completeness — every action emits, no silent gaps). | M | T1 |
-| **T5** CXDB-independence proof | Assert AC-8: with CXDB down, the event bus keeps appending and is the surviving source-of-truth trail (supports C21 G33 fail-open, spec-faithful/C21 §6). | S | T1, C19/C21 standing |
+| **T5** CXDB-independence proof | Assert AC-8: with CXDB down, the event bus keeps appending and is the surviving source-of-truth trail (supports C21 G33 fail-open, spec/C21 §6). | S | T1, C19/C21 standing |
 | **T6** Freeze event-record schema | Freeze the §4 [FAITHFUL-FILL] record `{seq, ts, created_by, action_type, target_ref?, payload}` + the `action_type` enumeration (OQ-2) so C24/C41/C40 contract against a stable shape. | M | T2, T3 |
 | **T7** Resolve G27 bridge-source seam with C24 | With C24, decide whether the event-bus path is *wired* or *latent* (spec §6 reading (b)); freeze I5 (the bridgeable-source guarantee) regardless. Surface as OQ-1 → review-log. | M | T6, C24 spec |
 | **T8** Freeze attribution carrier seam with C41 | Freeze the carrier-vs-resolver split (I4): C23 owns the field, C41 owns the actor schema + resolution ("rides events", OQ-3). | S | T3, C41 spec |

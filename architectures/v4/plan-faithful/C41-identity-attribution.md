@@ -1,6 +1,6 @@
 # C41 — Identity / actor model & attribution  (Build Plan, Track A)
 
-> Source / Spec ref: [spec-faithful/C41-identity-attribution.md](../spec-faithful/C41-identity-attribution.md)
+> Source / Spec ref: [spec/C41-identity-attribution.md](../spec/C41-identity-attribution.md)
 
 ## 1. Work breakdown
 

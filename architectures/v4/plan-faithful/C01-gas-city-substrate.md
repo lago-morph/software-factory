@@ -1,6 +1,6 @@
 # C01 — Gas City Runtime Substrate  (Build Plan, Track A)
 
-> Source / Spec ref: spec-faithful/C01-gas-city-substrate.md
+> Source / Spec ref: spec/C01-gas-city-substrate.md
 > Sources cited in spec: README §Part 4, §Part 6 (Phase 0/1); AI-CONTEXT §2, §3.1–§3.6, §11, §13.1–§13.2, §14; inventory C01 row; gaps G11, G03.
 
 ## 1. Work breakdown

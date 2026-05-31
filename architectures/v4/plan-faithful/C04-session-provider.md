@@ -1,6 +1,6 @@
 # C04 — Session & Provider Runtime  (Build Plan, Track A)
 
-> Source / Spec ref: spec-faithful/C04-session-provider.md
+> Source / Spec ref: spec/C04-session-provider.md
 
 ## 1. Work breakdown
 

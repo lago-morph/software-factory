@@ -2,7 +2,7 @@
 
 Integrator pass. Surgical, cross-component edits realizing the binding decisions in
 `review-log.md` (D-1…D-5) and `FUTURE-ENHANCEMENTS.md` (FE-1), across both tracks
-(`spec-faithful/`, `spec-optimized/`). No `.review.md` files touched; no git run.
+(`spec/`, `spec-optimized/`). No `.review.md` files touched; no git run.
 
 Conventions:
 - **Faithful (Track A):** rulings recorded as `> [AMBIGUITY ... — RESOLVED by D-n]` resolutions
@@ -24,9 +24,9 @@ option dropped.
 | `spec-optimized/C21-cxdb-trajectory-store.md` | DELTA-03 + §4 type-bundle pin + G17 row + §8 AC: trajectory bundle = `softwarefactory.v4.trajectory`; collision notes → RESOLVED. |
 | `spec-optimized/C22-cxdb-type-registry.md` | DELTA-01/04 header, §1, §4 data model (bundle file names, `bundle_id`/`type` examples, concrete-types table split by bundle), §5/§7/§8: trajectory bundle named, bead rows tagged C20-authored. |
 | `spec-optimized/C02-pack-extension-abi.md` | OQ5 rewritten to RESOLVED; pack-id namespace = `softwarefactory.v4.packs`. |
-| `spec-faithful/C21-cxdb-trajectory-store.md` | I7 type-registry row: canonical namespace ruled, trajectory bundle = `softwarefactory.v4.trajectory`. |
-| `spec-faithful/C22-cxdb-type-registry.md` | XC-4 note → AMBIGUITY-RESOLVED; all `softwarefactory.v4` literals → `softwarefactory.v4.trajectory` (§1, §4 triple/bundle, AC1). |
-| `spec-faithful/C19-bead-work-graph.md` | OQ-C19-5 rewritten to RESOLVED (namespace + ownership). |
+| `spec/C21-cxdb-trajectory-store.md` | I7 type-registry row: canonical namespace ruled, trajectory bundle = `softwarefactory.v4.trajectory`. |
+| `spec/C22-cxdb-type-registry.md` | XC-4 note → AMBIGUITY-RESOLVED; all `softwarefactory.v4` literals → `softwarefactory.v4.trajectory` (§1, §4 triple/bundle, AC1). |
+| `spec/C19-bead-work-graph.md` | OQ-C19-5 rewritten to RESOLVED (namespace + ownership). |
 
 C02-faithful, C20-faithful: no divergent bundle-id present → no edit needed (faithful C20 already
 treats beads as a separate type space and asserts no bundle string).
@@ -40,7 +40,7 @@ registering C20's bead types via a documented seam. C22's claim to author bead s
 |---|---|
 | `spec-optimized/C22-cxdb-type-registry.md` | DELTA-04 reframed (registration mechanism, two namespaces, bead schemas C20-owned); §1 "NOT" bullet, §2 consumer line (C20 supplies schemas via seam), §4 RegisteredType/table notes; flow §5.1 cold-start clarified Phase-0 no-CXDB. |
 | `spec-optimized/C20-bead-schema.md` | DELTA-07 RESOLVED block + OQ3: "two registries, one mapping" confirmed canonical. |
-| `spec-faithful/C22-cxdb-type-registry.md` | OQ2 → RESOLVED by D-3 (ownership split upheld; faithful C22 already declared C20/C22 separate so only the OQ needed resolving). |
+| `spec/C22-cxdb-type-registry.md` | OQ2 → RESOLVED by D-3 (ownership split upheld; faithful C22 already declared C20/C22 separate so only the OQ needed resolving). |
 
 Faithful C22/C20 already held the correct "separate registries / C20 owns bead types" reading;
 D-3 only required converting the open cross-track OQ to a RESOLVED note.
@@ -49,7 +49,7 @@ D-3 only required converting the open cross-track OQ to a RESOLVED note.
 
 | File | Change |
 |---|---|
-| `spec-faithful/C19-bead-work-graph.md` | §2 dependency row + OQ-C19-1 rewritten to RESOLVED: canonical C20→C19, cycle broken by M1 interface freeze + no-op `validate` stub. |
+| `spec/C19-bead-work-graph.md` | §2 dependency row + OQ-C19-1 rewritten to RESOLVED: canonical C20→C19, cycle broken by M1 interface freeze + no-op `validate` stub. |
 | `spec-optimized/C19-bead-work-graph.md` | §2 C20 dependency made explicit (co-foundational, C20 depends on C19, M1 freeze + no-op stub). |
 | `spec-optimized/C20-bead-schema.md` | §2 C19 dependency annotated with D-4 (direction + stub seam). |
 
@@ -61,15 +61,15 @@ Faithful C20 already stated "C20 depends on C19" (inventory direction) — left 
 |---|---|
 | `spec-optimized/C41-identity-attribution.md` | DELTA-04 header, §3 invariant, §3 outbound C23 line, §4.4 RC41B-01 ownership note, §6 G36 caveat (2): all → RESOLVED — C41 owns chain over C23-provided ordered gap-free `event_id`s. |
 | `spec-optimized/C23-event-bus.md` | §6 P9 F-mode row, §7 security, OQ3: C23 provides ordered gap-free `event_id`s only; chain is C41's (OQ3 RESOLVED). |
-| `spec-faithful/C41-identity-attribution.md` | §6 G36 AMBIGUITY block: appended D-5 chain-ownership resolution (orthogonal to the optional/mandatory question, which stays Track-A faithful). |
-| `spec-faithful/C23-event-bus.md` | §7 security: appended `> [AMBIGUITY] D-5` — C23 provides ordered ids only, chain is C41's. |
+| `spec/C41-identity-attribution.md` | §6 G36 AMBIGUITY block: appended D-5 chain-ownership resolution (orthogonal to the optional/mandatory question, which stays Track-A faithful). |
+| `spec/C23-event-bus.md` | §7 security: appended `> [AMBIGUITY] D-5` — C23 provides ordered ids only, chain is C41's. |
 
 ## D-1 / FE-1 — Judge (same-provider baseline; cross-family/cross-provider = FE-1, future)
 
 | File | Change |
 |---|---|
 | `spec-optimized/C29-model-floor-stylesheet.md` | DELTA-02 header note; §3c policy table (L2/L3 marked FE-1) + post-table D-1/FE-1 ruling block confirming L1 Phase-0 default; OQ-1/OQ-2 rewritten (Phase-0 resolved; FE-1 residual). |
-| `spec-faithful/C29-model-floor-stylesheet.md` | §6 tension: added `> [AMBIGUITY] D-1/FE-1` resolution so cross-family is no longer an unsatisfiable blocker; I2 invariant, §5 step 4, §8 A2, §6 F27/F46 rows, and G08/G20 OQs annotated to the same-provider Phase-0 baseline with cross-provider = FE-1. |
+| `spec/C29-model-floor-stylesheet.md` | §6 tension: added `> [AMBIGUITY] D-1/FE-1` resolution so cross-family is no longer an unsatisfiable blocker; I2 invariant, §5 step 4, §8 A2, §6 F27/F46 rows, and G08/G20 OQs annotated to the same-provider Phase-0 baseline with cross-provider = FE-1. |
 
 ---
 

@@ -1,6 +1,6 @@
 # C20 — Bead schema registry  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C20-bead-schema.md`](../spec-faithful/C20-bead-schema.md)
+> Source / Spec ref: [`spec/C20-bead-schema.md`](../spec/C20-bead-schema.md)
 
 ## 1. Work breakdown
 

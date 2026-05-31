@@ -1,6 +1,6 @@
 # C42 — Rig / agent-role partitioning  (Build Plan, Track A)
 
-> Source / Spec ref: [C42 spec (faithful)](../spec-faithful/C42-rig-partitioning.md)
+> Source / Spec ref: [C42 spec (faithful)](../spec/C42-rig-partitioning.md)
 > Track: A (faithful)   Status: sweep-1
 
 C42 is **policy/config**, not a service: it defines the closed role set (worker/scenario-author/judge),

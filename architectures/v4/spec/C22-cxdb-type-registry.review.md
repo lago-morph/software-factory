@@ -1,7 +1,7 @@
 # Adversarial review — C22 CXDB Type Registry & Viewpoint Tagging (Track A, sweep 1)
 
 Reviewer persona: Subsystem Adversary — Persistence & Memory
-Target: spec-faithful/C22-cxdb-type-registry.md
+Target: spec/C22-cxdb-type-registry.md
 Charter: Track A → attack FIDELITY and COMPLETENESS only, not the design.
 
 ## Findings

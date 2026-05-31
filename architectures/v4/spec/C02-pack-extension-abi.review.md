@@ -1,7 +1,7 @@
 # Adversarial review — C02 Pack & Tool-Node ABI (Tracks A + B, sweep 1)
 
 Reviewer persona: Subsystem Adversary (Runtime Substrate)
-Targets: spec-faithful/C02-pack-extension-abi.md, plan-faithful/C02-pack-extension-abi.md,
+Targets: spec/C02-pack-extension-abi.md, plan-faithful/C02-pack-extension-abi.md,
 spec-optimized/C02-pack-extension-abi.md, plan-optimized/C02-pack-extension-abi.md
 
 ## Findings — Track A (faithful: attack fidelity/completeness)

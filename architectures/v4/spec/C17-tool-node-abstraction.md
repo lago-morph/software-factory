@@ -1,6 +1,6 @@
 # C17 — Tool-Node Abstraction  (Spec, Track A)
 
-> Source: README §"Principle 4 — Deterministic-first" (lines 152–162; the "Tool node abstraction" row line 158 "Gas City native — tool beads … Native", and line 154 "Tool nodes are cheap and reproducible. Most steps don't need a model. Use models only where reasoning is required."), README §Part 3.1 "P4 (deterministic-first): reconciler + tool-node primitives available" (line 370), README §13.3-equivalent tool sketches (Inspect AI subprocess line 599, bridge line 389, satisfaction aggregator line 426). AI-CONTEXT §3.2 "nine concepts" concept 7 Formulas+Molecules / concept 9 Health Patrol (lines 91, 93), §3.5 P4 strength row "Strong (reconciler + tool nodes)" (line 69), §13.3 `[[tool]]` subprocess sketch (lines 599–608). F-MODE-COVERAGE F51 (Ashby-deficient probabilistic guard; line 76) and F52 (tempting-wrong-hybrid / deterministic-without-purpose; line 100). component-inventory C17 row (deps C02; gap G29; foundational yes); component-inventory-A A35 (Tool node abstraction; RM P4, AC §3.2), A17 (P4 deterministic-first cross-cutting). C02 spec `spec-faithful/C02-pack-extension-abi.md` (the ABI C17 is realized over).
+> Source: README §"Principle 4 — Deterministic-first" (lines 152–162; the "Tool node abstraction" row line 158 "Gas City native — tool beads … Native", and line 154 "Tool nodes are cheap and reproducible. Most steps don't need a model. Use models only where reasoning is required."), README §Part 3.1 "P4 (deterministic-first): reconciler + tool-node primitives available" (line 370), README §13.3-equivalent tool sketches (Inspect AI subprocess line 599, bridge line 389, satisfaction aggregator line 426). AI-CONTEXT §3.2 "nine concepts" concept 7 Formulas+Molecules / concept 9 Health Patrol (lines 91, 93), §3.5 P4 strength row "Strong (reconciler + tool nodes)" (line 69), §13.3 `[[tool]]` subprocess sketch (lines 599–608). F-MODE-COVERAGE F51 (Ashby-deficient probabilistic guard; line 76) and F52 (tempting-wrong-hybrid / deterministic-without-purpose; line 100). component-inventory C17 row (deps C02; gap G29; foundational yes); component-inventory-A A35 (Tool node abstraction; RM P4, AC §3.2), A17 (P4 deterministic-first cross-cutting). C02 spec `spec/C02-pack-extension-abi.md` (the ABI C17 is realized over).
 > Inventory ID: C17   Kind: component   Status: sweep-1
 > Track: A (faithful)
 
@@ -109,7 +109,7 @@ inputs/outputs, independent of the bound binary's language*. This is the "unifie
 > **Reading B** — C17 *owns a workflow-facing input/output declaration* distinct from the ABI (which context
 > keys a node consumes and which outputs it surfaces) while C02 owns only the byte-level wire format.
 > **Pick Reading A.** The *bytes and the I/O contract itself* are C02's (G29 is resolved there, in
-> `spec-faithful/C02-pack-extension-abi.md` §3.2, which already enumerates the input/output/status channels
+> `spec/C02-pack-extension-abi.md` §3.2, which already enumerates the input/output/status channels
 > as ABI elements). C17 adds only: the **node-kind** tag, the **determinism** semantics, and the **uniform
 > by-name reference** a formula uses to place the step. C17 does **not** introduce a third "workflow-level
 > I/O declaration" ownership band — *which placeholder keys a node fills* is the **C12** formula-node entry

@@ -1,6 +1,6 @@
 # C19 — Bead store / typed work-graph  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C19-bead-work-graph.md`](../spec-faithful/C19-bead-work-graph.md)
+> Source / Spec ref: [`spec/C19-bead-work-graph.md`](../spec/C19-bead-work-graph.md)
 
 ## 1. Work breakdown
 

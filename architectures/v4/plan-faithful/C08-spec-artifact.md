@@ -1,6 +1,6 @@
 # C08 — Spec artifact & format (`spec-artifact`)  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C08-spec-artifact.md`](../spec-faithful/C08-spec-artifact.md)
+> Source / Spec ref: [`spec/C08-spec-artifact.md`](../spec/C08-spec-artifact.md)
 > Inventory: C08, Spec Intake, artifact, foundational=yes. Depends on: C03. Track: A (faithful). Sweep: 1.
 
 C08 is an **artifact + format**, not a running service: most of "building C08" is *deciding and documenting the format contract* and providing the minimal conformance scaffolding so dependents (C09, C10, C11, C39, C51/C52) can build against a frozen shape. This plan is correspondingly thin on code and heavy on contract-freezing — which is exactly what makes it high-leverage on the critical path (C08 is in Batch 1, foundational).

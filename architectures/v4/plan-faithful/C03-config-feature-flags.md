@@ -1,6 +1,6 @@
 # C03 — Layered config / feature-flag model  (Build Plan, Track A)
 
-> Source / Spec ref: [`spec-faithful/C03-config-feature-flags.md`](../spec-faithful/C03-config-feature-flags.md)
+> Source / Spec ref: [`spec/C03-config-feature-flags.md`](../spec/C03-config-feature-flags.md)
 
 ## 1. Work breakdown
 

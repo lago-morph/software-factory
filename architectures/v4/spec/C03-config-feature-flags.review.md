@@ -1,7 +1,7 @@
 # Adversarial review — C03 Layered config / feature-flag model (Tracks A + B, sweep 1)
 
 Reviewer persona: Subsystem Adversary (Runtime Substrate)
-Targets: spec-faithful/C03-config-feature-flags.md, plan-faithful/C03-config-feature-flags.md,
+Targets: spec/C03-config-feature-flags.md, plan-faithful/C03-config-feature-flags.md,
 spec-optimized/C03-config-feature-flags.md, plan-optimized/C03-config-feature-flags.md
 
 ## Findings — Track A (faithful: attack fidelity/completeness)

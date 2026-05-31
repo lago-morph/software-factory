@@ -18,7 +18,7 @@
 
 Other claims spot-checked and **verified clean**:
 - "148 DELTAs across 23 built components" — enumeration §2 totals match (verified line-by-line).
-- "23 of 57 components" — spec-faithful/ + spec-optimized/ both contain 23 non-review files; inventory has 57 components.
+- "23 of 57 components" — spec/ + spec-optimized/ both contain 23 non-review files; inventory has 57 components.
 - "85.4% well-justified" — skeptic verdict table: 123/144 = 85.42% ✓.
 - "65% cherry-pickable" — independence file classifies 68+34=102 of 129 as ISOLATED+CLUSTER-2 (79%), but "ISOLATED + small clusters" framing gives 53+11+ partial cluster credit ≈ 65% range.
 - 11/4/5/2 secrets-consumer counts — secrets-manager file §1 explicitly states "Consumer count: 11. High: 4. Medium: 5. Low: 2." Verified exact match.

@@ -1,6 +1,6 @@
 # C07 — Vocabulary & Glossary  (Build Plan, Track A)
 
-> Source / Spec ref: spec-faithful/C07-vocabulary-glossary.md
+> Source / Spec ref: spec/C07-vocabulary-glossary.md
 > Track: A (faithful)   Sweep: 1
 
 ## 1. Work breakdown

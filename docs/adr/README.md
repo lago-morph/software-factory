@@ -22,6 +22,7 @@ python3 .claude/skills/adr/scripts/check_adr_links.py docs/adr/
 | [0007](./0007-advisory-ci-gates-emit-dismissible-pr-reviews.md) | Advisory CI gates emit dismissible PR reviews, not failing checks | Accepted | 2026-05-21 |
 | [0008](./0008-self-installing-pretooluse-hooks-for-skill-load-enforcement.md) | Self-installing PreToolUse hooks as the canonical mechanism for skill-load enforcement | Accepted | 2026-05-21 |
 | [0009](./0009-help-wanted-label-as-permanent-marker-of-agent-authored-issues.md) | Repurpose the GitHub default `help wanted` label as the permanent marker of agent-authored issues | Accepted | 2026-05-21 |
+| [0067](./0067-dual-track-per-component-v4-layout.md) | Dual-track per-component v4 spec/plan layout with a _meta decision ledger | Accepted | 2026-05-30 |
 
 ## Conventions in one screen
 

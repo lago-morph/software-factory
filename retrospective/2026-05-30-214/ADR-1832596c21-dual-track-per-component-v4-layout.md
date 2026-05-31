@@ -1,7 +1,7 @@
 # ADR: Dual-track per-component v4 spec/plan layout with a _meta decision ledger
 
 - **ID**: ADR-1832596c21
-- **Status**: Draft (not yet adopted to docs/adr/)
+- **Status**: Adopted — see [`docs/adr/0067-dual-track-per-component-v4-layout.md`](../../docs/adr/0067-dual-track-per-component-v4-layout.md)
 - **Date**: 2026-05-30
 - **Source retrospective**: ../2026-05-30-214.md
 - **PRs covered**: #213, #214

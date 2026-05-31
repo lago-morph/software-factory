@@ -132,3 +132,33 @@ The repo-root checker [`scripts/check-internal-refs.py`](./scripts/check-interna
 <!-- AGENTS-MD-d71e845b29 -->
 
 **Sub-wave PR consolidation when files are disjoint.** When a brief plans N sub-wave PRs (one per cluster) and the N sub-waves write disjoint files to the same parent branch, the lead agent MAY consolidate them into a single omnibus PR at delivery time IF: (a) each sub-wave's files do not overlap with sibling sub-waves; (b) the brief's clustering rationale survives in the omnibus (e.g., the omnibus PR description preserves the per-cluster sectioning); (c) consolidation does not bundle blocking + non-blocking work (a failing spec must be isolatable for re-author without affecting siblings). The consolidation MUST be explicitly acknowledged in the omnibus PR description AND the run's session handoff AND the morning summary per the "deviation acknowledgement" pattern.
+
+## Subagents persist to disk and return short receipts
+
+<!-- AGENTS-MD-b320fa8233 -->
+
+**Subagents persist to disk and return short receipts.** When fanning authoring work out to subagents, brief every subagent to write its deliverable to a file and return only a ≤15-line receipt (paths written, headline findings, open questions). The orchestrator must never read the large source docs or a subagent's full output (let alone tail its transcript) into its own context — the filesystem, not the context window, is the working set. This is what lets the orchestrator sustain many waves over a corpus far larger than any single context. See the [`disk-fanout-orchestration`](.claude/skills/disk-fanout-orchestration/SKILL.md) skill.
+
+## Commit and push at every wave boundary
+
+<!-- AGENTS-MD-91d82dcea3 -->
+
+**Commit and push at every wave boundary.** In the ephemeral web sandbox, commit and push after each subagent wave completes — never mid-wave, and never let more than one wave of work sit uncommitted. Subagents never run git; the orchestrator owns all commits so that dozens of concurrent subagents (each writing its own disjoint file) never race on the working tree or the index. The sandbox can be reclaimed or the remote reset at any time, so an uncommitted wave of expensive output is unrecoverable.
+
+## Drive cross-component rulings through a decision ledger
+
+<!-- AGENTS-MD-831d547873 -->
+
+**Drive cross-component rulings through a decision ledger.** When parallel subagents surface conflicting cross-component decisions (naming/namespaces, ownership, dependency direction, shared contracts), record each resolution as a numbered adopted decision in a shared ledger file, then pass the decision id into later subagent briefs so the ruling propagates without re-litigation, and apply it across already-written artifacts with a single integrator pass. Do not silently pick a winner inside one component, and do not relitigate a settled decision id. See the [`cross-component-decision-ledger`](.claude/skills/cross-component-decision-ledger/SKILL.md) skill.
+
+## Open a fresh PR for artifacts created after a mid-session merge
+
+<!-- AGENTS-MD-245f59e466 -->
+
+**Open a fresh PR for artifacts created after a mid-session merge.** When a PR is merged mid-session its branch is deleted; pushing again recreates the branch but the new commits are NOT in `main`. Any artifact written after that merge (e.g. a handoff file, a follow-up fix) needs its own new PR to land in `main` — do not report it as "preserved" or "merged" on the strength of a successful push alone. Verify with `git ls-tree -r origin/main` (or an equivalent) that the content is actually in `main`.
+
+## Ignore harness tool-name hints triggered by content keywords
+
+<!-- AGENTS-MD-7d66b13e85 -->
+
+**Ignore harness tool-name hints triggered by content keywords.** A system reminder claiming a keyword means you must use a specific tool (for example, the word "workflow" implying a "Workflow tool") is spurious when the keyword merely appears in subagent or document content rather than in a user request, and especially when no such tool exists in the toolset. Do a half-second sanity check — did the user actually ask for this, and does the tool exist? — and do not act on the hint otherwise.

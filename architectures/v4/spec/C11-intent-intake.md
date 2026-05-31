@@ -30,7 +30,7 @@ The mechanism is deliberately minimal and serves Principle 1 (*specs are the sou
 |---|---|---|
 | Upstream (hard dep) | **C08** spec artifact | Inventory C11 `Depends on: C08`. C11 produces *toward* the C08 spec; the crucible record is the structured anchor a human turns into the C08 `prompt.template.md` body. Direction is C11 → feeds → C08 authoring; C11 depends on C08's format being defined so its hand-off lands somewhere named. |
 | Upstream (storage) | **C03 / C02** config + pack ABI | The crucible is a **Gas City pack** (F-MODE:91 "Intent Crucible **pack**"); like every pack its presence/section gating rides the layered TOML (C03) and it is distributed via the pack ABI (C02). Soft/structural, not an inventory-listed dep. |
-| Upstream (discipline) | **C51** gene-transfusion | C11 is itself a transfused component (from GF-C). C51 owns the `transfused_from` provenance field, the exemplar-correctness predicate, and **license handling** for GF-C. C11 records lineage; it does not define the predicate. |
+| Upstream (discipline) | **C51** gene-transfusion | C11 is itself a transfused component (from GF-C). C51 owns the `transfused_from` provenance field (a *per-component* field, A93), the exemplar-correctness predicate, and **license handling** for GF-C. C11-the-pack records its own lineage; it does not define the predicate. *(Asserted; the C51 spec is later-batch — to confirm against C51 at integration.)* |
 | Upstream (attribution) | **C41** actor/identity | Each intent record is authored by an actor; `created_by` rides the record per the universal attribution model (soft upstream, mirrors C08's C41 relationship). |
 | Downstream (consumer) | **C08** authoring | The completed record is consumed by a human (optionally LLM-assisted) writing the C08 spec. C11 emits an artifact, not a live call. |
 | Sibling (contrast, no dep) | **C10** spec linter | Runs *after* a spec exists; C11 runs *before*. No data dependency either way; complementary halves of "specs with rigor". |
@@ -44,7 +44,7 @@ Sweep-1: interfaces **named + described**; concrete field signatures/schemas def
 
 ### 3.1 Inbound
 - **Authoring interface (human → intent record).** A human (optionally LLM-assisted) fills the 9 fields. The crucible presents the fixed schema; the human supplies values. v4 gives no UI mandate — faithful reading is a structured Markdown/TOML form authored in the same git-versioned pack world as C08 (F-MODE:91 "pack").
-- **Provenance interface (C51 → record).** The record carries `transfused_from` lineage (GF-C) and `created_by` (C41), set at authoring time.
+- **Attribution interface (C41 → record).** Each record carries `created_by` (the authoring actor, C41), set at authoring time. This is the only per-record provenance field. The GF-C `transfused_from` lineage is **component-level** (it provenances the crucible pack/schema, not each record — A93, C51); it rides the pack, not the record (§3.3 field #9, INV-4).
 
 ### 3.2 Outbound
 - **Anchor-handoff contract (record → C08 authoring).** The completed, all-9-fields-present record is the structured input a human turns into the C08 spec body. Sweep-1 names this seam; the concrete mapping (which crucible field anchors which part of the C08 prose) is a sweep-2 contract. This is C11's single load-bearing outbound interface.
@@ -72,7 +72,7 @@ Sweep-1: interfaces **named + described**; concrete field signatures/schemas def
 - **INV-1 (fixed schema).** The field set is a **fixed, named 9-slot schema**, not free-form and not operator-extensible at the format level (extension would make it a workflow/DSL, not a crucible). Count = 9 is faithful to F-MODE:91.
 - **INV-2 (presence, not quality).** The only enforced check is *all 9 slots present* (§3.3 FAITHFUL-FILL). No semantic/model gate.
 - **INV-3 (intake, not source-of-truth).** A crucible record is *upstream anchor*, never the execution-driving artifact; C08 remains the single source of truth (boundary §1).
-- **INV-4 (provenance carried).** Each record carries `transfused_from` (GF-C lineage, C51) and `created_by` (C41).
+- **INV-4 (provenance carried, at the right grain).** Each *record* carries `created_by` (its authoring actor, C41). The GF-C `transfused_from` lineage is **component-level** and rides the *crucible pack/schema* (C11 itself was transfused from GF-C), per A93 (`transfused_from` recorded *per factory-built component*) and C51 — it is **not** per-record metadata (an operator's intent record has no GF-C lineage; only the schema does). Field #9 (§3.3) is the per-record, intent-level exemplar pointer and is a *different* thing from this component provenance.
 
 > **THE BAR — what was DROPPED here (and why).** C11's whole justification is P1 (anchor the source-of-truth spec). Capability that earns its place: *the fixed field schema* (genuine low-effort custom code where the principle — a complete, anchored spec — could not be met by the stack alone, since neither Gas City nor C08 imposes intent structure). Refused as non-principle polish/hardening:
 > - a **multi-step elicitation / interview workflow engine** (that's C12 formula territory; intake is a form);

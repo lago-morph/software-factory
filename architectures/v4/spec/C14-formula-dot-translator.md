@@ -150,7 +150,21 @@ This is the contract C14 exists to guarantee. Three named properties:
 > bounded-repeat node), that construct must have a **defined DOT encoding and a defined inverse**, or the
 > round trip breaks on every iterative formula. C14 cannot resolve C12:OQ-2 (it is C12's), but it **must
 > treat the loop primitive as a first-class entry in the §3.3 exclusion/mapping catalog** and freeze its DOT
-> encoding the moment C12 freezes the primitive. Flagged as OQ-2; gates C15's ability to lint loops.
+> encoding the moment C12 freezes the primitive.
+>
+> **Two states must not be conflated (C14↔C15 seam).** C14's *end-state* is **not** to reject loops — it is
+> to **export them as a marked back-edge** (the §3.1 loop/back-edge marker row) so that **C15 can lint the
+> loop**: C15 §3.3 rule 1 must tell a sanctioned bounded loop apart from a raw cycle, and C15 §9 OQ-2 names
+> "loop-construct markers" as exactly the surface it needs C14 to freeze. Distinguish:
+> - **(interim, until C12:OQ-2 lands)** — the loop primitive is unfrozen, so C14 has no encoding to emit;
+>   an as-yet-unencodable loop is a **rejected** catalog entry that **fails loud** rather than emitting
+>   *lossy/ambiguous* DOT (better to refuse than to emit a raw back-edge C15 would mis-flag as a cycle).
+> - **(end-state, once C12 freezes the primitive)** — C14 emits the **marked** loop construct and ships a
+>   defined inverse; the catalog entry flips from *rejected* to *lowered-by-rule*, restoring C15's
+>   loop-lint capability. Fail-loud is the temporary blocker, **not** a permanent capability removal.
+>
+> Flagged as OQ-2; gates C15's ability to lint loops, which is why the §3.1 marker row freezes the
+> *obligation* now even though the concrete encoding waits on C12.
 
 ## 4. Data model / state
 
@@ -192,7 +206,7 @@ Key flows (sweep-1 narrative; sequence diagram deferred to sweep-2):
 | **F53** Voluntary-discipline fragility | "formula checks replace operator-voluntary discipline" (F-MODE:77). DOT-ecosystem linting is one such substrate check. | C14 supplies the DOT that makes the check possible; the check is C15. |
 | **Round-trip loss (G24 core)** | A formula that translates to DOT and back to a *different* formula would make visualization and linting lie. | The §3.3 fidelity contract + the §8 CI gate: mismatch = loud failure, never silent. Out-of-profile DOT on `import` is **rejected by name**, never coerced. |
 | **Expressive-power overflow on import** | DOT carrying constructs with no formula meaning (arbitrary edge attrs, ports, clusters, cycles). | `import` rejects out-of-profile constructs with a message naming the construct (§3.3.2); it never emits a malformed formula. |
-| **Loop-primitive mismatch** | If C12's iteration primitive has no DOT inverse, iterative formulas break the round trip. | Treated as a first-class catalog entry (§3.4); export of an as-yet-unencodable loop **fails loud** rather than emitting lossy DOT. Resolved when C12:OQ-2 lands. |
+| **Loop-primitive mismatch** | If C12's iteration primitive has no DOT inverse, iterative formulas break the round trip. | Treated as a first-class catalog entry (§3.4). **Interim** (C12:OQ-2 unfrozen): export of an as-yet-unencodable loop **fails loud** rather than emitting lossy/ambiguous DOT. **End-state** (C12 freezes the primitive): export emits a **marked back-edge** (§3.1 loop-marker row) with a defined inverse so C15 can lint the loop — the entry flips *rejected* → *lowered-by-rule*. Fail-loud is the temporary blocker, not C14's end-state. |
 | **C12 schema drift** | A new formula-format version C14 hasn't mapped. | Version-locked mapping (§4) rejects unknown schema versions rather than mistranslating. |
 | **Drift from `gc` export output** | If C14 wraps native `gc formula export` and that output changes. | C14 binds to the *observable* `--format dot` output, not `gc` internals (G11); a contract test (§8 AC-5) catches output drift. |
 

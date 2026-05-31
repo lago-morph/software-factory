@@ -89,7 +89,7 @@ C31 is **half of the P5 mechanism** (the *execution* half). P5's other halves ar
   (F-MODE F12/F54; README:195); the twins are **C44**. C31 executes whatever target the scenario/task
   configures; it does not provide or select the twin.
 - **NOT cross-family enforcement.** "Judge ≠ coder model family" is a C29/model-stylesheet rule (README:189);
-  irrelevant to the runner. (And per review-log D-9, cross-family is relaxed to same-provider for now.)
+  irrelevant to the runner. (And per review-log D-1, the cross-family rule is relaxed to same-provider for now.)
 
 ## 2. Context & dependencies
 
@@ -123,7 +123,7 @@ defer to sweep 2 (and the scenario format to C30, the trajectory/score model to 
 | I2 | **`inspect eval` subprocess tool node** | inbound (invoke) | The `[[tool]] type="subprocess"` node — `command="inspect"`, `args=["eval","{scenario_path}","--task","{task}"]`, `work_partition="scenarios"` (A28i; AI-CONTEXT §13.3). The engine invokes this node to *run a scenario*; placement is by C17 (by-name); bytes/exit-status are C02's. | C31 (this); C17 (placement), C02 (ABI) |
 | I3 | **Scenario-reference + task input** | inbound (data) | The `{scenario_path}` (a C30 store reference) + `{task}` the node consumes, substituted into `args` from molecule/bead context. C31 does not define the scenario format (C30) — it consumes a reference to it. | C30 (format/store), C31 (consumes) |
 | I4 | **Session-id adapter (G25)** | internal/glue | The custom glue that maps Claude Code/Gas City **`session.id`** ↔ Inspect AI's run/sample identity, **injecting** it into the eval so the run's emitted turns thread into one trajectory, and **surfacing** the run's `session.id` as part of the node's output. **This is C31's core custom deliverable.** | C31 (this) |
-| I5 | **Run trajectory + result output** | outbound (data) | The node's declared output: Inspect AI's emitted **trajectory/sample log** + run identity (`session.id`) + exit status, surfaced to the workflow engine (C17) and bound to a bead so C32 (judge) can score it ("scenario-to-bead binding via pack", README:439). | C31 (this); C32 (consumer), C17 (surfacing) |
+| I5 | **Run trajectory + result output** | outbound (data) | The node's declared output: Inspect AI's emitted **trajectory/sample log** + run identity (`session.id`) + exit status, surfaced to the workflow engine (C17) and bound to a bead so C32 (judge) can score it ("scenario-to-bead binding via pack", README:439). *[FAITHFUL-FILL]: README:439 states the **binding-via-pack** concept; the exact **bead-binding shape** (which fields land on the bead so C32 locates the right trajectory) is inferred from the bead model (C19/C20) + the judge-consumes-trajectory flow and is deferred to sweep 2 (OQ-4), not a v4-stated contract.* | C31 (this); C32 (consumer), C17 (surfacing) |
 | I6 | **Pack/tool-node lifecycle** | inbound (ops) | C31 packaged + configured as a Gas City pack (Inspect AI install + the I1/I2 blocks); operated in Phase 2 alongside C30/C32 (README:423–424). | C02/C17 (ABI), C31 (config) |
 
 **Invariants C31 must uphold:**

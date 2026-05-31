@@ -217,15 +217,17 @@ C30 *owns the scenario corpus + its layout + signatures*; the *partition policy*
 stored at `scenarios/<component>/…` in the separate repo, authored by the `scenario_authoring` rig, and
 signed at day-0. A *scenario suite* is the set of scenarios for a component (or the Healer/twins — README:499).
 
-> [FAITHFUL-FILL] v4 names the *format* (Inspect AI Task DSL, README:170), the *location* (separate repo +
-> `scenarios/<component>/`, README:171/425, AI-CONTEXT §16.4), and *day-0 signing* (F9) but not the
-> concrete on-disk scenario record (e.g. scenario id, component binding, signature placement, corpus
-> manifest). The minimal faithful elaboration is: **a stored scenario = {an Inspect AI `Task` file under
-> `scenarios/<component>/`, a day-0 signature, and a `created_by` author attribution}**, where `created_by`
-> mirrors the corpus-wide attribution requirement (C41; README:226–231) so scenarios are attributable to the
-> `scenario_authoring` rig. This is the smallest set implied by "Inspect AI Task" + "separate repo /
-> `<component>/` layout" + "signed at day-0" + the attribution requirement; the exact `Task` signatures and
-> signature format are sweep-2, and the *runner-facing* execution contract is C31's.
+> [FAITHFUL-FILL] v4 names the *format* (Inspect AI Task DSL, README:170) and the *location* (separate repo +
+> `scenarios/<component>/`, README:171/425, AI-CONTEXT §16.4) but not the concrete on-disk scenario record
+> (e.g. scenario id, component binding, corpus manifest). The minimal faithful elaboration is: **a stored
+> scenario = {an Inspect AI `Task` file under `scenarios/<component>/`} committed to the separate repo**,
+> whose **provenance + tamper-evidence are the git commit identity** (immutable, content-addressed,
+> attributable to the committing `scenario_authoring` rig — AI-CONTEXT:236/404), so no separate signature or
+> `created_by` field is required at Phase-0 (the git commit *author* already records the rig; P9 attribution
+> is satisfied natively, README:226–231 — an *inference*, not a v4 mandate that scenario files carry
+> `created_by`). The exact `Task` record shape and whether an explicit `created_by` field is added are
+> sweep-2 (OQ-1); the *runner-facing* execution contract is C31's. *(Cryptographic signing is DEFERRED →
+> FE-3/G37, D-14 — see §1 bullet 4.)*
 
 > [FAITHFUL-FILL] **Scenarios are stored in the git repo, not in CXDB.** v4 locates scenarios in a "separate
 > git repo" (README:171/425) and CXDB stores *trajectories* (C21), not scenario inputs. The minimal faithful

@@ -214,6 +214,11 @@ Key flows (sweep-1 narrative; sequence diagram deferred to sweep-2):
 | **C12 schema drift** | A new formula-format version C14 hasn't mapped. | Version-locked mapping (§4) rejects unknown schema versions rather than mistranslating. |
 | **Drift from `gc` export output** | If C14 wraps native `gc formula export` and that output changes. | C14 binds to the *observable* `--format dot` output, not `gc` internals (G11); a contract test (§8 AC-5) catches output drift. |
 
+C14 **closes no F-mode on its own** — it is the **fidelity/visibility enabler** for the F26/F53 controls
+that **C15** owns (and for human review via graphviz), not a mitigation owner. Its sole F-mode-relevant
+duty is that the DOT it emits is a faithful image of the formula, so C15's findings (and the reviewer's
+eyes) concern the *real* workflow. (Mirrors the C15 sibling's "no F-mode C15 closes on its own" note.)
+
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
 - **Security.** C14 handles only workflow *descriptions* (formulas/DOT), not credentials or live data; no

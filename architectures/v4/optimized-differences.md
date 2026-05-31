@@ -189,15 +189,27 @@ These are the only places where Track B is a meaningfully *different architectur
 
 ```mermaid
 flowchart LR
-    P["Portability contracts<br/>C01/C04/C21/C28 DELTA-01"]
-    S["Mandatory signing<br/>C41 DELTA-01/06"]
-    J["Graded judge<br/>independence policy<br/>C29 DELTA-02/03"]
-    SC["Supply-chain signing<br/>C02 DELTA-02 +<br/>C41/C51 provenance"]
-    P -.->|the only one with no<br/>external dependency| FREE["track-B-only<br/>(architectural taste)"]
-    S -.->|blocked on G37| BLOCK1["needs secrets manager<br/>decision"]
-    J -.->|blocked on second<br/>provider credential| BLOCK2["needs FE-1 +<br/>Max policy clarity"]
-    SC -.->|blocked on G37<br/>+ human trust root| BLOCK3["needs secrets +<br/>RSI governance"]
+    SYS["4 systemic clusters<br/>(real architectural divergence)"]
+    FREE["Track-B-only<br/>1 cluster: portability contracts"]
+    BLOCKED["Blocked on external decisions<br/>3 clusters: signing, judge, supply chain"]
+    G37["G37 secrets manager"]
+    FE1["FE-1 cross-family judge"]
+    RSI["Human-held RSI trust root"]
+    SYS --> FREE
+    SYS --> BLOCKED
+    BLOCKED --> G37
+    BLOCKED --> FE1
+    BLOCKED --> RSI
 ```
+
+The four clusters in detail:
+
+| # | Cluster | Components | External dependency |
+|---|---|---|---|
+| 1 | Portability contracts | C01/C04/C21/C28 DELTA-01 | None (Track-B-only) — skeptic-flagged weakest cluster |
+| 2 | Mandatory signing | C41 DELTA-01/06 | Blocked on G37 (secrets manager) |
+| 3 | Graded judge independence | C29 DELTA-02/03 | Blocked on second-provider credential (FE-1) |
+| 4 | Supply-chain signing | C02 DELTA-02 + C41/C51 provenance | Blocked on G37 + human-held RSI trust root |
 
 Three of the four systemic clusters cannot fully ship as Track B either — they're blocked on the same external decisions (G37, judge access, RSI governance) that Track A is also waiting on. Only the portability-contracts cluster is fully Track-B-internal, and the skeptic flagged that one as the weakest-justified group of deltas in the corpus.
 

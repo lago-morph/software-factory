@@ -49,9 +49,13 @@ are authored*, in a form that is **held out** from the implementer. Scenarios ar
 (`github.com/UKGovernmentBEIS/inspect_ai`, MIT; "Inspect AI has the strongest agent-trajectory model",
 README:175; "Most mature general-purpose; agent-trajectory model fits", AI-CONTEXT:467) — and **stored in a
 separate git repo** that the implementer rig cannot read (README:171/425). C30 is the *spec-of-record for
-the scenario corpus as a held-out artifact*: the DSL it is written in, the repo it lives in, the
-**`scenarios` partition** and **`scenario_authoring` rig** it is bound to, and the **day-0 signing** that
-makes a stored scenario tamper-evident (F9 "Cryptographically signed scenarios at day-0").
+the scenario corpus as a held-out artifact*: the DSL it is written in, the repo it lives in, and the
+**`scenarios` partition** and **`scenario_authoring` rig** it is bound to. Phase-0/2 **tamper-evidence +
+provenance** for the corpus come from the **separate git repo's content-addressed commit history** (git's
+object store is content-addressed — AI-CONTEXT:404 — and v4 treats content-addressing as tamper-evidence,
+AI-CONTEXT:236), *not* from custom cryptographic signing: per **D-14**, cryptographic scenario signing is
+**deferred to FE-3, blocked on the open secrets gap G37** (a plaintext key collapses the assurance —
+XC-6/D-14). See §1 bullet 4 + §6 + §7.
 
 C30 delivers the *storage half* of **Principle 5 (scenarios as a held-out test set)**: "Scenarios are
 external to the codebase. The agent cannot see them during work." (README:166; AI-CONTEXT §1.3 L35
@@ -82,11 +86,19 @@ diversity; C30's contribution to that guarantee is *correct placement of the cor
   rig (`read_partition`/`write_partition = "scenarios"`, AI-CONTEXT §13.3), never by the implementer rig.
   C30 owns *that authoring happens in that rig*; C42 owns *the rig/partition definition* and C34 *enforces
   the implementer's exclusion* (D-13).
-- **Day-0 scenario signing (tamper-evidence/provenance)** — each stored scenario carries a signature at
-  authoring time so spec-overfitting via silent scenario edits is detectable (F9 "Cryptographically signed
-  scenarios at day-0"; F7 "periodic baselining against signed scenarios"). This is the one genuine
-  low-effort custom artifact C30 adds beyond Inspect AI (the bar: KEEP — serves P5/P6 holdout integrity, no
-  off-the-shelf piece provides it; *but key custody is G37, deferred to C03 — see §6/§7*).
+- **Corpus tamper-evidence + provenance via the git repo (custom signing DEFERRED → FE-3/G37)** — silent
+  scenario edits are detectable because the corpus lives in the **separate, content-addressed git repo**
+  (INV-1): git's commit history is immutable + content-addressed (AI-CONTEXT:404) and attributable to the
+  committing `scenario_authoring` rig, and v4 treats content-addressing as tamper-evidence (AI-CONTEXT:236).
+  This is the Phase-0/2 mechanism. **Custom cryptographic "day-0 signing" is DEFERRED, not a KEEP** — it
+  fails the capability-for-principle bar (it adds no tamper-evidence the content-addressed git repo +
+  `scenarios`-partition isolation do not already provide at Phase-0; the *only* delta it could add —
+  non-repudiation against an attacker who can rewrite git history — needs a key, and there is **no secrets
+  store**: G37 is open, owned by C03, plaintext today, which collapses the assurance, XC-6). Per **D-14**
+  this is the materially-identical signing question already settled **optional/deferred → FE-3 (blocked on
+  G37)**; C30 does not re-open it. *(v4's only signing source — F9 "Cryptographically signed scenarios at
+  day-0 **(gene transfusion from GF-C pattern)**" — scopes signing as a **Phase-3+ transfused** artifact, not
+  a Phase-2 storage primitive; the README Principle-5 section names signing nowhere. See §6/§7/OQ-3.)*
 - **Scenario-corpus versioning & growth** — the corpus is version-controlled and *grows over time*
   ("No specific scenario suite at the start … the broader scenario library grows over time", README:526);
   factory-built components, the Healer, and the twins each get their own scenarios (README:499). C30 owns
@@ -120,8 +132,10 @@ diversity; C30's contribution to that guarantee is *correct placement of the cor
   trajectories (the runs scored against scenarios) are the CXDB content-addressed log (C21). C30 stores
   scenarios, not trajectories. (If scenario *records* are ever CXDB-typed, the bundle root is
   `softwarefactory.v4.*` per D-2 — but the corpus's home is the separate git repo, not CXDB.)
-- **NOT secrets/key management.** The day-0 signing *uses* a key; *where that key lives* is the open secrets
-  gap **G37** (plaintext `city.toml`/env today), owned by C03 — not C30 (§7).
+- **NOT secrets/key management.** Cryptographic signing (DEFERRED → FE-3) would *use* a key; *where that key
+  lives* is the open secrets gap **G37** (plaintext `city.toml`/env today), owned by C03 — not C30. The
+  Phase-0/2 corpus integrity story (content-addressed git history) needs no key, which is exactly why signing
+  is deferred until G37 lands (D-14; §7).
 
 ## 2. Context & dependencies
 
@@ -130,7 +144,7 @@ diversity; C30's contribution to that guarantee is *correct placement of the cor
 | Upstream (depends on) | **C17** Tool-node abstraction | The Inspect AI scenario-provider pack is wrapped as a **tool node** over C17's abstraction (the `inspect_eval` `[[tool]] type="subprocess"`, AI-CONTEXT §13.3 L599–608; README:177 "expose it as a tool node"). C17 §2 routes C30 explicitly through it. Inventory: C30 `depends on C17`. |
 | Upstream (depends on) | **C42** Rig / agent-role partitioning | **C42 PROVIDES** the `scenario_authoring` rig + the `scenarios` partition + the holdout invariant `scenarios ∉ read_partition(worker)` (C42 §1; AI-CONTEXT §13.3). C30 authors/stores *inside* that partition. Inventory: C30 `depends on C42`. **C30 does not enforce; C42 provides, C34 enforces (D-13).** |
 | Upstream (DSL — external OSS) | **Inspect AI** (`github.com/UKGovernmentBEIS/inspect_ai`, MIT) | The adopted authoring DSL + Task model (README:170; AI-CONTEXT §15.2 L638). Adopted verbatim as upstream OSS (README:500). The session-id-vs-Gas-City impedance (AI-CONTEXT §12 L512) lands on C31 (runner), not C30. |
-| Upstream (secrets — deferred) | **C03** Config / secrets | Custody of the day-0 signing key is G37 (plaintext `city.toml`/env today); deferred to C03's SecretResolver. C30 names the signing; it does not store the key. |
+| Upstream (secrets — deferred) | **C03** Config / secrets | Custody of a signing key is G37 (plaintext `city.toml`/env today); deferred to C03's SecretResolver. C30's Phase-0/2 corpus integrity uses content-addressed git history (no key); **cryptographic signing is deferred to FE-3, blocked on G37 (D-14)** — C30 neither signs nor stores a key at sweep 1. |
 | Downstream (executes) | **C31** Scenario runner | Runs C30's stored scenarios via the Inspect AI runner; needs the session-id adapter (G25). Inventory: C31 `depends on C30`. |
 | Downstream (scores) | **C32** Judge harness | Scores work trajectories against C30's scenarios (same provider as coder, D-1). Inventory: C32 `depends on C30`. |
 | Downstream (enforces + audits) | **C34** Holdout integrity & isolation enforcement | **Enforces** read-isolation (perms + OPA + rig partition) and **audits** actual reads vs C30's scenario paths (README:173; inventory C34). C30's repo/path layout + signatures are *what C34 audits against*. **Enforcement is C34's, not C30's (D-13).** Inventory: C34 `depends on C30`. |
@@ -156,7 +170,7 @@ the *enforcement/audit* contract to C34, the *partition* contract to C42).
 | I2 | **Scenario repo + layout** (`scenarios/<component>/`) | storage | The separate git repo and on-disk path layout scenarios live in (README:171/425; AI-CONTEXT §16.4 L698). The unit C31/C32/C34 resolve by path. | C30 (this) |
 | I3 | **`[[service]] type="inspect_ai"` provider pack** | inbound (config) | The small Gas City pack that exposes Inspect AI as a scenario provider (README:424). Wrapped as a C17 tool node (`inspect_eval`, AI-CONTEXT §13.3). | C30 (this); C17 (abstraction) |
 | I4 | **`scenarios` partition / `scenario_authoring` rig binding** | placement | C30 stores into the `scenarios` partition and authors in the `scenario_authoring` rig (AI-CONTEXT §13.3). C30 *binds to* these; **C42 defines them**, **C34 enforces** the implementer's exclusion (D-13). | **C42** (defines), **C34** (enforces), C30 (binds) |
-| I5 | **Day-0 scenario signature** | storage (write) + verify | A signature attached to each scenario at authoring time for tamper-evidence/provenance (F9; F7 baselining). C30 *produces* it on store; C34/baselining *verify* it. Key custody is G37 (C03). | C30 (produce); C34 (verify); C03 (key) |
+| I5 | **Corpus integrity = git revision (signing DEFERRED → FE-3)** | storage + verify | Phase-0/2 tamper-evidence/provenance is the **content-addressed git commit identity** of each scenario in the separate repo (AI-CONTEXT:236/404); C34/baselining (F7) verify the corpus against its git revision. **Cryptographic per-scenario signing is DEFERRED to FE-3 (blocked on G37/D-14)** — not a sweep-1 interface. | C30 (git revision); C34 (verify); *FE-3/C03 (signing+key, deferred)* |
 | I6 | **Scenario-path feed (to enforcement/audit)** | outbound (read) | The set of scenario paths/labels C34's audit compares actual implementer reads against ("agent reads vs scenario paths", README:173). C30 *publishes the corpus layout*; C34 *audits against it*. | C30 (publishes); **C34** (audits) |
 | I7 | **Corpus retrieval (to runner/judge)** | outbound (read) | The runner (C31) and judge (C32) resolve a component's scenarios by path/`Task` from the corpus. C30 owns *the corpus*; C31 owns *execution*. | C30 (corpus); C31/C32 (consume) |
 

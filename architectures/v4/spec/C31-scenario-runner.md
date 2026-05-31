@@ -131,9 +131,12 @@ defer to sweep 2 (and the scenario format to C30, the trajectory/score model to 
   **no** runner/scheduler/eval-loop of its own. The only custom code is the **wrap (I1/I2)** and the
   **session-id adapter (I4)**. (Bar discipline — README:172/439; see §6.)
 - **INV-2 (trajectory threads by `session.id`):** every scenario run is associated with exactly one
-  `session.id`, and all turns the run provokes chain into one trajectory under that id (so C24's parent-chain
-  lands them coherently and C32 scores the right trajectory). This is the property the adapter (I4) exists to
-  guarantee (AI-CONTEXT §4.3 line 178, §5.4; G25).
+  `session.id`, and all turns the run provokes carry that id so they chain into one trajectory (so C24's
+  parent-chain lands them coherently and C32 scores the right trajectory). This is the property the adapter
+  (I4) exists to guarantee (AI-CONTEXT §4.3 line 178, §5.4; G25). *C31's guarantee is the **coherent
+  `session.id`**; the **parent-chain landing itself** is C24's mechanism over the raw-bodies→CXDB seam, whose
+  `session.id`→CXDB-parent-pointer mapping rule is the **G26** seam C24 owns — C31 supplies the correct id, it
+  does not perform the parent-chaining.*
   > [AMBIGUITY: G25] v4 states only that Inspect AI's session-id model **vs** Gas City's "likely needs adapter
   > layer; impedance unknown" (AI-CONTEXT §12 line 512) and does not give the mapping. Two readings of the
   > adapter's depth: **(a) thin** — a 1:1 id translation (carry/rename the existing `session.id` into the
@@ -256,7 +259,9 @@ do not thread under a coherent id, and the OSS stack does not provide that recon
 > trajectories, F-MODE:90) and **F9** (spec overfitting — signed scenarios run as held-out, F-MODE:19) operate
 > on the *runs C31 produces*; **F28** (holdout leakage, F-MODE:22) is **C30/C34**'s, with C31 contributing only
 > the `scenarios`-partition execution. C31 inherits the **F45** (language-as-harness, Python) residual
-> (F-MODE:92), bounded to the subprocess (INV-5). C31 defers the canonical F-mode mapping to C57.
+> (F-MODE:92), whose blast radius is **bounded** to the subprocess (INV-5) — note F45 is **"Partial — Python
+> sections inherit risk"** in F-MODE-COVERAGE, i.e. the subprocess boundary *bounds* the residual, it does
+> not *close* it. C31 defers the canonical F-mode mapping to C57.
 
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 

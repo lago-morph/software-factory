@@ -223,20 +223,27 @@ Key flow (sweep-1 narrative; sequence diagram at sweep 2):
 | **Malformed / un-parseable DOT** | The C14 export is missing or not parseable as a graph. | Fail cleanly with a single high-severity "could not parse workflow graph" finding rather than crashing; if C14 is unavailable the lint pass degrades to skipped-with-warning (it is an *optional* advisory pass — README:392). > [FAITHFUL-FILL]: v4 specifies no behavior; graceful degradation is the minimal-consistent choice (C15 is advisory, not a hard dependency of the run). |
 | **G30 — transfusion-source license (Mammoth)** | C15's rule corpus is **transfused from Mammoth** (README:134), and G30 flags the Mammoth/Tracker license as *unverified*. | See the G30 note below — the faithful posture is structural-pattern transfusion under license verification, which keeps C15 buildable even if Mammoth's code is non-portable. |
 
-> **G30 handling (assigned to C15 alongside C38/C51).** G30's headline target is the **Healer's Tracker
-> transfusion** (C38); the same finding lands on C15 because **C15's 21 rules are transfused from Mammoth**
-> (README:134), whose license is "verify; 2389 convention is MIT" (README:301; AI-CONTEXT §6.4 "License:
-> verify") — *unverified* (G30; AI-CONTEXT §509 lists Mammoth's rules as an open documentation item).
-> **Faithful resolution:** README:134 *already* states Mammoth's license as **MIT** ("Mammoth's 21-rule DOT
-> linter (Go, MIT)") and README:301 names the DOT linter "the strongest transfusion target" — so the faithful
-> default is **MIT, code-transfusable** *pending the README:551 / §508 license-verification step that v4 itself
-> requires before adoption*. If verification fails (Mammoth non-permissive), C15 falls back to **pattern
+> **G30 handling (the boundary principle inherited for C15's Mammoth transfusion; C51).** G30's *literal*
+> subject is the **Healer's diagnosis-agent ↔ Tracker transfusion seam** (C38): it flags that Tracker's
+> license is unverified and that "the boundary between 'transfuse the code' and 'reimplement the pattern' is
+> left to chance" (ambiguities-and-gaps:77; Mammoth appears there only as "the library Mammoth wraps",
+> README:292). The inventory assigns **G30 to C15** because **the identical code-port-vs-pattern boundary
+> problem recurs for C15's own transfusion**: C15's 21 rules are transfused from **Mammoth's DOT linter**
+> (README:134), whose license the corpus marks **unverified — "MIT (verify; 2389 research convention)"**
+> (README:301), "**License: verify; 2389 convention is MIT**" (AI-CONTEXT §6.4), and which README:508/535/551
+> list among projects needing **license verification before adoption** (AI-CONTEXT §509 lists Mammoth's exact
+> rules as an open documentation item). C15 therefore *inherits G30's boundary obligation* rather than closing
+> G30's Tracker case.
+> **Faithful resolution:** the license is **unverified (likely MIT by 2389 convention, but flagged "verify")**,
+> so v4's own verification step (README:551 / §508) is the gate. **IF** verification confirms MIT, C15
+> **code-ports** the rules (README:134's inline "(Go, MIT)" + README:301 "strongest transfusion target"
+> support this branch). **IF** verification fails (Mammoth non-permissive), C15 falls back to **pattern
 > transfusion** (C51): the **21 structural rules are re-implemented from their documented behavior** — graph
-> cycle/reachability/entry-exit/chain checks are textbook DAG algorithms, independently writable — rather
-> than porting Mammoth's Go verbatim, recording `transfused_from` as pattern-only. This keeps C15 buildable
-> on either license outcome and isolates the unverified-license risk to *sourcing*, not *capability*. The
-> code-vs-pattern boundary G30 says is "left to chance" is thereby made explicit for C15: **default code-port
-> (MIT per README), pattern-reimplement on verification failure.** Mirrored as OQ-3.
+> cycle/reachability/entry-exit/chain checks are textbook DAG algorithms, independently writable — recording
+> `transfused_from` as pattern-only. Neither branch is pre-selected ahead of the verification; this keeps C15
+> buildable on either outcome and isolates the unverified-license risk to *sourcing*, not *capability*. The
+> code-vs-pattern boundary G30 says is "left to chance" is thereby made explicit for C15: **verify first
+> (OQ-3 / plan T0-license); code-port iff MIT-confirmed, else pattern-reimplement.** Mirrored as OQ-3.
 
 No *additional* C15-assigned Gxx beyond G30 (inventory C15 gap column: "G30"). There is no F-mode C15
 *closes* on its own — it is an enforcement mechanism for the P3 "visible and lintable" property (F26), not a
@@ -292,19 +299,25 @@ fixtures (the 21 specific Mammoth rules) deferred to sweep 2 alongside the rule_
 
 1. **[top open question] OQ-2 — does C15 lint the C14 DOT export or the C12 formula directly?** (§3.1
    [FAITHFUL-FILL]). The inventory edge is `Depends on → C14` and README:134's diagram routes DOT into the
-   linter, so the faithful default is **DOT-in (via C14)** — but **C14 has no spec yet**, so the exact DOT
-   surface (does it carry the node-kind tag, loop-construct markers, and node ids C15's structural rules
-   need?) is unpinned. This is the load-bearing contract C15 needs C14 to freeze. If C14's round-trip is
-   lossy on the topology C15 checks, C15 may need to read the C12 AST directly. Resolve when C14 is specced.
+   linter, so the faithful default is **DOT-in (via C14)**. **C14 is specced at sweep-1**
+   (`spec/C14-formula-dot-translator.md`), so the *named* surface (node ids, `kind=` attr, directed edges)
+   exists — but C14's **exact DOT-attribute encoding is a C14 sweep-2 item**, and whether the DOT carries the
+   **loop-construct markers** C15's cycle rule needs is tracked as **C14:OQ-2** (which defers to C12:OQ-2 for
+   the loop primitive). This is the load-bearing contract C15 needs C14 to freeze at sweep-2. If C14's
+   round-trip proves lossy on the topology C15 checks, C15 may read the C12 AST directly. Resolve jointly
+   with C14:OQ-2 / C12:OQ-2.
 2. **OQ-1 — blocking vs. advisory disposition** (§3.4 [AMBIGUITY]). README marks the linter "optional";
    sweep-1 picks **advisory-by-default, blocking-by-config** (parity with C10 OQ-1). Sweep 2 must confirm
    with C03 whether any structural class (e.g. a true cycle) should hard-block by default, given C01's loader
    is the real execution gate.
-3. **OQ-3 — Mammoth license + the 21-rule enumeration (G30).** README:134 states MIT but README:301/§508/§551
-   flag it "verify". Sweep 2 must (a) complete the license verification v4 itself requires, and (b) document
-   the **exact 21 Mammoth rules** (AI-CONTEXT §509 open item) as a rule_id→detector→severity table — noting,
-   per the G30 resolution, which are **code-ported** vs **pattern-reimplemented** and which Mammoth DOT-only
-   rules are dropped as non-mapping to the formula node/edge model.
+3. **OQ-3 — Mammoth license + the 21-rule enumeration (G30 boundary, inherited).** The license is
+   **unverified**: README:134 says "(Go, MIT)" inline but README:301 ("MIT (verify; 2389 convention)"),
+   AI-CONTEXT §6.4 ("License: verify"), and README:508/535/551 all flag verify-before-adopt. Sweep 2 must
+   (a) **complete the license verification first** (plan T0-license), then **code-port iff MIT-confirmed,
+   else pattern-reimplement** (per the G30 resolution — neither branch pre-selected), and (b) document the
+   **exact 21 Mammoth rules** (AI-CONTEXT §509 open item) as a rule_id→detector→severity table, noting which
+   are code-ported vs pattern-reimplemented and which Mammoth DOT-only rules are dropped as non-mapping to the
+   formula node/edge model.
 4. **OQ-4 — findings serialization.** JSON vs. SARIF vs. text for the report (§3.2 fill) — equal candidates,
    constrained only by the C02 output ABI; pick at sweep 2, jointly with C10 (same report shape — share the
    schema where possible). v4 names no format, so sweep-1 pre-selects none.

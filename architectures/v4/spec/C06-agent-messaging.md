@@ -19,9 +19,10 @@ It is responsible for:
     Gas City's (`[mail]`), not C06-authored.
   - **Nudge** — an *ephemeral* signal with no durability guarantee: a poke ("a bead is ready", "wake and
     reconcile") that is lost if no one is listening. Best-effort by construction.
-- **Carrying attribution on every message** — `created_by` flows automatically (P9, README L226 "native
-  `created_by`"; AI-CONTEXT §3.2: messaging maps to P9/P10). C06 adds **no** identity machinery of its own;
-  it inherits the substrate's actor stamp.
+- **Carrying attribution on every message** — `created_by` flows automatically (P9, README L227 "Gas City
+  beads, events native `created_by`" / L371 "every bead and event carries `created_by`"; AI-CONTEXT §3.2:
+  messaging maps to P9/P10). C06 adds **no** identity machinery of its own; it inherits the substrate's actor
+  stamp (for Mail directly; for the ephemeral Nudge the concept-6→P9 reading, qualified in I3).
 - **Naming the addressing surface** — who a message is *to* (an agent/role/seat handle, keyed on the C04
   `session.id` and the C41/C42 actor identity) and *from* (the `created_by` actor). C06 binds these
   identities into the Mail envelope; it does not mint them.
@@ -173,7 +174,8 @@ live in the substrate.
    requiring guaranteed delivery is sent as Mail instead.
 
 **Attribution (always-on):** both paths carry `created_by`; messaging traffic is queryable/attributable by
-the same P9 mechanism that stamps beads and events (README L226; the property F14/F32 lean on, §6).
+the same P9 mechanism that stamps beads and events (README L227/L371; the property F14/F32 lean on, §6 —
+Mail via the native bead/event-class stamp, Nudge via the concept-6→P9 faithful reading, I3).
 
 **Degraded / boundary behavior:**
 - **Recipient never returns:** a durable Mail stays queued (substrate retention); C06 does not define a

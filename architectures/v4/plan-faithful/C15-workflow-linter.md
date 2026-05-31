@@ -11,7 +11,7 @@ Ordered tasks. Size S/M/L. Prerequisites by task id / component id.
 |---|---|---|---|
 | T1 | **Freeze C15 I/O contract** as a C17 deterministic tool node over the C02 ABI: declared input (`formula_dot` — the C14 DOT export — + rule config) → status (exit code) + declared output (findings report). | S | C17, C02 ABI frozen |
 | T2 | **Define the findings-report schema** (`rule_id`, `severity`, `location`, `message`); `location` is graph-shaped (node id / edge / cycle path). **Share the schema with C10** (same report shape); defer JSON/SARIF serialization to sweep 2 (OQ-4). Stub it so dependents can read it. | S | T1 |
-| T3 | **Pin the DOT-surface contract with C14** (OQ-2, the top open question): the node/edge graph C14 exports must carry stable **node ids**, the **edge set**, and **loop-construct markers** (so a bounded loop is distinguishable from a raw back-edge). C14 is unbuilt — this is a *contract negotiation*, freeze it as the interface C14 must satisfy. | M | C14 spec exists; C12 §3/§4 node/edge + acyclicity model |
+| T3 | **Pin the DOT-surface contract with C14** (OQ-2, the top open question): the node/edge graph C14 exports must carry stable **node ids**, the **edge set**, and **loop-construct markers** (so a bounded loop is distinguishable from a raw back-edge). C14 **is specced at sweep-1** (`spec/C14-formula-dot-translator.md` §3.1 names node ids / `kind=` attr / edges), but its **attribute-level encoding is C14 sweep-2** and the **loop-marker encoding is C14:OQ-2** — so this task pins the attribute contract C15 needs against C14 sweep-2. | M | C14 §3.1 surface (specced); C14:OQ-2 / C12:OQ-2 loop encoding; C12 §3/§4 node/edge + acyclicity model |
 | T4 | **Author the rule-set definition** (the in-pack rule table): the **21 Mammoth structural rules**, each as `rule_id` + default severity + structural class (cycle / reachability / entry-exit / dangling / chain-bound). Fixed table, **not** a pluggable registry. (Sweep-2 deepens to per-rule detectors from the Mammoth source.) | M | spec §3.3; T3 |
 | T5 | **Implement structural detectors** over the parsed graph: cycle/acyclicity (back-edge vs. bounded-loop), reachability/orphan, entry/exit well-formedness, dangling-edge, chain-length/fan-out bound. Textbook DAG algorithms — independently writable (de-risks G30 license fallback). | L | T2, T3, T4 |
 | T6 | **Graph front-end** — parse the C14 DOT export into the node/edge model all detectors consume; clean-fail on un-parseable DOT (single high-severity finding). | M | T3 |
@@ -23,9 +23,11 @@ Ordered tasks. Size S/M/L. Prerequisites by task id / component id.
 ## 2. Dependency graph
 
 **Must precede C15 (external):**
-- **C14** formula↔DOT translator — the DOT export surface C15 lints (inventory `Depends on → C14`). **C14 has
-  no spec yet** — its DOT-surface contract (T3) is the load-bearing blocker; until C14 is specced, C15 builds
-  against a *stub DOT* matching the T3 contract.
+- **C14** formula↔DOT translator — the DOT export surface C15 lints (inventory `Depends on → C14`). **C14 is
+  specced at sweep-1** (`spec/C14-formula-dot-translator.md`): the named `export` surface (node ids, `kind=`
+  attr, directed edges) exists, but its **attribute-level DOT encoding is C14 sweep-2** and the **loop-marker
+  encoding is C14:OQ-2** — so the T3 attribute contract is the load-bearing blocker; until C14 freezes those
+  at sweep-2, C15 builds against a *stub DOT* matching the T3 contract.
 - **C12** formula format — the node/edge + acyclicity/loop model the rules reason about — must be frozen
   (it is: `spec/C12-formula-pipeline-file.md` exists).
 - **C17 / C02** tool-node abstraction + ABI (declared input → status + output) — frozen.

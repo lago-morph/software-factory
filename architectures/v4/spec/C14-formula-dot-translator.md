@@ -8,10 +8,12 @@
 
 C14 is the **interop seam between the Gas City formula format (C12, TOML DAG) and the DOT-graph ecosystem**.
 It exists for two reasons the corpus states plainly: (a) to **render a formula for human review**
-(README:133 "Render the DAG for review"; P3 delivered "full, including visualization", README:392), and
+(README:133 "Render the DAG for review") — the half README:392 marks P3-delivered "full, including
+visualization" (the *export/visualize* direction is the delivered, near-native one); and
 (b) to give the factory **bidirectional DOT↔formula interop** so DOT-ecosystem tooling — chiefly the
 Mammoth-derived 21-rule linter (C15) — can be brought to bear on v4's workflows (README:135, :538;
-AI-CONTEXT:469). v4 frames it as a *small* artifact: "~few hundred LOC Go" (README:135), "a small Go side
+AI-CONTEXT:469). The bidirectional/import half is the "small Go side project" that "doesn't have to be
+perfect" (README:538); its guarantee is not Phase-1 "delivered-full" but the **G24 round-trip proof** below. v4 frames it as a *small* artifact: "~few hundred LOC Go" (README:135), "a small Go side
 project" that "doesn't have to be perfect" (README:538).
 
 The load-bearing obligation — and C14's whole reason to be a *spec'd component* rather than a throwaway
@@ -88,10 +90,13 @@ formula's steps and whose edges are its dependencies. Sweep-1 mapping (named, no
 | Gate / `wait` semantics | DOT node (kind=`gate`) + attribute | The gate is a node-kind, so it rides the kind mapping. |
 | Formula parameters / metadata | DOT graph-level attributes | Graph attrs carry formula-scope data that has no node home. |
 
-> [FAITHFUL-FILL] **Export may be partly native — flag a custom translator.** README:385 ("Add `gc formula
-> export <name> --format dot` for graphviz rendering") strongly implies the **export direction is, or will
-> be, a `gc`-native subcommand**. The capability-for-principle bar says: if Gas City provides export
-> natively, C14 must **not** reimplement it. The minimal-consistent reading: C14's export interface is the
+> [FAITHFUL-FILL] **Export may be partly native — flag a custom translator.** The corpus carries **two
+> signals here, not one.** README:385 ("Add `gc formula export <name> --format dot` for graphviz rendering")
+> implies the **export direction is, or will be, a `gc`-native subcommand**; but README:133 labels the
+> visualizer "**Custom: formula → DOT exporter + graphviz**" and README:384 says "**Build** the formula↔DOT
+> bidirectional translator as a small Go tool." So whether export is native `gc` or factory-custom is
+> genuinely open (OQ-1), not merely "unverified that :385 is native." The capability-for-principle bar
+> resolves the default regardless: if Gas City provides export natively, C14 must **not** reimplement it. The minimal-consistent reading: C14's export interface is the
 > **named contract**, and its *implementation* is "shell out to / wrap `gc formula export --format dot`
 > where it exists; supply the thin mapping only for whatever `gc` does not emit." The genuinely-custom,
 > principle-bound code is the **import** direction and the **fidelity proof** (3.2/3.3), not a second DOT
@@ -256,14 +261,21 @@ Sweep-1 high-level criteria (concrete tests at sweep-2):
 (Mirrored into `_meta/review-log.md`.)
 
 1. **[OQ-1 — top open question] Is `gc formula export <name> --format dot` native `gc` or a v4-supplied
-   subcommand?** README:385 frames it under "Add", leaving it unverified (G11). This decides whether C14's
-   export direction is a thin *wrapper* over native output (preferred — don't reinvent) or a *custom* DOT
-   emitter. Resolve by running `gc` (the same G11 spike C01/C02 need); until then C14 binds to observable
-   `--format dot` output if present, else emits DOT via an off-the-shelf writer.
+   subcommand?** The corpus is genuinely two-sided: README:385 frames it under "Add" (suggesting a `gc`
+   subcommand), while README:133 ("**Custom**: formula → DOT exporter") and README:384 ("**Build** … a small
+   Go tool") suggest factory-custom — and all are unverified (G11). This decides whether C14's export
+   direction is a thin *wrapper* over native output (preferred under the bar — don't reinvent) or a *custom*
+   DOT emitter (over an off-the-shelf writer, README:384). Resolve by running `gc` (the same G11 spike
+   C01/C02 need); until then C14 binds to observable `--format dot` output if present, else emits DOT via an
+   off-the-shelf writer. Either way C14 never reinvents a *native* exporter and never binds to `gc` internals.
 2. **[OQ-2] Loop / bounded-iteration primitive (C12:OQ-2).** C12 has not frozen how a formula expresses
    iteration in a DAG file; this "drives C15/C14" (review-log). C14 cannot round-trip a loop construct it
-   cannot encode in DOT. Freeze the DOT encoding + inverse the moment C12 freezes the primitive; until then,
-   loops are a *rejected* catalog entry (fail loud, not lossy).
+   cannot encode in DOT. **This is the load-bearing C14→C15 seam contract:** C15 §9 OQ-2 needs C14's DOT to
+   carry **loop-construct markers** so C15 §3.3 rule 1 can distinguish a sanctioned bounded loop from a raw
+   cycle. C14's §3.1 export surface therefore freezes the *obligation* (export a **marked** loop) now; the
+   *concrete encoding + inverse* freeze the moment C12 freezes the primitive. Until then, an unencodable loop
+   is a *rejected* catalog entry (fail loud, not lossy) — the **interim** state, **not** C14's end-state
+   (end-state = marked back-edge, *lowered-by-rule*, so C15 can lint loops; see §3.4).
 3. **Exact canonical form for equality.** The precise normalization (node/edge ordering, attribute
    canonicalization, which presentation attrs are "noise") that makes `import(export(f)) = f` decidable is a
    sweep-2 deliverable; sweep-1 only asserts it must exist and be the basis of the CI gate.

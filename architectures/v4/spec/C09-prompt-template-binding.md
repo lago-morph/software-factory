@@ -1,8 +1,9 @@
 # C09 — Prompt template & spec→execution binding (`prompt-template-binding`)  (Spec, canonical track)
 
 > Source: README §"Principle 1 — Specs are the source of truth" (lines 106, 109, 111 — "Spec format" + "Spec → execution binding" rows); AI-CONTEXT §3.2 (concept table line 89 "Prompt Templates: Go `text/template` markdown"; line 92 "Dispatch (Sling) routes bead/wisp to agent or pool"), §3.3 vocab (line 101 `formula`, line 105 `sling`), §3.4 (smallest viable install, line 119 `agents/<name>/prompt.template.md`), §13.1 (Phase 0 prompt-template content, line 542); F-MODE-COVERAGE F18, F36, F37, F38 (of these, F18 + F38 are C09-relevant-but-*handled-upstream* at C10/C07/P6 — C09 is only their conduit; F36 + F37 are inherent/conduit at the rendered-instruction surface — see §6). Companion: faithful spec [`spec/C08-spec-artifact.md`](./C08-spec-artifact.md) (esp. OQ-1, the C08↔C09 collapse). Cross-track provenance: the frozen optimized reference [`spec-optimized/C08-spec-artifact.md`](../spec-optimized/C08-spec-artifact.md) DELTA-01 re-scopes this seam (noted, not adopted on the canonical track).
-> Inventory ID: C09   Kind: interface   Status: sweep-1
+> Inventory ID: C09   Kind: interface   Status: sweep-2
 > Maps from: A28, A32b, B27. Depends on: C08 (spec artifact), C05 (sling/dispatch). Key gaps: — (none assigned).
+> Binding decisions obeyed: **D-6** (canonical track), **D-29** (`created_by` wire type = `"kind:id"` string).
 
 ## 1. Purpose & responsibility
 
@@ -53,6 +54,55 @@ Sweep-1: interfaces **named + described** (concrete signatures, the template-var
   > [FAITHFUL-FILL] v4 names neither the template-variable namespace nor any specific variable. The minimal faithful contract: the render context is **whatever the Go `text/template` body references**, drawn from the dispatch/run context; no required variables exist at Phase 0 (the template may be a constant string, AI-CONTEXT:542). A fixed variable schema would be an architectural addition v4 does not make; it is left to be enumerated as templates begin using variables (sweep 2 / per-pack convention).
 
 - **Binding-request interface (C12 formula / C05 sling → C09).** A formula node names a template ("formulas reference templates by name", README:109); at dispatch sling asks C09 to resolve that name to the concrete template for the target agent role, and to render it for this work item.
+
+### 3.1a OQ-1 RESOLVED (Sweep-2): C08↔C09 inbound contract + authority chain
+
+**RESOLVED (Sweep-2):** The C08↔C09 boundary and the C12→C09→C05 authority chain are settled by the faithful collapse (C08 OQ-1 Reading A) and the C05 Sweep-2 OQ-1 resolution:
+
+> **D-8 — Convoy → C05; Order → C40.** "Convoy" (atomic multi-bead dispatch) is a Gas City sling concept referenced by C05; "Order" (durable workflow) is owned by C40. C12 references both but defines neither; C07 carries glossary entries.
+> — [review-log D-8](../_meta/review-log.md), Batch-2 review integration (2026-05-31)
+
+> **C05:OQ-1 resolution (verbatim from C05 Sweep-2 spec §9):** "The authority split is settled by the faithful reading of README:109 + C09's inventory dependency on C05: **C12** names the template (the formula step references a template name by string — C12's authoring domain). **C09** owns **resolution**: it turns the formula's template name into a `(template_name, agent_role)` binding. C09 is the component that knows how `agents/<name>/prompt.template.md` maps to which role. **C05** owns **routing**: it takes the resolved `(template_name, agent_role)` pair from C09 and issues `gc sling`. C05 never sees raw formula template-name strings; it receives already-resolved keys."
+
+The authority chain for a dispatch is therefore:
+
+1. **C12** authors a formula step that references a template by name string (e.g., `"agents/worker/prompt.template.md"`) — C12's domain only.
+2. **C09** receives this name + the target agent role and **resolves** them: it loads the template body from the pack layout at `agents/<name>/prompt.template.md`, produces `(template_name, agent_role)` as the resolved binding key, and **renders** the Go `text/template` into the concrete instruction string.
+3. **C09** hands the resolved key `(template_name, agent_role)` to **C05** as the `RoutingKey` in the `DispatchRequest`. C05 sees only the already-resolved key; it never resolves names.
+4. **C05** issues `gc sling` to dispatch the bead to the correct agent.
+
+**C09's inbound contract from C08:** On the canonical track (C08 Reading A / collapse), C09's template-source input is the `prompt.template.md` file body directly — C08 owns the file-as-artifact, C09 owns the act of rendering it. C09 does **not** receive a separate `spec_id`; it reads the file at the pack-layout path. If an integrator later adopts the optimized DELTA-01 split (standalone spec bundle), C09's inbound gains a `spec_id` resolution step before rendering — the render and bind responsibilities survive either way; only the resolution step is added. The canonical track does not adopt that split.
+
+### 3.1b Concrete signatures (Sweep-2)
+
+C09's authored code is the resolution and rendering logic that sits between C12's name-reference and C05's dispatch call. The following signatures represent the C09 policy contract:
+
+```
+# Resolve a formula-node template name + target agent role to a bound template.
+# Input:  template_name (the string a C12 formula node references)
+#         agent_role    (the role the formula step targets, e.g. "dog", "worker")
+#         pack_root     (the git pack root; C08 artifact lives at pack_root/agents/<name>/prompt.template.md)
+# Output: BoundTemplate {template_name, agent_role, template_body, pack_git_rev}
+# Errors: E-C09-01 (template-not-found), E-C09-03 (role-mismatch)
+resolve(template_name: string, agent_role: string, pack_root: PackRoot) -> Result<BoundTemplate, BindingError>
+
+# Render a bound template against a render context, producing the concrete instruction string.
+# Input:  bound  (output of resolve)
+#         ctx    (RenderContext — the template variable set; see §3.2 field table)
+# Output: InstructionString (the literal text handed to C28 as its initial prompt)
+# Errors: E-C09-02 (unbound-variable), E-C09-04 (template-parse-error)
+# Invariant: deterministic — same bound + same ctx => byte-identical output (INV-1)
+render(bound: BoundTemplate, ctx: RenderContext) -> Result<InstructionString, BindingError>
+
+# Top-level entry point: resolve + render in one call.
+# Called by C05 at dispatch time (via the DispatchRequest routing-key seam).
+# Output: RoutingKey {template_name, agent_role} — handed to C05 DispatchRequest
+#         InstructionString                       — handed to C28 as initial prompt
+bind_and_render(template_name: string, agent_role: string, pack_root: PackRoot, ctx: RenderContext)
+  -> Result<(RoutingKey, InstructionString), BindingError>
+```
+
+> [FAITHFUL-FILL] These are the minimal faithful signatures for the C09 render+bind interface. v4 never names these function boundaries; they are inferred from "Gas City formulas reference templates by name; sling routes work to agents with specific templates" (README:109) as the smallest decomposition that separates resolution (find the template body), rendering (expand template actions), and handoff to sling (produce the routing key). `bind_and_render` is the single entry point C05 calls at dispatch time; `resolve` and `render` are its constituent steps, testable in isolation.
 
 ### 3.2 Outbound
 

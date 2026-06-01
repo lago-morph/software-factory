@@ -118,8 +118,17 @@ dispatch_convoy(beads: List<BeadId>, target: TargetRef, meta: RoutingMeta) -> Re
 - **INV-3 (resolvable target).** A dispatch request whose target descriptor resolves to **zero** routable agents/pool-members is a dispatch error, not a silent drop; the work item is not lost. (Minimal consistent reading of "routes … to an agent or pool" — if no target exists, routing has failed and must surface, so the reconciler C18 can re-converge.)
 - **INV-4 (no payload mutation).** C05 routes the bead/wisp; it does not mutate the work item's typed fields (those belong to C19/C20). C05 contributes **no state of its own** to the work item — the dispatch is observable via native `created_by` (C41) and the native event bus (C23), not via a C05-owned record (see §3.2).
 - **INV-5 (no C05 queue).** C05 holds no internal dispatch queue or buffer of its own. Back-pressure is the native Gas City sling mechanism's concern (OQ-3 RESOLVED below) and/or the reconciler retry loop (C18). An explicit C05 queue is out of faithful scope (v4 names none; SURVIVOR-PASS C05 DELTA-02).
+- **INV-6 (D-30 pre-dispatch gate).** C05 is the **pre-tool-call boundary** for dispatch decisions: it is the point at which the routing policy executes before any agent session is handed a bead.
 
-> [FAITHFUL-FILL] INV-1…INV-5 are not stated verbatim in v4 (which gives sling one row + one half-sentence). They are the minimal invariants that make "routes a bead/wisp to an agent or pool by template/role" well-defined: a single recipient (INV-1), keyed correctly (INV-2), that actually exists or fails loudly (INV-3), without corrupting the payload it merely carries (INV-4), with no authored queue (INV-5). Each is the smallest constraint needed for the one-line responsibility to be implementable; none adds scope v4 withholds.
+  > **D-30 (ADOPTED — operator, 2026-06-01):**
+  > "unattended operation (P2) and self-modification (P3b) require the substrate to BLOCK (prevent at the
+  > tool-call/process boundary) — not merely detect — out-of-boundary access on the relevant blast-radius
+  > face."
+  > — review-log.md D-30, 2026-06-01
+
+  For P2 (unattended) and P3b (self-modification) dispatches, C05 MUST NOT hand off to an agent session unless the partition-prevent gate is satisfied (once D-23 spike confirms native prevent or the watcher is in place). Until the spike result is known, C05's dispatch path to P2/P3b agents is human-in-the-loop (detection-only floor; `prevent-vs-detect-OPEN` per gascity-conformance-check Test A). C05 does NOT design the enforcement watcher — that is deferred.
+
+> [FAITHFUL-FILL] INV-1…INV-6 are not stated verbatim in v4 (which gives sling one row + one half-sentence). They are the minimal invariants that make "routes a bead/wisp to an agent or pool by template/role" well-defined: a single recipient (INV-1), keyed correctly (INV-2), that actually exists or fails loudly (INV-3), without corrupting the payload it merely carries (INV-4), with no authored queue (INV-5). Each is the smallest constraint needed for the one-line responsibility to be implementable; none adds scope v4 withholds.
 
 ### 3.4 Dispatch-request field table (Sweep-2)
 
@@ -132,10 +141,11 @@ The `DispatchRequest` is the canonical input to the C05 routing policy. Every fi
 | `template_name` | `string` | R | Template name from the formula node (e.g. `agents/worker/prompt.template.md`); used by C05 to validate role↔template alignment (INV-2) | C09 writes (resolved name); C05 reads |
 | `routing_key` | `string` | O | Composite `<template_name>/<target_role>` key; pre-computed by C09 binding for fast topology lookup | C09 writes (optional precomputed); C05 reads or computes |
 | `convoy_beads` | `list<bead_id>` | O | Non-empty iff this is a Convoy dispatch (D-8); all beads go to the same target atomically via `gc sling` | C12/C18 writes for convoy; C05 reads, passes all bead_ids in one sling call |
-| `created_by` | `actor` | R | Dispatcher actor (coordinator agent ref in `"kind:id"` wire format per D-29); C41 provenance | C18/C12 writes; C05 passes to native event attribution |
+| `created_by` | `string` | R | Dispatcher actor wire value in `"kind:id"` colon-delimited format (D-29 — wire type = string; `ActorRef` is the in-memory parsed form, C41); e.g. `"rig:mayor-1"` | C18/C12 writes; C05 passes to native event attribution |
+| `rig_name` | `string` | O (Phase-0) / R (Phase-2) | Target rig name for multi-rig cities (D-31 — MUST NOT assume one-rig-per-city); Phase-0 = omit (single agent; README:361); Phase-2 = required so `resolve_target` can scope to the correct rig's pool | C18/C12 writes when rig-targeted dispatch; C05 reads for topology lookup |
 | `tick_id` | `string` | O | Reconciler tick identifier (for idempotence checking / double-dispatch guard with C18) | C18 writes; C05 reads for dedup guard |
 
-> [FAITHFUL-FILL] This field set is the minimal faithful elaboration of "a bead/wisp + target descriptor" (AI-CONTEXT:92 + README:109). v4 never names these fields; they are the smallest set that makes the routing policy concrete: `bead_id` is what gets slung, `target_role`+`template_name` are the routing key, `convoy_beads` captures D-8's Convoy primitive, `created_by` is the universal attribution requirement (P9/C41), and `tick_id` is the dedup anchor the reconciler (C18) needs for double-dispatch safety.
+> [FAITHFUL-FILL] This field set is the minimal faithful elaboration of "a bead/wisp + target descriptor" (AI-CONTEXT:92 + README:109). v4 never names these fields; they are the smallest set that makes the routing policy concrete: `bead_id` is what gets slung, `target_role`+`template_name` are the routing key, `convoy_beads` captures D-8's Convoy primitive, `created_by` is the universal attribution requirement (P9/C41) in `"kind:id"` wire format (D-29), `rig_name` is the D-31 multi-rig routing field (MUST NOT assume one-rig-per-city — D-31 ADOPTED 2026-06-01), and `tick_id` is the dedup anchor the reconciler (C18) needs for double-dispatch safety.
 
 ## 4. Data model / state
 

@@ -96,7 +96,7 @@ first (T1/T2 below); C03 and C04 elaborate semantics that C01 *hosts*, not the r
 | # | Interface | Direction | Description | Owning/detailing component |
 |---|---|---|---|---|
 | I1 | **`gc` CLI** | inbound (operator/automation) | The single Go binary's command surface — e.g. `gc bd find --type …`, `gc formula export <name> --format dot`, `gc converge resume <bead_id>` (AI-CONTEXT §16 lines 695–699; README line 384). The control plane for the substrate. | C01 (this) |
-| I2 | **`city.toml` / `pack.toml` config load** | inbound (config) | Layered TOML the runtime parses at boot; section presence toggles capabilities (`[formulas]`, `[mail]`, `[daemon]`, `[rigs]`, `[[service]]`, `[beads]`). | C03 (semantics), C01 (hosting) |
+| I2 | **`city.toml` / `pack.toml` config load** | inbound (config) | Layered TOML the runtime parses at boot; section presence toggles capabilities (`[formulas]`, `[mail]`, `[daemon]`, `[[rig]]/[[rigs]]`, `[[service]]`, `[beads]`). | C03 (semantics), C01 (hosting) |
 | I3 | **Pack-load + tool-node ABI** | inbound (extension) | Load a pack (TOML + tool-node binaries + prompt templates); invoke a tool node as a subprocess with a defined input/output protocol. The *sole* extension surface (no Go fork). | **C02** (the ABI itself) |
 | I4 | **Provider / session interface** | outbound (to agent) | The `runtime.Provider` interface (~18 methods, AI-CONTEXT §3.6) backing a Session; hosts the `claude` preset to drive Claude Code. | **C04** (session model), C28 (agent) |
 | I5 | **Workflow-run interface (formula → molecule)** | internal/inbound | Instantiate a formula (TOML DAG) into a molecule (bead-tree) and run it; sling routes resulting wisps/beads. | C12/C13 (formats), C05 (sling), C01 (execution host) |

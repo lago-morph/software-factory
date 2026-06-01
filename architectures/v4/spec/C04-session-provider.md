@@ -345,8 +345,10 @@ resolution.
 
 ### 6.3 D-30 prevent-gate applicability
 
-> **D-30 (ADOPTED — operator, 2026-06-01) — Prevent/block is required for unattended; the watcher is the
-> sanctioned discharge, its design deferred.**
+> **D-30 (ADOPTED — operator, 2026-06-01):**
+> "unattended operation (P2) and self-modification (P3b) require the substrate to BLOCK (prevent at the
+> tool-call/process boundary) — not merely detect — out-of-boundary access on the relevant blast-radius
+> face."
 >
 > — review-log.md D-30, 2026-06-01
 
@@ -394,7 +396,7 @@ provider = "claude"          # LLM-side preset (harvest-verified; gascity-config
 # env = { … }               # Per-agent env block; exact OTEL key names needs-pinned-gc-run (G11)
 
 [daemon]
-shutdown_timeout = 30        # seconds; used in Stop/teardown (E-C04-05 timeout)
+shutdown_timeout = "10s"     # duration string (PackV2 strict — bare integer rejected); used in Stop/teardown (E-C04-05 timeout)
 # patrol_interval, max_restarts, restart_window — C18's domain; named here for reference
 ```
 

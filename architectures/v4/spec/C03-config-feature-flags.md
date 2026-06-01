@@ -77,6 +77,35 @@ load-bearing schema everything references for "is feature X on, and with what pa
 
 This is the same authorship/registration split as C20→C22 (bead schemas → CXDB registry, per D-3): a pack *produces* a `capability_id` reference, C03 *owns* the registry and descriptor schema. **XC-7 is RESOLVED.** Remove any language in C02 or C03 that asserts the descriptor schema is deferred or belongs to the other component.
 
+**CapabilityDescriptor schema stub (Sweep-2 — owned by C03, D-33):**
+
+> [FAITHFUL-FILL] The exact CapabilityDescriptor schema is not given by v4 or the prototype (G11). The
+> following stub is the minimal faithful shape implied by D-33 ("which config section gates which
+> capability, with `requires` / `conflicts_with` relations") and the C20→C22 split analogy (D-3).
+> Concrete field names need Sweep-3 freeze against the C03 conformance suite and C02 consumer contract.
+
+```
+CapabilityDescriptor {
+  capability_id:    string          // stable reverse-DNS id, e.g. "softwarefactory.v4.capabilities.override-loop"
+                                    // matches the [[pack]] capability_id reference C02 carries
+  section:          string          // the city.toml / pack.toml section whose presence enables this capability
+                                    // e.g. "[formulas]", "[[rig]]", "[[service]]"
+  label:            string          // human-readable label (for tooling / audit)
+  requires:         []capability_id // capabilities that must ALSO be enabled (prerequisite sections)
+  conflicts_with:   []capability_id // capabilities that MUST NOT be simultaneously enabled
+  verification:     string          // "harvest-verified" | "needs-pinned-gc-run (G11)" | "[inferred — needs G11]"
+}
+```
+
+The registry of `CapabilityDescriptor` entries lives in C03 (not in pack.toml or city.toml).
+C02's `capability_id` field in a pack manifest is a *reference into* this registry.
+C03 validates the reference at pack import time; an unknown `capability_id` → E-C03-02 (missing required key variant) or a new E-code to be assigned at Sweep-3.
+
+> [needs G11 verification] Whether Gas City has a native CapabilityDescriptor registry concept or whether
+> this is a purely v4-side registry is **[needs G11 verification]**. Until confirmed, C03 owns the v4-side
+> registry as a config-layer artifact; the enforcement hook (whether `gc` validates `capability_id`
+> references natively or a C02/C03 conformance pack does) is a Sweep-3 concern.
+
 **Invariants**
 - **Presence-is-the-flag**: no separate `enabled = true` boolean exists for the substrate-native
   capabilities; the *only* on/off signal is whether the section is written. (Faithful to AI-CONTEXT §3.2
@@ -112,7 +141,7 @@ Verification-status vocabulary from [gascity-config-anchor.md](_meta/gascity-con
 | `[pack] schema = 2` | pack.toml | int | R | PackV2 schema version; C01 REFUSES startup on wrong value | Pack author writes; C01 enforces (harvest-verified) |
 | `[imports.<name>] source` | pack.toml | string | O | Import a bundled pack; source is `"github.com/…//path"` (embedded FS, no network). Transitive imports auto-de-duplicated — do NOT re-import a pack that is already transitively imported (F3 startup-refusal hazard). | Pack author writes; C01 resolves (harvest-verified, F3) |
 | `[[tool]] name` | pack.toml | string | O | Deterministic tool-node the pack ships | Pack author writes; C02 executes (needs-pinned-gc-run G11) |
-| `[[tool]] cmd` | pack.toml | string | O | Command or script the tool-node runs | Pack author writes; C02 executes (needs-pinned-gc-run G11) |
+| `[[tool]] cmd` | pack.toml | string | O | Command or script the tool-node runs. **SPELLING NOTE:** C02 §4.1 uses `command`; this table uses `cmd` — **needs-pinned-gc-run (G11)** to settle canonical field name. | Pack author writes; C02 executes (needs-pinned-gc-run G11) |
 | `[[tool]] args` | pack.toml | array\<string\> | O | Args with `{placeholder}` substituted from bead/molecule context | Pack author writes; C02 expands (needs-pinned-gc-run G11) |
 
 **Must NOT appear in `pack.toml`:**
@@ -245,7 +274,7 @@ Canonical capability sections from v4 + anchor §3, with on/off semantics and ve
 | `[[agent]] env = { … }` | city.toml | Per-agent OTEL/telemetry env | Phase 1 | C04/C26 | needs-pinned-gc-run (G11 for exact keys) |
 | `[mail]` | city.toml | Messaging/nudge (C06) **ON** | Phase 1/2 | C06 | needs-pinned-gc-run (G11) — not enabled in prototype |
 | `[events]` | city.toml | Event stream (C23) **ON** | Phase 1/2 | C23 | needs-pinned-gc-run (G11) |
-| `[[rig]]` blocks (city.toml) | city.toml | Rig partitioning (C42) **ON** | **Phase 2** | C42 | harvest-verified (prefix mechanism, F10); spelling needs-pinned-gc-run (G11) |
+| `[[rig]]` blocks (city.toml) | city.toml | Rig partitioning (C42) **ON** | **Phase 2** | C42 | harvest-verified (prefix mechanism, F10); spelling needs-pinned-gc-run (G11). **D-31 NOTE:** city hosts N rigs — MUST NOT assume one-rig-per-city (D-31 ADOPTED 2026-06-01). |
 | `[[rig]] read_partition / write_partition` | city.toml | Role-based partition labels | Phase 2 | C42/C34 | needs-pinned-gc-run (G11) |
 | `[[tool]] type = "subprocess"` | pack.toml | Tool-node declaration | Phase 2 | C02 | needs-pinned-gc-run (G11) |
 
@@ -378,12 +407,13 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://collector:4318" }
 **Phase-2 additions to `city.toml`** (add to Phase-1):
 
 ```toml
-[[rig]]          # spelling: [[rig]] per F1; [[rigs]] per prototype example — needs G11
+[[rig]]          # spelling: [[rig]] per F1; [[rigs]] per prototype example — needs-pinned-gc-run (G11)
+                 # D-31: city hosts N rigs — MUST NOT assume one-rig-per-city (D-31 ADOPTED 2026-06-01)
 name   = "worker"
 prefix = "r1"    # explicit, required (F10 — auto-derive collides)
 # read_partition / write_partition go here (needs-pinned-gc-run G11)
 
-[[rig]]
+[[rig]]          # needs-pinned-gc-run (G11) — spelling same caveat as above
 name   = "judge"
 prefix = "gp"
 ```

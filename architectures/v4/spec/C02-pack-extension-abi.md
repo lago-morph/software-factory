@@ -156,7 +156,7 @@ From this, the named ABI elements (faithful elaboration, sweep-1 descriptions):
 | `type = "subprocess"` | The only invocation kind v4 names; the binary is spawned as a child process, **not** linked. | §13.3; README:334 (subprocess, not Go import) |
 | `command` | Path/name of the tool-node binary (Go or any language). | §13.3 sketch |
 | `args` with `{placeholder}` | Argument vector with `{name}` placeholders substituted from the bead/molecule context (e.g. `{scenario_path}`, `{task}`). | §13.3 sketch |
-| `work_partition` | The rig read/write partition the subprocess runs against (ties to C42 isolation). | §13.3 sketch |
+| `work_partition` | The rig read/write partition the subprocess runs against (ties to C42 isolation). **D-31 NOTE:** a city hosts N rigs; the `work_partition` label is scoped to the rig the tool-node is invoked under — MUST NOT assume single-rig-per-city (D-31 ADOPTED 2026-06-01). | §13.3 sketch |
 | **Input channel** | How the substituted context reaches the binary. | > [FAITHFUL-FILL] |
 | **Output channel** | How the binary returns results to Gas City. | > [FAITHFUL-FILL] |
 | **Status channel** | Success/failure signal. | > [FAITHFUL-FILL] |
@@ -183,8 +183,10 @@ From this, the named ABI elements (faithful elaboration, sweep-1 descriptions):
 > against the frozen `spec-optimized/` reference should expect opposite primary I/O channels by design.
 
 **OQ-1 / G29 PARTIAL (needs-G11):** The prototype's `entrypoint.sh` and `pack/pack.toml` show the
-`[[tool]]` declaration shape (harvest-verified: `name`, `type`, `command`, `args`, `work_partition` fields
-from `pack/pack.toml`; verified at source level per gascity-config-anchor §3 row "`[[tool]]`"). The
+`[[tool]]` declaration shape (source-grounded: `name`, `type`, `args`, `work_partition` fields
+from `pack/pack.toml`; the command-key field name is `cmd` in the prototype / config-anchor §3
+vs `command` in AI-CONTEXT §13.3 — **needs-pinned-gc-run (G11)** to settle, per the field-table
+spelling note below and ledger **D-34**). The
 *runtime behavior* — exactly what env vars the subprocess receives, whether stdin is connected or `/dev/null`,
 the exact parse rule for `{placeholder}` substitution, and whether the prototype ever exercises a `[[tool]]`
 node end-to-end — is `[needs G11 verification]`. Reading A (args + files + exit-code) is grounded in the
@@ -338,10 +340,11 @@ The `pack.toml` manifest. Field column = TOML key (quoted as it appears). Type =
 | `[imports.<name>] source` | string | R (if block present) | GitHub path of the imported pack (e.g. `"github.com/gastownhall/gastown//base"`). Resolved from embedded FS at install; no runtime network. | Pack author writes; `gc` reads |
 | `[[tool]] name` | string | R | Logical tool-node identity (referenced by formula DAG nodes, C12). Unique within the pack. | Pack author writes; `gc` uses for dispatch; C17 references |
 | `[[tool]] type` | string `"subprocess"` | R | Invocation kind. Only value v4 names is `"subprocess"`. | Pack author writes; `gc` validates |
-| `[[tool]] command` | string | R | Path or name of the tool-node binary. Resolved relative to pack directory. | Pack author writes; `gc` spawns |
+| `[[tool]] command` | string | R | Path or name of the tool-node binary. Resolved relative to pack directory. **SPELLING NOTE:** AI-CONTEXT §13.3 sketch uses `command`; config-anchor §3 `[[tool]]` row uses `cmd` — **needs-pinned-gc-run (G11)** to settle canonical field name. | Pack author writes; `gc` spawns |
 | `[[tool]] args` | array of string | O | Argument vector; tokens of the form `{name}` are substituted from bead/molecule context at invocation time. | Pack author writes; `gc` substitutes at spawn time |
 | `[[tool]] work_partition` | string | O | Rig partition name the subprocess runs against (read/write scope; C42 isolation). | Pack author writes; `gc` sets working dir / scope at spawn |
 | `[[tool]] structured_io` | boolean | O | Opt-in to Reading-B JSON profile (§3.2.2). `false` (default) = Reading A (args + files + exit code). `[needs G11 verification]` whether native `gc` field. | Pack author writes; `gc` or C02 shim reads |
+| `capability_id` | string | O | Reference to a capability declared in the C03 CapabilityDescriptor registry (D-33 — C03 owns the registry; C02 carries ONLY this reference, NOT the descriptor definition). e.g. `"softwarefactory.v4.capabilities.override-loop"`. C03 validates the reference on import. | Pack author writes; C03 validates at import; `[needs G11 verification]` exact field name |
 | `[[hook]] event` | string | O | Claude Code hook event name (`PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`). `[inferred — needs G11]` exact field. | Pack author writes; C28/C35 reads |
 | `[[hook]] command` | string | O | Binary to invoke for the hook event. `[inferred — needs G11]` | Pack author writes; C28 invokes |
 | `[[hook]] args` | array of string | O | Args for hook binary (same `{placeholder}` convention as `[[tool]]`). `[inferred — needs G11]` | Pack author writes; C28 substitutes |
@@ -445,6 +448,16 @@ sequenceDiagram
   `work_partition` confine a tool node; production scissors must be declared (F44). C02's "subprocess, not
   in-process plugin" choice means a misbehaving tool node cannot corrupt `gc`'s address space — a security
   property of the subprocess boundary itself.
+
+  **D-30 prevent-gate at the tool-call boundary (C02 ABI concern):**
+
+  > **D-30 (ADOPTED — operator, 2026-06-01):**
+  > "unattended operation (P2) and self-modification (P3b) require the substrate to BLOCK (prevent at the
+  > tool-call/process boundary) — not merely detect — out-of-boundary access on the relevant blast-radius
+  > face."
+  > — review-log.md D-30, 2026-06-01
+
+  The tool-node invocation boundary (`[[tool]] type = "subprocess"` spawn) is the **tool-call/process boundary** D-30 refers to: it is the point at which the pack's subprocess is handed `work_partition` scope. For P2 (unattended) and P3b (self-modification) tool nodes, the ABI MUST surface partition-scope confirmation before spawn (once D-23 spike establishes whether Gas City's native `work_partition` confinement prevents out-of-scope access or only detects). Until the spike result is known, enforcement is `prevent-vs-detect-OPEN` (gascity-conformance-check Test A). C02 does NOT design the watcher — design is deferred.
 - **Cost / scale.** Spawn-per-step subprocess invocation has process-startup overhead; v4 accepts this
   because tool nodes are "cheap and reproducible" (README:154) and run only "where reasoning is not
   required." No token cost (deterministic). > [FAITHFUL-FILL] no perf budget is stated; not invented here.

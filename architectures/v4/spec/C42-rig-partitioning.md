@@ -210,7 +210,14 @@ cross-refs in §4.1 and §8):
 ```
 PartitionRecord {
   rig_name:       string          // must match [[rig]] name in city.toml; non-empty
+                                  // NOTE: rig_name is the TOML config key value (e.g. "implementer", "worker");
+                                  // role_kind is the ABSTRACT role class (e.g. worker). These are DISTINCT:
+                                  // a [[rig]] with name="implementer" maps to role_kind=worker (OQ-C42-2 RESOLVED).
+                                  // C34/C32 consumers: match on role_kind for policy logic; use rig_name for
+                                  // config lookup and bead-prefix scoping. Do NOT conflate rig_name with role_kind.
   role_kind:      RoleKind        // enum: worker | scenario_author | judge
+                                  // "worker" covers both Phase-0 "worker" and Phase-2 "implementer" rig names
+                                  // (OQ-C42-2 RESOLVED — same role, different TOML name by phase)
   read_partition: set<string>     // partition labels this rig may read; validated holdout invariant
   write_partition: set<string>    // partition labels this rig may write
   bead_prefix:    string          // the scoping mechanism (F10); e.g. "r1", "r2" (explicit, no auto-derive)

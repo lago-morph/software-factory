@@ -16,36 +16,38 @@ build against and **carrying the G31 exposure-window residual honestly** until C
 
 ## 1. Work breakdown
 
-| Task | Description | Size | Prereqs |
-|---|---|---|---|
-| **T1** | **Freeze the boundary-typing contract** — closed type set {`twin`, `isolated`, `production`}; deterministic-typing invariant (type by rule, not LLM — F51/F33). (Spec §3.1, §4.1) | S | — |
-| **T2** | **Freeze the twin-by-default / production-scissors routing rule** — surfaces are `twin` by default; `production` requires an explicit per-pack scissors declaration (F44); blast-radius invariant (D-13). (Spec §3.2, §4.2) | S | T1 |
-| **T3** | **Freeze the twin-route binding contract** — `twin`-typed surface → its C44 twin; default-twin posture. (Spec §3.3) | S | T2; C44 twin seam |
-| **T4** | **Write the Bash/network/fs security-posture statement** — per-surface default posture, with enforcement substrate identified as C04/C42 + C44 (not C43-built). (Spec §3.4) | S | T1, T2 |
-| **T5** | **Write the one-line G31 authority note + residual feed** — typing/routing is C43's keep; mechanical isolation is the stack's; enforcement/grant layer + OS jail + OPA + tags dropped; the bound is *aspirational until C44 twins land*. A sweep-1 clarification + a residual feed to C57, **not** a control plane. (Spec §4.3, §3.5) | S | T2 |
-| **T6** | **Author boundary-type + scissors config exemplars** — a `twin`-default surface, an `isolated` surface, and a `production` surface *with* its explicit per-pack scissors declaration; plus the invalid (production-by-default / LLM-typed) negative examples. | S | T1, T2 |
-| **T7** | **Resolve enforcement-strength + exposure-window OQs (G31/OQ-C43-1/OQ-C43-2)** — spike: does the pack/`gc` loader *reject* a production-defaulted or LLM-typed surface, or permit-with-review? *(Exposure-window half RESOLVED by D-20, ADOPTED 2026-05-31: the boundary-typing/blast-radius fence is a Phase-2 entry precondition, NOT detection-only; twin-isolation half stays P3c — see [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25).)* Feeds the C57 residual + the orchestrator decision. | M | T2; G11-class `gc`/twin availability; C44 status |
-| **T8** | **Resolve the boundary OQs** — OQ-C43-3 (`isolated` vs C42/C04 worktree scope — label-only vs new sandbox), OQ-C43-4 (scissors grammar + attach point in C02/C03, not the dropped grant engine). | S | T1, T2 |
+| Task | Description | Size | Prereqs | Sweep-2 status |
+|---|---|---|---|---|
+| **T1** | **Freeze the boundary-typing contract** — closed type set {`twin`, `isolated`, `production`}; deterministic-typing invariant (type by rule, not LLM — F51/F33). (Spec §3.1, §4.1) | S | — | **DONE (Sweep-2)** — schema table §3.1 with R/W-by; classification rule §3.2 |
+| **T2** | **Freeze the twin-by-default / production-scissors routing rule** — surfaces are `twin` by default; `production` requires an explicit per-pack scissors declaration (F44); blast-radius invariant (D-13). (Spec §3.2, §4.2) | S | T1 | **DONE (Sweep-2)** — TOML grammar §3.4; invariants in §3.5 |
+| **T3** | **Freeze the twin-route binding contract** — `twin`-typed surface → its C44 twin; default-twin posture. (Spec §3.3) | S | T2; C44 twin seam | **DONE (Sweep-2)** — TwinRouteBinding struct §3.5 |
+| **T4** | **Write the Bash/network/fs security-posture statement** — per-surface default posture, with enforcement substrate identified as C04/C42 + C44 (not C43-built). (Spec §3.4) | S | T1, T2 | **DONE (Sweep-1/Sweep-2)** — §1 + §3.4 |
+| **T5** | **Write the one-line G31 authority note + residual feed** — typing/routing is C43's keep; mechanical isolation is the stack's; enforcement/grant layer + OS jail + OPA + tags dropped; the bound is *aspirational until C44 twins land*. (Spec §4.3, §3.5) | S | T2 | **DONE (Sweep-1/Sweep-2)** — §4.3 + G31 residual in §6 |
+| **T6** | **Author boundary-type + scissors config exemplars** — a `twin`-default surface and a `production` surface with scissors; plus invalid (production-by-default / LLM-typed) negative examples. | S | T1, T2 | **DONE (Sweep-2)** — TOML grammar + exemplars in §3.4 |
+| **T7** | **Resolve enforcement-strength OQ (G31/OQ-C43-1)** — D-23 spike: does the pack/`gc` loader *reject* a production-defaulted surface, or permit-with-review? *(Exposure-window half RESOLVED by D-20: fence is Phase-2 entry precondition, NOT detection-only.)* | M | G11-class `gc`/twin availability; C44 status | **OPEN** — D-23 spike Test A not yet run; HumanGated state is operative (D-30) |
+| **T8** | **Resolve the boundary OQs** — OQ-C43-3 (`isolated` as C42/C04 label — RESOLVED Sweep-2); OQ-C43-4 (scissors grammar + attach in C02/C03 — RESOLVED Sweep-2). | S | T1, T2 | **DONE (Sweep-2)** — §3.3 + §3.4 |
+| **T9** | **Add E-code + AC-code tables + Mermaid diagrams** — formal E-C43-01..07 table, AC-C43-01..12 table with E↔AC cross-refs, state diagram (prevent-gate posture), sequence diagram (config-load classification). | S | T1–T5 | **DONE (Sweep-2)** — §3.6, §3.7, §5.1, §5.2 |
 
 ## 2. Dependency graph
 
 ```
-                  T1 ─► T2 ─► {T4, T5, T6}
-C44 (twin seam) ──┴────► T3
+                  T1 ─► T2 ─► {T4, T5, T6}   [DONE Sweep-2]
+C44 (twin seam) ──┴────► T3                    [DONE Sweep-2 (binding declared)]
 C42 (partition) ──► (baseline scope consumed by T1/T2)
-                         T2 ─► T7 (spike) ──► C57 residual + orchestrator decision
-                         T1 ─► T8 (OQs) ────► review-log / C02 / C03 / C42 / C04
+                         T2 ─► T7 (spike) ──► C57 residual + orchestrator decision [OPEN]
+                         T1 ─► T8 (OQs) ────► RESOLVED Sweep-2
+                         {T1..T5} ─► T9 ──► E-codes, AC-codes, diagrams [DONE Sweep-2]
 ```
 
-- **Critical path:** T1 → T2 → (T4 + T5). These freeze the boundary-type set + the twin-by-default rule +
-  the blast-radius invariant that C44/C45/C57 all build against. Everything else hangs off them.
-- **Upstream blockers:** T1/T2 consume **C42**'s partition (the baseline scope) — already built. T3 needs
-  the **C44** twin seam (same Batch 4 — co-developed). T7's spike is gated on the real `gc`/twin stack being
-  runnable end-to-end (the same **G11** assumption that blocks C01/C34) **and** on C44 status (the residual
-  shrinks only as twins land).
-- **Downstream consumers waiting on these freezes:** **C44** (its twins bind to `twin`-typed surfaces),
-  **C45** (verifies usage against the declared typing), **C57** (records the F12/F44/F56 mechanism + the G31
-  residual), and the autonomy/blast-radius consumers **C56/C39** (the bound caps L4/L5 reach).
+- **Critical path (Sweep-2 complete):** T1 → T2 → (T4 + T5 + T6 + T8 + T9) — all DONE. Boundary-type
+  set, twin-by-default rule, blast-radius invariant, E-codes, AC-codes, and Mermaid diagrams are frozen and
+  available for C44/C45/C57 to build against.
+- **Sole remaining open:** T7 (D-23 spike / enforce-strength) — gated on G11-class `gc`/twin availability.
+  Until the spike resolves, D-30's `HumanGated` state is operative: P2/P3b runs are blocked pending
+  prevention confirmation.
+- **Downstream consumers unblocked now:** **C44** (twins bind to `twin`-typed surfaces via §3.5
+  TwinRouteBinding), **C45** (verifies against §3.1 SurfaceTypingRecord + §3.7 ACs), **C57** (records
+  F12/F44/F56 mechanism + G31 residual per AC-C43-11), **C56/C39** (blast-radius bound frozen).
 
 ## 3. Parallelization
 

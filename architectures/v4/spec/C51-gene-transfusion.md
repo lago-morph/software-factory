@@ -441,28 +441,25 @@ Each test is a concrete conformance check against the §3 / §6.1 contracts. Cro
 
 ## 9. Open questions
 
-- **OQ-C51-1** (→ review-log): **"Named exemplar behaviors" extraction (the completeness anchor).** The
+- **OQ-C51-1** (→ review-log): **RESOLVED (Sweep-2) — "Named exemplar behaviors" extraction (the completeness anchor).** The
   completeness clause requires enumerating the exemplar's behaviors so each can be covered by a scenario —
   but v4 defines transfusion *by analogy* and names no behavior-extraction method (AI-CONTEXT §9). Is the
   behavior list authored by the operator at intent-intake (C11), derived from the exemplar's own
   tests/docs, or a [FAITHFUL-FILL] left to sweep-2? Without a defined anchor, "complete" is subjective —
-  the residual edge of G07. **Top open question.**
-- **OQ-C51-2** (→ review-log): **G14 class-level fallback ownership.** C51 makes the bet falsifiable
+  the residual edge of G07. **RESOLVED (Sweep-2): The completeness anchor is operator-supplied at C11 intake** — the operator names the exemplar(s) AND provides a `named_behaviors` list for each at intake time. "Complete" = every named behavior has ≥1 scenario in C30 tagged to it. Closed by `ExemplarRef.named_behaviors` field (§4.1.1) + `CompletenessResult` (§3.0.1) + E-C51-03/E-C51-04/AC-C51-03/AC-C51-04. This closes the residual edge of G07. (See §3.0.1 for the [FAITHFUL-FILL] rationale.)
+- **OQ-C51-2** (→ review-log): **STILL OPEN — G14 class-level fallback ownership.** C51 makes the bet falsifiable
   *per component* and routes a single failure to review, but the strategic fallback for "a whole
   high-value class (Healer/twins/self-opt) cannot be reliably transfused" (re-sequence phases? hand-build?
   abandon a principle?) is a **C54 phase-plan** decision, not C51's. Confirm C54 owns the class-level
   hedge so G14 is fully homed.
-- **OQ-C51-3** (→ review-log): **Numeric satisfaction bar + threshold owner (shared G09).** C51's
-  predicate is bar-relative but threshold-free (parity with C33:OQ-1). Confirm the transfusion-acceptance
-  cutline lives at **C53** (bootstrap milestone) / **C50** (promotion gate) as operator/integrator policy,
-  and that the same satisfaction statistic C33 emits is the one C51's predicate reads.
-- **OQ-C51-4** (→ review-log): **License census authority + staleness (G30 / shared with C57).** C51
+- **OQ-C51-3** (→ review-log): **RESOLVED (Sweep-2) — Numeric satisfaction bar + threshold owner (shared G09).** C51's
+  predicate is bar-relative but threshold-free (parity with C33:OQ-1). **RESOLVED (Sweep-2): The transfusion-acceptance cutline is owned by C53 (bootstrap milestone) and C50 (promotion gate) as operator/integrator policy.** C51's `CorrectnessResult.bar_value` is injected by C53 at call-time; C51 reads the same `SatisfactionDistribution` C33 emits (D-39). If no bar is supplied (`bar_value=null`), `bar_met` defaults to `true` — completeness is the binding constraint in early phases. Closed by §3.0.2.
+- **OQ-C51-4** (→ review-log): **RESOLVED (Sweep-2) — License census authority + staleness (G30 / shared with C57).** C51
   treats README:285–306 as the build-blocking license source of truth, but it is hand-maintained and lists
-  several sources "verify (convention)". Confirm C57 (which "owns license hygiene") is the authoritative
-  home of the census and the verification workflow, and that adding a new exemplar's license is a
-  prerequisite step before its first transfusion (no automated SBOM scanner at Phase 0 — confirm that
-  scope boundary).
-- **OQ-C51-5** (→ review-log): **Transfusion-record signing (G36/G37/FE-3).** `transfused_from` and the
-  verdict are **self-asserted** (no signature; D-14). Confirm this is acceptable for Phase 0 (consistent
-  with C20's self-asserted `created_by`) and that signed transfusion provenance is FE-3 (blocked on G37
-  secrets), not a Phase-0 requirement.
+  several sources "verify (convention)". **RESOLVED (Sweep-2): C57 is the authoritative home of the license census and the verification workflow.** Adding a new exemplar's license to C57's census is a prerequisite step before the first transfusion of that exemplar (no automated SBOM scanner at Phase 0; over-build per the bar). C51's `check_declaration` reads the C57 census via `ExemplarRef.license_spdx` + `license_verified` fields. Closed by §3.0 `check_declaration` interface and §4.1.1 `ExemplarRef` schema.
+- **OQ-C51-5** (→ review-log): **RESOLVED (Sweep-2) — Transfusion-record signing (G36/G37/FE-3).** `transfused_from` and the
+  verdict are **self-asserted** (no signature; D-14). **RESOLVED (Sweep-2): Self-asserted is acceptable for Phase 0.** Per binding decision D-14 (verbatim):
+
+  > "G37 = open secrets/credential-storage gap (owned by C03; plaintext `city.toml`/env today). FE-3 = graduated-mandatory signing, BLOCKED ON G37 but a distinct deferred enhancement. Specs deferring secrets cite **G37**, not FE-3. Signing stays deferred (Bet 2 → FE-3); resolves the old 'signing mandatory vs optional' → optional/deferred (README:229), revisit at FE-3's trigger."
+
+  `TransfusionVerdictRecord.signed=false` at Phase-0 (§4.1.2). Consistent with C20's self-asserted `created_by`. Signed transfusion provenance is FE-3, blocked on G37. Closed by §4.1.2 `signed` field + AC-C51-07.

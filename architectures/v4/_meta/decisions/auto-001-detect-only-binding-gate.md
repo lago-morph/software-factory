@@ -1,7 +1,7 @@
 # auto-001 — detect-only binding gate on D-20
 
 **Author.** Lead agent, autonomous-run session 2026-06-01.
-**Status.** `Round 1 in flight`.
+**Status.** `Round 2 in flight` (Round 1 superseded — see Round-2 decision below).
 **Rewind point.** Commit `TBD` on branch `claude/architectures-v4-meta-guidance-OpJFZ-03-auto001`. Reverting it removes this brief and leaves the as-adopted D-23 posture (prevent-vs-detect = a noted caveat, not a gate) unchanged; the operator can re-adjudicate.
 
 ---
@@ -43,11 +43,13 @@ Scope note: the prevent-vs-detect question itself is **OPEN** (the prototype pro
 - **Pros.** Honest, zero new build, reversible. Aligns with "L5 is the endpoint, not a precondition" ([C39](../../spec/C39-fix-task-loop-closure.md) cites README:527).
 - **Cons.** Forfeits the central v4 value proposition (unattended/dark factory) on a single substrate property; a strict reading makes the whole architecture contingent on `gc` preventing, with no engineering response other than "give up autonomy."
 
-## Decision (Round 1 — written before any adversarial review)
+## Decision (Round 1 — written before any adversarial review) — ~~SUPERSEDED by Round 2 below~~
 
-**Selected: Option A** (binding go/no-go gate, dischargeable by a real prevent layer **or** an explicit descope), with **Option C's prevent layer as the named discharge mechanism** and **Option D available as the operator's explicit descope choice**. A and C+D are not really rivals: A is the *policy* (detect-only ⇒ P2 is gated); C is *one* discharge (build the prevent layer); D is the *other* discharge (descope). Option A names both exits; Option B is rejected as the posture the operator already disliked.
+> **Superseded by Round 2** (after the Round-1 adversarial wave). Round 1 selected Option A *with the OS-level prevent layer pre-blessed as a named discharge*; all three Round-1 reviewers flagged that pre-blessed discharge as a bar violation (it is the literal union of SURVIVOR-PASS-dropped deltas), gameable, and outcome-incomplete. Round 2 keeps the binding-gate **policy** but de-blesses the prevent-layer build. Round-1 text preserved verbatim below for traceability.
 
-Reasoning:
+~~**Selected: Option A** (binding go/no-go gate, dischargeable by a real prevent layer **or** an explicit descope), with **Option C's prevent layer as the named discharge mechanism** and **Option D available as the operator's explicit descope choice**.~~ A and C+D are not really rivals: A is the *policy* (detect-only ⇒ P2 is gated); C is *one* discharge (build the prevent layer); D is the *other* discharge (descope). Option A names both exits; Option B is rejected as the posture the operator already disliked.
+
+Reasoning (preserved for traceability):
 
 1. **The fence's entire job is in-the-moment resistance.** D-20 pulled the fence forward precisely so a prompt-injection/self-mod during P2→P3b is *stopped*, not *noticed*. Under detect-only, the pulled-forward fence does not do that job — so D-20's safety claim is conditional on prevent. Making that conditionality a binding gate (A) is just stating D-20's own premise honestly; B leaves D-20 over-claiming.
 2. **The operator already ruled against detection-only at this boundary.** [decisions-to-make item 1](../../../../decisions-to-make.md) rejected "accept detection-only Phase 0" (XC-8) in favor of pulling the fence forward. A detect-only `gc` re-opens XC-8 by the back door; Option A closes that door consistently with the operator's adopted stance, where B silently re-admits it.
@@ -80,8 +82,75 @@ Per [`AGENTS.md` real-subagent rule](../../../../AGENTS.md#adversarial-review-mu
 
 ### Findings (after reviewers return)
 
-_(to be filled in after Round-1 reviewers return)_
+**Reviewer 1 (red-team/security) — strong amendments.** The brief's discharge layer closes the *cross-partition read* face but does **not** stop the lethal trifecta it claims to fence: an agent with *legitimate in-partition* access, fed untrusted content, can exfiltrate over an *allowed* egress channel (commit message, in-partition service call, DNS) — none of the brief's named controls touch that. So "closes the P2→P3b window" over-claims; the in-partition-read + allowed-egress path stays open regardless and must be a standing C57 residual. Also: detect/prevent is not binary (realistic outcome = "prevents FS, detects network"), so discharge must be **per-face** (read-face AND egress-face), with the egress allowlist a named deliverable. The L4-descope "safe floor" is asserted, not shown — a self-modifying agent between review batches still has a window (ties to VERDICT R3/§6-item-4). The C34 clause allowing "a documented weaker guarantee with operator sign-off" silently re-admits rejected Option B.
+
+**Reviewer 2 (cost/scope + buildability-bar) — strong amendments, near-reject of the discharge.** Decisive finding: the named discharge layer (FS-namespace + seccomp/landlock + egress policy) is the **literal union of deltas SURVIVOR-PASS already DROPPED under the bar** — C42-02 "read-isolation enforced at OS/process boundary" (DROP), C04-05 "isolation-at-spawn OS enforcement" (DROP), C28-04 "capability/egress profile per invocation" (DROP), C42-06 OPA (DROP). The brief's defense ("a 12-principle capability, not polish") cites no P-number and re-bills *enforcement of an already-kept principle* as fresh capability — relabeling, not a real distinction. Pre-committing the consequence with a pre-argued buildable discharge loads the dice toward building (cost not bounded, just deferred + pre-justified). Option D delivers identical safety content (no unattended P2 under detect-only) with zero build and zero gate machinery across C43/C34/C42/C56. Amendments: (1) Option D is the *sole default discharge*; (2) **delete** the OS-prevent layer as a pre-blessed discharge — any future prevent build re-enters the bar fresh, owned + costed + P-numbered; (3) the gate pre-commits **policy only, never a build**.
+
+**Reviewer 3 (pre-mortem) — strong amendments.** Dominant failure: *gate gamed / discharged on paper* — the spike returns A1 detect-only / A2 silent, schedule pressure mounts, someone wraps `bd` in OPA, checks "prevent-layer verified" against the **bead layer only**, and P2 launches with the OS/Bash (`cat ../rig2/...`) door still open — *worse* than an honest caveat because it adds false confidence. Early-warning sign: a discharge artifact citing A1 evidence but never re-running A2. Also: the brief pre-binds only "a detect-only result" but the protocol has **three** verdicts (PREVENT / DETECT-ONLY / SILENT) plus mixed per-face — the mixed/SILENT outcomes have no pre-bound consequence and will be re-litigated under the very schedule pressure the brief meant to forestall. And the discharge has no named owner / no deadline → indefinite P2 block (shipped-too-late). Cheapest fix: bind "verified" to re-passing spike Test A on **both A1 and A2**; pre-bind all outcomes; name an owner + descope-by-default date.
+
+**Convergence.** All three independently land on the same shape: the **binding-gate policy is right and honest** (it states D-20's premise plainly), but the **pre-blessed OS-prevent-layer discharge is wrong** — bar violation (R2), gameable/incomplete (R1 trifecta gap, R3 A2-untested), and outcome-incomplete (R1/R3). This changes the decision → Round 1 superseded.
 
 ### Verdict status (per reviewer)
+
+- Reviewer 1 (red-team/security): **`accept-with-named-amendments`** (4 named).
+- Reviewer 2 (cost/bar hawk): **`accept-with-named-amendments`** (3 named; amounts to reject-of-the-discharge while keeping the gate policy).
+- Reviewer 3 (pre-mortem): **`accept-with-named-amendments`** (3 named).
+
+No reviewer rejected the gate *policy*; all three rejected the *pre-blessed prevent-layer discharge*. → Revise (Round 2).
+
+---
+
+## Decision (Round 2 — revised after Round 1)
+
+**Final-candidate: Option A as POLICY ONLY, with Option D (descope-to-L4) as the sole default discharge; the OS-level prevent layer is NOT pre-blessed.**
+
+The binding gate now reads: **any D-23 Test-A outcome other than full PREVENT on both faces (A1 bead-visibility AND A2 OS/Bash) blocks unattended operation (P2) and self-modification (P3b).** This is a *policy* pre-commitment, not a build mandate. It binds every spike outcome, not just "detect-only":
+
+| Spike Test-A outcome | Consequence (pre-bound) |
+|---|---|
+| **PREVENT on both A1 + A2** | D-20's fence is a real control; P2 precondition satisfied (no extra work). |
+| **DETECT-ONLY (either face)** | P2/P3b **blocked**. Default discharge: **descope to L4** (human-in-loop) and record it. |
+| **SILENT (either face — access succeeds, no trail)** | P2/P3b **blocked**, *and* C34 holdout audit is also unsound on that face → treat as strictly worse than detect-only. |
+| **MIXED (e.g., A1 prevent / A2 detect)** | P2/P3b **blocked** until the *failing face* reaches PREVENT; per-face, not a single boolean. |
+
+Reasoning for the change (Round-1 findings folded in):
+
+1. **Gate = policy, not build (R2).** The gate pre-commits only that a non-PREVENT substrate blocks unattended P2. It mandates **no** code. The OS-level prevent layer is **removed as a pre-blessed discharge**; if anyone later wants to build prevention to *unblock* P2, that build must re-enter the bar fresh — owned, costed, and citing a specific P-number — exactly like any other candidate capability. This removes the bar violation (the brief no longer relabels SURVIVOR-PASS-dropped deltas as pre-authorized) and de-loads the dice toward building.
+2. **Default discharge = descope to L4 (R2), but L4 is not asserted "safe" (R1).** Under a non-PREVENT substrate the standing posture is L4 human-in-loop; the brief does **not** claim L4 is a clean safety floor. L4's residual exposure (a self-modifying agent between review batches) is bound to D-21's checkpoint-cadence + named-artifact requirement (VERDICT §6 item 4), not hand-waved.
+3. **Drop the "closes the window" claim; record the trifecta residual (R1).** Even full PREVENT on both faces bounds only the *cross-partition* face. The **in-partition-read + allowed-egress** trifecta path remains open and is recorded as a **standing C57 residual** (egress-allowlist granularity is its own future work, not solved here).
+4. **Bind all outcomes incl. SILENT + MIXED (R1, R3).** The consequence table above pre-binds PREVENT / DETECT-ONLY / SILENT / MIXED so no result is re-litigated under schedule pressure. SILENT is treated as worse than detect-only (it also breaks C34's audit soundness).
+5. **If a prevent layer is ever built, "verified" = re-pass spike Test A on BOTH faces (R3).** A discharge that cites A1 evidence but skips A2 does not count. This closes the "discharged on paper" failure.
+6. **Strike the C34 weaker-guarantee-with-sign-off clause (R1).** It re-admitted rejected Option B; removed. Under a non-PREVENT substrate C34 holdout integrity is *also* gated (or the factory runs at L4 where a human reviews holdout exposure), not waved through with sign-off.
+7. **Name an owner + a descope-by-default trigger (R3).** The gate names the Phase-2 entry checklist owner as accountable for the spike + the verdict; absent a verified prevent build by P2-entry, the default is descope-to-L4 (no indefinite limbo).
+
+### Revised downstream impact
+
+- **D-23 protocol §6:** the results table's "decision triggered" column adopts the 4-row consequence table above (PREVENT / DETECT-ONLY / SILENT / MIXED), per-face.
+- **C43 (fence):** "the boundary-typing fence is a *control* iff the substrate prevents on the relevant face; under any non-PREVENT face the C43 P2 precondition is satisfied only by descope-to-L4 (default) — a substitute prevent layer is NOT pre-authorized and must re-enter the bar." Plus a C57 residual cross-ref for the in-partition-read + allowed-egress trifecta path.
+- **C34 (holdout) / C42 (partition):** cross-reference the same gate; SILENT outcome flags C34 audit-unsoundness explicitly. No weaker-guarantee-with-sign-off clause.
+- **C56 (autonomy ladder):** P2 entry gate = "Test A PREVENT on both faces verified, OR operator descope-to-L4 recorded"; L4 residual bound to D-21 cadence.
+- **C57 (residual register):** add the in-partition-read + allowed-egress trifecta path as a standing residual (no bare "Addressed").
+
+### Revised if-user-overrides rewind point
+
+Revert this brief's commit(s) on `…-03-auto001`. Survives: the D-23 milestone (PR #230). Restores: the as-adopted D-23 noted-caveat posture. The Round-1→Round-2 history is preserved in-file as the audit trail.
+
+---
+
+## Adversarial-review round 2
+
+Dispatched ≥3 MORE real adversarial reviewers on the **revised brief**, cold (no Round-1 transcript). 3-tier verdicts.
+
+### Reviewer angles dispatched
+
+- Reviewer 4: **Domain practitioner / on-call operator** — does the descope-to-L4 default actually ship value and operate cleanly, or does it quietly kill the factory's reason to exist?
+- Reviewer 5: **Methodology-purist / scoping-principle skeptic** — does "policy-only, prevent-build re-enters the bar" hold consistently, or does it still covertly weaken the bar / the autonomy thesis?
+- Reviewer 6: **Falsification designer** — name the spike result (or operational outcome) that would falsify the revised decision's central claim; if it can't be named, the decision is too soft.
+
+### Findings
+
+_(to be filled in after Round-2 reviewers return)_
+
+### Verdict status
 
 _(to be filled)_

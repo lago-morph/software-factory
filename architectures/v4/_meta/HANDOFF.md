@@ -1,21 +1,54 @@
 # HANDOFF — v4 Spec & Plan run (resume from here)
 
-**Last updated:** 2026-06-01 (Sweep-2 run #1 — D-23 + first depth cluster — complete; see §0).
-**Status:** **Sweep-1 COMPLETE** (57/57 built+reviewed+integrated) + **wrap-up COMPLETE** (D-20…D-25 adopted, panel VERDICT, guides, products-first build order). **Sweep-2 has STARTED** (this run): the **D-23 Gas City reality-check is done as protocol + harvest** (no live run, per operator), the pivotal **auto-001 decision is settled** (2 rounds / 6 adversaries), and the **first Sweep-2 depth cluster (C19/C20/C21/C23/C41) landed**. **2 operator morning-review items are open** (D-20 re-adoption; per-rig-class autonomy) — see [`overnight-summary-2026-06-01-sweep2.md`](../../../archive/PR-233-overnight-summary-2026-06-01-sweep2.md) §6.
-**Working tree:** the Sweep-2 run #1 work is in stacked PRs **#229→#232 + wrap** (NOT yet merged to `main` at run close). Prior state: everything through #228 is in `main`.
+**Last updated:** 2026-06-01 (Sweep-2 run #1 closed + prevent-gate D-30 adopted; next run = the 25-component spine — see §0).
+**Status:** **Sweep-1 COMPLETE** (57/57). **Sweep-2 STARTED**: run #1 (PRs #229–#233, all merged to `main`) delivered the D-23 protocol+harvest, the adversarially-reviewed prevent-gate decision (now **operator-ADOPTED — D-30**, both morning-review items closed), and the evidence/data-substrate depth cluster (C19/C20/C21/C23/C41). **NEXT RUN: author Sweep-2 implementation-ready depth for the 25-component safe-self-build spine, unattended, Gas City + Claude Max integration FIRST.**
+**Working tree:** everything through PR #235 is in `main`. (Historical run reports/prompts now live under [`archive/`](../../../archive/README.md).)
 
-## 0. Sweep-2 run #1 (2026-06-01) — what landed + what's next
+## 0. NEXT RUN — Sweep-2 implementation depth for the 25-component spine (LONG, UNATTENDED)
 
-**Done this run (stacked PRs #229–#232 + wrap):**
-- **D-23 (protocol + harvest):** [`D-23-gas-city-spike-protocol.md`](./D-23-gas-city-spike-protocol.md) (runnable prevent-vs-detect / `[[service]]` / Orders-durability checklist) + [`D-23-substrate-harvest.md`](./D-23-substrate-harvest.md) (12 facts from the real `gascity-prototype@b14c278`). Closed **XC-9, C42:OQ-4, C04:OQ-4**; **0 true contradictions** (3 flagged, all reclassified NEW-INFO). 13 specs annotated `[D-23 substrate-verified]`.
-- **auto-001 decided** (the [detect-only binding-gate brief](./decisions/auto-001-detect-only-binding-gate.md)): detect-only ⇒ binding gate on unattended P2, as a **policy rubric** (descope-to-L4 default; prevent layer NOT pre-blessed; per-rig-class middle; fail-closed). Resolved **OQ-C41-4** via D-29.
-- **Sweep-2 depth cluster** (evidence/data substrate): **C19, C20, C21, C23, C41** at implementation depth. Seam adversary found + fixed a HIGH `event_id` drift → ledger **D-26…D-29**.
+> Read this whole §0, then [`STATUS.md`](./STATUS.md), [`review-log.md`](./review-log.md) (ledger D-1..D-30 + harvested OQs = the work list), and **the build order [`implementation-dependencies.md`](../implementation-dependencies.md)** (the authoritative 25-component spine + the 7 products + per-product dependency edges). Do **NOT** read the four v4 source docs into primary context — subagents read targeted sections.
 
-**MANDATORY FIRST ACTIONS for the next session (in order):**
-1. **Resolve the 2 morning-review items** ([summary §6](../../../archive/PR-233-overnight-summary-2026-06-01-sweep2.md)): (a) re-adopt D-20 as conditional-on-prevention? (b) accept per-rig-class autonomy? Until (a) is answered, do NOT wire the auto-001 rubric into specs.
-2. **If (a) re-adopted:** wire the auto-001 rubric into **C43/C34/C42/C56/C57** (the deferred spec edits) as its own PR.
-3. **The empirical D-23 spike is still owed** (needs a Docker-capable env; prototype + protocol ready) — prevent-vs-detect (C34:OQ-C34-1 ≡ C43:OQ-C43-1) stays OPEN until then; it gates the auto-001 rubric's actual outcome.
-4. **Continue Sweep-2 depth** on the remaining ~52 components. Suggested next clusters: **workflow-engine** (C04/C05/C12/C13/C18/C40) and **eval/holdout** (C30/C31/C32/C33/C34/C42 — note holdout depth is partly gated on item 1). Use the [`BUILDER-BRIEF`](./BUILDER-BRIEF.md) at Sweep-2 depth, the C20 spec as the format **exemplar**, and a cross-cluster seam adversary per cluster.
+### 0.1 Binding safety gate — D-30 (operator-adopted; DO NOT relitigate)
+
+Unattended operation (P2) / self-modification (P3b) requires the substrate to **BLOCK (prevent at the tool-call/process boundary)** — not merely detect — out-of-boundary access on the relevant blast-radius face. If Gas City does not prevent natively (per the [D-23 spike](./D-23-gas-city-spike-protocol.md)), a **blocking enforcement watcher WILL be added** — sanctioned in principle, but its **DESIGN is deferred until the spike confirms it's needed** (don't design what we may not need; it still passes the bar when built). Until prevention is established, unattended is **blocked**. Per-rig-class autonomy is available but secondary. Full text: [auto-001 brief §Operator adoption](./decisions/auto-001-detect-only-binding-gate.md) + [review-log D-30](./review-log.md). Already annotated on C43/C34/C42/C56/C57.
+
+### 0.2 Scope: the 25-component spine, in product order (Gas City + Claude Max FIRST)
+
+The spine is **25 components across 7 products** (authoritative list + the bold backbone IDs are in [`implementation-dependencies.md` §"The backbone"](../implementation-dependencies.md)). Product build order, and the order to DEFINE them this run:
+
+1. **Gas City (adopt)** — delivers 11 of the 25: **C01, C02, C03, C04, C05, C17, C18, C19, C23, C41, C42**. The "integration" deliverable = the concrete install+config recipe (`city.toml`/`pack.toml`/`.gc/site.toml`), grounded in the working **`lago-morph/gascity-prototype`** (clone it; read its `docs/PLAN.md` + README — the sandbox plumbing, Go 1.26.3 build, `[[rig]]` shapes, etc. are already proven there and harvested in [`D-23-substrate-harvest.md`](./D-23-substrate-harvest.md)), PLUS the **Gas City conformance check** = run the [D-23 spike protocol](./D-23-gas-city-spike-protocol.md) (the prevent-vs-detect / `[[service]]` / Orders-durability tests). **This is the piece the operator starts implementing tonight — define it to the deepest, most actionable detail first.**
+2. **Claude Code / Max (adopt) + model-floor (custom)** — **C28** (the `claude` worker under Max that Gas City drives) + **C29** (cost/family routing policy). The **Claude Max integration** deliverable = the provider preset + auth/session plumbing (the `gascity-prototype` proves the sandbox path: `CLAUDE_CODE_OAUTH_TOKEN`, CA-bundle, `IS_SANDBOX=1`, the onboarding-dialog pre-acks) + C29's routing policy. **Second priority — the operator also wants to start this tonight.**
+3. **In parallel after Gas City:** **Spec intake** (C08 spec format, C09 prompt binding), **Bead-type schema** (C20 — already at Sweep-2 depth from run #1; refine its seams).
+4. **Evaluation tier** (Inspect AI): **C30** scenario store, **C31** runner, **C32** judge scorer, **C33** score reduction.
+5. **The fence** (custom, gated on D-30): **C34** holdout integrity, **C43** boundary-typing half (needs only C42; can pull forward). **Bootstrap**: **C51** transfusion predicate, **C52** self-bootstrap, **C53** bootstrap-validation milestone (the apex).
+
+"Everything in, or that needs to be defined for, the spine" = author each spine component to implementation-ready depth, AND define any non-spine dependency a spine component needs (e.g. C24 bridge for CXDB if a spine component reads trajectories).
+
+### 0.3 First actions, in order
+
+1. Ground from §0 + the named docs. Lean HEAVILY on subagents from the start.
+2. **Gas City product to implementation depth FIRST** (the 11 components as a single integration product + the conformance check). Land it as its own stacked PR. This unblocks the operator's tonight work.
+3. **Claude Code/Max product** (C28 + C29) to implementation depth — its own stacked PR.
+4. Then products 3→5 above, one cluster per stacked PR, each closed by a **cross-cluster seam adversary** before integrate.
+5. The empirical **D-23 spike is owed** (it decides whether the D-30 watcher is actually built) — run it when a Docker-capable env exists; it does **not** block defining the components.
+
+### 0.4 Depth bar per component (Sweep-2 = implementation-ready)
+
+Concrete signatures, data schemas, API/message/**config** contracts, sequence/state diagrams (Mermaid, valid `stateDiagram-v2`/`sequenceDiagram`), error taxonomies (E-codes), concrete acceptance tests (AC-codes cross-referencing the E-codes). **Use the [C20 spec](../spec/C20-bead-schema.md) as the format exemplar** (per-type field tables Field/Type/Req/Semantics/R-W-by; ownership annotations; E↔AC cross-refs). Deepen **in place** — preserve Sweep-1 content + `[D-23 substrate-verified]` + `[D-30 ADOPTED]` annotations + inline OQs. For Gas City + Claude Max also produce the concrete **integration runbook** (install/config/auth, grounded in the prototype). Cite binding decisions (D-1..D-30) **verbatim**.
+
+### 0.5 Method & unattended discipline (this is the "context is precious" part)
+
+- **Context is precious.** Read only what §0 names; never read the four v4 source docs or a subagent's full output into primary context. Subagents **write deliverables to disk and return ≤15-line receipts**; the orchestrator owns ALL git and **commits + pushes every wave**.
+- **Dynamic model choice:** **opus** for planning, decision briefs, and panel synthesis; **sonnet** for general authoring / review / integration. Make the call per task.
+- **Standing briefs:** dispatch one builder per component at Sweep-2 depth using [`BUILDER-BRIEF.md`](./BUILDER-BRIEF.md); concurrency cap ~6–8; pipeline.
+- **Adversarial review is real subagents, never inline-simulated.** Run a **cross-cluster seam adversary** per product/cluster (it caught a HIGH `event_id` build-breaker in run #1). Cross-component conflicts → record as numbered ledger decisions and propagate (the [`cross-component-decision-ledger`](../../../.claude/skills/cross-component-decision-ledger/SKILL.md) discipline).
+- **Panel-of-experts review** (≥5 real adversarial personas, opus) when bringing together a large chunk or making a decision in the operator's absence.
+- **Decision briefs** (2 rounds, ≥3 real adversaries each) for genuine operator-judgment forks — don't freeze; write the brief, pick a side, flag it as a morning-review item.
+- **Stacked PRs** (operator-directed); at run close write a **plain-language** morning summary (per the [`human-scoped-deliverables`](../../../.claude/skills/human-scoped-deliverables/SKILL.md) skill — idea-first, corpus vocabulary, no hash IDs in body) + a `self-retrospective`.
+
+### 0.6 What run #1 already delivered (context, don't redo)
+
+D-23 protocol+harvest (XC-9/C42:OQ-4/C04:OQ-4 closed; 0 true contradictions); the prevent-gate decision now **adopted (D-30)**; the evidence/data-substrate cluster **C19/C20/C21/C23/C41** at Sweep-2 depth with seam fixes **D-26…D-29**. C20 is the exemplar; the rest of the spine is the new work.
 
 This file + the other `_meta/` artifacts are sufficient to resume with zero re-grounding. Start with the run summary at [`run-summary.md`](../../../archive/PR-220-run-summary.md), the operator decision guide [`decisions-to-make.md`](../../../decisions-to-make.md), and the coverage ledger [`STATUS.md`](./STATUS.md).
 

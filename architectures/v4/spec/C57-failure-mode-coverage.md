@@ -414,3 +414,9 @@ altitude.)
   which need an *integrator edit pass* across the corpus (a rename C57 cannot perform as a register). C57's
   faithful scope is to *record* them as residuals; performing a corpus-wide rename is an integrator action,
   not a register's. Sweep-2 / integrator.
+
+**[D-30 ADOPTED 2026-06-01 — prevent/block required for unattended]**
+
+The enforcement watcher is a sanctioned-but-undesigned residual in this register: its NEED is gated on the D-23 spike and its DESIGN is deferred until the spike confirms the substrate does not prevent.
+
+> The operator has adopted the auto-001 rubric and re-adopted D-20 as **conditional on prevention**: unattended operation (P2) and self-modification (P3b) require the substrate to **BLOCK (prevent at the tool-call/process boundary)** — not merely detect — out-of-boundary access on the relevant blast-radius face. **Discharge:** if Gas City does not prevent natively (per the [D-23 spike](../_meta/D-23-gas-city-spike-protocol.md)), an **enforcement watcher that blocks WILL be added** (sanctioned in principle); its **design is DEFERRED until the spike confirms the substrate does not already prevent** — do not design what we may not need, and the watcher's design must still pass the bar when built. Until prevention is established (native or watcher), unattended operation is **blocked** (human-in-the-loop). The per-rig-class "structurally-safe parts may run unattended" optimization remains available but secondary. See the [auto-001 decision brief](../_meta/decisions/auto-001-detect-only-binding-gate.md) and review-log D-30.

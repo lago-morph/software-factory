@@ -1,7 +1,20 @@
 # auto-001 — detect-only binding gate on D-20
 
 **Author.** Lead agent, autonomous-run session 2026-06-01.
-**Status.** `Decided after Round 2` (2 rounds, 6 real adversaries). Final = policy-level rubric; see "Final decision" below. **Carries a morning-review item:** operator re-adoption of D-20's conditionality.
+**Status.** `ADOPTED by operator 2026-06-01` (ledger **D-30**), after 2 rounds / 6 real adversaries. See "Operator adoption" immediately below, then the Final decision.
+
+---
+
+## Operator adoption (2026-06-01) — D-30
+
+The operator adopted the rubric and **re-adopted D-20 as conditional on prevention**, with one decisive amendment to the discharge:
+
+- **It must block.** Unattended operation (P2) / self-modification (P3b) requires the substrate to **PREVENT (block at the tool-call/process boundary)**, not merely detect. Detection-only does not authorize an unattended run.
+- **The watcher is the sanctioned discharge — design deferred.** If Gas City does not prevent natively (per the [D-23 spike](../D-23-gas-city-spike-protocol.md)), **we will add an enforcement watcher that blocks.** The watcher is sanctioned in principle; its **design is deferred until the spike confirms the substrate does not already prevent** ("don't design what we may not need"). When built, the watcher's design must still pass the bar. This **supersedes** the Round-2 "prevent layer NOT pre-blessed / descope-to-L4 as the *sole* default" wording — the operator sanctions the prevent path explicitly, just not its premature design.
+- **Until prevention is established** (native or watcher), unattended operation is **blocked** (human-in-the-loop).
+- **Per-rig-class autonomy** (the "missing middle") **remains available but secondary** to the block requirement.
+
+This resolves both morning-review items: #1 (block — yes) and #2 (per-rig-class — kept, secondary). The Final decision below stands as the rubric; this section records the operator's binding adoption + the watcher-as-discharge amendment.
 **Rewind point.** Commit `TBD` on branch `claude/architectures-v4-meta-guidance-OpJFZ-03-auto001`. Reverting it removes this brief and leaves the as-adopted D-23 posture (prevent-vs-detect = a noted caveat, not a gate) unchanged; the operator can re-adjudicate.
 
 ---

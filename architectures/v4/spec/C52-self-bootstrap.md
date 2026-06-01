@@ -1,8 +1,15 @@
 # C52 — Self-bootstrap recursion & design review (`self-bootstrap`)  (Spec, canonical track)
 
 > Source: README §"Part 7 — The self-bootstrap mechanic" (lines 476–500: the recursion diagram `Factory → Spec → Run → Human design review → Deploy -.extends.-> Factory`; line 478 "the 12 principles are *recursive* … Specs as SoT applies to the factory's own development"; "Discipline that keeps the bootstrap honest" — line 496 "Gene transfusion always … No invention from scratch", 497 "Attribution of transfusion sources … `transfused_from`", **498 "Design review before deployment. Human reviews the factory's design output before any factory-built component goes into production use. Required until P12 is mature and trusted"**, 499 "Scenarios drive evaluation"); README §"Phase 2 — Layer 2 … and bootstrap validation" (lines 429–436: the milestone "Author a careful spec for a small new component / Run the factory on the spec / Human review the output / Deploy if it works"; 436 "If the bootstrap validation succeeds, the factory has proven it can do its own development work … If it fails, the factory itself needs work before Phase 3"); README §"Phase 3+ — Factory builds factory" (lines 444–446 "every subsequent principle's components get built by the factory itself, with gene transfusion … with human design review at each piece"; 472 "each component is bounded, each gets reviewed, each ships independently"); README Part 8 bet #3 (line 510 "The factory can do its own development work after Phases 0-2") + risk (line 519 "Phase 2 may not validate the bootstrap … iterate on the spec and run again; if still failing after a few attempts, the factory needs more substrate"); README Part 9 step 8 (line 542 "Author the Phase 2 spec for a small first-factory-built component. The bootstrap validation prompt is the most consequential thing you write in the first month"); AI-CONTEXT §11.1 (line 471 "Factory-builds-factory after Layer 2 — StrongDM pattern; minimizes human engineering investment"; line 475 "Phase 2 = Layer 2 + bootstrap validation — First factory-built component proves/disproves whole approach"); AI-CONTEXT §16 cold-start "If you're picking up an in-progress factory-built component" (lines 694–699: `gc bd find --type factory_build_in_progress` → check `transfused_from` → spec in `packs/*/spec.md` → scenarios at `scenarios/<component>/` → `gc converge resume <bead_id>`); component-inventory C52 row (maps `A84, A87, A85, B06, B17, B56, B80`; depends on C51, C52-gate, C08; gaps G14, G23; foundational: no; Batch 4 "factory builds factory"); ambiguities-and-gaps G14 (major — transfusion reliability is "a bet"; Phases 3b/3c/3d gated on it; "no fallback for 'factory cannot reliably transfuse'"), G23 (major — "Bootstrap-validation success criteria are subjective … 'if it works' … has no rubric, no scenario set for the bootstrap component itself, no pass bar"); review-log binding decisions **D-3** (C20 authors the `factory_build`/`factory_build_in_progress` bead schemas; C52 *uses* the lifecycle, does not define it), **D-6** (canonical track), **D-15** (satisfaction holistic against C08 free-form DoD — *transitive only*: it shapes C51's predicate internals, which C52 consumes as a black-box verdict; C52 itself is not bound by the satisfaction-holism decision); F-MODE-COVERAGE F54 (line 93, RSI goal-subversion over cycles), F43 (line 75, RSI board-visibility gap), F25 (line 102, design starvation — A109).
-> Inventory ID: C52   Kind: control-loop   Status: sweep-1
+> Inventory ID: C52   Kind: control-loop   Status: sweep-2
 > Track: canonical
+> Binding decisions obeyed: **D-3** (C20 owns `factory_build` schema; C52 drives lifecycle only), **D-6** (canonical track), **D-15** (holistic free-form DoD — transitive via C51), **D-21** (F54 objective-drift: registered-unbuilt in C57; cheap periodic human checkpoint now; real detector required before L5), **D-40** (`factory_build` build-state is a STATUS transition `in_progress → completed` on a single bead type — NOT a type-flip; C52 drives the transition).
+
+> **D-40 ADOPTED — verbatim (resolves C52:OQ3 + XC-2):**
+> "The in-progress → completed advance of a factory self-build is a **`status` field transition on a single `factory_build` bead type** (`status: in_progress → completed`), **NOT** a flip from a distinct `factory_build_in_progress` type to `factory_build`. The cold-start / resume query keys on `factory_build` + `status = in_progress` (resolving **XC-2**'s AI-CONTEXT §16 hard-coded `gc bd find --type factory_build_in_progress` to a `--type factory_build --status in_progress` query). **C20** owns the `factory_build` schema + the `status` slot; **C52** drives the transition; **C53** records the go/no-go on the same bead."
+
+> **D-21 ADOPTED — verbatim (resolves C52:OQ6):**
+> "F54/objective-drift stays **registered-unbuilt** in the C57 residual register; mitigate now with a **cheap periodic human checkpoint** — 'do the objectives still match intent?' — tied to each batched human-review point on the autonomy ladder (C56). A **real drift detector (Option B) is REQUIRED before L5 lights-out** and is a hard precondition on L5 promotion (C56)."
 
 ## 1. Purpose & responsibility
 
@@ -14,138 +21,332 @@ It is responsible for:
 - **Self-targeted spec authoring** — producing a **spec for the factory's own next component** in C08's format (the same `agents/<name>/prompt.template.md` artifact a user-software spec uses), so the factory's development is driven by a source-of-truth spec exactly as user software is (README:478, 542; the intent for that spec is the under-defined gap G23 — see §3 contract 1 and §6).
 - **Running the normal build flow on that spec** — C52 does **not** introduce a second build engine; it dispatches the factory's *own* spec through the same convergence flow (C12/C13 formula+molecule, C28 agent loop) every other build uses, under C51 **gene-transfusion discipline** (≥1 exemplar; README:446, 496). "Factory builds factory" = the ordinary build flow pointed at the factory itself.
 - **The human-design-review gate before deploy** — a **mandatory** review of the factory's design output *before any factory-built component goes into production use* (README:498). This is the load-bearing safety invariant of the whole recursion and is the gate the inventory names `C52-gate` (§2 note). C52 owns the gate's *placement and mandatory-ness*; the go/no-go *rubric* is C53's and the *autonomy level* that decides how batched/out-of-loop the review is, is C56's.
-- **Deploy-and-extend** — on approval, the reviewed component is deployed **back into the factory**, extending it (README:491 `Deploy -.extends.-> Factory`); the build advances from `factory_build_in_progress` to a completed `factory_build` state through the C20-owned lifecycle (whether that is a `type`-flip on one record or a `status` transition is the open **C20:OQ-3**, not C52's to pick — D-3). The deployed component then participates in subsequent builds — the recursion's fixpoint.
-- **Resume of in-progress builds** — picking up a **mid-flight** factory-built component across agent sessions via the **`factory_build` bead lifecycle** (C20, D-3): find the `factory_build_in_progress` bead, recover its `transfused_from` / spec pointer / scenario pointer / workflow handle, and continue with `gc converge resume <bead_id>` (AI-CONTEXT §16 lines 694–699).
+- **Deploy-and-extend** — on approval, the reviewed component is deployed **back into the factory**, extending it (README:491 `Deploy -.extends.-> Factory`); the build advances from `status: in_progress` to `status: completed` on the single `factory_build` bead type (D-40; C20 §4.5.3). The deployed component then participates in subsequent builds — the recursion's fixpoint.
+- **Resume of in-progress builds** — picking up a **mid-flight** factory-built component across agent sessions via the **`factory_build` bead lifecycle** (C20, D-3, D-40): find the `factory_build` bead with `status=in_progress`, recover its `transfused_from` / spec pointer / scenario pointer / workflow handle, and continue with `gc converge resume <bead_id>` (AI-CONTEXT §16 lines 694–699).
 
 **What it is explicitly NOT:**
 - NOT the **gene-transfusion predicate**. The "does this behave like the exemplar?" correctness/completeness predicate (G07/G14) is **C51's** acceptance contract. C52 *calls* C51's predicate as the objective half of its acceptance step and *consumes* C51's `transfusion-insufficient` signal — it does not define or compute the predicate (C51 §3.3; inventory C52 `depends on C51`).
 - NOT the **validation rubric / go-no-go bar**. "Deploy if it works" (README:434) has no pass bar — that subjectivity *is* G23. The **rubric + scenario set + pass bar** for the bootstrap component is **C53's** (`bootstrap-validation` milestone; inventory C53 `depends on C52, C33`). C52 supplies the *loop and the mandatory review gate*; C53 supplies *what "it works" means*. C52 routes the decision to C53, it does not invent the cutline (§6, G23).
 - NOT the **autonomy ladder**. *How* out-of-the-loop / batched the human review is (L0 manual … L4 PM-mode batched … L5 dark) is **C56's** (`autonomy-ladder`; inventory C56 `depends on C52`). C52 mandates *that* design review exists "until P12 is mature and trusted" (README:498); C56 governs *the level at which* it operates. C52 holds the gate; C56 sets the gate's strictness.
-- NOT the **bead schema**. The `factory_build` / `factory_build_in_progress` payload (the `transfused_from`, spec/scenario pointers, workflow handle, lifecycle `status`) is **C20's** (binding **D-3**; C20 §4.2). C52 *writes and reads* those beads through their lifecycle; it does not define the type.
+- NOT the **bead schema**. The `factory_build` payload (the `transfused_from`, spec/scenario pointers, workflow handle, lifecycle `status`) is **C20's** (binding **D-3**, **D-40**; C20 §4.5.3). C52 *writes and reads* those beads through their lifecycle; it does not define the type.
 - NOT the **spec format**. The artifact the factory authors for itself is a **C08** spec (README:478 — specs-as-SoT applies recursively). C52 produces an instance *in* C08's format; it does not redefine the format (inventory C52 `depends on C08`).
 - NOT a **second build engine / pipeline runner**. The "run the factory on the spec" step is the *existing* convergence flow (C12 formula, C13 molecule, C28 agent loop, C30–C33 evaluation). C52 is the **recursion controller** that points that flow at the factory itself; building a bespoke bootstrap runner would be the over-build the bar forbids (§7).
 - NOT the **phase plan**. *Which* component the factory builds next, and the four-phase ordering (P0→P1→P2→P3), is **C54's** (`phase-plan`; inventory C54 `depends on C52`). C52 is the per-component recursion mechanism C54 sequences; it does not own the ordering.
-- NOT an **RSI-safety enforcer**. The factory modifying itself over cycles is the F54 goal-subversion risk; C52 *reduces blast radius* via the mandatory review gate + exemplar-anchoring (C51) + recorded provenance (C20/C41), but the dedicated multi-cycle drift audit is the F54 audit-pack discipline (F-MODE §11; G35), owned elsewhere (§6).
+- NOT an **RSI-safety enforcer**. The factory modifying itself over cycles is the F54 goal-subversion risk; C52 *reduces blast radius* via the mandatory review gate + exemplar-anchoring (C51) + recorded provenance (C20/C41), but the dedicated multi-cycle drift audit is the F54 audit-pack discipline, **owned by C57** per D-21 (F-MODE §11; G35). C52 names the C57 audit home; it does not build the detector.
 
 ## 2. Context & dependencies
 
 | Direction | Component | Relationship |
 |---|---|---|
-| Upstream (depends on) | **C51** Gene-transfusion discipline | C52 calls C51's correctness/completeness **predicate** as the objective acceptance gate before review/deploy, and consumes C51's `transfusion-insufficient` outcome (C51 §3.5, §5; README:496–498). Inventory: C52 `depends on C51`. C51 §2 lists C52 as the downstream consumer of its predicate. |
+| Upstream (depends on) | **C51** Gene-transfusion discipline | C52 calls C51's correctness/completeness **predicate** as the objective acceptance gate before review/deploy, and consumes C51's `transfusion-insufficient` outcome (C51 §3.0/§3.0.3; README:496–498). Inventory: C52 `depends on C51`. C51 §2 lists C52 as the downstream consumer of its predicate. |
 | Upstream (depends on) | **C08** Spec artifact & format | The factory authors its own next-component spec **in C08's format** (`agents/<name>/prompt.template.md`); specs-as-SoT applied recursively (README:478). Inventory: C52 `depends on C08`. C08 §2 lists C51/C52 as the bootstrap consumers of its format. |
-| Upstream (lifecycle owner) | **C20** Bead schema registry | **Authors** the `factory_build` / `factory_build_in_progress` payload + the resume fields (D-3; C20 §4.2). C52 *drives the lifecycle* (writes `factory_build_in_progress`, advances to `factory_build` on deploy). C20 §2 lists C52 as the consumer of `factory_build_in_progress`. |
-| Downstream (consumes) — **the validation gate** | **C53** Bootstrap-validation milestone | C52 routes the go/no-go decision to **C53**, which owns the **rubric + scenario set + pass bar** (G23) the subjective "deploy if it works" lacks (README:434; inventory C53 `depends on C52, C33`). C52 supplies the loop + mandatory review; C53 supplies the bar. |
+| Upstream (lifecycle owner) | **C20** Bead schema registry | **Authors** the `factory_build` payload + the resume fields + the `status` slot (D-3; D-40; C20 §4.5.3). C52 *drives the lifecycle* (writes `factory_build` at build start with `status=in_progress`; advances to `status=completed` on deploy — a STATUS TRANSITION, NOT a type-flip per **D-40**). C20 §2 lists C52 as the consumer of `factory_build` beads. |
+| Downstream (consumes) — **the validation gate** | **C53** Bootstrap-validation milestone | C52 routes the go/no-go decision to **C53**, which owns the **rubric + scenario set + pass bar** (G23) the subjective "deploy if it works" lacks (README:434; inventory C53 `depends on C52, C33`). C52 supplies the loop + mandatory review; C53 supplies the bar. **C53 also records the go/no-go result on the same `factory_build` bead (D-40 applied).** |
 | Downstream (governs the gate) — **autonomy level** | **C56** Autonomy ladder (L0–L5) | C56 sets *how batched / out-of-loop* C52's human design review runs (L4 PM-mode … L5 dark) "until P12 is mature and trusted" (README:498, 527). Inventory C56 `depends on C52`. C52 mandates the gate; C56 sets its strictness. |
 | Downstream (sequences) | **C54** Phase delivery plan | C54 orders the components C52 builds (P0→P1→P2→P3; README:444–472). Inventory C54 `depends on C52`. |
 | Lateral (the build flow it drives) | **C12 / C13 / C28** formula / molecule / agent loop, **C30–C33** scenarios+judge | "Run the factory on the spec" reuses the *existing* convergence + evaluation flow (README:432, 499). C52 dispatches into it; it does not own it. |
 | Lateral (attribution) | **C41** identity/attribution | The `factory_build` bead carries `created_by` (P9 applied to the factory's own work, README:497); C52 supplies the actor context, C41 stamps it. |
+| Lateral (audit home) | **C57** Failure-mode + residual-risk register | C57 owns the F54 multi-cycle drift audit (registered-unbuilt per D-21). C52 names C57 as the audit home; it does not build the detector. See §6 F54 handling. |
 
-> **Inventory note on the `C52-gate` dependency.** The component-inventory C52 row lists dependencies as `C51, C52-gate, C08`. `C52-gate` is **not a separate component** — it is the **human-design-review gate internal to C52** (README:498), called out in the dependency column to mark that the gate is a first-class, named obligation of this loop (the genuine KEEP). C52 *owns* this gate; the distinct, later-batch components are C53 (the gate's rubric) and C56 (the gate's autonomy level). This spec treats the design-review gate as C52-internal and routes the *rubric* to C53 and the *autonomy level* to C56. *(Restated as OQ2.)*
+> **Inventory note on the `C52-gate` dependency.**
+> RESOLVED (Sweep-2): OQ2. The component-inventory C52 row lists dependencies as `C51, C52-gate, C08`. `C52-gate` is **not a separate component** — it is the **human-design-review gate internal to C52** (README:498), called out in the dependency column to mark that the gate is a first-class, named obligation of this loop (the genuine KEEP). C52 *owns* this gate; the distinct, later-batch components are C53 (the gate's rubric) and C56 (the gate's autonomy level). This spec treats the design-review gate as C52-internal and routes the *rubric* to C53 and the *autonomy level* to C56. The inventory's `C52-gate` entry is the C52-internal mandatory design-review gate, NOT a separate unbuilt component.
 
 C52 is **not foundational** (inventory) but is the **keystone of Batch 4** ("factory builds factory", inventory L116): every Batch-4/Batch-5 factory-built component (C36–C39 Healer tier, C44–C45 twins, C46–C50 self-opt) is *built through* C52's recursion and *gated* by C51's predicate (which C52 invokes). It depends on C51's predicate, C08's format, and C20's lifecycle all existing first; it is consumed by C53 (gate rubric), C54 (sequencing), and C56 (autonomy).
 
-## 3. Interfaces / contracts (sweep-1: named + described)
+## 3. Interfaces / contracts (sweep-2: concrete signatures)
 
-**Inbound:**
-1. **Next-component intent (the factory's own development intent).** What the factory is to build for itself next — a target component description that becomes a C08 spec. v4 names the *act* ("Author a careful spec for a small new component", README:431; "Author the Phase 2 spec … the most consequential thing you write", README:542) but gives the **intent no structured definition** — that under-definition *is* G23 (and parallels C11's intent-intake debt). *Sweep-1: named + described; the structured intent shape is routed to C11/C53 (see §6 G23). The intent originates with the operator/phase-plan (C54), not C52 itself.*
-2. **Resume handle (in-progress build).** A reference to a mid-flight factory-built component: the `factory_build_in_progress` **bead** (C20). Input to the resume flow — C52 reads `transfused_from`, the spec pointer (`packs/*/spec.md`), the scenario pointer (`scenarios/<component>/`), and the **workflow handle** the bead carries (AI-CONTEXT §16 lines 695–699; C20 §4.2). *(C52's resume contract is a named co-owner of **review-log XC-2** — the cold-start-query reconciliation. The verbatim `gc bd find --type factory_build_in_progress` resolves under canonical C20's literal-type choice; the optimized-track fold to `factory_build` + `state=in_progress` would need a compat shim — same seam as the §3-contract-7 / C20:OQ-3 transition question.)*
-3. **Transfusion verdict (from C51).** The `{pass | fail | inconclusive}` outcome of C51's correctness/completeness predicate over the built component, plus C51's `transfusion-insufficient` signal on fail/inconclusive (C51 §3.3, §3.5). Input to C52's acceptance step.
+### 3.1 Inbound interface — recursion-initiation
 
-**Outbound:**
-4. **Self-targeted spec emission.** C52 produces (or causes to be authored) a **C08-format spec for the factory's own next component**, committed to a pack (`packs/*/spec.md`; README:431, 542; AI-CONTEXT §16 step 3). Invariant: the factory's own development is **spec-driven** exactly as user software is (README:478) — no factory component is built without a source-of-truth spec.
-5. **Build-flow dispatch.** C52 dispatches the self-targeted spec into the **existing convergence flow** (C12 formula / C13 molecule / C28 agent loop), under **C51 discipline** (≥1 `transfused_from` exemplar declared before the build — README:446, 496). The build writes a **`factory_build_in_progress`** bead (C20) carrying the resume fields; on completion it carries the C51 verdict. Invariant: the same flow that builds user software builds the factory (no second engine).
-6. **Design-review gate (the mandatory pre-deploy gate — `C52-gate`).** Before any factory-built component is deployed into production use, it passes a **mandatory human design review** (README:498). C52 owns the gate's *placement* (post-build, pre-deploy) and *mandatory-ness* ("Required until P12 is mature and trusted"). The gate **consumes**: (a) C51's transfusion verdict (objective half), and (b) **C53's** validation rubric/scenario-set result (the "does it work?" bar — G23). The gate's **autonomy level** (how batched/out-of-loop) is **C56's**. Invariant **(the keystone safety invariant):** **no factory-built component reaches production without passing this gate** — the recursion can never silently self-deploy (README:498; F54).
-7. **Deploy-and-extend.** On gate approval, C52 advances the build to **deployed**: the build moves from the `factory_build_in_progress` state to a completed `factory_build` state through the **C20-owned lifecycle** (C20 lifecycle, D-3) — whether that advance is a `type`-flip on a single record or a `status` transition is **C20:OQ-3** (unresolved; C52 commits only to *reaching* the completed `factory_build` state, faithful to AI-CONTEXT §16's two type names, not to the mechanism) — and the component is installed back into the factory (README:491 `Deploy -.extends.-> Factory`). On gate rejection, the loop returns to spec-iteration (README:519 "iterate on the spec and run again").
-8. **Resume contract (outbound to the build flow).** Given a resume handle (contract 2), C52 continues the in-progress build via `gc converge resume <bead_id>` (AI-CONTEXT §16 line 699), re-binding the recovered spec + scenarios + workflow handle. Invariant: a build that spans agent sessions loses no state — the `factory_build_in_progress` bead is the durable handoff (C20 resume-completeness invariant).
+**Contract 1 — Next-component intent (structured, from C11/C54).**
 
-**Invariants:**
-- **I1 (recursion is spec-driven):** every factory-built component is driven by a **C08 source-of-truth spec** (README:478) — the factory never builds itself by ad-hoc prompting. *(Contract 4.)*
-- **I2 (mandatory design-review gate — keystone):** **no factory-built component deploys into production without passing the human design review gate** (README:498). The gate is non-bypassable "until P12 is mature and trusted"; its strictness is C56's autonomy level, its rubric is C53's. *(Contract 6; F54/F43.)*
-- **I3 (transfusion discipline holds in the recursion):** every component C52 builds declares ≥1 `transfused_from` exemplar and is acceptance-gated by **C51's predicate** (README:446, 496) — "factory builds factory" never means "invention from scratch." *(Contract 5; C51.)*
-- **I4 (no second engine):** C52 runs the factory's own spec through the **existing** convergence + evaluation flow (C12/C13/C28/C30–C33) — it adds a recursion controller, not a parallel build stack. *(Contract 5; §7.)*
-- **I5 (resume completeness, D-3):** an in-progress factory build is fully recoverable from its `factory_build_in_progress` bead (`transfused_from` + spec pointer + scenario pointer + workflow handle) so `gc converge resume` continues without loss across sessions. C52 *uses* this C20-owned shape; it does not define it. *(Contract 8; C20.)*
-- **I6 (go/no-go is C53's, not C52's):** C52 decides *that* a deploy decision is made (and that review is mandatory); it does **not** define the pass bar — "deploy if it works" is resolved by **C53's** rubric (G23). *(Contract 6; §6.)*
+```
+BootstrapIntent = {
+  component_id:     str               -- e.g. "C36"
+  component_slug:   str               -- e.g. "anomaly-detection"
+  description:      str               -- one-line purpose
+  exemplar_refs:    List[ExemplarRef] -- ≥1 required (C51 ≥1-exemplar invariant)
+  named_behaviors:  List[str]         -- operator-authored, anchors C51 completeness check
+  phase:            enum{P0,P1,P2,P3} -- which phase this build belongs to (C54)
+  pack_root:        path              -- where the C08 spec will be committed
+}
+```
+
+> [FAITHFUL-FILL] The structured intent shape is the **minimal consistent interpretation** of v4's instruction to "Author a careful spec for a small new component" (README:431) and "the most consequential thing you write" (README:542). v4 gives no schema; the 7-field struct above is the minimum that satisfies: (a) C51's ≥1-exemplar invariant and named-behavior completeness anchor (C51 §3.0.1), (b) C08's spec placement (`pack_root`), (c) C54's phase ordering context. No field is invented beyond what these constraints require. G23 routes the *content-richness* of the structured intent to C11 intake; C52 consumes the result.
+
+**Contract 2 — Resume handle (in-progress build).**
+
+```
+gc bd find --type factory_build --status in_progress
+```
+
+Returns a `factory_build` bead (C20 §4.5.3) with `status=in_progress`. Per **D-40**, the resume query is `--type factory_build --status in_progress` (NOT `--type factory_build_in_progress` — that is the pre-D-40 AI-CONTEXT §16 text which D-40 resolves). C52 reads: `transfused_from`, `spec_ref`, `scenario_ref`, `workflow_handle`, and `created_by` from the bead.
+
+**Contract 3 — Transfusion verdict (from C51).**
+
+C52 calls:
+```
+can_transfuse(exemplar_set: List[ExemplarRef], target_spec: SpecRef) -> TransfusionVerdict
+```
+
+and receives:
+```
+TransfusionVerdict = {
+  outcome:        enum{pass, fail, inconclusive}
+  completeness:   CompletenessResult
+  correctness:    CorrectnessResult
+  scenario_ids:   List[ScenarioId]
+  score_records:  List[ScoreRecord]
+  verdict_time:   timestamp
+}
+```
+
+(C51 §3.0 — full signatures frozen there.) C52 routes `fail|inconclusive` to the review gate as "not-ready" rather than blocking deploy silently (C51 §3.0.3 `TransfusionInsufficient`).
+
+### 3.2 Outbound interface — spec emission
+
+**Contract 4 — Self-targeted spec emission.**
+
+```
+emit_spec(intent: BootstrapIntent) -> SpecEmissionResult
+
+SpecEmissionResult = {
+  spec_path:  path        -- e.g. "packs/<component_id>/agents/<slug>/prompt.template.md"
+  git_ref:    str         -- the pinned commit at which the spec was authored
+  bead_id:    bead_id     -- the factory_build bead opened (status=in_progress)
+}
+```
+
+The spec at `spec_path` is a valid C08-format artifact. The factory_build bead is written with `status=in_progress` at this point (C20 lifecycle start; D-40).
+
+### 3.3 Outbound interface — build-flow dispatch
+
+**Contract 5 — Build dispatch.**
+
+```
+dispatch_build(spec_ref: SpecRef, exemplar_set: List[ExemplarRef]) -> WorkflowHandle
+```
+
+Dispatches the spec into the existing convergence flow (C12 formula / C13 molecule / C28 agent loop). Before dispatch, calls `check_declaration(exemplar_set)` (C51 §3.0 declaration-time interface) to validate ≥1-exemplar invariant + license modes. The returned `WorkflowHandle` is written to the `factory_build` bead's `workflow_handle` field (C20 §4.5.3). **No second build engine is created** (I4).
+
+### 3.4 Outbound interface — design-review gate (`C52-gate`)
+
+**Contract 6 — Design-review gate.**
+
+```
+submit_for_review(
+  bead_id:          bead_id,
+  transfusion_verdict: TransfusionVerdict,
+  c53_rubric_result:   RubricResult,        -- from C53 (stub until C53 built)
+  autonomy_level:      AutonomyLevel,       -- from C56 (stub until C56 built)
+) -> GateDecision
+
+GateDecision = {
+  decision:      enum{approved, rejected}
+  reviewer_id:   str              -- the human reviewer identity (C41 ActorRef)
+  decision_ts:   timestamp
+  notes:         str | null
+  bead_id:       bead_id          -- same factory_build bead; C53 records go/no-go here (D-40)
+}
+```
+
+> **Keystone invariant (I2):** `submit_for_review` is the ONLY deploy path. A `factory_build` bead with `status=in_progress` MUST pass through this gate and receive `decision=approved` before `status` is advanced to `completed`. A deploy that skips this call MUST be blocked. This is the non-bypassable mandatory review (README:498) — "until P12 is mature and trusted."
+
+The gate's inputs: (a) C51's `TransfusionVerdict` (objective half), (b) C53's `RubricResult` (the "does it work?" bar — G23), (c) C56's `AutonomyLevel` (controls how batched/human-intensive the review is). C52 owns the gate's **placement and mandatory-ness**; it does NOT define the rubric (`C53`) or the level (`C56`).
+
+**RESOLVED (Sweep-2): OQ2.** The `C52-gate` in the inventory dependency list is the C52-internal mandatory design-review gate (this contract). It is NOT a separate unbuilt component. Rubric → C53. Level → C56.
+
+**RESOLVED (Sweep-2): OQ3.** The gate decision record (`GateDecision`) is stored on the same `factory_build` bead (C20 slot, per D-40 "C53 records the go/no-go on the same bead"). The `status` advance from `in_progress → completed` is performed by C52 after `approved`. The decision record fields (`reviewer_id`, `decision_ts`, `notes`) are a C20 slot-request on the `factory_build` schema (§4.5.3 extended).
+
+### 3.5 Outbound interface — deploy-and-extend
+
+**Contract 7 — Status advance (D-40).**
+
+```
+advance_to_completed(bead_id: bead_id, gate_decision: GateDecision) -> void
+```
+
+Sets `factory_build.status = completed` on the bead (a STATUS TRANSITION — the D-40 ruling). No type-flip. No new bead created. The component is then installed back into the factory (README:491). On `gate_decision.decision == rejected`, C52 does NOT advance; it returns the loop to spec-iteration (§5 step 7; README:519).
+
+### 3.6 Outbound interface — resume
+
+**Contract 8 — Resume.**
+
+```
+resume_build(bead_id: bead_id) -> ResumeResult
+
+ResumeResult = {
+  spec_ref:          path
+  scenario_ref:      path
+  transfused_from:   List[str]
+  workflow_handle:   handle
+  resumed_at:        timestamp
+}
+```
+
+Drives: `gc bd find --type factory_build --status in_progress` → read fields → `gc converge resume <bead_id>` (AI-CONTEXT §16 lines 695–699, rewritten per D-40 for the corrected query). On successful resume, continues from step 5 (acceptance) in the §5 recursion.
+
+**RESOLVED (Sweep-2): OQ4.** If the bead is **unrecoverable** (missing `workflow_handle`, dangling `spec_ref`, missing `scenario_ref`), C52 escalates via:
+
+```
+EscalationContract = {
+  failure_mode:     E-C52-02   -- resume-unrecoverable (see §8)
+  action:           "restart-from-spec"
+  operator_gate:    bool       -- true: requires operator acknowledgment before restart
+  bead_id:          bead_id    -- the stranded bead (preserved for audit; NOT deleted)
+}
+```
+
+The stranded bead is preserved (status stays `in_progress`) as a C20 resume-completeness defect. The operator must explicitly acknowledge the restart-from-spec (the gate prevents silent data loss). A new `factory_build` bead is opened for the restarted build; the old stranded bead is linked via `depends_on`. This parallels C04:OQ-2 multi-mode resume.
+
+**RESOLVED (Sweep-2): OQ1.** C53 is the authoritative home of the bootstrap-validation bar (rubric + scenario set + pass bar). C52 owns the loop + the mandatory review gate. The factory's own next-component intent is routed through C11 intake (the BootstrapIntent struct above is the structured form C11 produces). C52 does NOT invent a pass bar (I6).
 
 ## 4. Data model / state
 
-C52 owns **almost no durable state of its own**; it is a control-loop over state owned elsewhere — its memory *is* the `factory_build` bead lifecycle.
+### 4.1 Fields C52 reads/writes on the `factory_build` bead (C20 schema owner)
 
-| State | Owner | C52's relationship |
-|---|---|---|
-| `factory_build` / `factory_build_in_progress` beads (type + payload + lifecycle `status`) | **C20** schema / **C19** store | C52 **drives the lifecycle** (writes `factory_build_in_progress` at build start; advances to a completed `factory_build` state on deploy — the advance's on-disk form, `type`-flip vs `status` transition, is **C20:OQ-3**, not C52's to fix). Owns neither schema (D-3) nor ledger. |
-| `transfused_from`, spec pointer, scenario pointer, **workflow handle** on the build bead | **C20** (fields) / **C51** (`transfused_from` meaning) | C52 **reads** them to resume (contract 8) and **populates** them at build start from the C51 declaration. The workflow handle is what `gc converge resume` consumes. |
-| `created_by` attribution on each `factory_build` bead | **C41** | Stamped by the identity layer; C52 supplies actor context. "P9 applied to the factory's own work" (README:497). |
-| The self-targeted **spec** (`packs/*/spec.md`) | **C08** format / git | C52 **authors/commits** an instance in C08's format; git history is its durable record (C08 §4). |
-| The **transfusion verdict** | **C51** | Computed by C51; C52 reads it at the acceptance step. Recorded on the `factory_build` bead (C20 slot per C51 §4). |
-| The **validation rubric result** (go/no-go) | **C53** | C52 routes the decision to C53; C53 owns the rubric/scenario-set/bar. C52 keeps only the gate outcome (approved/rejected). |
-| Design-review gate **decision record** | **transient / bead** | The approve/reject outcome + reviewer. *Sweep-1: faithfully a fact on the `factory_build` bead (a C20 slot request) or a review record; concrete home is C20/C53's sweep-2 call (§9 OQ3).* |
+| Field | Type | Req? | Semantics | R/W by |
+|---|---|---|---|---|
+| `id` | `bead_id` | R | stable identifier; target of `gc bd find` / `gc converge resume` | C19 mints; C52 reads |
+| `type` | `enum{…factory_build…}` | R | always `factory_build` (single type per D-40) | C20 defines; C52 writes |
+| `status` | `enum{in_progress, completed}` | R | lifecycle state; `in_progress` on build-start; **C52 advances to `completed`** after gate approval (D-40) | C20 defines slot; **C52 drives transition** |
+| `created_by` | `actor` | R | colon-delimited `"kind:id"` (D-29); C41 stamps identity | C41 semantics; C52 supplies actor context |
+| `transfused_from` | `string \| list<string>` | R | ≥1 exemplar URL(s) declared at build-start (C51 §3.0) | C51 writes; C52 populates from BootstrapIntent |
+| `spec_ref` | `path` | R | C08 spec path (`packs/*/agents/*/prompt.template.md`) | C52 writes on spec emission |
+| `scenario_ref` | `path` | R | scenario dir (`scenarios/<component>/`) | C52 writes; C30 populates scenarios |
+| `workflow_handle` | `handle` | R | resume token for `gc converge resume` | C52 writes after dispatch; GC reads on resume |
+| `transfusion_verdict` | `TransfusionVerdict` (JSON) | O | C51 verdict written at acceptance step | C51 writes; C52 routes; gate reads |
+| `gate_decision` | `GateDecision` (JSON) | O | approve/reject + reviewer + timestamp (§3.4); C53 records go/no-go here (D-40) | C53 records; C52 reads to decide advance |
+| `depends_on` | `list<bead_id>` | O | if resume-restart, links to stranded bead (§3.6 escalation) | C52 writes on restart |
 
-The loop is otherwise **stateless between runs** — the `factory_build` bead **is** the recursion's persistent state (that is precisely why resume works: AI-CONTEXT §16 reconstructs the entire in-progress build from the bead). C52's only genuine policy is **where the mandatory gate sits and that it is non-bypassable** (the keystone invariant) — configuration/discipline, not a store.
+> This is NOT a new C52 schema. These are C20-owned fields (D-3); C52 requests any new fields as a C20 change request. The `transfusion_verdict` and `gate_decision` fields are C52's slot-requests to C20 (per D-40 "C53 records the go/no-go on the same bead" — this needs a C20 field, hence the slot-request model).
+
+### 4.2 No other durable state
+
+C52 owns **no store of its own**. Its memory *is* the `factory_build` bead lifecycle. The loop is otherwise stateless between runs.
 
 ## 5. Behavior
 
-**The recursion (one self-build cycle):**
-1. **Intend.** A next-component intent for the factory itself arises (from the operator / phase plan C54). *(Its under-definition is G23 — §6.)*
-2. **Author spec.** A **C08-format spec** for that component is authored and committed to a pack (`packs/*/spec.md`; README:431, 542). *(I1.)*
-3. **Declare transfusion.** Per C51, the build declares ≥1 `transfused_from` exemplar and its license mode (C51 §5 declaration-time) — "No invention from scratch" (README:496). *(I3.)*
-4. **Run the build (the normal flow).** C52 dispatches the spec into the **existing** convergence flow (C12/C13/C28); a **`factory_build_in_progress`** bead is written carrying the resume fields (`transfused_from`, spec/scenario pointers, workflow handle). *(I4, I5; C20.)*
-5. **Acceptance (transfusion predicate).** C51 evaluates the correctness/completeness predicate over the built component (exemplar-grounded scenarios → satisfaction; C51 §3.3). On `fail`/`inconclusive`, C51 emits `transfusion-insufficient` and the component routes to review-as-not-ready rather than auto-deploy (C51 §3.5; G14). *(I3.)*
-6. **Human design review (mandatory gate — `C52-gate`).** The factory's design output is reviewed *before* any deploy (README:498). The review consumes the C51 verdict **and** **C53's** validation-rubric result (G23 — the "does it work?" bar). The review runs at **C56's** autonomy level (L4 batched … L5 dark). *(I2, I6.)*
-7. **Deploy & extend, or iterate.** On approval, the component deploys back into the factory; the build advances from the `factory_build_in_progress` state to a completed `factory_build` state via the C20 lifecycle (the advance's on-disk form is C20:OQ-3). The factory is now extended (README:491). On rejection, return to step 2 — "iterate on the spec and run again; if still failing after a few attempts, the factory needs more substrate before Phase 3" (README:519). *(I2.)*
+### 5.1 Recursion lifecycle — state diagram (stateDiagram-v2)
+
+```mermaid
+stateDiagram-v2
+    [*] --> Specced : emit_spec completes (factory_build bead opened with status=in_progress)
+    Specced --> Building : dispatch_build dispatches spec into existing convergence flow
+    Building --> Running : agent loop active (C28 working under C51 discipline)
+    Running --> Scored : C51 transfusion predicate evaluated (TransfusionVerdict written)
+    Scored --> InReview : submit_for_review called (mandatory gate entered)
+    InReview --> Deployed : gate_decision=approved then advance_to_completed (status=completed)
+    InReview --> FailBranch : gate_decision=rejected
+    FailBranch --> Specced : iterate on spec (README:519)
+    FailBranch --> [*] : repeated failure - defer Phase 3 (README:436)
+    Deployed --> [*] : component installed back into factory
+    note right of InReview : C53 rubric consumed here\nC56 autonomy level applied\nC52 owns mandatory-ness
+    note right of Deployed : status=completed on bead\nC52 drives the transition (D-40)
+```
+
+(No `;` in labels — Mermaid-safe per SWEEP2-DISPATCH hazard note.)
 
 **Resume sub-flow (a build that spans sessions):**
-A. **Find** the in-progress bead: `gc bd find --type factory_build_in_progress` (AI-CONTEXT §16 line 695). B. **Recover** `transfused_from`, the spec (`packs/*/spec.md`), the scenarios (`scenarios/<component>/`), and the workflow handle from the bead (lines 696–698). C. **Resume** the build: `gc converge resume <bead_id>` (line 699) — re-entering the same convergence flow at the recovered point, then continuing from step 5 above. *(I5.)*
 
-**Cadence:** the recursion is **slow and human-gated** — one bounded component at a time ("each component is bounded, each gets reviewed, each ships independently", README:472), with the mandatory design-review gate (step 6) as a hard synchronization point. C52 is therefore not a high-throughput loop; its throughput is bounded by *operator design-review capacity* (the F25 design-starvation constraint — §6) and by the autonomy level C56 permits.
+```mermaid
+stateDiagram-v2
+    [*] --> FindBead : gc bd find --type factory_build --status in_progress (D-40 query)
+    FindBead --> RecoverFields : read transfused_from + spec_ref + scenario_ref + workflow_handle
+    RecoverFields --> Resumable : all fields present
+    RecoverFields --> Unrecoverable : missing workflow_handle or dangling ref (E-C52-02)
+    Resumable --> Running : gc converge resume bead_id (re-enters §5.1 at Running)
+    Unrecoverable --> OperatorGate : escalation - restart-from-spec requires operator ack
+    OperatorGate --> Specced : operator approves restart (new bead opened; old bead preserved)
+```
 
-> [FAITHFUL-FILL] v4 gives the recursion as a 5-box diagram (README:480–491: Factory → Spec → Run → Review → Deploy → extends) plus the Phase-2 milestone's 4 bullets (README:431–434). The 7-step sequence above is the **minimal faithful assembly** of exactly those boxes/bullets, in the order v4 states them, with two additions that v4 already implies but does not draw as boxes: (a) the **transfusion declaration + predicate** steps (3, 5), which README:446/496 and C51 make mandatory parts of *every* factory build, and (b) the explicit **resume sub-flow** (A–C), which AI-CONTEXT §16 gives as a 5-step procedure. No new control element is invented; the recursion, the gene-transfusion discipline, and the resume procedure are each lifted verbatim from their sources and wired in their stated order.
+### 5.2 Recursion steps (sweep-2 concrete)
+
+1. **Intend.** C54 supplies a `BootstrapIntent` (§3.1 contract 1): component ID + slug + description + exemplar_refs (≥1) + named_behaviors + phase + pack_root. *(I1, G23 routed to C53/C11.)*
+2. **Author spec.** `emit_spec(intent)` produces a C08-format spec at `spec_ref` (committed to `packs/<id>/agents/<slug>/prompt.template.md`; README:431, 542). A `factory_build` bead is opened with `status=in_progress` and `spec_ref` populated. *(I1; C08.)*
+3. **Declare transfusion.** `check_declaration(intent.exemplar_refs)` is called (C51 §3.0 declaration-time). Validates ≥1 exemplar, resolves license modes. A zero-exemplar build fails here (E-C52-03). "No invention from scratch" (README:496). *(I3.)*
+4. **Run the build.** `dispatch_build(spec_ref, exemplar_refs)` dispatches the spec into the **existing** convergence flow (C12/C13/C28). The returned `WorkflowHandle` is written to the bead. *(I4.)*
+5. **Acceptance.** `can_transfuse(exemplar_refs, spec_ref)` is called (C51 §3.0). The `TransfusionVerdict` is written to the bead's `transfusion_verdict` slot. On `fail|inconclusive`, C51 emits `TransfusionInsufficient` and C52 routes to the review gate as "not-ready" (README:498; C51 §3.0.3). *(I3.)*
+6. **Human design review (mandatory gate).** `submit_for_review(bead_id, transfusion_verdict, c53_rubric_result, autonomy_level)` is called (§3.4). The gate consumes (a) C51's verdict and (b) C53's `RubricResult`. It runs at C56's `AutonomyLevel`. Returns `GateDecision` (stored on the bead per D-40). **This call is non-bypassable** (I2). *(I2, I6.)*
+7. **Deploy and extend, or iterate.** On `approved`: `advance_to_completed(bead_id, gate_decision)` transitions `status` to `completed` (D-40); the component is installed back into the factory (README:491). On `rejected`: return to step 2 — "iterate on the spec and run again; if still failing after a few attempts, the factory needs more substrate before Phase 3" (README:519). *(I2.)*
+
+**Cadence:** the recursion is **slow and human-gated** — one bounded component at a time ("each component is bounded, each gets reviewed, each ships independently", README:472). Throughput is bounded by operator design-review capacity (F25) and C56's autonomy level.
+
+> [FAITHFUL-FILL] The 7-step sequence is the **minimal faithful assembly** of exactly the boxes in README:480–491 (Factory→Spec→Run→Review→Deploy→extends), the Phase-2 milestone bullets (README:431–434), the transfusion discipline (README:446/496 + C51), and the resume procedure (AI-CONTEXT §16 lines 694–699). No new control element is invented.
 
 ## 6. Failure modes & handling
 
 | F-mode / gap | Applies how | Handling per v4 |
 |---|---|---|
-| **F54** Goal subversion (RSI prompt-injection / objective drift over cycles) | The factory modifying *itself* over recursion cycles is the canonical multi-cycle drift surface — C52 *is* the self-modifying loop F54 warns about | **Blast-radius-reduced, not eliminated** — F-MODE L93 maps F54 to "CXDB content-addressed history + Healer anomaly detection on objective shift" and rates it **Partial — significant residual; requires audit discipline**. C52's contribution: the **mandatory design-review gate** (I2, README:498) keeps a human in the loop "until P12 is mature and trusted" so the recursion cannot silently self-deploy; **C51 exemplar-anchoring** ties each self-built component to an external human-chosen ground truth (drift away from the exemplar is detectable); **C20/C41 provenance** (`transfused_from` + `created_by` on every `factory_build` bead) is the audit trail F54's guard needs. The dedicated multi-cycle goal-comparison **audit pack** (F-MODE §11 recommendation #5; G35) is *not* C52's — flagged §9. |
-| **F43** RSI board-visibility gap | A factory-built component that modifies the factory must be *visible* as such | **Partial (declaration discipline)** — F-MODE L75: "P9 attribution + audit trail + bead history; pack-author declares RSI status". C52's `factory_build` bead (with `transfused_from`, `created_by`, the deploy record) **is** the board-visibility record for "what did the factory build into itself, from what, reviewed by whom". |
-| **F25** Design starvation | C52's throughput is bounded by how fast the operator can author specs + perform design review; the recursion can consume specs faster than a human supplies/reviews them | **Honest constraint (by construction)** — F-MODE L102/L161: v4 "doesn't claim to solve design starvation; document the operator-throughput requirement". C52 makes the constraint **visible** (the mandatory gate is the throughput bottleneck) and **tunable** (C56's autonomy level raises throughput by batching/removing review as trust grows — README:527 "L4 … for as long as needed"). C52 does not *solve* F25; it surfaces it. *(A109 maps F25 to A84, the self-bootstrap mechanic.)* |
+| **F54** Goal subversion (RSI prompt-injection / objective drift over cycles) | The factory modifying *itself* over recursion cycles is the canonical multi-cycle drift surface — C52 *is* the self-modifying loop F54 warns about | **Blast-radius-reduced by C52, not eliminated.** C52's contribution: the **mandatory design-review gate** (I2, README:498) keeps a human in the loop "until P12 is mature and trusted" so the recursion cannot silently self-deploy; **C51 exemplar-anchoring** ties each self-built component to a human-chosen ground truth; **C20/C41 provenance** (`transfused_from` + `created_by` on every `factory_build` bead) is the audit trail. **Per D-21:** F54 objective-drift stays **registered-unbuilt in C57**; mitigation now = cheap periodic human checkpoint tied to each batched human-review point (C56). **A real drift detector is REQUIRED before L5** (D-21; C56 L5-gate). **C57 is the audit home; C52 names it but does not build the detector.** |
+| **F43** RSI board-visibility gap | A factory-built component that modifies the factory must be *visible* as such | **Partial (declaration discipline)** — C52's `factory_build` bead (with `transfused_from`, `created_by`, the `gate_decision` record) **is** the board-visibility record for "what did the factory build into itself, from what, reviewed by whom." F-MODE L75: P9 attribution + bead history. |
+| **F25** Design starvation | C52's throughput is bounded by how fast the operator can author specs + perform design review | **Honest constraint (by construction)** — C52 makes the constraint **visible** (the mandatory gate is the bottleneck) and **tunable** (C56's autonomy level raises throughput by batching). C52 does not *solve* F25. *(A109 maps F25 to A84, the self-bootstrap mechanic.)* |
 
-**Loop-specific failure handling:**
-- **Bootstrap validation fails (the pivotal milestone, G23/bet #3):** if the first factory-built component fails review, C52 **does not deploy**; it returns to spec-iteration (README:519 "iterate on the spec and run again"). If it still fails "after a few attempts, the factory needs more substrate before Phase 3" — an explicit **non-shipping exit** that defers Phase 3 rather than forcing a bad self-deploy (README:436, 519). The *bar* that decides pass/fail is **C53's** (§6 G23 below), not C52's.
-- **Transfusion insufficient (G14, from C51):** when C51's predicate returns fail/inconclusive, C52 routes the component to human design review **as not-ready** rather than auto-deploying — the per-component falsification of bet #4 (C51 §3.5). C52 *consumes* this signal; it does not compute it.
-- **Resume failure (in-progress bead unrecoverable):** if a `factory_build_in_progress` bead lacks a recoverable workflow handle / spec / scenario pointer, resume cannot proceed; this is a **C20 resume-completeness** defect (C20 invariant), surfaced as a build that must restart from its spec rather than resume. *(Concrete resume-failure escalation → sweep-2; OQ4.)*
+### 6.1 Loop-specific failure handling
 
-> [AMBIGUITY: G23] **What does "deploy if it works" mean — who owns the pass bar, and how is the factory's own next-component intent defined?**
-> Reading A (C52 self-contained): README Phase 2 (lines 429–434) states the milestone as four imperative bullets ending in "Deploy if it works", with no external rubric named — read literally, C52 *is* the whole gate, "works" = the reviewing human's judgment, and the next-component intent is just "a careful spec" (README:431) the operator writes freehand.
-> Reading B (decomposed): the inventory **splits** this — C52 owns the *recursion + mandatory review gate*, **C53** (`bootstrap-validation` milestone, inventory: "The go/no-go gate … needs a rubric/scenario set, not 'looks good'") owns the **pass bar**, and the *structured intent* for any component is C11's intent-intake territory (the 9-field crucible, F41). G23 itself names the defect: "'if it works' … has no rubric, no scenario set for the bootstrap component itself, no pass bar."
-> **Chosen (most consistent with v4 + the inventory decomposition): Reading B.** C52 owns the **loop and the mandatory human-design-review gate**; the **go/no-go rubric + scenario set + pass bar is C53's** (G23 is *closed by C53*, which C52 *routes to*), and the **under-defined next-component intent is routed to C11/C53** (C11 supplies structured intent; C53 supplies the bootstrap component's own scenario set — README:526 "Phase 2 ships scenarios for the bootstrap validation"). This is the only reading consistent with the inventory listing C53 as a distinct component that *depends on* C52 and is gapped on G23, and with C53's one-liner explicitly demanding "a rubric/scenario set, not 'looks good'". C52 therefore **does not** invent a pass bar (I6) — it guarantees the gate *exists and is mandatory* and hands the *decision content* to C53. **This is a deferral of the G23 pass-bar definition to C53 (and the structured-intent definition to C11), plus a concrete scope ruling: C52 = loop + mandatory gate; C53 = bar; C11 = intent.** *(→ review-log; confirm C53 owns the bar and C11 the intent.)*
+- **Bootstrap validation fails (G23/bet #3):** C52 **does not deploy**; it returns to spec-iteration (README:519). If it still fails "after a few attempts, the factory needs more substrate before Phase 3" — explicit **non-shipping exit** deferring Phase 3 (README:436). The *bar* is **C53's**, not C52's.
+- **Transfusion insufficient (G14, from C51):** C52 routes the component to human design review **as not-ready** — the per-component falsification of bet #4 (C51 §3.0.3). C52 *consumes* this signal; it does not compute it.
+- **Resume failure (OQ4 RESOLVED):** Unrecoverable `factory_build` + `status=in_progress` → `E-C52-02` escalation → restart-from-spec with mandatory operator gate (§3.6). The stranded bead is preserved as a C20 resume-completeness defect audit record.
+- **Spec-author failure:** If `emit_spec` produces a spec that fails C10 EARS linting or does not conform to C08's format → `E-C52-01` spec-author-fail, loop does not advance to build dispatch.
+- **Review-gate bypassed:** Any code path that reaches `advance_to_completed` without a prior `submit_for_review` returning `approved` is `E-C52-04` gate-bypass. This is a security invariant violation (I2). The `advance_to_completed` implementation MUST check that `gate_decision.decision == approved`; on absence or non-approved, it raises `E-C52-04` and blocks.
+
+> [AMBIGUITY: G23] **RESOLVED (Sweep-2): OQ1.**
+> Reading A (C52 self-contained): README Phase 2 (lines 429–434) gives "Deploy if it works" with no external rubric — C52 *is* the whole gate, "works" = the reviewing human's judgment, next-component intent is just "a careful spec" (README:431) the operator writes freehand.
+> Reading B (decomposed): the inventory **splits** this — C52 owns the *recursion + mandatory review gate*, **C53** (`bootstrap-validation` milestone) owns the **pass bar**, and the *structured intent* for any component is C11's intent-intake territory (the 9-field crucible, F41). G23 itself names the defect: "'if it works' … has no rubric, no scenario set for the bootstrap component itself, no pass bar."
+> **Chosen (Reading B, confirmed at Sweep-2):** C52 owns the **loop and the mandatory human-design-review gate**; the **go/no-go rubric + scenario set + pass bar is C53's** (G23 is *closed by C53*, which C52 *routes to*), and the **under-defined next-component intent is routed to C11** (C11 supplies structured intent; C53 supplies the bootstrap component's own scenario set — README:526). C52 **does not** invent a pass bar (I6) — it guarantees the gate *exists and is mandatory* and hands the *decision content* to C53. **C53 is the authoritative home of the bootstrap-validation bar.**
 
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
-- **Security (RSI / self-modification):** C52 *is* the recursive-self-improvement surface, so its security posture is the **mandatory design-review gate** (I2) + **exemplar-anchoring** (C51) + **full provenance** (`transfused_from` + `created_by` on every `factory_build` bead, C20/C41). No factory-built component reaches production unreviewed "until P12 is mature and trusted" (README:498). C52 adds **no** new tool/network/fs surface of its own — it dispatches the *existing* flow. The dedicated F54 multi-cycle drift audit pack (G35) is a separate discipline (§9).
-- **Cost:** negligible *incremental* cost — C52 reuses the existing convergence + evaluation flow (C12/C13/C28/C30–C33); the build it dispatches costs what any build costs (the C28 Max-seat budget concern, G13/G32). C52 adds **no second engine and no second judge** — exactly the over-build the bar rejects. (The recursion's *aggregate* cost is bounded by how many components the factory builds, which C54 sequences.)
-- **Scale:** the recursion is **build-cadence, human-gated, one-bounded-component-at-a-time** (README:472) — not request-cadence. Its throughput ceiling is **operator design-review capacity** (F25), raised only by C56's autonomy level. No data-scale concern; the `factory_build` log grows one record per self-built component.
-- **Observability:** C52 is self-describing via its own beads — the `factory_build` lifecycle (start → in-progress → reviewed → deployed) **is** the observable record of "what the factory built into itself, from what exemplar, reviewed by whom" (the §16 cold-start procedure reads exactly this). C52's actions are beads/events in the same stores every other component feeds.
-- **Ops:** the recursion controller + the resume procedure are **declarative + pack/CLI-shaped** — the build dispatch is the existing flow; resume is the documented `gc bd find` / `gc converge resume` CLI procedure (AI-CONTEXT §16). No bespoke runtime. The mandatory gate is a discipline/config point (its autonomy level is C56's `city.toml` policy).
+- **Security (RSI / self-modification):** C52 *is* the recursive-self-improvement surface, so its security posture is the **mandatory design-review gate** (I2) + **exemplar-anchoring** (C51) + **full provenance** (`transfused_from` + `created_by` + `gate_decision` on every `factory_build` bead, C20/C41). No factory-built component reaches production unreviewed "until P12 is mature and trusted" (README:498). C52 adds **no** new tool/network/fs surface of its own — it dispatches the *existing* flow. The F54 multi-cycle drift audit (G35) is **C57's** (D-21; §6).
+- **Cost:** negligible *incremental* cost — C52 reuses the existing convergence + evaluation flow (C12/C13/C28/C30–C33). C52 adds **no second engine and no second judge** — exactly the over-build the bar rejects.
+- **Scale:** the recursion is **build-cadence, human-gated, one-bounded-component-at-a-time** (README:472) — not request-cadence. Throughput ceiling = operator design-review capacity (F25), raised only by C56's autonomy level.
+- **Observability:** C52 is self-describing via its own beads — the `factory_build` lifecycle (status: `in_progress → completed`) + `transfusion_verdict` + `gate_decision` **is** the observable record. C52's actions are beads/events in the same stores every other component feeds.
+- **Ops:** the recursion controller + resume procedure are **declarative + pack/CLI-shaped** — build dispatch is the existing flow; resume is `gc bd find --type factory_build --status in_progress` then `gc converge resume <id>` (D-40 corrected query). The mandatory gate is a discipline/config point (its autonomy level is C56's `city.toml` policy).
 
-**What the capability-bar dropped (non-principle polish):** a **bespoke bootstrap build engine** (→ reuse the existing C12/C13/C28 convergence flow — I4), a **second/parallel evaluation stack for self-built components** (→ reuse C30–C33 via C51's predicate), a **custom resume mechanism** (→ the C20 `factory_build_in_progress` lifecycle + native `gc converge resume`, AI-CONTEXT §16), and any **auto-deploy-without-review path** (dropped on the F54/README:498 safety bar — design review is mandatory until P12 is trusted). What is **kept** as the genuine P-recursion capability is exactly: the **self-targeted spec-authoring + build-flow dispatch** (the factory authoring and running its own next component), the **mandatory human-design-review gate** (the keystone safety invariant, `C52-gate`), and the **resume-of-in-progress-builds** controller over the `factory_build` bead lifecycle. The *predicate* is C51's, the *bar* is C53's, the *autonomy level* is C56's, the *ordering* is C54's — C52 is the loop that wires them.
+**What the capability-bar dropped:** a bespoke bootstrap build engine (→ reuse C12/C13/C28 — I4), a second/parallel evaluation stack (→ reuse C30–C33 via C51), a custom resume mechanism (→ the C20 `factory_build` lifecycle + native `gc converge resume`, D-40), and any auto-deploy-without-review path (dropped on the F54/README:498 safety bar). **Kept:** self-targeted spec-authoring + build-flow dispatch, the mandatory human-design-review gate (`C52-gate`), and the resume-of-in-progress-builds controller. The predicate is C51's, the bar is C53's, the autonomy level is C56's, the ordering is C54's, the audit is C57's — C52 is the loop that wires them.
 
-## 8. Acceptance criteria & test strategy (sweep-1, high level)
+## 8. Error taxonomy
 
-- **AC1 (spec-driven self-build):** the factory builds a component **for itself** only from a committed **C08-format spec** (`packs/*/spec.md`); no factory-built component exists without a source-of-truth spec. (README:478, 542; I1.)
-- **AC2 (normal build flow, no second engine):** the self-targeted spec runs through the **existing** convergence flow (C12/C13/C28) — the same path user-software builds use — with a `factory_build_in_progress` bead written carrying the resume fields. (README:432; I4, I5.)
-- **AC3 (transfusion discipline in the recursion):** every component C52 builds declares ≥1 `transfused_from` exemplar and its acceptance invokes **C51's predicate**; a zero-exemplar self-build is rejected at C51's discipline gate. (README:446, 496; I3.)
-- **AC4 (mandatory design-review gate — keystone):** **no** factory-built component deploys into production without passing the human design review gate; the gate is reachable on the deploy path and is **non-bypassable** "until P12 is mature and trusted". A self-build whose review is skipped does not deploy. (README:498; I2; F54.)
-- **AC5 (gate consumes C51 + C53, runs at C56 level):** the gate's inputs are C51's transfusion verdict **and** **C53's** validation-rubric result; the gate operates at the autonomy level **C56** sets. C52 itself defines *no* pass bar (the decision content is C53's). (README:434; I6; G23.)
-- **AC6 (deploy-and-extend, or iterate):** on approval the build advances from the `factory_build_in_progress` state to a completed `factory_build` state (the advance's on-disk form is C20-owned — C20:OQ-3) and the component is installed back into the factory; on rejection the loop returns to spec-iteration (and defers Phase 3 after repeated failure). (README:491, 519; I2.)
-- **AC7 (resume across sessions):** given a `factory_build_in_progress` bead, the resume sub-flow recovers `transfused_from` + spec pointer + scenario pointer + workflow handle and continues via `gc converge resume <bead_id>` with no state loss. A bead missing a recoverable handle is a C20 resume-completeness defect, not a silent partial resume. (AI-CONTEXT §16 lines 694–699; I5.)
-- **AC8 (schema/format deference):** C52 writes only C20-declared `factory_build*` fields (D-3) and authors specs only in C08's format — a needed new field is a change request to C20, a format change a request to C08, never a local extension. (D-3; C08/C20.)
+| Code | Condition | Surfaced as | Caller recovery |
+|---|---|---|---|
+| **E-C52-01** | spec-author-fail — `emit_spec` produces a spec that fails C08 format validation or C10 EARS linting | Exception at spec-emission step (§5.2 step 2) | Fix the spec template input / retry with corrected BootstrapIntent; do not advance to build dispatch |
+| **E-C52-02** | resume-unrecoverable — `factory_build` + `status=in_progress` bead is missing `workflow_handle`, `spec_ref`, or `scenario_ref` | EscalationContract raised at `resume_build` (§3.6) | Escalate to operator gate; restart-from-spec with new bead; preserve stranded bead as audit record |
+| **E-C52-03** | zero-exemplar-build — `dispatch_build` called with empty `exemplar_refs` | Exception at `check_declaration` (C51 declaration-time, §3.3) | Add ≥1 `transfused_from` exemplar to the BootstrapIntent; re-call `dispatch_build` |
+| **E-C52-04** | review-gate-bypassed — `advance_to_completed` reached without an `approved` GateDecision | Hard error at status-advance gate-check (§3.5) | MUST NOT be swallowed; surfaces as a security invariant violation (I2); requires operator audit |
+| **E-C52-05** | spec-build-divergence — built component diverges from the C08 spec's DoD (C51 correctness=fail, not just completeness) | `TransfusionVerdict.outcome = fail` at acceptance step (§5.2 step 5) | Route to human design review as "not-ready" (C51 §3.0.3 `TransfusionInsufficient`); iterate on spec or exemplar set |
+| **E-C52-06** | phase-order-violation — a component's BootstrapIntent specifies a phase that precedes unmet dependencies (C54 ordering constraint) | Exception at intent validation (§5.2 step 1) | C54 supplies a corrected sequencing; C52 waits for the prerequisite component's `status=completed` bead |
 
-**Test strategy (sweep-1):** end-to-end test the recursion against a **small first-factory-built component** fixture (README:431 names candidates — a Linear-webhook `[[provider]]` extension or a daily-bead reporter pack): assert spec→build→`factory_build_in_progress` bead→C51-predicate→**gate**→deploy→`factory_build`. Assert the **mandatory gate** by attempting a deploy with the review unset and verifying it is blocked (AC4). Test resume by interrupting a build mid-flight, then driving the §16 procedure (`gc bd find` → recover → `gc converge resume`) and asserting continuation from the recovered point (AC7). Contract-test the C51 verdict consumption and the C53 rubric-result hand-off against stubs (C53 unbuilt — Batch 4). Assert no second build engine / judge is introduced (AC2; I4). (Concrete fixtures + the gate's machine-checkable form → sweep-2, co-frozen with C53's rubric.)
+## 9. Acceptance criteria (sweep-2)
 
-## 9. Open questions (→ review-log)
+### 9.1 Acceptance test table
 
-- **OQ1 (G23, top):** "Deploy if it works" has **no pass bar** (README:434). Spec rules: **C52 owns the loop + mandatory review gate; C53 owns the rubric/scenario-set/pass bar; C11 supplies the structured next-component intent.** **Needs review-log confirmation** that C53 is the authoritative home of the bootstrap-validation bar (and ships the bootstrap component's own scenario set per README:526), and that the factory's own next-component intent is routed through C11's intake — so the most consequential checkpoint in the plan stops being "looks good to a human."
-- **OQ2 (`C52-gate` decomposition):** the inventory lists C52's deps as `C51, C52-gate, C08`, where **`C52-gate` is the C52-internal human-design-review gate, not a separate component.** Spec treats the gate as C52-owned and routes its *rubric* → C53 and its *autonomy level* → C56. **Confirm** this reading (gate = C52-internal; C53 = bar; C56 = level) so the gate's ownership is unambiguous and `C52-gate` is not mistaken for an unbuilt dependency.
-- **OQ3 (gate decision record home + build-state advance mechanism):** where does the design-review approve/reject outcome (+ reviewer identity) live — a new slot on the `factory_build` bead (a C20 change request, D-3), a C53 milestone record, or a review bead? Sweep-1 treats it as a fact on the build bead/review record; concrete home is a C20/C53 sweep-2 call. **Adjacent open C20 seam (RC52-01):** the `factory_build_in_progress` → completed `factory_build` advance is **C20:OQ-3** — a `type`-flip on one record vs a `status` transition (which also decides whether `factory_build_in_progress` stays a distinct `type` at all). C52 commits only to *reaching* the completed state (faithful to AI-CONTEXT §16's two type names), never to the mechanism; confirm with C20 at sweep-2.
-- **OQ4 (resume-failure escalation):** AI-CONTEXT §16 gives the **happy-path** resume procedure but no failure handling — what happens when a `factory_build_in_progress` bead is unrecoverable (missing workflow handle / dangling spec or scenario pointer)? Sweep-1 treats it as a C20 resume-completeness defect forcing a restart-from-spec; the escalation contract (re-dispatch? operator gate?) is sweep-2. *(Parallels C04:OQ-2 multi-mode resume + review-log XC-2 cold-start-query reconciliation.)*
-- **OQ5 (G14 class-level fallback, shared with C51):** C52 routes a *single* transfusion-insufficient component to review (consuming C51's signal), but the strategic fallback for "a whole high-value class (Healer/twins/self-opt) cannot be reliably transfused" — re-sequence phases? hand-build? — is a **C54 phase-plan** decision (C51:OQ-C51-2), not C52's. Confirm C54 owns the class-level hedge so G14 is fully homed across C51/C52/C54.
-- **OQ6 (F54 audit-pack ownership):** C52 reduces RSI blast-radius via the mandatory gate + exemplar-anchoring + provenance, but the dedicated **multi-cycle goal-comparison audit pack** (F-MODE §11 #5; G35) that detects objective drift *across* recursion cycles is a distinct discipline. Confirm its owner (C43 isolation / C57 residual-risk register / a dedicated audit pack) so the F54 "significant residual" is explicitly homed, not assumed-covered by C52's gate.
+| Code | Given / When / Then | Verifies | E-code ref |
+|---|---|---|---|
+| **AC-C52-01** | Given a valid BootstrapIntent with ≥1 exemplar; when `emit_spec` completes; then a C08-format spec exists at `spec_ref` and a `factory_build` bead exists with `status=in_progress` | I1 — spec-driven self-build | — |
+| **AC-C52-02** | Given a self-targeted spec; when `dispatch_build` runs; then the existing convergence flow (C12/C13/C28) is invoked with no second engine instantiated; and `workflow_handle` is written to the bead | I4, I5 — no second engine; resume completeness | — |
+| **AC-C52-03** | Given a BootstrapIntent with `exemplar_refs = []`; when `dispatch_build` is called; then `E-C52-03` is raised and no build is dispatched | I3 — ≥1 exemplar invariant | E-C52-03 |
+| **AC-C52-04** | Given a completed build; when `advance_to_completed` is called WITHOUT a prior `submit_for_review` returning `approved`; then `E-C52-04` is raised and `status` is NOT advanced to `completed` | I2 — mandatory gate is non-bypassable | E-C52-04 |
+| **AC-C52-05** | Given a build where C53 rubric result and C51 verdict are both provided to `submit_for_review`; when the gate runs; then C52 does not define any pass bar — `GateDecision` is determined by C53's `RubricResult` and C56's `AutonomyLevel` | I6 — go/no-go is C53's not C52's | — |
+| **AC-C52-06** | Given `approved` GateDecision; when `advance_to_completed` runs; then `factory_build.status = completed` (STATUS TRANSITION per D-40); the same bead is used (no type-flip, no new bead) | D-40 — status transition not type-flip | — |
+| **AC-C52-07** | Given a `factory_build` bead with `status=in_progress` and all resume fields present; when `resume_build` is called; then `gc converge resume <bead_id>` is invoked with the recovered `workflow_handle`; and the build continues from the Running state | I5 — resume across sessions | — |
+| **AC-C52-08** | Given a `factory_build` bead with `status=in_progress` and missing `workflow_handle`; when `resume_build` is called; then `E-C52-02` escalation is raised; operator gate is required before restart-from-spec; and the stranded bead is preserved (NOT deleted) | OQ4 (RESOLVED) escalation contract | E-C52-02 |
+| **AC-C52-09** | Given a rejected gate decision; when the recursion handles rejection; then the loop returns to step 2 (re-spec), NOT to deploy; after N configurable rejections a "defer Phase 3" signal is emitted (README:519) | I2 — rejection → iterate, not deploy | — |
+| **AC-C52-10** | Given the `factory_build` resume query; then it is formed as `--type factory_build --status in_progress` (D-40), NOT `--type factory_build_in_progress` | D-40 / XC-2 resolution | — |
+| **AC-C52-11** | Given a C51 `TransfusionVerdict.outcome = fail`; when the acceptance step runs; then the component is routed to `submit_for_review` as "not-ready" (with the insufficient verdict); and NO auto-deploy occurs | I3 — transfusion fail → review not auto-deploy | E-C52-05 |
+
+### 9.2 Test strategy
+
+End-to-end test the recursion against a **small first-factory-built-component fixture** (README:431 candidates: a Linear-webhook `[[provider]]` extension or a daily-bead reporter pack):
+- Assert spec→build→`factory_build` bead (`status=in_progress`)→C51-predicate→**mandatory gate**→`status=completed`.
+- Assert the **mandatory gate** by attempting `advance_to_completed` with the review unset → verify `E-C52-04` is raised (AC-C52-04 negative test, the keystone).
+- Test resume by interrupting a build mid-flight, then driving: `gc bd find --type factory_build --status in_progress` → recover → `gc converge resume` → assert continuation from Running (AC-C52-07/08).
+- Contract-test C51 verdict consumption and C53 rubric-result hand-off against stubs (C53 unbuilt — Batch 4).
+- Assert the D-40 status-transition: after approval, the SAME bead has `status=completed`; no new `factory_build` record was created (AC-C52-06).
+
+## 10. Open questions (→ review-log)
+
+- **OQ1 (G23, top) — RESOLVED (Sweep-2):** C53 is the authoritative home of the bootstrap-validation bar (rubric + scenario set + pass bar). C52 owns the loop + mandatory review gate. C11 supplies structured next-component intent. C53 ships the bootstrap component's own scenario set (README:526). The BootstrapIntent struct (§3.1) is C52's consumption shape; its richness is C11/C53's authoring responsibility.
+- **OQ2 (`C52-gate` decomposition) — RESOLVED (Sweep-2):** `C52-gate` in the inventory dependency list = C52-internal mandatory design-review gate (§3.4). NOT a separate unbuilt component. Rubric → C53. Level → C56. This is the authoritative ruling.
+- **OQ3 (gate decision-record home + build-state advance) — RESOLVED (Sweep-2) via D-40:** The `factory_build` build-state advance is a STATUS TRANSITION (`in_progress → completed`) on a single bead type — NOT a type-flip. C52 drives the transition (§3.5 `advance_to_completed`). The gate decision record (`GateDecision`) lives on the same `factory_build` bead (D-40: "C53 records the go/no-go on the same bead"). XC-2 is resolved: the resume query is `--type factory_build --status in_progress`.
+- **OQ4 (resume-failure escalation) — RESOLVED (Sweep-2):** Unrecoverable `factory_build` + `status=in_progress` → `E-C52-02` → restart-from-spec with mandatory operator gate. Stranded bead preserved as audit record. New bead opened for restart, linked via `depends_on`. See §3.6 and AC-C52-08.
+- **OQ5 (G14 class-level fallback, shared with C51) — still open:** C52 routes a *single* transfusion-insufficient component to review. The strategic fallback for "a whole high-value class (Healer/twins/self-opt) cannot be reliably transfused" is **C54's** phase-plan decision (C51:OQ-C51-2). Confirm C54 owns the class-level hedge.
+- **OQ6 (F54 audit-pack ownership) — RESOLVED (Sweep-2) via D-21:** C57 is the audit home. F54 objective-drift stays registered-unbuilt in C57. Cheap periodic human checkpoint mitigates now. Real drift detector required before L5 (D-21; C56 L5 precondition). C52 names C57; does not build the detector.

@@ -1,6 +1,10 @@
 # C53 — Bootstrap-validation milestone  (Build Plan, canonical track)
 
 > Source / Spec ref: spec/C53-bootstrap-validation.md
+>
+> **Sweep-2 update (2026-06-01):** Tasks T1–T9 retained verbatim (Sweep-1 WBS is correct). Updated task descriptions to reflect: concrete `decide()` signature (§3.1), `GoNoGoInput`/`GoNoGoDecision` schemas, `MilestoneConfig` knobs (§3.3), D-40 bead-slot assignment (§3.4), E-C53-01..08 error taxonomy (§8.1), AC-C53-01..13 acceptance test codes (§8.2). All four OQs resolved; no WBS restructuring needed. Critical-path unchanged: T1→T4→T5→T6→T8→T9. M1/M2/M3 contract milestones retain meaning; M1 now includes the `GoNoGoInput`/`GoNoGoDecision` schemas as the freeze artifacts.
+>
+> **Operator-judgment flag (OQ-1 resolved):** Before T5 (rubric evaluation) can be signed off, the operator MUST review and approve the decision-rule SHAPE (`p10 >= T_tail AND mean >= T_central`) as a morning-review item. This is a governance checkpoint, not a build step. It is a pre-condition on T5 completion and on the Phase-3 arm (T8).
 
 ## 1. Work breakdown
 
@@ -50,17 +54,13 @@ Once **T1 (seam freeze)** and **T2 (skeleton + config)** land, two thin workstre
 ## 4. Interfaces-first / contract milestones
 
 - **M1 — milestone seam contract freeze (T1):** the three contracts dependents/sub-streams build against:
-  (a) **rubric** = the conjunction terms (C51 / C33 / C52) + the decision rule;
-  (b) **decision record** = `go`/`no-go` + evidence bundle (the `factory_build` bead slot, a **C20 request**);
-  (c) **inputs** = C51 verdict ref, C33 distribution + scenario-set id + n, C52 review ref.
-  Freezing M1 lets WS-A build against synthetic evidence and WS-B against synthetic bundles in parallel, and
+  (a) **rubric** = the conjunction terms (C51 / C33 / C52) + the decision rule (`p10 >= T_tail AND mean >= T_central`, §3.2);
+  (b) **decision record** = `GoNoGoDecision` schema (§3.1) written to the `factory_build` bead (D-40, §3.4), a **C20 schema-slot request**;
+  (c) **inputs** = `GoNoGoInput` schema (§3.1): C51 verdict ref, C33 `SatisfactionDistribution` + scenario-set id + n, C52 review ref.
+  Freezing M1 lets WS-A build against synthetic `GoNoGoInput` and WS-B against synthetic bundles in parallel, and
   lets **C54** stub against the go/no-go output to wire its Phase-3 transition.
-- **M2 — rubric + bar fixed (T5/G23/G09):** the go/no-go is a **falsifiable conjunction over named
-  evidence** with the **satisfaction cutline applied at C53** (configurable value, OQ-1), before C54 reasons
-  over the decision. This is the **G23 close** at sweep-1 altitude.
-- **M3 — `factory_build` decision-slot agreed (T6):** the go/no-go decision slot on the `factory_build`
-  bead is reconciled with **C51's predicate-verdict slot + C52's review-record slot** (one decision per
-  first-component build, grain agreement — OQ-4) as **C20 schema-slot requests**, before any bead-write.
+- **M2 — rubric + bar fixed (T5/G23/G09):** the go/no-go is a **falsifiable conjunction** (`p10 >= T_tail AND mean >= T_central AND C51 pass AND C52 approve`) with operator-policy knobs `tail_threshold`, `central_threshold`, `min_scenarios` (§3.3); `E-C53-03 / E-C53-04` are the bar-not-met codes. **Operator must sign off on the SHAPE before M2 is closed** (§3.1 OPERATOR-JUDGMENT FLAG / OQ-1 resolved). This is the **G23 close**.
+- **M3 — `factory_build` decision-slot agreed (T6):** the `milestone_verdict` + `milestone_evidence` + `milestone_decided_at` fields on the `factory_build` bead (§3.4) are reconciled with **C51's predicate-verdict slot + C52's review-record slot** (OQ-4 resolved — D-40). C20 accepts the schema-slot request and bumps the bead-type version before any bead-write. NEW SEAM (§9).
 
 ## 5. Risks & de-risking order
 
@@ -86,27 +86,27 @@ Once **T1 (seam freeze)** and **T2 (skeleton + config)** land, two thin workstre
 
 ## 6. Definition of done
 
-**Per-component DoD:** the bootstrap-validation harness (T9) passes **AC-1…AC-10** against a synthetic
-first-component decision — **falsifiable rubric** (not "looks good", G23) computed as a **conjunction over
-named evidence** (C51 pass ∧ C33 ≥ bar ∧ C52 approve), **scenario-set required** (absent ⇒ no-go), **no
-model call / no scorer** (reads pre-computed signals), the **satisfaction cutline applied at C53** with a
-**configurable** value (G09 reading (b)), the **decision recorded + auditable** on the `factory_build` bead,
-a defined **fail branch** (iterate + re-run → add-substrate), the decision **arming/withholding Phase 3**
-for C54, **engine-reuse** (composes C30/C31/C32/C33 + C51, no second evaluation engine/significance test),
-and **one-time** (fires once; subsequent components gated by C51/C52, steady-state by C50/C39). C53 is a
+**Per-component DoD:** the bootstrap-validation harness (T9) passes **AC-C53-01…AC-C53-13** against a
+synthetic first-component decision — **falsifiable rubric** (G23) as a **conjunction over named evidence**
+(`p10 >= T_tail AND mean >= T_central AND C51 pass AND C52 approve`), **scenario-set required**
+(AC-C53-02, E-C53-01), **evidence-floor enforced** (AC-C53-03, E-C53-03), **conjunction both ways**
+(AC-C53-04..07, E-C53-04..06), **hard error on missing inputs** (AC-C53-08, E-C53-02), **attempt-bound
+escalation** (AC-C53-09, E-C53-07), **evidence-anchored record** (AC-C53-10, INV-4), **Phase-3 arm**
+(AC-C53-11), **no model call** (AC-C53-12, INV-2), **configurable knobs** (AC-C53-13, INV-5). C53 is a
 thin milestone artifact, not a control loop.
 
-**Per-task DoD:**
-- T1: M1 contracts written + agreed with C51/C52/C33/C30/C54 owners; sub-streams + C54 can stub against them.
-- T3: a component with no held-out scenario set yields **no-go (insufficient-evidence)** (AC-2).
-- T4: C51 verdict + C33 distribution + n + C52 record read as **pre-computed signals**; no scoring (AC-3).
-- T5: rubric evaluates as a **conjunction** (AC-1/AC-6); **bar applied here**, configurable value (AC-4); n surfaced.
-- T6: go/no-go + evidence bundle **recorded** on `factory_build` bead, attributable, reconstructable (AC-5).
-- T7: no-go → **iterate + re-run**; bounded repeated failure → **add-substrate** escalation (AC-7).
-- T8: `go` **arms** / `no-go` **withholds** the Phase-2 → Phase-3 transition for C54 (AC-8).
-- T9: full AC suite green; **must pass before Phase 3 is armed** (C54 reads C53's decision as the gate).
+**Pre-condition on T5 (operator checkpoint):** The operator MUST review and sign off on the decision-rule
+SHAPE (`p10 >= T_tail AND mean >= T_central`) before T5 is closed as done. This is a governance item, not
+a CI gate. It is the only morning-review item C53 introduces (see §3.1 OPERATOR-JUDGMENT FLAG, OQ-1 resolved).
 
-**Open questions to resolve before sweep 2** (mirrored to review-log): OQ-1 (G09/G23 bar value + decision
-rule + cutline ownership at C53, shared C33/C51/C50), OQ-2 (fail-branch attempt bound + "add substrate"
-authorizer, relates C56), OQ-3 (bootstrap scenario-set sufficiency / minimum-evidence guideline with
-C30/C51), OQ-4 (C52/C51/C53 `factory_build`-bead slot ownership + grain agreement, C20 schema-slot requests).
+**Per-task DoD (Sweep-2 — references updated to E/AC codes):**
+- T1: M1 contracts (`GoNoGoInput` + `GoNoGoDecision` schemas, §3.1; `MilestoneConfig` knobs, §3.3; bead-slot table, §3.4) written + agreed; sub-streams + C54 can stub against them.
+- T3: absent scenario set → E-C53-01 / AC-C53-02 green.
+- T4: C51 verdict + C33 `SatisfactionDistribution` + n + C52 record read as pre-computed signals; no scoring (AC-C53-12).
+- T5: rubric conjunction (AC-C53-04..07); bar applied and configurable (AC-C53-13); n-floor checked (AC-C53-03); **operator shape sign-off obtained**.
+- T6: `GoNoGoDecision` written to `factory_build` bead with all evidence refs (AC-C53-10 / INV-4); E-C53-02 surfaces on missing input.
+- T7: `AttemptBoundReached = true` + `EscalationRequired = true` when `AttemptNo >= MaxAttempts` (AC-C53-09 / E-C53-07).
+- T8: `go` arms / `no_go` withholds Phase-3 transition (AC-C53-11).
+- T9: full AC-C53-01..13 suite green; E-C53-01..08 all exercised; **must pass before Phase 3 is armed**.
+
+**All four OQs resolved at Sweep-2** (see spec §9 for resolution text and §3.1/§3.2/§3.3/§3.4 for the settled contracts). No open questions deferred from Sweep-2.

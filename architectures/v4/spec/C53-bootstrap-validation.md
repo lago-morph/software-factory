@@ -396,7 +396,7 @@ stateDiagram-v2
     NoGo --> AddSubstrate : attempt_no >= max_attempts
 
     FailBranch --> Evaluating : spec iterated and factory re-run by C52
-    AddSubstrate --> [*] : operator authorizes; Phase 3 withheld until substrate work complete
+    AddSubstrate --> [*] : operator authorizes — Phase 3 withheld until substrate work complete
 ```
 
 Note: `Go` and `NoGo` are decision outcomes of a single `decide()` invocation. `FailBranch` initiates
@@ -548,6 +548,40 @@ conjunction** over **named evidence** (AC-1/AC-6), that **absent scenarios force
 the **fail branch** iterates/escalates (AC-7), and that **no second scorer** exists (AC-9). This suite
 **must pass before Phase 3 is armed**, since C54's transition reads C53's decision as the go/no-go.
 
+### 8.1 Error taxonomy (Sweep-2)
+
+C53 is deterministic over its inputs; errors are mis-condition codes the caller uses to route (no-go verdict
+with a stated reason, or a hard error for missing required inputs).
+
+| E-code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| **E-C53-01** | Scenario set absent: `ScenarioSetPath` is empty or `scenarios/<component>/` contains no tasks (INV-3 violation) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["scenario_set_absent"]}` + error return | Operator authors and commits a held-out scenario set for the component; re-run after C30 corpus is populated |
+| **E-C53-02** | Insufficient evidence: any required `GoNoGoInput` field is missing or zero-value — no distribution, no predicate verdict, no review ref (INV-1 violation) | `error` (hard — cannot produce a decision without evidence) | C52 must ensure all upstream steps (C51, C33 run, C52 review) complete and reference before calling `decide()` |
+| **E-C53-03** | Distribution below minimum-scenario floor: `Distribution.N < cfg.MinScenarios` — scenario count too small to meet evidential bar (OQ-3 resolved) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["evidence_insufficient_n"]}` | Operator expands bootstrap scenario set to at least `min_scenarios`; re-run |
+| **E-C53-04** | Bar not met: `Distribution.P10 < cfg.TailThreshold` or `Distribution.Mean < cfg.CentralThreshold` — C33 distribution fails the milestone satisfaction predicate (I3) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["c33_distribution_below_bar"]}` | Operator iterates the bootstrap component spec; factory re-runs (C52); re-evaluated on next attempt |
+| **E-C53-05** | Transfusion predicate not pass: `TransfusionVerdict` is `"fail"` or `"inconclusive"` — C51 completeness term fails (I1 Term 1) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["transfusion_predicate_fail"]}` | Operator repairs exemplar-coverage gaps in the bootstrap component spec; C51 re-evaluated on the next attempt |
+| **E-C53-06** | Review not approved: `ReviewVerdict` is `"reject"` — C52 human design-review term fails (I1 Term 3) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["review_rejected"]}` | Operator addresses the reviewer's findings and re-runs the factory; next `decide()` re-reads the new review record |
+| **E-C53-07** | Attempt bound exceeded: `AttemptNo >= cfg.MaxAttempts` and verdict is `no_go` — fail-branch exhausted (I5) | `GoNoGoDecision{Verdict:"no_go", AttemptBoundReached:true, EscalationRequired:true}` | Operator (C56 policy) must authorize "add substrate before Phase 3"; Phase 3 remains withheld until substrate work completes and a fresh attempt is authorized |
+| **E-C53-08** | Config invalid: a required config knob (`tail_threshold`, `central_threshold`, `min_scenarios`, `max_attempts`) is missing or out-of-range (e.g. negative, NaN) | `error` (hard — misconfigured milestone cannot produce a meaningful decision) | Operator corrects the pack/config TOML values and re-deploys; C03 surface owns the config schema |
+
+### 8.2 Acceptance-test codes (Sweep-2, E↔AC cross-refs)
+
+| AC-code | Given / When / Then | Verifies |
+|---|---|---|
+| **AC-C53-01** | Given: all rubric terms met (C51 pass, C33 p10 >= T_tail AND mean >= T_central with N >= min_scenarios, C52 approve). When: `decide()` called. Then: returns `GoNoGoDecision{Verdict:"go"}` with non-empty evidence refs for all three terms. | INV-1 (falsifiable `go`); §3.1 decide() signature |
+| **AC-C53-02** | Given: `ScenarioSetPath` empty (no scenarios in C30 corpus for this component). When: `decide()` called. Then: returns `GoNoGoDecision{Verdict:"no_go", FailedTerms:["scenario_set_absent"]}`. | E-C53-01; INV-3; G23 "scenario set, not vibe" |
+| **AC-C53-03** | Given: scenario set present but `Distribution.N < cfg.MinScenarios`. When: `decide()` called. Then: returns `no_go` with `FailedTerms` containing `"evidence_insufficient_n"`. | E-C53-03; OQ-3 minimum-evidence guideline |
+| **AC-C53-04** | Given: N >= min_scenarios, C51 pass, C52 approve, but `Distribution.P10 < cfg.TailThreshold`. When: `decide()` called. Then: returns `no_go` with `FailedTerms:["c33_distribution_below_bar"]`; human approve does NOT override. | E-C53-04; AC-1/AC-6 conjunction; INV-1 |
+| **AC-C53-05** | Given: N >= min_scenarios, C51 pass, C52 approve, but `Distribution.Mean < cfg.CentralThreshold` (tail passes, center fails). When: `decide()` called. Then: returns `no_go` with `FailedTerms:["c33_distribution_below_bar"]`. | E-C53-04; two-term bar shape (OQ-1 resolved) |
+| **AC-C53-06** | Given: distribution meets bar, C52 approve, but `TransfusionVerdict == "fail"`. When: `decide()` called. Then: returns `no_go` with `FailedTerms:["transfusion_predicate_fail"]`. | E-C53-05; INV-1 conjunction; C51 completeness term |
+| **AC-C53-07** | Given: distribution meets bar, C51 pass, but `ReviewVerdict == "reject"`. When: `decide()` called. Then: returns `no_go` with `FailedTerms:["review_rejected"]`; passing bar does NOT skip review. | E-C53-06; AC-6 conjunction; README:498 review required |
+| **AC-C53-08** | Given: any required `GoNoGoInput` field is zero-value. When: `decide()` called. Then: returns hard `error` (not a `no_go` verdict); no bead write attempted. | E-C53-02; INV-1 evidence-anchored |
+| **AC-C53-09** | Given: `no_go` verdict and `AttemptNo >= cfg.MaxAttempts`. When: `decide()` called. Then: `GoNoGoDecision.AttemptBoundReached == true` AND `EscalationRequired == true`; Phase 3 arm signal absent. | E-C53-07; I5 fail branch; README:519 add-substrate |
+| **AC-C53-10** | Given: valid `go` decision. When: evidence bundle written to `factory_build` bead. Then: bead contains non-empty `EvidenceTransfusionRef`, `EvidenceDistributionBead`, `EvidenceN > 0`, `EvidenceScenarioSetID`, `EvidenceReviewRef`. | INV-4 evidence-anchored record; D-40 bead slot |
+| **AC-C53-11** | Given: a valid `go` decision recorded. When: C54 queries the `factory_build` bead. Then: bead `milestone_verdict == "go"` + `milestone_decided_at` non-empty; Phase-3 transition armed. | AC-8; I4 → C54; README:436 go→Phase 3 |
+| **AC-C53-12** | Given: C53 test environment (synthetic inputs, no provider configured). When: `decide()` runs end-to-end. Then: zero model calls; no judge invocation; only reads GoNoGoInput and cfg. | INV-2 no-scoring; AC-3; C53 is model-free |
+| **AC-C53-13** | Given: `TailThreshold` and `CentralThreshold` reconfigured to new values (operator policy change). When: `decide()` re-run on same distribution. Then: verdict changes to reflect new knob values; confirms bar is configurable, not hard-coded. | AC-4; INV-5; G09 reading (b) |
+
 ## 9. Open questions
 
 - **OQ-1 (→ review-log, top): G09/G23 milestone bar value + decision rule.** §6 binds C53 to **apply** the
@@ -555,18 +589,24 @@ the **fail branch** iterates/escalates (AC-7), and that **no second scorer** exi
   single quantile? a distribution-shape condition? a multi-term predicate over C33's statistics?) are
   operator/integrator policy v4 does not fix. Confirm the cutline lives at C53 (not C33), that its value is
   policy (shared with C33:OQ-1, C51:OQ-C51-3, C50), and freeze the decision rule at sweep-2 with C33/C51.
+  > **RESOLVED (Sweep-2):** Decision-rule SHAPE = `p10 >= T_tail AND mean >= T_central` over an N-scenario run (§3.1 + §3.2). Rationale: mean-only fails F47 (a consistent bad tail can pass); p10-only ignores central tendency; the two-term shape is the minimal multi-term predicate guarding both modes. **The SHAPE itself is an operator-judgment / morning-review fork** (see §3.1 OPERATOR-JUDGMENT FLAG): the operator MUST sign off on the rule shape before the milestone is armed. Threshold VALUES (`T_tail`, `T_central`) and minimum run size (`N` via `min_scenarios`) remain operator-policy knobs (§3.3); they are NOT fixed here. C33's `SatisfactionDistribution = {n, mean, p10, p50, p90, std_dev}` (+ optional `rate_above_cutline`) is the input; C33 stays threshold-free (C33:INV-3).
 - **OQ-2 (→ review-log): fail-branch attempt bound + "add substrate" authorizer.** README:519 names
   "iterate … and if still failing **after a few attempts** … add more substrate" but fixes **no** attempt
   count and **no** authorizer for the "factory needs more substrate before Phase 3" call. C53 requires *a*
   bound (I5); the **value** + who decides escalation is operator policy — freeze at sweep-2 (relates to the
   C56 autonomy ladder for who authorizes).
+  > **RESOLVED (Sweep-2) — shape:** The fail-branch has a `max_attempts` config knob (§3.3) that bounds the iteration cycle; when `AttemptNo >= MaxAttempts` on a `no_go`, `GoNoGoDecision.AttemptBoundReached = true` and `EscalationRequired = true`, requiring operator authorization before Phase 3 can proceed (E-C53-07 / AC-C53-09). **Value** of `max_attempts` and **who authorizes the escalation** remain operator-policy (relates to C56 autonomy-ladder level — the "add substrate" call is a governance decision, not a mechanical one). The *structure* of the bound (the `max_attempts` knob + the escalation flag) is frozen here.
 - **OQ-3 (→ review-log): bootstrap scenario-set sufficiency.** INV-3 requires *a* held-out scenario set and
   n is surfaced (inheriting C33:INV-4), but **how many scenarios / what coverage** make the go/no-go
   *credible* for bet #3 is unfixed at sweep-1 (a too-small set can meet the bar yet be weak evidence —
   README:526 "the broader scenario library grows over time"). Freeze a minimum-evidence guideline at
   sweep-2 with C30/C51.
+  > **RESOLVED (Sweep-2) — minimum-evidence guideline:** The `min_scenarios` config knob (§3.3) implements the evidence floor: `Distribution.N < cfg.MinScenarios` → `no_go` with `FailedTerms:["evidence_insufficient_n"]` (E-C53-03 / AC-C53-03). This prevents a too-small set from gaming the bar. **The value** of `min_scenarios` is operator policy (per D-15's holistic posture — the evidence bar is a policy judgment about what makes the bet credible for bet #3, not a metric property). Guideline: the minimum should be large enough that the C33 distribution statistics (`p10`, `mean`) are not dominated by a single outlier scenario; the precise value is frozen jointly by the operator with C30/C51 at first use. Structure (the knob + the floor check) is frozen here.
 - **OQ-4 (→ review-log): C52/C51/C53 seam — who records what on the `factory_build` bead.** C51's predicate
   verdict, C52's design-review record, and C53's go/no-go decision all attach to the same `factory_build`
   bead (C20). Confirm the **slot ownership + grain agreement** (one decision per first-component build) and
   the C20 schema-slot requests at sweep-2, jointly with C20/C51/C52 (parity with C51's verdict-slot
   request).
+  > **RESOLVED (Sweep-2) by D-40:** See §3.4 slot-ownership table. One bead, three sequential writes: C51 writes `transfusion_verdict` + `transfusion_ref`; C52 writes `review_verdict` + `review_ref` + `status` transition; C53 writes `milestone_verdict` + `milestone_evidence` + `milestone_decided_at`. Grain = one decision per first-component build. **NEW SEAM registered:** C53 requests three new fields on C20's `factory_build` bead (§3.4); C20 must accept the schema-slot request and bump the bead-type version.
+
+**NEW SEAM (→ orchestrator ledger):** C53 §3.4 requests three new fields on C20's `factory_build` bead type: `milestone_verdict` (string), `milestone_evidence` (JSON-blob of GoNoGoDecision), `milestone_decided_at` (ISO-8601 string). C20 must accept this as a schema-slot request and bump the registered bead-type version (C22 I2 mechanism). This seam was not present at Sweep-1 and is the only net-new schema obligation C53 introduces on C20.

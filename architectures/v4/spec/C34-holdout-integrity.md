@@ -661,17 +661,17 @@ sequenceDiagram
    actor read inside the `scenarios` partition, C34's after-the-fact audit produces a **`leak` verdict** and
    a leak finding (actor + rig + read path); given a clean trail, a `clean` verdict. The audit is
    **detection**, not prevention (the test records this, G21).
-3. **Independence check verifies isolation (D-1)**: for a scored trajectory whose judge ran as a distinct
+3. **Independence check verifies isolation (D-1, D-38)**: for a scored trajectory whose judge ran as a distinct
    `judge` rig with a distinct prompt/partition, C34 yields `independent`; for one where the judge shared the
    worker's rig/prompt/context, `violation` + an independence finding. Independence is asserted by
-   **isolation**, not model family (D-1) and not a registry field (D-10).
+   **isolation** (all four predicates in §3.3), not model family (D-1) and not a registry field (D-10).
 4. **Cross-family relaxed, recorded (G08)**: C34 does **not** block on a second-provider judge credential
    and does **not** enforce a model-family difference; the family-difference rule is advisory (C29) and the
-   cross-family enforcement is documented as **FE-1**. The F48 shared-training-distribution residual is
-   surfaced as "Partial", not silently absorbed.
+   cross-family enforcement is documented as **FE-1** (FE1_cross_family_gate seam named in §3.3). The F48
+   shared-training-distribution residual is surfaced as "Partial", not silently absorbed.
 5. **Status + findings feed present (downstream seam)**: C34 publishes, per run / per scenario evaluation,
-   a holdout `clean|leak` + independence `independent|violation` status and the findings as beads, consumable
-   by C33 (gate/annotate the score), C35 (override/why), and the residual-risk register.
+   `HoldoutAuditRecord` + `IndependenceAuditRecord` beads to C19, consumable by C33 (gate/annotate the
+   score), C35 (override/why), and the residual-risk register (§4.2 schemas).
 6. **G28 authority note + G10 caveat explicit (one line, not a composition stack)**: the v4-named mechanisms
    are documented with rig `read_partition` (C42) named the authoritative declaration, C34's perms/repo
    realization + after-the-fact audit named the verification, OPA documented as **dropped**, and the
@@ -685,9 +685,20 @@ sequenceDiagram
    no tool-call-time interceptor**; enforcement is file perms + C42 partitions + the after-the-fact audit
    only (SURVIVOR-PASS C42-06; README:425).
 
-(Concrete audit-record schema, leak-finding / independence-finding bead types, the read-event source
-contract, and the isolation-predicate definition are sweep-2 deliverables — and for the *prevention* path,
-are deliverables of C43, not C34's default build.)
+### 8.1 Concrete acceptance tests (Sweep-2 AC-codes)
+
+| AC-code | Given / When / Then | Verifies | E-code asserted |
+|---|---|---|---|
+| **AC-C34-01** | GIVEN a `ReadTrail` containing one `ReadEvent` where `actor_ref="rig:worker-1"` and `path_or_arg` matches `manifest.protected_paths`; WHEN `run_holdout_audit` is called; THEN `HoldoutAuditRecord.verdict = "leak"` and `findings` contains a `LeakFinding` with the correct `actor_ref`, `rig_name`, and `read_path` | §3.2 holdout audit detects a leak (README:173) | E-C34-01 |
+| **AC-C34-02** | GIVEN a `ReadTrail` with no worker-rig reads matching protected paths; WHEN `run_holdout_audit` is called; THEN `HoldoutAuditRecord.verdict = "clean"` and `findings` is empty | §3.2 clean-trail verdict | — (no E-code) |
+| **AC-C34-03** | GIVEN a `ReadTrail` containing an event with `actor_ref = ""` (unknown actor); WHEN `run_holdout_audit` is called; THEN `HoldoutAuditRecord.verdict = "audit_trail_incomplete"` | §3.2 incomplete-trail handling | E-C34-03 |
+| **AC-C34-04** | GIVEN a `ScoreRecord` where `created_by = "rig:judge-1"` and worker `actor_ref = "rig:worker-1"` with non-overlapping partitions; WHEN `check_independence` is called; THEN `IndependenceAuditRecord.verdict = "independent"` | §3.3 independence predicate — passing case | — (no E-code) |
+| **AC-C34-05** | GIVEN a `ScoreRecord` where `created_by = "rig:worker-1"` (same as worker actor); WHEN `check_independence` is called; THEN `IndependenceAuditRecord.verdict = "violation"` and `violated_predicates` contains `"same_actor"` | §3.3 independence predicate — same-actor violation | E-C34-02 |
+| **AC-C34-06** | GIVEN a `ScoreRecord` where `independence_level = "L0"` (below Phase-0 floor L1); WHEN `check_independence` is called; THEN `verdict = "violation"` and `violated_predicates` contains `"independence_level_below_floor"` | §3.3 independence level floor (D-1) | E-C34-02 |
+| **AC-C34-07** | GIVEN a MANIFEST.json with an entry where `created_by = "rig:worker-1"` (not `scenario_authoring`); WHEN `load_scenario_manifest` is called; THEN `E-C34-05` is raised and no `protected_paths` are returned | §3.1 wrong-authoring-identity signal (E-C30-04 consumption) | E-C34-05 |
+| **AC-C34-08** | GIVEN a MANIFEST.json where `generated_at_commit` does not match the scenario repo HEAD SHA; WHEN `load_scenario_manifest` is called; THEN `E-C34-06` is raised | §3.1 stale-manifest detection | E-C34-06 |
+| **AC-C34-09** | GIVEN a `HoldoutAuditRecord` with `verdict = "leak"` is written to C19; WHEN C33 queries for audit records for the run; THEN C33 can read the bead and retrieve `LeakFinding.read_path` and `LeakFinding.actor_ref` | §4.2 schema completeness; C33 gate seam | E-C34-01 |
+| **AC-C34-10** | GIVEN the factory has no OPA engine / Rego policy / tool-call-time interceptor; THEN audit runs solely via manifest-based path comparison (§3.1/§3.2) and independence predicate (§3.3); no Rego evaluation occurs | §1 no-policy-engine invariant (SURVIVOR-PASS C42-06) | — (structural) |
 
 ## 9. Open questions
 
@@ -700,27 +711,32 @@ are deliverables of C43, not C34's default build.)
   C42 provides the partition — but the substrate fact (prevent vs permit-with-detect) is the **G21** gap and
   cannot be settled without verifying the real `gc` binary (**G11**). Per **D-1** there is no model-family
   fallback, so this single boundary carries the whole holdout guarantee.
-  **OPEN — D-23 spike (see below):** The D-23 harvest confirmed prefix is the bead-scoping MECHANISM but
-  explicitly did NOT resolve whether `gc` PREVENTS out-of-prefix access or merely scopes-by-convention.
-  This OQ remains the D-23 spike target.
-- **OQ-C34-2** (→ review-log): **Is the read/tool-call trail complete enough to make the audit sound?** The
-  after-the-fact audit (README:173) compares "agent reads vs scenario paths"; its soundness depends on the
-  read trail capturing *every* way a broad-tool-access worker (Bash, Read) could touch scenario bytes. Which
-  source supplies the trail (Gas City event bus / OTLP raw bodies / CXDB / C41 attribution) and whether it
-  captures filesystem reads (not just tool invocations) is open — a worker could read by a path the trail
-  misses until C43 isolation constrains the surface (G21). Confirm the read-event source + completeness.
-- **OQ-C34-3** (→ review-log; **judge read-surface scoped by D-17**): **What is the independence predicate,
-  exactly, for a same-provider judge (D-1)?** Independence is by isolation (rig/role/prompt), but the precise
-  predicate — distinct rig + distinct prompt + partition distinct from the worker + no shared context window —
-  needs definition, including the judge's partition (this is also C42's OQ-C42-3: is the judge a third
-  partition, or does it read `code` + scenario *outputs* role-isolated from the worker?). **Per D-17:** the
-  Sweep-1 read-default is fixed (judge MAY read trajectories + scenarios; worker MUST NOT read the judge rig or
-  scenarios), and the exact **partition SHAPE** is the **unified OQ-C42-3 + OQ-C34-3 + C32-OQ5**, frozen
-  **jointly by C42 (provides) + C34 (enforces+audits) + C32 (judge) at Sweep-2**. Confirm with C42/C32.
+  **OPEN — D-23 spike (see below); D-30 watcher design DEFERRED:** The D-23 harvest confirmed prefix is
+  the bead-scoping MECHANISM but explicitly did NOT resolve whether `gc` PREVENTS out-of-prefix access or
+  merely scopes-by-convention. This OQ remains the D-23 spike target. Per **D-30**, if prevention is not
+  native, an enforcement watcher WILL be added — but C34 does NOT design that watcher; its design is
+  deferred until the spike result confirms it is needed. C34 builds the detect+audit path (this spec).
+  **RESOLVED (Sweep-2): prevent-vs-detect stays OPEN; C34 builds DETECT+AUDIT now per D-30 intent.**
+- **OQ-C34-2** (→ review-log): **Is the read/tool-call trail complete enough to make the audit sound?**
+  **PARTIALLY RESOLVED (Sweep-2):** Sources named — Gas City event bus (C23), OTLP (C25), C41 actor
+  attribution. **OPEN sub-question:** whether the trail captures *raw filesystem reads* (e.g. `cat
+  scenarios/…` via Bash — not just tool-call events) against a broad-tool-access worker. This sub-question
+  is gated on the D-23 spike / C43 broad-tool-access bound (G21). Until C43 lands, the
+  `trail_completeness_caveat` field in every `HoldoutAuditRecord` carries the explicit note. E-C34-03
+  surfaces incomplete trails.
+- **OQ-C34-3** (→ review-log; **RESOLVED Sweep-2 — D-38**): **What is the independence predicate, exactly,
+  for a same-provider judge (D-1)?** **RESOLVED:** The four-predicate independence check is defined in §3.3:
+  (a) distinct `created_by` actor, (b) distinct rig, (c) disjoint read partitions, (d) structural rig
+  separation = no shared context window (D-38 "separate rig = separate agent instance"). Judge's read
+  surface = separate judge rig that MAY read worker trajectory + held-out scenarios; worker MUST NOT read
+  judge rig or scenarios (D-38). This is the D-17/D-38 joint C42+C34+C32 freeze. Resolves the unified
+  OQ-C42-3 + OQ-C34-3 + C32-OQ5.
 - **OQ-C34-4** (→ review-log / FE-1): **When cross-family (FE-1) lands, does the family-difference check
   move into C34 or stay advisory in C29?** Today (D-1) it is relaxed to C29's advisory model-stylesheet
-  rule. If FE-1 makes a different-family judge real, confirm whether the *enforcement* of the family
-  difference becomes a C34 independence-check dimension or remains a C29 routing rule.
+  rule. The **forward seam is named** (§3.3): `FE1_cross_family_gate` — when `cross_family_required=True`
+  on the `IndependenceConstraint` (C29 → C32 → C34 audit), C34 will verify `judge_model_family !=
+  worker_model_family` as a fifth predicate. Whether this makes the check a C34 obligation or remains C29
+  advisory is **OQ-C34-4 STILL OPEN** — FE-1's design decision.
 
 **[D-30 ADOPTED 2026-06-01 — prevent/block required for unattended]**
 

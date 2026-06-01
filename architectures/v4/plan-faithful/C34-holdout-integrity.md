@@ -1,7 +1,7 @@
 # C34 — Holdout integrity & isolation enforcement  (Build Plan, canonical track)
 
 > Source / Spec ref: [C34 spec](../spec/C34-holdout-integrity.md)
-> Track: canonical   Status: sweep-1
+> Track: canonical   Status: sweep-2
 
 C34 is the **enforcement + after-the-fact audit** of the holdout boundary (D-13). It is not a service or a
 policy engine: it (1) **owns the read-isolation policy** — the holdout invariant `scenarios ∉
@@ -17,27 +17,32 @@ sound (OQ-C34-2).
 
 ## 1. Work breakdown
 
-| Task | Description | Size | Prereqs |
-|---|---|---|---|
-| **T1** | **Freeze the read-isolation policy object** — the enforced invariant `scenarios ∉ read_partition(worker)` (from C42) + its on-disk realization (perms read-only-from-implementer + separate scenario repo). Owns *realization correctness*, not the declaration. (Spec §3.1, §4.1) | S | C42 partition labels frozen (C42 M1); C30 scenario layout |
-| **T2** | **Freeze the holdout-audit contract (the custom KEEP)** — inputs (scenario paths from C30 + per-actor read trail) → per-run/per-scenario `clean|leak` verdict + leak finding. Detection, not prevention (README:173). (Spec §3.2, §4.2) | M | T1; read-event source (OQ-C34-2) |
-| **T3** | **Freeze the independence-check contract (D-1)** — judge↔worker pairing (from C32) → role/prompt-isolation predicate → `independent|violation` + finding. Independence by isolation, not family (D-1) / not a registry field (D-10). (Spec §3.3, §4.2) | M | C32 pairing seam; OQ-C34-3 (predicate + judge partition) |
-| **T4** | **Freeze the status + findings feed** — per-run holdout + independence status + findings-as-beads, consumable by C33 (gate/annotate score), C35 (override/why), C57 (residual register). (Spec §3.4) | S | T2, T3 |
-| **T5** | **Write the one-line G28 authority note + G10 caveat** — rig `read_partition` (C42) authoritative; C34 realizes (perms/repo) + verifies (audit); OPA dropped; blast-radius is C43's. A sweep-1 clarification, **not** a composition stack. (Spec §4.3) | S | T1 |
-| **T6** | **Author the audit pack + exemplars** — the Gas City pack tool node (README:177) that runs the read-trail-vs-scenario-paths scan + the isolation predicate; clean and leak/violation negative examples. | M | T2, T3 |
-| **T7** | **Resolve substrate prevent-vs-detect OQ (G21/OQ-C34-1)** — spike: does `gc` *prevent* the worker subprocess's out-of-partition read at tool-call time, or only permit-with-detect so the audit catches it after the fact? Feeds the C43 hand-off. | M | T1; G11-class `gc` availability |
-| **T8** | **Resolve read-trail completeness OQ (OQ-C34-2)** — confirm the read-event source (Gas City event bus / OTLP raw bodies / CXDB / C41 attribution) and whether it captures *filesystem* reads (not just tool calls), which is what makes the audit sound against a broad-tool-access worker. | M | T2 |
-| **T9** | **Resolve independence-predicate + FE-1 OQs** — OQ-C34-3 (exact isolation predicate + judge partition, with C42 OQ-C42-3), OQ-C34-4 (does the family-difference check move into C34 at FE-1 or stay advisory in C29?). | S | T3 |
+**Sweep-2 depth added:** T1–T5 now carry concrete deliverables (schemas, signatures, diagrams); OQ-C34-3
+is resolved (D-38); T8/T9 are partially resolved. New task T10 added for the C30 MANIFEST seam.
+
+| Task | Description | Size | Prereqs | Sweep-2 status |
+|---|---|---|---|---|
+| **T1** | **Freeze the read-isolation policy object** — the enforced invariant `scenarios ∉ read_partition(worker)` (from C42) + its on-disk realization (perms read-only-from-implementer + separate scenario repo). Spec §4.1 field table frozen (R/W-by annotated). | S | C42 partition labels frozen (C42 M1); C30 scenario layout | DONE — §4.1 field table complete |
+| **T2** | **Freeze the holdout-audit contract (the custom KEEP)** — `run_holdout_audit(manifest, read_trail, run_id) → HoldoutAuditResult`. `HoldoutAuditRecord` bead schema frozen (§4.2). E-C34-01/03 defined. AC-C34-01/02/03 cover the test vectors. | M | T1; T10 (manifest seam); OQ-C34-2 (source named) | DONE (signatures + schemas frozen; trail completeness sub-question stays OQ-C34-2) |
+| **T3** | **Freeze the independence-check contract (D-1, D-38)** — `check_independence(score_record, worker_actor, worker_partition, judge_partition) → IndependenceCheckResult`. Four-predicate spec frozen. `IndependenceAuditRecord` + `IndependenceViolationFinding` schemas frozen (§4.2). E-C34-02/04 defined. AC-C34-04/05/06 cover the test vectors. | M | C32 ScoreRecord schema frozen (D-39); D-38 (OQ-C34-3 resolved) | DONE — OQ-C34-3 RESOLVED (D-38) |
+| **T4** | **Freeze the status + findings feed** — per-run `HoldoutAuditRecord` + `IndependenceAuditRecord` beads written to C19, consumable by C33/C35/C57. Sequence diagram (§5.1) shows publish path. AC-C34-09 covers the C33 gate seam. | S | T2, T3 | DONE — §5.1 sequence diagram + §4.2 schemas complete |
+| **T5** | **Write the one-line G28 authority note + G10 caveat** — rig `read_partition` (C42) authoritative; C34 realizes (perms/repo) + verifies (audit); OPA dropped; blast-radius is C43's. (Spec §4.3) | S | T1 | DONE — §4.3 authority note unchanged (Sweep-1 resolution sufficient) |
+| **T6** | **Author the audit pack + exemplars** — the Gas City pack tool node (README:177) that runs the `load_scenario_manifest` + `run_holdout_audit` + `check_independence` pipeline; clean and leak/violation exemplars (against §3.1/§3.2/§3.3 signatures). | M | T2, T3, T10 | PENDING (Sweep-3 / build time) |
+| **T7** | **Resolve substrate prevent-vs-detect OQ (G21/OQ-C34-1)** — spike: does `gc` prevent the worker subprocess's out-of-partition read at tool-call time? Feeds the C43 hand-off. Per D-30: detect+audit path (T2) is built now regardless; watcher design is deferred pending spike. | M | T1; G11-class `gc` availability | OPEN — D-23 spike (detect+audit path complete; prevent path awaits spike) |
+| **T8** | **Resolve read-trail completeness OQ (OQ-C34-2 completeness sub-question)** — confirm whether C23/C25 trail captures raw filesystem reads (Bash `cat` etc.) against a broad-tool-access worker. Sources are named (§3.2). | M | T2; D-23 spike / C43 | PARTIALLY RESOLVED (sources named: C23/C25/C41; raw-filesystem sub-question open; E-C34-03 handles incomplete trails) |
+| **T9** | **Independence predicate + FE-1 forward seam** — OQ-C34-3 resolved (§3.3, D-38); OQ-C34-4 FE1_cross_family_gate seam named (§3.3) but not built (D-1). | S | T3 | OQ-C34-3 RESOLVED; OQ-C34-4 OPEN (FE-1 seam named) |
+| **T10** | **Freeze C30 MANIFEST consumption seam** — `load_scenario_manifest(manifest_path, scenario_repo_root) → ScenarioManifest`; `created_by` validation (E-C34-05); staleness check (E-C34-06). Closes the C30→C34 deferred seam. | S | C30 §3.3 manifest schema frozen | DONE — §3.1 seam closed (Sweep-2) |
 
 ## 2. Dependency graph
 
 ```
 C42 (partition labels) ─┐
-C30 (scenario layout) ──┼─► T1 ─► {T2, T5}
-                        │        T2 ─► {T4, T6, T8}
-C32 (judge pairing) ────┴─► T3 ─► {T4, T6, T9}
+C30 MANIFEST (§3.1) ────┼─► T10 ─► T1 ─► {T2, T5}
+                        │          T2 ─► {T4, T6, T8}
+C32 ScoreRecord (D-39) ─┴─► T3 ─► {T4, T6, T9}
                               T1 ─► T7 (spike) ──► C43 hand-off
-                              T3 ─► T9 (OQs) ────► review-log / C29(FE-1) / C42
+                              T3 ─► T9 (OQs) ────► review-log / C29(FE-1)
+                              T10 (DONE — seam closed)
 ```
 
 - **Critical path:** T1 → (T2 + T3) → T4. These freeze the read-isolation policy, the audit, the
@@ -67,13 +72,15 @@ C32 (judge pairing) ────┴─► T3 ─► {T4, T6, T9}
 
 ## 4. Interfaces-first / contract milestones
 
-| Milestone | Freezes | Unblocks |
-|---|---|---|
-| **M1 (earliest, load-bearing)** | Read-isolation policy object + the enforced invariant (T1) — `scenarios ∉ read_partition(worker)` realized by perms+repo backing C42's labels | The audit + independence checks (what "the policy" is) |
-| **M2** | Holdout-audit contract (T2) — reads-vs-scenario-paths → `clean|leak` + finding | C57 residual register; the audit pack (T6) |
-| **M3** | Independence-check contract (T3) — judge↔worker isolation predicate → `independent|violation` | C32 ↔ C34 boundary on the pairing; F1/F27/F46/F48 independence claim |
-| **M4** | Status + findings feed (T4) — beads consumable by C33/C35/C57 | C33 (gate/annotate score), C35 (override/why), C57 (register) |
-| **M5** | One-line G28 authority note + G10 caveat (T5) | C57 (residual-risk register). *(Not "what C43 must enforce" — the lethal-trifecta blast-radius bound is C43's; C34 owns enforcement+audit per D-13.)* |
+| Milestone | Freezes | Status (Sweep-2) | Unblocks |
+|---|---|---|---|
+| **M0 (new — C30 seam)** | C30 MANIFEST consumption seam (T10) — `load_scenario_manifest` signature + E-C34-05/06 + `created_by` validation | DONE | M1; audit `protected_paths` |
+| **M1 (load-bearing)** | Read-isolation policy object + enforced invariant (T1) — §4.1 field table frozen | DONE | The audit + independence checks |
+| **M2** | Holdout-audit contract (T2) — `run_holdout_audit` signature + `HoldoutAuditRecord`/`LeakFinding` schemas (§3.2/§4.2) | DONE | C57 residual register; audit pack (T6) |
+| **M3** | Independence-check contract (T3) — four-predicate `check_independence` + `IndependenceAuditRecord`/`IndependenceViolationFinding` schemas (§3.3/§4.2); OQ-C34-3 RESOLVED (D-38) | DONE | C32 ↔ C34 pairing; F1/F27/F46/F48 independence claim |
+| **M4** | Status + findings feed (T4) — `HoldoutAuditRecord` + `IndependenceAuditRecord` beads to C19; sequence diagram §5.1 | DONE | C33 (gate score), C35 (override/why), C57 (register) |
+| **M5** | One-line G28 authority note + G10 caveat (T5) | DONE (Sweep-1; unchanged) | C57 residual register |
+| **M6 (PENDING)** | Audit pack tool node (T6) — Gas City pack running the pipeline against real `gc` | PENDING — Sweep-3 / build | End-to-end AC-C34-01..10 pass |
 
 Freeze M1 first: it is the policy the audit and independence checks rest on. M2/M3/M4 let C33/C35/C57 start
 without waiting on the T7 substrate spike. M3 is the seam C32 needs to expose its judge↔worker pairing.

@@ -706,11 +706,22 @@ This table maps each test result to the downstream architectural consequence. Th
 D-decision input" column names the spec(s) or decision record that must be updated once the result
 is known.
 
+> **COMPOSITE VERDICT RULE (RC01-S2-02 fix — read before the per-row table).**
+> The overall Test A verdict that routes D-30 is the **worst-case combination of A1 and A2**:
+> - Overall **PREVENT**: A1=PREVENT AND A2=PREVENT → D-30 watcher NOT needed.
+> - Overall **DETECT-ONLY**: A1=DETECT-ONLY (regardless of A2) OR A1=PREVENT + A2=DETECT → D-30 watcher MUST be built; scope determined by which layer failed.
+> - Overall **SILENT**: A1=SILENT OR (A1=PREVENT + A2=SILENT) → `auto-001` binding gate; watcher MUST cover the failing layer (OS-level if A2 is silent).
+>
+> The C01 §8.1 shorthand "Test A PREVENT → watcher not needed" means **both A1 AND A2 = PREVENT**.
+> A1=PREVENT + A2=SILENT is NOT overall PREVENT — it is overall SILENT; the D-30 watcher is required at the OS level.
+
 | Test | PASS outcome | FAIL outcome | Spec annotation / D-decision input |
 |---|---|---|---|
-| **A1 PREVENT** | D-20 fence is a real control; C43/C34 are enforcement boundaries; D-30 watcher not needed for bead layer | D-30 watcher MUST be built; `auto-001` binding gate triggered if A2 also SILENT; C43/C34 downgraded to advisory | C34, C43, D-30 design decision, `auto-001` gate |
-| **A2 PREVENT** | OS layer enforces rig partition; combined with A1 PREVENT: no compensating layer needed | OS layer does not enforce; if SILENT: VERDICT.md §6 item 8 confirmed; C34 is not OS audit boundary | C34, D-30 scope (may need OS-level compensating control) |
-| **A2 SILENT** | (N/A — SILENT is always a FAIL) | C34 OS audit claim is void; undetected cross-rig reads possible; D-30 watcher scope must include OS reads; P2 blocked without OS-level control | C34 annotation, D-30 scope, P2 readiness gate |
+| **A1 PREVENT** | D-20 fence is a real control; C43/C34 are enforcement boundaries; D-30 watcher not needed for the bead/tool layer | D-30 watcher MUST be built for the bead layer; `auto-001` binding gate triggered if A2 also SILENT; C43/C34 downgraded to advisory | C34, C43, D-30 design decision, `auto-001` gate |
+| **A1 DETECT-ONLY** | (N/A — DETECT-ONLY is always a bead-layer FAIL) | D-30 watcher MUST be built for the bead layer regardless of A2 outcome; OPA policy or equivalent wrapping `bd` calls required before P2; C43 downgraded to advisory | C34, C43, D-30 watcher design (bead layer), `auto-001` gate |
+| **A2 PREVENT** | OS layer enforces rig partition; combined with A1 PREVENT: overall PREVENT — no compensating layer needed | OS layer does not enforce; if SILENT: VERDICT.md §6 item 8 confirmed; C34 is not OS audit boundary | C34, D-30 scope (may need OS-level compensating control) |
+| **A1=PREVENT + A2=SILENT** | (N/A — this combination is overall SILENT, not overall PREVENT) | Most dangerous combination: bead layer enforces but OS layer leaks with no trail. D-30 watcher MUST be built at the OS level (namespace/seccomp); C34 OS audit claim void; P2 blocked. This is NOT the overall-PREVENT path. | C34 annotation, D-30 scope (OS-level watcher required), `auto-001` gate |
+| **A2 SILENT** | (N/A — SILENT is always a FAIL) | C34 OS audit claim is void; undetected cross-rig reads possible; D-30 watcher MUST be built and must operate at the OS level (namespace/seccomp), not only at the bead/tool layer. P2 cannot proceed without this control. | C34 annotation, D-30 scope, P2 readiness gate |
 | **B PASS** | C44 twin design can proceed; bind OQ-4 fields to observed schema | C44:OQ-4 must be re-authored before any C44 implementation; per-twin packaging design is blocked | C44 (OQ-4, OQ-2 partial) |
 | **C1 PASS (step-boundary)** | C40:OQ-3 granularity = step; controller-crash durability confirmed | C40:OQ-3 granularity = order; idempotency requirement propagates to order definitions | C40:OQ-3 annotation |
 | **C2 PASS (durable)** | dolt push cadence sufficient for container-restart durability; C40:OQ-1 trigger NOT met | C40:OQ-1 trigger confirmed: any container restart during multi-step order = lost progress; Temporal integration warranted for P11 | C40 (OQ-1, OQ-3); Temporal integration decision |

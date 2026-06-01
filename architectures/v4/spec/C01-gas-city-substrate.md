@@ -388,6 +388,10 @@ and config-misplacement failures. Each row: condition → surfaced-as → caller
   to C37-config/C57; C01 notes the plaintext-TOML exposure but does not resolve it (out of faithful scope).
   **D-30 prevent-gate:** see §8.1 — the conformance check Test A is the gate that determines whether
   unattended operation is safe without a blocking watcher.
+  **[D-30 ADOPTED — operator, 2026-06-01]** "unattended operation (P2) and self-modification (P3b)
+  require the substrate to BLOCK (prevent at the tool-call/process boundary) — not merely detect —
+  out-of-boundary access on the relevant blast-radius face." P2/P3b are human-in-the-loop until Test
+  A overall-PREVENT is confirmed or the D-30 watcher is built and gates the fence.
 - **Cost.** Phase-0 substrate cost is effectively the `gc` binary (free, MIT) + one Claude Code Max seat
   ($200/mo, AI-CONTEXT §4.1). v4 gives no other substrate cost model (G32, deferred to C46/C57).
 - **Scale.** The substrate's throughput ceiling is the single-Max-seat agent limit (G34) — a property of
@@ -439,16 +443,19 @@ The key binding decisions cited verbatim:
 > out-of-boundary access on the relevant blast-radius face."
 
 The conformance check Test A (prevent-vs-detect, KEYSTONE) is the gate that turns the D-23 native
-claim into a fact and routes the D-30 prevent-gate outcome:
-- **Test A PREVENT** → D-30 watcher not needed; D-20 fence is a real control; P2/P3b may proceed.
-- **Test A DETECT-ONLY / SILENT** → D-30 watcher MUST be built before P2; `auto-001` binding gate.
+claim into a fact and routes the D-30 prevent-gate outcome. Test A has two sub-tests (A1 = bead/tool
+layer; A2 = OS/Bash layer); the D-30 routing uses the **worst-case composite** (see conformance check
+Outcome Routing table for the full matrix):
+- **Test A overall PREVENT** (A1=PREVENT **AND** A2=PREVENT) → D-30 watcher not needed; D-20 fence is a real control; P2/P3b may proceed.
+- **Test A A1=PREVENT + A2=SILENT** → Overall SILENT (NOT overall PREVENT) — D-30 watcher MUST be built at the OS level; `auto-001` binding gate triggered.
+- **Test A DETECT-ONLY / SILENT (any layer)** → D-30 watcher MUST be built for the failing layer before P2; `auto-001` binding gate.
 
 **Per-code AC table:**
 
 | AC-code | Given / when / then | Verifies | E-code cross-ref |
 |---|---|---|---|
 | **AC-C01-1** | Given the pinned install; when `gc start --foreground` completes; then `gc status` shows the controller running and the worker agent pane in `gc session list` | Phase-0 install runs (AC-1); INV-4 Phase-0 feature gating | E-C01-01, E-C01-04, E-C01-05 |
-| **AC-C01-2** | Given AC-C01-1 passes; when the full conformance check battery (Tests A–G) runs; then all tests PASS and outcomes are recorded in `gascity-conformance-check.md` Results Record | Native capabilities verified; G11 de-risked; Test A routes D-30 | E-C01-07, E-C01-09 |
+| **AC-C01-2** | Given AC-C01-1 passes; when the full conformance check battery (Tests A–G) runs; then all tests have been run and their outcomes (PASS or FAIL) are recorded in `gascity-conformance-check.md` Results Record; Test A outcome has been routed per the D-30 composite-verdict rule (RC01-S2-02) | Native capabilities verified; G11 de-risked; Test A routes D-30 (FAIL outcomes are valid, expected, and architecturally routed) | E-C01-07, E-C01-09 |
 | **AC-C01-3** | Given the pinned commit `b14c278` + Go 1.26.3; when re-building the image from scratch; then the resulting `gc` binary is byte-for-byte identical to the original staged binary | Version pinned + reproducible (INV-1 / AC-3) | E-C01-02, E-C01-03, E-C01-08 |
 | **AC-C01-4** | Given the v4 artifact tree; when scanning all Go import paths; then no `github.com/gastownhall/gascity/internal/*` or `…/pkg/*` import is found | No-fork invariant (INV-2 / AC-4) | (none — this is a static check) |
 | **AC-C01-5** | Given Phase-0 `city.toml` with no `[formulas]` section; when `gc start` runs; then `gc formula list` returns empty or "formulas disabled"; adding `[formulas]` and restarting enables DAG composition without changing Phase-0 behavior | Feature-gating (INV-4 / AC-5) | E-C01-06 |

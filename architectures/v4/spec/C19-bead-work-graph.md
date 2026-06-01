@@ -267,3 +267,21 @@ test vectors are sweep-2 deliverables, jointly with C20.)
   C41's signed provenance is "optional, deferred." For an L5 self-modifying factory, is unsigned
   attribution acceptable as the *only* integrity control, or must the C19↔C41 seam reserve a place for
   signing now? (Faithfully recorded as residual risk; resolution belongs to C41/C57.)
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F9 — Bead store = local Dolt SQL server; durability via periodic `dolt push`; `refs/heads/*` required (NEW-INFO operational caveat; does NOT contradict C19):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the Dolt bead store backend runs as a **local Dolt SQL server** inside the container; durability
+is achieved by periodic `dolt push` to a GitHub git-remote repository. This is NEW-INFO
+portability context: no v4 spec claims the default dolt ref works universally; this caveat is
+surfaced here for deployment and ops use.
+
+**Critical operational constraint:** `dolt push` must use `--ref refs/heads/<branch>` (e.g.
+`refs/heads/dolt-data`). Dolt's default push namespace `refs/dolt/data` is rejected by many git
+proxies and by the Anthropic sandbox proxy; specifying `refs/heads/*` is the portable,
+proxy-compatible form. Any deployment guide or ops runbook that uses the default dolt ref will
+fail in proxy-mediated environments. Set `DOLT_REF=refs/heads/dolt-data` in env and pass
+`--ref $DOLT_REF` to all dolt push/clone operations.

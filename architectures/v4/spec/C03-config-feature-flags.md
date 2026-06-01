@@ -195,3 +195,46 @@ C03 has no control loop; its behavior is **load-time** and **authoring-time**:
   signal, a misnamed/forgotten section is indistinguishable from a deliberate disable. v4 specifies no
   guard; is a faithful "expected-sections manifest" warranted, or does that contradict the
   presence-is-the-only-signal invariant?
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F1 — `[[rig]]` canonical spelling (NEW-INFO, supports XC-9 resolution):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the canonical spelling is `[[rig]]` (singular). `[[rigs]] path =` is a PackV2 validation error;
+path bindings for a rig's working directory live in `.gc/site.toml` as `[[rig]]` entries, written
+at container-start time by the entrypoint (which knows the runtime filesystem paths). `city.toml`
+carries `[[rig]]` blocks for partition/role semantics only, without a `path` field. This makes the
+`[[rig]]` spelling in C03 canonical (consistent with AI-CONTEXT §13.3).
+
+**F3 — Pack import strictness and `[defaults.rig.imports.*]` placement (NEW-INFO operational constraint):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+(a) `[defaults.rig.imports.*]` entries must live in `city.toml`, not `pack.toml` — PackV2 rejects
+them in a pack manifest. (b) Transitive imports are de-duplicated at startup: if pack A imports
+pack B transitively, the city must NOT also declare `[imports.B]` directly — doing so produces a
+duplicate agent definition and refuses startup. Pack authors should document transitive imports
+explicitly so city authors know not to re-import them. C03's layering/merge-order section should
+reflect these two constraints.
+
+**F4 — `gc init` is interactive; production workflow authors config files directly (NEW-INFO operational caveat):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+`gc init` is an **interactive command** that prompts for a provider choice and runs
+provider-readiness checks; it cannot be run unattended without `--provider <name>
+--skip-provider-readiness`. The prototype's production setup path bypasses `gc init` entirely —
+`pack.toml` and `city.toml` are authored directly. This is NEW-INFO operational context: no v4
+spec references `gc init`; this fact is surfaced here so that any ops procedure or deployment guide
+knows not to include `gc init` without these flags in an automated context.
+
+**F12 — Deployment constraints: `IS_SANDBOX=1` for root + three onboarding dialogs must be pre-acked (NEW-INFO deployment constraint):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+**Deployment constraint — root + permissions flag:** `claude --dangerously-skip-permissions`
+refuses to run as root unless `IS_SANDBOX=1` is set in the environment. Container images running
+as root must set this variable. **Deployment constraint — onboarding dialogs:** Interactive
+`claude` presents three pre-run dialogs (theme picker, folder-trust, bypass-permissions warning)
+that hang an agent session indefinitely if not pre-acknowledged. Pre-acknowledgement requires:
+(a) `hasCompletedOnboarding: true`, `hasSeenWelcome: true`, `theme: "dark"` in
+`~/.claude.json` (not `~/.claude/settings.json`); (b) `projects[path].hasTrustDialogAccepted:
+true` and `bypassPermissionsModeAccepted: true` for every working directory an agent uses
+(written by the entrypoint because paths are known only at runtime). These are production
+requirements for any containerised Gas City deployment, not just sandbox quirks.

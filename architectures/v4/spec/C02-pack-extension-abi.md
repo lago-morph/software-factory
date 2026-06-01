@@ -274,3 +274,18 @@ Sweep-1 high-level criteria (concrete tests at sweep-2):
    `[[service]]` block), so the "stateless per call" invariant is safe. Specifically: do the C24 directory-
    watch bridge and the C44 twin run as tool nodes or as `[[service]]` blocks? The corpus does not draw this
    boundary; the optimized tracks defer it (C02-B OQ4 / C17 OQ4). Reconcile at sweep-2 before C24/C44 build.
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F3 — Pack import strictness; `[defaults.rig.imports.*]` placement; transitive-import deduplication (NEW-INFO operational constraint):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+(a) `[defaults.rig.imports.*]` entries must live in `city.toml`, not `pack.toml` — PackV2 rejects
+them in a pack manifest. (b) Transitive imports are de-duplicated at startup: if pack A imports
+pack B transitively, the city must NOT also declare `[imports.B]` directly — doing so produces a
+duplicate agent definition and refuses startup. Pack authors should document transitive imports
+explicitly so city authors know not to re-import them. C02's pack-on-disk layout documentation
+(§4) should reflect these two constraints. This partially informs C02:OQ4 (declaration-discipline
+key names) — specifically, the import placement rule: `[imports.*]` belongs in `pack.toml`,
+`[defaults.rig.imports.*]` belongs in `city.toml`.

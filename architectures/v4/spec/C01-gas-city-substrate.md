@@ -265,3 +265,15 @@ suite is the *de-risking gate* for G11 and must pass before any Batch-2 componen
   `gc converge resume`) — enumerate and freeze at sweep 2 so C05/C12/C18 can build against it.
 - **OQ-4 (→ C57):** The corpus-wide "6 of 12 native" headline still needs reconciling to the
   phase-dependent 5/6 (G03); C01 fixes its own statement but the global count lives in the coverage map.
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F1 — `[[rig]]` path bindings and canonical spelling (NEW-INFO, supports XC-9 resolution):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the canonical spelling is `[[rig]]` (singular). `[[rigs]] path =` is a PackV2 validation error;
+path bindings for a rig's working directory live in `.gc/site.toml` as `[[rig]]` entries, written
+at container-start time by the entrypoint (which knows the runtime filesystem paths). `city.toml`
+carries `[[rig]]` blocks for partition/role semantics only, without a `path` field. This makes the
+`[[rig]]` spelling in C01 canonical (consistent with AI-CONTEXT §13.3).

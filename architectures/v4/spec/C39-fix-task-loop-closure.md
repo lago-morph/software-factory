@@ -190,3 +190,18 @@ Test strategy (sweep-1): unit-test the diagnosis→fix_task mapping against diag
 - **OQ3 (G35 — fix-authorization / autonomy bound).** *Who/what authorizes an autonomous fix to ship?* C39's disposition: **ship-without-review is gated on the C56 autonomy level** (L5 dark only; L4 batched), and the broader multi-cycle goal-drift guard (F54, the *weakest* v4 mechanism, F-MODE-COVERAGE §11/§12) is the **C56/C57 audit-pack** scope, noted-and-deferred here. **Confirm:** (a) C39 reads the current level from C56 (the C39↔C56 tie is a G35 seam, not a hard inventory dependency — inventory lists C38/C20/C08); (b) the `Healer governance | OPA` row (AI-CONTEXT:335) is where the ship predicate is *enforced* at sweep-2; (c) C56/C57 own the multi-cycle drift audit, not C39.
 - **OQ4 (C40 launch seam).** C40 (durable Orders) models an Order *driving* a C39 heal chain across crashes as **C40's faithful inference** (C40:OQ-4); C39's deps do not list C40. Confirm the C40↔C39 coupling direction (does an Order launch/retry the chain, or does C39 run standalone and Orders only persist it?) at sweep-2.
 - **OQ5 (closure-verdict source).** The proof-of-fix verdict (anomaly-silent AND scenarios/satisfaction pass) is read from C30–C33; the exact contract (does C39 query the satisfaction metric C33, the judge C32, the anomaly detector C36, or all three?) and the "anomaly no longer fires" detection mechanism are sweep-2. Confirm the C39↔(C33/C36) read seam.
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F2 — `convergence.max_iterations` is NOT a real `gc` field (NEW-INFO operational caveat, does NOT contradict C39):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+`convergence.max_iterations` is **not** a real `gc` config field — PackV2 strict-mode rejects it.
+This does NOT contradict C39: C39 correctly defers the numeric termination policy to G18 and
+sweep-2 pinned-`gc` verification — C39 never asserts a `convergence.*` config field name. The
+implication for C39 is that OQ1 and OQ2 (the values of N, the exact field shape) cannot assume
+`convergence.max_attempts` or `convergence.max_iterations`; the actual field by which `gc` expresses
+a per-pass bound remains **unverified** (G11/G18). Sweep-2 must identify the real config field shape
+from a pinned `gc` install before C39 can write any numeric termination config. This usefully
+eliminates one candidate field name.

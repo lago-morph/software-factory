@@ -1,8 +1,9 @@
 # C51 — Gene-transfusion discipline (`gene-transfusion`)  (Spec, canonical track)
 
 > Source: AI-CONTEXT §9 ("Gene transfusion technique" — definition by analogy from v3 vocabulary: "applying a working pattern from one codebase to another by pointing the agent at a concrete exemplar and asking it to reproduce the behavior"; §9.1 transfusion-source map per layer; §9.2 "Discipline patterns" — `transfused_from: <url>`, "License hygiene: track transfusion source license per component", "Permissively-licensed transfusions can be donated back upstream; restrictively-licensed ones stay private"); AI-CONTEXT §16 cold-start step 2 ("Check `transfused_from` attribution"); README Part 7 "Discipline that keeps the bootstrap honest" (lines 496–500: "Gene transfusion always … No invention from scratch … evaluation grounded ('does this behave like the exemplar?')"; line 497 "Attribution of transfusion sources … records its `transfused_from: <url>` … P9 applied to the factory's own work"; line 499 "Scenarios drive evaluation … ensure its clusters match"; line 500 "External grounding for substrate"); README Part 8 bet #4 (line 511: "Gene transfusion is reliable for bounded components"); README Part 5 license census (lines 285–306 — per-source SPDX + "Verify before adopting" gating); component-inventory C51 row (maps `A86, A93, A107, A180-189, B52, B55`; depends on C08, C20; gaps G07, G14, G30; foundational: yes; critical-path note #4 — "without a correctness predicate the whole factory-builds-factory plan (C52–C54) has no acceptance contract"); ambiguities-and-gaps G07 (major — transfusion has "no acceptance criterion for *when a transfusion is correct/complete*, no contract for what 'behaves like the exemplar' means operationally, and no handling for exemplars under incompatible licenses"), G14 (major — reliability is "a bet"; Phases 3b/3c/3d all gated on it; "no fallback for 'factory cannot reliably transfuse'"), G30 (minor — Tracker license unverified; "the boundary between 'transfuse the code' and 'reimplement the pattern' is left to chance").
-> Inventory ID: C51   Kind: cross-cutting   Status: sweep-1
+> Inventory ID: C51   Kind: cross-cutting   Status: sweep-2
 > Track: canonical
+> Binding decisions obeyed: **D-14** (G37 secrets ≠ FE-3 signing — transfusion-record signing is FE-3, blocked on G37, NOT Phase-0), **D-15** (holistic free-form DoD; FE-5 enumerated-per-criterion deferred), **D-39** (`ScoreRecord` schema owned by C32; C33 aggregates), **D-40** (`factory_build` lifecycle is a status transition, not a type-flip).
 
 ## 1. Purpose & responsibility
 
@@ -85,6 +86,100 @@ acceptance-gated by C51's predicate. Per critical-path note #4 it gates C52–C5
 
 ## 3. Interfaces / contracts
 
+### 3.0 Transfusion-predicate interface (sweep-2 — the load-bearing signature)
+
+The concrete function C52 calls at acceptance-time is:
+
+```
+can_transfuse(exemplar_set: List[ExemplarRef], target_spec: SpecRef) -> TransfusionVerdict
+```
+
+**Parameters:**
+
+| Parameter | Type | Semantics |
+|---|---|---|
+| `exemplar_set` | `List[ExemplarRef]` | Non-empty set of declared exemplars (each an `ExemplarRef`; see §4 schema). ≥1 invariant is a precondition — caller (C52) must enforce before calling. |
+| `target_spec` | `SpecRef` | The C08 spec artifact (`pack_root/agents/<name>/prompt.template.md` at a pinned git revision) whose DoD the predicate scores against. |
+
+**Return type `TransfusionVerdict`:**
+
+```
+TransfusionVerdict = {
+  outcome:        enum{pass, fail, inconclusive}
+  completeness:   CompletenessResult         -- see §3.0.1
+  correctness:    CorrectnessResult          -- see §3.0.2
+  scenario_ids:   List[ScenarioId]           -- the scenarios evaluated (C30 IDs)
+  score_records:  List[ScoreRecord]          -- per-scenario judge output (C32 §4 schema, D-39)
+  verdict_time:   timestamp
+}
+```
+
+The verdict is written by C52 to the `factory_build` bead's `transfusion_verdict` field (C20 §4.5.3-extended; the slot is a C51 slot-request into C20 — §4 table below).
+
+**Declaration-time interface (pre-build, invoked by C52 before agent work begins):**
+
+```
+check_declaration(exemplar_set: List[ExemplarRef]) -> DeclarationResult
+```
+
+```
+DeclarationResult = {
+  valid:         bool
+  violations:    List[E-C51-code]    -- empty on valid=true
+  license_modes: Map[url, LicenseMode]   -- per-exemplar resolved mode
+}
+```
+
+`LicenseMode = enum{code_port, pattern_reimplement}`. The mode is resolved from the README:285–306 license census via C57 (which owns the census — OQ-C51-4 RESOLVED below). If any exemplar is unverified/restrictive, its mode = `pattern_reimplement` and the result is still `valid=true` (mode restriction, not rejection), UNLESS the build's declared intent is `code_port` from that exemplar (in which case `valid=false`, `E-C51-02`).
+
+### 3.0.1 Completeness check
+
+**RESOLVED (Sweep-2): OQ-C51-1 — "Named exemplar behaviors" extraction (the completeness anchor).**
+
+> [FAITHFUL-FILL] The completeness anchor is **operator-supplied at C11 intake**, not auto-extracted from the exemplar's tests or docs. Rationale: (a) v4 defines transfusion "by analogy" (AI-CONTEXT §9) and names no behavior-extraction method; (b) C11 (intent intake) already captures the 9-field crucible including "what behaviors this component must reproduce" from the operator's framing at intake time; (c) auto-extraction from exemplar tests/docs would require new tooling v4 never scopes — over-build per the bar. The minimal consistent choice: at C11 intake the operator names the exemplar(s) AND provides a **named-behavior list** for each (a short, operator-authored enumeration of the exemplar behaviors this component must reproduce). That list is the completeness anchor. "Complete" means: for every named behavior in the operator-authored list, ≥1 scenario in C30 carries an `exemplar_behavior` tag matching that behavior name. This anchor is objective and checkable — it closes the residual edge of G07.
+
+**Completeness check (predicate clause):**
+
+```
+CompletenessResult = {
+  anchor_behaviors:   List[str]       -- operator-named behaviors from C11 intake
+  covered_behaviors:  List[str]       -- behaviors with ≥1 tagged scenario in C30
+  uncovered:          List[str]       -- behaviors lacking coverage (must be empty for pass)
+  complete:           bool            -- true iff uncovered is empty
+}
+```
+
+A `complete=false` result causes `TransfusionVerdict.outcome = fail` regardless of satisfaction scores.
+
+### 3.0.2 Correctness check
+
+The correctness half reuses the existing eval tier without adding a new judge:
+
+```
+CorrectnessResult = {
+  satisfaction_dist:  SatisfactionDistribution  -- C33 output (per D-39, D-15)
+  bar_met:            bool                        -- whether operator bar (C53/C50 policy) is met
+  bar_value:          float | null               -- the threshold (null = not yet set by C50/C53)
+}
+```
+
+**RESOLVED (Sweep-2): OQ-C51-3 — numeric satisfaction bar.** The satisfaction bar is owned by C53 (bootstrap milestone) and C50 (promotion gate) as operator/integrator policy. C51's predicate reads the C33 satisfaction distribution — the same statistic C33 emits via `SatisfactionDistribution` — and compares it against the bar C53 injects at call-time. C51 does NOT set the threshold. If no bar is supplied by C53 (Phase-0 bootstrapping before C53 is live), `bar_value=null` and `bar_met` defaults to `true` (conservative: defer to completeness as the binding constraint in early phases).
+
+### 3.0.3 Bet-failure signal (outbound)
+
+When `outcome = fail | inconclusive`, C51 emits a **`TransfusionInsufficient` signal** consumed by C52's loop and C53's milestone:
+
+```
+TransfusionInsufficient = {
+  component_id:  str
+  outcome:       enum{fail, inconclusive}
+  reason_codes:  List[E-C51-code]
+  verdict:       TransfusionVerdict    -- full detail for human design review
+}
+```
+
+C52 routes this to human design review (README:498); C53 records it as a non-passing milestone event. This is the per-component falsification of bet #4 (G14 made falsifiable, not eliminated — OQ-C51-2 note: the class-level fallback for a whole category failing remains C54's responsibility).
+
 Sweep 1 — interfaces named and described (concrete signatures / scenario schemas deferred to sweep 2).
 
 1. **Transfusion record (inbound declaration).** What a factory-build *declares*: one or more
@@ -137,6 +232,41 @@ the `factory_build` bead (C20 §4.2; D-3) at the **component grain**:
 | `transfusion_license` | per-exemplar license fact + verified? flag (from README:285–306 census) | per (component, exemplar) | AI-CONTEXT:429 "track transfusion source license per component"; G30 |
 | `transfusion_mode` | per-exemplar {code-port \| pattern-reimplement}, derived from license | per (component, exemplar) | AI-CONTEXT:625; G30; **> [FAITHFUL-FILL]** below |
 | `transfusion_verdict` | predicate outcome {pass \| fail \| inconclusive} + the scenario set it was computed over | per factory-built component | README:496,499; G07; **> [FAITHFUL-FILL]** below |
+
+### 4.1 Transfusion-record schema (sweep-2 — concrete field table)
+
+These are C51's **slot requests into C20** (`factory_build` bead extensions; C20 §4.5.3-extended per D-3). Column format matches C20 §4.5: **Field | Type | Req? | Semantics | R/W by**.
+
+#### 4.1.1 `ExemplarRef` — per-exemplar record (one per element of `transfused_from` list)
+
+| Field | Type | Req? | Semantics | R/W by |
+|---|---|---|---|---|
+| `url` | `string` | R | External exemplar URL (verbatim source; README:497 `transfused_from: <url>`). Must be resolvable at the time of first transfusion. | C52 writes at declaration-time; C51 reads at predicate-time; C57 aggregates |
+| `license_spdx` | `string` | R | SPDX license identifier from the README:285–306 census (e.g. `Apache-2.0`, `MIT`, `UNKNOWN`). `UNKNOWN` = unverified. | C57 census authority (OQ-C51-4 RESOLVED below); C52 writes after C57 lookup; C51 reads |
+| `license_verified` | `bool` | R | `true` = the license was confirmed against the census; `false` = unverified/restrictive. | C57 (census); C52 writes; C51 reads |
+| `transfusion_mode` | `enum{code_port, pattern_reimplement}` | R | Permitted mode: `code_port` only if `license_verified=true` AND `license_spdx` in the permissive-allow-list; `pattern_reimplement` otherwise (G30). Fixed **pre-build** by `check_declaration`. | C51 computes (§3.0); C52 records; C28 must respect |
+| `donate_back` | `bool` | O | `true` if `transfusion_mode=code_port` and the license permits upstream donation (AI-CONTEXT:430). Informational; not enforced by C51. | C52 writes; C57 aggregates |
+| `named_behaviors` | `List[str]` | R | Operator-named list of behaviors this exemplar must contribute (the completeness anchor; OQ-C51-1 RESOLVED §3.0.1). Written at C11 intake, carried here by C52. | C11 intake supplies; C52 records; C51 completeness-check reads |
+
+#### 4.1.2 `transfusion_verdict` — per-component predicate outcome
+
+| Field | Type | Req? | Semantics | R/W by |
+|---|---|---|---|---|
+| `outcome` | `enum{pass, fail, inconclusive}` | R | The predicate result from `can_transfuse(...)` (§3.0). | C51 computes; C52 writes to `factory_build` bead; C53 reads |
+| `completeness_result` | `CompletenessResult` (§3.0.1) | R | Behavior-coverage detail (anchor_behaviors, covered_behaviors, uncovered). | C51 computes; C52 writes |
+| `correctness_result` | `CorrectnessResult` (§3.0.2) | R | Satisfaction distribution + bar-met flag. | C51 computes (reads C33 output); C52 writes |
+| `scenario_ids` | `List[ScenarioId]` | R | C30 scenario IDs evaluated in this predicate invocation. | C51 reads from C30; C52 writes |
+| `verdict_time` | `timestamp` | R | When the predicate was evaluated. | C51 sets; C52 writes |
+| `signed` | `bool` | O | Always `false` at Phase-0 (self-asserted; FE-3/D-14 deferred). See §7 / OQ-C51-5 RESOLVED below. | C52 writes `false` |
+
+#### 4.1.3 Extended `factory_build` bead (C20 slot-request — Sweep-2)
+
+The `factory_build` bead (C20 §4.5.3) is extended with the following C51-owned fields (requested as C20 schema slots per D-3):
+
+| Field | Type | Req? | Semantics | R/W by |
+|---|---|---|---|---|
+| `exemplar_set` | `List[ExemplarRef]` | R | The declared exemplars at component grain (§4.1.1). ≥1 required (≥1-exemplar invariant). | C52 writes at declaration-time; C51 reads; C57 license-census aggregates |
+| `transfusion_verdict` | `TransfusionVerdictRecord` | O | The predicate outcome (§4.1.2). Present iff acceptance-time evaluation has run. Absent = pre-evaluation (build in progress). | C51 computes result; C52 writes; C53 reads to gate milestone |
 
 > [FAITHFUL-FILL] **`transfusion_mode` and `transfusion_verdict` are inferred field names.** v4 names
 > `transfused_from` verbatim (README:497) and names license tracking and the code-vs-pattern boundary in
@@ -204,6 +334,49 @@ sweep-2 deliverables per BUILDER-BRIEF altitude.)
 | Empty / missing `transfused_from` | Silent "invention from scratch" violating B55 | Invariant §3: rejected at declaration-time. A factory-built component **must** declare ≥1 exemplar. |
 | License declared but unverified, yet code-ported | Legal exposure (README:292 "Verify before adopting") | License mode is fixed **pre-build** (§5 declaration-time); a code-port from an unverified license is blocked before the agent runs, not caught after. |
 
+### 6.1 Error taxonomy (sweep-2)
+
+These E-codes cover the two C51 gate surfaces — **declaration-time** (pre-build, `check_declaration`) and **acceptance-time** (post-build, `can_transfuse`). Each row: condition | surfaced-as | caller recovery.
+
+| Code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| **E-C51-01** | `exemplar_set` is empty — zero exemplars declared (≥1-exemplar invariant violated; B55) | `DeclarationResult{valid=false, violations=[E-C51-01]}` returned by `check_declaration` | C52 MUST reject the build before agent work begins; operator must supply ≥1 `transfused_from` URL at C11 intake |
+| **E-C51-02** | Exemplar URL present but `license_verified=false` AND declared `transfusion_mode=code_port` — illegal code-port from unverified/restrictive license (G30; README:292) | `DeclarationResult{valid=false, violations=[E-C51-02]}` | C52 MUST reject; operator must either (a) verify the license via C57 + mark `license_verified=true` or (b) switch to `pattern_reimplement` mode |
+| **E-C51-03** | Named-behavior list (`named_behaviors`) is empty for an exemplar — completeness anchor absent (OQ-C51-1 resolved; §3.0.1) | `DeclarationResult{valid=false, violations=[E-C51-03]}` | C52 MUST reject; operator must provide the behavior list at C11 intake before the factory build starts |
+| **E-C51-04** | Completeness check failed: one or more named behaviors have zero covering scenarios in C30 (`uncovered` is non-empty; §3.0.1) | `TransfusionVerdict{outcome=fail, completeness={complete=false}}` + `TransfusionInsufficient{reason_codes=[E-C51-04]}` | C52 routes to human design review (README:498); operator must author additional scenarios in C30 tagged to the uncovered behaviors, then re-invoke acceptance-time evaluation |
+| **E-C51-05** | Satisfaction bar not met: `CorrectnessResult.bar_met=false` — scenarios covered but scores below threshold (§3.0.2) | `TransfusionVerdict{outcome=fail, correctness={bar_met=false}}` + `TransfusionInsufficient{reason_codes=[E-C51-05]}` | C52 routes to human design review; may require component rebuild or bar re-negotiation with C53/C50 (the bar is their policy, not C51's) |
+| **E-C51-06** | Evaluation inconclusive: C31 runner error or C32 judge returned no usable score (not enough data to decide) | `TransfusionVerdict{outcome=inconclusive}` + `TransfusionInsufficient{reason_codes=[E-C51-06]}` | C52 routes to human design review; operator may retry evaluation after diagnosing the runner/judge failure (C31/C32 fault, not a C51 predicate fault) |
+| **E-C51-07** | Exemplar URL unresolvable at declaration-time — the `url` in `ExemplarRef` cannot be fetched/verified | `DeclarationResult{valid=false, violations=[E-C51-07]}` | C52 MUST reject; operator must correct the URL or add a local mirror before declaring the exemplar |
+
+### 6.2 Declaration-to-acceptance sequence diagram (sweep-2)
+
+The protocol C52 runs when self-building a new factory component, showing the two C51 call-points and the downstream record on the `factory_build` bead (C20):
+
+```mermaid
+sequenceDiagram
+    participant C52 as C52 Bootstrap
+    participant C51 as C51 Predicate
+    participant C57 as C57 License Census
+    participant C11 as C11 Intake Record
+    participant C30 as C30 Scenario Store
+    participant C33 as C33 Satisfaction Agg
+    participant C20 as C20 Bead (factory_build)
+
+    C52->>C51: check_declaration(exemplar_set)
+    C51->>C11: fetch named_behaviors per exemplar
+    C51->>C57: resolve license_spdx + license_verified per URL
+    C51-->>C52: DeclarationResult (valid or E-C51-01..03)
+    note over C52: On valid=false emit E-C51-NN and block build
+    C52->>C20: write factory_build bead (status=in_progress, exemplar_set)
+    note over C52,C20: Agent (C28) performs transfusion act here
+    C52->>C51: can_transfuse(exemplar_set, target_spec)
+    C51->>C30: fetch scenarios tagged to named_behaviors
+    C51->>C33: fetch SatisfactionDistribution for scenario_ids
+    C51-->>C52: TransfusionVerdict (pass or fail or inconclusive)
+    C52->>C20: write transfusion_verdict + status=completed
+    note over C52,C20: On fail or inconclusive route to human design review
+```
+
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
 - **Security / license.** The license-mode contract (§3.4) is the factory's **legal-hygiene control**:
@@ -249,9 +422,22 @@ sweep-2 deliverables per BUILDER-BRIEF altitude.)
    Temporal) is **not** flagged for a missing `transfused_from` — only factory-built glue is in scope
    (README:500).
 
-(Concrete scenario-coverage schema, the verdict field shape on the `factory_build` bead, and
-conformance vectors for the license-mode decision table are sweep-2 deliverables, co-frozen with C20
-(fields) and C30/C32/C33 (predicate wiring).)
+### 8.1 Concrete acceptance tests (sweep-2)
+
+Each test is a concrete conformance check against the §3 / §6.1 contracts. Cross-references to E-codes where a failure path is exercised.
+
+| Code | Given / When / Then | Verifies |
+|---|---|---|
+| **AC-C51-01** | **Given** a factory build with `exemplar_set=[]` (empty) / **When** `check_declaration([])` is called / **Then** `DeclarationResult.valid=false` and `violations=[E-C51-01]`; the build is blocked before agent work starts | ≥1-exemplar invariant (B55); **E-C51-01** |
+| **AC-C51-02** | **Given** an exemplar with `license_verified=false` and `transfusion_mode=code_port` / **When** `check_declaration(...)` is called / **Then** `valid=false` and `violations=[E-C51-02]`; Tracker (README:335) is the canonical test instance | License-mode code-port block (G30); **E-C51-02** |
+| **AC-C51-03** | **Given** an exemplar with `named_behaviors=[]` (empty behavior list) / **When** `check_declaration(...)` is called / **Then** `valid=false` and `violations=[E-C51-03]` | Completeness-anchor required (OQ-C51-1 resolved); **E-C51-03** |
+| **AC-C51-04** | **Given** a build that passes declaration / AND C30 has zero scenarios tagged to one of the named behaviors / **When** `can_transfuse(...)` is called / **Then** `outcome=fail`, `completeness.complete=false`, `uncovered` contains the untagged behavior, and `TransfusionInsufficient{reason_codes=[E-C51-04]}` is emitted | Completeness clause (G07); **E-C51-04** |
+| **AC-C51-05** | **Given** all named behaviors covered by ≥1 scenario / AND C33 returns a satisfaction distribution below the bar injected by C53 / **When** `can_transfuse(...)` is called / **Then** `outcome=fail`, `correctness.bar_met=false`, and `TransfusionInsufficient{reason_codes=[E-C51-05]}` is emitted | Correctness clause (G07); bar deferred to C53/C50; **E-C51-05** |
+| **AC-C51-06** | **Given** a build that passes declaration / AND the C31 runner errors out returning no usable score / **When** `can_transfuse(...)` is called / **Then** `outcome=inconclusive` and `TransfusionInsufficient{reason_codes=[E-C51-06]}` is emitted; the build is NOT deployed | Bet-failure non-ship rule (G14); **E-C51-06** |
+| **AC-C51-07** | **Given** a passing predicate (`outcome=pass`) / **When** C52 records the verdict / **Then** the `factory_build` bead's `transfusion_verdict.outcome=pass` and `transfusion_verdict.signed=false` (self-asserted; FE-3/D-14 deferred) | Self-asserted verdict (D-14; OQ-C51-5 resolved) |
+| **AC-C51-08** | **Given** an exemplar with `license_verified=true` and `license_spdx` in the permissive-allow-list / **When** `check_declaration(...)` is called / **Then** `license_modes[url]=code_port` and `donate_back` may be set true | Permissive license allows code-port and donate-back (AI-CONTEXT:430; G30) |
+| **AC-C51-09** | **Given** an adopted upstream substrate dependency (CXDB, Temporal) / **When** the factory checks that component for `transfused_from` / **Then** no E-C51-01 is raised — the external-grounding exclusion applies | A107 exclusion (README:500) |
+| **AC-C51-10** | **Given** a `factory_build` bead with all required `exemplar_set` fields written by C52 / **When** the §16 cold-start step 2 reads `transfused_from` / **Then** the value resolves at the component grain (once per component, not per-trajectory bead) | Component-grain provenance (RC11-01; AI-CONTEXT §16 step 2) |
 
 ## 9. Open questions
 

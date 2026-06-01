@@ -1,7 +1,7 @@
 # C43 — Isolation & lethal-trifecta boundary  (Build Plan, canonical track)
 
 > Source / Spec ref: [C43 spec (canonical)](../spec/C43-isolation-boundary.md)
-> Track: canonical   Status: sweep-1
+> Track: canonical   Status: sweep-2
 
 > **Wrap-up decision (D-20, ADOPTED 2026-05-31; confirms D-18).** C43's split is now **binding, not provisional**: the **boundary-typing / blast-radius half** is a **Phase-2 entry precondition** (a gate before unattended/self-modifying operation); the **twin-isolation half** stays at **Phase 3c** (blocked on C44). The detection-only-Phase-0 alternative is REJECTED. See [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25).
 

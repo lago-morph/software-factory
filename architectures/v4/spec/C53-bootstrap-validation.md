@@ -30,7 +30,13 @@
 > held-out scenario corpus organized `scenarios/<component>/` that C53's scenario-set requirement lands in);
 > F-MODE-COVERAGE F9 (spec overfitting), F47 (Goodhart / visible-metric), F54 (RSI goal-subversion over
 > cycles — the milestone is the first human-reviewed checkpoint on the self-modifying factory).
-> Inventory ID: C53   Kind: artifact   Status: sweep-1
+> Inventory ID: C53   Kind: artifact   Status: sweep-2
+>
+> **Sweep-2 additions (2026-06-01):** `decide()` signature + `GoNoGoInput`/`GoNoGoDecision` schemas; decision-rule shape (OQ-1 RESOLVED); state diagram; `factory_build` bead slot assignment per D-40 (OQ-4 RESOLVED); fail-branch bound structure (OQ-2 RESOLVED shape, values = operator knobs); scenario-set minimum-evidence guideline (OQ-3 RESOLVED); E-code table; AC-code table with E↔AC cross-refs. Binding decisions cited verbatim: **D-15** (holistic satisfaction), **D-40** (status transition on `factory_build`). OQ-1 rule shape is an operator-judgment / morning-review fork — see §3.1 and §9.
+>
+> **D-15 (verbatim):** "Satisfaction is HOLISTIC at Sweep-1 (FE-5 resolution). C33 computes the satisfaction distribution by a graded judge (C32) over C08's existing free-form Definition-of-Done — NOT against enumerated per-criterion DoD."
+>
+> **D-40 (verbatim):** "`factory_build` build-state is a STATUS transition, not a type-flip. … C53 records the go/no-go on the same bead (C53:OQ-4). … C20 owns the `factory_build` schema + the `status` slot; C52 drives the transition; C53 records the go/no-go on the same bead."
 > Track: canonical
 
 ## 1. Purpose & responsibility
@@ -158,6 +164,126 @@ the predicate, C30 on the scenario manifest, and C52 on the design-review record
 | I4 | **Go/no-go decision record** | outbound (data) | The recorded **`go` \| `no-go`** verdict + the **evidence** (C51 predicate verdict, C33 distribution + scenario set + sample count, C52 review record). Written to the `factory_build` bead (C20/C19); read by C54 to arm/withhold Phase 3. | C53 (shape); **C20** (slot), C54 (consumer) |
 | I5 | **Fail-branch escalation contract** | internal (policy) | On **no-go**: **iterate the spec + re-run** (README:519); after a bounded attempt count still failing → **"add more substrate before Phase 3"** (AI-CONTEXT:619). C53 names the branch + the attempt-bound *requirement*; the exact bound + authorizer is operator policy (OQ-2). | C53 (this); C52 (re-run), operator (bound) |
 
+### 3.1 Sweep-2 concrete signature — `decide()` (OQ-1 RESOLVED here)
+
+> **OQ-1 RESOLVED (Sweep-2) — decision-rule SHAPE:** The go/no-go is a **multi-term predicate over C33's `SatisfactionDistribution` statistics**: `p10 ≥ T_tail AND mean ≥ T_central`, evaluated over an N-scenario run. The **SHAPE** — which distributional statistics gate the first self-build go/no-go — is a **genuine operator-judgment / safety fork that MUST be a morning-review item** (see §9 OQ-1). The **threshold VALUES `T_tail`, `T_central`, and the minimum run size `N`** are **operator-policy knobs** in the milestone config (see §3.4 below); C53 does NOT fix any numeric value. Rationale for the shape: a `mean`-only gate can pass while a consistent tail of scenarios systematically fails (Goodhart risk, F47); a `p10`-only gate ignores central tendency; the two-term shape (tail + central) is the smallest multi-term predicate that guards both failure modes with C33's available statistics. Adding `p90` or `std_dev` gates is optional operator policy, not required by the shape.
+>
+> **OPERATOR-JUDGMENT FLAG (OQ-1):** The choice of which statistics gate the FIRST SELF-MODIFICATION go/no-go — the apex point of bet #3 — is an architectural/safety value judgment, not a mechanical engineering choice. A mean-only rule, a p50-only rule, a p10+mean rule, a p10+mean+std_dev rule, and a rate_above_cutline rule all have defensible arguments. The SHAPE selected here (p10+mean) is the recommended engineering default; **the operator MUST review and sign off on this rule shape** as a morning-review item before the milestone is armed. This is the only decision in C53 that crosses from engineering policy into safety/governance territory.
+
+```
+// Primary public surface of C53 — the go/no-go function.
+// All inputs are pre-computed signals; C53 makes no model call (INV-2).
+func decide(
+    input GoNoGoInput,        // the collected evidence bundle (see GoNoGoInput below)
+    cfg   MilestoneConfig,    // operator-policy config — bar values, attempt bound (see §3.4)
+) (GoNoGoDecision, error)
+
+// GoNoGoInput — the evidence bundle C53 reads from upstream signals.
+// All fields are required; missing any → E-C53-02 (insufficient-evidence).
+type GoNoGoInput struct {
+    // From C51 (transfusion-correctness predicate verdict)
+    TransfusionVerdict    string    // "pass" | "fail" | "inconclusive" — C51's predicate outcome
+    TransfusionRef        string    // bead_id of the C51 predicate-verdict record (for evidence bundle)
+
+    // From C33 (satisfaction distribution over bootstrap scenario run)
+    Distribution          SatisfactionDistribution // C33's struct: {n, mean, p10, p50, p90, std_dev, rate_above_cutline?}
+    DistributionBead      string    // bead_id of the C33 satisfaction_metric bead (for evidence bundle)
+    ScenarioSetID         string    // identifier of the bootstrap scenario set (I2/INV-3)
+    ScenarioSetPath       string    // path in C30 corpus: scenarios/<component>/ — must be non-empty (INV-3)
+
+    // From C52 (human design-review record)
+    ReviewVerdict         string    // "approve" | "reject" — C52 design-review outcome
+    ReviewRef             string    // bead_id of the C52 review record (for evidence bundle)
+
+    // Context
+    AttemptNo             int       // which attempt this evaluation is for the same component (1-based)
+    ComponentID           string    // the factory-built component being evaluated
+}
+
+// GoNoGoDecision — the output recorded on the factory_build bead (D-40).
+type GoNoGoDecision struct {
+    Verdict               string    // "go" | "no_go"
+    Reason                string    // human-readable reason (which rubric term failed, or "all terms met")
+    FailedTerms           []string  // e.g. ["c33_distribution", "scenario_set_absent"]; empty on go
+
+    // Evidence bundle (INV-4 — must be present on every recorded verdict)
+    EvidenceTransfusionRef  string  // echoes GoNoGoInput.TransfusionRef
+    EvidenceDistributionBead string // echoes GoNoGoInput.DistributionBead
+    EvidenceN               int     // echoes Distribution.n (sample-honesty)
+    EvidenceScenarioSetID   string  // echoes GoNoGoInput.ScenarioSetID
+    EvidenceReviewRef       string  // echoes GoNoGoInput.ReviewRef
+
+    // Fail-branch context (populated on no_go)
+    AttemptNo               int     // echoes GoNoGoInput.AttemptNo
+    AttemptBoundReached     bool    // true if AttemptNo >= cfg.MaxAttempts — triggers add-substrate escalation
+    EscalationRequired      bool    // true if AttemptBoundReached → operator must authorize next step
+
+    // Timestamps
+    DecidedAt               string  // ISO-8601 UTC
+}
+
+// SatisfactionDistribution — C33's schema (C33 §3.4 — canonical; C53 reads, does not own)
+// Field names match C33 §3.4 exactly.  R/W-by: W: C33; R: C53 (and C46, C55, C50)
+type SatisfactionDistribution struct {
+    N                    int      // sample count (required; INV-3 size check)
+    Mean                 float64  // arithmetic mean of satisfaction_score ∈ [0.0, 1.0]
+    P10                  float64  // 10th percentile (tail — the T_tail gate term)
+    P50                  float64  // median
+    P90                  float64  // 90th percentile
+    StdDev               float64  // standard deviation
+    RateAboveCutline     *float64 // optional — present only if C33 was given a report_cutline
+}
+```
+
+### 3.2 Milestone decision-rule predicate (I3 — bar applied here)
+
+The rubric (I1) is a **conjunction** of three terms evaluated in order; the first false term short-circuits to `no_go`:
+
+```
+go  iff  ScenarioSetPresent(input)                              // Term 0: precondition (INV-3)
+     AND TransfusionVerdict == "pass"                           // Term 1: C51 completeness
+     AND C33SatisfactionMeetsBar(input.Distribution, cfg)       // Term 2: C33 correctness (I3)
+     AND ReviewVerdict == "approve"                             // Term 3: C52 human gate
+```
+
+**Term 2 expanded — the milestone satisfaction bar (operator-policy knobs, not fixed values):**
+
+```
+C33SatisfactionMeetsBar(d SatisfactionDistribution, cfg MilestoneConfig) bool {
+    if d.N < cfg.MinScenarios { return false }          // OQ-3 guideline: N < MinScenarios → insufficient evidence
+    return d.P10  >= cfg.TailThreshold                  // T_tail: tail gate — no consistent low tail
+        && d.Mean >= cfg.CentralThreshold               // T_central: central-tendency gate
+}
+```
+
+**MilestoneConfig — operator-policy knobs (all values configurable; none fixed by C53):**
+
+### 3.3 Config surface (pack TOML — I5 / C03 model)
+
+| Key | Type | Req | Default | Semantics | R/W-by |
+|---|---|---|---|---|---|
+| `tail_threshold` | float | yes | — | Operator-set value for `T_tail` (p10 gate). Value is operator policy. | W: operator/C03; R: C53 |
+| `central_threshold` | float | yes | — | Operator-set value for `T_central` (mean gate). Value is operator policy. | W: operator/C03; R: C53 |
+| `min_scenarios` | int | yes | — | Minimum N below which the distribution is rejected as insufficient evidence (OQ-3). Value is operator policy. | W: operator/C03; R: C53 |
+| `max_attempts` | int | yes | — | Attempt bound for the fail branch before "add substrate" escalation (OQ-2). Value is operator policy. | W: operator/C03; R: C53 |
+| `require_review_approve` | bool | no | `true` | Whether the C52 review-approve term is required (always true at Phase-2; relaxable post-P12). | W: operator/C03; R: C53 |
+
+### 3.4 Go/no-go decision slot on `factory_build` bead (D-40 / OQ-4 RESOLVED)
+
+> **D-40 (verbatim):** "`factory_build` build-state is a STATUS transition, not a type-flip. … C53 records the go/no-go on the same bead. Applied: C20 (factory_build lifecycle + status slot), C52 (build-state advance), C53 (go/no-go record). Resolves XC-2 + C20:OQ-3 + C52:OQ3."
+
+**OQ-4 RESOLVED (Sweep-2):** Who records what on the `factory_build` bead — one bead, three writers, one per build:
+
+| Slot owner | Field on `factory_build` bead | Written when | Written by |
+|---|---|---|---|
+| **C51** | `transfusion_verdict` + `transfusion_ref` | transfusion-predicate evaluated | C51 |
+| **C52** | `review_verdict` + `review_ref` + `status` transition (`in_progress → completed`) | human design review completes | C52 |
+| **C53** | `milestone_verdict` (`"go"` or `"no_go"`) + `milestone_evidence` (GoNoGoDecision evidence bundle) + `milestone_decided_at` | milestone `decide()` called | C53 |
+
+This is one bead, three sequential append-writes (C51, then C52, then C53). Grain = one decision per first-component build. The `factory_build` bead schema is **C20's** (C20 §4.5.3 + the new C53 fields, registered as a C20 schema-slot request — see §9 NEW SEAM).
+
+**NEW SEAM (→ orchestrator ledger):** C53 requests three new fields on C20's `factory_build` bead: `milestone_verdict`, `milestone_evidence` (JSON-blob of GoNoGoDecision), and `milestone_decided_at`. C20 must accept this schema-slot request and bump the bead-type version (C22 I2).
+
 **Invariants C53 must uphold:**
 - **INV-1 (falsifiable, not "looks good" — G23).** The milestone verdict is computed from **named evidence**
   (C51 predicate + C33 distribution over a **named scenario set** + C52 review), never from an unanchored
@@ -250,6 +376,33 @@ to read C51's predicate verdict, C33's distribution, C30's scenario set, and C52
 build's evidence; each evaluation records its own decision (INV-4), so the attempt history (and the
 attempt-bound check, I5) is reconstructable. C53 itself owns no source-of-truth — re-reading current
 signals reproduces the verdict.
+
+### 5.1 Lifecycle state diagram (Sweep-2)
+
+The state machine below covers the go/no-go decision flow for the bootstrap-validation milestone.
+C53 drives transitions; C52 drives the build loop on the left; C54 consumes on the right.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Evaluating : decide() called with evidence bundle
+
+    Evaluating --> Go : all rubric terms met (p10 >= T_tail AND mean >= T_central AND C51 pass AND C52 approve)
+    Evaluating --> NoGo : any rubric term fails
+
+    Go --> Deployed : Phase-3 transition armed via C54
+    Deployed --> [*]
+
+    NoGo --> FailBranch : attempt_no < max_attempts
+    NoGo --> AddSubstrate : attempt_no >= max_attempts
+
+    FailBranch --> Evaluating : spec iterated and factory re-run by C52
+    AddSubstrate --> [*] : operator authorizes; Phase 3 withheld until substrate work complete
+```
+
+Note: `Go` and `NoGo` are decision outcomes of a single `decide()` invocation. `FailBranch` initiates
+the C52 re-run loop. `AddSubstrate` is the escalation terminal when the attempt bound is exhausted.
+All transitions record a `GoNoGoDecision` on the `factory_build` bead (D-40). The diagram has no `;`
+characters inside transition labels — validated per SWEEP2-DISPATCH Mermaid hazard note.
 
 > The exact rubric grammar, the decision-record schema, the canonical scenario-set manifest, the **bar
 > value + decision rule** (point estimate vs distribution-shape condition), and the **attempt bound** are

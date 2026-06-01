@@ -35,7 +35,7 @@
 > OS-level enforcement = hardening; we trust process boundaries Gas City gives"), **C41-07 DROP**
 > (`boundary_class` tag — "Defensive labeling; we don't have twins yet"), and **C42-06 DROP** ("No OPA in
 > scope").
-> Inventory ID: C43   Kind: cross-cutting   Status: sweep-1
+> Inventory ID: C43   Kind: cross-cutting   Status: sweep-2
 > Track: canonical
 
 ## 1. Purpose & responsibility
@@ -169,9 +169,7 @@ strength of C43's typing + C44's twins, so until C43 (and C44) land, those statu
 
 ## 3. Interfaces / contracts
 
-Sweep 1 — interfaces **named and described**; the concrete boundary-type enum encoding, the per-pack
-production-scissors declaration grammar, the twin-route binding format, and the C57/C45 feed schemas are
-sweep-2 deliverables.
+Sweep 1 — interfaces named and described. Sweep 2 — concrete boundary-type schema, scissors declaration grammar, E-codes, AC-codes, and state/sequence diagrams added in §3.1–§3.5 below.
 
 1. **Boundary-typing contract (the P4 keep).** The closed set of **boundary types** —
    **`twin` | `isolated` | `production`** — that an external-interaction surface (Bash target / network
@@ -197,6 +195,146 @@ sweep-2 deliverables.
    before twins land (Phase 0→3b) the typing is a declaration without a twin to route to, so the
    blast-radius bound is *aspirational until C44 ships* (XC-8). This is routing/observability, not a custom
    enforcement engine.
+
+### 3.1 Blast-radius typing schema — field table (Sweep-2)
+
+The **SurfaceTypingRecord** is the unit C45 verifies usage against and C57 records as the F12/F44/F56 mechanism. One record per declared external-interaction surface. Columns follow the C20 convention: **Field | Type | Req? | Semantics | R/W by**.
+
+| Field | Type | Req? | Semantics | R/W by |
+|---|---|---|---|---|
+| `surface_id` | `string` | R | Stable identifier for the surface (e.g. `"github-api"`, `"s3-prod"`, `"db-replica"`). Scoped to the pack that declares it; globally unique within a city config as `"<pack_id>/<surface_id>"`. | Pack author writes in `pack.toml`; C45/C57 read |
+| `surface_kind` | `enum{bash, network, filesystem}` | R | Which tool surface this entry types. `bash` = a Bash invocation targeting an external system; `network` = an HTTP/TCP egress endpoint; `filesystem` = a path on an *external* system's filesystem (distinct from the run-worktree, which is `isolated` by definition). | Pack author writes; C28 (agent loop) resolves at interaction time |
+| `boundary_type` | `enum{twin, isolated, production}` | R | The deterministic boundary type for this surface (§4.1). Assigned by a deterministic classification rule (§3.2), never by LLM judgment (F51). `production` requires `production_scissors = true`; absence of scissors → `twin` by default (F44). | C43 classification rule assigns; C45 verifies; C57 records |
+| `twin_id` | `string` | O | When `boundary_type = twin`: the C44 twin identifier this surface routes to (the twin-route binding, §3.3). Required iff `boundary_type = twin` AND C44 twins are deployed (Phase 3c+); omittable during Phase 0→3b aspirational window (G31 caveat). | C44 author writes; C43 routing reads; C45 verifies |
+| `production_scissors` | `bool` | R | `true` iff the pack has explicitly opted this surface into `production` reach (the F44 per-pack opt-in, §3.2). Default `false`. A surface with `production_scissors = false` and `boundary_type = production` is a config error (E-C43-02). | Pack author writes (explicit opt-in); C43 validation reads |
+| `target_ref` | `string` | O | Human-readable description of the target (URL pattern, path glob, command pattern). Not used for enforcement — for observability and C57 audit only. [needs G11 verification] | Pack author writes; C57 reads |
+| `phase_gate` | `string` | O | The earliest phase at which this surface typing is active (e.g. `"P2"`, `"P3c"`). Lets C57 distinguish realized-now from aspirational-until-phase. | C43 writes (inferred from C44 status); C57 reads |
+
+> [FAITHFUL-FILL] **`surface_kind` = `{bash, network, filesystem}` is the minimal faithful set** matching v4's "Bash/network/filesystem access" naming (F12/F44/F56; README §security posture per surface, §3.4 above). A `filesystem` entry types an *external system's* filesystem path; the run-worktree path (the `isolated` scope C42/C04 provides) is not a `SurfaceTypingRecord` entry — it is the background default (see §4.1 `isolated` note).
+
+### 3.2 Deterministic classification rule (Sweep-2)
+
+The boundary type is assigned by the following deterministic rule at config-load time. **No LLM judgment may participate in this path** (F51 primary-guard invariant):
+
+```
+classify(surface) -> BoundaryType:
+  if surface.production_scissors == true:
+    return production
+  # No scissors declaration → twin by default (F44)
+  # (If no C44 twin is deployed yet, the result is still "twin" — the G31
+  #  aspirational-until-C44 caveat; the type is the intent, not the realized route.)
+  return twin
+
+# Special case: surfaces that are structurally within C42/C04 worktree scope
+# (e.g. run-worktree paths that do not cross to an external system's filesystem)
+# are not SurfaceTypingRecord entries at all — they are isolated by construction.
+# A SurfaceTypingRecord is only authored for surfaces that CAN reach external state.
+```
+
+This rule has **two invariants** the config validator MUST enforce:
+1. `production_scissors = true` → `boundary_type = production` (and only then).
+2. `boundary_type = production` AND `production_scissors != true` → config error **E-C43-02**.
+
+**OQ-C43-1 posture (prevent-required, watcher DEFERRED):**
+
+> "The operator re-adopts D-20 as **conditional on prevention**: unattended operation (P2) and self-modification (P3b) require the substrate to **BLOCK (prevent at the tool-call/process boundary)** — not merely detect — out-of-boundary access on the relevant blast-radius face. **Discharge:** if Gas City does not prevent natively (per the D-23 spike), an **enforcement watcher that blocks WILL be added** — sanctioned in principle; its **design is DEFERRED until the spike confirms the substrate does not already prevent**."
+> — review-log **D-30** (ADOPTED 2026-06-01)
+
+Therefore: the classification rule above specifies the *required* outcome (what must be blocked). **Whether the pack/`gc` loader achieves this by native rejection or a blocking watcher is the D-23 spike question (OQ-C43-1).** The spec states the required behavior; the enforcement mechanism is spike-gated. Until the spike resolves it, C43's typing is a *declaration* — and unattended operation (P2/P3b) is **blocked at human-in-the-loop** (D-30). **DO NOT design the watcher here** (D-30 deferred; AGENTS-MD-bf4431be57).
+
+### 3.3 `isolated` type — label over C42/C04 scope (Sweep-2)
+
+**OQ-C43-3 RESOLVED (Sweep-2):** `isolated` is a **label C43 puts on the C42/C04 worktree/process boundary** — it is **not** a distinct C43 sandbox or OS jail. This resolves the OQ by accepting the minimal faithful reading (no new mechanism; the bar would drop a new sandbox, C04-05).
+
+The `isolated` type applies when:
+- The surface is within the **run-scoped worktree** C04/C42 provides (a filesystem path under the session's worktree — Gas City worktree isolation, F17).
+- **No external system** is reachable from that path (the path does not cross a `production`-typed or `twin`-typed boundary).
+
+Because `isolated` surfaces are *definitionally within the C42/C04 boundary*, they **do not appear as `SurfaceTypingRecord` entries** in `pack.toml`. They are the *background default* for intra-worktree/intra-partition access — any Bash/fs interaction that stays within the run-worktree is `isolated` without declaration. The `SurfaceTypingRecord` is only authored for interactions that *can* reach beyond the worktree to an external system.
+
+**Mechanically:** `isolated` = the process/network/fs boundary C04 establishes at session spawn + C42's partition confinement. C43 names the type; C04/C42 provide the boundary; **no new C43 mechanism** (C04-05 dropped).
+
+> [FAITHFUL-FILL] **`isolated` as a label is the smallest faithful form of the third boundary type.** v4 names only `twin`/`production` explicitly via F44, but F56 ("twins isolate the agent from production entirely") implies a third posture — what happens when there is no twin and no production reach, just the agent's own working environment. The minimal consistent choice is that this is the C42/C04 worktree scope, given the label `isolated` for the type system's completeness. Confirmed: `isolated` is NOT a distinct sandbox (that would be the C04-05 drop and an over-build).
+
+### 3.4 Production-scissors declaration grammar (Sweep-2)
+
+**OQ-C43-4 RESOLVED (Sweep-2):** The scissors declaration lives in **`pack.toml`** (per-pack config, C02/C03) under a `[[surface]]` array-of-tables, **not** in a dropped capability-grant engine (C02-04 dropped) and **not** in a new C43 store.
+
+```toml
+# pack.toml — production-scissors declaration grammar (per-pack, C02/C03 attach point)
+
+[[surface]]
+surface_id         = "github-api"          # unique within this pack
+surface_kind       = "network"             # bash | network | filesystem
+production_scissors = false                # false → twin by default (F44 default)
+target_ref         = "https://api.github.com/*"   # observability only
+
+[[surface]]
+surface_id         = "s3-prod-bucket"
+surface_kind       = "network"
+production_scissors = true                 # explicit opt-in to production reach
+target_ref         = "s3://my-prod-bucket/*"
+```
+
+The scissors opt-in is valid **only when `production_scissors = true` is authored explicitly** by a human in the pack config and passes through git review (C02/C03). An LLM-written or runtime-generated `production_scissors = true` is an **E-C43-04** violation (the deterministic-typing invariant: the type is assigned by a static rule over a human-authored config, not by an agent at runtime).
+
+**City-level override (not per-pack scissors):** A `city.toml` may define a `[surface_policy]` block that sets city-wide defaults (e.g. force all surfaces `twin` regardless of pack declarations — useful as a blanket city-level safe mode). City-level policy **always overrides** pack-level scissors. [needs G11 verification — `city.toml` surface policy key is `needs-pinned-gc-run`]
+
+**Invariants enforced at config-load:**
+- `production_scissors` field MUST be present and boolean in every `[[surface]]` block (E-C43-01 if absent).
+- `production_scissors = true` without a human-committed config entry is a runtime config injection → E-C43-04.
+- A `[[surface]]` block with `surface_kind` outside `{bash, network, filesystem}` → E-C43-05.
+
+### 3.5 Twin-route binding contract (Sweep-2)
+
+`twin`-typed surfaces bind to a C44 twin via the `twin_id` field in `SurfaceTypingRecord` (§3.1). The binding is:
+
+```
+TwinRouteBinding {
+  surface_id:    string          // from SurfaceTypingRecord
+  twin_id:       string          // C44 twin identifier (e.g. "twin:github-api:v1")
+  phase_active:  string          // earliest phase this binding is live (e.g. "P3c")
+}
+```
+
+C45 reads `TwinRouteBinding` to verify that an agent interaction claiming to target `surface_id` actually routes to `twin_id` and not to the real endpoint. Until C44 twins exist (Phase 0→3b, G31 caveat), `twin_id` is a *declared intent* — the `phase_active` field records when the route becomes realized. C57 reads `phase_active` to distinguish the realized bound from the aspirational bound.
+
+### 3.6 E-code table (Sweep-2)
+
+E-codes are component-scoped. `surfaced-as` is the error signal a config validator or runtime check emits; `caller recovery` states what the pack author or orchestrator must do.
+
+| Code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| **E-C43-01** | `[[surface]]` block missing the required `production_scissors` field | Config-load error: `"surface '<id>': production_scissors field is required (bool)"` | Pack author: add `production_scissors = false` (or `true` with justification) to the block; re-submit config |
+| **E-C43-02** | `boundary_type = production` AND `production_scissors != true` — constraint violated (§3.2 invariant 2) | Config-load error: `"surface '<id>': boundary_type production requires production_scissors = true"` | Pack author: either add `production_scissors = true` (explicit opt-in) or correct the boundary intent to `twin`; re-submit |
+| **E-C43-03** | `production_scissors = true` present but no `surface_id` — anonymous scissors declaration | Config-load error: `"surface block: surface_id is required"` | Pack author: assign a stable `surface_id` and re-submit |
+| **E-C43-04** | `production_scissors = true` injected at runtime (not present in a human-committed pack config — detected by config provenance check) | Runtime error: `"surface '<id>': production_scissors = true may only be set in a human-committed pack config; runtime injection is forbidden"` | Orchestrator: reject the config update; flag as deterministic-typing violation (F51 breach); human review required before any production-typed surface is activated |
+| **E-C43-05** | `surface_kind` outside `{bash, network, filesystem}` | Config-load error: `"surface '<id>': surface_kind '<value>' is not in {bash, network, filesystem}"` | Pack author: correct `surface_kind` to a valid enum value and re-submit |
+| **E-C43-06** | `boundary_type = twin` AND `twin_id` absent in Phase 3c+ (twins deployed — the binding is required) | Config-load warning (Phase 0→3b) / error (Phase 3c+): `"surface '<id>': boundary_type twin requires twin_id once C44 twins are deployed"` | Pack author (Phase 3c+): add the C44-assigned `twin_id`; C44 provides the identifier when the twin is registered |
+| **E-C43-07** | City-level `[surface_policy]` override sets an invalid policy value [needs G11 verification] | Config-load error: `"city surface_policy: unknown policy value '<v>'"` | City operator: correct the `[surface_policy]` block to a supported value; [needs G11 verification on supported values] |
+
+> [FAITHFUL-FILL] **E-C43-04 (runtime config injection) is a critical invariant guard.** The deterministic-typing invariant (F51 "boundary typing as primary guard") is *only* Ashby-sufficient if the boundary type is assigned by a rule over a human-authored config — not by an agent at runtime. Detecting a `production_scissors = true` that was not in the human-committed config (e.g. injected via a tool call writing pack.toml mid-run) is the faithful minimal guard for this invariant. The detection mechanism (file provenance / git-committed check) is substrate-dependent [needs G11 verification].
+
+### 3.7 AC-code table (Sweep-2)
+
+AC-codes are component-scoped. Each AC that exercises a failure path cross-references the E-code it asserts (E↔AC cross-ref).
+
+| Code | Given / When / Then | Verifies |
+|---|---|---|
+| **AC-C43-01** | GIVEN a `pack.toml` with a `[[surface]]` block where `production_scissors = false` (or field absent) / WHEN the config is loaded / THEN the surface's `boundary_type` is `twin` (not `production`); no error for the no-scissors case | Twin-by-default invariant (F44); **asserts E-C43-01** for the missing-field sub-case |
+| **AC-C43-02** | GIVEN a `pack.toml` with `production_scissors = true` on surface "S" / WHEN the config is loaded / THEN surface "S" has `boundary_type = production`; all other surfaces without scissors remain `twin` | Production-scissors explicit opt-in (F44); rule correctness |
+| **AC-C43-03** | GIVEN a `[[surface]]` block with `boundary_type = production` and `production_scissors = false` / WHEN the config is loaded / THEN a config-load error is raised **E-C43-02**; the factory refuses to proceed | Invariant 2 (§3.2); **asserts E-C43-02** |
+| **AC-C43-04** | GIVEN a `[[surface]]` block with `surface_kind = "rpc"` (outside the closed set) / WHEN the config is loaded / THEN a config-load error **E-C43-05** is raised | Closed surface-kind enum (§3.1); **asserts E-C43-05** |
+| **AC-C43-05** | GIVEN a `[[surface]]` block missing `production_scissors` entirely / WHEN the config is loaded / THEN a config-load error **E-C43-01** is raised | Required-field invariant (§3.4); **asserts E-C43-01** |
+| **AC-C43-06** | GIVEN an agent tool call targeting a surface with `boundary_type = twin` / WHEN Phase 3c+ and a `twin_id` is registered / THEN the interaction routes to the C44 twin, not the real endpoint | Twin-route binding (§3.5); blast-radius bound (D-13) |
+| **AC-C43-07** | GIVEN an agent tool call targeting a surface with `boundary_type = production` / WHEN no `production_scissors = true` is in the committed config / THEN the call is blocked (prevent) or flagged (detect) depending on enforcement-strength (OQ-C43-1); NOT silently routed to production | Blast-radius bound (D-13); prevent/detect posture (D-30) |
+| **AC-C43-08** | GIVEN a runtime write of `production_scissors = true` to pack.toml (not in a human-committed config) / WHEN the config provenance check runs / THEN error **E-C43-04** is raised; the change is rejected | Deterministic-typing invariant (F51); **asserts E-C43-04** |
+| **AC-C43-09** | GIVEN a `[[surface]]` block with `boundary_type = twin` and no `twin_id` during Phase 0→3b / WHEN the config is loaded / THEN a warning is emitted (not a hard error) and `phase_gate` is recorded as aspirational | G31 residual-exposure caveat (XC-8); **asserts E-C43-06** (warning variant) |
+| **AC-C43-10** | GIVEN a complete city config with `[surface_policy]` overriding all surfaces to `twin` / WHEN any pack's `production_scissors = true` declaration is also present / THEN the city-level override wins; no surface is `production`-typed | City-level override precedence (§3.4) |
+| **AC-C43-11** | GIVEN the C57 residual register / WHEN the G31 exposure window is active (Phase 0→3b, C44 twins not yet deployed) / THEN the register contains the G31 caveat with `phase_gate = "P3c"` and the "Addressed on paper" annotation | G31 residual feed to C57; XC-8 discoverability (§8 AC 6) |
+| **AC-C43-12** | GIVEN an intra-worktree filesystem access (path within the session worktree, per C04/C42) / WHEN a tool call is made / THEN no `SurfaceTypingRecord` is required; the surface is `isolated` by construction | `isolated` = C42/C04 label (§3.3); OQ-C43-3 RESOLVED |
+
+**E↔AC cross-reference summary:** E-C43-01 → AC-C43-01, AC-C43-05 | E-C43-02 → AC-C43-03 | E-C43-04 → AC-C43-08 | E-C43-05 → AC-C43-04 | E-C43-06 → AC-C43-09 | (E-C43-03, E-C43-07 exercised by integration-level config tests, not unit AC-codes).
 
 **Invariants**
 - **Twin-by-default (load-bearing).** An external-dependency surface with **no explicit production-scissors
@@ -308,8 +446,77 @@ C43 has no control loop; its behavior is **definitional** and **config-load / in
 - **Publish-time (to C57 / C45)**: C43 exposes the boundary-type assignments + scissors declarations + the
   G31 residual caveat to C45 (usage verification) and C57 (residual-risk register).
 
-(Sequence/state diagrams for config-load typing and interaction-routing are deferred to sweep 2 per
-BUILDER-BRIEF altitude.)
+### 5.1 State diagram — prevent-required/detect-until-spike posture (Sweep-2)
+
+The diagram below models the lifecycle of the boundary-typing fence from the D-30 requirement through the D-23 spike resolution. It is the load-bearing Sweep-2 artifact for the "prevent-required, enforcement-mechanism DEFERRED" posture.
+
+> **Mermaid note:** no `;`, `--`, `()`, `=`, or `#` in transition labels (SWEEP2-DISPATCH hazard rule). Labels use commas and plain words.
+
+```mermaid
+stateDiagram-v2
+    [*] --> TypedDeclaration : pack config loaded, surface classified deterministically
+
+    TypedDeclaration --> PreventGateOpen : surface_type=production AND scissors=true
+    TypedDeclaration --> TwinRouted : surface_type=twin AND C44 twin deployed
+    TypedDeclaration --> Aspirational : surface_type=twin AND C44 twin NOT yet deployed (Phase 0 to 3b)
+    TypedDeclaration --> IsolatedByConstruction : surface within worktree scope, isolated label
+
+    PreventGateOpen --> BlockedBySubstrate : D-23 spike confirms gc PREVENTS natively
+    PreventGateOpen --> BlockedByWatcher : D-23 spike shows detect-only, watcher added
+    PreventGateOpen --> HumanGated : spike not yet run, unattended run is BLOCKED pending D-30 discharge
+
+    HumanGated --> BlockedBySubstrate : spike resolves, native prevention confirmed
+    HumanGated --> BlockedByWatcher : spike resolves, watcher designed and deployed
+
+    BlockedBySubstrate --> ProductionReach : agent call allowed through, production reached
+    BlockedByWatcher --> ProductionReach : agent call allowed through, watcher approved
+    ProductionReach --> [*]
+
+    TwinRouted --> TwinInteraction : agent call routes to C44 twin
+    TwinInteraction --> [*]
+
+    Aspirational --> G31Residual : no twin available, blast-radius bound is a declaration
+    G31Residual --> [*] : C57 records aspirational status
+
+    IsolatedByConstruction --> [*]
+```
+
+**State notes:**
+- `HumanGated` is the operative state for unattended (P2) and self-modification (P3b) runs **until** the D-23 spike resolves enforcement strength (D-30: "until prevention is established, unattended operation is blocked").
+- `BlockedBySubstrate` and `BlockedByWatcher` are the two possible discharge paths — native Gas City prevention OR the sanctioned blocking watcher. **DO NOT design the watcher here** (D-30 deferred).
+- `Aspirational` covers the G31 exposure window (Phase 0→3b, C44 twins unbuilt); the bound is a *declaration*, not a realized control.
+- The `isolated` label (IsolatedByConstruction) applies without any SurfaceTypingRecord — it is the background default for intra-worktree interactions.
+
+### 5.2 Sequence diagram — config-load surface classification (Sweep-2)
+
+```mermaid
+sequenceDiagram
+    participant PackAuthor as Pack Author
+    participant Loader as Config Loader (C02/C03)
+    participant C43 as C43 Classifier
+    participant C44Reg as C44 Twin Registry
+    participant C57 as C57 Residual Register
+
+    PackAuthor->>Loader: commit pack.toml with [[surface]] blocks
+    Loader->>C43: classify each surface (deterministic rule, §3.2)
+    C43->>C43: if production_scissors=false then type=twin else type=production
+    alt production_scissors missing
+        C43-->>Loader: E-C43-01 (missing field)
+    else boundary_type=production AND production_scissors!=true
+        C43-->>Loader: E-C43-02 (constraint violated)
+    else surface_kind invalid
+        C43-->>Loader: E-C43-05 (unknown kind)
+    else valid
+        C43->>C44Reg: lookup twin_id for twin-typed surface
+        alt C44 twin deployed (Phase 3c+)
+            C44Reg-->>C43: twin_id resolved
+        else Phase 0 to 3b, no twin
+            C43->>C57: record G31 aspirational caveat, phase_gate=P3c
+        end
+        C43-->>Loader: SurfaceTypingRecord (classified)
+    end
+    Loader-->>PackAuthor: config accepted or error returned
+```
 
 ## 6. Failure modes & handling
 
@@ -378,43 +585,17 @@ BUILDER-BRIEF altitude.)
 
 ## 8. Acceptance criteria & test strategy
 
-1. **Twin-by-default invariant holds (F44/F56)**: an external-dependency surface with **no** explicit
-   per-pack production-scissors declaration is **`twin`**-typed and routes to a C44 twin; a surface
-   defaulted to `production` is an **invalid configuration**. Reaching real production requires an explicit
-   per-pack scissors declaration. *(Whether the pack/`gc` loader actively rejects or merely
-   permits-with-review is OQ-C43-1 / G31, gated on G11-class `gc` availability; the test asserts the
-   *policy*.)*
-2. **Deterministic typing (F51/F33)**: a surface's boundary type is assigned by a **deterministic rule**
-   over the target; a boundary type assigned by an LLM/agent decision is an **invalid (Ashby-deficient)
-   configuration**. The deterministic typing is the primary guard; the LLM-judge (C32) is explicitly the
-   secondary layer.
-3. **Blast-radius bound (D-13)**: an agent with broad Bash/network/fs tool access reaches, by default, only
-   `twin`/`isolated` surfaces; a `production` surface is reachable **only** through a declared scissors. The
-   bound is the *distinct* boundary from C34's holdout audit and C42's partition (the test records the D-13
-   split).
-4. **Security posture stated per surface (Bash/network/fs)**: the default posture is documented per tool
-   surface — Bash → twinned/isolated; network → twin-routed egress (no default production reach); filesystem
-   → run-worktree/partition-scoped (C42/C04), external production fs behind scissors — with the **enforcement
-   substrate** identified as C04/C42 + C44 (not a C43-built mechanism).
-5. **Twin-route + scissors feed present (C44/C45/C57 seam)**: C43 publishes the boundary-type assignments +
-   per-pack scissors declarations so **C44** twins bind to `twin`-typed surfaces, **C45** verifies usage
-   against the declared typing, and **C57** records the F12/F44/F56 mechanism. The feed exists; the realized
-   bound is gated on C44 (the test records this, G31).
-6. **G31 residual-exposure caveat is discoverable (XC-8)**: downstream consumers (C57, C56, C39) can
-   discover that the lethal-trifecta bound is **aspirational until C44 twins land** (Phase 0→3b exposure
-   window), so the "Addressed" status is never lifted without the caveat.
-7. **No enforcement-engine / OS-jail / OPA / tag over-build (bar)**: C43 contains **no capability-grant
-   engine** (C02-04), **no spawn-time OS sandbox/seccomp/namespace jail** (C04-05 — relies on Gas City
-   process boundaries), **no OPA/Rego** (C42-06), and **no `boundary_class` defensive tag machinery**
-   (C41-07). Enforcement is the stack's (C04/C42 + C44); C43 types + routes.
-8. **G35 blast-radius half handled, drift half routed (faithful)**: C43's bound caps the blast radius of an
-   L4/L5 autonomous agent; the objective-drift / fix-ship-authorization half of G35 is documented as
-   **C39 + C56 + C35**'s, not C43's. **G37 secrets** is documented as **C03/G37** (deferred, D-14), not a
-   C43-built layer.
+**Sweep-2 note:** formal AC-codes live in **§3.7** (AC-C43-01 through AC-C43-12) with E↔AC cross-refs. The high-level acceptance criteria below map to those codes.
 
-(Concrete boundary-type enum encoding, the per-pack scissors declaration grammar, the twin-route binding
-format, the C45/C57 feed schemas, and the deterministic-typing classification rule are sweep-2 deliverables
-— and the twin behavior the `twin` type routes to is C44's, not C43's default build.)
+1. **Twin-by-default invariant holds (F44/F56)** → **AC-C43-01, AC-C43-02**: an external-dependency surface with **no** explicit per-pack production-scissors declaration is **`twin`**-typed and routes to a C44 twin; a surface defaulted to `production` is an **invalid configuration** (AC-C43-03 / **E-C43-02**). *(Whether the pack/`gc` loader actively rejects or merely permits-with-review is OQ-C43-1 / G31, gated on G11-class `gc` availability; the test asserts the *policy*.)*
+2. **Deterministic typing (F51/F33)** → **AC-C43-08** (**E-C43-04**): a surface's boundary type is assigned by a **deterministic rule** over the target; a boundary type injected by an LLM/agent at runtime is an **invalid (Ashby-deficient)** configuration. The deterministic typing is the primary guard; the LLM-judge (C32) is explicitly the secondary layer.
+3. **Blast-radius bound (D-13)** → **AC-C43-07**: an agent with broad Bash/network/fs tool access reaches, by default, only `twin`/`isolated` surfaces; a `production` surface is reachable **only** through a declared scissors. The bound is the *distinct* boundary from C34's holdout audit and C42's partition (the test records the D-13 split). Prevent-required posture per D-30.
+4. **Security posture stated per surface (Bash/network/fs)** → **AC-C43-12** (`isolated`): the default posture is documented per tool surface — Bash → twinned/isolated; network → twin-routed egress (no default production reach); filesystem → run-worktree/partition-scoped (C42/C04), external production fs behind scissors — with the **enforcement substrate** identified as C04/C42 + C44 (not a C43-built mechanism).
+5. **Twin-route + scissors feed present (C44/C45/C57 seam)** → **AC-C43-06**: C43 publishes the boundary-type assignments + per-pack scissors declarations so **C44** twins bind to `twin`-typed surfaces, **C45** verifies usage against the declared typing, and **C57** records the F12/F44/F56 mechanism. The feed exists; the realized bound is gated on C44 (the test records this, G31).
+6. **G31 residual-exposure caveat is discoverable (XC-8)** → **AC-C43-09, AC-C43-11** (**E-C43-06** warning): downstream consumers (C57, C56, C39) can discover that the lethal-trifecta bound is **aspirational until C44 twins land** (Phase 0→3b exposure window), so the "Addressed" status is never lifted without the caveat.
+7. **No enforcement-engine / OS-jail / OPA / tag over-build (bar)**: C43 contains **no capability-grant engine** (C02-04), **no spawn-time OS sandbox/seccomp/namespace jail** (C04-05 — relies on Gas City process boundaries), **no OPA/Rego** (C42-06), and **no `boundary_class` defensive tag machinery** (C41-07). Enforcement is the stack's (C04/C42 + C44); C43 types + routes.
+8. **G35 blast-radius half handled, drift half routed (faithful)**: C43's bound caps the blast radius of an L4/L5 autonomous agent; the objective-drift / fix-ship-authorization half of G35 is documented as **C39 + C56 + C35**'s, not C43's. **G37 secrets** is documented as **C03/G37** (deferred, D-14), not a C43-built layer.
+9. **D-30 prevent-gate posture held** → **AC-C43-07**: the state diagram (§5.1) correctly shows the `HumanGated` state as the operative pre-spike posture for P2/P3b runs; the factory is BLOCKED from unattended operation until D-23 spike resolves enforcement strength. The watcher is NOT designed here.
 
 ## 9. Open questions
 

@@ -275,3 +275,16 @@ Mail via the native bead/event-class stamp, Nudge via the concept-6→P9 faithfu
 - **OQ4 (addressing granularity):** Are recipients addressed by individual `session.id`, by C42 role, by
   seat, or by topic (for Nudge)? v4 names the primitives but not the address space; inferred to key on C04
   `session.id` + C41/C42 actor, but the granularity is unstated (→ sweep-2 envelope schema).
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F8 — Agents coordinate THROUGH beads (write→poll), not directly (CONFIRMS-CLAIM):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+all inter-agent coordination passes through the bead store — agents write beads and recipients
+poll for beads addressed to them. No agent-to-agent direct channel (e.g. tmux send-keys to another
+pane) was observed or needed. This confirms that the bead store is the sole coordination medium
+and that C06's messaging contract must be implemented as bead operations, not as a separate
+transport. The coordinator polls its bead scope on each tick; when it wants another agent to act,
+it writes a bead to that agent's scope — the recipient's prompt drives polling behaviour.

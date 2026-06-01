@@ -161,3 +161,24 @@ Test strategy (sweep-1): a single-tick fixture with one deciding deterministic g
 - **OQ-1 (→ [review-log](../_meta/review-log.md), top open question).** *Confirm C39 — not C18 — owns the numeric termination policy (G18 / XC-3).* C18 provides the bounded convergence **loop** and emits **bound-reached**; XC-3 routes the **numeric** policy (N attempts → escalate, F52 oscillation detection, L5 ship authorization) to **C39**, backed by C20's `attempt_no`/`max_attempts`/`escalated`/`closes` slots — "deferred to C39 (and possibly C18). **Confirm C39 owns it.**" (review-log XC-3). Faithful disposition: **C39 owns the policy; C18 owns the loop + the bound-reached signal + the injected-bound enforcement.** The load-bearing cross-component item is confirming with the C39 author that (a) C39 injects the bound C18 enforces, (b) C39 consumes C18's bound-reached signal, and (c) oscillation detection and L5 ship authorization live wholly in C39, so C18 holds none of the numbers. If any of the numeric policy is folded back into C18, INV-2 grows from "enforce an injected bound + signal" to "own N + detect oscillation + authorize ship" — a materially larger C18 that XC-3 currently routes away.
 - **OQ-2.** *Reconciler→dispatch trigger is inferred, not v4-stated (RC05-01).* C18's outbound (re)dispatch edge to C05 (§3.2) — and the F22 re-dispatch story (§6) — assumes the reconciler invokes sling, which v4 implies but never states (the two never co-occur causally; §2 `[FAITHFUL-FILL]`). Carry this as the load-bearing assumption to confirm with the C05 author (already mirrored as RC05-01 on the C05 side): if dispatch is instead triggered by a running C12 formula step, C18's outbound trigger changes from "issue dispatch" to "converge state and let the formula dispatch". Until then, model it as reconciler-driven and **flag it as inference, never assert it as sourced fact**.
 - **OQ-3.** *Native Health Patrol internals are unverified (G11).* v4 says the loop is "Native" (README:159) and "Per-tick … bounded convergence with gates" (AI-CONTEXT:93) but gives no `gc` reconciler interface, tick model, or gate-ordering hook surface. Under the bar this is **Gas City's native machinery**, not C18 custom code — C18 specs the *contract* (deterministic-first ordering, bounded pass, bound-reached signal), not the engine. Open for sweep 2: confirming against the **pinned `gc` binary** how Health Patrol exposes per-pass gate ordering and where a v4 pack hooks the deterministic-first discipline and the bound — strictly as *observation/config over native*, **not** by inventing `gc` reconciler internals (G11 caution).
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F2 — `convergence.max_iterations` is NOT a real `gc` field (NEW-INFO operational caveat, does NOT contradict C18):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+`convergence.max_iterations` is **not** a real `gc` config field — PackV2 strict-mode rejects it.
+This does NOT contradict C18: C18 correctly states that a bound exists and is enforced per pass,
+and defers the numeric policy (how many attempts, the values) to C39 and G18 verification — C18
+never asserts a `convergence.*` config field. This usefully eliminates one candidate field name for
+the sweep-2 pinned-`gc` verification (OQ-3 / G11): the actual mechanism by which `gc` expresses a
+per-pass bound is **unverified** and must be confirmed against the real binary.
+
+**F6 — Controller = `gc start --foreground`; reconciles desired-vs-running, reaps dead sessions, fires due orders (CONFIRMS-CLAIM):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the Gas City controller is the process started by `gc start --foreground`; it runs as PID 7
+in the prototype container (with tini as PID 1 for zombie reaping — see F12). Its three
+observed duties are: (1) reconcile desired-vs-running agents (bring up missing, restart dead);
+(2) reap dead sessions; (3) fire due orders. This is the concrete realisation of C18's
+"per-tick desired-state convergence" mechanism as a single Erlang/OTP-style supervisor process.

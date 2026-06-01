@@ -224,3 +224,19 @@ automated CI gate are sweep 2.)
   ratification with C03 (config) so linters load it uniformly. Deferred to sweep 2.
 - **OQ-C07-3:** Deprecation/versioning policy for retired terms given AI-CONTEXT §3.5's "1–2 breaking
   changes per quarter" — how long must a retired term remain resolvable? Deferred to sweep 2 / ops.
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F11 — Gastown pack concrete role names ↔ v4 generic vocabulary (CONFIRMS-CLAIM; vocabulary table addendum):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the bundled `gastown` pack instantiates v4's generic agent-role vocabulary with these concrete
+names: `mayor` = coordinator; `deacon` = health-patrol; `boot` = bootstrap agent; `witness` =
+per-rig observer; `refinery` = per-rig reviewer (spawned on demand); `polecat` / `crew` = worker
+variants; `dog` = pool worker (min=0, spawned on dispatch). All six city-scope named agents were
+verified running as real `claude` processes in distinct tmux panes under the controller (2026-05-25
+stand-up). The `gastown` pack is the Phase-0 reference implementation of v4's role taxonomy.
+C07's vocabulary table (§4.1) notes `Polecat` and `Mayor` as pack-specific roles; this fact
+extends those entries: `deacon`, `boot`, `witness`, `refinery`, `crew`, and `dog` are equally
+`gastown`-specific concrete names for v4's generic roles.

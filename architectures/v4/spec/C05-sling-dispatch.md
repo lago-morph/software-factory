@@ -153,3 +153,24 @@ Test strategy (sweep-1): a Phase-0 fixture with one `[[agent]]` and one work ite
 - **OQ-1 (→ [review-log](../_meta/review-log.md), top open question).** *Routing-key authority: C05 vs. C09 vs. C12.* v4 gives one sentence — "formulas reference templates by name; sling routes work to agents with specific templates" (README:109) — that braids three components: the formula (C12) *names* the template, C09 *binds* name→template/role, and C05 *routes* on that key. The faithful split adopted here is C09-owns-resolution, C05-owns-route-and-handoff (consistent with inventory C09 `Depends on: C05` and C05's `Depends on: C01, C18`). But v4 never states where name-resolution ends and routing begins, so an integrator could fold the name→agent resolution into C05 instead. Faithful disposition: keep resolution in C09 (the binding component) and routing in C05 (the dispatch component); flag that **if resolution is folded into C05, C05's inbound key changes from "resolved template/role" to "raw formula template-name"** and it absorbs the §3.1 routing-key step. This is the load-bearing cross-component reconciliation item shared with the C09 author.
 - **OQ-2.** *Pool member-selection policy (Gas City's, not C05's).* v4 names "pool" / "multi-rig pool" (AI-CONTEXT:92; README:364) but specifies no selection policy (round-robin, least-loaded, sticky-by-bead, capability-weighted). Under the bar this is **Gas City's native sling behaviour** — C05 routes to the pool and one recipient results (INV-1); it builds no selection engine (optimized DELTA-03 dropped). Phase 0 has no pool, so the path is latent. Open for sweep 2: confirming what Gas City's pool routing actually does against the pinned `gc` binary (G11), and whether any C05-visible policy interacts with model-floor/stylesheet routing (C29) — but only as *observation/config*, not custom routing code.
 - **OQ-3.** *Back-pressure: Gas City native vs. reconciler tick — but never a C05 queue.* Faithful reading puts back-pressure (what happens when no target is free) **outside** C05: Gas City's native dispatch may impose it at the sling layer (optimized admission-control delta dropped as native, SURVIVOR-PASS C05 DELTA-02), and/or the reconciler's desired-vs-actual retry loop (C18) re-attempts next tick. Which layer actually provides it is a sweep-2 question against the pinned `gc` binary (G11). Either way C05 holds **no internal queue**; an explicit C05 dispatch queue/buffer is out of faithful scope (v4 names none).
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F5 — Worker pool min=0; scales on demand for cost discipline (CONFIRMS-CLAIM):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+worker pools operate with `min=0` — no worker claude processes run at idle. When the coordinator
+dispatches a task via `gc sling`, the controller spawns a new tmux pane with a fresh `claude`
+process on demand. This is the literal cost-discipline mechanism: pool scales 0→1 on dispatch,
+returns to 0 when idle (health-patrol scales it back). C05:OQ-2 (member-selection policy) remains
+open; the verified fact is only that min=0 and on-demand spawn is the observed behaviour.
+
+**F11 — Gastown pack roles ↔ v4 generic role mappings (CONFIRMS-CLAIM):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the bundled `gastown` pack instantiates v4's generic agent-role vocabulary with these concrete
+names: `mayor` = coordinator; `deacon` = health-patrol; `boot` = bootstrap agent; `witness` =
+per-rig observer; `refinery` = per-rig reviewer (spawned on demand); `polecat` / `crew` = worker
+variants; `dog` = pool worker (min=0, spawned on dispatch). All six city-scope named agents were
+verified running as real `claude` processes in distinct tmux panes under the controller (2026-05-25
+stand-up). Pool sizing confirmed: `dog` pool starts at min=0 and spawns on `gc sling` dispatch.

@@ -232,4 +232,56 @@ work re-enters via its bead — but v4 does not specify a resume-failure escalat
   multi-session scale belong to C04 (hosting), C05 (dispatch/pool), or C29 (routing)? *Shared with C28 OQ3.*
 - **OQ4 (Provider-kind selection):** v4 names tmux as the Phase-0 default and lists k8s/subprocess/exec as
   alternatives but gives no selection criterion (when does a run get k8s vs tmux?). Inferred: config-driven
-  via C03; the *policy* is unstated.
+  via C03; the *policy* is unstated. (RESOLVED by D-23 harvest — see [`_meta/D-23-substrate-harvest.md`](../_meta/D-23-substrate-harvest.md))
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F7 — Each agent = interactive `claude` process in its own tmux pane (RESOLVES OQ4):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the Phase-0 Provider-kind is **tmux**. Each agent (coordinator, health-patrol, bootstrap,
+per-rig observers, worker pool members) runs as a separate interactive `claude` process in its own
+tmux pane, all within a single tmux server named after the city. The controller manages the panes
+and restarts dead ones. This is the concrete realisation of C04's tmux Provider and resolves
+C04:OQ4: the Phase-0 selection criterion is tmux, config-driven, as the spec inferred.
+
+**F6 — Controller = `gc start --foreground`; reconciles desired-vs-running, reaps dead sessions, fires due orders (CONFIRMS-CLAIM):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the Gas City controller is the process started by `gc start --foreground`; it runs as PID 7
+in the prototype container (with tini as PID 1 for zombie reaping — see F12). Its three
+observed duties are: (1) reconcile desired-vs-running agents (bring up missing, restart dead);
+(2) reap dead sessions; (3) fire due orders. This is the concrete realisation of C04's session-
+provider and durable-orders mechanisms as a single Erlang/OTP-style supervisor process.
+
+**F4 — `gc init` is interactive; production workflow authors config files directly (NEW-INFO operational caveat):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+`gc init` is an **interactive command** that prompts for a provider choice and runs
+provider-readiness checks; it cannot be run unattended without `--provider <name>
+--skip-provider-readiness`. The prototype's production setup path bypasses `gc init` entirely —
+`pack.toml` and `city.toml` are authored directly. This is NEW-INFO operational context: no v4
+spec references `gc init` as part of an automated setup path; this fact is surfaced here so that
+any ops procedure or deployment guide knows not to include `gc init` without these flags in an
+automated context.
+
+**F11 — Gastown pack roles ↔ v4 generic role mappings (CONFIRMS-CLAIM):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the bundled `gastown` pack instantiates v4's generic agent-role vocabulary with these concrete
+names: `mayor` = coordinator; `deacon` = health-patrol; `boot` = bootstrap agent; `witness` =
+per-rig observer; `refinery` = per-rig reviewer (spawned on demand); `polecat` / `crew` = worker
+variants; `dog` = pool worker (min=0, spawned on dispatch). All six city-scope named agents were
+verified running as real `claude` processes in distinct tmux panes under the controller (2026-05-25
+stand-up). The `gastown` pack is the Phase-0 reference implementation of v4's role taxonomy.
+
+**F12 — Deployment constraints: `IS_SANDBOX=1` for root + three onboarding dialogs must be pre-acked (NEW-INFO deployment constraint):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+**Deployment constraint — root + permissions flag:** `claude --dangerously-skip-permissions`
+refuses to run as root unless `IS_SANDBOX=1` is set in the environment. Container images running
+as root must set this variable. **Deployment constraint — onboarding dialogs:** Interactive
+`claude` presents three pre-run dialogs (theme picker, folder-trust, bypass-permissions warning)
+that hang an agent session indefinitely if not pre-acknowledged. Pre-acknowledgement requires:
+(a) `hasCompletedOnboarding: true`, `hasSeenWelcome: true`, `theme: "dark"` in
+`~/.claude.json` (not `~/.claude/settings.json`); (b) `projects[path].hasTrustDialogAccepted:
+true` and `bypassPermissionsModeAccepted: true` for every working directory an agent uses
+(written by the entrypoint because paths are known only at runtime). These are production
+requirements for any containerised Gas City deployment, not just sandbox quirks.

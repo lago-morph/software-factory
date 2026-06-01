@@ -403,4 +403,31 @@ deliverables of C43, not C42's default build.)
   partition) + C34 (enforces+audits) + C32 (judge) at Sweep-2**. Confirm the judge rig's partition (and whether
   the same-provider judge per D-1 needs its own partition label distinct from `code`/`scenarios`).
 - **OQ-C42-4** (→ review-log, XC-9): **Canonical `[rigs]` vs `[[rig]]` spelling.** Inconsistent across
-  C01/C03/C42; C42 uses `[[rig]]` per AI-CONTEXT §13.3. Owner: C07/integrator — pick one and propagate.
+  C01/C03/C42; C42 uses `[[rig]]` per AI-CONTEXT §13.3. Owner: C07/integrator — pick one and propagate. (RESOLVED by D-23 harvest — see [`_meta/D-23-substrate-harvest.md`](../_meta/D-23-substrate-harvest.md))
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F1 — `[[rig]]` path bindings and canonical spelling (RESOLVES OQ-C42-4 / XC-9):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+the canonical spelling is `[[rig]]` (singular). `[[rigs]] path =` is a PackV2 validation error;
+path bindings for a rig's working directory live in `.gc/site.toml` as `[[rig]]` entries, written
+at container-start time by the entrypoint (which knows the runtime filesystem paths). `city.toml`
+carries `[[rig]]` blocks for partition/role semantics only, without a `path` field. This resolves
+XC-9 in favour of `[[rig]]` and makes the spelling in C01/C03/C42 canonical.
+
+**F10 — Bead scope enforced by bead prefix; explicit `prefix=` required to avoid collision (NEW-INFO operational caveat):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+**Bead scope is implemented as bead prefix.** Prefixes `gp-` (city HQ), `r1-` (rig1), `r2-`
+(rig2) are the real scoping mechanism — agents scoped to rig1 see/write only `r1-` prefixed
+beads. **Operational constraint:** rig names `rig1` and `rig2` both auto-derive prefix `"ri"` and
+collide at startup; explicit `prefix = "r1"` and `prefix = "r2"` in `city.toml` are required.
+Naming rigs to avoid short-prefix collisions is a production authoring concern, not a framework
+safeguard.
+
+**OPEN — prevent-vs-detect (C34:OQ-C34-1 / C43:OQ-C43-1 / D-23 spike):** The prototype proved
+that prefix is the MECHANISM for scoping. It did NOT verify whether `gc` PREVENTS an
+out-of-prefix bead access at the tool-call level or merely scopes-by-convention with
+detect-after-the-fact. The end-to-end smoke test (which would test this path) was deferred.
+This boundary remains the D-23 spike target and must NOT be treated as resolved by this harvest.

@@ -427,6 +427,9 @@ format, the C45/C57 feed schemas, and the deterministic-typing classification ru
   C42 the partition), but the substrate fact — does the realized bound *prevent* production reach at
   interaction time, or rely on C44 twins being present + C04/C42 boundaries — cannot be settled without the
   real `gc`/twin stack (**G11**). Same enforcement-strength uncertainty as C34's OQ-C34-1.
+  **OPEN — D-23 spike (see below):** The D-23 harvest confirmed prefix is the bead-scoping MECHANISM but
+  explicitly did NOT resolve whether `gc` PREVENTS out-of-prefix access or merely scopes-by-convention.
+  This OQ remains the D-23 spike target.
 - **OQ-C43-2** (→ review-log): **Does C43's exposure window (Phase 0→3b) need an interim bound before C44
   twins land, or is detection-only (C34 audit + capability-breach detection, XC-8) the accepted Phase-0
   posture?** **RESOLVED by D-20 (ADOPTED 2026-05-31):** the window gets an interim bound — the
@@ -446,3 +449,20 @@ format, the C45/C57 feed schemas, and the deterministic-typing classification ru
   "explicit declaration **per pack**" — confirm the declaration lives in pack/`city.toml` config (C02/C03)
   and the exact grammar (which surface, what scope), and that it is **not** wired to the dropped
   capability-grant engine (C02-04). Sweep-2, jointly with C02/C03.
+
+---
+
+**[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]**
+
+**F10 — Bead prefix IS the scoping mechanism; explicit `prefix=` required to avoid collision; prevent-vs-detect OPEN (NEW-INFO operational caveat):**
+Verified against the Gas City prototype (lago-morph/gascity-prototype@b14c278, 2026-05-25):
+**Bead scope is implemented as bead prefix.** Prefixes `gp-` (city HQ), `r1-` (rig1), `r2-`
+(rig2) are the real scoping mechanism — agents scoped to rig1 see/write only `r1-` prefixed
+beads. **Operational constraint:** rig names `rig1` and `rig2` both auto-derive prefix `"ri"` and
+collide at startup; explicit `prefix = "r1"` and `prefix = "r2"` in `city.toml` are required.
+
+**OPEN — prevent-vs-detect (C43:OQ-C43-1 / D-23 spike):** The prototype proved that prefix is
+the MECHANISM for scoping. It did NOT verify whether `gc` PREVENTS an out-of-prefix bead access
+at the tool-call level or merely scopes-by-convention with detect-after-the-fact. The end-to-end
+smoke test (which would test this path) was deferred. This boundary remains the D-23 spike target
+and must NOT be treated as resolved by this harvest.

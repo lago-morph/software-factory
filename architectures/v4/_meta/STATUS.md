@@ -31,7 +31,10 @@ Four axes: **B**uilt · **R**eviewed · **I**ncorporated · i**N**tegrated. **DO
 - **OQ-6** — C46 dep edge should read C21/C25 (OTLP-metrics + CXDB) not just C24 (touches `component-inventory.md`).
 - **C49:OQ-1** — when is an LLM-step counterfactual trustworthy enough to feed C48/C50 (v4's riskiest open question).
 - **prevent-vs-detect** (C43:OQ-1 ≡ C34:OQ-1, gated on G11). **G37** secrets store (C03). Judge read-surface shape (D-17 sweep-2). Unleash license contradiction (README:273 vs :322 → C57 register).
-- *Resolved:* signing→D-14, cross-family→D-1, FE-5→D-15, XC-3→C39.
+- *Resolved:* signing→D-14, cross-family→D-1, FE-5→D-15, XC-3→C39, **XC-9 + C42:OQ-4 + C04:OQ-4 → D-23 harvest (2026-06-01, gascity-prototype-verified)**.
+
+## Sweep-2 D-23 first action — DONE (protocol + harvest, no live run)
+Per operator decision (no live agents this run). [D-23 spike protocol](D-23-gas-city-spike-protocol.md) (runnable prevent-vs-detect / `[[service]]` / Orders-durability checklist) + [D-23 substrate harvest](D-23-substrate-harvest.md) (12 facts from `gascity-prototype@b14c278`). Resolved XC-9 / C42:OQ-4 / C04:OQ-4; **0 true contradictions** after lead verification (3 flagged, all reclassified NEW-INFO). **Prevent-vs-detect (C34:OQ-C34-1 ≡ C43:OQ-C43-1) remains OPEN** — needs a Docker-capable empirical run of the protocol (the prototype deferred the smoke test).
 
 ## Passes still owed (next runs)
 Integration Pass over the whole 57 (cross-batch drift) · **Sweep 2** (implementation-ready: signatures, schemas, sequence/state diagrams, error taxonomies, acceptance tests) · **Sweep 3** (exhaustive: pseudocode, skeletons, edge-cases, perf/sec/ops) · final cross-cutting README/index.

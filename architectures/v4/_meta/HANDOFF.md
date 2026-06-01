@@ -1,7 +1,7 @@
 # HANDOFF — v4 Spec & Plan run (resume from here)
 
 **Last updated:** 2026-06-01 (Sweep-2 run #1 — D-23 + first depth cluster — complete; see §0).
-**Status:** **Sweep-1 COMPLETE** (57/57 built+reviewed+integrated) + **wrap-up COMPLETE** (D-20…D-25 adopted, panel VERDICT, guides, products-first build order). **Sweep-2 has STARTED** (this run): the **D-23 Gas City reality-check is done as protocol + harvest** (no live run, per operator), the pivotal **auto-001 decision is settled** (2 rounds / 6 adversaries), and the **first Sweep-2 depth cluster (C19/C20/C21/C23/C41) landed**. **2 operator morning-review items are open** (D-20 re-adoption; per-rig-class autonomy) — see [`overnight-summary-2026-06-01-sweep2.md`](../../../overnight-summary-2026-06-01-sweep2.md) §6.
+**Status:** **Sweep-1 COMPLETE** (57/57 built+reviewed+integrated) + **wrap-up COMPLETE** (D-20…D-25 adopted, panel VERDICT, guides, products-first build order). **Sweep-2 has STARTED** (this run): the **D-23 Gas City reality-check is done as protocol + harvest** (no live run, per operator), the pivotal **auto-001 decision is settled** (2 rounds / 6 adversaries), and the **first Sweep-2 depth cluster (C19/C20/C21/C23/C41) landed**. **2 operator morning-review items are open** (D-20 re-adoption; per-rig-class autonomy) — see [`overnight-summary-2026-06-01-sweep2.md`](../../../archive/PR-233-overnight-summary-2026-06-01-sweep2.md) §6.
 **Working tree:** the Sweep-2 run #1 work is in stacked PRs **#229→#232 + wrap** (NOT yet merged to `main` at run close). Prior state: everything through #228 is in `main`.
 
 ## 0. Sweep-2 run #1 (2026-06-01) — what landed + what's next
@@ -12,7 +12,7 @@
 - **Sweep-2 depth cluster** (evidence/data substrate): **C19, C20, C21, C23, C41** at implementation depth. Seam adversary found + fixed a HIGH `event_id` drift → ledger **D-26…D-29**.
 
 **MANDATORY FIRST ACTIONS for the next session (in order):**
-1. **Resolve the 2 morning-review items** ([summary §6](../../../overnight-summary-2026-06-01-sweep2.md)): (a) re-adopt D-20 as conditional-on-prevention? (b) accept per-rig-class autonomy? Until (a) is answered, do NOT wire the auto-001 rubric into specs.
+1. **Resolve the 2 morning-review items** ([summary §6](../../../archive/PR-233-overnight-summary-2026-06-01-sweep2.md)): (a) re-adopt D-20 as conditional-on-prevention? (b) accept per-rig-class autonomy? Until (a) is answered, do NOT wire the auto-001 rubric into specs.
 2. **If (a) re-adopted:** wire the auto-001 rubric into **C43/C34/C42/C56/C57** (the deferred spec edits) as its own PR.
 3. **The empirical D-23 spike is still owed** (needs a Docker-capable env; prototype + protocol ready) — prevent-vs-detect (C34:OQ-C34-1 ≡ C43:OQ-C43-1) stays OPEN until then; it gates the auto-001 rubric's actual outcome.
 4. **Continue Sweep-2 depth** on the remaining ~52 components. Suggested next clusters: **workflow-engine** (C04/C05/C12/C13/C18/C40) and **eval/holdout** (C30/C31/C32/C33/C34/C42 — note holdout depth is partly gated on item 1). Use the [`BUILDER-BRIEF`](./BUILDER-BRIEF.md) at Sweep-2 depth, the C20 spec as the format **exemplar**, and a cross-cluster seam adversary per cluster.

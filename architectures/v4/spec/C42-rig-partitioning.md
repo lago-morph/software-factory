@@ -31,7 +31,9 @@
 > Binding decisions obeyed: **D-1** (same-provider judge → holdout rests on partition+role isolation),
 > **D-13** (C34 enforces+audits; C43 blast-radius; C42 PROVIDES — not enforces), **D-17** (joint C42/C34/C32
 > Sweep-2 partition-shape freeze), **D-30** (prevent/block required for unattended; watcher design deferred
-> to D-23 spike).
+> to D-23 spike), **D-31** (multiple rigs per city — partition contract operates over N rigs; worker-rig ≠
+> judge-rig), **D-32** (rig config spelling is file-split — `.gc/site.toml` uses `[[rig]]` with `path`;
+> `city.toml` spelling is needs-pinned-gc-run G11; `[[rigs]] path =` is a PackV2 error).
 
 > [D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25] Two substrate facts directly underwrite
 > this spec: **(F1)** `[[rig]]` (singular) is the canonical block spelling; `[[rigs]] path=` is a PackV2
@@ -54,6 +56,18 @@ read and write**. In v4 vocabulary a **rig** is "an agent worker role" (AI-CONTE
 [scenarios] during work" (README:166). (Faithful precision per G10: this makes the worker rig
 *policy-denied* read of the scenario partition — filesystem perms + rig config — **not** a hard physical
 control until C43 lands; see §6/G21.)
+
+**[D-31 ADOPTED 2026-06-01 — Multiple rigs per city; partition contract operates over N rigs]**
+
+> "A *city* (one Gas City install / the `gc` substrate, C01) hosts **multiple rigs** (C42) — not one.
+> The `[[rig]]`/`[[rigs]]` array-of-tables declares N rig partitions inside a single city;
+> **rig partitioning (C42) is the isolation of these N co-resident rigs from one another** (e.g. a
+> worker rig and a separate judge rig living in the same city — the D-17 holdout read-surface depends
+> on worker-rig ≠ judge-rig). Specs MUST model multiple-rigs-per-city explicitly and MUST NOT assume
+> one-rig-per-city."
+> — review-log D-31 (Sweep-2 spine-run decisions, 2026-06-01)
+
+**C42's partition contract therefore operates over N rigs per city** — not a singleton. The `[[rig]]`/`[[rigs]]` array-of-tables in a city's config declares all N co-resident rig partitions; the partition isolation this component defines is fundamentally *between* multiple rigs sharing the same Gas City install. The D-17 holdout design (worker-rig ≠ judge-rig) is the canonical instance: both rigs reside in the same city, and the partition boundary between them is exactly what C42 provides. All contracts in this spec (§3, §4, §5) are stated over the set of N rigs, not a single rig.
 
 C42 is **load-bearing for holdout integrity (C34)**. Per review-log **D-1**, the judge runs on the *same
 provider/family* as the coder (cross-family judging is deferred to FE-1), so the holdout guarantee that
@@ -250,6 +264,17 @@ the `[[rig]]`/`[[rigs]]` block in `city.toml` at config-load.
 | `bead_prefix` | `string` | R | Explicit prefix for bead IDs scoped to this rig (the scoping mechanism, F10). Must be unique across all rigs in this city; duplicate prefix → E-C42-02. Auto-derived prefix from rig name is a misconfiguration (F10 collision risk). | C42 validates; C01/Gas City runtime applies |
 
 ### 4.2 `city.toml` rig-block config surface (Sweep-2)
+
+**[D-32 ADOPTED 2026-06-01 — Rig config spelling is file-split]**
+
+> "Rig **path** bindings live in **`.gc/site.toml`** as **`[[rig]]`** (singular array-of-tables,
+> `name` + `path`) — harvest-verified. The **`city.toml`** rig block (partition / `prefix` / role
+> semantics, **no `path`**) is spelled **`[[rigs]]`** (plural) in the prototype's actual
+> `city.toml.example`, contradicting D-23 F1's blanket "`[[rig]]` singular canonical" — so the
+> **`city.toml` rig-block spelling is `needs-pinned-gc-run (G11)`** and specs MUST NOT assert a
+> single canonical `city.toml` spelling. `[[rigs]] path =` (a `path` in `city.toml`) is an
+> unambiguous PackV2 error."
+> — review-log D-32 (Sweep-2 spine-run decisions, 2026-06-01)
 
 > **DRIFT-CRITICAL SPELLING NOTE (from gascity-config-anchor §3, applies verbatim here).**
 > The harvest's F1 states "canonical spelling is `[[rig]]` (singular)". The prototype **primary sources

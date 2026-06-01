@@ -82,6 +82,8 @@ the dependency forest: it is the "load-bearing third-party dependency. If Gas Ci
 reorganizes" (README §11 / AI-CONTEXT, the G11 admission). It is Phase 0 in the delivery plan (C54) and
 is the only component that ships with "no custom code" (README line 355).
 
+**[D-31 — A city hosts multiple rigs.]** One `gc` install (one city) hosts **multiple rigs** simultaneously — not one. Per review-log D-31 (Sweep-2, 2026-06-01): "A *city* (one Gas City install / the `gc` substrate, C01) hosts **multiple rigs** (C42) — not one. The `[[rig]]`/`[[rigs]]` array-of-tables declares N rig partitions inside a single city." C01 is the single substrate on which all N co-resident rigs operate; rig partitioning (C42) provides the isolation between them. The Phase-2 config (AI-CONTEXT §13.3) illustrates this: a `scenario_authoring` rig and an `implementer` rig both live in the same city. Do NOT assume one-rig-per-city when reading this spec.
+
 **Cycle resolution note.** Two dependency cycles exist in the inventory: C01↔C03 and C01↔C04. Both are
 broken by treating **C01 as the dependency root** and freezing an interface contract at the C01 boundary
 that C03/C04 build against — exactly the M1 interface-freeze pattern used for C19↔C20. C01 is adopted
@@ -179,7 +181,7 @@ Per the config anchor §2 — three files participate. Getting the right key int
 | File | Role | Must NOT contain |
 |---|---|---|
 | **`pack.toml`** | Root pack manifest: `[pack] name`, `[pack] schema = 2`; `[imports.<name>]` with `source`; pack-shipped `[[tool]]`, prompt templates, formulas | `[defaults.rig.imports.*]` (→ `city.toml` per F3); a direct `[imports.maintenance]` when `gastown` already imports it transitively (duplicate `gastown.dog` agent → startup refusal — F3) |
-| **`city.toml`** | Workspace install config: `[workspace]`, `[defaults.rig.imports.<name>]`, capability sections `[daemon]`, `[beads]`, `[orders]`, `[mail]`, `[formulas]`, `[[service]]`; `[[agent]]` worker decls; `[[rig]]`/`[[rigs]]` partition/role blocks with `name` + `prefix` (NO `path`) | A rig `path` field (machine-local, belongs in `.gc/site.toml` — F1); `convergence.max_iterations` (not a real field — F2) |
+| **`city.toml`** | Workspace install config: `[workspace]`, `[defaults.rig.imports.<name>]`, capability sections `[daemon]`, `[beads]`, `[orders]`, `[mail]`, `[formulas]`, `[[service]]`; `[[agent]]` worker decls; **`[[rig]]`/`[[rigs]]` partition/role blocks (an ARRAY of N rig entries; spelling needs-pinned-gc-run G11 per D-32)** with `name` + `prefix` (NO `path`) — D-31: one city hosts N rigs declared as this array | A rig `path` field (machine-local, belongs in `.gc/site.toml` — F1); `convergence.max_iterations` (not a real field — F2) |
 | **`.gc/site.toml`** | Machine-local, entrypoint-written at container-start: `workspace_name`; `[[rig]]` (singular) blocks with `name` + `path` | Partition/role semantics, prefixes (those are `city.toml`'s job). This file is `.gitignore`d. |
 
 > **city.toml rig-block spelling: `[[rig]]` vs `[[rigs]]` — `needs-pinned-gc-run (G11)`.**

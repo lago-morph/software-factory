@@ -67,15 +67,15 @@ load-bearing schema everything references for "is feature X on, and with what pa
 4. **Capability-parameter accessor** — for an enabled section, read its keys (e.g. `[[service]]
    endpoint = …`, `[beads] provider = "file"`). Presence enables; keys parameterize.
 
-**XC-7 — CapabilityDescriptor ownership (DEFERRED — orchestrator ledger).**
-The `CapabilityDescriptor` concept (a machine-readable declaration of which config section gates which
-capability, with `requires` / `conflicts_with` relations) is declared in both C02 (optimized track,
-`PackManifest`) and C03 (optimized track, capability registry). C03's reading: the *carrier* for a
-capability descriptor is the pack manifest (C02 ships it); the *validator/registrar* is C03. On the
-canonical track, C03 does NOT implement the descriptor schema — that is an optimized-track addition
-(DELTA-02 in the spec-optimized files). Canonical C03 models capability presence as section-presence only,
-with no descriptor registry. Whether DELTA-02 graduates to the canonical track and which component owns
-the schema is routed to the **orchestrator ledger** as XC-7. Sibling C02 flags the same conflict.
+**XC-7 — CapabilityDescriptor ownership — RESOLVED by D-33.**
+
+> **[D-33 ADOPTED — lead, converged C02+C03 builders; 2026-06-01]**
+> "The C02 and C03 Sweep-2 builders independently converged: **C03 owns the CapabilityDescriptor registry** (the authored capability catalog — a `city.toml` / config-layer concern); **C02 carries only a `capability_id` reference** in the pack manifest, not the descriptor definition. Resolves **XC-7** (the C02↔C03 ownership straddle flagged in both Sweep-1 specs)."
+> — review-log D-33 (Sweep-2 spine-run decisions, 2026-06-01)
+
+**C03 OWNS the CapabilityDescriptor registry + descriptor schema.** The `CapabilityDescriptor` concept (a machine-readable declaration of which config section gates which capability, with `requires` / `conflicts_with` relations) is a config-layer concern: the registry of authored capability descriptors lives in C03 as the feature-flag/config-model owner. C02 carries only a `capability_id` reference in the pack manifest (declaring which capability the pack provides) — C02 does NOT define the descriptor schema. C03 validates `capability_id` references against its registry.
+
+This is the same authorship/registration split as C20→C22 (bead schemas → CXDB registry, per D-3): a pack *produces* a `capability_id` reference, C03 *owns* the registry and descriptor schema. **XC-7 is RESOLVED.** Remove any language in C02 or C03 that asserts the descriptor schema is deferred or belongs to the other component.
 
 **Invariants**
 - **Presence-is-the-flag**: no separate `enabled = true` boolean exists for the substrate-native

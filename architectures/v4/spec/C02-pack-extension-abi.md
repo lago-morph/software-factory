@@ -3,7 +3,7 @@
 > Source: README §Part 4 (placement tables, lines ~107–256), §Part 5 ("Specific cautions" line 334; license-strategy table line 288), §Part 6 (Phase 0 lines 359–362; Phase 1 line 389; Phase 2 lines 424–426), §Part 7 (design bets lines 509–518), §Part 8 (line 535). AI-CONTEXT §3.4 (smallest viable install, lines 114–122), §3.5 (migration tail, line 128), §3.6 (extractability), §10.1 / decision tables (lines 439, 465, 476, 502), §13.1 (`pack.toml`/`city.toml` skeletons, lines 524–544), §13.2 (Phase-1 env + service blocks), §13.3 (rig partition + tool-node subprocess sketch, lines 599–608). F-MODE-COVERAGE F44 (per-pack production-scissors), F31 (single-adapter floor), F35/F43 (pack governance/RSI declaration). component-inventory C02 row; gaps G29, G06.
 > Inventory ID: C02   Kind: interface   Status: sweep-2
 > Track: canonical (faithful)
-> Binding decisions obeyed: **D-2** (bundle-id namespace: pack ids = `softwarefactory.v4.packs`), **D-7** (formula node-kind taxonomy home = C12; C02 references C12's `tool` kind for the tool-node ABI but does not redefine the node-kind set).
+> Binding decisions obeyed: **D-2** (bundle-id namespace: pack ids = `softwarefactory.v4.packs`), **D-7** (formula node-kind taxonomy home = C12; C02 references C12's `tool` kind for the tool-node ABI but does not redefine the node-kind set), **D-33** (XC-7 RESOLVED — C03 owns the CapabilityDescriptor registry + descriptor schema; C02 carries only a `capability_id` reference in the pack manifest, NOT the descriptor definition).
 
 > [D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]
 > **F3 — Pack import strictness; `[defaults.rig.imports.*]` placement; transitive-import deduplication:**
@@ -27,6 +27,13 @@
 > One factory-owned reverse-DNS root with per-store sub-bundles: `softwarefactory.v4.beads` (bead types), `softwarefactory.v4.trajectory` (CXDB turn types), `softwarefactory.v4.packs` (pack ids). Drop vendor `strongdm.*` and the merged-single-bundle option. Apply across C02/C20/C21/C22.
 
 — review-log D-2 (ADOPTED — both Persistence adversaries independently concur)
+
+**D-33** (XC-7 CapabilityDescriptor ownership resolved):
+> "The C02 and C03 Sweep-2 builders independently converged: **C03 owns the CapabilityDescriptor registry** (the authored capability catalog — a `city.toml` / config-layer concern); **C02 carries only a `capability_id` reference** in the pack manifest, not the descriptor definition. Resolves **XC-7** (the C02↔C03 ownership straddle flagged in both Sweep-1 specs)."
+
+— review-log D-33 (Sweep-2 spine-run decisions, 2026-06-01)
+
+**C02 DOES NOT define the CapabilityDescriptor schema.** C02 carries only a `capability_id` reference field in the pack manifest (declaring which capability a pack provides); C03 owns the registry and validates the reference. **XC-7 is RESOLVED.** See [C03](C03-config-feature-flags.md) for the registry and descriptor schema ownership.
 
 ---
 
@@ -73,8 +80,9 @@ C02 owns the two contracts that make that claim true:
   "a deterministic step / Gas City tool bead"; C02 is the concrete **wire protocol + bundle format** that
   C17's nodes are realized over. C17 depends on C02.
 - NOT the config/feature-flag *model* (C03). C03 owns "section presence = capability"; C02 owns the
-  bundle/ABI shape. They meet where a pack contributes config sections. (Note: XC-7 CapabilityDescriptor
-  ownership straddle — see §9.)
+  bundle/ABI shape. They meet where a pack contributes config sections. C02 carries only a `capability_id`
+  reference in the pack manifest; C03 owns the CapabilityDescriptor registry and descriptor schema
+  (**D-33, XC-7 RESOLVED** — see §9 and [C03](C03-config-feature-flags.md) §3).
 - NOT a Go-library SDK, an FFI, or a plugin-`.so` mechanism. The only sanctioned mechanism is
   **subprocess** tool nodes + TOML + templates (AI-CONTEXT §3.5, README:334).
 - NOT the individual packs' contents (the CXDB bridge, Inspect-AI wrapper, anomaly pack, etc.). Those are
@@ -500,19 +508,14 @@ Sweep-1 high-level criteria (concrete AC-codes at sweep-2 §8.1):
 2. **[OQ-2] Pack-vs-`city.toml` precedence on duplicate sections** — confirm Reading A (local authoritative)
    against actual `gc` behavior (G11 — Gas City unverified). Unblocks C03's §4 merge-algebra sweep-2 freeze.
 
-3. **[OQ-3 / XC-7] CapabilityDescriptor ownership straddle.** The concept `CapabilityDescriptor` (a
-   descriptor declaring which config section a pack gates, its `requires`/`conflicts_with`) appears in
-   both C02 (spec-optimized only, as a `PackManifest` field) and C03 (spec-optimized, as a registry entry).
-   In the *canonical* (faithful) track, the concept does NOT appear — it is a Track-B addition. However,
-   XC-7 (review-log) still routes to C02 and C03 to state an ownership reading.
-   **C02's reading:** the `CapabilityDescriptor` concept, if adopted, belongs with **C03** as the
-   configuration/feature-flag model, since it is fundamentally a config-capability declaration. C02 would
-   carry a `capability_id` reference field in the manifest (declaring which capability the pack provides)
-   that C03 validates against its registry — a pack *produces* a descriptor, C03 *owns* the registry.
-   This is the same authorship/registration split as C20→C22 (bead schemas → CXDB registry, per D-3).
-   **DEFERRED — orchestrator ledger**: XC-7 needs a cross-component ruling; the C03 builder is flagging
-   the same straddle. Until the orchestrator rules, the canonical track does not implement
-   `CapabilityDescriptor` (faithfully omitted as a Track-B delta).
+3. **[OQ-3 / XC-7] CapabilityDescriptor ownership — RESOLVED by D-33 (2026-06-01).**
+   **XC-7 is RESOLVED.** Per D-33: **C03 owns the CapabilityDescriptor registry + descriptor schema**
+   (the authored capability catalog — a `city.toml` / config-layer concern); **C02 carries only a
+   `capability_id` reference** in the pack manifest, not the descriptor definition. C02 does NOT define the
+   CapabilityDescriptor schema. The `capability_id` reference field in the pack manifest declares which
+   capability a pack provides; C03 validates the reference against its registry. This is the same
+   authorship/registration split as C20→C22 (bead schemas → CXDB registry, per D-3). See binding decisions
+   block at the top of this spec and [C03 §3](C03-config-feature-flags.md).
 
 4. **[OQ-4] Declaration-discipline key names** — the F44/F35/F43 manifest keys (`[pack.safety]`,
    `[pack.derivation]`) are reserved here; their exact names/shape must be reconciled with C43 (isolation)

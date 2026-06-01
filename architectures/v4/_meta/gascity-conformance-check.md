@@ -122,9 +122,7 @@ merely permits and logs the access after the fact. This is the test that decides
 blocking watcher must be built.
 
 > **D-30 operator-adopted prevent-gate (verbatim binding):**
-> "unattended operation (P2) and self-modification (P3b) require the substrate to BLOCK (prevent at
-> the tool-call/process boundary) — not merely detect — out-of-boundary access on the relevant
-> blast-radius face."
+> "unattended operation (P2) and self-modification (P3b) require the substrate to BLOCK (prevent at the tool-call/process boundary) — not merely detect — out-of-boundary access on the relevant blast-radius face."
 
 The D-30 watcher's design is **deferred** until this test runs. Test A is the go/no-go gate for
 that design decision. Do not design or build the watcher before running this test.

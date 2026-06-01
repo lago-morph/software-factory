@@ -47,7 +47,7 @@ is strict and *refuses startup* on misplaced keys — F1, F3).
 | File | What lives here | What must NOT live here |
 |---|---|---|
 | **`pack.toml`** (root pack manifest) | `[pack] name`, `[pack] schema = 2`; `[imports.<name>]` with `source = "github.com/…//path"`; pack-shipped `[[tool]]`, prompt templates, formulas. | `[defaults.rig.imports.*]` (→ `city.toml` per F3). A **direct** `[imports.maintenance]` when `gastown` already imports it transitively (duplicate `gastown.dog` agent ⇒ startup refusal — F3). |
-| **`city.toml`** (workspace install) | `[workspace]` (name, provider, global_fragments); `[defaults.rig.imports.<name>]`; capability sections `[daemon]`, `[beads]`, `[orders]`, `[mail]`, `[formulas]`, `[[service]]`; `[[agent]]` worker decls; **`[[rig]]`/`[[rigs]]` partition/role blocks carrying `name` + `prefix` but NO `path`** (see §3 spelling note). | A rig **`path`** field — path bindings are machine-local and live in `.gc/site.toml` (F1). `convergence.max_iterations` (not a real field — F2). |
+| **`city.toml`** (workspace install) | `[workspace]` (name, provider, global_fragments); `[defaults.rig.imports.<name>]`; capability sections `[daemon]`, `[beads]`, `[orders]`, `[mail]`, `[formulas]`, `[[service]]`; `[[agent]]` worker decls; **`[[rig]]`/`[[rigs]]` partition/role blocks carrying `name` + `prefix` but NO `path`** (see §3 spelling note) — **D-31: one city hosts MULTIPLE rigs; this is an ARRAY of N rig entries, not a singleton; specs MUST NOT assume one-rig-per-city** (see §3 D-31 note). | A rig **`path`** field — path bindings are machine-local and live in `.gc/site.toml` (F1). `convergence.max_iterations` (not a real field — F2). |
 | **`.gc/site.toml`** (machine-local, entrypoint-written) | `workspace_name`; **`[[rig]]` (singular) blocks carrying `name` + `path`** — the actual `/workspace/rigs/<name>/` filesystem bindings. Written by the entrypoint at container-start because only it knows runtime paths. | Partition/role semantics, prefixes (those are city.toml's job). This file is `.gitignore`d (machine-local). |
 
 **`.gc/` directory** (deep-dive §6) also holds: `events.jsonl` (the event stream), controller socket/pidfile/lock, bead-store working files, molecule artifact dirs, materialized pack imports (`.gc/imports/`), deferred-nudge queue (`.gc/nudges/`).
@@ -55,6 +55,19 @@ is strict and *refuses startup* on misplaced keys — F1, F3).
 ---
 
 ## 3. Canonical config-key table
+
+> **[D-31 ADOPTED 2026-06-01 — Multiple rigs per city.]**
+> "A *city* (one Gas City install / the `gc` substrate, C01) hosts **multiple rigs** (C42) — not one.
+> The `[[rig]]`/`[[rigs]]` array-of-tables declares N rig partitions inside a single city;
+> **rig partitioning (C42) is the isolation of these N co-resident rigs from one another** (e.g. a
+> worker rig and a separate judge rig living in the same city — the D-17 holdout read-surface depends
+> on worker-rig ≠ judge-rig). Specs MUST model multiple-rigs-per-city explicitly and MUST NOT assume
+> one-rig-per-city."
+> — review-log D-31 (Sweep-2 spine-run decisions, 2026-06-01)
+>
+> The `[[rig]]`/`[[rigs]]` section in `city.toml` is therefore an **ARRAY** (N entries); builders must
+> author one block per rig role (worker, judge, scenario-author). The D-17 holdout design (worker-rig ≠
+> judge-rig) requires at least two rig blocks in a Phase-2 city.toml. Do NOT collapse to a single rig block.
 
 > **DRIFT-CRITICAL SPELLING NOTE (read before using `[[rig]]`).** The harvest's F1 states "canonical
 > spelling is `[[rig]]` (singular)". The prototype **primary sources show the spelling is

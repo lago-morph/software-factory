@@ -164,6 +164,19 @@ the predicate, C30 on the scenario manifest, and C52 on the design-review record
 | I4 | **Go/no-go decision record** | outbound (data) | The recorded **`go` \| `no-go`** verdict + the **evidence** (C51 predicate verdict, C33 distribution + scenario set + sample count, C52 review record). Written to the `factory_build` bead (C20/C19); read by C54 to arm/withhold Phase 3. | C53 (shape); **C20** (slot), C54 (consumer) |
 | I5 | **Fail-branch escalation contract** | internal (policy) | On **no-go**: **iterate the spec + re-run** (README:519); after a bounded attempt count still failing → **"add more substrate before Phase 3"** (AI-CONTEXT:619). C53 names the branch + the attempt-bound *requirement*; the exact bound + authorizer is operator policy (OQ-2). | C53 (this); C52 (re-run), operator (bound) |
 
+### 3.0 Outbound type — `RubricResult` (C52 seam — RFB-SEAM-03 fix)
+
+> **RFB-SEAM-03 FIX (2026-06-01):** C52 §3.4 `submit_for_review` takes `c53_rubric_result: RubricResult` as a typed parameter. C53 produces `GoNoGoDecision` from `decide()` but never exported the `RubricResult` name. This creates an untyped seam: C52 references a type C53 never defines. Fix: `RubricResult` is an explicit **type alias** for `GoNoGoDecision` — it is C53's outbound face toward C52's gate.
+
+```
+// RubricResult — C53's outbound type toward C52 submit_for_review gate.
+// Identical to GoNoGoDecision (§3.1); aliased here so C52's contract is typed.
+// C52 passes the result of C53's decide() call as c53_rubric_result.
+type RubricResult = GoNoGoDecision
+```
+
+The `RubricResult` C52 receives contains the full `GoNoGoDecision` evidence bundle (verdict, evidence refs, N, attempt state, decided_at). C52's `submit_for_review` gate reads `c53_rubric_result.Verdict` to determine whether C53's go/no-go has been assessed — the gate is non-bypassable regardless of the verdict value (I2). C52 stores the `gate_decision` (C52's own human-review record); C53's milestone fields (`milestone_verdict`, `milestone_evidence`, `milestone_decided_at`) are written directly by C53 to the `factory_build` bead (D-40, §3.4 below) — they are NOT part of C52's `GateDecision`.
+
 ### 3.1 Sweep-2 concrete signature — `decide()` (OQ-1 RESOLVED here)
 
 > **OQ-1 RESOLVED (Sweep-2) — decision-rule SHAPE:** The go/no-go is a **multi-term predicate over C33's `SatisfactionDistribution` statistics**: `p10 ≥ T_tail AND mean ≥ T_central`, evaluated over an N-scenario run. The **SHAPE** — which distributional statistics gate the first self-build go/no-go — is a **genuine operator-judgment / safety fork that MUST be a morning-review item** (see §9 OQ-1). The **threshold VALUES `T_tail`, `T_central`, and the minimum run size `N`** are **operator-policy knobs** in the milestone config (see §3.4 below); C53 does NOT fix any numeric value. Rationale for the shape: a `mean`-only gate can pass while a consistent tail of scenarios systematically fails (Goodhart risk, F47); a `p10`-only gate ignores central tendency; the two-term shape (tail + central) is the smallest multi-term predicate that guards both failure modes with C33's available statistics. Adding `p90` or `std_dev` gates is optional operator policy, not required by the shape.

@@ -214,11 +214,14 @@ The stranded bead is preserved (status stays `in_progress`) as a C20 resume-comp
 | `spec_ref` | `path` | R | C08 spec path (`packs/*/agents/*/prompt.template.md`) | C52 writes on spec emission |
 | `scenario_ref` | `path` | R | scenario dir (`scenarios/<component>/`) | C52 writes; C30 populates scenarios |
 | `workflow_handle` | `handle` | R | resume token for `gc converge resume` | C52 writes after dispatch; GC reads on resume |
-| `transfusion_verdict` | `TransfusionVerdict` (JSON) | O | C51 verdict written at acceptance step | C51 writes; C52 routes; gate reads |
-| `gate_decision` | `GateDecision` (JSON) | O | approve/reject + reviewer + timestamp (§3.4); C53 records go/no-go here (D-40) | C53 records; C52 reads to decide advance |
+| `transfusion_verdict` | `TransfusionVerdict` (JSON) | O | C51 verdict written at acceptance step (C51 §4.1.2). | C51 writes; C52 routes; gate reads |
+| `gate_decision` | `GateDecision` (JSON) | O | **C52's own human-review record** (§3.4): `{decision: enum{approved,rejected}, reviewer_id: actor, decision_ts: timestamp, notes: string|null, bead_id: bead_id}`. This is NOT C53's milestone record — it is C52's reviewer gate output (the `submit_for_review` return). C52 reads this to decide whether to call `advance_to_completed`. | **C52 writes** after `submit_for_review`; C52 reads to decide advance |
+| `milestone_verdict` | `string` (`"go"` \| `"no_go"`) | O | **C53's go/no-go outcome** — distinct from C52's `gate_decision`. Written by C53 to the same bead (D-40: "C53 records the go/no-go on the same bead"). C52 does NOT write this field. | **C53 writes**; C54 reads |
+| `milestone_evidence` | `JSON` (GoNoGoDecision evidence bundle) | O | **C53's evidence record** — C53's full `GoNoGoDecision` (§3.0 RubricResult). | **C53 writes** |
+| `milestone_decided_at` | `timestamp` | O | **C53's decision timestamp.** | **C53 writes** |
 | `depends_on` | `list<bead_id>` | O | if resume-restart, links to stranded bead (§3.6 escalation) | C52 writes on restart |
 
-> This is NOT a new C52 schema. These are C20-owned fields (D-3); C52 requests any new fields as a C20 change request. The `transfusion_verdict` and `gate_decision` fields are C52's slot-requests to C20 (per D-40 "C53 records the go/no-go on the same bead" — this needs a C20 field, hence the slot-request model).
+> This is NOT a new C52 schema. These are C20-owned fields (D-3); C52 requests any new fields as a C20 change request. The `transfusion_verdict` and `gate_decision` fields are C52's slot-requests to C20 (per D-40); the `milestone_verdict`/`milestone_evidence`/`milestone_decided_at` fields are C53's slot-requests to C20 (C53 §3.4 NEW SEAM). **RFB-SEAM-04 clarification:** `gate_decision` is C52's human-review record; the three `milestone_*` fields are C53's go/no-go milestone record — these are distinct slots on the same bead, not the same data under different names.
 
 ### 4.2 No other durable state
 

@@ -27,10 +27,10 @@ configuration (README:231; AI-CONTEXT §3.1 row 9).
 
 C41 exists as a *named component* (not just "a field") because three things must be defined for
 attribution to be load-bearing rather than incidental: (1) the **actor vocabulary** — the closed set of
-actor kinds (city, rig, agent) that may legitimately appear in a `created_by`; (2) the **universality
-invariant** — that *every* state-changing action carries a `created_by`, with no unattributed path; and
-(3) the **audit trail** — that the union of bead history (C19) and the event bus (C23) is a queryable,
-append-only record of who did what. The optional fourth piece — **identity *verification*** (signed
+actor kinds (city, rig, agent, tool) that may legitimately appear in a `created_by` (`tool` added per
+INT-4 to cover C17 tool-node actors); (2) the **universality invariant** — that *every* state-changing
+action carries a `created_by`, with no unattributed path; and (3) the **audit trail** — that the union
+of bead history (C19) and the event bus (C23) is a queryable, append-only record of who did what. The optional fourth piece — **identity *verification*** (signed
 provenance proving the claimed actor is the actual actor) — v4 marks "optional, deferred" (README:229),
 so C41 *defines the seam* for it but does not require it (gap G36; see §6). **D-5** adds a fifth,
 non-optional piece unique to C41: the **provenance hash-chain** — a tamper-evident chain computed over
@@ -39,9 +39,11 @@ substrate-native `created_by`; it provides tamper evidence that the `created_by`
 reordered or truncated, without requiring signatures (which would need G37-resolved key storage).
 
 **Responsibilities**
-- Define the **actor model**: the actor kinds v4 names — **city** (workspace), **rig** (agent worker
-  role), **agent** (the acting worker/judge/scenario role) — and how an actor is identified
-  (README:226 "Gas City `actor` schema (cities, rigs, agents)"; AI-CONTEXT §3.3 city/rig vocabulary).
+- Define the **actor model**: the actor kinds — **city** (workspace), **rig** (agent worker role),
+  **agent** (the acting worker/judge/scenario role), **tool** (automated tool-node actors, e.g.
+  C17 `inspect_eval`; added per INT-4) — and how an actor is identified (README:226 "Gas City
+  `actor` schema (cities, rigs, agents)"; AI-CONTEXT §3.3 city/rig vocabulary; `tool` is the
+  INT-4 addition required so `resolve_actor("tool:inspect_eval")` succeeds).
 - Own the **`created_by` attribution semantics**: what a `created_by` value *is* (a reference to an actor
   in the actor model), so that C19 (beads) and C23 (events) — which merely *carry* the field — resolve to
   a defined actor (README:227 "native `created_by`"; component-inventory: beads/events carry `created_by`,
@@ -115,9 +117,16 @@ identifier)` against this contract.
 **Interface signature (C41-I1):**
 ```
 resolve_actor(created_by: string) → ActorRef | ActorResolutionError
-  ActorRef = { kind: "city" | "rig" | "agent", id: string }
+  ActorRef = { kind: "city" | "rig" | "agent" | "tool", id: string }
   ActorResolutionError: E-C41-03 (unknown kind), E-C41-04 (malformed ref)
 ```
+
+> **INT-4 FIX (Sweep-2):** `tool` is added to the `kind` enum. C17 tool-nodes (e.g. `inspect_eval`)
+> emit `created_by = "tool:inspect_eval"` (D-29 wire type). C41 is the vocabulary authority; if
+> `tool` is not in the enum then `resolve_actor("tool:inspect_eval")` raises E-C41-03 (unknown kind),
+> breaking the universality invariant (every action attributable). The `{city, rig, agent, tool}`
+> closed set is now the canonical actor-kind vocabulary. All invariant text and error descriptions
+> that name `{city, rig, agent}` are updated to include `tool`.
 
 > `created_by` wire type = colon-delimited `"kind:id"` string per **D-29** (parsed to C41 `ActorRef`); resolves OQ-C41-4. `ActorRef` is the in-memory/parsed form; the wire value across C19/C20/C21/C23 is the `"kind:id"` string (e.g. `"rig:worker-1"`).
 
@@ -208,8 +217,8 @@ proceed. OQ-C41-5 gates this.
 - **Universal attribution**: no state-changing action (bead write, event emit) exists without a
   `created_by` resolving to a valid actor. An unattributed write is invalid (this *is* F14 "Addressed";
   README:222).
-- **Actor-kind closure**: every `created_by` resolves to one of the v4-named kinds (city / rig / agent);
-  an actor of unknown kind is invalid. (> [FAITHFUL-FILL] — see §4.1.)
+- **Actor-kind closure**: every `created_by` resolves to one of the named kinds (city / rig / agent / tool);
+  an actor of unknown kind is invalid. (> [FAITHFUL-FILL + INT-4] — see §4.1.)
 - **Append-only audit**: the audit trail (event bus + bead history) is append-only; attribution records
   are never rewritten (C23 is "append-only JSONL with monotonic seq" — AI-CONTEXT §3.2 #3).
 - **Chain append-only**: chain entries are never rewritten or deleted; a recomputed hash that differs
@@ -230,21 +239,24 @@ means, and maintains the chain.
 
 | Field | Type | Req? | Semantics | Read-by | Write-by |
 |---|---|---|---|---|---|
-| `kind` | `enum{"city","rig","agent"}` | R | the actor kind — closed set (README:226 "cities, rigs, agents") | C41 resolve_actor; C42 partition; C43 boundary | writer stamps on bead/event creation |
+| `kind` | `enum{"city","rig","agent","tool"}` | R | the actor kind — closed set (README:226 "cities, rigs, agents" + `tool` added per INT-4 to cover C17 tool-node actors, e.g. `"tool:inspect_eval"`) | C41 resolve_actor; C42 partition; C43 boundary | writer stamps on bead/event creation |
 | `id` | `string` | R | the specific actor identifier — rig name from a `[[rig]]` block (AI-CONTEXT §13.3), agent name from `[[agent]]` (AI-CONTEXT §3.4) | C41 audit_trail; C42; C43 | writer; sourced from Gas City config |
 | `signature` | `bytes` | O | signed provenance binding ref to action — **present only with the optional verification pack** (README:229; G36; signing deferred to FE-3 per D-14) | C41-I4 verifier | optional pack writes |
 
-> [FAITHFUL-FILL] **Actor-kind set = exactly {city, rig, agent}.** v4 names "cities, rigs, agents"
+> [FAITHFUL-FILL] **Actor-kind set = {city, rig, agent, tool}.** v4 names "cities, rigs, agents"
 > verbatim as the Gas City `actor` schema (README:226); the `agent` kind is sourced from README:226 +
 > §3.4 `[[agent]]` blocks (RC41A-01 — *not* from §3.3, which glosses only city/rig and ambiguously maps
-> rig = "agent worker role"). The minimal faithful choice is to treat that
-> triple as the *closed* kind set, because v4 never names a fourth actor kind and the universal-attribution
-> invariant requires a *closed* set for "actor of unknown kind is invalid" to be well-defined. Whether
+> rig = "agent worker role"). **INT-4 (Sweep-2) adds `tool`:** C17 tool-nodes (e.g. `inspect_eval`)
+> emit `created_by = "tool:inspect_eval"` (D-29 wire type). C41 owns the vocabulary; without `tool`
+> in the enum, `resolve_actor("tool:inspect_eval")` raises E-C41-03 and breaks the universality
+> invariant. `tool` is the fourth kind — a distinct actor class for automated tool-node actors that
+> are neither a city workspace, a rig worker role, nor an agent persona. Whether
 > the *human operator* is modeled as an `agent`, a distinct kind, or sits outside the actor model entirely
 > is a real open question (overrides are operator actions — README P8) — flagged as OQ-C41-2; the smallest
 > faithful reading is that the operator acts *through* an agent/rig and is attributed as such, since v4
-> gives no fourth kind. Concrete identifier grammar: `"<kind>:<id>"` e.g. `"rig:worker-1"`,
-> `"agent:judge"` — the colon-delimited prefix is the minimal structured encoding (OQ-C41-4).
+> gives no fifth kind. Concrete identifier grammar: `"<kind>:<id>"` e.g. `"rig:worker-1"`,
+> `"agent:judge"`, `"tool:inspect_eval"` — the colon-delimited prefix is the minimal structured encoding
+> (OQ-C41-4).
 
 > [FAITHFUL-FILL] **Actor reference is (minimal faithful reading) a (kind, identifier) pair, not a flat
 > string — pending C19/C23 ratification (OQ-C41-4).** v4 stores `created_by` as a field but never gives
@@ -420,7 +432,7 @@ sequenceDiagram
 |---|---|---|---|
 | **E-C41-01** | **Unattributed write** — bead/event written without `created_by` | stamp-time check; C19/C20 required-field validation (R=required on envelope) | reject the write (or flag if Gas City defaults rather than rejects — G11-gated; OQ-C41-3). Signals F14. |
 | **E-C41-02** | **Unresolvable attribution** — `created_by` present but does not resolve to a valid actor (e.g., unknown rig name) | resolve_actor call returns error | reject or quarantine the record; alert auditor. Signals actor-kind-closure invariant violation. |
-| **E-C41-03** | **Unknown actor kind** — `created_by` prefix not in {city, rig, agent} | resolve_actor kind check | reject; actor-kind set is closed (§3 invariant). |
+| **E-C41-03** | **Unknown actor kind** — `created_by` prefix not in {city, rig, agent, tool} | resolve_actor kind check | reject; actor-kind set is closed (§3 invariant). |
 | **E-C41-04** | **Malformed actor reference** — `created_by` string does not parse as `kind:id` | resolve_actor parse | reject the write; the writer must supply a well-formed reference. |
 | **E-C41-05** | **Hash mismatch** — chain_verify recomputes entry_hash and finds it differs from stored `entry_hash` | chain_verify per-entry recompute | return VerifyResult{ok=false, first_mismatch_seq=K}; signal tamper evidence to auditor; do NOT silently pass. This is the core tamper-detection signal. |
 | **E-C41-06** | **Chain gap** — event_id sequence in a chain entry has a gap (missing `event_id` values relative to the previous entry's last id) | chain_append input validation; chain_verify gap scan | reject the chain_append (C23 must provide gap-free stream per §3.6); signal tamper evidence on verify. |
@@ -469,7 +481,7 @@ sequenceDiagram
    record with a non-empty `created_by`; a write path that omits it is rejected/invalid. No unattributed
    action exists.
 2. **Actor resolvability**: every `created_by` resolves to a (kind, identifier) under the C41 actor model,
-   with kind ∈ {city, rig, agent}; an unknown-kind actor is invalid.
+   with kind ∈ {city, rig, agent, tool}; an unknown-kind actor is invalid.
 3. **Audit trail answerable by actor**: given an actor X, the union of bead history (C19) + event-bus
    records (C23) keyed by `created_by == X` returns X's actions; given a bead/event Y, its creating actor
    is recoverable (README:228).
@@ -487,7 +499,7 @@ sequenceDiagram
 ### 8.1 Concrete acceptance tests (AC-codes)
 
 **Actor model (E-C41-03 / E-C41-04)**
-- **AC-C41-1** — `resolve_actor("rig:worker-1")` → `{kind="rig", id="worker-1"}` without error; `resolve_actor("unknown:foo")` → E-C41-03; `resolve_actor("bad_format")` → E-C41-04.
+- **AC-C41-1** — `resolve_actor("rig:worker-1")` → `{kind="rig", id="worker-1"}` without error; `resolve_actor("tool:inspect_eval")` → `{kind="tool", id="inspect_eval"}` without error (INT-4); `resolve_actor("unknown:foo")` → E-C41-03; `resolve_actor("bad_format")` → E-C41-04.
 - **AC-C41-2** — Writing a bead with `created_by=""` or `created_by=null` → E-C41-01 (unattributed write rejected or flagged — enforcement strength is G11-gated; OQ-C41-3).
 
 **Universal attribution (F14)**

@@ -8,7 +8,7 @@
 
 **Done this run (stacked PRs #229–#232 + wrap):**
 - **D-23 (protocol + harvest):** [`D-23-gas-city-spike-protocol.md`](./D-23-gas-city-spike-protocol.md) (runnable prevent-vs-detect / `[[service]]` / Orders-durability checklist) + [`D-23-substrate-harvest.md`](./D-23-substrate-harvest.md) (12 facts from the real `gascity-prototype@b14c278`). Closed **XC-9, C42:OQ-4, C04:OQ-4**; **0 true contradictions** (3 flagged, all reclassified NEW-INFO). 13 specs annotated `[D-23 substrate-verified]`.
-- **auto-001 decided** ([`decisions/auto-001-detect-only-binding-gate.md`](./decisions/auto-001-detect-only-binding-gate.md)): detect-only ⇒ binding gate on unattended P2, as a **policy rubric** (descope-to-L4 default; prevent layer NOT pre-blessed; per-rig-class middle; fail-closed). Resolved **OQ-C41-4** via D-29.
+- **auto-001 decided** (the [detect-only binding-gate brief](./decisions/auto-001-detect-only-binding-gate.md)): detect-only ⇒ binding gate on unattended P2, as a **policy rubric** (descope-to-L4 default; prevent layer NOT pre-blessed; per-rig-class middle; fail-closed). Resolved **OQ-C41-4** via D-29.
 - **Sweep-2 depth cluster** (evidence/data substrate): **C19, C20, C21, C23, C41** at implementation depth. Seam adversary found + fixed a HIGH `event_id` drift → ledger **D-26…D-29**.
 
 **MANDATORY FIRST ACTIONS for the next session (in order):**

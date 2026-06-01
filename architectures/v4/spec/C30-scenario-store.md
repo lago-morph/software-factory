@@ -332,6 +332,31 @@ stored at `scenarios/<component>/…` in the separate repo, authored + committed
 rig (the git commit being its provenance + tamper-evidence record; custom signing DEFERRED → FE-3/G37, D-14).
 A *scenario suite* is the set of scenarios for a component (or the Healer/twins — README:499).
 
+### 4.5 Scenario-record schema (FROZEN — Sweep-2, OQ-1 RESOLVED)
+
+The **authoritative record** for a stored scenario is defined by two co-located artifacts in the separate
+scenario repo: (a) the Inspect AI `Task` Python file at `scenarios/<component>/<name>.py`, and (b) the
+corresponding entry in `scenarios/MANIFEST.json`. Together they constitute the scenario record C31/C32/C34
+build against.
+
+**Scenario-record field table** (the MANIFEST entry; the `task_path` points to the `.py` file that is the Inspect AI record):
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `component` | `string` | R | C-ID the scenario exercises (e.g. `"C31"`); maps to the `scenarios/<component>/` path prefix (AI-CONTEXT §16.4 L698) | C30 writes; C31/C32/C34 read |
+| `task_path` | `string` (repo-relative path) | R | Repo-relative path to the Inspect AI `Task` Python file (`scenarios/<component>/<name>.py`); the I7 corpus-retrieval key for C31/C32 | C30 writes; C31/C32 read |
+| `task_name` | `string` | R | Python `Task` object name inside `task_path` (the `--task` arg to `inspect eval`; C31 §3 contract) | C30 writes; C31 read |
+| `created_by` | `string` (`"kind:id"`) | R | `"rig:scenario_authoring"` — the D-29 canonical wire form (a colon-delimited `"kind:id"` string, consistent with C20/C41/C19 `created_by`); confirms authoring-rig confinement (INV-2) | C30 writes; C34/C41 read |
+| `git_commit` | `string` (SHA-1) | R | SHA of the git commit that introduced this entry in the separate repo; the I5 Phase-0/2 tamper-evidence / provenance anchor (INV-4; AI-CONTEXT:236/404); what C34 baselining verifies (F7) | C30 writes (via git commit identity); C34 verifies |
+| `created_at` | `string` (ISO-8601) | R | Authoring timestamp (UTC); the human-readable companion to `git_commit` for audit and ordering | C30 writes; C34 audit reads |
+| `description` | `string` | O | Human-readable scenario description for corpus navigation | C30 writes; human readers |
+| `schema_version` | `string` | R (manifest root) | Version of the MANIFEST schema; bump on structural field changes | C30 writes; all readers |
+| `generated_at_commit` | `string` (SHA-1) | R (manifest root) | HEAD SHA of the scenario repo at manifest generation time; the I6 corpus-feed baseline C34 audits against | C30 writes; C34 baseline verifies |
+
+**Signing fields: NONE at Phase-0/2.** Per D-14/OQ-3 RESOLVED: no `signature`, `public_key`, or `attestation` field is added to the record. The content-addressed git commit (INV-4) provides tamper-evidence without a key. Signing fields are a FE-3 addition, blocked on G37.
+
+**Inspect AI `Task` Python file.** The Python file is the Inspect AI-native record — it must be a valid `inspect_ai.Task` object importable as `{task_name}` from `{task_path}`. C30 owns the corpus; Inspect AI (MIT) defines the `Task` schema (INV-5). No bespoke scenario-format fields are added to the Python file — it is adopted verbatim as the authoring format (README:170; AI-CONTEXT:467).
+
 > [FAITHFUL-FILL] v4 names the *format* (Inspect AI Task DSL, README:170) and the *location* (separate repo +
 > `scenarios/<component>/`, README:171/425, AI-CONTEXT §16.4) but not the concrete on-disk scenario record
 > (e.g. scenario id, component binding, corpus manifest). The minimal faithful elaboration is: **a stored
@@ -385,15 +410,52 @@ a holdout violation after the fact, and may *verify the corpus against its git r
 (F7). C30 *publishes the corpus + its git-revision identity*; it does not run the runner, the judge, or the
 audit. *(Cryptographic signature verification is an FE-3 addition, not a sweep-1 path.)*
 
-> Sequence/state diagrams (Mermaid), the exact `Task`/repo wire contracts, and the pack manifest
-> are **sweep-2+** (the cryptographic-signature contract is DEFERRED → FE-3, not sweep-2). The *execution*
-> contract is owned by **C31**; the *enforcement/audit* contract by **C34**;
-> the *partition* contract by **C42**.
+### 5.1 Sequence diagram — scenario authoring + corpus-feed publish (Sweep-2)
+
+The diagram covers the two C30-owned flows: (a) authoring a scenario via the `scenario_authoring` rig, and
+(b) publishing the corpus-path feed (I6) so C34 and C31/C32 can consume it. The *execution* flow (C31 invoking
+`inspect_eval`) and the *enforcement* flow (C34 policing the worker rig) are out of scope here — they are
+owned by C31 §3 and C34 §3 respectively.
+
+```mermaid
+sequenceDiagram
+    participant Auth as scenario_authoring rig (C42)
+    participant Repo as Separate scenario git repo (C30)
+    participant Man as MANIFEST.json (C30 corpus feed)
+    participant C34 as Holdout audit (C34)
+    participant C31 as Scenario runner (C31)
+
+    Auth->>Repo: write scenarios/<component>/<name>.py (Inspect AI Task)
+    Auth->>Repo: git commit (commit SHA = provenance + tamper-evidence, INV-4)
+    Auth->>Man: append manifest entry with task_path, task_name, created_by, git_commit, created_at
+    Auth->>Repo: git commit MANIFEST.json (generated_at_commit = HEAD SHA)
+    Repo-->>C34: I6 path feed available (scenario paths + git_commit per entry)
+    Repo-->>C31: I7 corpus retrieval available (task_path + task_name per component)
+    Note over Auth,Repo: Worker rig has NO read_partition on scenarios (C42 INV-3; C34 enforces D-13)
+    Note over C34: C34 baselines MANIFEST generated_at_commit vs repo HEAD; detects drift
+```
 
 ## 6. Failure modes & handling
 
 C30 carries the holdout/isolation gaps assigned to it (G10, G21, G28) **at the storage/authoring altitude**,
 routing the *enforcement* obligations to C34 per D-13.
+
+### 6.1 Error taxonomy (E-codes — Sweep-2)
+
+C30's error surface is at the **store/authoring boundary**: validation failures when a scenario is authored or
+committed, and integrity failures detected when the corpus is consumed. Enforcement failures (worker reads the
+`scenarios` partition) are C34's errors, not C30's (D-13). E-codes below are raised by C30's conformance pack
+(§8 test strategy) or by the corpus-consumer interface (I6/I7).
+
+| E-code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| **E-C30-01** | Malformed scenario: `task_path` file is not a valid Inspect AI `Task` Python module (import fails or no `Task` object named `task_name`) | Conformance-pack assertion failure at authoring time; E-C30-01 in the pack result log | Author corrects the `Task` definition in the `.py` file; re-commit; AC-C30-01 verifies |
+| **E-C30-02** | Missing provenance: a MANIFEST entry is present but `git_commit` is empty, `"unknown"`, or does not resolve to a real commit in the separate repo | C34 baselining (F7) raises a corpus-integrity alert; E-C30-02 in the audit log | Re-commit the scenario from the `scenario_authoring` rig so the git commit identity is populated; regenerate MANIFEST |
+| **E-C30-03** | Holdout-leak path: a scenario file exists at a path that is NOT inside the `scenarios` partition (e.g. inadvertently co-located in the `code` partition) | Conformance-pack INV-1/INV-3 check raises E-C30-03; C34 audit should also detect the out-of-partition path | Move the file to `scenarios/<component>/`; re-commit; re-run conformance pack |
+| **E-C30-04** | Wrong authoring identity: a MANIFEST entry has `created_by` ≠ `"rig:scenario_authoring"` (e.g. authored by an implementer or worker rig) | Conformance-pack INV-2 check raises E-C30-04; C34 audit reads `created_by` and may flag as a holdout-integrity violation | Revoke the entry; re-author from the `scenario_authoring` rig; C34 must assess whether the holdout was compromised (E-C30-04 is a C34 trigger) |
+| **E-C30-05** | Manifest schema mismatch: `schema_version` in MANIFEST.json does not match the version the consumer (C31/C32/C34) expects | Consumer (C31/C32/C34) raises a parse error citing E-C30-05; scenario retrieval (I7) or path-feed consumption (I6) is blocked | Regenerate MANIFEST under the current schema version; bump `schema_version` if a structural change was made |
+| **E-C30-06** | MANIFEST missing or corrupt: `scenarios/MANIFEST.json` is absent or unparseable in the separate repo | C31/C32 cannot retrieve scenarios (I7 outage); C34 cannot baseline (I6 outage); E-C30-06 raised by all consumers | Re-generate and commit a valid MANIFEST from the `scenario_authoring` rig; consumers retry once manifest is committed |
+| **E-C30-07** | Tampered scenario: the content of `scenarios/<component>/<name>.py` does not match the git-object hash for the `git_commit` recorded in MANIFEST (i.e. git history was rewritten after authoring) | C34 baselining detects hash mismatch; E-C30-07 in the audit log (INV-4 violation) | Human operator investigation required; the tampered file must be restored from git history or re-authored; this is a security event (F28/F9) |
 
 **G10 (minor) — "held-out" implies a guarantee the mechanism doesn't provide.** "P5 says the agent 'cannot
 see' scenarios, but the enforcement is file permissions + agent-prompt discipline + audit logging;
@@ -480,58 +542,52 @@ a git repo with git's own durability/replication story — which is *also* the s
 
 ## 8. Acceptance criteria & test strategy
 
-Sweep-1 = high-level criteria (concrete tests at sweep 2).
+**Sweep-2 AC-code table** (cross-referenced to E-codes in §6.1; each failure-path AC names the E-code it asserts):
 
-1. **AC-1 (DSL adopted — I1/INV-5):** scenarios are authored as **Inspect AI `Task`** artifacts; no bespoke
-   scenario format is introduced (README:170; AI-CONTEXT:467). *Proves the off-the-shelf DSL is the format.*
-2. **AC-2 (separate-repo holdout — INV-1):** the scenario corpus lives in a **separate git repo** from the
-   implementer's code partition; it is never co-located in `code` (README:171/425).
-3. **AC-3 (authoring-rig confinement — INV-2):** scenarios are authored **only** by the `scenario_authoring`
-   rig; an attempt to author from the implementer rig is invalid (AI-CONTEXT §13.3). *Placement is correct;
-   enforcement of the implementer's read-exclusion is C34's (D-13).*
-4. **AC-4 (partition placement — INV-3):** every stored scenario resolves under the **`scenarios` partition**
-   C42 defines, so the holdout invariant `scenarios ∉ read_partition(worker)` and C34's audit have a
-   well-defined target (AI-CONTEXT §13.3; C42 §3).
-5. **AC-5 (git-revision integrity — INV-4):** every scenario has an immutable, content-addressed **git
-   commit identity** in the separate repo; a tampered/edited scenario yields a git-history / content-address
-   mismatch detectable by baselining (F7; AI-CONTEXT:236/404). *Cryptographic per-scenario signing is
-   **DEFERRED → FE-3 (blocked on G37/D-14)** — not asserted by this AC; the Phase-0/2 mechanism is the git
-   revision, which needs no key.*
-6. **AC-6 (layout resolvable by path — I2/I7):** a component's scenarios are resolvable at
-   `scenarios/<component>/…` by the runner (C31), the judge (C32), and the audit (C34) (AI-CONTEXT §16.4).
-7. **AC-7 (scenario-path feed to enforcement/audit — I6; supplies the boundary G10/G21/G28 resolve
-   against):** C30 **publishes** the scenario corpus layout/paths so **C34** can enforce+audit actual
-   implementer reads against them (README:173). *C30 publishes; C34 enforces+audits — C30 runs no enforcement
-   (D-13). C30 makes the boundary well-defined; G21 is resolved by C34/C43, not C30.*
-8. **AC-8 (versioned, append-growing — INV-6):** the corpus is version-controlled and grows additively;
-   scenario history is preserved (git), not overwritten (README:526).
+| AC-code | Given / When / Then | Verifies | E↔AC ref |
+|---|---|---|---|
+| **AC-C30-01** | Given a valid Inspect AI `Task` Python file authored by `scenario_authoring` rig / When committed to `scenarios/<component>/` in the separate repo and MANIFEST updated / Then the file imports without error and MANIFEST entry is resolvable with all required fields (INV-5, I1) | DSL adopted; no bespoke format (README:170; AI-CONTEXT:467) | Asserts absence of **E-C30-01** (malformed Task) |
+| **AC-C30-02** | Given the scenario repo / When the `scenarios/<component>/` path is checked / Then no scenario file exists outside the separate repo (i.e. in the `code` partition or implementer working tree) (INV-1) | Separate-repo holdout (README:171/425) | Asserts absence of **E-C30-03** (wrong partition path) |
+| **AC-C30-03** | Given a MANIFEST entry for a committed scenario / When `created_by` is inspected / Then `created_by == "rig:scenario_authoring"` (D-29 wire form; INV-2) | Authoring-rig confinement (AI-CONTEXT §13.3) | Asserts absence of **E-C30-04** (wrong authoring identity) |
+| **AC-C30-04** | Given a MANIFEST entry / When `task_path` is resolved under the `scenarios` partition / Then the file path starts with `scenarios/` (i.e. inside C42's `scenarios` partition, never in `code`) (INV-3) | Partition placement (AI-CONTEXT §13.3; C42 §3) | Asserts absence of **E-C30-03** (holdout-leak path) |
+| **AC-C30-05** | Given a committed scenario at `git_commit = SHA` / When the SHA is resolved in the separate repo and the object hash compared to the live file / Then the hashes match (INV-4); ALSO: when the file is artificially mutated and the check re-run / Then a mismatch is detected (tamper-detection round-trip) | Git-revision integrity; tamper-evidence (AI-CONTEXT:236/404; F7) | Asserts detection of **E-C30-07** (tampered scenario) on the negative path |
+| **AC-C30-06** | Given `scenarios/MANIFEST.json` in the separate repo / When a consumer (C31/C32/C34) reads the manifest / Then every `task_path` resolves to an existing file and every `task_name` is importable from that file (I2/I7) | Corpus layout resolvable by path (AI-CONTEXT §16.4 L698) | Asserts absence of **E-C30-05** (schema mismatch) + **E-C30-06** (manifest missing) |
+| **AC-C30-07** | Given `scenarios/MANIFEST.json` / When C34 reads `generated_at_commit` and compares to repo HEAD / Then the field equals the current HEAD SHA (or is the last committed HEAD, if the manifest is stale by at most one commit) (I6) | Scenario-path feed to enforcement/audit (README:173); C34 audit baseline | Asserts absence of **E-C30-02** (missing provenance) + **E-C30-06** (manifest corrupt) |
+| **AC-C30-08** | Given the scenario corpus at time T / When a new scenario is added and committed at time T+1 / Then the prior scenario's git-commit SHA is unchanged and the prior scenario file is unmodified (append-only check) (INV-6) | Versioned, append-growing corpus (README:526) | No E-code (positive path; confirms no destructive rewrite) |
 
-**Test strategy.** A **scenario-store conformance pack** that: authors a sample Inspect AI `Task` from the
-`scenario_authoring` rig, commits it to the separate repo at `scenarios/<component>/`, and asserts
-AC-1…AC-8 — in particular the separate-repo holdout (AC-2), the `scenarios`-partition placement (AC-4), the
-git-revision integrity / tamper-detection round-trip (AC-5), and the scenario-path feed C34 audits against
-(AC-7). The suite proves
-*correct held-out placement + provenance*; it does **not** test enforcement (C34) or execution (C31). It is
+**Test strategy (Sweep-2).** A **scenario-store conformance pack** that: (1) authors a sample Inspect AI `Task`
+from the `scenario_authoring` rig, commits it to the separate repo at `scenarios/<component>/`, and regenerates
+MANIFEST; (2) asserts AC-C30-01 through AC-C30-08 in order; (3) exercises the negative path for each E-code
+(E-C30-01…E-C30-07) and asserts the correct error condition is raised. The suite proves *correct held-out
+placement + provenance + MANIFEST integrity*; it does **not** test enforcement (C34) or execution (C31). It is
 the storage-side de-risking gate before C31/C32/C34 build on C30.
+
+**Gating exit criteria (from plan §6):** AC-C30-04 (partition placement) + AC-C30-07 (path feed to C34) are
+the gates — they make the holdout boundary well-defined and auditable. The conformance pack MUST be green on
+these two before C31/C32/C34 consume C30's corpus interfaces (M2–M4 in the build plan).
 
 ## 9. Open questions
 
-- **OQ-1 (→ review-log, top):** **Scenario record + corpus manifest.** Exactly which fields are C30's stored
-  scenario record (the §4 [FAITHFUL-FILL]: `Task` file under `scenarios/<component>/`, provenance = git commit
-  identity), whether an explicit `created_by` field is added beyond the git commit author, and what the corpus
-  manifest is. Freeze at sweep 2 before C31/C32/C34 build against the corpus. *(Cryptographic signing is **not**
-  part of the sweep-1/2 record — it is DEFERRED → FE-3/G37, D-14; revisit only at FE-3's trigger.)*
-- **OQ-2 (→ review-log):** **D-13 storage/enforcement seam.** Confirm the split: C30 *stores/authors* in the
-  isolated rig, C42 *provides* the partition, C34 *enforces + audits*. In particular, confirm C30 publishes
-  exactly the scenario-path/label feed (I6) that C34's audit needs, and that no enforcement obligation leaks
-  back onto C30. *(Pre-constrains unbuilt C34, Batch 3.)*
-- **OQ-3 (→ review-log):** **Signing deferral confirmed (FE-3/G37, D-14).** Cryptographic per-scenario
-  signing needs a key; v4 has no secrets story (plaintext `city.toml`/env), so a key collapses the assurance
-  (XC-6). Per **D-14** this signing question is already settled **optional/deferred → FE-3 (blocked on G37)**;
-  C30's Phase-0/2 corpus integrity is the content-addressed git revision (no key). Confirm the orchestrator
-  agrees C30 should **not** carry a signing obligation at sweep 1 and that FE-3 is the right home when G37
-  lands. *(G37 (secrets) ≠ FE-3 (signing) per D-14; secrets-deferral citations name G37.)*
-- **OQ-4 (→ review-log):** **CXDB vs git for scenario metadata.** Sweep-1 keeps the corpus's authoritative
-  home in the separate git repo (§4 [FAITHFUL-FILL]). Confirm whether any scenario *metadata* (e.g. for the
-  satisfaction aggregator C33 or methodology loop C55) is ever mirrored into a typed store — and if so, that
-  it uses the `softwarefactory.v4.*` bundle root (D-2), without making the git repo non-authoritative.
+- **OQ-1 RESOLVED (Sweep-2):** **Scenario record + corpus manifest.** Schema frozen in §4.5: `Task` file at
+  `scenarios/<component>/<name>.py` + MANIFEST entry with fields `component`, `task_path`, `task_name`,
+  `created_by` (`"rig:scenario_authoring"`, D-29 wire form), `git_commit`, `created_at`, `description` (O),
+  `schema_version`, `generated_at_commit`. No signing fields at Phase-0/2 (D-14/G37). C31/C32/C34 build
+  against this frozen schema.
+- **OQ-2 RESOLVED (Sweep-2):** **D-13 storage/enforcement seam.** Confirmed (D-13 verbatim §3.1): C30
+  *stores/authors*; C42 *provides* the partition; C34 *enforces + audits*. C30 publishes the I6 path feed
+  (MANIFEST `task_path` entries + `generated_at_commit`) and no enforcement obligation leaks onto C30.
+  E-C30-04 (wrong authoring identity) is flagged by C30's conformance pack AND is a trigger for C34 — the
+  seam is: C30 detects the authoring violation; C34 assesses holdout-integrity impact.
+- **OQ-3 RESOLVED (Sweep-2):** **Signing deferral confirmed (FE-3/G37, D-14).** Phase-0/2 integrity =
+  git content-addressing (INV-4) + rig isolation (INV-2); no key required; no signing obligation on C30.
+  FE-3 (blocked on G37) is the correct home when G37 (C03 SecretResolver) lands.
+- **OQ-4 RESOLVED (Sweep-2):** **Metadata home = separate git repo, NOT CXDB.** Per D-36 (verbatim §3.1):
+  the eval-tier flow is the Inspect AI log, not CXDB; scenario metadata home is the git repo. If scenario
+  metadata is ever mirrored to a typed store (C33/C55), it uses `softwarefactory.v4.*` (D-2) and the git
+  repo remains authoritative (INV-1). No CXDB dependency is added to C30.
+
+**New seam (→ orchestrator ledger):** E-C30-04 (wrong authoring identity) creates a C30↔C34 trigger seam.
+C30's conformance pack detects the violation at authoring time and raises E-C30-04; C34 must consume this
+signal (or re-detect via the I6 path feed's `created_by` field) to assess holdout-integrity impact. The
+*handoff mechanism* (does C34 poll the I6 feed, or does C30 emit a signal) is a **C30↔C34 seam left open**
+for the C34 Sweep-2 author to close. C30 publishes; C34 decides how to consume.

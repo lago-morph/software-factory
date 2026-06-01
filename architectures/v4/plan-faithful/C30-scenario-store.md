@@ -26,7 +26,8 @@ against** — then freeze the corpus/layout/feed seams the evaluation tier (C31,
 | **T4** Bind to `scenarios` partition / `scenario_authoring` rig | Bind authoring to the `scenario_authoring` rig and storage to the `scenarios` partition C42 provides (AC-3/AC-4; AI-CONTEXT §13.3). **Placement only — enforcement is C34, partition def is C42 (D-13).** | S | T3, **C42** partition published |
 | **T5** Corpus integrity via git revision (signing DEFERRED → FE-3/G37) | Establish that each scenario's **git commit identity** is its Phase-0/2 tamper-evidence/provenance record (AC-5; verified by C34/baselining, F7; AI-CONTEXT:236/404). **Custom cryptographic signing is NOT built — it is DEFERRED → FE-3, blocked on G37 (D-14); a plaintext key collapses the assurance (XC-6).** | S | T3 |
 | **T6** Scenario-path feed to C34 | Publish the corpus layout/paths (+ git-revision identity) as the feed **C34** enforces+audits actual implementer reads against (AC-7; README:173). **C30 publishes; C34 enforces+audits (D-13).** | M | T3, T4 |
-| **T7** Freeze corpus/layout/feed seams | Enumerate + freeze I1–I7 (Task DSL, repo+layout, provider pack, partition/rig binding, git-revision integrity, path-feed, corpus retrieval) + the §4 scenario-record [FAITHFUL-FILL] so C31/C32/C34 build against stubs. *(No signature-format seam — signing DEFERRED → FE-3.)* | M | T2–T6 |
+| **T7** Freeze corpus/layout/feed seams | Enumerate + freeze I1–I7 (Task DSL, repo+layout, provider pack, partition/rig binding, git-revision integrity, path-feed, corpus retrieval) + the §4.5 scenario-record schema (OQ-1 RESOLVED) so C31/C32/C34 build against the frozen schema. *(No signature-format seam — signing DEFERRED → FE-3.)* | M | T2–T6 |
+| **T8** Scenario-store conformance pack | Build the conformance pack (§8 test strategy) asserting AC-C30-01…AC-C30-08 + E-code negative paths (E-C30-01…E-C30-07); gate C31/C32/C34 on AC-C30-04 + AC-C30-07 green. | M | T7 |
 
 ## 2. Dependency graph
 
@@ -119,8 +120,10 @@ Retire in this order (highest uncertainty first):
 - The corpus/layout/feed seams (I1–I7) + the §4 scenario-record [FAITHFUL-FILL] are frozen + published so
   C31/C32/C34 build against stubs (M1–M4).
 
-**Per-task DoD:** each Tn meets its mapped acceptance criterion (T1→AC-1, T2→AC-1/I3, T3→AC-2/6/8,
-T4→AC-3/4, T5→AC-5, T6→AC-7, T7→M1–M4) and updates the spec's Open Questions / review-log as items close.
-**T4's AC-4 (scenarios land in the `scenarios` partition) + T6's AC-7 (path-feed to C34) are the gating exit
-criteria** — they make the holdout boundary well-defined and auditable, which C34/C42 depend on; **and the
-DoD explicitly excludes any enforcement/audit work, which is C34's (D-13).**
+**Per-task DoD:** each Tn meets its mapped acceptance criterion (T1→AC-C30-01, T2→AC-C30-01/I3,
+T3→AC-C30-02/AC-C30-06/AC-C30-08, T4→AC-C30-03/AC-C30-04, T5→AC-C30-05, T6→AC-C30-07, T7→M1–M4,
+T8→conformance-pack-green) and marks the spec's OQs resolved (OQ-1/OQ-2/OQ-3/OQ-4 RESOLVED by Sweep-2).
+**T4 (AC-C30-04: partition placement) + T6 (AC-C30-07: path-feed to C34) are the gating exit criteria** —
+they make the holdout boundary well-defined and auditable; C34/C42 depend on them. **DoD explicitly excludes
+enforcement/audit work (C34, D-13).** New seam: E-C30-04 handoff to C34 (C30↔C34 trigger contract) left
+open for the C34 Sweep-2 author to specify the consumption mechanism.

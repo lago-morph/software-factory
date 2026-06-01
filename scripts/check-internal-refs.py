@@ -50,6 +50,7 @@ BARE_TEXT_REPORT = re.compile(
 DEFAULT_EXCLUDES = [
     "node_modules/",
     ".git/",
+    "archive/",
     "research/manual/",
     "research/fetched/",
     "reference-only/",

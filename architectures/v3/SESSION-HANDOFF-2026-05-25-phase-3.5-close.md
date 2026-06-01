@@ -67,7 +67,7 @@ Per the [v1.2 plan revision](../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md#phase-4--pe
 - [`primitives/P-31-smoke-test-invariants.md`](primitives/P-31-smoke-test-invariants.md) — the smoke-test result that resolved U-B's conditional survival.
 - [`../../AGENTS.md`](../../AGENTS.md) — adversarial-review-MUST-be-subagents rule (binding).
 - [`../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md`](../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md) — v1.2 plan revision (Phase 3.5 + rescoped Phase 4–8 for 10 candidates).
-- [`../../overnight-summary.md`](../../overnight-summary.md) — the morning-review entry point for the 2026-05-25 overnight run.
+- [`../../archive/PR-180-overnight-summary.md`](../../archive/PR-180-overnight-summary.md) — the morning-review entry point for the 2026-05-25 overnight run.
 
 ## Open questions / suggestions for the next agent to surface
 
@@ -84,7 +84,7 @@ Per the [v1.2 plan revision](../../ARCHITECTURE-V3-SYNTHESIS-PLAN.md#phase-4--pe
 3. Read this handoff doc.
 4. Read [`candidate-registry.md`](candidate-registry.md) end-to-end, focusing on the Phase-3.5.5 section + RG-primitive rule.
 5. Skim [`primitives/index.md`](primitives/index.md) post-sketch annotations to understand the buildability landscape; drill into individual primitive sketches only as needed.
-6. Read [`../../overnight-summary.md`](../../overnight-summary.md) for the rewind points if any decision needs reversal.
+6. Read [`../../archive/PR-180-overnight-summary.md`](../../archive/PR-180-overnight-summary.md) for the rewind points if any decision needs reversal.
 7. Surface to the user: BF-L's per-RG-view choice (Phase-4 entry blocker #1) + Phase-4 dispatch shape decision (entry blocker #2). Per AGENTS.md, draft a brief + dispatch real adversarial reviewers; do NOT inline-simulate.
 8. Once blockers resolved, dispatch Phase 4.
 

@@ -5,7 +5,7 @@
 
 This document aligns intent between the lead agent and the user before the Phase-8 unattended run begins. It is the contract: what the run will produce, what it will *not* touch, and how the lead agent will handle the first decision points. The morning user reviews against this envelope.
 
-Per [`AGENTS-MD-a43c9584c9`](../../AGENTS.md#dispatch-prompt-edit-before-run-pattern): the dispatch prompt [`next-agent-prompt-phase-8.md`](../../next-agent-prompt-phase-8.md) was committed at `1077358` on main before this run fired; this envelope cites it verbatim.
+Per [`AGENTS-MD-a43c9584c9`](../../AGENTS.md#dispatch-prompt-edit-before-run-pattern): the dispatch prompt [`next-agent-prompt-phase-8.md`](../../archive/PR-193-next-agent-prompt-phase-8.md) was committed at `1077358` on main before this run fired; this envelope cites it verbatim.
 
 ---
 
@@ -52,7 +52,7 @@ The 4 questions I will hit early in the run that would normally need user input.
   - [`AGENTS-MD-2f8a6c9d51`](../../retrospective/2026-05-27-191/AGENTS-MD-2f8a6c9d51-per-candidate-engagement-over-blanket-skip.md) — per-candidate engagement over blanket-skip for prior-phase defaults. Relevant if auto-008 proposes to "skip" any Phase-6/Phase-7 inherited material.
 - **Alternative:** Defer adoption; follow the patterns informally in auto-008 and flag the gap in honest-acks.
 - **If you disagree with the lead-agent best-call:** revert PR 1.5; auto-008 Round-1 reviewers will not be able to ground the patterns by AGENTS-MD-<hash> but can still apply them as drafts.
-- **Will surface via [`AskUserQuestion`](#)** as the [dispatch prompt](../../next-agent-prompt-phase-8.md) explicitly directs.
+- **Will surface via [`AskUserQuestion`](#)** as the [dispatch prompt](../../archive/PR-193-next-agent-prompt-phase-8.md) explicitly directs.
 
 ### 2. Tier-table calibration at auto-008 Round 1
 

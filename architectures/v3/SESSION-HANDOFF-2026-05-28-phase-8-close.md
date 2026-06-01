@@ -119,7 +119,7 @@ None. v3 synthesis pipeline is complete. Downstream simulator-harness execution 
 
 ### Retrospective reviewer (this run's morning review)
 
-- Read: [`AGENTS.md`](../AGENTS.md), [`run-summary-2026-05-28-phase-8.md`](../run-summary-2026-05-28-phase-8.md) (when authored at PR 8), [`retrospective/2026-05-28-NNN.md`](../retrospective/) (when authored at PR 8), this handoff. The morning summary's "suggested merge order" + "morning-review items" are the primary review surface.
+- Read: [`AGENTS.md`](../AGENTS.md), [`run-summary-2026-05-28-phase-8.md`](../../archive/PR-201-run-summary-2026-05-28-phase-8.md) (when authored at PR 8), [`retrospective/2026-05-28-NNN.md`](../retrospective/) (when authored at PR 8), this handoff. The morning summary's "suggested merge order" + "morning-review items" are the primary review surface.
 - Skip: per-candidate briefs (review by sampling 1-2 candidates against the cross-candidate brief; full per-candidate review is downstream-simulator-harness territory, not morning review).
 
 ### Future phase planning (if Phase-9 emerges)

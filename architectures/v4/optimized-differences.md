@@ -275,4 +275,4 @@ Underlying research files, all on the same branch as this document:
 - [Independence / cherry-pick analysis](_meta/research/optimized-deltas-independence.md)
 - [Secrets-manager thread trace](_meta/research/secrets-manager-thread.md)
 
-The five Track-B deltas already adopted into both tracks (D-1 through D-5) are documented in [`_meta/INTEGRATION-PASS-1.md`](_meta/INTEGRATION-PASS-1.md). The list of open human decisions across both tracks is in [`_meta/review-log.md`](_meta/review-log.md).
+The five Track-B deltas already adopted into both tracks (D-1 through D-5) are documented in [`INTEGRATION-PASS-1.md`](../../archive/PR-218-INTEGRATION-PASS-1.md). The list of open human decisions across both tracks is in [`_meta/review-log.md`](_meta/review-log.md).

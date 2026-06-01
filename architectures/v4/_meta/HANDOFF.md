@@ -1,18 +1,25 @@
 # HANDOFF — v4 Spec & Plan run (resume from here)
 
-**Last updated:** 2026-05-31 (Sweep-1 complete).
-**Status:** **Sweep-1 is COMPLETE — all 57 components built + adversary-reviewed + integrated** on the single canonical `spec/` + `plan-faithful/` track. Next work is **Sweep 2 (implementation-ready depth)**.
-**Working tree:** clean and pushed. The Sweep-1 build is PR #220 on `claude/epic-fermat-LTO4V`.
+**Last updated:** 2026-06-01 (Sweep-1 + wrap-up run complete).
+**Status:** **Sweep-1 is COMPLETE** (all 57 components built + adversary-reviewed + integrated on the canonical `spec/` + `plan-faithful/` track) **AND the wrap-up run is complete** — operator decisions **D-20…D-25 adopted**, the expert-panel **VERDICT** recorded, three human-facing guides published, and the implementer build order rewritten to lead with the **safe-self-build backbone**. Next work is **Sweep 2 (implementation-ready depth)**, and its first action is the **Gas City reality-check spike (D-23)**.
+**Working tree:** clean. Everything is merged to `main` (tip = merge of **PR #224**). The Sweep-1 build landed as **#220**; the wrap-up kit + guides + operator decisions as **#221–#224**.
 
-This file + the other `_meta/` artifacts are sufficient to resume with zero re-grounding. Start with the run summary at [`run-summary.md`](../../../run-summary.md) and the coverage ledger [`STATUS.md`](./STATUS.md).
+This file + the other `_meta/` artifacts are sufficient to resume with zero re-grounding. Start with the run summary at [`run-summary.md`](../../../run-summary.md), the operator decision guide [`decisions-to-make.md`](../../../decisions-to-make.md), and the coverage ledger [`STATUS.md`](./STATUS.md).
 
 ---
 
-## 1. Where we are: 57 of 57 components built — one canonical track
+## 1. Where we are: 57 of 57 built + reviewed + integrated, then wrapped up
 
 **One canonical track** — `spec/` + `plan-faithful/`. `spec-optimized/` + `plan-optimized/` are frozen reference. Every component (C01–C57) has `spec/<ID>-<slug>.md` + `plan-faithful/<ID>-<slug>.md` + `spec/<ID>-<slug>.review.md` (**57 / 57 / 57**). All adversary verdicts across the run were **accept-with-fixes** (0 blockers, 0 needs-rework). The live per-component four-axis state (Built / Reviewed / Incorporated / iNtegrated) is in [`STATUS.md`](./STATUS.md) — all 57 are ✓ on all four.
 
-Sweep-1 was produced in batches (build → adversary-review → integrator), each batch's cross-component findings recorded as ledger decisions: **D-1..D-5** (Batch 1 / Integration-Pass-1), **D-6..D-14** (Batch 2), **D-15..D-17** (Batch 3), **D-18..D-19 + XC-3 resolved** (Batch 4), OQ-harvest only (Batch 5). Detail in [`review-log.md`](./review-log.md).
+Sweep-1 was produced in batches (build → adversary-review → integrator), each batch's cross-component findings recorded as ledger decisions **D-1..D-19** (+ XC-3 resolved). Detail in [`review-log.md`](./review-log.md).
+
+**The wrap-up run (after Sweep-1 close) added:**
+- **Operator decisions D-20…D-25** adopted and annotated across affected specs — see [`decisions-to-make.md`](../../../decisions-to-make.md) (plain-language) and §5 below. This **resolved every Sweep-1 morning-review item** (D-18, OQ-6, F54 — see §3).
+- **Expert-panel review** of the whole corpus — [`VERDICT.md`](./panel/VERDICT.md) + five panelist opinions (`panel/01..05`). The panel's single headline: the whole plan is gated on **D-23** (verify Gas City's "native" claims against a real `gc` *before* building on them), and it argues D-23 should be a **binding go/no-go gate** on D-20, not just a noted spike.
+- **Three human-facing guides** (kept in sync): the engineer guide [`architecture-guide-for-engineers.md`](../../../architecture-guide-for-engineers.md), the plain-English build order [`build-order-plain-english.md`](../../../build-order-plain-english.md), and the implementer build order [`implementation-dependencies.md`](../implementation-dependencies.md).
+- **The implementer build order now leads with the safe-self-build backbone** (PR #224): the minimum 25-component vertical slice to a first human-reviewed self-build (rings 19→22→25), grouped into six implementation clusters, with a **product→components** table (one Gas City adoption discharges 11 backbone components), dotted-line soft deps, a top-10-next by cost/benefit, and the beads/Gas-City "one install, many components" clarification. Two graph corrections landed there: **C31 scenario-runner is required** (was missing) and **C43 splits per D-20** (boundary-typing now, twin half C44 deferred).
+- A whole-57 **consistency pass** report (under `_meta/`) and **C46 dep-edge fix** (D-24).
 
 ## 2. The bar (operator's — still in force for every sweep)
 
@@ -20,23 +27,32 @@ Sweep-1 was produced in batches (build → adversary-review → integrator), eac
 
 When in doubt: DROP. Grounding + worked examples in [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md). This bar held across all 57 — Sweep 2/3 must keep applying it (don't let implementation-depth reintroduce dropped hardening).
 
-## 3. Passes still owed (next runs)
+## 3. Sweep-1 morning-review items — ALL RESOLVED by D-20…D-25
 
-1. **Whole-57 cross-batch integration pass** — integration was done per-batch; a final drift pass over all 57 (esp. seams frozen "→ Sweep-2 joint freeze": C12/C14/C15 loop-DOT encoding D-16; C42/C34/C32 judge read-surface D-17; C36↔C37 population seam; C38↔C39 / C48↔C55 / C46 dep-edge OQ-6).
-2. **Sweep 2 (implementation-ready):** concrete signatures, data schemas, API/message contracts, sequence/state diagrams (Mermaid), error taxonomies, concrete acceptance tests — re-enter every component. This is the next work.
+The three items the previous handoff said to "resolve first" are now closed:
+- **D-18 (C43 split-sequencing)** — **ADOPTED as D-20**: the C43 **boundary-typing half** (needs only C42) is pulled forward as the mandatory precondition before any unattended run; the **twin-isolation half (C44)** is deferred. No longer provisional.
+- **OQ-6 (C46 dependency edge)** — **resolved by D-24** (meta-metrics cost signal re-sourced; dep edge corrected).
+- **F54 / OQ-C57-3 (objective-drift audit ownership)** — **resolved by D-21**: objective-drift is logged UNBUILT with a cheap human checkpoint while a person still reviews batches; an automated drift detector is a **required precondition for full lights-out** (not built yet — the loudest residual; see §7).
+
+## 4. Passes still owed (next runs)
+
+1. **Sweep 2 (implementation-ready) — the next work.** Concrete signatures, data schemas, API/message contracts, sequence/state diagrams (Mermaid), error taxonomies, concrete acceptance tests — re-enter every component. **First action: the D-23 Gas City reality-check spike** (prevent-vs-detect, Orders durability, `[[service]]` semantics) against a pinned `gc`; the panel wants a *detect-only* outcome to bind a re-evaluation of D-20, not just be noted (VERDICT §6, PF follow-ups).
+2. **Whole-57 cross-batch integration drift pass** — integration was done per-batch; a final drift pass over the seams frozen "→ Sweep-2 joint freeze" (C12/C14/C15 loop-DOT encoding D-16; C42/C34/C32 judge read-surface D-17; C36↔C37 population seam; C38↔C39 / C48↔C55 / C46 dep-edge).
 3. **Sweep 3 (exhaustive):** pseudocode/algorithms, skeletons, edge-case catalogs, perf/security/ops.
 4. **Final cross-cutting pass:** whole-system consistency, critical-path/parallelism analysis, top-level README/index.
 
-## 4. How to resume (Sweep 2)
+## 4b. How to resume (Sweep 2)
 
-1. Read [`run-summary.md`](../../../run-summary.md) (what the run did + morning-review items), this file, then [`STATUS.md`](./STATUS.md) (coverage ledger) and [`review-log.md`](./review-log.md) (D-1..D-19 + ~196 harvested OQs — the OQs are the Sweep-2 work list). Do **NOT** read the four v4 source docs into primary context — subagents do that.
-2. Resolve the **morning-review items first** (run-summary §"Morning-review"): D-18 (C43 split-sequencing), OQ-C57-3 (F54 ownership), OQ-6 (C46 dep edge) — these shape Sweep-2 dependencies.
+1. Read [`run-summary.md`](../../../run-summary.md), [`decisions-to-make.md`](../../../decisions-to-make.md) (D-20..D-25 in plain language), this file, then [`STATUS.md`](./STATUS.md) (coverage ledger) and [`review-log.md`](./review-log.md) (D-1..D-19 + ~196 harvested OQs — the OQs are the Sweep-2 work list). Skim [`VERDICT.md`](./panel/VERDICT.md) for the cross-cutting risk ranking + the PF-1..PF-3 follow-ups. Do **NOT** read the four v4 source docs into primary context — subagents do that.
+2. **Start with the D-23 Gas City reality-check spike** (it gates the most: every "Native" claim, and whether D-20's fence actually *prevents*). The other operator decisions (D-20..D-22, D-24, D-25) are already adopted and annotated into the specs — do not relitigate.
 3. Use the standing briefs [`BUILDER-BRIEF.md`](./BUILDER-BRIEF.md) + [`ADVERSARY-BRIEF.md`](./ADVERSARY-BRIEF.md) (single-track banners). Dispatch one builder per component at **Sweep 2** depth; concurrency cap ~8; pipeline; subagents persist to disk + return receipts; **primary owns all git**; commit+push every wave.
-4. Each component's `spec/<ID>-*.md` already carries its Sweep-1 OQs inline + its `.review.md` — Sweep 2 starts from those, not a blank page.
+4. Each component's `spec/<ID>-*.md` already carries its Sweep-1 OQs inline + its `.review.md` (+ any D-20..D-25 annotations) — Sweep 2 starts from those, not a blank page.
 
-## 5. Binding decisions (do not relitigate) — detail in [`review-log.md`](./review-log.md)
+## 5. Binding decisions (do not relitigate) — detail in [`review-log.md`](./review-log.md) + [`decisions-to-make.md`](../../../decisions-to-make.md)
 
-D-1 same-provider judge (cross-family→FE-1) · D-2 bundle-id namespace `softwarefactory.v4.{beads,trajectory,packs}` · D-3 C20 authors bead schemas / C22 mechanism · D-4 C20→C19 · D-5 C41 hash-chain over C23 · D-6 "canonical track" nomenclature · D-7 node-kind home=C12 · D-8 convoy→C05 / Order→C40 · D-9 F38 vocab-lint=C10 · D-10 modeldb=`{id,family,cost_tier}` · D-11 LangFuse traces-only seam · D-12 two-sink cross-refs · D-13 holdout C34(enforce+audit)/C43(lethal-trifecta) · D-14 G37(secrets)≠FE-3(signing) · D-15 satisfaction holistic (FE-5 deferred) · D-16 loop-DOT encoding=C12 · D-17 judge read-surface · **D-18 (PROVISIONAL — operator confirm)** C43 split-sequencing · **D-19** methodology significance→C48 · **XC-3 RESOLVED** C39 owns G18 numeric policy.
+**Sweep-1 ledger (D-1..D-19):** D-1 same-provider judge (cross-family→FE-1) · D-2 bundle-id namespace `softwarefactory.v4.{beads,trajectory,packs}` · D-3 C20 authors bead schemas / C22 mechanism · D-4 C20→C19 · D-5 C41 hash-chain over C23 · D-6 "canonical track" nomenclature · D-7 node-kind home=C12 · D-8 convoy→C05 / Order→C40 · D-9 F38 vocab-lint=C10 · D-10 modeldb=`{id,family,cost_tier}` · D-11 LangFuse traces-only seam · D-12 two-sink cross-refs · D-13 holdout C34(enforce+audit)/C43(lethal-trifecta) · D-14 G37(secrets)≠FE-3(signing) · D-15 satisfaction holistic (FE-5 deferred) · D-16 loop-DOT encoding=C12 · D-17 judge read-surface · D-18 C43 split-sequencing (**now adopted as D-20**) · D-19 methodology significance→C48 · XC-3 RESOLVED C39 owns G18 numeric policy.
+
+**Operator wrap-up decisions (D-20..D-25 — ADOPTED 2026-05-31):** **D-20** fence (C43 boundary-typing) pulled to a P2 precondition before any unattended run · **D-21** objective-drift (F54) logged-unbuilt + cheap human checkpoint; automated detector required before full lights-out · **D-22** counterfactual replay (C49): ship the deterministic half, keep the LLM-step half experimental (G19 honesty) · **D-23** run the Gas City prevent-vs-detect reality-check spike (G11) as the first Sweep-2 action · **D-24** C46 meta-metrics dependency-edge wiring correction · **D-25** secrets deferred to first-credential + Unleash license version-pin.
 
 ## 6. Deferred capabilities (do not build) — detail in [`FUTURE-ENHANCEMENTS.md`](./FUTURE-ENHANCEMENTS.md)
 
@@ -44,15 +60,16 @@ FE-1 cross-provider judge · FE-2 portability contracts · FE-3 graduated-mandat
 
 ## 7. Key residual risks (carried into Sweep 2 + the C57 register)
 
-- **G11** — every "Native" Gas City claim is still unverified against a real `gc`; Sweep 2 MUST freeze real `gc` schemas (formula/molecule/bead/Order/reconciler) before dependents bind. Touches C01/C12/C13/C14/C18/C40 + the prevent-vs-detect OQ (C43/C34).
-- **G18** — **CLOSED in design:** C39 owns the numeric termination policy (N→escalate, F52 oscillation, L5 ship-auth) over C20 slots; C18 owns the loop. (XC-3 resolved.)
-- **G31** — lethal-trifecta has a deterministic boundary-typing **design** (C43) but the bound is aspirational until C44 twins land (the XC-8 P0–P3b exposure window); see D-18 (C43 pull-forward, operator-confirm).
-- **G19** — counterfactual replay (C49) is **framed honestly, not solved**: deterministic-slice replay is tractable now; full LLM-step counterfactual is deferred (best-effort + human-reviewed). v4's riskiest leaf.
-- **F54** — objective-drift audit registered UNBUILT (C57 / OQ-C57-3) — loudest residual after G31 on a self-modifying L5 factory. Operator call.
-- **G37** — no secrets store (owned by C03); blocks FE-3 signing; keeps several controls "detect not prevent".
+- **G11** — every "Native" Gas City claim is still unverified against a real `gc`. **D-23 makes the reality-check spike the first Sweep-2 action**; the panel wants a *detect-only* outcome to bind a D-20 re-evaluation. Touches C01/C12/C13/C14/C18/C40 + the prevent-vs-detect OQ (C43/C34). The single highest-leverage unknown.
+- **G31** — lethal-trifecta has a deterministic boundary-typing **design** (C43). **D-20 (adopted)** pulls the boundary-typing half forward as the P2 precondition, which closes the documented exposure window *if* the fence actually prevents (depends on D-23). The twin-isolation half (C44) is still future (the XC-8 exposure window narrows but does not vanish).
+- **F54 — objective drift:** **D-21 (adopted)** — logged UNBUILT with a human checkpoint; the **automated detector is a required precondition for full lights-out** and is not built. Loudest residual after G31 on a self-modifying L5 factory.
+- **G19** — counterfactual replay (C49): **D-22** ships the deterministic-slice half now, keeps full LLM-step counterfactual experimental + human-reviewed. v4's riskiest invention leaf.
+- **G37** — no secrets store (owned by C03): **D-25** defers to first-credential need + pins the Unleash license version; blocks FE-3 signing; keeps several controls "detect not prevent".
 
-## 8. Artifact map (`architectures/v4/_meta/`)
+## 8. Artifact map
 
-META-PLAN · TRACK-CHARTERS · DOC-TEMPLATES · BUILDER-BRIEF · ADVERSARY-BRIEF · component-inventory (+ -A/-B raw) · ambiguities-and-gaps · **review-log** (D-1..D-19 + harvested OQs) · INTEGRATION-PASS-1 · SURVIVOR-PASS · FUTURE-ENHANCEMENTS · **RUN-SCOPE-2026-05-31** (this run's scope envelope) · **STATUS** (coverage ledger) · HANDOFF (this). Run summary at repo root: [`run-summary.md`](../../../run-summary.md).
+**`architectures/v4/_meta/`:** META-PLAN · TRACK-CHARTERS · DOC-TEMPLATES · BUILDER-BRIEF · ADVERSARY-BRIEF · component-inventory (+ -A/-B raw) · ambiguities-and-gaps · **review-log** (D-1..D-19 + harvested OQs) · INTEGRATION-PASS-1 · SURVIVOR-PASS · FUTURE-ENHANCEMENTS · RUN-SCOPE-2026-05-31 (Sweep-1 scope) · **STATUS** (coverage ledger) · **panel/** (VERDICT + 5 opinions) · HANDOFF (this).
 
-Frozen reference (do not author here): `spec-optimized/` + `plan-optimized/`.
+**`architectures/v4/`:** **implementation-dependencies.md** (build order — leads with the safe-self-build backbone) · README · AI-CONTEXT · F-MODE-COVERAGE · one-shot-specs-and-research · optimized-differences(+reviews). Frozen reference (do not author here): `spec-optimized/` + `plan-optimized/`.
+
+**Repo root:** [`run-summary.md`](../../../run-summary.md) · [`decisions-to-make.md`](../../../decisions-to-make.md) (D-20..D-25 plain-language) · [`architecture-guide-for-engineers.md`](../../../architecture-guide-for-engineers.md) · [`build-order-plain-english.md`](../../../build-order-plain-english.md).

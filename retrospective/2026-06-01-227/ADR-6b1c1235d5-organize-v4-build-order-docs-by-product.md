@@ -1,7 +1,7 @@
 # ADR: Organize v4 build-order documentation by adopted product, not by dependency phase
 
 - **ID**: ADR-6b1c1235d5
-- **Status**: Draft (not yet adopted to docs/adr/)
+- **Status**: Adopted — see [`docs/adr/0068-organize-v4-build-order-docs-by-product.md`](../../docs/adr/0068-organize-v4-build-order-docs-by-product.md)
 - **Date**: 2026-06-01
 - **Source retrospective**: ../2026-06-01-227.md
 - **PRs covered**: #227

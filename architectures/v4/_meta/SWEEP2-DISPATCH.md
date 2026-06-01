@@ -10,6 +10,7 @@ Per [`HANDOFF.md` §0.4](./HANDOFF.md). Every deepened spec MUST add, where the 
 2. **Data schemas** — per-type field tables in the C20 shape: **Field | Type | Req | Semantics | R/W-by** (the R/W-by column names the owning/reading component — the ownership annotation).
 3. **API / message / config contracts** — for Gas City + Claude Max, the concrete `city.toml`/`pack.toml`/`.gc/site.toml`/env-var/CLI surface. Config keys quoted exactly.
 4. **Sequence / state diagrams** — valid Mermaid. Use `sequenceDiagram` for protocols, `stateDiagram-v2` for lifecycles. Keep them syntactically clean (the orchestrator validates a sample per product with a Mermaid validator before integrate). ≤ ~10 nodes each.
+   - **Mermaid syntax — avoid the validated build-breaker:** in `stateDiagram-v2`, a **`;` inside a transition label terminates the statement** and breaks the parse. Do NOT put `;` `/` `--` `:` `()` `=` `#` inside transition labels — reword (use a comma or " then ") or move the detail to adjacent prose. Keep state IDs ASCII-simple; multi-line `note` blocks use `<br/>`. If the Mermaid validator tool is available to you, self-validate each diagram before returning.
 5. **Error taxonomy** — an **E-code** table: `E-<ID>-NN | condition | surfaced-as | caller recovery`. IDs are component-scoped (e.g. `E-C30-01`).
 6. **Acceptance tests** — an **AC-code** table: `AC-<ID>-NN | given/when/then | verifies`. Each AC that exercises a failure path **cross-references the E-code** it asserts (the E↔AC cross-ref — see C20).
 

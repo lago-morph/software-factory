@@ -79,6 +79,15 @@ Per the operator's Sweep-2 decision (no live agents this run), the D-23 Gas City
 - **Contradiction scan — lead-verified 0 true contradictions.** The harvest flagged F2 (`convergence.max_iterations` not a real field), F4 (`gc init` interactive), F9 (dolt `--ref refs/heads/*`) as `CONTRADICTS-CLAIM`. Lead verification against the actual specs reclassified **all three to `NEW-INFO`**: C18/C39 never assert a `convergence.*` field (they defer numeric policy to C20 slots + G11), and no v4 spec references `gc init` or dolt refs at all. v4's deferral discipline held. Applied as operational caveats, not corrections. (Morning-review headline.)
 - **Prevent-vs-detect remains OPEN.** The prototype proved bead-**prefix** is the scoping *mechanism* (F10) but **never tested enforcement strength** (smoke test deferred). **C34:OQ-C34-1 ≡ C43:OQ-C43-1 stay live**; the D-23 spike (Test A) is the resolver. No annotation closes this.
 
+### Sweep-2 data-cluster cross-component decisions (2026-06-01) — D-26..D-29
+
+Surfaced by the cross-cluster seam-consistency adversary review of the C19/C20/C21/C23/C41 Sweep-2 deepening (the panel's R4 integration-tax lens). Each is an adopted cross-component contract resolution, applied corpus-wide by a single integrator pass and propagated into the affected specs. Decided by the lead from the seam review; not to be re-litigated.
+
+- **D-26 — `event_id` wire type = `EventId = {stream, seq}` (C23-canonical).** The seam review found a HIGH-severity drift: C23 §4.1 produces a structured `EventId = {stream, seq}` while C41 consumed a bare `uint64` at the D-5 chain seam (would collide across multiple streams). Canonical: C41 consumes C23's `EventId` struct. Applied: C41 §3.6 + §4.2 (`uint64` → `EventId`); C23 unchanged (already canonical).
+- **D-27 — `payload_digest` is C41-computed, not C23-provided.** C41 implied `payload_digest` arrived on the incoming C23 `EventRecord`; C23 carries no such field. Canonical: C41 computes `payload_digest` over the C23 record bytes at chain-append time (chain-internal). Applied: C41 §3.4/§3.6/§4.2; C23 unchanged.
+- **D-28 — dependency-edge field name = `depends_on` (C19 M1-freeze anchor).** C19 used `depends_on`, C20 used `dependencies` for the same edge. Canonical: `depends_on` (matches C19's M1 interface freeze). Applied: C20 §4.1 + §4.5.0 (`dependencies` → `depends_on`); C19 unchanged.
+- **D-29 — `created_by` common wire type = colon-delimited `"kind:id"` string (resolves OQ-C41-4).** The wire type drifted (`string`/`actor`/`actor_id`/`ActorRef`). Canonical: the wire value is the `"kind:id"` string (e.g. `"rig:worker-1"`), parsed by C41's `resolve_actor` into the `ActorRef` struct (the in-memory/parsed form). Applied: C19/C20/C21/C23 normalize the `created_by` wire type note; C41 marks **OQ-C41-4 RESOLVED** and keeps `ActorRef` as the parsed form.
+
 ## Cross-component issues (raised during Sweep 1 builds)
 
 - **XC-1 — C19↔C20 dependency direction contradiction.** The canonical inventory lists C20→C19

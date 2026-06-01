@@ -1,8 +1,8 @@
 # C19 — Bead store / typed work-graph  (Spec, canonical track)
 
 > Source: AI-CONTEXT §3.2 ("nine concepts" #2 — "Bead Store: Durable typed work-graph (Dolt or file); P1, P5, P9, P10"); AI-CONTEXT §2 ("Persistence — event store (CXDB) + work ledger (Beads)"); AI-CONTEXT §3.1 (coverage map: P10 "Strong (bead store, file or Dolt)"); AI-CONTEXT §13.1 (`[beads] provider = "file"`); AI-CONTEXT §16 cold-start (`gc bd find --type factory_build_in_progress`; `gc converge resume <bead_id>`; `transfused_from`); AI-CONTEXT §15.1 (`github.com/gastownhall/beads`); README Part 4 — P2 persistence row (line 122 "Gas City beads (file or Dolt)"), P8 override-log row (214 "beads with type `override`"), P9 attribution rows (227–229 "native `created_by`", "bead history", "signature on bead provenance"), P10 rows (239–242 "Tasks with dependencies", "`gc bd` commands"), P11 rows (257–259 `fix_task` bead / "bead chain anomaly → diagnosis → fix → resolution"); README Phase 0 (368–372 "beads as persistence", "every bead … carries `created_by`", "bead store handles task graph + cross-session"); component-inventory C19 row (`A20, A19e, A21b, B44`; depends on C01; gap G17; foundational yes).
-> Inventory ID: C19   Kind: data-store   Status: sweep-1
-> Track: A (faithful)
+> Inventory ID: C19   Kind: data-store   Status: sweep-2
+> Track: canonical (faithful)
 
 ## 1. Purpose & responsibility
 
@@ -104,6 +104,81 @@ Sweep 1 — interfaces **named and described**; concrete signatures/schemas defe
   backend is `file` or `dolt`; backend choice changes durability/concurrency properties, not the contract
   (AI-CONTEXT §3.2 #2 "Dolt **or** file").
 
+### 3.1 C19↔C20 contract block (sweep-2 — the M1 interface freeze, D-4)
+
+> **D-4 (ADOPTED) — C19↔C20 direction (resolves XC-1).** Canonical: **C20 depends on C19** (schema layer
+> over the graph store). They are co-foundational; the production write-path cycle is broken by the M1
+> interface freeze + a no-op `validate` stub seam (the reversed dispatch arrow was only that call seam).
+
+The **M1 interface freeze** is the load-bearing contract boundary that lets C19 and C20 build in parallel
+without circular coupling. Its content:
+
+**C19 → C20 (what C19 exposes for C20 to layer over):**
+
+| Field | Type | Req? | Semantics | Notes |
+|---|---|---|---|---|
+| `id` | `string` (opaque, stable) | R | bead identifier; target of `gc bd find` / `gc converge resume <id>` | C19 mints; globally unique within the store |
+| `type` | `string` | R | registry type tag; C19 stores + indexes; C20 defines the legal set | closed-set check is C19↔C20 contract (see E-C19-1) |
+| `created_by` | `string` | R | actor attribution; C19 stamps from acting context if caller omits. `created_by` wire type = colon-delimited `"kind:id"` string per **D-29** (parsed to C41 `ActorRef`); resolves OQ-C41-4. | self-asserted; see G36 / OQ-C19-4 |
+| `depends_on` | `list<id>` | O | directed dependency edges: this bead depends on the listed beads | acyclic; C19 enforces no-cycle (see §4.3) |
+| `status` | `enum{open,in_progress,closed}` | R | lifecycle state; written by create, advanced by state-transition call | C20 names the enum values (§4.5.0); C19 stores + transitions |
+| `payload` | `map<string,any>` | O | type-specific fields; C20 owns the schema; C19 stores opaquely | C19 passes through; validation is C20's seam |
+| `history` | derived | — | per-bead change log; C19 derives from Dolt versioning or file append | [FAITHFUL-FILL] — see §4.2 |
+
+**The no-op `validate` stub seam:** C19's write path calls `C20.validate(type, payload)`. At M1 freeze
+time, before C20 is built, the stub returns `ok` unconditionally. Once C20 ships, the real validator
+replaces the stub. This breaks the production write-path cycle while preserving the contract: the seam
+exists and has the right shape from day 0.
+
+```
+write_bead(type, payload, created_by, depends_on):
+  # M1 seam: call C20 validator (no-op stub until C20 ships)
+  C20.validate(type, payload)   # → ok | error(E-C19-1)
+  id = store.mint_id()
+  record = {id, type, created_by, depends_on, status="open", payload}
+  store.put(record)             # durable write
+  return id
+```
+
+**Postconditions (M1 — both parties freeze against these):**
+- A bead written through this interface is durably stored and retrievable by `id` and by `type`-filtered query in any subsequent session.
+- `created_by` is non-empty on every stored bead (stamped by the write path if not supplied).
+- The `depends_on` list is acyclic at write time (C19 rejects a cycle — E-C19-3).
+
+### 3.2 Query/traversal interface signatures (sweep-2)
+
+C19's query surface maps to the `gc bd` CLI surface (AI-CONTEXT §16; README:242). Logical signatures
+(backend-agnostic; maps to `gc bd` subcommands):
+
+```
+# I1 — find by type (the cold-start query; AI-CONTEXT §16)
+find_by_type(type: string) → list<bead>
+
+# I2 — find by id (the resume lookup; AI-CONTEXT §16 "gc converge resume <bead_id>")
+find_by_id(id: string) → bead | not_found
+
+# I3 — find by actor (attribution query; README:242)
+find_by_creator(created_by: string) → list<bead>
+
+# I4 — find by status (lifecycle filter)
+find_by_status(status: enum{open,in_progress,closed}) → list<bead>
+
+# I5 — get dependency subgraph (the "Tasks with dependencies" graph; README:239)
+get_subgraph(root_id: string, direction: enum{upstream,downstream,both}) → graph{nodes:list<bead>, edges:list<(from_id,to_id)>}
+
+# I6 — advance state (C18 / C39 drive transitions; C19 owns the durable record)
+transition_status(id: string, from: enum, to: enum) → ok | error(E-C19-2)
+
+# I7 — bead history (audit; README:228)
+get_history(id: string) → list<{timestamp, actor, field, old_val, new_val}>
+```
+
+> [FAITHFUL-FILL] **These logical signatures are the minimal faithful elaboration of `gc bd`.** v4 names
+> `gc bd find --type <T>` (I1), `gc converge resume <bead_id>` (uses I2), "Tasks with dependencies"
+> (I5), "bead history" (I7), and attribution queries (I3) — all five surfaces are v4-cited. I4 (status
+> filter) and I6 (transition) are the smallest addition that makes the C20 lifecycle states meaningful
+> and the C18 reconciler operable. No additional query surface is invented.
+
 ## 4. Data model / state
 
 C19 **owns the work-graph state**: the set of beads, their typed payloads, their dependency edges, their
@@ -160,6 +235,89 @@ concurrency model, or ordering guarantee for concurrent bead writes from paralle
 durable-and-readable across sessions is required; stronger consistency claims are not made by v4 (see §6
 and OQ-C19-3).
 
+### 4.1 Node entity table (sweep-2)
+
+The **bead node** is C19's primary entity. All fields below are C19's storage view; per-type payload field
+schemas are C20's contract.
+
+| Field | Type | Req? | Semantics | Read-by | Write-by |
+|---|---|---|---|---|---|
+| `id` | `string` (opaque, stable) | R | store-minted stable handle; the "address" for `gc bd find` and `gc converge resume` (AI-CONTEXT §16) | all consumers (I2); C52 resume; C33 judge-output reader | C19 mints at write |
+| `type` | `string` (C20 registry) | R | type tag; drives `gc bd find --type` (I1); validated against C20 registry via the M1 seam (`validate` stub → real validator) | all find-by-type callers; I1 | caller; C19 checks via C20 seam |
+| `created_by` | `string` (actor identity, C41 semantics) | R | universal attribution; stamped by C19 write path if not provided; self-asserted until C41 signed provenance lands (G36). Wire type = colon-delimited `"kind:id"` string per **D-29** (parsed to C41 `ActorRef`); resolves OQ-C41-4. | C41; audit reads; I3 | C19 stamps from acting context |
+| `depends_on` | `list<string>` (list of `id`) | O | directed dependency edges — this bead depends on the listed beads; forms the work-graph (README:239 "Tasks with dependencies"); acyclic (E-C19-3) | I5 subgraph traversal; C39 chain traversal; C05 Sling routing | caller at write time; not mutable after write (see OQ-C19-3) |
+| `status` | `enum{open,in_progress,closed}` | R | bead lifecycle state; C20 defines the enum values (C20 §4.5.0); C18 and C39 drive transitions via I6 | C18 reconciler; C39 loop-closure; I4 filter | C19 sets `open` at create; I6 advances |
+| `payload` | `map<string,any>` | O | type-specific fields (C20 schema); C19 stores opaquely; round-trip must preserve values verbatim (E-C19-4) | type-specific consumers (C35, C39, C52, C51, C33) | caller; validated at write via C20 seam |
+| `history` | derived | — | per-bead change log; derived from Dolt branch versioning (Dolt backend) or append-log (file backend); surfaced via I7 | audit/C41; README:228 "bead history" | implicit — C19 records every state transition |
+
+### 4.2 Edge entity table (sweep-2)
+
+C19 stores **one kind of directed edge** at the graph-store level: `depends_on` (from node A to nodes B₁…Bₙ that A depends on). The *semantic* interpretation of a specific edge (e.g. `diagnosed_by`, `produces`, `resolved_by` — C20 §4.3) is carried on the **node types**, not on the edge record itself.
+
+> [AMBIGUITY: untyped vs typed edges] As noted above, v4 names only "Tasks with **dependencies**" (one untyped edge kind). C20 §4.3 labels edges by chain step name. The C19/C20 canonical pair resolves this by: **C19 stores a single `depends_on` edge kind; C20 names the chain semantics at the node level.** This is the minimal faithful model — one edge type, chain semantics from node-type pairs. If a later substrate verification (G11) reveals Gas City supports typed edges natively, this can be enriched without breaking the M1 contract.
+
+| Field | Type | Req? | Semantics | Read-by | Write-by |
+|---|---|---|---|---|---|
+| `from_id` | `string` (bead id) | R | the bead that depends on `to_id` | I5 traversal; chain walks | caller at bead-write time |
+| `to_id` | `string` (bead id) | R | the bead that `from_id` depends on; must already exist in the store (E-C19-5) | I5 traversal; C39 chain reconstruction | caller at bead-write time |
+
+Edges are **immutable after write** and are **acyclic** — C19 rejects a write that would create a cycle (E-C19-3). All edges for a bead are written atomically with the bead's creation.
+
+### 4.3 Persistence & consistency contract (sweep-2, Dolt backend)
+
+This section formalizes the durability/consistency contract for the **Dolt SQL backend** (Phase 1+), incorporating F9 from the D-23 substrate harvest.
+
+**Durability model (F9 — D-23 substrate-verified):**
+
+The Dolt backend runs as a **local Dolt SQL server** inside the Gas City container. Writes to this server are immediately consistent within a session (SQL transaction semantics). Durability beyond the container lifetime requires a periodic `dolt push`. The critical operational constraint from F9:
+
+> **`dolt push` MUST use `--ref refs/heads/<branch>`** (e.g. `refs/heads/dolt-data`). The Dolt default push namespace `refs/dolt/data` is rejected by many git proxies and by the Anthropic sandbox proxy. Set `DOLT_REF=refs/heads/dolt-data` in env; pass `--ref $DOLT_REF` to every push/clone.
+
+**Transaction ordering:**
+
+| Guarantee | Faithful claim | Source |
+|---|---|---|
+| Within-session write ordering | ACID SQL transactions on the local Dolt server; each `write_bead` is one transaction | F9 (D-23 harvest) |
+| Cross-session durability | A bead written before the last `dolt push` is readable by a new session after a `dolt clone/pull` from the same `refs/heads/*` branch | F9 + README:235 "Survives across agent sessions" |
+| Concurrent multi-agent writes | **Not specified by v4**; Dolt SQL server serializes local writes; network-level conflicts on a shared `refs/heads/*` branch are the ops responsibility | OQ-C19-3 — deferred |
+| Acyclicity | C19 enforces no-cycle at write time within a transaction; concurrent writes could in principle produce cycles if two agents write cross-referencing `depends_on` edges simultaneously | OQ-C19-3 flag |
+
+**Push frequency:** v4 does not specify a push interval; the D-23 harvest notes "periodic" push. Faithful position: the push interval is a Gas City operational parameter, not a C19 contract. Ops runbooks MUST use `--ref refs/heads/dolt-data` (F9).
+
+**File backend consistency:** Single-node, Phase 0. No concurrency guarantees; crash mid-write leaves partial files. Faithful position: durability is best-effort for the file backend; Phase 0 is low-concurrency enough that this is acceptable (AI-CONTEXT §3.4 "Explicitly off: … Dolt server"). Crash semantics are a Gas City internal (G11 — unverified).
+
+### 4.4 Mermaid diagram — write / traversal sequence (sweep-2)
+
+The diagram below shows the two canonical flows C19 must support: **(A)** the cold-start resume recipe (AI-CONTEXT §16) and **(B)** the fix-task chain write (README:257–259). Both flows go through the M1 seam (C20 `validate` stub → real).
+
+```mermaid
+sequenceDiagram
+    participant Agent as Cold/Repair Agent
+    participant C19 as C19 Bead Store
+    participant C20 as C20 Schema (M1 seam)
+    participant C52 as C52 Self-bootstrap
+
+    Note over Agent,C52: Flow A — Cold-start resume (AI-CONTEXT §16)
+    Agent->>C19: I1 find_by_type("factory_build_in_progress")
+    C19-->>Agent: list<bead> with {id, payload.workflow_handle, ...}
+    Agent->>C19: I2 find_by_id(bead.id)
+    C19-->>Agent: full bead record
+    Agent->>C52: gc converge resume <bead.id>
+
+    Note over Agent,C52: Flow B — Fix-task chain write (README:257-259)
+    Agent->>C20: validate("fix_task", payload)
+    C20-->>Agent: ok (stub → real validator)
+    Agent->>C19: write_bead(type="fix_task", payload, depends_on=[diagnosis_id])
+    C19-->>Agent: new_bead_id
+    Agent->>C19: I6 transition_status(new_bead_id, open→in_progress)
+    C19-->>Agent: ok
+```
+
+> [FAITHFUL-FILL] The sequencing above is the minimal faithful reading of the §16 cold-start recipe and
+> README P11 fix-task write. The M1 seam (`C20.validate` call in Flow B) is precisely the no-op stub
+> described in §3.1 — it exists in the interface at M1 freeze time and becomes a real check once C20
+> ships. C52 is named as the consumer of the resume handle, per AI-CONTEXT §16.
+
 ## 5. Behavior
 
 C19 has **no control loop of its own** (the loop that *acts on* beads is the reconciler C18; the loop that
@@ -191,6 +349,22 @@ per BUILDER-BRIEF altitude.)
 
 No v4 F-mode is *owned* by C19 beyond the persistence/attribution role; F32 (mail-injection) and the
 attribution F-modes are addressed via P9 `created_by` flowing through beads (C41 owns the security framing).
+
+### 6.1 Error taxonomy (sweep-2)
+
+C19-owned errors at the graph-store layer. Each row: E-code, failure, detection point, handling. These
+are the errors C19 can detect and surface *without* needing C20's type catalog (those are C20 §6.1
+E-codes). The E-codes are referenced by acceptance tests in §8.1.
+
+| # | Failure | Surface | Detection | Handling |
+|---|---|---|---|---|
+| **E-C19-1** | **Unknown type** — `type` not in C20 registry at write time | write_bead (M1 seam) | `C20.validate(type, payload)` returns error (the no-op stub passes all until C20 ships; real validator enforces closed set) | Reject write; return E-C19-1. Prevent-vs-detect is G11-gated: native enforcement if Gas City rejects unknown types; C02 pack-level detect otherwise (same caveat as C20 E1 / OQ-C20-4). |
+| **E-C19-2** | **Invalid status transition** — e.g. advancing `closed → in_progress` (no re-open) | I6 transition_status | Transition table check: C19 enforces the lifecycle DAG `open→in_progress→closed` (C20 §4.5.0 / C20 §5.1) | Reject transition; return E-C19-2. Caller (C18/C39) must not issue backwards transitions. |
+| **E-C19-3** | **Dependency cycle** — writing a bead whose `depends_on` list would create a directed cycle | write_bead | Reachability check: does any `to_id` in `depends_on` transitively depend on the new bead's would-be id? (checked before commit) | Reject write; return E-C19-3. The work-graph must be a DAG (acyclicity invariant §3). |
+| **E-C19-4** | **Round-trip payload corruption** — a `payload` field written as one type reads back as a different type | read path | Structural comparison: `read(write(bead)).payload == bead.payload` (the AC-C19-RT test) | Fail-loud; indicates a storage backend type-mapping bug. Dolt SQL column types must match payload field types (F9 informs: local SQL server, types are real). |
+| **E-C19-5** | **Unknown dependency target** — `depends_on` references an id that does not exist in the store | write_bead | Existence check on each `to_id` before committing | Reject write; return E-C19-5. All dependency targets must exist at write time (referential integrity for the work-graph). |
+| **E-C19-6** | **Missing `created_by`** — write_bead called with no actor context and no explicit `created_by` | write_bead | Attribution stamping: C19 stamps `created_by` from the acting context; if neither is available, the write is rejected | Reject write; return E-C19-6. "Native/automatic everywhere" (README:227) means C19 always has an acting context; the error case signals a misconfigured call site, not a user error. |
+| **E-C19-7** | **Durability loss** — `dolt push` fails or is skipped; a session ends before the last push; beads written are not visible to the next session | ops/durability layer | Detected at next-session `find_by_type` returning an empty set for a type known to have beads | Fail-loud on `dolt push` error; surface as operational alert. Mitigation: push frequency and `DOLT_REF=refs/heads/dolt-data` constraint (F9 — D-23 substrate-verified). Not a write-time C19 API error; an ops concern. |
 
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
@@ -233,8 +407,46 @@ attribution F-modes are addressed via P9 `created_by` flowing through beads (C41
    both `provider = "file"` and `provider = "dolt"` with identical observable contract. Not exercisable at
    sweep 1 — Phase 0 turns the Dolt server "explicitly off" (AI-CONTEXT §3.4) and the Dolt backend itself
    is unverified Gas City behavior (G11). Stated now so the contract is frozen; tested when Dolt lands.
-(Concrete bead record schema, `gc bd` signatures, edge/link semantics per type, and file-layout/migration
-test vectors are sweep-2 deliverables, jointly with C20.)
+
+### 8.1 Concrete acceptance tests (sweep-2)
+
+Each test is an executable check tied to the E-codes in §6.1 and the M1 interface in §3.1.
+`assert accept(...)` = write succeeds; `assert reject(...)` = write/call is refused with the named error;
+`assert roundtrips(b)` = `read(write(b)) == b`.
+
+**Write-path and M1 seam**
+
+- **AC-C19-W1** — `assert accept(write_bead(type="fix_task", payload={...}, created_by="agent-1", depends_on=[]))` writes cleanly and returns a non-empty `id`. (M1 seam with C20 real validator; requires C20 to be live. With stub, passes unconditionally.) (§3.1)
+- **AC-C19-W2** — `assert reject(write_bead(type="not_a_type", ...))` is refused with E-C19-1 once C20's real validator replaces the stub. With the no-op stub, this passes — *marked G11-gated*. (§3.1, E-C19-1)
+- **AC-C19-W3** — `assert roundtrips(b)` for a bead with all fields populated: `read(write(b)).payload == b.payload` field-by-field. Specifically, integer fields read back as integers (no silent string coercion). (E-C19-4)
+- **AC-C19-W4** — `assert reject(write_bead(depends_on=[X]))` when X does not exist in the store → E-C19-5. (§4.2, E-C19-5)
+- **AC-C19-W5** — `assert reject(write_bead(depends_on=[A]))` when A's `depends_on` already points (transitively) to the new bead's would-be id → E-C19-3 (cycle prevention). (§4.2, E-C19-3)
+
+**Attribution**
+
+- **AC-C19-A1** — write_bead called with no `created_by` and a valid acting context → the written bead has `created_by` set to that context's actor id (stamping invariant). (§3 FAITHFUL-FILL, README:227)
+- **AC-C19-A2** — write_bead called with no `created_by` and no acting context → `assert reject(...)` with E-C19-6. (§6.1, E-C19-6)
+
+**Query/traversal (I1–I7)**
+
+- **AC-C19-Q1** — `find_by_type("factory_build_in_progress")` returns exactly the beads of that type and no others. Specifically: the literal string `factory_build_in_progress` resolves correctly (G17 prevention; AI-CONTEXT §16). (I1)
+- **AC-C19-Q2** — `find_by_id(id)` for a written bead returns the identical record (all fields). `find_by_id(unknown_id)` returns `not_found`. (I2)
+- **AC-C19-Q3** — `get_subgraph(root_id="anomaly_bead", direction="downstream")` returns the connected closure-chain sub-graph: anomaly → diagnosis → fix_task → resolution as a set of nodes + edges. (I5; README:259 "bead chain anomaly → diagnosis → fix → resolution")
+- **AC-C19-Q4** — `transition_status(id, open→in_progress)` succeeds; `transition_status(id, closed→open)` is rejected with E-C19-2. (I6, §6.1, E-C19-2)
+- **AC-C19-Q5** — `get_history(id)` returns a non-empty list of change records after any state transition; timestamps are monotonically increasing. (I7; README:228)
+
+**Cross-session durability**
+
+- **AC-C19-D1** — write bead in session S1 (process exit); start session S2; `find_by_id(bead.id)` returns the identical bead. (§8 AC-2; README:235)
+- **AC-C19-D2** *(Dolt backend, G11-gated)* — durability requires a successful `dolt push --ref refs/heads/dolt-data` between S1 and S2. After a push with an incorrect ref (e.g. default `refs/dolt/data`) to a proxy-mediated environment, the push fails → surface E-C19-7. Passing requires `DOLT_REF=refs/heads/dolt-data` (F9 — D-23 substrate-verified). (§4.3, E-C19-7)
+
+**Cold-start resume recipe (AI-CONTEXT §16)**
+
+- **AC-C19-R1** — end-to-end: write a `factory_build_in_progress` bead with `workflow_handle` + `spec_ref` + `scenario_ref` (C20 §4.5.4 fields); call `find_by_type("factory_build_in_progress")`; retrieve the bead by id; pass `bead.id` to `gc converge resume`; the resume succeeds without out-of-band state. (AI-CONTEXT §16 lines 695–699; §8 AC-5)
+
+**Backend transparency**
+
+- **AC-C19-BT1** *(G11-gated, Dolt-era)* — all AC-C19-W*, AC-C19-A*, AC-C19-Q*, AC-C19-D1, AC-C19-R1 pass unchanged with `[beads] provider = "dolt"` as with `provider = "file"`. (§8 AC-6)
 
 ## 9. Open questions
 

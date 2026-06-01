@@ -1,8 +1,11 @@
 # C23 — Event Bus  (Spec, canonical track)
 
 > Source: AI-CONTEXT §3.2 "nine concepts" (line 87 "Event Bus / Append-only JSONL with monotonic seq / P9, P10, P11"), §5.4 bridge-impedance table (line 228 "Gas City event bus JSONL → CXDB / **Lowest** / Events already attributed and trajectory-shaped"), §5.5 "what CXDB adds over plain JSONL" (lines 234–239); README §Part 4 (P9 attribution table line 228 "Audit trail / Queryable history / Gas City event bus + bead history / MIT / Native"; P11 event-substrate line 252 "Event substrate / Records every action / Gas City event bus (always), CXDB (for trajectories) / MIT / Apache 2.0 / Native + bridge"; P9 attribution narrative lines 222, 231 "Attribution flows automatically through beads and events without configuration"); spec/C01 §3 I7 (event bus seam, lines 87) + §4 (event-bus log state, line 111) + INV-3 (universal attribution); component-inventory C23 row (line 35 "Append-only JSONL with monotonic seq; records every action; lowest-impedance CXDB source", gaps A29/B46, depends C01, foundational yes), Batch-1 note (line 107); F-MODE-COVERAGE F10, F14, F11, F32, F43; ambiguities-and-gaps G27.
-> Inventory ID: C23   Kind: data-store   Status: sweep-1
-> Track: A (faithful)
+> Inventory ID: C23   Kind: data-store   Status: sweep-2
+> Track: canonical (formerly Track A / faithful)
+> Binding decisions obeyed: **D-5** (C41 owns the provenance hash-chain, computed over C23-provided
+> ordered `event_id`s; C23 provides gap-free ordered `event_id`s ONLY, it does NOT provide the chain),
+> **D-6** (canonical track, not "Track A").
 
 ## 1. Purpose & responsibility
 
@@ -117,36 +120,171 @@ to sweep 2 (and the actor-value contract to C41, the bridge delivery seam to C24
 - **INV-5 (JSONL, one record per line):** the on-disk format is line-delimited JSON — one self-describing
   record per line — so it is grep-able, tailable, and bridgeable without a special reader (AI-CONTEXT §3.2;
   §5.5 frames CXDB as additions "over plain JSONL").
+- **INV-6 (gap-free `event_id` stream — D-5 seam):** C23 provides a **gap-free, totally-ordered
+  `event_id` stream** — the property D-5 names as C23's contribution to C41's tamper-evidence chain.
+  Every appended record receives an `event_id` that is `(stream_name, seq)` with `seq` gap-free and
+  strictly increasing. *No hash-chain is computed or maintained by C23.* The chain — if/when built — is
+  **C41's** responsibility, computed over C23-provided `event_id`s. This is the D-5 boundary, stated
+  verbatim from the review-log: **"C41 owns the provenance hash-chain, computed over C23-provided ordered
+  `event_id`s. C23 provides gap-free ordered `event_id`s only; it does NOT provide the chain."**
+
+### 3.1 `event_id` stream contract (D-5 seam — the C41-binding interface)
+
+This subsection specifies the C23→C41 seam that D-5 froze. It is the contract C41 builds its
+provenance hash-chain against, and the property the gap-free total-order acceptance test (AC-S2-O)
+must verify.
+
+**D-5 verbatim text** (review-log, adopted):
+> "C41 owns the provenance hash-chain, computed over C23-provided ordered `event_id`s. C23 provides
+> gap-free ordered `event_id`s only; it does NOT provide the chain. Update both specs."
+
+**C23's obligation under D-5:**
+- Every appended record is assigned an `event_id = {stream: <stream_name>, seq: <uint64>}` where `seq`
+  is **gap-free and strictly increasing** within a named stream (no holes: if the last `seq` was N,
+  the next MUST be N+1). This is the stronger-than-monotonic property D-5 depends on — a gap in the
+  sequence is a detectable tamper signal for C41's chain.
+- C23 exposes the `event_id` field on every record (field table §4.2).
+- C23 does **not** compute, store, or verify any cryptographic hash over records. The chain,
+  HMAC signing, and tamper-detection are C41's optional pack (README line 229; deferred per D-14/G37).
+- C41 may call I2 (ordered read) to consume `event_id` values in `seq` order as inputs to its chain
+  computation. C23 provides the ordered stream; C41 owns what it does with it.
+
+**Why gap-free (not merely monotonic) is required:** A monotonic-but-gapped sequence would create
+ambiguity for C41's hash-chain — a gap could be a dropped event (tamper) or a legitimately unused
+sequence number. Gap-free removes the ambiguity: *any gap is a provenance failure*. (OQ-4 tracks
+whether the pinned Gas City binary guarantees this in practice.)
+
+> [FAITHFUL-FILL] **D-5 specifies "gap-free ordered `event_id`s" but v4 does not spell out
+> whether the Gas City event bus is gap-free or merely monotonic.** AI-CONTEXT §3.2 says "monotonic
+> seq"; it does not use "gap-free". The D-5 integrator ruling *adds* the gap-free requirement as the
+> C41-binding property. C23 faithfully accepts this boundary: the gap-free invariant is C23's
+> obligation to the D-5 seam, and OQ-4 is the verification spike against the pinned binary.
+
+### 3.2 Publish / subscribe / delivery interface (sweep-2)
+
+C23 is an **append-only log**, not a broker. There is no subscription registry inside C23. "Subscribe"
+is implemented by a consumer tailing the log from a checkpointed `seq` (I2/I3). Delivery semantics:
+
+| Property | Value | Reasoning |
+|---|---|---|
+| **Delivery guarantee** | At-least-once (on reader retry from last checkpoint) | The append-only log is durable; a consumer that crashes and resumes from its last saved `seq` will re-read and re-process events since that checkpoint. This gives at-least-once. Exactly-once requires idempotent consumers (their responsibility, not C23's). |
+| **Order guarantee** | **Total order per stream** (gap-free `seq`; INV-2/INV-6) | All events on a stream are totally ordered by `seq`. Cross-stream ordering is wall-clock only (`ts` field). |
+| **Durability** | Append persists before I1 returns | Append-only local file; the event is durable once appended. A crash before append completes means the event was never recorded (INV-4 failure). |
+| **Delivery to C41** | Pull (I2 read, not push) | C41 reads the event_id stream via I2 to construct its chain; C23 does not push to C41. |
+| **Delivery to C24** | Pull / tail | C24 tails I2 from its checkpoint; C23 does not push to C24. |
+| **Back-pressure** | None in C23 | C23 appends unconditionally; producers are never blocked by consumer lag. Consumer lag is C24/C40's concern (G27). |
+
+**I1 publish signature (sweep-2 concrete):**
+
+```
+append(event: EventRecord) → event_id: EventId
+```
+
+Where `EventRecord` is the record shape (§4.2) minus `seq` and `event_id` (assigned by C23 on append);
+returns the assigned `event_id = {stream, seq}`. Fails loud if the backing store is unwritable (E5).
+
+**I2 ordered read signature:**
+
+```
+read(from_seq: uint64, limit?: uint32) → []EventRecord
+```
+
+Returns records with `seq >= from_seq` in strictly ascending `seq` order, up to `limit` (or all if
+omitted). Returns an empty list when `from_seq` is beyond the current head.
+
+**I3 checkpoint / resume-from-seq:**
+
+```
+last_seq() → uint64   # head of the log; consumers save their own checkpoint
+```
+
+Consumers are responsible for persisting their last-processed `seq`. C23 provides `last_seq()` so
+a new consumer can tail from the current head rather than replay the full history.
 
 ## 4. Data model / state
 
 C23 *owns the event-log seam + record shape*; the **actor schema** behind `created_by` is owned by C41.
-State C23 is the spec-of-record for at sweep 1:
+State C23 is the spec-of-record for:
 
 | State | Description | Persistence | Detailed by |
 |---|---|---|---|
 | **Event log** (`events.jsonl`-style) | Append-only, line-delimited JSON; the ordered action ledger (AI-CONTEXT §3.2). | Append-only file (the Gas City event bus backing store). | C23 |
-| **Monotonic `seq` counter** | The strictly-increasing sequence assigned per append; the total-order + checkpoint key (INV-2). | Derived from / persisted with the log. | C23 |
+| **Monotonic `seq` counter** | The strictly-increasing, gap-free sequence assigned per append; the total-order + checkpoint key (INV-2/INV-6). | Derived from / persisted with the log. | C23 |
 | **Per-record `created_by`** | Resolvable actor on every event (city/rig/agent) (README line 227). | Field on each JSONL record. | **C41** (actor schema), C23 (carrier field) |
 | **Log location config** | Where the event log lives (path/rotation), part of C01's config. | Version-controlled `city.toml` (C03 model). | C03 (model), C01/C23 (binding) |
 
 > [FAITHFUL-FILL] v4 specifies the event-bus *primitive* (append-only JSONL + monotonic seq + `created_by`)
 > but not the concrete field-level event record. The minimal faithful elaboration of one record is:
-> **`{seq, ts, created_by, action_type, target_ref?, payload}`** — where `seq` is the monotonic order key
-> (INV-2), `ts` is the wall-clock timestamp, `created_by` is the inherited universal-attribution actor
-> (spec/C01 INV-3; resolved by C41), `action_type` names the action that occurred (dispatch / gate /
-> bead-transition / mail / tool-run / healer-action), `target_ref` optionally references the affected bead /
-> session / molecule, and `payload` carries action-specific detail. This is the smallest set implied by
-> "monotonic seq" + "records every action" + universal attribution + "events already attributed and
-> trajectory-shaped" (AI-CONTEXT §5.4 — i.e. enough to reconstruct a trajectory). Exact wire field names /
-> types and the `action_type` enumeration are **sweep-2**; the actor-id shape inside `created_by` is **C41**.
+> **`{event_id, seq, ts, created_by, action_type, target_ref?, payload}`** — where `event_id` is the
+> D-5-seam identifier (stream + seq pair), `seq` is the monotonic gap-free order key (INV-2/INV-6), `ts`
+> is the wall-clock timestamp, `created_by` is the inherited universal-attribution actor (spec/C01 INV-3;
+> resolved by C41), `action_type` names the action that occurred (dispatch / gate / bead-transition / mail /
+> tool-run / healer-action), `target_ref` optionally references the affected bead / session / molecule, and
+> `payload` carries action-specific detail. This is the smallest set implied by "monotonic seq" + "records
+> every action" + universal attribution + "events already attributed and trajectory-shaped" (AI-CONTEXT §5.4)
+> + the D-5 gap-free `event_id` seam requirement. The actor-id shape inside `created_by` is **C41**.
 
-**Consistency / lifecycle.** Append-only + monotonic-seq give a **write-once, totally-ordered, replayable**
-log: a reader can deterministically reconstruct the action history and checkpoint by `seq`. The bus is
-**always-on from Phase 0** (additive to nothing — it is part of the base substrate; spec/C01 §4)
+**Consistency / lifecycle.** Append-only + gap-free monotonic seq give a **write-once, totally-ordered,
+replayable** log: a reader can deterministically reconstruct the action history and checkpoint by `seq`. The
+bus is **always-on from Phase 0** (additive to nothing — it is part of the base substrate; spec/C01 §4)
 and unlike CXDB needs no feature flag (README line 252 "always"). The log is the *source-of-truth action
 trail that survives independently of CXDB* — which is exactly why a CXDB outage is survivable (see §6, and
 spec/C21 §6 G33 reading).
+
+### 4.1 `EventId` — the D-5 seam type
+
+| Field | Type | Req? | Semantics | Read-by | Write-by |
+|---|---|---|---|---|---|
+| `stream` | `string` | R | The named event stream (e.g. `"factory.main"`); scopes the `seq` namespace. One city may have multiple streams. | C41, C24, C40 read | C23 assigns on append |
+| `seq` | `uint64` | R | Strictly-increasing, **gap-free** sequence number within the stream. If the prior appended `seq` was N, the next MUST be N+1 (INV-6). Any gap is a detectable ordering violation (E3). | C41 (hash-chain input), C24 (checkpoint), C40 (trigger match) | C23 assigns; never mutated |
+
+`EventId` = `{stream, seq}`. This is the pair D-5 names: "C23 provides gap-free ordered `event_id`s" for
+C41 to compute its hash-chain over. C23 does NOT hash, chain, or sign these values.
+
+### 4.2 `EventRecord` — concrete wire schema (sweep-2)
+
+Every JSONL line on the event bus is one `EventRecord`. Columns: **Field** / **Type** / **Req?**
+(R = required, O = optional) / **Semantics** / **Read-by** / **Write-by**.
+
+| Field | Type | Req? | Semantics | Read-by | Write-by |
+|---|---|---|---|---|---|
+| `event_id` | `EventId` | R | The D-5 seam identifier: `{stream, seq}`. The gap-free total-order key C41 builds its chain over (§3.1, INV-6). | C41 (chain), C24 (bridge), C40 (trigger) | C23 assigns |
+| `seq` | `uint64` | R | Convenience copy of `event_id.seq`; the checkpoint key consumers persist (I3). Redundant with `event_id.seq` but present for grep/tail readability (INV-5). | All consumers | C23 assigns |
+| `ts` | `timestamp` (ISO-8601 / RFC-3339) | R | Wall-clock time at append. Monotonic within seq order; not the ordering key (seq is). | Audit, C24 bridge | C23 stamps |
+| `created_by` | `actor_id` | R | Resolvable actor (city/rig/agent) that triggered the action (INV-3; P9; spec/C01 INV-3). C23 **carries** the field; C41 **defines and resolves** the `actor_id` schema (I4). No anonymous events. `created_by` wire type = colon-delimited `"kind:id"` string per **D-29** (parsed to C41 `ActorRef`); resolves OQ-C41-4. | C41 (resolve), C24 (bridge attribution), audit | Action path writes; C23 stamps from substrate |
+| `action_type` | `enum{…}` | R | Closed set of action kinds (§4.3). Each value names one class of factory event. | C40 (trigger predicates), C24 (bridge), audit | Action path writes |
+| `target_ref` | `string` \| `bead_id` | O | Reference to the affected bead / session / molecule / formula. Free-form string or a C19 `bead_id`. Absent when no single target (e.g. a city-level event). | C40 (filter), audit | Action path writes |
+| `payload` | `object` | O | Action-specific detail. Schema is per `action_type` (§4.3). Free-form map for forward compatibility; action-type-specific schemas frozen at T6 per the plan. | C24 (bridge into CXDB), consumers | Action path writes |
+
+> [FAITHFUL-FILL] **The `seq` redundancy.** `event_id.seq` and the top-level `seq` field carry the same
+> value. v4 (AI-CONTEXT §3.2) says "monotonic seq" as a first-class field; D-5 adds `event_id = {stream,
+> seq}` as the seam type. The minimal consistent approach is to keep both: `seq` at the top level (faithful
+> to v4's framing and grep-friendliness per INV-5), `event_id` as the D-5 seam object. They must match;
+> a mismatch is E6 (see §6.1).
+
+### 4.3 `action_type` enumeration (sweep-2)
+
+The closed set of action kinds the bus records. Every factory action that mutates state or makes a
+decision MUST appear here (INV-4). Enumeration frozen at T6 (plan §4).
+
+| `action_type` value | Description | Primary emitter | Typical `target_ref` |
+|---|---|---|---|
+| `dispatch` | A bead/wisp was dispatched to an agent or pool (AI-CONTEXT §3.2 concept 8) | C05/C06 | bead_id |
+| `gate_decision` | A formula gate evaluated and produced a pass/fail decision | C11/C12 | formula/bead ref |
+| `bead_transition` | A bead changed `status` or `type` (C19/C20 write) | C19 via C20 | bead_id |
+| `mail_sent` | A durable mail message was enqueued (C06) | C06 | session/rig ref |
+| `nudge_sent` | An ephemeral nudge was sent (C06) | C06 | session ref |
+| `tool_invocation` | A tool-node was invoked in a formula run (C17) | C17 | formula/molecule ref |
+| `healer_action` | The self-healing loop took an action (C36/C37/C39) | C39/C36/C37 | bead_id (anomaly/fix_task) |
+| `override_recorded` | An operator override was written as a bead (C35) | C35 | bead_id (override) |
+| `order_triggered` | A durable Order was triggered by an event match (C40) | C40 | order ref |
+| `session_lifecycle` | A session was started / stopped / crashed (C01) | C01 | session ref |
+
+> [FAITHFUL-FILL] **The enumeration is inferred.** v4 says "records every action" (README line 252) and
+> lists the action classes in the dependency graph (dispatch, gate, bead transitions, mail/nudge, tool runs,
+> healer) but never enumerates `action_type` values. This table is the minimal faithful set covering every
+> action path named in v4. It is **open-for-extension** (adding a value requires a schema version bump, not
+> a breaking change) and must be verified against the pinned Gas City binary at T6 (plan).
 
 ## 5. Behavior
 
@@ -167,9 +305,43 @@ reads via I2 from a checkpointed `seq` (I3) to the head, in order. Orders are *t
 and posts the *already-attributed, trajectory-shaped* records to CXDB (AI-CONTEXT §5.4 line 228) — see §7
 G27 for which source v4 actually wires.
 
-> Sequence/state diagrams (Mermaid), the exact append/read/checkpoint wire contracts, the `action_type`
-> enumeration, and log-rotation behavior are **sweep-2+**. The actor-resolution inside `created_by` is **C41**;
-> the bridge delivery/ordering algorithm is **C24**.
+### 5.1 Publish → ordered delivery → C41 chain-input (sequence diagram)
+
+The diagram shows the three roles interacting with C23: an **action path** that emits an event (publish),
+a **general consumer** (e.g. C24 bridge or C40 Order) that reads the ordered stream, and **C41** consuming
+the `event_id` stream as input to its provenance hash-chain. The diagram covers the D-5 boundary: C23
+hands over gap-free `event_id`s; C41 owns what it computes over them.
+
+```mermaid
+sequenceDiagram
+    participant A as Action Path (any emitter)
+    participant C23 as C23 Event Bus
+    participant Con as Consumer (C24/C40)
+    participant C41 as C41 Identity / Attribution
+
+    A->>C23: append({action_type, target_ref, payload, created_by})
+    C23->>C23: assign event_id = {stream, seq=N+1} (gap-free, INV-6)
+    C23-->>A: return event_id
+
+    Con->>C23: read(from_seq=last_checkpoint)
+    C23-->>Con: []EventRecord in seq order (INV-2, total order)
+    Con->>Con: process records; persist last seq as checkpoint
+
+    C41->>C23: read(from_seq=chain_head)
+    C23-->>C41: []EventRecord with gap-free event_ids
+    C41->>C41: extend hash-chain over event_ids (D-5: C41 owns chain, not C23)
+```
+
+**D-5 boundary visible in the diagram:** C23 returns `event_id` values to C41 via the same I2 read
+interface all consumers use. C23 does nothing special for C41 — it provides the ordered, gap-free stream.
+C41 is the sole actor that extends a hash-chain; C23 never does.
+
+### 5.2 Gap detection (ordering violation — E3)
+
+A consumer (typically C41) can detect a gap by comparing the received `seq` to its expected next value.
+If `received_seq != expected_seq`, a gap has occurred — the bus's gap-free invariant (INV-6) was violated.
+This is E3 in the error taxonomy (§6.1). The consumer must fail loud and not silently accept a gapped stream,
+because from C41's perspective any gap is a potential tamper signal.
 
 ## 6. Failure modes & handling
 
@@ -235,6 +407,27 @@ A partial/torn final line on crash is detectable (JSONL line-framing, INV-5) and
 > (attribution loss F14, audit completeness F10, reference stability F11, unsigned coordination F32/F43,
 > CXDB-path contradiction G27) and defers the canonical mapping there.
 
+### 6.1 Error taxonomy (E-codes, sweep-2)
+
+Enumerated failure modes across C23's three surfaces — **append** (I1), **read/checkpoint** (I2/I3),
+and **ordering/gap** (INV-6). Each row: detection point, handling, and the AC-code that tests it.
+
+| # | Failure | Surface | Detection | Handling | AC |
+|---|---|---|---|---|---|
+| **E1** | **Anonymous event** — `created_by` absent or empty on an appended record | append (I1) | Required-field check at append time (INV-3) | Reject the append; the action path MUST supply `created_by`. An event without attribution is a F14 failure and a chain-input violation for C41. | AC-S2-4 |
+| **E2** | **Unknown `action_type`** — a value not in the §4.3 enumeration | append (I1) | Closed-set check (INV-4 contract) | Reject the append; unknown types bypass the completeness invariant. *G11-gated: if Gas City does not enforce natively, C02 pack enforces detect.* | AC-S2-3 |
+| **E3** | **Ordering/gap violation** — `seq` is not N+1 from prior (INV-6 broken) | read (I2); detected by consumer | Consumer compares `seq` to `expected_next_seq` | Fail loud on the consumer side; C23 MUST NOT produce gaps (D-5 gap-free contract). If a gap is detected it is either a C23 bug or tamper — escalate; do NOT silently skip. C41 MUST treat a gap as a tamper signal. | AC-S2-O |
+| **E4** | **Mutation of existing record** — a historical record was modified in place (INV-1 broken) | read/replay (I2) | Re-read of a historical record differs from its first-read value | Fail loud. The audit trail is corrupted; this invalidates C41's hash-chain and the entire F10 guarantee. Log the deviation; escalate to substrate-level ops. | AC-S2-2 |
+| **E5** | **Append durability failure** — the backing store is unwritable (disk full / I/O error) | append (I1) | I1 returns an error | Fail loud (the action that cannot be recorded must not be silently lost, INV-4). The emitting action path MUST surface the failure; silent swallow is the F10 failure mode. Recovery is C01 substrate-level. | AC-S2-5 |
+| **E6** | **`seq` / `event_id.seq` mismatch** — top-level `seq` field disagrees with `event_id.seq` | append (I1) or read (I2) | Field consistency check at append/read | Reject; one of the two fields was incorrectly set. A mismatch indicates a serialization bug in the emitter. | AC-S2-6 |
+| **E7** | **`created_by` actor unresolvable** — the carried actor id fails C41 resolution | read (I2) / attribution layer | C41 resolution attempt fails | C23's failure surface is limited to *carrying* the field; C41 reports unresolvability. C23 supplies the field value; C41 owns the verdict (I4). Flagged as F14-partial. | (C41 AC) |
+| **E8** | **Torn/partial final JSONL line** — log file ends mid-record (crash during append) | read (I2) / startup | JSONL line-framing — a line that does not parse as valid JSON is detected immediately | The partial line is discarded (the append was not completed before crash); the prior complete record is the new head. This is a known recovery case (§6 "Degraded behaviour"); the truncated record was never durably committed. | AC-S2-7 |
+
+> **D-5 boundary note.** C23 owns E1–E8 (append/read/ordering failures). C23 does **not** own
+> hash-chain verification or HMAC checking — those are C41's E-codes against its own provenance layer.
+> E3 (gap violation) is the critical shared-surface: C23 guarantees no gaps (produces); C41 detects gaps
+> (consumes); a gap triggers C41's tamper response, not a C23 recovery action.
+
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
 - **Security.** `created_by` on every event (INV-3) is the audit/attribution foundation (P9). The
@@ -262,14 +455,14 @@ A partial/torn final line on crash is detectable (JSONL line-framing, INV-5) and
 
 ## 8. Acceptance criteria & test strategy
 
-Sweep-1 = high-level criteria (concrete tests at sweep 2).
+### 8.1 Sweep-1 high-level criteria (preserved)
 
 1. **AC-1 (always-on append — INV-4/I1):** in the minimal Phase-0 install, performing a unit of work
    produces event records for each action with **no configuration** (README line 231; spec/C01 §5).
 2. **AC-2 (append-only — INV-1):** existing records are never mutated/reordered/deleted; a re-read of the log
    yields byte-identical historical records.
 3. **AC-3 (monotonic seq + total order — INV-2):** every record's `seq` is strictly greater than the prior
-   record's; the order is total and gap-free enough to checkpoint against.
+   record's; the order is total.
 4. **AC-4 (universal attribution — INV-3, addresses F14):** every event carries a **resolvable** `created_by`;
    no anonymous events exist (README line 231). *Actor-value correctness is verified jointly with C41.*
 5. **AC-5 (ordered read / replay / checkpoint — I2/I3):** a consumer can read from a checkpointed `seq` to
@@ -282,11 +475,74 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
 8. **AC-8 (CXDB-independence — supports C21 G33):** with CXDB down, the event bus keeps appending and remains
    the surviving source-of-truth action trail (spec/C21 §6 fail-open reading).
 
-**Test strategy.** A **Gas-City-event-bus conformance pack** (mirroring the C01/C21 conformance shape) that
-boots the pinned Gas City substrate and asserts AC-1…AC-8 against the *real* event bus — in particular the
-append-only + monotonic-seq invariants, universal `created_by`, ordered replay/checkpoint, and CXDB-
-independence. This is the de-risking gate that **must pass before C24 (bridge), C41 (identity), and C40
-(Orders) build on C23**, since all three contract against the record shape and ordering guarantees.
+### 8.2 Concrete acceptance tests (sweep-2)
+
+Each is an executable check against the **Gas-City-event-bus conformance pack** (boots the pinned Gas City
+substrate). `assert reject(...)` = the call is refused / returns error. `assert seq_of(records)` = the
+`seq` values of the returned list. `assert eq(a, b)` = values are identical. Notation:
+`eb.append(r)` = call I1; `eb.read(n)` = call I2 from seq=n; `eb.last_seq()` = call I3.
+
+**Append path (I1) and required fields**
+
+- **AC-S2-1 (always-on, no-config)** — Boot the minimal Gas City substrate. Perform one dispatchable
+  action. Assert `len(eb.read(0)) >= 1` with no event-bus configuration beyond the substrate default.
+  Verifies INV-4/AC-1.
+
+- **AC-S2-2 (append-only)** — Append records r1, r2. Read both back. Modify `r1.payload` in memory.
+  Re-read the log. Assert the on-disk r1 equals the original (not the modified copy). Verifies INV-1/E4.
+
+- **AC-S2-3 (closed `action_type`)** — `assert reject(eb.append({action_type: "not_an_action_type", …}))`.
+  *G11-gated: passes natively iff Gas City enforces the enum; else C02 pack-level check.* Verifies E2/INV-4.
+
+- **AC-S2-4 (no anonymous events)** — `assert reject(eb.append({created_by: null, action_type: "dispatch", …}))`.
+  Verifies E1/INV-3/AC-4/F14.
+
+- **AC-S2-5 (durability failure loud)** — Simulate an unwritable backing store (e.g. chmod the log file).
+  Call `eb.append(…)`. Assert the call returns an error (does not silently succeed). The emitter must be
+  able to detect and surface the failure (E5/INV-4).
+
+- **AC-S2-6 (`seq`/`event_id.seq` consistency)** — Append a valid record. Call `eb.read(0)`. Assert
+  `record.seq == record.event_id.seq` for every returned record. Verifies E6/§4.2.
+
+**Ordering and gap-free `event_id` stream — the D-5 property**
+
+- **AC-S2-O (gap-free total order — the C41-seam test)** — Append N=100 records in sequence. Read all.
+  Assert `seq_of(records) == [1, 2, …, N]` — no gaps, no reordering. Then checkpoint at seq=50 and
+  append 10 more. Read from seq=50. Assert `seq_of(result) == [50, 51, …, 60]`. Assert `event_id.seq`
+  equals `seq` for every record. **This is the primary D-5 property test: the event_id stream C41
+  depends on is gap-free and totally ordered.** Verifies INV-2/INV-6/D-5/AC-3.
+
+**Ordered read / replay / checkpoint (I2/I3)**
+
+- **AC-S2-R1 (read from checkpoint)** — Append 20 records. Checkpoint at seq=10. Append 10 more. Call
+  `eb.read(10)`. Assert exactly 21 records returned (seq 10 through 30 inclusive). Verifies I2/I3/AC-5.
+
+- **AC-S2-R2 (resume after crash)** — Append records, save checkpoint at seq=K. Simulate crash/restart
+  (re-instantiate the bus from backing store). Call `eb.read(K)`. Assert records from K to head returned
+  in seq order. Verifies I3/AC-5.
+
+**Torn-line recovery (E8)**
+
+- **AC-S2-7 (torn final line)** — Append a valid record (seq=N), then write a partial (non-terminated)
+  JSON fragment directly to the log file. Re-open the bus. Assert: (a) `eb.last_seq() == N` (partial line
+  discarded), (b) `eb.read(0)` returns records 1..N with no parse errors. Verifies E8.
+
+**Audit completeness and CXDB-independence**
+
+- **AC-S2-8 (audit completeness)** — Run a standard factory workflow (dispatch → gate → bead transition).
+  Assert that `eb.read(0)` contains events with `action_type` in {`dispatch`, `gate_decision`,
+  `bead_transition`} — no silent-gap action paths. Verifies INV-4/AC-7.
+
+- **AC-S2-9 (CXDB-independence)** — Bring down CXDB. Perform an action. Assert `eb.append(…)` succeeds
+  and the record is readable via `eb.read(…)`. Assert CXDB status has no effect on bus append or read.
+  Verifies AC-8.
+
+**Test strategy.** These tests form the **Gas-City-event-bus conformance pack** (mirroring the C01/C21
+conformance shape). They boot the pinned Gas City substrate and assert AC-S2-1…AC-S2-9 against the
+*real* event bus. **AC-S2-O (gap-free total order) is the gate test for the C41 seam** — it must pass
+before C41 can build its hash-chain on C23's stream. **All tests must pass before C24 (bridge), C41
+(identity), and C40 (Orders) build against C23**, since all three contract against the record shape and
+ordering guarantees.
 
 ## 9. Open questions
 

@@ -15,7 +15,7 @@ Supersedes the [Phase-4-close handoff](SESSION-HANDOFF-2026-05-25-phase-4-close.
 | Wave 5.2 — Discipline ADRs (10) | **Closed** | [`docs/adr/0018-0027`](../../docs/adr/). Exemplar: 0020 cost-ceiling. |
 | Wave 5.1b — Designed-system + 2-candidate substrate ADRs (9) | **Closed** | [`docs/adr/0028-0036`](../../docs/adr/). Variant-bearing primitives (P-19, P-28, P-29, P-30) explicitly scope-bounded to framework-only with Wave-5.3 deferral. |
 | Wave 5.3 — Candidate-specific + per-variant ADRs (~29) | **Owed; non-negotiable before Phase 6** | This handoff is the binding artifact. See [Wave 5.3 binding constraint](#wave-53-binding-constraint-non-negotiable) below. |
-| Phase 5b-this-run-close summary | **Closed** | [`overnight-summary-2026-05-25.md`](../../overnight-summary-2026-05-25.md) (top of stack). |
+| Phase 5b-this-run-close summary | **Closed** | [`overnight-summary-2026-05-25.md`](../../archive/PR-181-overnight-summary-2026-05-25.md) (top of stack). |
 | Self-retrospective | **Closed** | [`retrospective/2026-05-25-167.md`](../../retrospective/2026-05-25-167.md) (final PR-N covered by retro). |
 | Phase 6 (architecture-spec authorship per candidate) | **BLOCKED** | Pending Wave 5.3 close OR adversarially-reviewed waiver decision brief. |
 

@@ -3,7 +3,7 @@
 Live state of the v4 run (specs + plans). Updated by the primary agent every wave.
 
 ## ✅ SWEEP-1 COMPLETE (2026-05-31) — all 57 components built + reviewed + integrated
-Single canonical track `spec/` + `plan-faithful/`. Every component has `spec/<ID>-*.md` + `plan-faithful/<ID>-*.md` + `spec/<ID>-*.review.md` (57/57/57), all adversary verdicts **accept-with-fixes** (0 blockers, 0 needs-rework across the run), all cross-component findings integrated via decisions **D-1..D-19** (+ XC-3 resolved). See [`RUN-SCOPE-2026-05-31.md`](./RUN-SCOPE-2026-05-31.md) and the run summary at [`run-summary.md`](../../../run-summary.md).
+Single canonical track `spec/` + `plan-faithful/`. Every component has `spec/<ID>-*.md` + `plan-faithful/<ID>-*.md` + `spec/<ID>-*.review.md` (57/57/57), all adversary verdicts **accept-with-fixes** (0 blockers, 0 needs-rework across the run), all cross-component findings integrated via decisions **D-1..D-19** (+ XC-3 resolved). See [`RUN-SCOPE-2026-05-31.md`](../../../archive/PR-220-RUN-SCOPE-2026-05-31.md) and the run summary at [`run-summary.md`](../../../archive/PR-220-run-summary.md).
 
 ## ✅ TRACKS CONVERGED (2026-05-31) — single canonical track is `spec/`
 Track B (optimized) is frozen reference (`spec-optimized/`, `plan-optimized/`). Survivor pass folded all 25 must-have deltas into `spec/`; 117 hardening deltas dropped, 4 bets deferred (FE-1..4); FE-5 resolved (D-15). See [`SURVIVOR-PASS.md`](./SURVIVOR-PASS.md) + [`FUTURE-ENHANCEMENTS.md`](./FUTURE-ENHANCEMENTS.md).

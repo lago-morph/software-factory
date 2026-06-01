@@ -17,7 +17,7 @@
 3. **The empirical D-23 spike is still owed** (needs a Docker-capable env; prototype + protocol ready) — prevent-vs-detect (C34:OQ-C34-1 ≡ C43:OQ-C43-1) stays OPEN until then; it gates the auto-001 rubric's actual outcome.
 4. **Continue Sweep-2 depth** on the remaining ~52 components. Suggested next clusters: **workflow-engine** (C04/C05/C12/C13/C18/C40) and **eval/holdout** (C30/C31/C32/C33/C34/C42 — note holdout depth is partly gated on item 1). Use the [`BUILDER-BRIEF`](./BUILDER-BRIEF.md) at Sweep-2 depth, the C20 spec as the format **exemplar**, and a cross-cluster seam adversary per cluster.
 
-This file + the other `_meta/` artifacts are sufficient to resume with zero re-grounding. Start with the run summary at [`run-summary.md`](../../../run-summary.md), the operator decision guide [`decisions-to-make.md`](../../../decisions-to-make.md), and the coverage ledger [`STATUS.md`](./STATUS.md).
+This file + the other `_meta/` artifacts are sufficient to resume with zero re-grounding. Start with the run summary at [`run-summary.md`](../../../archive/PR-220-run-summary.md), the operator decision guide [`decisions-to-make.md`](../../../decisions-to-make.md), and the coverage ledger [`STATUS.md`](./STATUS.md).
 
 ---
 
@@ -56,7 +56,7 @@ The three items the previous handoff said to "resolve first" are now closed:
 
 ## 4b. How to resume (Sweep 2)
 
-1. Read [`run-summary.md`](../../../run-summary.md), [`decisions-to-make.md`](../../../decisions-to-make.md) (D-20..D-25 in plain language), this file, then [`STATUS.md`](./STATUS.md) (coverage ledger) and [`review-log.md`](./review-log.md) (D-1..D-19 + ~196 harvested OQs — the OQs are the Sweep-2 work list). Skim [`VERDICT.md`](./panel/VERDICT.md) for the cross-cutting risk ranking + the PF-1..PF-3 follow-ups. Do **NOT** read the four v4 source docs into primary context — subagents do that.
+1. Read [`run-summary.md`](../../../archive/PR-220-run-summary.md), [`decisions-to-make.md`](../../../decisions-to-make.md) (D-20..D-25 in plain language), this file, then [`STATUS.md`](./STATUS.md) (coverage ledger) and [`review-log.md`](./review-log.md) (D-1..D-19 + ~196 harvested OQs — the OQs are the Sweep-2 work list). Skim [`VERDICT.md`](./panel/VERDICT.md) for the cross-cutting risk ranking + the PF-1..PF-3 follow-ups. Do **NOT** read the four v4 source docs into primary context — subagents do that.
 2. **Start with the D-23 Gas City reality-check spike** (it gates the most: every "Native" claim, and whether D-20's fence actually *prevents*). The other operator decisions (D-20..D-22, D-24, D-25) are already adopted and annotated into the specs — do not relitigate.
 3. Use the standing briefs [`BUILDER-BRIEF.md`](./BUILDER-BRIEF.md) + [`ADVERSARY-BRIEF.md`](./ADVERSARY-BRIEF.md) (single-track banners). Dispatch one builder per component at **Sweep 2** depth; concurrency cap ~8; pipeline; subagents persist to disk + return receipts; **primary owns all git**; commit+push every wave.
 4. Each component's `spec/<ID>-*.md` already carries its Sweep-1 OQs inline + its `.review.md` (+ any D-20..D-25 annotations) — Sweep 2 starts from those, not a blank page.
@@ -85,4 +85,4 @@ FE-1 cross-provider judge · FE-2 portability contracts · FE-3 graduated-mandat
 
 **`architectures/v4/`:** **implementation-dependencies.md** (build order — leads with the safe-self-build backbone) · README · AI-CONTEXT · F-MODE-COVERAGE · one-shot-specs-and-research · optimized-differences(+reviews). Frozen reference (do not author here): `spec-optimized/` + `plan-optimized/`.
 
-**Repo root:** [`run-summary.md`](../../../run-summary.md) · [`decisions-to-make.md`](../../../decisions-to-make.md) (D-20..D-25 plain-language) · [`architecture-guide-for-engineers.md`](../../../architecture-guide-for-engineers.md) · [`build-order-plain-english.md`](../../../build-order-plain-english.md).
+**Repo root:** [`run-summary.md`](../../../archive/PR-220-run-summary.md) · [`decisions-to-make.md`](../../../decisions-to-make.md) (D-20..D-25 plain-language) · [`architecture-guide-for-engineers.md`](../../../architecture-guide-for-engineers.md) · [`build-order-plain-english.md`](../../../build-order-plain-english.md).

@@ -49,7 +49,7 @@ Three mutually-agreeing binding artifacts:
 ### Example 1: Wave 5.3 deferral in 2026-05-25 run
 
 - **Handoff doc** ([`architectures/v3/SESSION-HANDOFF-2026-05-25-phase-5a-close.md`](../../architectures/v3/SESSION-HANDOFF-2026-05-25-phase-5a-close.md)) carries: 29-ADR scope (13 per-variant + 16 orphan); ADR-ID-to-file mapping table for the 27 ADRs this run produced; Phase-6 gate: "Phase 6 MAY NOT START until Wave 5.3 Accepted OR adversarially-reviewed waiver brief authored."
-- **Morning summary** ([`overnight-summary-2026-05-25.md`](../../overnight-summary-2026-05-25.md) § "What I deliberately did NOT do") names Wave 5.3 explicitly with reference back to the handoff and to auto-005 Round 2.
+- **Morning summary** ([`overnight-summary-2026-05-25.md`](../../archive/PR-181-overnight-summary-2026-05-25.md) § "What I deliberately did NOT do") names Wave 5.3 explicitly with reference back to the handoff and to auto-005 Round 2.
 - **Next-run dispatch prompt** NOT YET AUTHORED — flagged in the morning summary's follow-up section as a deferred-deferred item. The user can author it now or at next-session start.
 
 ### Example 2: Hypothetical Phase-3.6 deferral

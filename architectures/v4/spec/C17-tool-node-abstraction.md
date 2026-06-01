@@ -492,18 +492,37 @@ Each AC is an executable test vector. E-code cross-references appear in the righ
 
 (Mirrored into `_meta/review-log.md`.)
 
-1. **[top open question] C17↔C02 ownership of the input/output *declaration*** (3.2 [AMBIGUITY: G29]):
-   sweep-1 places wire-bytes in C02 and workflow-level declared-inputs/outputs in C17. Sweep-2 must confirm
-   this split against C02's frozen ABI so a node's declared inputs map cleanly onto C02 `args`/stdin and its
-   declared outputs onto partition files / stdout — every downstream tool node (C24, C31, C33) depends on it.
-2. **Node-kind tag name/shape** — the `kind=deterministic` vs model/agent tag (3.1 fill) must be reconciled
-   with C16 (discipline linter) and C12 (formula node schema) so the linter and the formula agree on one
-   field.
-3. **Runtime determinism enforcement** — v4 asserts reproducibility but specifies no runtime check; is a
-   determinism guard (e.g. re-run-and-compare in test, or a sandbox that denies clock/network) in scope for
-   v4, or purely a declared-and-reviewed discipline (C16)?
-4. **Tool-node retry contract placement** — confirm C17 only surfaces status and C18/C40 own retry, with no
-   per-node retry policy at the C17 abstraction (consistent with C02's same fill).
-5. **Gas City "tool bead" reality** — like all "Native" cells, the claim that Gas City exposes a unified
-   tool-bead interface is unverified (G11 — Gas City unverified); sweep-2 should confirm the native shape
-   before freezing C17's mapping onto it.
+1. **OQ-C17-1 — RESOLVED (Sweep-2): C17↔C02 ownership of the input/output declaration** (3.2
+   [AMBIGUITY: G29]). **Reading A confirmed**: C02 owns the wire bytes (args + partition files + exit code
+   as the mandatory floor; stdin/stdout-JSON as an optional structured profile). C17 owns `ToolNodeRef`
+   (typed abstraction of the binding) and `ToolNodeResult` (typed result surfaced to the molecule). The
+   declared inputs/outputs at the formula level are C12's formula-node entry; C17 validates the keys but
+   does not re-specify the wire format. Every downstream component (C24, C31, C33) binds to C17's typed
+   surface; C02's ABI is what their binary speaks. No third ownership band. See §3.2 RESOLVED note.
+
+2. **OQ-C17-2 — RESOLVED (Sweep-2): Node-kind tag name/shape.** C12's `kind` field carries the node-kind
+   value from D-7's taxonomy `{agent, tool, gate, sub_formula}`. C17 maps `kind="tool"` to
+   `DeterminismTag="deterministic"` in `ToolNodeRef`. C16 reads `kind="tool"` from the formula node and the
+   `DeterminismTag` from C17's typed surface. The on-disk field name is `kind` (C12's vocabulary, D-7);
+   C17 does not introduce a parallel field. [Residual: the exact on-disk TOML key spelling awaits G11
+   verification — C12:OQ-4 is the authoritative freeze point; `"tool"` value is the confirmed faithful read.]
+
+3. **OQ-C17-3 (still open) — Runtime determinism enforcement.** v4 asserts reproducibility (README:154)
+   but specifies no runtime check. C17 Sweep-2 adds the `Deterministic=true` flag in `ToolNodeResult` for
+   C18's safe-re-run signal, but this is still a *declared* invariant, not a runtime-enforced one.
+   Whether a sandbox denying clock/network or a re-run-and-compare gate is in v4 scope is a discipline
+   question for C16 (F52). Faithful floor = contract declared + test-enforced (AC-C17-09/AC-C17-10);
+   any runtime guard is C16 policy, not C17 mechanism.
+
+4. **OQ-C17-4 — RESOLVED (Sweep-2): Tool-node retry contract placement.** Confirmed: C17 only surfaces
+   `ToolNodeResult.ExitCode`; retry/escalation policy is entirely C18 (reconciler) + C40 (Orders). C17
+   has no per-node retry field and adds none. E-C17-03 is how C17 signals the failure; the retry decision
+   is C18's. Consistent with C02 §6 "v4 gives no per-tool retry contract at the ABI."
+
+5. **OQ-C17-5 (still open) — Gas City "tool bead" reality** (G11). The `[[tool]] type="subprocess"` sketch
+   (AI-CONTEXT §13.3) is the only verified substrate shape; `BindToolNode` / `InvokeToolNode` / `PackRegistry`
+   are faithful elaborations of it. The exact runtime API Gas City exposes for tool-name lookup and the
+   precise subprocess lifecycle (environment variables passed, stdin behavior, working-dir contract) are
+   `[needs G11 verification]`. C17's abstraction layer is designed to absorb the impedance — the formula and
+   molecule surfaces are stable; the `PackRegistry` and `BoundToolNode.Command/Args` may need adjustment
+   once a pinned `gc` install is verified. **Top open question** for Sweep-3 / G11 spike.

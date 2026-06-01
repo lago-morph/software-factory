@@ -73,10 +73,11 @@ Freeze these earliest so dependents build against stubs in parallel:
 ## 6. Definition of done
 
 Per-component DoD (ties to spec §8 acceptance criteria):
-- **T1/T2/T3 done:** the per-tick convergence contract, the deterministic-first gate-ordering contract, and the C39 bound/bound-reached seam are frozen and published for dependents (AC-1, AC-3, AC-5).
-- **T4 done:** a convergence pass evaluates **deterministic gates before any LLM step** and admits an LLM step **only where a deterministic gate cannot decide**, taking a step toward desired (AC-1, AC-2, AC-4; INV-1, INV-3).
-- **T5 done:** a non-convergent pass **terminates at the injected bound and emits bound-reached to C39**, without C18 counting toward N, detecting oscillation, or authorizing a ship (AC-3, AC-5; INV-2; XC-3).
-- **T6 done:** a desired-vs-actual delta meaning "work should run but is not" issues a (re)dispatch to C05, with the trigger edge **marked `[FAITHFUL-FILL]` (RC05-01)** and not asserted as sourced (AC-6, F22 recovery).
-- **T7 done:** tick / gate / convergence events are observable via the **native** event bus (C23) with **no C18-owned record** (AC-7; INV-4).
-- **T8 done:** all §8 fixtures pass.
-- **Component done:** AC-1…AC-7 pass; **OQ-1 (G18 / XC-3) explicitly resolved with the C39 author** (C39 owns the numeric policy; C18 owns the loop + bound enforcement + signal); **no new control loop, scheduler, tick engine, queue, or convergence checkpoint introduced**, and no invented `gc` reconciler internal (beyond native Health Patrol + the C13/C19/C20 state read + the C16/C17 gate set).
+- **T1/T2/T3 done (Sweep-2 concretised):** `PassInput`, `Gate`, `BoundPolicy`, `BoundReachedSignal`, `PassResult` types frozen (spec §3.0); §3.4 field-table R/W-by column published; dependents can build against stub (AC-C18-03, AC-C18-05).
+- **T4 done:** a convergence pass evaluates **deterministic gates before any LLM step** and admits an LLM step **only where a deterministic gate cannot decide**, taking a step toward desired (AC-C18-01, AC-C18-02, AC-C18-04; INV-1, INV-3). Gate-ordering hook confirmed against pinned `gc` binary (OQ-3/G11).
+- **T5 done:** a non-convergent pass **terminates at the injected bound and emits `BoundReachedSignal` to C39**, without C18 counting toward N, detecting oscillation, or authorizing a ship (AC-C18-03, AC-C18-05; INV-2; XC-3; E-C18-02 path exercised).
+- **T6 done:** a desired-vs-actual delta meaning "work should run but is not" issues a (re)dispatch to C05, with the trigger edge **marked `[FAITHFUL-FILL]` (RC05-01)** and E-C18-04 covering dispatch-fail (AC-C18-06, F22 recovery).
+- **T7 done:** tick / gate / convergence events are observable via the **native** event bus (C23) with **no C18-owned record** (AC-C18-07; INV-4).
+- **T8 done:** all §8.1 AC-C18-01..08 fixtures pass, including E-code paths E-C18-01..05.
+- **T9 done:** nil-bound stub path operates safely (AC-C18-08; E-C18-05); warning on native bus.
+- **Component done:** AC-C18-01..08 pass; **OQ-1 (G18 / XC-3) RESOLVED verbatim** (XC-3 quote in spec §9); **OQ-2 explicitly flagged inference** (RC05-01) — not asserted as fact; **OQ-3 confirmed G11-open** — gate-ordering hook must be verified against pinned `gc` binary before T4 implementation proceeds; **no new control loop, scheduler, tick engine, queue, or convergence checkpoint introduced**, and no invented `gc` reconciler internal (beyond native Health Patrol + the C13/C19/C20 state read + the C16/C17 gate set).

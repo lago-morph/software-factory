@@ -37,3 +37,10 @@ Archived historical artifacts (run reports, phase prompts, scope envelopes, pass
 
 - [`PR-213-component-inventory-A.md`](PR-213-component-inventory-A.md) — raw component inventory A (independent decomposition)
 - [`PR-213-component-inventory-B.md`](PR-213-component-inventory-B.md) — raw component inventory B (independent decomposition)
+
+## Added 2026-06-01 (PR #235) — second cleanup pass
+
+Following the rule "everything outside `archive/` is a living doc, guide, primer, or grounding doc":
+
+- `PR-233-overnight-summary-2026-06-01-sweep2.md` — the Sweep-2 run #1 report (its decisions live on in the always-updated `architectures/v4/_meta/HANDOFF.md`).
+- `PR-180-initial-sources.md` — the frozen Round-1 research seed URL list.

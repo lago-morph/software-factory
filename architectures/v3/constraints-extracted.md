@@ -96,7 +96,7 @@
 
 ## UC7 — Seed source list (frozen, primary research input)
 
-> The 17-URL list in [`initial-sources.md`](../../initial-sources.md) — user-authored, Round-1 seed.
+> The 17-URL list in [`initial-sources.md`](../../archive/PR-180-initial-sources.md) — user-authored, Round-1 seed.
 
 **Extracted as constraint:**
 - The original seed list is frozen and remains primary research input. Subsequent rounds extended it; the v3 synthesis works against the full extended corpus, not just the seed.

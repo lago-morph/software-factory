@@ -114,7 +114,7 @@ Each phase below: **goal**, **steps**, **bias guards**, **checkpoint** (where to
 **Goal.** Lock down the v3 brief; remove anchoring documents from the active tree.
 
 **Steps:**
-- 0.1 ✅ Extract user-given constraints from [`research-plan.md`](archive/research-plan.md), [`AGENTS.md`](AGENTS.md), [`initial-sources.md`](initial-sources.md), and PR discussion history. Constraints only — *not* recommendations. → [`constraints-extracted`](architectures/v3/constraints-extracted.md).
+- 0.1 ✅ Extract user-given constraints from [`research-plan.md`](archive/research-plan.md), [`AGENTS.md`](AGENTS.md), [`initial-sources.md`](archive/PR-180-initial-sources.md), and PR discussion history. Constraints only — *not* recommendations. → [`constraints-extracted`](architectures/v3/constraints-extracted.md).
 - 0.2 Draft the reframed brief. → [`00-brief-v3`](architectures/v3/00-brief-v3.md). Carries: lights-out + greenfield + brownfield mandates, L5-vs-lights-out tension named openly, the user's working hypothesis (§2 above), explicit out-of-scope statements.
 - 0.3 **[CHECKPOINT — user review of brief before archival]**
 - 0.4 ✅ Archive existing 4 architectures → [`archive/architectures-v2/`](archive/architectures-v2/) + [`ARCHIVE`](archive/architectures-v2/ARCHIVE.md) (one-paragraph why-archived per file).

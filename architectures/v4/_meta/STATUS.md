@@ -36,6 +36,9 @@ Four axes: **B**uilt · **R**eviewed · **I**ncorporated · i**N**tegrated. **DO
 ## Sweep-2 D-23 first action — DONE (protocol + harvest, no live run)
 Per operator decision (no live agents this run). [D-23 spike protocol](D-23-gas-city-spike-protocol.md) (runnable prevent-vs-detect / `[[service]]` / Orders-durability checklist) + [D-23 substrate harvest](D-23-substrate-harvest.md) (12 facts from `gascity-prototype@b14c278`). Resolved XC-9 / C42:OQ-4 / C04:OQ-4; **0 true contradictions** after lead verification (3 flagged, all reclassified NEW-INFO). **Prevent-vs-detect (C34:OQ-C34-1 ≡ C43:OQ-C43-1) remains OPEN** — needs a Docker-capable empirical run of the protocol (the prototype deferred the smoke test).
 
+## Prevent-gate ADOPTED (2026-06-01) — D-30 (auto-001 + both morning-review items closed)
+Operator ruling: unattended operation requires the substrate to **BLOCK (prevent)**, not merely detect. Re-adopts D-20 as conditional-on-prevention. If Gas City doesn't prevent natively (per the D-23 spike), a **blocking watcher WILL be added** — sanctioned, but **design deferred until the spike confirms it's needed**. Until prevention is established, unattended is **blocked**. Per-rig-class autonomy kept but secondary. See [auto-001 brief](decisions/auto-001-detect-only-binding-gate.md) + [review-log D-30](review-log.md). Annotated on C43/C34/C42/C56/C57. The empirical spike stays the open input that decides whether the watcher is built.
+
 ## Passes still owed (next runs)
 Integration Pass over the whole 57 (cross-batch drift) · **Sweep 2** (implementation-ready: signatures, schemas, sequence/state diagrams, error taxonomies, acceptance tests) · **Sweep 3** (exhaustive: pseudocode, skeletons, edge-cases, perf/sec/ops) · final cross-cutting README/index.
 

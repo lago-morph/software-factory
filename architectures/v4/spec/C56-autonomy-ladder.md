@@ -377,3 +377,9 @@ the audit *mechanism* is C57's / a deferred build.)
   whether raising to L5 should require a machine-checked precondition (e.g. F54 audit-pack present + green,
   C53 bootstrap validated) or remain a documented operator decision. Faithful sweep-1: operator decision +
   documented checklist; a machine gate is a sweep-2/C57 question. **Wrap-up decision (D-21, ADOPTED 2026-05-31):** a **real objective-drift (F54) detector is REQUIRED before L5 lights-out** — a hard precondition on L5 promotion; the cheap periodic human checkpoint (F54's interim mitigation, homed in C57) suffices only at L1–L4. See [the decision ledger](../_meta/review-log.md#wrap-up-operator-decisions-2026-05-31--d-20d-25).
+
+**[D-30 ADOPTED 2026-06-01 — prevent/block required for unattended]**
+
+C56's P2/unattended entry gate now carries this precondition: prevention (native or sanctioned watcher) must be established before unattended operation is authorized.
+
+> The operator has adopted the auto-001 rubric and re-adopted D-20 as **conditional on prevention**: unattended operation (P2) and self-modification (P3b) require the substrate to **BLOCK (prevent at the tool-call/process boundary)** — not merely detect — out-of-boundary access on the relevant blast-radius face. **Discharge:** if Gas City does not prevent natively (per the [D-23 spike](../_meta/D-23-gas-city-spike-protocol.md)), an **enforcement watcher that blocks WILL be added** (sanctioned in principle); its **design is DEFERRED until the spike confirms the substrate does not already prevent** — do not design what we may not need, and the watcher's design must still pass the bar when built. Until prevention is established (native or watcher), unattended operation is **blocked** (human-in-the-loop). The per-rig-class "structurally-safe parts may run unattended" optimization remains available but secondary. See the [auto-001 decision brief](../_meta/decisions/auto-001-detect-only-binding-gate.md) and review-log D-30.

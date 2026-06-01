@@ -171,8 +171,10 @@ three parts: the common envelope, the named types, and the named chains.
 | `id` | bead identifier; target of `gc bd find` / `gc converge resume <bead_id>` | AI-CONTEXT §16 line 699 |
 | `type` | the registry type tag queried by `gc bd find --type <T>` | AI-CONTEXT §16 line 695; G17 |
 | `created_by` | actor attribution, present on every bead | README P9; AI-CONTEXT §3.1 row 9 |
-| `dependencies` | edges to other beads (the "dependency-aware" work-graph) | README P10 "Tasks with dependencies"; AI-CONTEXT §3.2 #2 "work-graph" |
+| `depends_on` | edges to other beads (the "dependency-aware" work-graph) | README P10 "Tasks with dependencies"; AI-CONTEXT §3.2 #2 "work-graph" |
 | `status` | lifecycle state of the bead | > [FAITHFUL-FILL] below |
+
+> Field name `depends_on` per **D-28** (aligns with C19's M1-freeze).
 
 > [FAITHFUL-FILL] **`status` field.** v4 never names a status field, yet it refers to a
 > `factory_build_in_progress` type *and* a plain `factory_build` type (G17 §49). The minimal consistent
@@ -281,8 +283,8 @@ must validate against that type and survive a store→read→store cycle unchang
 |---|---|---|---|---|
 | `id` | `bead_id` | R | stable identifier; target of `gc bd find` / `gc converge resume <id>` (F8: poll-by-address) | C19 mints; all read |
 | `type` | `enum{override,fix_task,factory_build,factory_build_in_progress,anomaly,diagnosis,resolution}` | R | registry type tag; closed set (§3 invariant) | C19 stores; all query |
-| `created_by` | `actor` | R | actor attribution, present on every bead (P9) | C41 semantics; writers set |
-| `dependencies` | `list<bead_id>` | O | directed dependency edges (P10) | C19 stores; chains read |
+| `created_by` | `actor` | R | actor attribution, present on every bead (P9). `created_by` wire type = colon-delimited `"kind:id"` string per **D-29** (parsed to C41 `ActorRef`); resolves OQ-C41-4. | C41 semantics; writers set |
+| `depends_on` | `list<bead_id>` | O | directed dependency edges (P10). Field name `depends_on` per **D-28** (aligns with C19's M1-freeze). | C19 stores; chains read |
 | `status` | `enum{open,in_progress,closed}` | R | lifecycle state of the bead (FAITHFUL-FILL §4.1) | writers transition (§5 diagram) |
 
 > [FAITHFUL-FILL] **`status` enum = `{open, in_progress, closed}`.** v4 names only the *value* "in

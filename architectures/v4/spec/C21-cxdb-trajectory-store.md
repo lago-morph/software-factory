@@ -142,6 +142,7 @@ TurnAppend {
   parent_turn_id:  TurnID | null      // null iff root turn (new trajectory)
   payload_refs:    list<PayloadRef>   // one or more typed payloads carried by this turn
   created_by:      string             // actor attribution (C01 INV-3; README P9)
+                                      // wire type = colon-delimited "kind:id" string per D-29 (parsed to C41 ActorRef); resolves OQ-C41-4.
   session_id:      string             // the session.id from Claude Code correlation attrs
                                       // (AI-CONTEXT §5.2 line 178: "session.id" OTEL attr)
                                       // → used to resolve parent_turn_id via §3.2
@@ -265,7 +266,7 @@ A **turn record** is the atomic unit stored in `turns.log`. It is C21's internal
 | `turn_id` | `TurnID` (string, server-minted) | R (server) | stable globally-unique identifier for this turn; target of `from_turn_id` in branch requests | all readers; C21 mints |
 | `parent_turn_id` | `TurnID` \| null | R | pointer to parent turn (null = trajectory root); forms the DAG backbone (INV-2) | all traversal; C21 sets via §3.2 |
 | `session_id` | `string` | R | the `session.id` correlation attribute from Claude Code (AI-CONTEXT §5.2 line 178); indexes the session-chain (§3.2) | C21 session-index; C24 carries it |
-| `created_by` | `string` | R | actor attribution — mirrors the corpus-wide P9 requirement (C01 INV-3; README line 231); all trajectories are attributable | C24 bridge sets (from raw-body attribution); C41 semantics |
+| `created_by` | `string` | R | actor attribution — mirrors the corpus-wide P9 requirement (C01 INV-3; README line 231); all trajectories are attributable. `created_by` wire type = colon-delimited `"kind:id"` string per **D-29** (parsed to C41 `ActorRef`); resolves OQ-C41-4. | C24 bridge sets (from raw-body attribution); C41 semantics |
 | `payload_refs` | `list<PayloadRef>` | R | ordered list of typed, content-addressed payloads on this turn; each entry is a `{turn_id, blob_key, bundle_id, type_name, version}` row (§4.2) | C36/C37/C38/C49 read |
 | `appended_at` | `timestamp` | R | wall-clock time at which C21 accepted this turn; used for ordering within a session branch when parent pointers are ambiguous | C21 sets; C37 clustering |
 | `branch_id` | `string` \| null | O | set by C21 when the turn was appended to a named branch (§3.3); null on the main trajectory trunk | C49 reads for replay bookkeeping |

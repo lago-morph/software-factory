@@ -119,7 +119,7 @@ without circular coupling. Its content:
 |---|---|---|---|---|
 | `id` | `string` (opaque, stable) | R | bead identifier; target of `gc bd find` / `gc converge resume <id>` | C19 mints; globally unique within the store |
 | `type` | `string` | R | registry type tag; C19 stores + indexes; C20 defines the legal set | closed-set check is C19↔C20 contract (see E-C19-1) |
-| `created_by` | `string` | R | actor attribution; C19 stamps from acting context if caller omits | self-asserted; see G36 / OQ-C19-4 |
+| `created_by` | `string` | R | actor attribution; C19 stamps from acting context if caller omits. `created_by` wire type = colon-delimited `"kind:id"` string per **D-29** (parsed to C41 `ActorRef`); resolves OQ-C41-4. | self-asserted; see G36 / OQ-C19-4 |
 | `depends_on` | `list<id>` | O | directed dependency edges: this bead depends on the listed beads | acyclic; C19 enforces no-cycle (see §4.3) |
 | `status` | `enum{open,in_progress,closed}` | R | lifecycle state; written by create, advanced by state-transition call | C20 names the enum values (§4.5.0); C19 stores + transitions |
 | `payload` | `map<string,any>` | O | type-specific fields; C20 owns the schema; C19 stores opaquely | C19 passes through; validation is C20's seam |
@@ -244,7 +244,7 @@ schemas are C20's contract.
 |---|---|---|---|---|---|
 | `id` | `string` (opaque, stable) | R | store-minted stable handle; the "address" for `gc bd find` and `gc converge resume` (AI-CONTEXT §16) | all consumers (I2); C52 resume; C33 judge-output reader | C19 mints at write |
 | `type` | `string` (C20 registry) | R | type tag; drives `gc bd find --type` (I1); validated against C20 registry via the M1 seam (`validate` stub → real validator) | all find-by-type callers; I1 | caller; C19 checks via C20 seam |
-| `created_by` | `string` (actor identity, C41 semantics) | R | universal attribution; stamped by C19 write path if not provided; self-asserted until C41 signed provenance lands (G36) | C41; audit reads; I3 | C19 stamps from acting context |
+| `created_by` | `string` (actor identity, C41 semantics) | R | universal attribution; stamped by C19 write path if not provided; self-asserted until C41 signed provenance lands (G36). Wire type = colon-delimited `"kind:id"` string per **D-29** (parsed to C41 `ActorRef`); resolves OQ-C41-4. | C41; audit reads; I3 | C19 stamps from acting context |
 | `depends_on` | `list<string>` (list of `id`) | O | directed dependency edges — this bead depends on the listed beads; forms the work-graph (README:239 "Tasks with dependencies"); acyclic (E-C19-3) | I5 subgraph traversal; C39 chain traversal; C05 Sling routing | caller at write time; not mutable after write (see OQ-C19-3) |
 | `status` | `enum{open,in_progress,closed}` | R | bead lifecycle state; C20 defines the enum values (C20 §4.5.0); C18 and C39 drive transitions via I6 | C18 reconciler; C39 loop-closure; I4 filter | C19 sets `open` at create; I6 advances |
 | `payload` | `map<string,any>` | O | type-specific fields (C20 schema); C19 stores opaquely; round-trip must preserve values verbatim (E-C19-4) | type-specific consumers (C35, C39, C52, C51, C33) | caller; validated at write via C20 seam |

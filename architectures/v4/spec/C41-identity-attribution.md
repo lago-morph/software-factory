@@ -119,6 +119,8 @@ resolve_actor(created_by: string) → ActorRef | ActorResolutionError
   ActorResolutionError: E-C41-03 (unknown kind), E-C41-04 (malformed ref)
 ```
 
+> `created_by` wire type = colon-delimited `"kind:id"` string per **D-29** (parsed to C41 `ActorRef`); resolves OQ-C41-4. `ActorRef` is the in-memory/parsed form; the wire value across C19/C20/C21/C23 is the `"kind:id"` string (e.g. `"rig:worker-1"`).
+
 ### 3.2 `created_by` attribution contract
 
 The guarantee that every bead (via C20 envelope) and every event (via C23 record) carries a
@@ -151,8 +153,9 @@ ordered `event_id`s. C23 provides gap-free ordered `event_id`s only; it does NOT
 C41 exposes two operations over the chain:
 
 ```
-chain_append(event_ids: gap_free_ordered_list<event_id>, payload_digest: sha256) → ChainEntry
+chain_append(event_ids: gap_free_ordered_list<EventId>) → ChainEntry
   # Appends one entry; event_ids is the C23-ordered gap-free batch since the last entry.
+  # C41 computes payload_digest over the C23 record bytes at chain-append time (D-27).
   # Returns the new ChainEntry (prev_hash, event_ids, payload_digest, entry_hash).
 
 chain_verify(from_seq: uint64, to_seq: uint64) → VerifyResult
@@ -187,10 +190,15 @@ The C23→C41 seam is the load-bearing input to the hash-chain. C23 MUST provide
 
 ```
 event_id_stream(from_seq: uint64 | null) → gap_free_ordered_list<EventRecord>
-  EventRecord = { event_id: uint64, created_by: string, timestamp: timestamp, payload_digest: sha256 }
-  # gap-free: no skipped seq numbers between from_seq and last returned event_id
-  # ordered: returned in strictly ascending event_id order
+  EventRecord = { event_id: EventId, created_by: string, timestamp: timestamp }
+  EventId = { stream: string, seq: uint64 }
+  # gap-free: no skipped seq numbers between from_seq and last returned event_id.seq
+  # ordered: returned in strictly ascending event_id.seq order
 ```
+
+> Wire type per **D-26**: `event_id` is C23's `EventId = {stream, seq}` struct, not a bare integer.
+
+> Per **D-27**: `payload_digest` is computed by C41 over the C23 record bytes at chain-append time; C23 does not provide it.
 
 **Freeze requirement:** This seam (the gap-free ordered `event_id` stream, with `event_id` as a
 monotonic sequence number) must be frozen jointly with C23 before C41's chain implementation can
@@ -256,8 +264,8 @@ means, and maintains the chain.
 |---|---|---|---|---|---|
 | `seq` | `uint64` | R | monotonic sequence number of this chain entry; starts at 0 | C41 verify; auditors | C41 chain_append (auto-increments) |
 | `prev_hash` | `sha256 \| null` | R | SHA-256 of the previous ChainEntry (serialised canonical form); `null` only for seq=0 (genesis) | C41 verify | C41 chain_append |
-| `event_ids` | `gap_free_ordered_list<uint64>` | R | the C23 event_ids this entry covers — gap-free, strictly ascending, from C23's monotonic sequence (D-5: C23 provides these; C41 consumes) | C41 verify; auditors | C41 chain_append from C23 stream |
-| `payload_digest` | `sha256` | R | SHA-256 of the canonical serialisation of `event_ids` + the `created_by` values for those events (tamper-evidence over attribution stream) | C41 verify | C41 chain_append |
+| `event_ids` | `gap_free_ordered_list<EventId>` | R | the C23 event_ids this entry covers — gap-free, strictly ascending, from C23's monotonic sequence (D-5: C23 provides these; C41 consumes). Wire type per **D-26**: `EventId = {stream: string, seq: uint64}`, not a bare integer. | C41 verify; auditors | C41 chain_append from C23 stream |
+| `payload_digest` | `sha256` | R | SHA-256 computed by C41 over the C23 record bytes for the events in `event_ids` at chain-append time (tamper-evidence over attribution stream). Per **D-27**: this is a C41 chain-internal field; C23 does not provide it. | C41 verify | C41 chain_append |
 | `entry_hash` | `sha256` | R | SHA-256 of the canonical serialisation of `{seq, prev_hash, event_ids, payload_digest}` — the linkage value that becomes the next entry's `prev_hash` | C41 verify | C41 chain_append |
 | `appended_at` | `timestamp` | R | wall-clock time the entry was appended (local to the C41 process; not a cryptographic timestamp) | auditors; ops | C41 chain_append |
 
@@ -519,8 +527,5 @@ sequenceDiagram
   behavior is asserted-not-run (G11-class). Confirm whether the substrate *rejects* an unattributed write
   or merely defaults the field — this determines whether the F14 invariant is enforced or
   discipline-dependent (and bears on OQ-C41-1).
-- **OQ-C41-4** (→ review-log): **Actor reference encoding boundary with C20/C23.** C41 says `created_by`
-  is a (kind, identifier) reference (§4.1 fill); C20 declares it as an envelope field and C23 records it
-  on events. Confirm a single shared encoding so beads and events use the *same* actor-reference shape
-  (else the audit-trail union in §4.3 cannot key cleanly across both stores).
+- **OQ-C41-4** (→ review-log, **RESOLVED by D-29**): RESOLVED by D-29 — common wire type is the `"kind:id"` string; `ActorRef` is the parsed form. The colon-delimited `"kind:id"` string (e.g. `"rig:worker-1"`) is the canonical wire encoding in C19/C20/C21/C23; C41's `resolve_actor` parses it into `ActorRef{kind, id}`. All stores use the same actor-reference shape, so the audit-trail union in §4.3 keys cleanly across both.
 - **OQ-C41-5** (→ review-log): **C23 event_id_stream seam contract — flush granularity and sequence semantics.** D-5 says C23 provides gap-free ordered event_ids; the exact flush trigger (time-based, count-based, or bead-write-based), the `event_id` sequence numbering scheme (is it C23's own monotonic sequence or a substrate sequence?), and the handshake/ack protocol between C23 and C41 must be frozen jointly before C41's chain implementation proceeds. This seam freeze is the first build action (plan §4 M0).

@@ -97,6 +97,16 @@ shutdown_timeout = "10s"   # Grace period for C28 process teardown; bare int rej
 
 **Injected env vars (AI-CONTEXT §13.2 L572–580; set in `[[agent]] env = { … }`):**
 
+> **[OPEN SEAM: needs-G11 — RCM-SEAM-01 env-forwarding seam, explicit per cross-cluster seam review]**
+>
+> `CLAUDE_CODE_OAUTH_TOKEN` is the sole Max auth credential (prototype-verified in `docker-compose.sandbox.yml`; see runbook §1.1). Its delivery mechanism has TWO READINGS whose resolution requires a pinned-`gc` run (G11):
+>
+> **Reading A — explicit `[[agent]] env` declaration:** C04 I3 says it injects "OAuth-derived auth" via `[[agent]] env = {…}` at every Start/Resume. On this reading `CLAUDE_CODE_OAUTH_TOKEN` should appear in the `[[agent]] env` block — but the table below does NOT list it, because the exact TOML key spelling is `[needs G11 verification]` and the token was not in the AI-CONTEXT §13.2 L572–580 skeleton this table is sourced from.
+>
+> **Reading B — container-env inheritance:** The prototype passes `CLAUDE_CODE_OAUTH_TOKEN` in the Docker container env; `gc start --foreground` spawns tmux panes whose processes inherit the container env, so the token reaches `claude` without an explicit `[[agent]] env` declaration. Whether `gc`'s `internal/execenv` STRIPS vars matching `TOKEN`/`OAUTH` patterns before spawning operator commands is **unknown** (needs G11).
+>
+> **Operational risk:** If Reading A is correct but `CLAUDE_CODE_OAUTH_TOKEN` is absent from `[[agent]] env`, all API calls return 401 (E-C28-03); if Reading B is correct but `gc` strips token-bearing vars, the same failure. Until G11 resolves this, operators MUST supply `CLAUDE_CODE_OAUTH_TOKEN` via container env AND should verify it reaches the pane process. This seam is also noted in C04 §8.
+
 | Env var | Value / Example | Required | Semantics | Source / Verification |
 |---|---|---|---|---|
 | `IS_SANDBOX` | `"1"` | Yes (when root) | Allows `claude --dangerously-skip-permissions` to run as root | F12, harvest-verified |
@@ -170,7 +180,7 @@ protocol = "mcp"
 command  = "bin/cxdb-mcp-server"
 ```
 
-> C28 does NOT invent new registration shapes. The `[[hook]]` and `[[service]]` shapes above are the minimal faithful elaboration of C02 §3.3. If C28 needs a different shape than what C02 specifies (e.g. an additional field), that is a **seam conflict** that must be flagged. No conflict identified at Sweep-2; the C02 contract as specced is sufficient for C28's hook/MCP surface. `[inferred — needs G11]` still applies to the exact field names.
+> C28 does NOT invent new registration shapes. The `[[hook]]` and `[[service]]` shapes above are the minimal faithful elaboration of C02 §3.3. If C28 needs a different shape than what C02 specifies (e.g. an additional field), that is a **seam conflict** that must be flagged. No conflict identified at Sweep-2; the C02 contract as specced is sufficient for C28's hook/MCP surface. `[inferred — needs G11]` still applies to the exact field names. Per **D-34** (ADOPTED, 2026-06-01): "Tool-node command-key field name is a source contradiction, G11-gated. Specs MUST carry the spelling note and MUST NOT claim either spelling as verified." The `[[hook]] command` field is subject to the same D-34 uncertainty as `[[tool]] command` — neither `command` nor `cmd` is confirmed canonical until G11.
 
 ### 3.5 Outbound telemetry emission contract
 
@@ -270,7 +280,7 @@ sequenceDiagram
             CC->>C25: PostToolUse event (tool_name, exit_code)
         else hook denies
             HK-->>CC: exit(non-zero) deny
-            CC->>C25: ToolDenied event (E-C28-03)
+            CC->>C25: ToolDenied event (E-C28-09)
             CC->>CC: observe denial as tool result
         end
     end
@@ -288,7 +298,7 @@ stateDiagram-v2
     Running --> Reasoning : turn begins
     Reasoning --> HookGate : tool call proposed
     HookGate --> ToolExecuting : PreToolUse exit(0)
-    HookGate --> Reasoning : PreToolUse exit(non-zero) — tool denied
+    HookGate --> Reasoning : PreToolUse non-zero exit, tool denied
     ToolExecuting --> Reasoning : tool result observed
     ToolExecuting --> Failed : E-C28-04 tool hard-failure
     Running --> Suspended : C04 Detach or idle timeout
@@ -334,6 +344,7 @@ stateDiagram-v2
 | **E-C28-06** | Hook binary not found: a `[[hook]]` command binary declared in `pack.toml` is absent from the pack `bin/` dir | Hook event fires; Claude Code cannot invoke the hook binary; C02 surfaces E-C02-07 | Ensure the hook binary is present in the pack bundle and the `[[hook]] command` path is correct. The missing hook does NOT crash the loop — Claude Code treats a failed hook as a non-fatal event unless it is a PreToolUse deny gate (in which case the tool is allowed through by default, reducing security posture). |
 | **E-C28-07** | MCP-connection failure: an MCP server declared in `[[service]]` is unreachable at tool-dispatch time | Claude Code emits an MCP-connection-error event; the specific tool call fails; loop observes the failure as a tool result | Loop may retry (standard agent-loop semantics); if persistent, C18 self-healing surfaces the MCP failure as a bead event. |
 | **E-C28-08** | Partition violation (attempted): the C28 process attempts to access a partition outside its declared `code` scope (attempted `scenarios` read or write) | D-30 prevent-gate fires at the tool-call/process boundary; access is blocked | C34/C43 enforce; C28 receives a denial from the PreToolUse hook gate or the bead-access layer. The enforcement strength (prevent vs detect) is OPEN pending D-23 spike (C34:OQ-C34-1). |
+| **E-C28-09** | Hook-deny: a `[[hook]]` binary registered for `PreToolUse` exits non-zero, denying a proposed tool call | Claude Code does NOT execute the tool; a `ToolDenied` event is emitted to C25 OTLP; the loop observes the denial as the tool result | The hook's denial is intentional (D-30 gate). If the denial is unexpected (wrong binary, bug), check the hook binary exit code and logs. The loop continues; the denied tool call is surfaced to the LLM as a blocked-tool result. |
 
 ### 6.2 D-30 prevent-gate applicability
 
@@ -358,7 +369,7 @@ C28's PreToolUse hooks are the **first prevention surface** at the tool-call/pro
 | **AC-C28-01** | Given a bead dispatched to the `implementer` rig worker; When C04 starts the `claude` session with the env block from §3.3; Then a Claude Code process starts, runs a multi-turn loop, dispatches at least one tool, and a `session.id`-attributed work product appears in the bead store | E2E loop start (README L537 Phase-0 checkpoint 1). Asserts E-C28-01 and E-C28-05 do NOT fire. |
 | **AC-C28-02** | Given a running C28 session; When the `IS_SANDBOX=1` env var is removed and the session is restarted as root; Then the `claude` process exits immediately and C04 returns E-C04-01 | **E-C28-05** — sandbox-flag-missing. |
 | **AC-C28-03** | Given a running C28 session with OTLP vars set; When any tool is executed; Then native OTLP metrics (60s), logs (5s), and a raw-API-bodies file appear in the watched dir, all carrying `session.id` and `prompt.id` | Telemetry emission contract (§3.5, README L539 Phase-0 checkpoint 2). |
-| **AC-C28-04** | Given the `bin/override-gate` PreToolUse hook registered via `[[hook]]` in `pack.toml`; When the loop proposes a tool call; Then the hook receives `{tool_name}` and `{session_id}`; When the hook exits non-zero; Then the tool is NOT executed and C25 records a ToolDenied event | **E-C28-03** hook-deny path; D-30 prevent-gate surface (C35 integration). |
+| **AC-C28-04** | Given the `bin/override-gate` PreToolUse hook registered via `[[hook]]` in `pack.toml`; When the loop proposes a tool call; Then the hook receives `{tool_name}` and `{session_id}`; When the hook exits non-zero; Then the tool is NOT executed and C25 records a ToolDenied event | **E-C28-09** hook-deny path; D-30 prevent-gate surface (C35 integration). |
 | **AC-C28-05** | Given a PostToolUse hook registered; When a tool call completes; Then the hook receives `{exit_code}` and a telemetry-observe record is written | PostToolUse observe surface (C35 integration). |
 | **AC-C28-06** | Given a Skill defined in `.claude/skills/my-skill.md` and an MCP server declared in `[[service]]`; When the loop runs; Then the Skill is callable and the MCP server's tools are reachable; No Go fork is required | AC4 (no-fork, Skill + MCP surface). Asserts E-C28-07 does NOT fire on a healthy MCP server. |
 | **AC-C28-07** | Given a C28 session in the `implementer` rig (`read/write = code`); When the loop attempts to read a file from the `scenarios` partition; Then the access is blocked (via PreToolUse hook or partition layer) and a PartitionViolation event is emitted | **E-C28-08** — partition-violation gate (holdout integrity I4, D-30). The exact enforcement mechanism (prevent vs detect) is OPEN pending D-23 spike. |

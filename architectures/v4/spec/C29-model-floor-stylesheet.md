@@ -211,10 +211,12 @@ sequenceDiagram
     alt role == "coder"
         C29->>C29: clamp to floor if below floor (I1)
     end
-    C29->>C29: crossFamilyRule(coder_model, independence_level=L1)
+    alt role == "judge"
+        C29->>C29: crossFamilyRule(coder_model, independence_level=L1)
+        C29-->>Dispatch: IndependenceConstraint{level=L1, cross_family_required=false}
+        Dispatch->>C32: dispatch judge with ModelIdentity + IndependenceConstraint
+    end
     C29-->>Dispatch: ModelIdentity
-    C29-->>Dispatch: IndependenceConstraint{level=L1, cross_family_required=false}
-    Dispatch->>C32: dispatch judge with ModelIdentity + IndependenceConstraint
 ```
 
 ### 5.3 Worked routing example (sweep-2)
@@ -359,4 +361,4 @@ sequenceDiagram
 
 - **[C29:OQ — RESOLVED (Sweep-2)] Concrete stylesheet "judge != coder" grammar.** AI-CONTEXT §12 (line 514) flags "specific Gas City model stylesheet syntax for judge != coder". **RESOLVED (Sweep-2): the rule is `judge_family_advisory` at Phase-0** — implemented via `[judge_policy]` TOML section with `independence_level="L1"` and `cross_family_enforce=false`. The constraint is emitted by `crossFamilyRule` as an `IndependenceConstraint` record (§3.2). The fail-closed cross-family form (`cross_family_enforce=true`) is the FE-1 upgrade path. See §3.3 and §5.3 for the full worked example.
 
-- **[C34:OQ-C34-4 — open, inherited]** When FE-1 lands, does the family-difference check move into C34 (holdout enforcement) or stay advisory in C29? Today relaxed per D-1. The `cross_family_enforce` boolean in `[judge_policy]` is the clean FE-1 seam; the enforcement *owner* at FE-1 is a cross-component question (C29 emits the constraint; C34 enforces it — the split is already implied by D-13, but the FE-1 wiring is deferred).
+- **[C34:OQ-C34-4 — open, inherited]** When FE-1 lands, does the family-difference check move into C34 (holdout enforcement) or stay advisory in C29? Today relaxed per D-1. The `cross_family_enforce` boolean in `[judge_policy]` is the clean FE-1 seam; the enforcement *owner* at FE-1 is a cross-component question (C29 emits the constraint; C34 enforces it — the split is already implied by D-13, but the FE-1 wiring is deferred). **For the C34 builder at FE-1:** the signal to watch for is `IndependenceConstraint.cross_family_required == true`; when that flag is true and `judge.family == coder.family`, C34 (or its enforcement layer) must reject the dispatch — C29 emits the constraint but does not enforce it. The enforcement ownership question (C29-advisory vs C34-gate) is the unresolved FE-1 cross-component question. DEFERRED — orchestrator ledger.

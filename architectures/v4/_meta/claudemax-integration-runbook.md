@@ -459,6 +459,8 @@ dispatches at least one tool, and a `session.id`-attributed work product appears
 > command  = "bin/cxdb-mcp-server"
 > ```
 >
+> **D-34 (ADOPTED, 2026-06-01):** "Tool-node command-key field name is a source contradiction, G11-gated. AI-CONTEXT §13.3's `[[tool]]` sketch uses `command`; the prototype `pack/pack.toml` uses `cmd`. Specs MUST carry the spelling note and MUST NOT claim either spelling as verified." The same D-34 uncertainty applies to `[[hook]] command` / `[[hook]] cmd` — neither form is confirmed canonical until a pinned-`gc` run (G11). All `command` key spellings in the TOML fragments above carry this caveat per D-34.
+>
 > If the field shapes C28 consumes differ from what C02 specifies, that is a **seam conflict**
 > that must be surfaced — do not silently paper over it.
 

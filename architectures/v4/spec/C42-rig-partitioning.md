@@ -438,7 +438,7 @@ sequenceDiagram
     Note over W,GC: Attempted out-of-partition read
     W->>GC: bd get r2-<bead-id>  (out-of-partition)
     alt Gas City PREVENTS (prevent-vs-detect-OPEN — D-23 spike)
-        GC-->>W: BLOCKED (E-C42-04 partition-violation-detected; C43 fence active)
+        GC-->>W: BLOCKED (E-C42-04 partition-violation-detected, C43 fence active)
     else Gas City permits (detect-only path until D-23 spike + C43)
         GC-->>W: bead data returned (partition violation NOT blocked)
         GC->>C34: event: out-of-partition read observed (prefix r2 from rig r1)

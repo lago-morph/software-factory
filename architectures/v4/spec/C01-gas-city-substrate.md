@@ -302,19 +302,19 @@ conformance check (AC-C01-2, §8) is the gate; the prevent-vs-detect outcome rou
 ```mermaid
 stateDiagram-v2
     [*] --> Uninstalled : start
-    Uninstalled --> Staged : pin commit b14c278; pre-stage gc/bd/dolt/claude binaries on host
-    Staged --> Configured : author pack.toml + city.toml + .gc/site.toml (entrypoint)
-    Configured --> Booted : gc start --foreground; IS_SANDBOX=1; claude.json pre-acked
+    Uninstalled --> Staged : pin commit b14c278, pre-stage gc/bd/dolt/claude binaries on host
+    Staged --> Configured : author pack.toml + city.toml + .gc/site.toml
+    Configured --> Booted : gc start --foreground, IS_SANDBOX=1, claude.json pre-acked
     Booted --> ConformanceRunning : run gascity-conformance-check.md battery
     ConformanceRunning --> Ready : ALL tests PASS (smoke-signal + A-G)
     ConformanceRunning --> PreventGateOpen : Test A PREVENT outcome
     ConformanceRunning --> WatcherRequired : Test A DETECT-ONLY or SILENT outcome
-    PreventGateOpen --> Ready : D-30 watcher not needed; D-20 fence is a real control
-    WatcherRequired --> WatcherDesign : D-30 watcher MUST be built; unattended blocked until done
+    PreventGateOpen --> Ready : D-30 watcher not needed, D-20 fence is a real control
+    WatcherRequired --> WatcherDesign : D-30 watcher MUST be built, unattended blocked until done
     WatcherDesign --> Ready : watcher built + gates P2
     Ready --> [*] : downstream Batch-1 components build against frozen seams
-    note right of WatcherRequired : auto-001 binding gate triggered\nP2/P3b blocked until watcher lands
-    note right of ConformanceRunning : Live-run OWED (needs Docker)\nAll tests currently status=OWED
+    note right of WatcherRequired : auto-001 binding gate triggered<br/>P2/P3b blocked until watcher lands
+    note right of ConformanceRunning : Live-run OWED (needs Docker)<br/>All tests currently status=OWED
 ```
 
 ## 6. Failure modes & handling

@@ -322,7 +322,7 @@ stateDiagram-v2
     Merging --> SiteOverlay : city.toml keys merged over pack imports
     SiteOverlay --> EnvApply : .gc/site.toml rig paths overlaid
     EnvApply --> Validation : per-agent env = {…} applied (innermost)
-    Validation --> Effective : all keys valid; no unknown/missing-required
+    Validation --> Effective : all keys valid, no unknown/missing-required
     Validation --> Error_MissingRequired : required key absent → E-C03-02
     Validation --> Error_UnknownKey : unexpected key for section → E-C03-04
     Validation --> Error_MergeConflict : duplicate pack import → E-C03-01 (F3)

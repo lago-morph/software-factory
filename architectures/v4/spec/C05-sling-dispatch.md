@@ -214,7 +214,7 @@ sequenceDiagram
     end
     GC-->>C04: spawn tmux pane / wake worker (F5: pool 0→1)
     GC-->>C05: DispatchConfirmation (native event emitted)
-    Note over C05: no C05-owned record; C41 created_by + C23 event bus carry attribution
+    Note over C05: no C05-owned record — C41 created_by and C23 event bus carry attribution
     C04->>C04: agent loop (C28) executes bound template
 ```
 

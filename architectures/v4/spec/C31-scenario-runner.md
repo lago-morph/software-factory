@@ -20,8 +20,14 @@
 > 54), B49 (line 61 "Inspect AI … multi-slot (authoring+runner+judge+aggregation)"); spec/C17 §3 (tool-node
 > abstraction; C17 lists C31 as an instance, line 64), spec/C02 (subprocess ABI); ambiguities-and-gaps G25;
 > review-log D-6 (canonical track), D-13 (C34 owns read-isolation enforcement; C42 provides the partition).
-> Inventory ID: C31   Kind: component   Status: sweep-1
+> Inventory ID: C31   Kind: component   Status: sweep-2
 > Track: canonical (per D-6)
+>
+> Binding decisions obeyed (Sweep-2):
+> **D-36** — Eval-tier trajectory flow is the Inspect AI log, NOT CXDB.
+> **D-37** — C31↔C32 contract = post-hoc scoring (C31 produces TrajectoryLog; C32 scores post-hoc off that log; C31 does NOT invoke C32 inline).
+> **D-13** — C34 owns holdout enforcement; C31 only runs inside the `scenarios` partition.
+> **D-6** — Single canonical track.
 
 ## 1. Purpose & responsibility
 
@@ -48,6 +54,21 @@ C31 is **half of the P5 mechanism** (the *execution* half). P5's other halves ar
 (D-13). C31 only **runs** the scenarios C30 stores; it is a leaf component built in inventory **Batch 3**
 (component-inventory line 111), which delivers the README **Phase-2** Layer-2 tier (README:417) — distinct schemes that coincide here, not one milestone.
 
+**The single hand-off artifact.** Per D-37:
+
+> "C31 runs the held-out scenario against the freshly built component → a **trajectory log** (the single
+> hand-off artifact); C32 scores **post-hoc off that log** (Inspect AI's scorer phase), NOT C31 invoking
+> C32 inline." — review-log D-37
+
+Per D-36:
+
+> "C31 (runner) produces an **Inspect AI trajectory log**; C32 (judge) scores that log; C33 reduces. The
+> spine eval tier does **NOT** read trajectories from CXDB (C21) — CXDB (C21/C22) + the bridge (C24) stay
+> **non-spine**… C33 writes the satisfaction record to **C19 (beads)**, not CXDB." — review-log D-36
+
+These two decisions fully settle C31's output contract: C31 produces one `TrajectoryLog` per run; C32
+consumes it post-hoc; C31 never invokes C32; C31 never writes to CXDB.
+
 **Responsibilities (what C31 is the spec-of-record for):**
 - **Wrap Inspect AI as a scenario provider** — the `[[service]] type="inspect_ai"` block (A28j) and the
   `[[tool]] type="subprocess"` node that shells `inspect eval` (A28i), packaged as a Gas City pack (A47;
@@ -58,9 +79,8 @@ C31 is **half of the P5 mechanism** (the *execution* half). P5's other halves ar
 - **Own the session-id adapter (G25)** — map/inject `session.id` across the Inspect-AI ↔ Gas-City/Claude-Code
   boundary so the run's emitted turns thread into one trajectory; surface the run's `session.id` so C24
   (telemetry→CXDB) and C32 (judge) can find the right trajectory.
-- **Surface the run's trajectory + result as the step product** — make Inspect AI's trajectory/sample output
-  and exit status available to the workflow engine (C17) and to the judge (C32) as the tool node's declared
-  output (README:439 "scenario-to-bead binding via pack").
+- **Produce the `TrajectoryLog` (the single hand-off artifact)** — the frozen schema C32 scores post-hoc;
+  see §4 for the field table. C31 does NOT invoke C32; C32 reads the log after C31 completes (D-37).
 - **Be a C17 tool node over the C02 ABI** — packaged + invoked per the tool-node/pack contract, not a Python
   or Go import of the engine (C17 §1; README:177).
 
@@ -80,14 +100,13 @@ C31 is **half of the P5 mechanism** (the *execution* half). P5's other halves ar
 - **NOT the judge / scorer.** Scoring a trajectory against a scenario (LLM-as-judge) is **C32**; satisfaction
   aggregation (Inspect AI score reduction) is **C33** (README:185/188). Inspect AI is *multi-slot*
   (authoring+runner+judge+aggregation, B49) but C31 occupies **only the runner slot** — it executes and emits
-  the trajectory; C32 consumes it. C31 does not compute satisfaction or a pass/fail verdict.
-- **NOT the telemetry→CXDB bridge.** Persisting the run's trajectory turns into CXDB is **C24** (raw-API-bodies
-  → CXDB). C31 *makes the run happen and tags it with `session.id`*; C24 *delivers the resulting turns*. C31
-  does not post to CXDB. *(The adapter's job is to make the `session.id` correct so C24's parent-chain lands
-  the turns under the right trajectory — AI-CONTEXT §5.4.)*
+  the trajectory; C32 consumes it post-hoc (D-37). C31 does not compute satisfaction or a pass/fail verdict.
+- **NOT the telemetry→CXDB bridge.** Per D-36, the eval-tier does NOT read from CXDB; C24 (bridge) stays
+  non-spine. C31 *tags the run with `session.id`*; C24 handles the raw-API-body path separately. C31 does
+  not post to CXDB and does not read from it.
 - **NOT the digital twins.** Scenarios run against **twins** rather than production for critical external deps
   (F-MODE F12/F54; README:195); the twins are **C44**. C31 executes whatever target the scenario/task
-  configures; it does not provide or select the twin.
+  configures; it does not provide or select the twin. (OQ-5 RESOLVED: see §9.)
 - **NOT cross-family enforcement.** "Judge ≠ coder model family" is a C29/model-stylesheet rule (README:189);
   irrelevant to the runner. (And per review-log D-1, the cross-family rule is relaxed to same-provider for now.)
 
@@ -100,8 +119,8 @@ C31 is **half of the P5 mechanism** (the *execution* half). P5's other halves ar
 | Underlying ABI | **C02** Pack/tool-node ABI | The `[[tool]] type="subprocess"` wire contract (command/args/work_partition/exit-status) C31's `inspect eval` node is realized over (AI-CONTEXT §13.3; C17 §3 Reading A). |
 | The wrapped OSS | **Inspect AI** (B49; `github.com/UKGovernmentBEIS/inspect_ai`) | The MIT runner C31 wraps — provides `inspect eval`, the trajectory/sample model, and the session/sample identity C31's adapter reconciles. C31 supplies *no* runner of its own. |
 | Identity source | **Claude Code `session.id`** (AI-CONTEXT §4.3 line 178) | The correlation attribute the adapter threads into the run so emitted turns chain into one trajectory; also "Gas City session resume + Claude Code session-id" for cross-session continuity (README:240). |
-| Downstream (consumer) | **C32** Judge harness | Scores the trajectory C31 emits against the scenario. C31 produces the trajectory + run identity; C32 consumes it. |
-| Downstream (consumer) | **C24** Telemetry→CXDB bridge | Delivers the run's emitted turns into CXDB, parent-chained via `session.id` (AI-CONTEXT §5.4); the adapter's correct `session.id` is what makes that landing coherent. |
+| Downstream (consumer) | **C32** Judge harness | Scores the `TrajectoryLog` C31 emits **post-hoc** against the scenario (D-37). C31 does NOT invoke C32 inline; C32 reads the log after C31 completes. |
+| Downstream (consumer) | **C24** Telemetry→CXDB bridge | Delivers the run's emitted turns into CXDB, parent-chained via `session.id` (AI-CONTEXT §5.4); the adapter's correct `session.id` is what makes that landing coherent. Non-spine per D-36. |
 | Governed-by (positional) | **C34** Holdout enforcement, **C42** Role/rig partition | C34 enforces `scenarios ∉ read_partition(worker)` + audits leakage (D-13); C42 provides the partition. C31 *runs inside* the `scenarios` work-partition they govern; it does not enforce. |
 | Packaging host | **C02/C17** pack + tool-node ABI | C31 ships as a Gas City pack (the `[[service]] type="inspect_ai"` + `[[tool]]` blocks), not a Go/Python import (README:177; C17 §1). |
 
@@ -114,17 +133,121 @@ C31 builds in parallel with its Evaluation-&-Judge siblings (C30/C32/C33/C34; in
 
 ## 3. Interfaces / contracts
 
-Sweep-1: interfaces **named and described**; concrete CLI flags / trajectory schema / adapter field-mapping
-defer to sweep 2 (and the scenario format to C30, the trajectory/score model to Inspect AI + C32).
+### 3.1 Runner function signature
 
-| # | Interface | Direction | Description | Owning/detailing component |
+The canonical runner entry point. This is the contract C31 exposes to the workflow engine (C17) via the
+`[[tool]] type="subprocess"` ABI; the signature below is the in-process view that the adapter + invocation
+glue implement:
+
+```python
+def run(scenario: ScenarioRef, built_component: ComponentRef) -> TrajectoryLog:
+    """
+    Execute the scenario against the built component.
+
+    Parameters
+    ----------
+    scenario : ScenarioRef
+        Reference to a C30-stored scenario (scenario_path + task name).
+        The target (twin vs production) is encoded in the scenario by C30; C31 is target-agnostic (OQ-5 RESOLVED).
+    built_component : ComponentRef
+        Identity of the component under test (its session context / Gas City session.id).
+        C31 uses this to establish the run's session.id via the adapter (I4).
+
+    Returns
+    -------
+    TrajectoryLog
+        The frozen hand-off artifact (§4 field table). C32 scores this post-hoc; C31 does NOT invoke C32.
+        D-37: post-hoc contract; D-36: not CXDB.
+
+    Raises
+    ------
+    ScenarioLoadError   (E-C31-01) — scenario_path not found or not readable
+    RunTimeoutError     (E-C31-03) — inspect eval exceeded max_runtime_s
+    SessionIdUnsetError (E-C31-04) — adapter could not establish/verify session.id
+    RunFailedError      (E-C31-02) — inspect eval exited nonzero (scenario ran but eval failed)
+    """
+```
+
+> [FAITHFUL-FILL] The `run(scenario, built_component) → TrajectoryLog` signature is the minimal consistent
+> callable the D-37 post-hoc contract (C31 → TrajectoryLog → C32 scores separately) implies. The Python
+> function shape matches the subprocess-adapter pattern (Inspect AI is Python; the glue wrapper is Python
+> or shell); the exact call surface (Go subprocess vs Python module entry point) is G11-gated.
+
+### 3.2 Interface table (updated for Sweep-2)
+
+| # | Interface | Direction | Signature / Contract | Owning/detailing component |
 |---|---|---|---|---|
-| I1 | **`[[service]] type="inspect_ai"` provider block** | declarative (config) | The Gas City service block that registers Inspect AI as the scenario provider (A28j; README:424). The pack-level declaration that makes the runner available to the engine. | C31 (this); C02/C03 (service-block model) |
-| I2 | **`inspect eval` subprocess tool node** | inbound (invoke) | The `[[tool]] type="subprocess"` node — `command="inspect"`, `args=["eval","{scenario_path}","--task","{task}"]`, `work_partition="scenarios"` (A28i; AI-CONTEXT §13.3). The engine invokes this node to *run a scenario*; placement is by C17 (by-name); bytes/exit-status are C02's. | C31 (this); C17 (placement), C02 (ABI) |
-| I3 | **Scenario-reference + task input** | inbound (data) | The `{scenario_path}` (a C30 store reference) + `{task}` the node consumes, substituted into `args` from molecule/bead context. C31 does not define the scenario format (C30) — it consumes a reference to it. | C30 (format/store), C31 (consumes) |
-| I4 | **Session-id adapter (G25)** | internal/glue | The custom glue that maps Claude Code/Gas City **`session.id`** ↔ Inspect AI's run/sample identity, **injecting** it into the eval so the run's emitted turns thread into one trajectory, and **surfacing** the run's `session.id` as part of the node's output. **This is C31's core custom deliverable.** | C31 (this) |
-| I5 | **Run trajectory + result output** | outbound (data) | The node's declared output: Inspect AI's emitted **trajectory/sample log** + run identity (`session.id`) + exit status, surfaced to the workflow engine (C17) and bound to a bead so C32 (judge) can score it ("scenario-to-bead binding via pack", README:439). *[FAITHFUL-FILL]: README:439 states the **binding-via-pack** concept; the exact **bead-binding shape** (which fields land on the bead so C32 locates the right trajectory) is inferred from the bead model (C19/C20) + the judge-consumes-trajectory flow and is deferred to sweep 2 (OQ-4), not a v4-stated contract.* | C31 (this); C32 (consumer), C17 (surfacing) |
-| I6 | **Pack/tool-node lifecycle** | inbound (ops) | C31 packaged + configured as a Gas City pack (Inspect AI install + the I1/I2 blocks); operated in Phase 2 alongside C30/C32 (README:423–424). | C02/C17 (ABI), C31 (config) |
+| I1 | **`[[service]] type="inspect_ai"` provider block** | declarative (config) | `type = "inspect_ai"` in `city.toml`/`pack.toml`; `version = "<pinned>"` (pin required — see §7 Ops). | C31 (this); C02/C03 (service-block model) |
+| I2 | **`inspect eval` subprocess tool node** | inbound (invoke) | `[[tool]] type="subprocess"`, `name = "scenario_runner"`, `cmd`/`command = "inspect"` (field spelling G11-gated per D-34), `args = ["eval", "{scenario_path}", "--task", "{task}", "--log-dir", "{log_dir}", "--model", "{model_name}"]`, `work_partition = "scenarios"` (AI-CONTEXT §13.3). Exit 0 = success, nonzero = E-C31-02. | C31 (this); C17 (placement), C02 (ABI) |
+| I3 | **Scenario-reference + task input** | inbound (data) | `ScenarioRef = { scenario_path: str, task: str }`. `scenario_path` = C30 store path (the Inspect AI Task Python file); `task` = Inspect AI task name within that file. C31 does not define the scenario format (C30 does). | C30 (format/store), C31 (consumes) |
+| I4 | **Session-id adapter (G25)** | internal/glue | See §3.3. Injects `GC_SESSION_ID=<session.id>` env var into the `inspect eval` subprocess. Thin baseline: carry the existing `session.id` 1:1. Thick fallback: maintain Inspect-AI-run-id ⇄ `session.id` map. Depth = OQ-1 spike. | C31 (this) |
+| I5 | **`TrajectoryLog` output** | outbound (data) | See §4 field table — the **frozen** hand-off artifact. Written to `log_dir` by Inspect AI; C31 surfaces the path + `session_id` + `exit_code` as the tool-node output fields (bound to a bead per README:439). C32 reads the log **post-hoc** (D-37); C31 does NOT invoke C32. | C31 (this); C32 (consumer), C17 (surfacing) |
+| I6 | **Pack/tool-node lifecycle** | inbound (ops) | C31 packaged + configured as a Gas City pack (Inspect AI install + the I1/I2 blocks); operated in Phase 2 alongside C30/C32 (README:423–424). Version pin in `pack.toml`. | C02/C17 (ABI), C31 (config) |
+
+### 3.3 Session-id adapter (I4) — concrete mechanism
+
+**OQ-1 RESOLVED (Sweep-2, minimal reading):** The thin 1:1 translation is the Phase-0 chosen baseline.
+Rationale: Inspect AI `inspect eval` accepts `--metadata key=value` flags for run-level metadata and
+exposes the running environment to the eval task; the minimal surface for injecting a caller-set id is an
+environment variable (`GC_SESSION_ID`) consumed by the task wrapper or a `--metadata session_id=<id>` flag.
+C31 uses the **env-var path as the canonical injection** (`GC_SESSION_ID=<session.id>` set on the
+subprocess env before exec), which Inspect AI exposes inside the task via `os.environ` without needing
+Inspect AI to "own" the session identity.
+
+> [AMBIGUITY: G25] v4 states only that Inspect AI's session-id model **vs** Gas City's "likely needs adapter
+> layer; impedance unknown" (AI-CONTEXT §12 line 512) and does not give the mapping. Two readings of the
+> adapter's depth: **(a) thin** — a 1:1 id translation (carry/rename the existing `session.id` into the
+> Inspect-AI run's metadata and back out) when the two identity models are reconcilable; **(b) thick** — a
+> stateful correlation layer that *generates/assigns* a run id and maintains a map (Inspect AI sample/eval id
+> ⇄ Claude Code `session.id`) when Inspect AI owns its own session identity that cannot be overridden.
+> **Chosen: (a) as the faithful baseline — thinnest adapter that threads the existing `session.id`** — with
+> (b) named as the fallback. Rationale: v4 calls this a single "**adapter layer**" (singular, lightweight),
+> consistently treats `session.id` as *the* correlation key the whole telemetry/CXDB chain already uses
+> (AI-CONTEXT §4.3/§5.4), and the "impedance unknown" caveat is explicitly a *spike*, not a directive to
+> build a heavy broker. The actual depth is **OQ-1**: it is empirically determined by whether Inspect AI
+> lets the caller set/propagate the session identity (thin) or mints its own (thick map). C31 owns whichever
+> the spike resolves to; both are "the adapter layer" v4 scopes.
+
+**OQ-3 RESOLVED (Sweep-2):** One `inspect eval` invocation = one `session.id` (eval-level granularity, not
+per-sample). Rationale: D-37's post-hoc contract pairs *one run* with *one TrajectoryLog* — the hand-off
+artifact is per-run. Per-sample `session.id` would produce N logs per `inspect eval`, requiring C32 to
+re-aggregate what Inspect AI already aggregates. The eval-level granularity matches "one scenario → one
+trajectory log → C32 scores it" most simply. C32 sees a single `session_id` per TrajectoryLog and scores
+the run as a unit.
+
+**OQ-5 RESOLVED (Sweep-2):** The run target (twin vs real system) is **selected by the scenario (C30) and
+the task configuration**, NOT by C31. C31 executes whatever endpoint the scenario/task configures. C31 is
+target-agnostic (boundary confirmed, boundary check closed).
+
+**Thin adapter pseudo-code:**
+```python
+import os, subprocess
+
+def _inject_session_id(env: dict, session_id: str) -> dict:
+    """Thin adapter: set GC_SESSION_ID in the subprocess environment."""
+    env = env.copy()
+    env["GC_SESSION_ID"] = session_id  # task wrapper reads this
+    return env
+
+def _run_inspect_eval(scenario_path: str, task: str, log_dir: str,
+                      model_name: str, session_id: str,
+                      max_runtime_s: int) -> subprocess.CompletedProcess:
+    env = _inject_session_id(os.environ.copy(), session_id)
+    return subprocess.run(
+        ["inspect", "eval", scenario_path,
+         "--task", task,
+         "--log-dir", log_dir,
+         "--model", model_name],
+        env=env,
+        timeout=max_runtime_s,
+        capture_output=True,
+    )
+```
+
+If the thin path fails (Inspect AI overrides `GC_SESSION_ID` or the task wrapper cannot read it), the
+spike (OQ-1 empirical) triggers the **thick fallback**: maintain an in-process map `{inspect_run_id →
+session_id}`, set after `inspect eval` starts (via its log output), and surface `session_id` on the
+`TrajectoryLog` from this map.
 
 **Invariants C31 must uphold:**
 - **INV-1 (runner is Inspect AI, not custom):** scenario execution is performed by `inspect eval`; C31 adds
@@ -137,19 +260,6 @@ defer to sweep 2 (and the scenario format to C30, the trajectory/score model to 
   `session.id`**; the **parent-chain landing itself** is C24's mechanism over the raw-bodies→CXDB seam, whose
   `session.id`→CXDB-parent-pointer mapping rule is the **G26** seam C24 owns — C31 supplies the correct id, it
   does not perform the parent-chaining.*
-  > [AMBIGUITY: G25] v4 states only that Inspect AI's session-id model **vs** Gas City's "likely needs adapter
-  > layer; impedance unknown" (AI-CONTEXT §12 line 512) and does not give the mapping. Two readings of the
-  > adapter's depth: **(a) thin** — a 1:1 id translation (carry/rename the existing `session.id` into the
-  > Inspect-AI run's metadata and back out) when the two identity models are reconcilable; **(b) thick** — a
-  > stateful correlation layer that *generates/assigns* a run id and maintains a map (Inspect AI sample/eval id
-  > ⇄ Claude Code `session.id`) when Inspect AI owns its own session identity that cannot be overridden.
-  > **Chosen: (a) as the faithful baseline — thinnest adapter that threads the existing `session.id`** — with
-  > (b) named as the fallback. Rationale: v4 calls this a single "**adapter layer**" (singular, lightweight),
-  > consistently treats `session.id` as *the* correlation key the whole telemetry/CXDB chain already uses
-  > (AI-CONTEXT §4.3/§5.4), and the "impedance unknown" caveat is explicitly a *spike*, not a directive to
-  > build a heavy broker. The actual depth is **OQ-1**: it is empirically determined by whether Inspect AI
-  > lets the caller set/propagate the session identity (thin) or mints its own (thick map). C31 owns whichever
-  > the spike resolves to; both are "the adapter layer" v4 scopes.
 - **INV-3 (runs in the scenario rig, does not police it):** the `inspect eval` node executes with
   `work_partition = "scenarios"` (AI-CONTEXT §13.3 line 607). C31 **inherits** the read-isolation that C34
   enforces / C42 provides (D-13); it does **not** itself check holdout integrity. C31's only obligation is to
@@ -160,59 +270,127 @@ defer to sweep 2 (and the scenario format to C30, the trajectory/score model to 
   via the C02 subprocess ABI; it does **not** import Inspect AI's Python (or the engine's Go) in-process
   (README:177; C17 §1). The Python lives behind the subprocess boundary (F-MODE F45 bounding, §7).
 
-## 4. Data model / state
+## 4. Data model / state — `TrajectoryLog` schema (FROZEN, Sweep-2)
+
+This is the **single hand-off artifact** from C31 to C32 (D-37). C32 scores this post-hoc; this field
+table is frozen at Sweep-2 and must not drift between C31 (writer) and C32 (reader). The schema reflects
+the Inspect AI log format (a JSON log file per eval, standard Inspect AI output) augmented with the Gas
+City `session_id` threaded by the adapter (I4).
+
+> Per D-36: "C31 produces an **Inspect AI trajectory log**; C32 scores that log." The schema below
+> represents what C31 **surfaces** as the tool-node output (the path + session_id + exit_code envelope)
+> plus the on-disk Inspect AI log file schema that C32 reads.
+
+### 4.1 Tool-node output (the bead-binding envelope)
+
+C31 surfaces these fields as the `[[tool]] type="subprocess"` node's declared output, bound to a bead per
+README:439 ("scenario-to-bead binding via pack"). C32 reads the `log_path` to score the run.
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `session_id` | `string` | Y | The Gas City / Claude Code `session.id` threaded by the adapter (I4/INV-2). One per `inspect eval` run (OQ-3 RESOLVED). C32 uses this to correlate the score with the run; C24 uses it to parent-chain turns in CXDB. | W: C31 (adapter); R: C32, C24 |
+| `log_path` | `string` | Y | Absolute path to the Inspect AI `.eval` log file (see §4.2). C32 reads this file post-hoc to score the run (D-37). | W: C31 (Inspect AI writes; C31 surfaces path); R: C32 |
+| `scenario_path` | `string` | Y | The C30 scenario reference passed in (I3), echoed for traceability. | W: C31; R: C32, audit |
+| `task` | `string` | Y | The Inspect AI task name executed, echoed from I3. | W: C31; R: C32 |
+| `exit_code` | `int` | Y | `inspect eval` process exit code. 0 = success; nonzero = E-C31-02. C18/C40 re-drive on nonzero (INV-1 — C31 adds no retry). | W: C31; R: C17 (tool-node status), C18/C40 (retry decision) |
+| `run_started_at` | `string (ISO 8601)` | Y | Wall-clock timestamp when `inspect eval` was invoked. | W: C31; R: C32, observability |
+| `run_completed_at` | `string (ISO 8601)` | Y | Wall-clock timestamp when `inspect eval` exited (success or fail). | W: C31; R: C32, observability |
+| `inspect_version` | `string` | Y | Pinned Inspect AI version string (e.g. `"0.3.x"`). C32 must be pinned to the same version to parse the log. | W: C31 (from installed version); R: C32 |
+
+### 4.2 On-disk Inspect AI log schema (the file C32 reads)
+
+The `log_path` points to Inspect AI's native `.eval` log file (JSON). This is **Inspect AI's own output
+format** (not a C31 invention). The fields below are the subset that C32 MUST be able to read to score the
+trajectory; C31 is responsible for ensuring these fields are present (by passing `--log-dir` and letting
+Inspect AI write them) and for confirming the version pin ensures schema stability.
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `eval.run_id` | `string` | Y | Inspect AI's internal run identifier. Distinct from `session_id` (which is the Gas City correlation key). The thick adapter (if needed) maintains the `run_id → session_id` map. | W: Inspect AI; R: C31 (adapter, thick path), C32 |
+| `eval.task` | `string` | Y | Inspect AI task name executed (matches I3 `task` input). | W: Inspect AI; R: C32 |
+| `eval.model` | `string` | Y | Model identifier used for the eval (e.g. `claude-sonnet-4-6`). | W: Inspect AI; R: C32 |
+| `eval.status` | `string` | Y | Eval-level status: `"success"` or `"error"`. | W: Inspect AI; R: C32, C31 (for exit_code mapping) |
+| `samples[*].id` | `string` | Y | Per-sample identifier within the eval. | W: Inspect AI; R: C32 |
+| `samples[*].messages[*].role` | `string` | Y | Message role (`"user"` or `"assistant"`) — trajectory turn role. | W: Inspect AI; R: C32 |
+| `samples[*].messages[*].content` | `string or list` | Y | Turn content — the actual trajectory text. | W: Inspect AI; R: C32 |
+| `samples[*].messages[*].tool_calls` | `list` | N | Tool calls made by the agent during the turn. | W: Inspect AI; R: C32 |
+| `samples[*].messages[*].tool_results` | `list` | N | Tool call results observed. | W: Inspect AI; R: C32 |
+| `samples[*].score` | `object or null` | N | Inspect AI scorer output (if a scorer was attached). C32 may use or override this via its own judge logic. | W: Inspect AI; R: C32 |
+| `samples[*].metadata` | `object` | N | Sample-level metadata — C31's thin adapter MAY write `session_id` here as a redundant cross-ref. | W: Inspect AI / C31 adapter; R: C32 |
+| `logging.git` | `object` | N | Git commit of the scenario repo at run time (tamper-evidence reference, corroborates C30's content-addressed store). | W: Inspect AI; R: audit, C34 |
+
+> [FAITHFUL-FILL] The Inspect AI `.eval` log format is well-documented in the Inspect AI source repo.
+> The field names above follow the Inspect AI v0.3.x log schema (JSON). The actual field names MUST be
+> pinned to the same Inspect AI version C31 packages (OQ-4 operationalized here). If the pinned version
+> differs, the field table must be re-verified. The `samples[*]` structure is the canonical Inspect AI
+> sample-log shape; the exact field paths are confirmed against the pinned version at build time.
+
+### 4.3 State C31 is spec-of-record for
 
 C31 is **largely stateless** — it shells out to `inspect eval` per run and surfaces the result. The only
-state directly forced by a v4 requirement is the **adapter's `session.id` association** (and, under the thick
-reading, its id map). State C31 is the spec-of-record for at sweep 1:
+state directly forced by a v4 requirement is the **adapter's `session.id` association**.
 
 | State | Description | Persistence | Detailed by |
 |---|---|---|---|
-| **Pack / service + tool config** | The `[[service]] type="inspect_ai"` block + the `[[tool]]` subprocess node (command/args/`work_partition="scenarios"`), plus Inspect AI install/version pin. | Pack TOML (C02/C03 model). | C02/C03 (model), C31 (binding) |
-| **Per-run `session.id` association** *(adapter, I4/INV-2)* | The `session.id` threaded into a given scenario run, and (thick reading only) the Inspect-AI-run-id ⇄ `session.id` map. **The one piece of state forced by G25.** | Thin reading: transient per-invocation (carried in the run's env/metadata, not a store). Thick reading: a small per-run correlation map — **OQ-1**. | C31 (adapter) |
-| **Run trajectory + result** | Inspect AI's emitted trajectory/sample log + exit status, surfaced as the node's output. **Stored/owned by Inspect AI's log dir + the bead it binds to (C19/C20)**; the trajectory's durable home is **CXDB via C24**. | Inspect AI log output (transient) → bead (C19/C20) → CXDB (C24). | **Inspect AI** (log), **C24** (CXDB), C32 (consumer) |
+| **Pack / service + tool config** | The `[[service]] type="inspect_ai"` block + the `[[tool]]` subprocess node (command/args/`work_partition="scenarios"`), plus Inspect AI version pin. | Pack TOML (C02/C03 model). | C02/C03 (model), C31 (binding) |
+| **Per-run `session.id` association** *(adapter, I4/INV-2)* | The `session.id` threaded into a given scenario run. Thin: transient per-invocation (env var). Thick: a small per-run correlation map `{inspect_run_id → session_id}`. **The one piece of state forced by G25.** | Thin: transient. Thick: per-run in-process (freed on run complete). | C31 (adapter) |
+| **`TrajectoryLog` envelope** | The tool-node output fields (§4.1) surfaced to the workflow engine and bound to a bead. | Bead (C19/C20) — C31 emits the fields; the bead store persists them. | C31 (emitter); C19/C20 (bead persistence) |
+| **Inspect AI log file** | The on-disk `.eval` log (§4.2) Inspect AI writes to `log_dir`. C31 surfaces the path. | Inspect AI log dir (filesystem) — durable within the run; C32 reads it post-hoc. Not in CXDB (D-36). | Inspect AI (writer); C31 (path surfacer); C32 (reader) |
 | **Scenario reference + task** | The `{scenario_path}` (C30 store reference) + `{task}` the run consumes. | Owned by **C30** (the scenario store); C31 holds only the reference for the duration of a run. | **C30** |
 
 > [FAITHFUL-FILL] v4 specifies the runner's *behavior* (invoke `inspect eval` on a scenario) and *names* the
 > needed adapter, but not C31's persisted state. The minimal faithful set is **the adapter's per-run
 > `session.id` association** — the *only* state a v4-named requirement forces ("needs session-id adapter",
 > inventory C31; "Inspect AI's session-id model vs Gas City's … adapter layer", §12 G25). Everything else is
-> owned upstream/downstream: the scenario is **C30**'s, the trajectory's durable store is **CXDB/C24**'s, the
-> score is **C32**'s, the config is the **pack TOML**'s. Whether the adapter state is transient (thin) or a
-> small map (thick) is OQ-1; either way C31 introduces **no** general-purpose store — consistent with "write a
-> *small* pack that exposes it as a tool node" (README:177).
-
-**Consistency / lifecycle.** C31 stands up in **Phase 2** with the Inspect AI install + the scenario store
-(README:423–424). Each run is **ephemeral**: invoke → emit trajectory → surface output; the durable artifacts
-are the **trajectory in CXDB** (C24) and the **bead** (C19/C20). C31 holds no long-lived source of truth; a
-restart loses at most an in-flight `inspect eval` (which the workflow engine / Orders re-drive — C40), and the
-already-emitted trajectory survives in its log dir + CXDB.
+> owned upstream/downstream: the scenario is **C30**'s, the trajectory's durable store is the **Inspect AI
+> log dir + the bead**'s, the score is **C32**'s, the config is the **pack TOML**'s. Whether the adapter state
+> is transient (thin) or a small map (thick) is OQ-1; either way C31 introduces **no** general-purpose store
+> — consistent with "write a *small* pack that exposes it as a tool node" (README:177).
 
 ## 5. Behavior
 
-**Stand up (Phase 2).** Install Inspect AI (README:423). The pack declares the `[[service]] type="inspect_ai"`
+**Stand up (Phase 2).** Install Inspect AI (pinned version, README:423). The pack declares the `[[service]] type="inspect_ai"`
 provider (I1) and the `[[tool]] type="subprocess"` `inspect eval` node (I2) with `work_partition="scenarios"`
 (AI-CONTEXT §13.3). The session-id adapter (I4) is wired into the invocation.
 
 **Execute a scenario (steady state).**
 1. **Receive** (I3): the engine reaches the scenario-run node in a formula/molecule with a `{scenario_path}`
    (C30 reference) + `{task}` from bead context.
-2. **Thread session-id** (I4): the adapter establishes the run's `session.id` — carrying the existing Claude
-   Code/Gas City `session.id` into the Inspect AI run's metadata/env (thin), or assigning + mapping a run id
-   (thick) — so emitted turns will chain into one trajectory (INV-2; G25).
-3. **Invoke** (I2): run `inspect eval {scenario_path} --task {task}` as a C02 subprocess in the `scenarios`
-   partition (INV-3). Inspect AI *is* the runner — it drives the system through the scenario and produces a
-   trajectory/sample log (INV-1).
-4. **Surface** (I5): on completion, surface Inspect AI's trajectory/log + the run's `session.id` + exit status
-   as the node's declared output, bound to a bead (README:439). C32 (judge) consumes the trajectory; C24
-   delivers the emitted turns to CXDB under the threaded `session.id`.
-5. **On failure**: a nonzero `inspect eval` exit surfaces as the node's status (C02 exit-code); the workflow
-   engine / Orders (C18/C40) own retry/escalation — C31 adds no custom retry loop (INV-1).
+2. **Thread session-id** (I4): the adapter establishes the run's `session.id` — setting `GC_SESSION_ID=<id>`
+   in the subprocess env (thin baseline; §3.3). The `session_id` is taken from the Gas City/Claude Code
+   session context of the built component under test (INV-2; G25).
+3. **Invoke** (I2): run `inspect eval {scenario_path} --task {task} --log-dir {log_dir} --model {model_name}`
+   as a C02 subprocess in the `scenarios` partition (INV-3). Inspect AI *is* the runner — it drives the
+   system through the scenario and produces the `.eval` log file (INV-1).
+4. **Surface** (I5): on completion, surface the `TrajectoryLog` envelope (§4.1) as the node's declared
+   output, bound to a bead (README:439). Fields: `session_id`, `log_path`, `scenario_path`, `task`,
+   `exit_code`, `run_started_at`, `run_completed_at`, `inspect_version`. C32 reads `log_path` **post-hoc**
+   to score the trajectory (D-37). C31 does NOT invoke C32.
+5. **On failure**: a nonzero `inspect eval` exit surfaces as `exit_code` in the `TrajectoryLog` envelope
+   (C02 tool-node status); the workflow engine / Orders (C18/C40) own retry/escalation — C31 adds no custom
+   retry loop (INV-1). See E-codes in §8.
 
-> The exact `inspect eval` CLI surface (flags beyond `--task`), the trajectory/sample-log schema, the precise
-> `session.id` ⇄ Inspect-AI-id field mapping and injection mechanism (env var? `--metadata`? sample tag?),
-> and the bead-binding shape are **sweep-2+**. The scenario format is **C30**; the score model is **C32**; the
-> trajectory store is **CXDB/C24**.
+## 5.1 Sequence diagram — scenario load → run → trajectory log → C32 post-hoc
+
+```mermaid
+sequenceDiagram
+    participant E as Workflow Engine (C17/C18)
+    participant C31 as C31 Scenario Runner
+    participant IA as Inspect AI (inspect eval)
+    participant C32 as C32 Judge (post-hoc)
+
+    E->>C31: invoke tool node (scenario_path, task, session_id)
+    C31->>C31: adapter: set GC_SESSION_ID in env (I4 thin)
+    C31->>IA: exec inspect eval scenario_path --task task --log-dir log_dir
+    IA->>IA: drive agent through scenario turns
+    IA-->>C31: exit code + log_path (.eval file written)
+    C31->>E: TrajectoryLog envelope (session_id, log_path, exit_code, timestamps)
+    Note over C31,E: bead bound per README:439
+    Note over C32: post-hoc (separate invocation)
+    E->>C32: invoke judge with (log_path, session_id, scenario_path)
+    C32->>C32: read .eval log, score trajectory
+    C32-->>E: ScoreRecord (owned by C32, D-39)
+```
 
 ## 6. Failure modes & handling
 
@@ -239,18 +417,19 @@ do not thread under a coherent id, and the OSS stack does not provide that recon
   `scenarios` partition (INV-3); it does not police reads.
 - **Scoring / satisfaction / verdict** — DROPPED here (**C32/C33**, INV-4). The runner is verdict-blind.
 - **A scenario format/store** — DROPPED here (**C30**). C31 consumes a reference.
-- **CXDB trajectory delivery** — DROPPED here (**C24**). C31 tags the run; C24 delivers turns.
+- **CXDB trajectory delivery** — DROPPED here (**C24**). Per D-36, C31 does not interact with CXDB at all.
+- **Invoking C32 inline** — DROPPED here (D-37). C31 produces the TrajectoryLog; C32 reads it post-hoc.
 
 **Other failure cases.**
-- **`inspect eval` nonzero exit / Inspect AI internal error** → surfaces as the C02 tool-node status; C18/C40
-  own retry/escalation. *[FAITHFUL-FILL]: v4 gives no C31-level retry contract; minimal-consistent placement
-  is "surface status, engine decides" — same posture as C17 §6.]*
+- **`inspect eval` nonzero exit / Inspect AI internal error** → surfaces as `exit_code` in the `TrajectoryLog`
+  and as the C02 tool-node status; C18/C40 own retry/escalation. *[FAITHFUL-FILL]: v4 gives no C31-level
+  retry contract; minimal-consistent placement is "surface status, engine decides" — same posture as C17 §6.]*
 - **Adapter cannot thread `session.id`** (Inspect AI rejects/overrides the injected id) → the trajectory may
   not chain coherently; this is the **G25 impedance risk** the spike (OQ-1) retires before C32/C24 rely on it.
   Mitigation: detect at the bridge (C24 sees an unparented/mis-parented turn) — but the *fix* is the adapter
   depth (thin→thick). Until the spike resolves, this is the component's top risk (OQ-1).
 - **Scenario runs against production instead of a twin** → out of C31's scope; the run target is configured by
-  the scenario/task (C30) and the twin is C44; C31 executes what it is given (F-MODE F12/F54 context).
+  the scenario/task (C30) and the twin is C44; C31 executes what it is given (OQ-5 RESOLVED — C30 selects).
 - **Python-harness fault** (F45) → bounded by the subprocess boundary (INV-5): a fault in Inspect AI's Python
   is a nonzero exit at the C02 ABI, not an in-process crash of the (Go) engine.
 
@@ -270,7 +449,7 @@ do not thread under a coherent id, and the OSS stack does not provide that recon
   policy. The Inspect AI Python runs **behind the C02 subprocess boundary** (INV-5), bounding the Python
   blast radius (F45). The adapter carries `session.id` (a correlation attribute, not a secret) into the run.
   Scenarios that target external deps should use **twins** (C44), not production, to bound exposure (F-MODE
-  F12/F54) — selected by the scenario, not C31.
+  F12/F54) — selected by the scenario (OQ-5 RESOLVED), not C31.
 - **Cost.** A run is an `inspect eval` subprocess; the **token cost is the scenario's** (it drives the system
   through real model calls), not C31's wrapper. C31's own overhead is process-startup + the adapter (cheap).
   v4 gives no separate runner cost model.
@@ -278,51 +457,56 @@ do not thread under a coherent id, and the OSS stack does not provide that recon
   the workflow engine's (formula/molecule concurrency), **not** a C31-owned scheduler (INV-1). The P7 twins
   exist precisely so scenarios can "run thousands per hour without rate limits" (README:195) — a property of
   the *target*, not the runner wrapper.
-- **Observability.** The run's **trajectory** is the primary artifact — it lands in CXDB via C24 (parent-chain
-  by the adapter's `session.id`) and is what C32 scores. C31's own health (eval exit status, run latency,
-  adapter id-threading success rate) is the operational signal that tells ops whether scenarios are
-  executing + threading correctly. Emitting these on the event bus (C23) keeps runs auditable.
+- **Observability.** The run's **`TrajectoryLog`** is the primary artifact (D-37). C31's own health (eval
+  exit status, run latency, adapter id-threading success rate) is the operational signal that tells ops
+  whether scenarios are executing + threading correctly. Emitting these on the event bus (C23) keeps runs
+  auditable.
 - **Ops.** Pack-delivered tool node operated alongside C30/C32 in Phase 2 (README:423–424). **Pin the Inspect
-  AI version** so the `inspect eval` CLI surface + trajectory schema the adapter and C32 depend on are
-  reproducible (parallels C24's CXDB-version-pin posture). v4 flags "the **Inspect AI wrap** … harder part"
-  (README:442) — that wrap + the adapter spike *are* C31's work.
+  AI version** so the `inspect eval` CLI surface + `TrajectoryLog` schema the adapter and C32 depend on are
+  reproducible. v4 flags "the **Inspect AI wrap** … harder part" (README:442) — that wrap + the adapter spike
+  *are* C31's work.
 
-## 8. Acceptance criteria & test strategy
+## 8. Error taxonomy
 
-Sweep-1 = high-level criteria (concrete tests at sweep 2).
+| E-code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| **E-C31-01** | `scenario_path` not found or not accessible from the `scenarios` partition | Tool-node nonzero exit + error message in stderr; `exit_code` ≠ 0 in TrajectoryLog | C18/C40 re-drive or escalate; C30 store integrity check |
+| **E-C31-02** | `inspect eval` exited nonzero (eval ran but failed — Python exception, task error, model API error) | `exit_code` = Inspect AI exit code in TrajectoryLog; C02 tool-node error status | C18/C40 retry (with back-off if model API error); no C31-level retry (INV-1) |
+| **E-C31-03** | `inspect eval` exceeded `max_runtime_s` (run timeout) | `RunTimeoutError` raised; tool-node nonzero exit; `exit_code` = timeout sentinel (e.g. 124) | C18/C40 escalate (do not retry immediately — scenario may be pathological); alert ops |
+| **E-C31-04** | Adapter could not establish or verify `session.id` (e.g. `GC_SESSION_ID` env var not readable by task; thick map fails) | `SessionIdUnsetError` raised; tool-node nonzero exit; `session_id` field EMPTY in TrajectoryLog | **BLOCK C32 scoring** — a TrajectoryLog with no `session_id` MUST NOT be handed to C32 (scoring would be unattributable); escalate to ops for adapter spike resolution (OQ-1) |
+| **E-C31-05** | Inspect AI log file (`log_path`) not produced (disk error, log-dir not writable) | Tool-node nonzero exit; `log_path` EMPTY in TrajectoryLog | C18/C40 retry; check `log_dir` mount + permissions; alert ops |
 
-1. **AC-1 (runner wrap — I1/I2/INV-1):** the pack registers Inspect AI via `[[service]] type="inspect_ai"`
-   and a `[[tool]] type="subprocess"` node runs `inspect eval {scenario_path} --task {task}`; a scenario
-   executes end-to-end **without any custom runner code** (Inspect AI is the runner; README:172/439).
-2. **AC-2 (executes a scenario against the system — I3):** given a C30 scenario reference + task, C31 runs it
-   and produces an Inspect AI trajectory/sample log + exit status as the node's output.
-3. **AC-3 (session-id threads — I4/INV-2, addresses G25):** a scenario run is associated with exactly one
-   `session.id`, and the turns the run provokes chain into **one** trajectory under that id — verifiable by
-   C24 landing them as a single parent-chained trajectory in CXDB (AI-CONTEXT §4.3/§5.4) and by C32 scoring
-   that trajectory.
-4. **AC-4 (adapter depth resolved — OQ-1/G25):** the spike confirms whether Inspect AI accepts an injected
-   `session.id` (thin) or requires a maintained id-map (thick); the implemented adapter matches reality and
-   AC-3 passes under it.
-5. **AC-5 (runs in the scenario rig, does not enforce — INV-3):** the `inspect eval` node executes with
-   `work_partition="scenarios"`; C31 contains **no** holdout-enforcement/audit logic (that is C34; D-13).
-6. **AC-6 (verdict-blind — INV-4):** C31 emits a trajectory + status only; it computes **no** satisfaction
-   score and renders **no** pass/fail verdict (C32/C33 do).
-7. **AC-7 (pack, not import — INV-5):** C31 is a Gas City pack invoking the `inspect` CLI over the C02
-   subprocess ABI; no in-process import of Inspect AI Python (or engine Go). A Python fault surfaces as a
-   nonzero exit, not an engine crash (F45 bounding).
-8. **AC-8 (trajectory → judge handoff — I5):** the emitted trajectory + run identity are bound to a bead such
-   that C32 can locate and score the **right** trajectory ("scenario-to-bead binding via pack", README:439).
-9. **AC-9 (no over-build):** review confirms C31 contains no custom runner/scheduler/eval-loop, no parallel-run
-   engine, no retry policy, no scoring, no scenario store, no CXDB delivery — only the **wrap** + the
-   **session-id adapter** (the bar; INV-1).
+## 9. Acceptance criteria (Sweep-2, concrete)
+
+| AC-code | Given / When / Then | Verifies |
+|---|---|---|
+| **AC-C31-01** | Given a pinned Inspect AI install + a C30 scenario reference + task; when the tool node is invoked; then `inspect eval` runs and the `TrajectoryLog` (§4.1) is emitted with all required fields populated | INV-1 (runner is Inspect AI), I1/I2 wrap |
+| **AC-C31-02** | Given a valid C30 scenario + task; when `inspect eval` completes (exit 0); then `log_path` points to a readable `.eval` log file containing `samples[*].messages` (§4.2) | I5, TrajectoryLog schema |
+| **AC-C31-03** | Given a multi-turn scenario run; when C31 completes; then exactly ONE `session_id` appears in the `TrajectoryLog` envelope and it matches the Gas City `session.id` of the built component | INV-2, I4, OQ-3 RESOLVED |
+| **AC-C31-04** | Given the thin adapter; when `GC_SESSION_ID` is set on the subprocess env; then the running Inspect AI task can read it (verified by task wrapper log); if not readable, the thick fallback is activated | I4 thin/thick, E-C31-04 prevention |
+| **AC-C31-05** | Given `inspect eval` exit 0 and a `log_path` present; when C32 is invoked (separately, post-hoc); then C32 can read `log_path` and score the run without any C31 involvement | D-37 post-hoc contract |
+| **AC-C31-06** | Given `inspect eval` exit nonzero; when C31 surfaces the `TrajectoryLog`; then `exit_code` ≠ 0 and C18/C40 receive the tool-node error status — C31 adds NO retry logic | E-C31-02, INV-1 |
+| **AC-C31-07** | Given the `[[tool]]` node config; then `work_partition = "scenarios"` is set and C31 contains NO holdout-enforcement or leakage-audit code | INV-3, D-13 boundary |
+| **AC-C31-08** | Given any run; then C31 computes NO satisfaction score and renders NO pass/fail verdict | INV-4 |
+| **AC-C31-09** | Given a fault in Inspect AI's Python; then it surfaces as a nonzero exit at the C02 ABI boundary, NOT as an in-process engine crash | INV-5, F45 bound |
+| **AC-C31-10** | Given `scenario_path` not found; when the tool node is invoked; then E-C31-01 is raised and `exit_code` ≠ 0 in the TrajectoryLog | **E-C31-01** |
+| **AC-C31-11** | Given `inspect eval` times out; when `max_runtime_s` is exceeded; then E-C31-03 is raised with exit_code = timeout sentinel; C18/C40 receive the escalation signal | **E-C31-03** |
+| **AC-C31-12** | Given the adapter fails to establish `session_id`; then E-C31-04 is raised, `session_id` is EMPTY in the TrajectoryLog, and the TrajectoryLog is NOT forwarded to C32 | **E-C31-04** |
+| **AC-C31-13** | Code review confirms C31 contains no custom runner/scheduler/eval-loop, no parallel-run engine, no retry policy, no scoring, no scenario store, no CXDB interaction (D-36), no inline C32 invocation (D-37) | INV-1 thru INV-5, D-36, D-37 |
+
+**E↔AC cross-references:**
+- E-C31-01 → AC-C31-10
+- E-C31-02 → AC-C31-06
+- E-C31-03 → AC-C31-11
+- E-C31-04 → AC-C31-12
+- E-C31-05 → AC-C31-06 (log_path empty variant)
 
 **Test strategy.** A **scenario-runner integration pack** that: installs the pinned Inspect AI, points the
-`inspect eval` node at a synthetic C30 scenario in the `scenarios` partition, and drives AC-1…AC-9 — in
-particular the **session-id threading (AC-3/AC-4)**: run a multi-turn scenario and assert its turns land in
-CXDB (C24) as **one** parent-chained trajectory under the run's `session.id`, and that C32 scores that
-trajectory. The **adapter spike** (thin vs thick, OQ-1) is the first de-risker and gates AC-3. This suite must
-pass before **C32 (judge)** and **C33 (satisfaction)** rely on C31's trajectories — it is the *execution* half
-of the P5 mechanism the **bootstrap-validation milestone** (README:429) exercises.
+`inspect eval` node at a synthetic C30 scenario in the `scenarios` partition, and drives AC-C31-01…AC-C31-13
+— in particular the **session-id threading (AC-C31-03/AC-C31-04)**: run a multi-turn scenario and assert its
+`TrajectoryLog` carries one `session_id`, and that C32 (invoked post-hoc per AC-C31-05) scores it. The
+**adapter spike** (thin vs thick, OQ-1) is the first de-risker and gates AC-C31-03/04. This suite must pass
+before **C32 (judge)** and **C33 (satisfaction)** rely on C31's trajectories.
 
 ## 9. Open questions
 
@@ -330,18 +514,23 @@ of the P5 mechanism the **bootstrap-validation milestone** (README:429) exercise
   the run's session identity (→ **thin** 1:1 translation of the existing `session.id`), or does it mint its
   own unalterable session/sample id (→ **thick** maintained `session.id` ⇄ Inspect-AI-id map)? This is the
   "impedance unknown" v4 flags (AI-CONTEXT §12 line 512); resolve by a **direct Inspect AI spike** before
-  sweep 2, since C24's parent-chain (AI-CONTEXT §5.4) and C32's scoring both depend on the threaded id. (The
-  single load-bearing uncertainty for C31.)
-- **OQ-2 (→ review-log): exact `session.id` injection mechanism.** Given OQ-1's answer, *how* is the id
-  carried into `inspect eval` — env var, `--metadata`/`-T` task arg, sample tag, or Inspect AI hook? Freeze at
-  sweep 2 against the real CLI; it is the concrete field-mapping behind I4.
-- **OQ-3 (→ review-log): one scenario → one `session.id` granularity.** Does a single `inspect eval` (which
-  may run many samples/epochs) map to **one** `session.id` for the whole eval, or **one per sample**? This
-  sets the trajectory granularity C24/C32 see (a scenario "run" vs a per-sample trajectory). Confirm with
-  C32/C24 at sweep 2 (interacts with Inspect AI's sample model, B49).
-- **OQ-4 (→ review-log): `inspect eval` CLI surface + trajectory-log schema.** The exact flags (beyond
-  `--task`), the trajectory/sample-log format C32 must parse, and how it is surfaced/bound to a bead
-  (README:439). Pin to the chosen Inspect AI version; freeze with C32 at sweep 2.
-- **OQ-5 (→ review-log): run target / twin selection.** Confirm the scenario/task (C30) — not C31 — selects
-  whether a run hits a **twin** (C44) vs the real system (F-MODE F12/F54; README:195), so C31 stays target-
-  agnostic. (Boundary check, not a C31 mechanism.)
+  implementation, since C32's scoring depends on the threaded id. The thin baseline (env-var path) is assumed
+  for Phase-0; spike confirms or triggers the thick fallback. (The single load-bearing uncertainty for C31.)
+
+- **OQ-2 (→ review-log): exact `session.id` injection mechanism.**
+  Thin baseline chosen (§3.3): `GC_SESSION_ID` env var. However the exact Inspect AI task wrapper hook
+  (how the task reads `GC_SESSION_ID` and embeds it in `samples[*].metadata`) must be frozen with C30
+  (the task DSL owner) before both C31 and C30 ship.
+
+- **OQ-3 (→ review-log): one scenario → one `session.id` granularity.**
+  RESOLVED (Sweep-2): one `inspect eval` invocation = one `session.id` (eval-level granularity, not
+  per-sample). C32 scores the run as a unit. See §3.3.
+
+- **OQ-4 (→ review-log): `inspect eval` CLI surface + trajectory-log schema.**
+  PARTIALLY RESOLVED (Sweep-2): §4.2 freezes the field table C32 reads. Remaining open: the exact Inspect
+  AI version pin and the precise `--model` flag syntax must be confirmed against the pinned version before
+  C31 ships. The `cmd`/`command` field spelling remains G11-gated (D-34).
+
+- **OQ-5 (→ review-log): run target / twin selection.**
+  RESOLVED (Sweep-2): the scenario/task (C30) selects the run target; C31 is target-agnostic. See §1
+  "Explicitly NOT" + §3.3.

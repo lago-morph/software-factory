@@ -1,8 +1,11 @@
 # C01 — Gas City Runtime Substrate  (Spec, canonical track)
 
 > Source: README §Part 4 (Layer/principle placement tables — Pipeline engine line 121, Tool node / reconciler lines 158–160, attribution lines 226–228, memory lines 239–242, event substrate line 252), §Part 6 Phase 0 (lines 353–374) and Phase 1 (lines 376–399); AI-CONTEXT §2 (three-layer + persistence shape, lines 46–54), §3 (Gas City as load-bearing dependency: §3.1 coverage map lines 62–77, §3.2 "nine concepts" lines 79–93, §3.3 vocabulary lines 95–112, §3.4 smallest viable install lines 114–122, §3.5 migration tail lines 124–129, §3.6 extractability lines 131–135), §11 decisions (lines 463–476, 494–502), §13.1 Phase 0 skeleton (lines 522–544), §13.2 Phase 1 additions (lines 546–580), §14 risk register (line 616); component-inventory C01 row (line 13) + critical-path notes; ambiguities-and-gaps G11, G03.
-> Inventory ID: C01   Kind: subsystem   Status: sweep-1
-> Track: A (faithful)
+> Inventory ID: C01   Kind: subsystem   Status: sweep-2
+> Track: canonical (faithful)
+> Binding decisions obeyed: **D-23** (substrate harvest / conformance check as the gate that turns native claims into facts), **D-30** (prevent-gate: unattended/self-modification require the substrate to BLOCK, not merely detect), **D-6** (single canonical track).
+
+> **[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]** Twelve substrate facts (F1–F12) from the Gas City prototype harvest underwrite this spec. The install/pin contract (§3.1) is grounded in PLAN.md primary-source evidence (F-context, PLAN items 1–2, 6–8). The Phase-0 Provider-kind = tmux is F7-verified; the bead-prefix scoping mechanism is F10-verified. **Every native claim in §6 that is not individually marked `harvest-verified` carries `needs-pinned-gc-run (G11)` status per the anchor §4 table** — the D-23 spike resolved some questions and left others explicitly open.
 
 ## 1. Purpose & responsibility
 
@@ -79,10 +82,14 @@ the dependency forest: it is the "load-bearing third-party dependency. If Gas Ci
 reorganizes" (README §11 / AI-CONTEXT, the G11 admission). It is Phase 0 in the delivery plan (C54) and
 is the only component that ships with "no custom code" (README line 355).
 
+**Cycle resolution note.** Two dependency cycles exist in the inventory: C01↔C03 and C01↔C04. Both are
+broken by treating **C01 as the dependency root** and freezing an interface contract at the C01 boundary
+that C03/C04 build against — exactly the M1 interface-freeze pattern used for C19↔C20. C01 is adopted
+first (T1/T2 below); C03 and C04 elaborate semantics that C01 *hosts*, not the reverse.
+
 ## 3. Interfaces / contracts
 
-Sweep-1: interfaces are **named and described**; signatures/schemas defer to sweep 2 and to owning
-components. C01's contracts are the *substrate seams* — what the install exposes to the rest of v4.
+### 3.0 Interface table (sweep-1, preserved)
 
 | # | Interface | Direction | Description | Owning/detailing component |
 |---|---|---|---|---|
@@ -106,57 +113,175 @@ components. C01's contracts are the *substrate seams* — what the install expos
   the Phase-0 install has `[daemon]`, `[mail]`, `[formulas]`, `[rigs]`, Dolt, `[[service]]`, orders all
   absent ⇒ off (AI-CONTEXT §3.4 line 122).
 
-## 4. Data model / state
+### 3.1 Install / pin contract (sweep-2)
 
-C01 *owns the install and config*; the **schemas** of the stores it hosts are owned downstream (deferred,
-faithful to inventory). State C01 is the spec-of-record for at sweep 1:
+**The pinned identity.** All v4 work targets exactly:
 
-| State | Description | Persistence | Detailed by |
-|---|---|---|---|
-| **Install + version pin** | The `gc` binary, its pinned version, and the workspace layout (`packs/*`, `agents/<name>/prompt.template.md`). | Filesystem + version control (packs are git-versioned, README line 107). | C01 |
-| **`city.toml` / `pack.toml`** | Layered TOML config (workspace, agents, beads provider, optional sections). | Version-controlled file. | C03 |
-| **Bead store** | Durable typed work-graph; `provider = "file"` at Phase 0, Dolt optional later. | File (`.beads`) or Dolt server. | C19/C20 |
-| **Event bus log** | Append-only JSONL, monotonic seq. | `events.jsonl`-style append log. | C23 |
-| **Molecule (in-flight)** | A formula instantiated into a live bead-tree; the runtime state of a running workflow. | In bead store (molecule = bead-tree). | C13 |
+| Artifact | Value | Source |
+|---|---|---|
+| Prototype repo | `lago-morph/gascity-prototype` | harvest provenance |
+| Prototype branch + commit | `claude/great-pascal-RUfkN` @ `b14c278` (PLAN dated 2026-05-25) | PLAN.md §status; config anchor §1 |
+| Upstream `gc` SDK commit | `gastownhall/gascity@183897e` (post-v1.0.0, PackV2) | deep-dive §provenance |
+| Go toolchain | **Go 1.26.3** — `go.mod` is authoritative (`head -5 go.mod` to confirm; PLAN §build facts; config anchor §1) | config anchor §1; spike protocol §1 |
+| Primary `gc` binary | **`gc`** → built via `make install` → `/usr/local/bin/gc` | PLAN.md §file-by-file |
+| Companion binary | **`bd`** (beads CLI) — the bead store is driven through it | `pack/pack.toml` header; PLAN item 1 |
+| Controller invocation | **`gc start --foreground`** — supervisor (PID 7 in-container; tini as PID 1) | F6; PLAN item 6 |
 
-**Phase-0 install (the canonical minimum — AI-CONTEXT §13.1):**
+**What "install" means (harvest-grounded — F4, PLAN items 1–2).** The factory does **NOT** run `gc init`
+(it is interactive — F4; zero references to it in any v4 spec). Instead:
+1. Author `pack.toml` and `city.toml` **directly** from templates.
+2. Pre-stage binaries (`gc`, `bd`, `dolt`, `node`, `claude`) on the host and `COPY` them into the image.
+   (The sandbox TLS-inspection proxy blocks in-container downloads — F12 context, PLAN item 1.)
+3. Run `gc start --foreground` (or under Docker Compose with `tini`).
+
+**What "install" produces.** A container/process in which:
+- `gc` is running as the controller/supervisor.
+- The bead store (Dolt SQL server in-container or file-backed) is accessible via `bd` CLI.
+- All agents declared in `city.toml` are scheduled; the Phase-0 set is one `[[agent]] provider="claude"` worker.
+- `.gc/site.toml` (machine-local, entrypoint-written) binds rig names to filesystem paths (F1).
+- Events are streaming to `.gc/events.jsonl`.
+
+**Sandbox-root requirement (F12 / PLAN items 7–8):**
+- `claude --dangerously-skip-permissions` refuses root unless `IS_SANDBOX=1` is set in the environment.
+- Three onboarding dialogs must be pre-acknowledged in `~/.claude.json` (NOT `~/.claude/settings.json`).
+
+**Reproducibility invariant (INV-1).** A re-install from the pinned commit + Go version + pre-staged
+binary checksums is byte-reproducible. A version bump that breaks any conformance AC is detected by
+the conformance check (§8).
+
+### 3.2 Concrete `gc` CLI surface relied on by v4 (sweep-2, freeze)
+
+These are the subcommands/flags v4 builds against. Downstream components (C05, C12, C18, C19, C23)
+build stubs against this surface (milestone M2).
+
+| Subcommand / invocation | Used by | Source |
+|---|---|---|
+| `gc start --foreground` | C01 (boot) | F6; PLAN item 6 |
+| `gc status` | C01, C18 (health probe) | harvest; conformance check preconditions |
+| `gc session list` | C04, C01 (session inspect) | harvest; conformance check Test D |
+| `gc events [--follow] [--since=…]` | C23, C01 (audit) | harvest; conformance check Tests A/D/G |
+| `gc sling <bead>` | C05 (dispatch) | F5, F8; conformance check smoke-signal |
+| `gc bd find --type <T>` | C19/C20 (query) | AI-CONTEXT §16 line 695 |
+| `gc bd create / get / ls` (via `bd` CLI) | C19/C20 | F8; conformance check Tests A/C/E/F |
+| `gc converge resume <bead_id>` | C52 (self-bootstrap) | AI-CONTEXT §16 line 699 |
+| `gc formula export <name> --format dot` | C14 (DOT translator) | README line 384 |
+
+> [FAITHFUL-FILL] Exact flag syntax (e.g., `--since` duration format, `--json` flag on `gc session list`,
+> `gc service list` existence) is confirmed by the conformance check live run (§8). Until the live run
+> completes, flag spellings carry `[needs-pinned-gc-run (G11)]` status. The subcommand list above is
+> grounded in harvest evidence and primary prototype sources.
+
+### 3.3 Config-file layout (sweep-2)
+
+Per the config anchor §2 — three files participate. Getting the right key into the right file is the
+#1 drift hazard (PackV2 refuses startup on misplaced keys — F1, F3).
+
+| File | Role | Must NOT contain |
+|---|---|---|
+| **`pack.toml`** | Root pack manifest: `[pack] name`, `[pack] schema = 2`; `[imports.<name>]` with `source`; pack-shipped `[[tool]]`, prompt templates, formulas | `[defaults.rig.imports.*]` (→ `city.toml` per F3); a direct `[imports.maintenance]` when `gastown` already imports it transitively (duplicate `gastown.dog` agent → startup refusal — F3) |
+| **`city.toml`** | Workspace install config: `[workspace]`, `[defaults.rig.imports.<name>]`, capability sections `[daemon]`, `[beads]`, `[orders]`, `[mail]`, `[formulas]`, `[[service]]`; `[[agent]]` worker decls; `[[rig]]`/`[[rigs]]` partition/role blocks with `name` + `prefix` (NO `path`) | A rig `path` field (machine-local, belongs in `.gc/site.toml` — F1); `convergence.max_iterations` (not a real field — F2) |
+| **`.gc/site.toml`** | Machine-local, entrypoint-written at container-start: `workspace_name`; `[[rig]]` (singular) blocks with `name` + `path` | Partition/role semantics, prefixes (those are `city.toml`'s job). This file is `.gitignore`d. |
+
+> **city.toml rig-block spelling: `[[rig]]` vs `[[rigs]]` — `needs-pinned-gc-run (G11)`.**
+> F1 names `[[rig]]` (singular) as canonical; the prototype `city.toml.example` uses `[[rigs]]` (plural).
+> The **invariant that holds in both** is: rig `path` belongs ONLY in `.gc/site.toml`; `city.toml` rig
+> blocks carry `prefix`/partition/role and never `path`. Whether `city.toml` uses `[[rig]]` or `[[rigs]]`
+> is unresolved — do NOT silently pick one. See config anchor §3 spelling note.
+
+**Phase-0 canonical install (~30 lines TOML + one template, AI-CONTEXT §13.1):**
 
 ```toml
 # pack.toml
+[pack]
+name   = "v4-factory"
+schema = 2
+
 [imports.core]
+source = "github.com/gastownhall/gascity//gastown"
 ```
+
 ```toml
 # city.toml
 [workspace]
-name = "v4-bootstrap"
+name     = "v4-bootstrap"
+provider = "claude"
 
 [[agent]]
-name = "worker"
+name     = "worker"
 provider = "claude"
 
 [beads]
-provider = "file"
+provider = "bd"            # Dolt-backed via bd binary (harvest-verified — F9, city.toml.example:32-36)
 ```
-Plus `agents/worker/prompt.template.md`. ~30 lines TOML + one template = full minimum (AI-CONTEXT §3.4).
-**Explicitly off at Phase 0:** `[daemon]`, `[mail]`, `[formulas]`, `[rigs]`, Dolt server, `[[service]]`,
-orders (AI-CONTEXT §3.4 line 122; README line 364).
 
-**Consistency / lifecycle.** Beads + events provide cross-session durability and the audit trail (P9/P10).
-Phase-1 layering adds `[formulas]` and `[[service]]` blocks (langfuse/cxdb/otel) per AI-CONTEXT §13.2;
-these are additive — they do not alter the Phase-0 substrate, only turn on latent capabilities (INV-4).
+```toml
+# .gc/site.toml  (written by entrypoint — F1)
+workspace_name = "v4-bootstrap"
+
+[[rig]]
+name = "rig1"
+path = "/workspace/rigs/rig1"
+```
+
+Plus `agents/worker/prompt.template.md`. **Explicitly off at Phase 0:** `[daemon]`, `[mail]`,
+`[formulas]`, `[rigs]`, `[[service]]`, orders (AI-CONTEXT §3.4 line 122; README line 364).
+
+**Environment variables (harvest-verified):**
+
+| Variable | Value | Source |
+|---|---|---|
+| `IS_SANDBOX=1` | Required for `claude --dangerously-skip-permissions` as root | F12; config anchor §3 |
+| `DOLT_REF=refs/heads/dolt-data` | Dolt push/clone ref; default `refs/dolt/data` rejected by proxies | F9; config anchor §3 |
+
+## 4. Data model / state
+
+C01 *owns the install and config*; the **schemas** of the stores it hosts are owned downstream (deferred,
+faithful to inventory). State C01 is the spec-of-record for:
+
+### 4.1 State table (sweep-2 — with R/W-by column)
+
+| State | Type | Req? | Description | Persistence | R/W-by |
+|---|---|---|---|---|---|
+| **Install + version pin** | filesystem artifact | R | The `gc` binary at pinned commit, pre-staged companion binaries (`bd`, `dolt`, `node`/`claude`), workspace layout (`packs/*`, `agents/<name>/prompt.template.md`) | Filesystem + version control | C01 writes (bootstrap); all read |
+| **`pack.toml`** | TOML file | R | Root pack manifest: `[pack] name`, `schema = 2`, `[imports.*]` | Version-controlled file | C01/C02/C03 write; `gc` reads at boot |
+| **`city.toml`** | TOML file | R | Workspace install config: agents, beads provider, optional sections | Version-controlled file | C01/C03 write; `gc` reads at boot |
+| **`.gc/site.toml`** | TOML file | R | Machine-local rig path bindings; entrypoint-written at container-start | Container-local (`.gitignore`d) | Entrypoint writes; `gc` reads at boot |
+| **Bead store** | Dolt SQL (F9) or file | R | Durable typed work-graph; `provider = "bd"` (Dolt) at Phase 0 | In-container Dolt SQL server; `dolt push` cadence for durability | C19/C20 schema; all agents R/W via `bd` CLI |
+| **Event bus log** | Append-only JSONL | R | `.gc/events.jsonl` — monotonic-seq append log recording every action | Filesystem within container | `gc` writes; C23 consumes |
+| **Molecule (in-flight)** | bead-tree in bead store | O | A formula instantiated into a live bead-tree; the runtime state of a running workflow | In bead store (molecule = bead-tree) | C13 writes; `gc` drives |
+| **`~/.claude.json`** | JSON file | R | Pre-acknowledged onboarding dialogs for `claude --dangerously-skip-permissions` (F12 / PLAN items 7–8) | Filesystem (container home) | Entrypoint/bootstrap writes; `claude` CLI reads |
+
+### 4.2 Native-claim → verification-status (sweep-2, from config anchor §4)
+
+C01's job is to STATE that Gas City provides these capabilities and DEFER their contracts to owning
+components. The table below marks each claim's verification status so downstream builders know which
+are grounded facts vs unverified.
+
+| Native claim | Owner component | Status | Conformance test |
+|---|---|---|---|
+| **Beads store** (durable typed work-graph) | C19, C20 | **harvest-verified** (F8, F9): Dolt SQL in-container, `bd` CLI, agents R/W through it | AC-C01-2 (smoke-signal round-trip) |
+| **Event bus / stream** | C23 | **needs-pinned-gc-run (G11)**: deep-dive shows `[events] provider` → `.gc/events.jsonl`; prototype README cites "logs lifecycle into the event stream" but the stream was not exercised end-to-end | `gc events --follow` shows agent-lifecycle + bead events (conformance check, Test G) |
+| **Attribution (`created_by`)** | C41 | **needs-pinned-gc-run (G11)**: deep-dive shows `gc config explain --provenance` and bead fields `From`/`Assignee`; a literal `created_by` field is `[inferred — needs G11]` | conformance check Test E; inspect bead fields against pinned `gc` |
+| **Rig partitioning** | C42 | **harvest-verified** (F10, F11): prefix is the scoping mechanism; `read_partition`/`write_partition` TOML grammar is needs-pinned-gc-run (G11) | conformance check Tests D, F |
+| **Durable Orders** | C40 | **needs-pinned-gc-run (G11)**: controller "fires due orders" verified (F6); crash-resume granularity NOT verified | conformance check Tests C1/C2/C3 |
+| **Reconciler / health-patrol** | C18, C56 | **harvest-verified** (F6, F11): `gc start` reconciles desired-vs-running, reaps dead sessions; `[daemon]` patrol cadence present | conformance check Test G |
+| **Sling / dispatch** | C05 | **harvest-verified** (F5, F8): `gc sling` dispatches a bead; worker pool `min=0` scales 0→1 on dispatch | AC-C01-1 (smoke-signal); conformance check smoke-signal |
+| **Sessions / provider runtime** | C04 | **harvest-verified** (F7): Phase-0 Provider-kind = tmux; each agent = one interactive `claude` pane | conformance check Test G; `gc session list` |
+| **Formula + molecule** | C12, C13 | **harvest-verified** definitionally (deep-dive: molecule = formula-as-beads, wisp = TTL molecule); `[formulas]` execution NOT enabled in prototype | Phase-1 conformance: enable `[formulas]`; `gc sling --formula <name>` cooks a molecule |
+| **Partition ENFORCEMENT (prevent vs detect)** | C34, C43 | **prevent-vs-detect-OPEN** (F10): prefix is the mechanism; enforcement strength UNVERIFIED | conformance check Test A (KEYSTONE — see §8.1) |
 
 ## 5. Behavior
 
 **Boot & configure (Phase 0).** Operator installs the pinned `gc`, writes `pack.toml` (`[imports.core]`)
 and `city.toml`, and one prompt template. `gc` parses the layered TOML; absent sections ⇒ capabilities
 off (INV-4). One `[[agent]]` with `provider = "claude"` makes Claude Code (C28) the worker via the
-session Provider (C04). `[beads] provider = "file"` stands up the file-backed work-graph. Result:
+session Provider (C04). `[beads] provider = "bd"` stands up the Dolt-backed work-graph. Result:
 a runnable single-agent factory with attribution + memory, no custom code (README line 355).
 
 **Run a unit of work (single-step at Phase 0; formula-driven from Phase 1).**
 1. Work is represented as a bead/wisp in the store.
 2. **Sling** (C05) routes it to the `worker` agent/pool by template/role.
-3. The agent runs inside a provider-backed **session** (C04) driving Claude Code.
+3. The agent runs inside a provider-backed **session** (C04, Phase-0 provider-kind = tmux — F7) driving Claude Code.
 4. Every action emits an **event** (append-only JSONL) and updates **beads**, all carrying `created_by`.
 5. The **Health Patrol** reconciler (C18) ticks toward desired state, applying bounded convergence gates.
 6. At Phase 1, multi-step work is a **formula** (TOML DAG, C12) instantiated into a **molecule**
@@ -166,8 +291,29 @@ a runnable single-agent factory with attribution + memory, no custom code (READM
 registers external services (LangFuse, CXDB, OTel collector) and agent `env` wires Claude Code telemetry
 (AI-CONTEXT §13.2). The substrate's behaviour is unchanged; latent sections light up (INV-4).
 
-> Sequence/state diagrams (Mermaid), exact `gc` subcommand contracts, and the formula→molecule execution
-> algorithm are **sweep-2+** and largely owned by C04/C05/C12/C13/C18. Deferred here per sweep-1 altitude.
+### 5.1 Install → conformance → ready lifecycle (sweep-2 — Mermaid stateDiagram-v2)
+
+The diagram below captures the C01-owned lifecycle: from raw binary obtain, through install and
+conformance check, to a substrate declared READY for downstream components to build against. The
+conformance check (AC-C01-2, §8) is the gate; the prevent-vs-detect outcome routes to D-30 (see §8.1).
+
+```mermaid
+stateDiagram-v2
+    [*] --> Uninstalled : start
+    Uninstalled --> Staged : pin commit b14c278; pre-stage gc/bd/dolt/claude binaries on host
+    Staged --> Configured : author pack.toml + city.toml + .gc/site.toml (entrypoint)
+    Configured --> Booted : gc start --foreground; IS_SANDBOX=1; claude.json pre-acked
+    Booted --> ConformanceRunning : run gascity-conformance-check.md battery
+    ConformanceRunning --> Ready : ALL tests PASS (smoke-signal + A-G)
+    ConformanceRunning --> PreventGateOpen : Test A PREVENT outcome
+    ConformanceRunning --> WatcherRequired : Test A DETECT-ONLY or SILENT outcome
+    PreventGateOpen --> Ready : D-30 watcher not needed; D-20 fence is a real control
+    WatcherRequired --> WatcherDesign : D-30 watcher MUST be built; unattended blocked until done
+    WatcherDesign --> Ready : watcher built + gates P2
+    Ready --> [*] : downstream Batch-1 components build against frozen seams
+    note right of WatcherRequired : auto-001 binding gate triggered\nP2/P3b blocked until watcher lands
+    note right of ConformanceRunning : Live-run OWED (needs Docker)\nAll tests currently status=OWED
+```
 
 ## 6. Failure modes & handling
 
@@ -184,8 +330,8 @@ third-party tool.
 > **Chosen: (b)**, as most consistent with the rest of v4: README §552 and AI-CONTEXT §14 *both* name
 > this as the single highest structural risk and Phase 0's explicit goal is "validate baseline before
 > adding complexity" (AI-CONTEXT §11 line 473). Faithful handling ⇒ C01's acceptance criteria (§8)
-> include a **Gas City-conformance verification** that exercises each claimed-native capability against
-> a *pinned* `gc`, and a recorded version pin (INV-1). v4 prescribes no fallback design if the bet fails
+> include a **Gas City conformance check** that exercises each claimed-native capability against a *pinned*
+> `gc`, and a recorded version pin (INV-1). v4 prescribes no fallback design if the bet fails
 > (the API-key/Temporal fallbacks are for other risks), so C01 **defers** "what replaces Gas City" to the
 > phase-plan/residual-risk register (C54/C57) — it is out of C01's faithful scope to invent a replacement.
 
@@ -214,12 +360,32 @@ conformance suite (§8) fails on a version bump that breaks a Native claim.
 > F-mode applicability is owned by C57 (coverage map); C01 surfaces the substrate-level failure classes
 > (dependency unavailability G11, version drift) and defers the canonical F1–F61 mapping there.
 
+### 6.1 Error taxonomy (sweep-2)
+
+C01's failure surface spans four categories: install failures, version-pin failures, conformance failures,
+and config-misplacement failures. Each row: condition → surfaced-as → caller recovery.
+
+| E-code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| **E-C01-01** | **Binary unavailable** — `gc` or `bd` binary not found at `/usr/local/bin/gc` | `exec: not found` at container boot; `gc start` never reaches Running | Re-run binary staging step (PLAN item 1); confirm host pre-stage succeeded before `docker build` |
+| **E-C01-02** | **Go version mismatch** — `go.mod` requires Go 1.26.3 but a different version is on PATH | `go build` error: "requires go 1.26.3 or newer" | Download and stage the exact Go version from `go.mod` (`head -5 go.mod` is authoritative — config anchor §1) |
+| **E-C01-03** | **Wrong commit / branch** — built from a commit other than `b14c278` | Behavioural deviation from harvest facts; conformance check failures surface it | Verify `git rev-parse HEAD` == `b14c278` before `docker build` |
+| **E-C01-04** | **`IS_SANDBOX=1` missing** — `claude --dangerously-skip-permissions` refuses root | `claude` exits with a permissions error at first agent dispatch | Set `IS_SANDBOX=1` in `.env` / container environment (F12; config anchor §3) |
+| **E-C01-05** | **`~/.claude.json` not pre-acked** — three onboarding dialogs block first `claude` invocation | `claude` hangs waiting for interactive input; no agent pane spawns | Pre-populate `~/.claude.json` with the pre-ack record (PLAN items 7–8) in the entrypoint |
+| **E-C01-06** | **Misplaced config key** — e.g. `[defaults.rig.imports.*]` in `pack.toml` or a `path=` in a `city.toml` rig block | PackV2 startup refusal — `gc start` exits non-zero with a config-validation error | Move the key to the correct file per §3.3 table; `[[rig]] path` belongs ONLY in `.gc/site.toml` (F1, F3) |
+| **E-C01-07** | **Conformance check failure** — one or more AC-C01-* tests fail against the pinned `gc` | Failing test output in the conformance check run log | Diagnose the specific AC; do NOT advance to Batch-2 component builds until all ACs pass (§8 gate) |
+| **E-C01-08** | **Version-pin drift** — a `gc` version bump breaks one or more AC-C01-* conformance tests | Regression in the conformance suite on re-run | Pin back to `b14c278`; investigate the breaking change; budget for migration (AI-CONTEXT §3.5 / §14) |
+| **E-C01-09** | **Prevent-vs-detect outcome unknown** — conformance check Test A not yet run | All P2/P3b design decisions that depend on enforcement strength are unresolved (prevent-vs-detect-OPEN) | Run Test A (Docker required); do NOT finalize C34/C43 prevent-gate design until outcome is recorded (D-30; §8.1) |
+| **E-C01-10** | **`DOLT_REF` mismatch** — default `refs/dolt/data` rejected by TLS-inspection proxy | `dolt push` fails; bead store not persisted between container restarts | Set `DOLT_REF=refs/heads/dolt-data` in `.env` (F9; config anchor §3) |
+
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
 - **Security.** C01 hosts the substrate; the lethal-trifecta / isolation posture is **NOT** C01's
   (deferred to C43/C42/C44). C01 only guarantees universal attribution (INV-3) as the audit foundation
   (P9). Secret handling for `env`/`[[service]]` endpoints is flagged but unspecced in v4 (G37) ⇒ deferred
   to C37-config/C57; C01 notes the plaintext-TOML exposure but does not resolve it (out of faithful scope).
+  **D-30 prevent-gate:** see §8.1 — the conformance check Test A is the gate that determines whether
+  unattended operation is safe without a blocking watcher.
 - **Cost.** Phase-0 substrate cost is effectively the `gc` binary (free, MIT) + one Claude Code Max seat
   ($200/mo, AI-CONTEXT §4.1). v4 gives no other substrate cost model (G32, deferred to C46/C57).
 - **Scale.** The substrate's throughput ceiling is the single-Max-seat agent limit (G34) — a property of
@@ -227,14 +393,15 @@ conformance suite (§8) fails on a version bump that breaks a Native claim.
 - **Observability.** The event bus (I7) records every action; Phase-1 wires Claude Code OTLP + raw-API
   bodies (AI-CONTEXT §13.2). C01 *hosts* these; C23–C27 own them.
 - **Ops.** Install = single Go binary; "single-engineer day to a few days, mostly config" (README line
-  374). Version pin + reproducible install are the key ops invariants (INV-1).
+  374). Version pin + reproducible install are the key ops invariants (INV-1). The conformance check
+  procedure at `architectures/v4/_meta/gascity-conformance-check.md` is the operationalized de-risk gate.
 
 ## 8. Acceptance criteria & test strategy
 
-Sweep-1 = high-level criteria (concrete tests at sweep 2).
+### 8.0 High-level criteria (sweep-1, preserved)
 
 1. **AC-1 (Phase-0 install runs):** the ~30-line `pack.toml` + `city.toml` + one template install boots a
-   single Claude Code worker with file-backed beads and **no custom code** (README Phase 0; AI-CONTEXT §13.1).
+   single Claude Code worker with Dolt-backed beads and **no custom code** (README Phase 0; AI-CONTEXT §13.1).
 2. **AC-2 (native capabilities verified — resolves G11/G03):** a **Gas City conformance check** exercises
    each Phase-0 Native claim against the *pinned* `gc` and records pass/fail: P1 (templates+config in VC),
    P2 (three-layer: agent+client+engine+beads), P4 (reconciler + tool-node primitives present), P9
@@ -250,19 +417,70 @@ Sweep-1 = high-level criteria (concrete tests at sweep 2).
 6. **AC-6 (attribution end-to-end — INV-3):** a unit of work produces beads and events all carrying a
    resolvable `created_by`, queryable via `gc bd …` and the event log (README line 231).
 
-**Test strategy.** A conformance pack (transfusable shape: Gas City's own `runtimetest/conformance.go`,
-AI-CONTEXT §3.6) that boots the pinned `gc`, runs one trivial unit of work, and asserts AC-1…AC-6. This
-suite is the *de-risking gate* for G11 and must pass before any Batch-2 component builds against C01.
+### 8.1 Concrete acceptance tests (sweep-2)
+
+The **Gas City conformance check** at `architectures/v4/_meta/gascity-conformance-check.md` is the
+**first-class acceptance gate** for C01. "Run the conformance check" is AC-C01-2 — the single most
+important test in this spec. The procedure operationalizes the D-23 spike protocol and covers Tests
+A through G. **Live-run status: OWED (needs Docker).**
+
+The key binding decisions cited verbatim:
+
+> **D-23 (ADOPTED — operator, 2026-06-01):** "do NOT bind holdout-integrity (C34) or the fence (C43)
+> to either 'prevent' or 'detect' until a focused Gas City reality-check spike verifies what a real
+> `gc` actually enforces at tool-call/config-load time. This spike is the first move of the next pass
+> (Sweep-2) and the highest-leverage de-risking action (it underwrites every 'Gas City does X natively'
+> claim)."
+
+> **D-30 (ADOPTED — operator, 2026-06-01):** "unattended operation (P2) and self-modification (P3b)
+> require the substrate to BLOCK (prevent at the tool-call/process boundary) — not merely detect —
+> out-of-boundary access on the relevant blast-radius face."
+
+The conformance check Test A (prevent-vs-detect, KEYSTONE) is the gate that turns the D-23 native
+claim into a fact and routes the D-30 prevent-gate outcome:
+- **Test A PREVENT** → D-30 watcher not needed; D-20 fence is a real control; P2/P3b may proceed.
+- **Test A DETECT-ONLY / SILENT** → D-30 watcher MUST be built before P2; `auto-001` binding gate.
+
+**Per-code AC table:**
+
+| AC-code | Given / when / then | Verifies | E-code cross-ref |
+|---|---|---|---|
+| **AC-C01-1** | Given the pinned install; when `gc start --foreground` completes; then `gc status` shows the controller running and the worker agent pane in `gc session list` | Phase-0 install runs (AC-1); INV-4 Phase-0 feature gating | E-C01-01, E-C01-04, E-C01-05 |
+| **AC-C01-2** | Given AC-C01-1 passes; when the full conformance check battery (Tests A–G) runs; then all tests PASS and outcomes are recorded in `gascity-conformance-check.md` Results Record | Native capabilities verified; G11 de-risked; Test A routes D-30 | E-C01-07, E-C01-09 |
+| **AC-C01-3** | Given the pinned commit `b14c278` + Go 1.26.3; when re-building the image from scratch; then the resulting `gc` binary is byte-for-byte identical to the original staged binary | Version pinned + reproducible (INV-1 / AC-3) | E-C01-02, E-C01-03, E-C01-08 |
+| **AC-C01-4** | Given the v4 artifact tree; when scanning all Go import paths; then no `github.com/gastownhall/gascity/internal/*` or `…/pkg/*` import is found | No-fork invariant (INV-2 / AC-4) | (none — this is a static check) |
+| **AC-C01-5** | Given Phase-0 `city.toml` with no `[formulas]` section; when `gc start` runs; then `gc formula list` returns empty or "formulas disabled"; adding `[formulas]` and restarting enables DAG composition without changing Phase-0 behavior | Feature-gating (INV-4 / AC-5) | E-C01-06 |
+| **AC-C01-6** | Given a unit of work dispatched via `gc sling`; when the worker bead is created and the event is emitted; then `bd get <id>` shows a non-null `created_by` field AND `gc events` shows the same field on the event record | Attribution end-to-end (INV-3 / AC-6) | E-C01-07 (conformance Test E) |
+| **AC-C01-7** | Given a `city.toml` with a `path=` field inside a `[[rig]]` or `[[rigs]]` block; when `gc start` runs; then it exits non-zero with a config-validation error referencing the misplaced `path` key | Config-misplacement rejection (F1, F3); INV-1 | E-C01-06 |
+| **AC-C01-8** | Given the Phase-0 install; when conformance check Test A runs (prevent-vs-detect, KEYSTONE); then the outcome (PREVENT / DETECT-ONLY / SILENT) is recorded in `gascity-conformance-check.md` Results Record and routed to D-30 | Prevent-vs-detect outcome; D-30 routing; C34/C43 design input | E-C01-09 |
+
+**Test strategy.** The `architectures/v4/_meta/gascity-conformance-check.md` procedure is the
+authoritative operationalization. Tests A–G are independent assertions runnable in parallel once the
+minimal stand-up passes. Tests A (prevent-vs-detect) and C (Orders durability) are the highest-priority
+runs because their outcomes reshape C34/C43 and C40 respectively. All tests carry status OWED until
+the Docker-capable environment is available.
 
 ## 9. Open questions
 
 - **OQ-1 (→ review-log, top):** **G11** — has anyone actually run `gc` end-to-end against the v4 Native
   claims, and what is the pinned version + commit? Until a conformance run exists, every downstream
   "Native" dependency is provisional. *This is the single highest-leverage unknown in v4.*
-- **OQ-2:** Which `gc` version to pin given two in-flight CI-enforced migrations (AI-CONTEXT §3.5)? Need a
-  version that satisfies all Phase-0/1 Native claims *and* a documented upgrade procedure.
+  **RESOLVED (Sweep-2): pinned = `lago-morph/gascity-prototype@b14c278`, Go 1.26.3, upstream SDK
+  `gastownhall/gascity@183897e` (D-23 substrate harvest; config anchor §1). These are the Sweep-2
+  ground-truth pins. End-to-end empirical run STILL OWED — the conformance check procedure exists
+  (`gascity-conformance-check.md`) but requires Docker and has not been executed. All 11 test
+  outcomes are status OWED. The pin is resolved; the empirical end-to-end is not. OQ text preserved.**
+
+- **OQ-2:** Which `gc` version to pin given two in-flight CI-enforced migrations (AI-CONTEXT §3.5)?
+  **RESOLVED (Sweep-2): pin = `b14c278` / `@183897e` per the D-23 harvest (§3.1, config anchor §1).
+  Upgrade procedure: re-run conformance check against the candidate commit; any AC regression blocks
+  the bump. The migration tail risk is documented at §6 and in the conformance check procedure.**
+
 - **OQ-3:** Exact `gc` CLI surface (subcommands/flags) v4 relies on (`gc bd`, `gc formula export`,
   `gc converge resume`) — enumerate and freeze at sweep 2 so C05/C12/C18 can build against it.
+  **RESOLVED (Sweep-2): frozen in §3.2. Exact flag syntax (e.g., `--since` duration, `--json`) remains
+  `[needs-pinned-gc-run (G11)]` until the conformance check live run confirms them.**
+
 - **OQ-4 (→ C57):** The corpus-wide "6 of 12 native" headline still needs reconciling to the
   phase-dependent 5/6 (G03); C01 fixes its own statement but the global count lives in the coverage map.
 
@@ -276,4 +494,6 @@ the canonical spelling is `[[rig]]` (singular). `[[rigs]] path =` is a PackV2 va
 path bindings for a rig's working directory live in `.gc/site.toml` as `[[rig]]` entries, written
 at container-start time by the entrypoint (which knows the runtime filesystem paths). `city.toml`
 carries `[[rig]]` blocks for partition/role semantics only, without a `path` field. This makes the
-`[[rig]]` spelling in C01 canonical (consistent with AI-CONTEXT §13.3).
+`[[rig]]` spelling in C01 canonical (consistent with AI-CONTEXT §13.3). Note: whether `city.toml`
+uses `[[rig]]` or `[[rigs]]` remains `needs-pinned-gc-run (G11)` per the config anchor §3 spelling
+note — F1 names `[[rig]]` canonical while the prototype `city.toml.example` uses `[[rigs]]` plural.

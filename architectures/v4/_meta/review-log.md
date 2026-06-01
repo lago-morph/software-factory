@@ -112,6 +112,15 @@ Surfaced by the cross-cluster seam-consistency adversary review of the C19/C20/C
 
 - **D-40 (ADOPTED — lead, resolving XC-2 / C20:OQ-3 / C52:OQ3; 2026-06-01) — `factory_build` build-state is a STATUS transition, not a type-flip.** The in-progress → completed advance of a factory self-build is a **`status` field transition on a single `factory_build` bead type** (`status: in_progress → completed`), **NOT** a flip from a distinct `factory_build_in_progress` type to `factory_build`. The cold-start / resume query keys on `factory_build` + `status = in_progress` (resolving **XC-2**'s AI-CONTEXT §16 hard-coded `gc bd find --type factory_build_in_progress` to a `--type factory_build --status in_progress` query). **C20** owns the `factory_build` schema + the `status` slot; **C52** drives the transition; **C53** records the go/no-go on the same bead (C53:OQ-4). Applied: C20 (factory_build lifecycle + status slot), C52 (build-state advance), C53 (go/no-go record). Resolves XC-2 + C20:OQ-3 + C52:OQ3. Rewind: revert this entry + the C20/C52/C53 `factory_build` annotations.
 
+### Sweep-2 opus-panel integration fixes (2026-06-01) — D-41
+
+- **D-41 (ADOPTED — lead, from the Sweep-2 opus-panel integration adversary; 2026-06-01) — Four cross-product integration fixes.** The 5-expert opus panel's cross-product integration adversary found 4 seam contradictions that the per-cluster seam reviews missed (each cluster review trusted the *other* side of a seam crossing two reviews). All corrected without architectural change:
+  1. **C52↔C53 circular hand-off (was a deadlock)** → **linearized**: C52 review-phase → `ReviewVerdict` → `C53.decide(satisfaction, review_verdict, transfusion_verdict) → GoNoGoDecision` → C52 deploy-phase. C53 runs AFTER C52's human review; its decision is C52's deploy trigger (one-directional, no cycle).
+  2. **`factory_build` status enum collision** → the build-state terminal aligns to C20's bead-envelope `state = closed` (the `in_progress → closed` envelope lifecycle), **NOT** a new `completed` value (which collided with C20's `{open, in_progress, closed}`); the go/no-go outcome is the separate `milestone_verdict` field. **This CORRECTS D-40's stated `completed` terminal to `closed`.**
+  3. **C09↔C05 ordering** → C09's sequence is **DispatchRequest-first** (C05 builds the `DispatchRequest`, calls C09; C09 reads `bead_id`/`created_by` from it — consistent with D-35). C09's self-contradicting diagram fixed.
+  4. **C41 actor-kind enum** → add `tool` → `{city, rig, agent, tool}` (admits `tool:<name>` emitted by C17/C32; D-29 wire type).
+  Applied: C52 / C53 / C20 / C09 / C41 (see [`panel-sweep2/INTEGRATION-FIXES.md`](panel-sweep2/INTEGRATION-FIXES.md)). Panel overall: 4/5 `right-idea-change-X-before-building`, 1/5 `sound-as-is` — the spine SHAPE is sound; these were the change-before-building corrections. Rewind: revert this entry + the integration-fix commit.
+
 ## Cross-component issues (raised during Sweep 1 builds)
 
 - **XC-1 — C19↔C20 dependency direction contradiction.** The canonical inventory lists C20→C19

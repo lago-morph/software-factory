@@ -1,6 +1,6 @@
 # Sweep-2 dispatch addendum (2026-06-01 spine run)
 
-> Read this **with** [`BUILDER-BRIEF.md`](./BUILDER-BRIEF.md) (persona) or [`ADVERSARY-BRIEF.md`](./ADVERSARY-BRIEF.md) (critic). This addendum sets the **Sweep-2 depth contract** for the 25-component safe-self-build spine. The format exemplar is [`spec/C20-bead-schema.md`](../spec/C20-bead-schema.md) — match its shape.
+> Read this **with** [`BUILDER-BRIEF.md`](./BUILDER-BRIEF.md) (persona) or [`ADVERSARY-BRIEF.md`](./ADVERSARY-BRIEF.md) (critic). This addendum sets the **Sweep-2 depth contract** for the 25-component safe-self-build spine. The format exemplar is the [`C20-bead-schema.md`](../spec/C20-bead-schema.md) spec — match its shape.
 
 ## The depth bar (Sweep-2 = implementation-ready)
 

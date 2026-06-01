@@ -169,7 +169,8 @@ def score(
 
 **Preconditions:** (a) `trajectory_log` exists and is parseable Inspect AI log format; (b) `scenario` is
 resolvable from the judge rig's read surface (D-38); (c) `judge_model` is not None (C29 resolved it);
-(d) `dod` is non-empty (C08 produced it).
+(d) `dod` is non-empty (C08 produced it); **(e) `trajectory_log.inspect_version` matches C32's installed
+Inspect AI version — mismatch raises E-C32-02 (REV-SEAM-02: version-pin guard).**
 
 **Postconditions:** exactly one attributed `ScoreRecord` is persisted as a C19 bead (`score_record` type)
 and is consumable by C33 and auditable by C34.
@@ -440,6 +441,8 @@ events (visible to the C36–C39 self-healing loop), never as silent or fabricat
   makes the independence audit (C34) and judge-FP-rate meta-metric (C46) computable.
 - **Ops.** The scorer is adopted off-the-shelf (Inspect AI) and exposed declaratively as a Gas City pack
   (C02/C17), no Go fork; rubrics are versioned with the scenario corpus (C30).
+  **[REV-SEAM-02 — version-pin requirement added:]** C32's `[[service]] type="inspect_ai"` provider block MUST carry the **same pinned Inspect AI version** as C31's pack (e.g. `version = "0.3.x"`). C32 MUST validate the `inspect_version` field on the incoming `TrajectoryLog` envelope (C31 §4.1) against its own installed version at score time; a version mismatch MUST be treated as a log-parse failure and surface as E-C32-02. Version drift between C31 and C32 silently breaks post-hoc scoring (C31 flagged this risk at OQ-4 / §7 Ops).
+  **[REV-SEAM-03 — C22 registration seam added:]** The `score_record` bead type (`softwarefactory.v4.beads:score_record`) MUST be registered in C22 (D-3 mechanism) at C32's pack installation step, before any scoring run. C33, C34, and C46 consumers depend on the registration to locate the bead-type schema. This mirrors C33's `satisfaction_metric` registration seam (C33 §3.5/§7 Ops).
 
 ## 8. Acceptance criteria & test strategy (sweep-2: concrete AC-code table)
 

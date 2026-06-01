@@ -141,12 +141,14 @@ the scenario/judge capability is enabled, C03).
 ### 3.2 Sweep-2 concrete signature
 
 > **OQ-4 RESOLVED (Sweep-2):** C32's `ScoreRecord` is frozen (D-39). The fields C33 reads are
-> `score_value: float64` (normalised 0.0–1.0 by C32, Inspect AI scorer shape), `scenario_id: string`,
-> `trajectory_ref: string`, and `independence_level: string`. Ensemble collapse (multiple judges → one
-> `score_value`) is **C32's** contract (boundary; §1 NOT); C33 consumes the already-collapsed
-> `score_value`. If C32 surfaces a future `score_per_judge: []float64` field, that remains C32's — C33
-> reduces only the `score_value` field. **C33's normalisation rule: accept `score_value` ∈ [0.0, 1.0];
+> `satisfaction_score: float64` (normalised 0.0–1.0 by C32, Inspect AI scorer shape — the D-39-canonical
+> field name; **not** `score_value`), `scenario_id: string`, `trajectory_ref: string`, and
+> `independence_level: string`. Ensemble collapse (multiple judges → one `satisfaction_score`) is
+> **C32's** contract (boundary; §1 NOT); C33 consumes the already-collapsed `satisfaction_score`. If C32
+> surfaces a future `score_per_judge: []float64` field, that remains C32's — C33 reduces only the
+> `satisfaction_score` field. **C33's normalisation rule: accept `satisfaction_score` ∈ [0.0, 1.0];
 > reject (flag E-C33-02) any record where the field is absent or outside [0.0, 1.0].**
+> **[REV-SEAM-01 fix: field name corrected from `score_value` → `satisfaction_score` to match C32's D-39 frozen schema]**
 
 ```
 // Primary entry — the only public surface of the tool node.
@@ -157,8 +159,9 @@ func reduce(
 ) (SatisfactionDistribution, error)
 
 // ScoreRecord — consumed fields (D-39; C32 owns full schema, C33 reads subset)
+// [REV-SEAM-01 fix: SatisfactionScore matches C32's D-39 frozen field name `satisfaction_score`]
 type ScoreRecord struct {
-    ScoreValue        float64  // normalised [0.0, 1.0]; required (E-C33-02 if absent/OOB)
+    SatisfactionScore float64  // normalised [0.0, 1.0]; required (E-C33-02 if absent/OOB)
     ScenarioID        string   // for grouping / population key
     TrajectoryRef     string   // for population-honest logging (INV-4)
     IndependenceLevel string   // carried through to output for C34 auditability
@@ -191,12 +194,12 @@ If a future version of C32 adds fields C33 needs, this table is the **FLAG trigg
 
 | Field (C32-owned) | Type | Req | Semantics | R/W-by |
 |---|---|---|---|---|
-| `score_value` | float64 | yes | Normalised satisfaction score, [0.0, 1.0] | R: C33; W: C32 |
+| `satisfaction_score` | float64 | yes | Normalised satisfaction score, [0.0, 1.0] — the D-39 canonical name (C32 §3.2). **[REV-SEAM-01 fix: was `score_value` — corrected to match C32 frozen schema]** | R: C33; W: C32 |
 | `scenario_id` | string | yes | Scenario identity for grouping (I3) | R: C33; W: C32 |
 | `trajectory_ref` | string | yes | Trajectory reference for audit log (INV-4) | R: C33; W: C32 |
 | `independence_level` | string | no | Carried into output record for C34 auditability | R: C33; W: C32 |
 
-**FLAG — no new C32 field needed:** C33's reduction requires only `score_value`. All other fields are carried
+**FLAG — no new C32 field needed:** C33's reduction requires only `satisfaction_score`. All other fields are carried
 through for auditability/grouping. No field absent from C32's Sweep-2 frozen schema is required.
 
 ### 3.4 SatisfactionDistribution schema (OQ-2 RESOLVED — see §9)
@@ -221,7 +224,7 @@ through for auditability/grouping. No field absent from C32's Sweep-2 frozen sch
 | `grouping_key` | string | yes | Dimension used (e.g. `"spec_revision"`) | W: C33; R: C46/C53/C55 |
 | `grouping_value` | string | yes | The spec-revision ID (or scenario/cohort value) | W: C33; R: C46/C53/C55 |
 | `n` | int | yes | Sample count (population size; INV-4) | W: C33; R: C46/C53/C55 |
-| `mean` | float64 | yes | Arithmetic mean of `score_value` across population | W: C33; R: C46/C53/C55 |
+| `mean` | float64 | yes | Arithmetic mean of `satisfaction_score` across population | W: C33; R: C46/C53/C55 |
 | `p10` | float64 | yes | 10th percentile (tail — detects consistently poor runs) | W: C33; R: C46/C53/C55 |
 | `p50` | float64 | yes | Median (50th percentile) | W: C33; R: C46/C53/C55 |
 | `p90` | float64 | yes | 90th percentile (tail — detects ceiling of good runs) | W: C33; R: C46/C53/C55 |
@@ -297,7 +300,7 @@ wired downstream of C32 (judge outputs land on C19) and upstream of C46/C53/C55.
 
 **Aggregate path (steady state):**
 
-```
+```mermaid
 sequenceDiagram
     participant Caller as C46/C53/C55 (consumer)
     participant C33 as C33 aggregator (tool node)
@@ -310,7 +313,7 @@ sequenceDiagram
     alt n == 0
         C33-->>Caller: E-C33-01 insufficient-sample bead (n=0)
     else n >= 1
-        C33->>InspectAI: reduce score_values via Inspect AI scorer reduction
+        C33->>InspectAI: reduce satisfaction_scores via Inspect AI scorer reduction
         InspectAI-->>C33: per-task reduction primitives
         C33->>C33: compute mean, p10, p50, p90, std_dev (thin stats helper)
         C33->>C33: if report_cutline set: compute rate_above_cutline
@@ -324,12 +327,12 @@ sequenceDiagram
 1. **Select population (I3):** resolve the grouping key (e.g. all judge outputs for a given spec-revision,
    optionally a scenario/cohort slice).
 2. **Read judge outputs (I1):** query C19 for that population's judge-output beads; collect per-trajectory
-   `ScoreRecord.score_value` fields. Exclude records where `score_value` is absent or outside [0.0, 1.0];
+   `ScoreRecord.satisfaction_score` fields (D-39 canonical name; **[REV-SEAM-01 fix]**). Exclude records where `satisfaction_score` is absent or outside [0.0, 1.0];
    record the exclusion count (field `excluded_count` in the bead; logged as an event).
 3. **Reduce (I2):** apply v4's named Inspect AI score reduction + thin stats helper to the collected
-   `score_value` slice → `mean`, `p10`, `p50`, `p90`, `std_dev`. No model call (INV-2); no pass/fail verdict (INV-3).
+   `satisfaction_score` slice → `mean`, `p10`, `p50`, `p90`, `std_dev`. No model call (INV-2); no pass/fail verdict (INV-3).
 4. **Optional cutline stat:** if `report_cutline` is configured, compute `rate_above_cutline =
-   count(score_value > cutline) / n`. This is a reporting statistic only — C33 emits no verdict (INV-3).
+   count(satisfaction_score > cutline) / n`. This is a reporting statistic only — C33 emits no verdict (INV-3).
 5. **Write bead (D-36):** persist the `SatisfactionDistribution` record to C19 as a `satisfaction_metric` bead.
 6. **Emit (I4):** return the `SatisfactionDistribution` (including `bead_id`) to the caller (C46/C53/C55).
 
@@ -410,9 +413,9 @@ capability, but a **C08 change**)?
 | E-code | Condition | Surfaced-as | Caller recovery |
 |---|---|---|---|
 | **E-C33-01** | Population is empty (n=0 judge-output beads for the grouping key) | Returns a bead with `n=0`, `excluded_count=0`, and all stat fields absent; no error return — the insufficient-sample case is a valid (degenerate) result, not a crash | C46/C53: check `n` before interpreting stats; C53 should gate on minimum-n (OQ at C53, not C33) |
-| **E-C33-02** | `ScoreRecord` has `score_value` absent or outside [0.0, 1.0] | Record excluded; `excluded_count` incremented in output bead; event logged to observability stream | Caller: inspect `excluded_count`; if high, investigate C32 output integrity; C34 audit |
+| **E-C33-02** | `ScoreRecord` has `satisfaction_score` absent or outside [0.0, 1.0] (D-39 canonical field; **[REV-SEAM-01 fix]**) | Record excluded; `excluded_count` incremented in output bead; event logged to observability stream | Caller: inspect `excluded_count`; if high, investigate C32 output integrity; C34 audit |
 | **E-C33-03** | `grouping_value` supplied in config matches no beads on C19 (key exists but value is unknown) | Same as E-C33-01 (n=0 result); the empty-population path subsumes this case | Caller: verify grouping_value against known spec-revision IDs before invoking |
-| **E-C33-04** | Score-scale mismatch — `score_value` consistently at or near 0.0 or 1.0 across entire population (boundary-saturation signal) | `std_dev` near 0.0 in output bead; an informational event is logged | C46: flag to operator as a potential judge calibration issue (PF-2 from review-log); not a C33 error |
+| **E-C33-04** | Score-scale mismatch — `satisfaction_score` consistently at or near 0.0 or 1.0 across entire population (boundary-saturation signal) | `std_dev` near 0.0 in output bead; an informational event is logged | C46: flag to operator as a potential judge calibration issue (PF-2 from review-log); not a C33 error |
 | **E-C33-05** | C19 query failure (bead store unreachable or returns error) | Error returned to caller; no bead written | Caller (C46/C53): retry with backoff; if C19 is persistently unavailable, escalate to operator (the evaluation pack health channel) |
 | **E-C33-06** | `report_cutline` out of [0.0, 1.0] in config | Config validation error at pack start; tool node refuses to start | Operator: correct `report_cutline` in pack TOML; redeploy |
 
@@ -420,7 +423,7 @@ capability, but a **C08 change**)?
 - **Malformed / missing judge-output bead** (score absent or off-scale) → E-C33-02 above: exclude from the
   population + record the exclusion count. Do not let one bad bead poison the distribution.
 - **Judge disagreement / multi-scorer inputs** (C32 multi-judge ensemble, README:187) → C33 reduces whatever
-  `score_value` C32 emits; how ensemble disagreement collapses to one `score_value` is **C32's** contract, not
+  `satisfaction_score` C32 emits; how ensemble disagreement collapses to one `satisfaction_score` is **C32's** contract, not
   C33's (boundary; OQ-4 RESOLVED below).
 
 > F-mode applicability is owned by **C57** (coverage map). C33 underwrites the satisfaction-over-population
@@ -497,15 +500,15 @@ bead-population read/reduce glue Inspect AI's per-task reduction does not by its
 
 | AC-code | Given / When / Then | Verifies |
 |---|---|---|
-| **AC-C33-10** | Given: 10 C32-written judge-output beads with `score_value` in [0.2, 0.9] for spec-revision "R1". When: `reduce(groupingKey="spec_revision", groupingValue="R1")` is called. Then: output bead has `n=10`, `mean` ≈ arithmetic mean of the 10 values, `p50` ≈ median, `std_dev` > 0, no `verdict` field. | INV-1 (distribution not boolean), §3.4 schema |
-| **AC-C33-11** | Given: 2 of 10 beads have `score_value=NaN` (malformed). When: reduce is called. Then: `n=8`, `excluded_count=2`, stats computed over 8 valid records; no crash. | E-C33-02 exclusion path |
+| **AC-C33-10** | Given: 10 C32-written judge-output beads with `satisfaction_score` in [0.2, 0.9] for spec-revision "R1" (**[REV-SEAM-01 fix]**). When: `reduce(groupingKey="spec_revision", groupingValue="R1")` is called. Then: output bead has `n=10`, `mean` ≈ arithmetic mean of the 10 values, `p50` ≈ median, `std_dev` > 0, no `verdict` field. | INV-1 (distribution not boolean), §3.4 schema |
+| **AC-C33-11** | Given: 2 of 10 beads have `satisfaction_score=NaN` (malformed; **[REV-SEAM-01 fix]**). When: reduce is called. Then: `n=8`, `excluded_count=2`, stats computed over 8 valid records; no crash. | E-C33-02 exclusion path |
 | **AC-C33-12** | Given: 0 judge-output beads for grouping key "R99". When: reduce is called. Then: output bead has `n=0`, stat fields absent, `excluded_count=0`; no error return; caller receives the degenerate result. Verifies E-C33-01. | E-C33-01 insufficient-sample |
-| **AC-C33-13** | Given: a population of 5 beads + `report_cutline=0.7`. When: reduce is called. Then: output bead includes `rate_above_cutline = count(score_value > 0.7) / 5`; bead still has no `verdict` or `pass` field. | INV-3 (threshold-free; cutline is reporting-only) |
+| **AC-C33-13** | Given: a population of 5 beads + `report_cutline=0.7`. When: reduce is called. Then: output bead includes `rate_above_cutline = count(satisfaction_score > 0.7) / 5`; bead still has no `verdict` or `pass` field. | INV-3 (threshold-free; cutline is reporting-only) |
 | **AC-C33-14** | Given: the same 10 beads reduced twice (no bead added or modified). When: `reduce()` is called a second time. Then: second output bead has identical `mean`, `p10`, `p50`, `p90`, `std_dev` as the first. | INV-5 (reproducible) |
 | **AC-C33-15** | Given: `report_cutline=1.5` in pack TOML. When: the tool node starts. Then: it refuses to start and returns E-C33-06 config error; no bead is written. | E-C33-06 config validation |
 | **AC-C33-16** | Given: C19 bead store is unreachable. When: reduce is called. Then: E-C33-05 is returned; no partial bead is written; the caller can retry. | E-C33-05 store failure |
 | **AC-C33-17** | Given: the output bead is written to C19 (D-36). When: C46 queries C19 for `type="softwarefactory.v4.beads:satisfaction_metric"`. Then: the bead is found and its `mean`/`p10`/`n` fields match the reduce output. | D-36 bead-write contract; C46 consumption |
-| **AC-C33-18** | Given: `score_value` fields are all 1.0 (boundary-saturation). When: reduce is called. Then: `std_dev` ≈ 0.0, E-C33-04 informational event is logged; no crash; result bead is valid. | E-C33-04 saturation signal |
+| **AC-C33-18** | Given: `satisfaction_score` fields are all 1.0 (boundary-saturation; **[REV-SEAM-01 fix]**). When: reduce is called. Then: `std_dev` ≈ 0.0, E-C33-04 informational event is logged; no crash; result bead is valid. | E-C33-04 saturation signal |
 
 **E↔AC cross-references:**
 
@@ -554,8 +557,9 @@ C33's distribution is the canonical satisfaction number.
   Per-criterion aggregation is the clean I2/I3 sweep-2 extension when revisited. (Same FE-5 ruling C32 surfaces.)
 
 - **OQ-4 — RESOLVED (Sweep-2): score scale + ensemble collapse (C32 boundary).** Per D-39: C32 owns and freezes
-  the `ScoreRecord` schema. C33 reads `score_value: float64 ∈ [0.0, 1.0]` (already normalised by C32/Inspect AI).
-  Ensemble collapse (multiple judges → one `score_value`) is C32's contract; C33 consumes the post-collapse value.
+  the `ScoreRecord` schema. C33 reads `satisfaction_score: float64 ∈ [0.0, 1.0]` (D-39 canonical field name; already normalised by C32/Inspect AI;
+  **[REV-SEAM-01 fix: was `score_value` — corrected to match C32 frozen schema]**).
+  Ensemble collapse (multiple judges → one `satisfaction_score`) is C32's contract; C33 consumes the post-collapse value.
   C33's normalisation rule: accept [0.0, 1.0], reject outside (E-C33-02). No new field needed from C32 for C33's
   reduction. *(Was: "Score scale + ensemble-collapse-to-one-score is C32's contract; C33 normalisation (I2) frozen
   against C32 output shape sweep-2.")*

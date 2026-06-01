@@ -425,14 +425,14 @@ sequenceDiagram
     participant C34 as Holdout audit (C34)
     participant C31 as Scenario runner (C31)
 
-    Auth->>Repo: write scenarios/<component>/<name>.py (Inspect AI Task)
+    Auth->>Repo: write scenarios/CXX/eval_task.py (Inspect AI Task, INV-5)
     Auth->>Repo: git commit (commit SHA = provenance + tamper-evidence, INV-4)
-    Auth->>Man: append manifest entry with task_path, task_name, created_by, git_commit, created_at
+    Auth->>Man: append manifest entry (task_path, task_name, created_by, git_commit, created_at)
     Auth->>Repo: git commit MANIFEST.json (generated_at_commit = HEAD SHA)
     Repo-->>C34: I6 path feed available (scenario paths + git_commit per entry)
     Repo-->>C31: I7 corpus retrieval available (task_path + task_name per component)
-    Note over Auth,Repo: Worker rig has NO read_partition on scenarios (C42 INV-3; C34 enforces D-13)
-    Note over C34: C34 baselines MANIFEST generated_at_commit vs repo HEAD; detects drift
+    Note over Auth,Repo: Worker rig excluded from scenarios partition (C42 INV-3, C34 enforces D-13)
+    Note over C34: C34 baselines MANIFEST generated_at_commit vs repo HEAD detects drift
 ```
 
 ## 6. Failure modes & handling

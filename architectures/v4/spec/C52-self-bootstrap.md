@@ -256,7 +256,7 @@ stateDiagram-v2
     RecoverFields --> Unrecoverable : missing workflow_handle or dangling ref (E-C52-02)
     Resumable --> Running : gc converge resume bead_id (re-enters §5.1 at Running)
     Unrecoverable --> OperatorGate : escalation - restart-from-spec requires operator ack
-    OperatorGate --> Specced : operator approves restart (new bead opened; old bead preserved)
+    OperatorGate --> Specced : operator approves restart (new bead opened, old bead preserved)
 ```
 
 ### 5.2 Recursion steps (sweep-2 concrete)

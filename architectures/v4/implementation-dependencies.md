@@ -1,6 +1,6 @@
 # Implementation dependencies — an implementer's build order for v4
 
-**What this is.** A build order for the 57 v4 components, organized by the **product** each one belongs to. A *product* is the unit you build, test, and integrate as a whole: either an **external off-the-shelf product** you adopt and configure (one Gas City install brings up fifteen components at once), or an **internal custom product** — a cohesive cluster of original engineering, sometimes a single component. Every dependency stated here is taken directly from the "Depends on" column of the [component inventory](./_meta/component-inventory.md); this document adds no ordering the inventory doesn't require and invents no edge it doesn't list (the two functional run-flow edges that the strict graph misses are called out explicitly where they appear).
+**What this is.** A build order for the 57 v4 components, organized by the **product** each one belongs to. A *product* is the unit you build, test, and integrate as a whole: either an **external off-the-shelf product** you adopt and configure (one Gas City install brings up fifteen components at once, eleven of them in the backbone), or an **internal custom product** — a cohesive cluster of original engineering, sometimes a single component. Every dependency stated here is taken directly from the "Depends on" column of the [component inventory](./_meta/component-inventory.md); this document adds no ordering the inventory doesn't require and invents no edge it doesn't list (the two functional run-flow edges that the strict graph misses are called out explicitly where they appear).
 
 **Why products, not build-phases.** Most of v4's substrate is software that already exists. The work of "building C01, C18, C19, C23, C41, C42 …" is, in reality, *installing and configuring one binary*. Organizing the build by the product being adopted keeps that natural clustering visible: you see at a glance that a dozen "components" are one install, and that the real engineering cost lives in a much smaller set of custom products. Within each product the components carry their own dependency edges, and the [build order across products](#build-order-across-products) section threads those edges into a single schedule.
 
@@ -19,48 +19,51 @@ The single most important question for planning is: *what is the shortest path t
 
 **The target.** The first moment the factory can **author a spec for one of its own next components, build it in isolation, have that build scored by a trustworthy satisfaction signal, and pass it through a human-reviewed go/no-go gate before it deploys.** In component terms the apex is the **bootstrap-validation milestone (C53)** — "first factory-built component passes review and deploys" — standing behind the **isolation fence (C43)**. Everything those two transitively need, plus the bits required to actually *run* a build and to make that run *safe*, is the backbone. Build this vertical slice as aggressively as staffing allows; defer all the breadth (extra linters, full observability, twin fidelity, self-optimization) until the slice closes.
 
-### The backbone is six products, not twenty-five components
+### The backbone: 25 components, but only seven products to build
 
-The backbone is **25 components**, but you do **not** build 25 things in sequence. They belong to **six products**, and the single largest — **adopting and configuring Gas City — brings up eleven of the twenty-five at once**, because they are facets of the same installed binary (see [the Gas City product](#gas-city--gc-binary-mit) below).
+The backbone is **25 components**, but you do **not** build 25 things in sequence. They belong to **seven products**, and the single largest — **adopting and configuring Gas City — brings up eleven of the twenty-five at once**, because they are facets of the same installed binary (see [the Gas City product](#gas-city--gc-binary-mit) below).
 
 ```mermaid
 flowchart TD
   G["Gas City (adopt)<br/>C01 C02 C03 C04 C05<br/>C17 C18 C19 C23 C41 C42"]
   CC["Claude Code (adopt)<br/>C28 + model-floor C29"]
-  S["Spec intake (custom)<br/>C08 C09 + bead schema C20"]
+  S["Spec intake (custom)<br/>C08 C09"]
+  BS["Bead-type schema (custom)<br/>C20"]
   E["Evaluation tier on Inspect AI<br/>C30 C31 C32 C33"]
   F["The fence (custom)<br/>C43 boundary-typing + C34 holdout"]
   B["Bootstrap (custom)<br/>C51 C52 C53"]
   G --> CC --> E
   G --> S --> B
+  G --> BS --> B
   G --> E --> B
   G --> F
   E --> F
 ```
-*Caption: the backbone in six products. Gas City is one workstream that delivers eleven backbone components together; the rest are genuinely separate engineering. The fence sits **below** the evaluation tier, not beside it: its holdout-integrity half (C34) scores against the eval harness (C30/C32), so it cannot start until that tier exists; only its boundary-typing half (C43) can be pulled forward right after Gas City. The fence and bootstrap are the two parallel preconditions for the first *safe* self-build. Depth is ~5 product-levels within the backbone, not 25 steps.*
+*Caption: the backbone in seven products. Gas City is one workstream that delivers eleven backbone components together; the rest are separate engineering. The fence follows the evaluation tier — its holdout half (C34) scores against that tier (C30/C32) — while only its boundary-typing half (C43) can start right after Gas City. Depth is ~5 product-levels, not 25 steps.*
 
 | Product | Backbone components | What it is | Built as one unit because |
 |---|---|---|---|
 | **Gas City** (adopt) | C01, C02, C03, C04, C05, C17, C18, C19, C23, C41, C42 | Install + pin the `gc` binary; write `city.toml`/`pack.toml`; verify its native claims | They all ship *inside* one binary; the install + config turns them on at once. One workstream, not eleven builds. |
 | **Claude Code** (adopt) + **model-floor** (custom) | C28, C29 | Claude Code as the worker (a separate dependency Gas City *drives*) + the cost/family routing policy authored on top of it | Standing up the `claude` provider preset is adoption; the routing policy (C29) is the one authored piece. |
-| **Spec intake** (custom) | C08, C09, C20 | A version-controlled spec artifact (C08), its prompt-template binding (C09), and the bead-type schema (C20) the bootstrap predicate reads | The format, its execution binding, and the bead types it produces are co-designed. |
+| **Spec intake** (custom) | C08, C09 | A version-controlled spec artifact (C08) and its prompt-template binding (C09) | The format and its execution binding are co-designed. |
+| **Bead-type schema** (custom) | C20 | The authored bead-type contract the bootstrap predicate reads — its own product, layered on Gas City's bead store (C19) | It is the written contract for the beads Gas City already provides; it has its own dependency (C19), not Spec intake. |
 | **Evaluation tier on Inspect AI** (adopt framework, then author) | C30, C31, C32, C33 | Author scenarios in an isolated rig (C30), **run** them (C31), **judge** the trajectory (C32), **aggregate** satisfaction (C33) | This is the hinge of the whole build; the scenarios and judge prompts are authored together on one harness. |
 | **The fence** (custom) | C34, C43 (boundary-typing half) | Holdout integrity (C34) + the lethal-trifecta blast-radius boundary that must be up before any unattended run | Both are safety policy composed over Gas City process boundaries, rig partitions (C42), and filesystem permissions. |
 | **Bootstrap** (custom) | C51, C52, C53 | Gene-transfusion predicate (C51), the self-bootstrap recursion + human design-review gate (C52), the go/no-go milestone (C53) | The recursion and its acceptance gate are one mechanism. |
 
-**Product order.** `Gas City` → (in parallel) `Claude Code`, `Spec intake`, and the bead schema → `Evaluation tier` → `the fence` and `Bootstrap` (parallel, both gated on the eval tier). The one piece that can be pulled all the way forward is the fence's **boundary-typing half** (C43): it needs only rig partitioning (C42), so it can be built right after Gas City; only the fence's **holdout-integrity half** (C34) waits on the eval tier. Gas City is the long pole *within* the backbone — and its own long pole is the **Gas City conformance check**: nobody has yet run `gc` end-to-end against v4's "native" claims, so the very first practical action is to verify the substrate before anything is stacked on it.
+**Product order.** `Gas City` → (in parallel) `Claude Code`, `Spec intake`, and the `Bead-type schema` → `Evaluation tier` → `the fence` and `Bootstrap` (parallel, both gated on the eval tier). The one piece that can be pulled all the way forward is the fence's **boundary-typing half** (C43): it needs only rig partitioning (C42), so it can be built right after Gas City; only the fence's **holdout-integrity half** (C34) waits on the eval tier. Gas City is the long pole *within* the backbone — and its own long pole is the **Gas City conformance check**: nobody has yet run `gc` end-to-end against v4's "native" claims, so the very first practical action is to verify the substrate before anything is stacked on it.
 
 ### Three rings: possible, runnable, *safe*
 
 The 25 build up in three honest rings, so you can see exactly what each layer buys:
 
-1. **Dependency closure of the two apexes — 19 components.** Start from the transitive closure of {C53, C43} over the inventory's "Depends on" column, then make two deliberate adjustments: **add the scenario runner C31** and **drop the twin-isolation dependency C44**. The result is C01, C02, C03, C04, C08, C17, C19, C20, C28, C29, **C30, C31, C32, C33** (the eval tier), C42, C43, C51, C52, C53. Each adjustment has a reason:
+1. **Possible — 19 components** (the dependency closure of the two apexes). Start from the transitive closure of {C53, C43} over the inventory's "Depends on" column, then make two deliberate adjustments: **add the scenario runner C31** and **drop the twin-isolation dependency C44**. The result is C01, C02, C03, C04, C08, C17, C19, C20, C28, C29, **C30, C31, C32, C33** (the eval tier), C42, C43, C51, C52, C53. Each adjustment has a reason:
    - **C31 is added, because a build must be *run* to be scored.** The eval tier is a *store* (C30) and a *scorer* (C32) with an *executor* between them: the held-out scenario must be **run** against the freshly built component to produce the trajectory the judge scores. C53's milestone is "scenario set (C30) **run (C31)** + judged (C32) → satisfaction (C33)" (C53 §AC-9). The strict closure of C53 alone does not transit C31, so it is added on this functional ground.
-   - **C44 is dropped, because the fence enters via its boundary-typing half only.** The inventory lists `C43 → C42, C44`. The **boundary-typing half** — deterministic blast-radius typing — needs only rig partitioning (C42), and [decision D-20](../../decisions-to-make.md) (the operator ruling that pulls the boundary-typing fence forward as a precondition before any unattended run) makes *that* half the precondition. The **twin-isolation half** (rehearsing against digital twins, C44) is deferred until the factory builds itself and is *not* needed for the first human-reviewed self-build. So C44 is out of the backbone and C43 enters via its C42-only half.
-2. **+ Run-flow → 22 components.** The dependency column records what each component's *spec* needs, not what it takes to *run a build*. C52 says the factory "authors a spec … **runs** … human-reviews" — and running a build means dispatching an agent against a spec. That pulls in **C05 (sling/dispatch), C09 (prompt-template binding), C18 (reconciler)** — functionally required, but no inventory edge from C52/C53 names them. A real gap the strict closure misses.
-3. **+ Safety collar → 25 components.** What separates *possible* from *safe*: **C34 holdout integrity** (without it the satisfaction score the C53 gate trusts can be gamed — the highest-*likelihood* failure in the corpus), **C41 identity/attribution** (every self-build action attributed before you trust the loop), and **C23 event bus** (the append-only audit source C41 writes through).
+   - **C44 is dropped, because the fence enters via its boundary-typing half only.** The inventory lists `C43 → C42, C44`. The **boundary-typing half** — deterministic blast-radius typing — needs only rig partitioning (C42), and [decision D-20](../../decisions-to-make.md#1-put-the-safety-fence-up-before-the-factory-runs-unattended-or-after) (the operator ruling that pulls the boundary-typing fence forward as a precondition before any unattended run) makes *that* half the precondition. The **twin-isolation half** (rehearsing against digital twins, C44) is deferred until the factory builds itself and is *not* needed for the first human-reviewed self-build. So C44 is out of the backbone and C43 enters via its C42-only half.
+2. **Runnable — 22 components** (+ run-flow). The dependency column records what each component's *spec* needs, not what it takes to *run a build*. C52 says the factory "authors a spec … **runs** … human-reviews" — and running a build means dispatching an agent against a spec. That pulls in **C05 (sling/dispatch), C09 (prompt-template binding), C18 (reconciler)** — functionally required, but no inventory edge from C52/C53 names them. A real gap the strict closure misses.
+3. **Safe — 25 components** (+ safety collar). What separates *possible* from *safe*: **C34 holdout integrity** (without it the satisfaction score the C53 gate trusts can be gamed — the highest-*likelihood* failure in the corpus), **C41 identity/attribution** (every self-build action attributed before you trust the loop), and **C23 event bus** (the append-only audit source C41 writes through). One honest limit on this collar: before digital twins (C44) land, C34 *detects* holdout violations after the fact rather than preventing them at tool-call time — tool-call-time *prevention* is C43's blast-radius bound and stays aspirational until twins ship (per C34 §4.3 / XC-8). The first safe self-build is therefore guarded by detection plus a human gate, not yet by full prevention.
 
-So: **runnable build = 22 components; safe self-build = 25.** Of those 25, eleven are the single Gas City adoption, two more are one Claude Code adoption plus its routing policy, and four are authored on the Inspect AI harness — the genuinely from-scratch engineering is the spec intake, the fence, and the bootstrap mechanism.
+So: **runnable build = 22 components; safe self-build = 25.** Of those 25, eleven are the single Gas City adoption, two more are one Claude Code adoption plus its routing policy, and four are authored on the Inspect AI harness — the genuinely from-scratch engineering is the spec intake, the bead-type schema, the fence, and the bootstrap mechanism.
 
 ---
 
@@ -77,7 +80,7 @@ This is the spine of the build. Each row is one product and the components it de
 | **CXDB** — `strongdm/cxdb` (Apache-2.0) | C21 trajectory store, C22 type registry (+ the O(1)-branch primitive the C49 driver uses) | adopt + integrate; the bridge to it (C24) is its own internal product | Gas City |
 | **Inspect AI** (MIT) | **C30** scenario store/DSL, **C31** runner, **C32** judge scorer, **C33** score reduction | adopt framework, then author | Gas City (a pack wraps Inspect AI); Claude Code (judge model) |
 | **OpenTelemetry Collector** (Apache-2.0) + **LangFuse** (MIT) | C26 collector, C27 trace store/browser | adopt + configure | Claude Code (OTLP source, C25) |
-| **PyOD/Anomalib** (BSD-2/Apache-2.0) + **sentence-transformers** (Apache-2.0) + **HDBSCAN/scikit-learn** (BSD) | C36 anomaly detection, C37 trajectory clustering | adopt + compose (standard recipe) | CXDB (trajectory store + bridge) |
+| **PyOD/Anomalib** (BSD-2/Apache-2.0) + **sentence-transformers** (Apache-2.0) + **HDBSCAN/scikit-learn** (BSD) | C36 anomaly detection, C37 trajectory clustering — *the adopted half of self-heal* | adopt + compose (standard recipe) | CXDB (trajectory store + bridge) |
 | **MLflow/Aim** (Apache-2.0; or **W&B**, freemium) | the tracking-store half of C46 meta-metrics (the *definitions* are custom) | adopt + compose | Inspect AI (satisfaction, C33), CXDB, Claude Code (C25) |
 | **DSPy/Optuna/Ray Tune** (MIT/Apache-2.0) + **Unleash/GrowthBook** (Apache-2.0/MIT) + **scipy/Evidently** (BSD/Apache-2.0) | C47 variant identification, C48 A/B routing + statistics | adopt + compose | Meta-metric stream (C46) |
 
@@ -86,14 +89,14 @@ This is the spine of the build. Each row is one product and the components it de
 | Product | Components delivered | Kind of work | Depends on (products) |
 |---|---|---|---|
 | **Vocabulary & glossary** | C07 | build from scratch (registry + doc) | Gas City |
-| **Spec intake** | **C08** spec format, **C09** prompt binding, C10 EARS linter, C11 intent crucible | build from scratch (on Gas City's template engine) | Gas City |
+| **Spec intake** | **C08** spec format, **C09** prompt binding, C10 EARS linter, C11 intent crucible | build from scratch (on Gas City's template engine; C08→C09 is the core chain, while the C10 linter and C11 crucible each need only C08 and are independently schedulable) | Gas City |
 | **Bead-type schema** | **C20** bead types | build from scratch (the authored contract on the adopted bead store) | Gas City (bead store, C19) |
 | **Methodology tooling** | C14 DOT translator, C15 workflow linter (transfused from Mammoth), C16 discipline linter | build from scratch | Gas City (formula engine, C12) |
 | **Model-floor policy** | **C29** | build from scratch (policy on the Claude Code stylesheet) | Claude Code |
 | **CXDB bridge** | C24 telemetry → CXDB bridge | build from scratch (small standalone tool-node binary) | CXDB, Claude Code |
 | **Override → rule loop** | C35 | build from scratch (on Claude Code hooks + `override` beads) | Claude Code, Bead-type schema, Inspect AI (scenario store) |
 | **The fence** | **C34** holdout integrity, **C43** isolation boundary | build from scratch (policy over Gas City process boundaries, rig partitions C42, and filesystem permissions) | Gas City (rigs, C42), Inspect AI (C30/C32), Digital twins (C44, twin-isolation half only) |
-| **Self-heal diagnosis & fix** | C38 diagnosis agent (transfused from Tracker), C39 fix-task loop closure | build from scratch | PyOD/HDBSCAN (clustering, C37), CXDB, Spec intake, Bead-type schema |
+| **Self-heal diagnosis & fix** | C38 diagnosis agent (transfused from Tracker), C39 fix-task loop closure — *the custom half of self-heal* | build from scratch | PyOD/HDBSCAN (clustering, C37), CXDB, Spec intake, Bead-type schema |
 | **Digital twins & fidelity** | C44 per-service twin (LocalStack pattern), C45 fidelity bar (on Pact, MIT) | transfuse per service | Gas City (tool-node, C17), Inspect AI (scenario store, C30) |
 | **Meta-metric stream** | C46 (definitions; storage is the MLflow product) | build from scratch | Inspect AI (satisfaction, C33), CXDB, Claude Code (C25) |
 | **Counterfactual replay** | C49 driver | build from scratch (drives CXDB's O(1) branching — the riskiest invention leaf) | CXDB |
@@ -163,7 +166,7 @@ The harness is adopted; the scenarios and judge prompts are authored on it. This
 | The scenario store / DSL (C30) | C17, C42 | Inspect AI Task DSL; the scenarios are authored. |
 | The scenario runner (C31) | C30, C17 | Inspect AI runner — runs a scenario against a built component to produce a trajectory. |
 | The judge harness (C32) | C30, C29 | Inspect AI scorer; the judge prompts are authored. |
-| Satisfaction aggregation (C33) | C32, C19 | Inspect AI score reduction + a small custom aggregator tool-node. The most-depended-on node in the back half. |
+| Satisfaction aggregation (C33) | C32, C19 | Inspect AI score reduction + a custom aggregator tool-node whose satisfaction-distribution definition is a non-trivial design question, not a thin wrapper. The most-depended-on node in the back half. |
 
 ### Observability, self-heal, and self-optimization products
 
@@ -244,7 +247,7 @@ flowchart LR
 ```
 *Caption: the dominant critical path, ten components deep. The evaluation hinge (C32 → C33) sits in the middle; the self-optimization chain hangs off it. Widening any product cannot shorten this line.*
 
-**The fence's boundary-typing half is early and mandatory.** That half (C43) needs only Gas City's rig partitions (C42), so it is buildable as soon as the substrate is up — and decision D-20 makes it the precondition for *any* unattended operation, so there is no schedule reason to defer it. The fence's **holdout-integrity half** (C34) is not early: it scores against the evaluation tier (C30/C32) and lands with it. The **twin-isolation half** waits on the [digital-twins product](#the-remaining-custom-products) (C44) and lands once the factory is building itself.
+**The fence's boundary-typing half is early and mandatory.** That half (C43) needs only Gas City's rig partitions (C42), so it is buildable as soon as the substrate is up — and decision D-20 makes it the precondition for *any* unattended operation, so there is no schedule reason to defer it. The fence's **holdout-integrity half** (C34) is not early: it scores against the evaluation tier (C30/C32) and lands with it — and until twins exist it *detects and audits* violations rather than preventing them at tool-call time. The **twin-isolation half** waits on the [digital-twins product](#the-remaining-custom-products) (C44), which is what turns the blast-radius bound from aspirational prevention into enforced prevention, and lands once the factory is building itself.
 
 **The tail is chain-bound, not capacity-bound.** Self-optimization (meta-metric stream → variant identification → A/B statistics → promotion gate) is genuinely sequential. Start it the moment satisfaction aggregation (C33) lands; you cannot compress it by adding people.
 

@@ -11,16 +11,24 @@ PLAN.md dated 2026-05-25. Every fact below cites this source. Internal docs refe
 
 ---
 
-## Contradictions Requiring Lead/Morning Review
+## Contradictions — LEAD-VERIFIED 2026-06-01: 0 TRUE CONTRADICTIONS
 
-These are the loud findings. A `CONTRADICTS-CLAIM` means a v4 spec makes or implies a claim that the
-prototype disproves or materially constrains. **Review each before applying any annotation.**
+The harvest subagent flagged F2/F4/F9 as `CONTRADICTS-CLAIM` (a v4 spec makes/implies a claim the
+prototype disproves). The lead agent verified each against the **actual** v4 spec text and found
+**none of them contradicts v4** — all three are reclassified `NEW-INFO` (operational caveats /
+candidate-eliminations). The v4 corpus's discipline of deferring unverified substrate field names to
+G11 verification held up. (This is a morning-summary headline: a panel-flagged risk class produced
+zero spec-correctness bugs.)
 
-| # | Fact summary | Affected spec(s) | Impact |
-|---|---|---|---|
-| F2 | `convergence.max_iterations` is **not a real `gc` field** | C18, C39 | Any v4 text that treats this field as a real config knob is wrong; the numeric termination config shape is unknown |
-| F4 | `gc init` is interactive; production authors `pack.toml`+`city.toml` directly | C03, C04 | v4 any reference to `gc init` as a production workflow is misleading |
-| F9 | Dolt requires `--ref refs/heads/*` for push via proxy; default `refs/dolt/data` is rejected | C19, C41 | Any claim the default dolt ref works in sandbox/CI environments is wrong |
+| # | Fact summary | Affected spec(s) | Lead verification (grep of actual v4 text) | Reclassified |
+|---|---|---|---|---|
+| F2 | `convergence.max_iterations` is **not a real `gc` field** | C18, C39 | C18 §3.2 / C39 explicitly **defer** the numeric policy to **C20 schema slots** (`max_attempts`) + pinned-`gc` G11 verification; they never assert a `convergence.*` config field. The finding *confirms* that prudence and eliminates one candidate field name. | `NEW-INFO` |
+| F4 | `gc init` is interactive; production authors config directly | C03, C04 | **Zero** references to `gc init` anywhere in v4 specs/AI-CONTEXT/README/plan-faithful. No opposing claim exists. | `NEW-INFO` (ops caveat) |
+| F9 | Dolt push needs `--ref refs/heads/*` via proxy | C19, C41 | **Zero** references to dolt refs in v4 specs. No claim that the default works. Caveat is proxy/CI-specific. | `NEW-INFO` (portability caveat) |
+
+> **Per-fact entries below retain the subagent's original `(d) Verdict` for traceability, each
+> annotated `[LEAD-RECLASSIFIED → NEW-INFO 2026-06-01]`. There remain no `CONTRADICTS-CLAIM` facts
+> after lead verification.**
 
 ---
 
@@ -75,7 +83,7 @@ for partition/role declarations without a `path` field.
 **(c) Affected v4 spec(s) + OQ id(s).** C18 (convergence loop, INV-2 bound), C39 (numeric
 termination policy, G18), C03 (config feature flags)
 
-**(d) Verdict.** `CONTRADICTS-CLAIM`
+**(d) Verdict.** ~~`CONTRADICTS-CLAIM`~~ **`NEW-INFO`** `[LEAD-RECLASSIFIED → NEW-INFO 2026-06-01]` — C18/C39 never assert a `convergence.*` field; they defer the numeric policy to C20 schema slots + G11. The finding eliminates one candidate field name; it does not contradict v4.
 
 **(e) Proposed annotation.** Add to C18 §9 (OQ) and C39 §9 (OQ1):
 
@@ -144,8 +152,7 @@ it cannot be used unattended. The production workflow for the prototype is to au
 **(c) Affected v4 spec(s) + OQ id(s).** C03 (config feature flags / layered config authoring),
 C04:OQ-4 (provider-kind selection, inferred config-driven)
 
-**(d) Verdict.** `CONTRADICTS-CLAIM` (to the extent any v4 spec implies `gc init` is part of an
-automated/scripted setup path)
+**(d) Verdict.** ~~`CONTRADICTS-CLAIM`~~ **`NEW-INFO`** `[LEAD-RECLASSIFIED → NEW-INFO 2026-06-01]` — no v4 spec references `gc init` at all (grep-verified), so there is no claim to contradict; this is a deployment ops caveat.
 
 **(e) Proposed annotation.** Add to C03 §6 and C04 §9:
 
@@ -358,9 +365,7 @@ proxies (and by the Anthropic sandbox proxy specifically).
 **(c) Affected v4 spec(s) + OQ id(s).** C19 (bead work-graph, Dolt backend), C20 (bead schema),
 C21 (CXDB trajectory store), C23 (event bus), C41 (identity attribution)
 
-**(d) Verdict.** `CONTRADICTS-CLAIM` — specifically, any claim that `dolt push` with default
-`refs/dolt/data` works universally is wrong; the `refs/heads/*` form is the required portable
-configuration.
+**(d) Verdict.** ~~`CONTRADICTS-CLAIM`~~ **`NEW-INFO`** `[LEAD-RECLASSIFIED → NEW-INFO 2026-06-01]` — no v4 spec references dolt refs (grep-verified); there is no claim that the default works. This is a portability/ops caveat for proxy-mediated git (sandbox/CI), not a v4 correction. The `refs/heads/*` form is the portable configuration.
 
 **(e) Proposed annotation.** Add to C19 §5 (operational notes) and C19 §9 (OQs):
 
@@ -548,14 +553,14 @@ provider, agent bootstrap)
 | # | Fact | Verdict | OQ(s) resolved | Disposition |
 |---|---|---|---|---|
 | F1 | `[[rig]]` singular / site.toml path bindings | RESOLVES-OQ | C42:OQ-4, XC-9 | safe-to-apply |
-| F2 | `convergence.max_iterations` not a real field | CONTRADICTS-CLAIM | — | needs-lead-review |
+| F2 | `convergence.max_iterations` not a real field | NEW-INFO (was CONTRADICTS; lead-reclassified) | — | applied as ops note |
 | F3 | Pack import strictness; `[defaults.rig.imports.*]` in city.toml; no duplicate transitive imports | NEW-INFO | C28:OQ-4 (partial) | safe-to-apply |
-| F4 | `gc init` is interactive; production uses direct config authoring | CONTRADICTS-CLAIM | — | needs-lead-review |
+| F4 | `gc init` is interactive; production uses direct config authoring | NEW-INFO (was CONTRADICTS; lead-reclassified) | — | applied as ops note |
 | F5 | Worker pool min=0, scales on demand | CONFIRMS-CLAIM | — | safe-to-apply |
 | F6 | Controller = `gc start --foreground`; reconcile/reap/fire | CONFIRMS-CLAIM | — | safe-to-apply |
 | F7 | Each agent = interactive `claude` in its own tmux pane | RESOLVES-OQ | C04:OQ-4 | safe-to-apply |
 | F8 | Agents coordinate through beads only (write/poll), not directly | CONFIRMS-CLAIM | — | safe-to-apply |
-| F9 | Dolt SQL server + periodic push; `refs/heads/*` required | CONTRADICTS-CLAIM | — | needs-lead-review |
+| F9 | Dolt SQL server + periodic push; `refs/heads/*` required | NEW-INFO (was CONTRADICTS; lead-reclassified) | — | applied as ops note |
 | F10 | Bead prefix = scoping mechanism; explicit prefix= to avoid collision; prevent-vs-detect OPEN | NEW-INFO | — (D-23 spike stays open) | safe-to-apply (mechanism); needs-lead-review (enforcement boundary) |
 | F11 | Gastown pack roles ↔ v4 generic roles verified | CONFIRMS-CLAIM | — | safe-to-apply |
 | F12 | IS_SANDBOX=1 for root; 3 onboarding dialogs must be pre-acked | NEW-INFO | — | safe-to-apply |

@@ -71,6 +71,14 @@ The 5-expert panel ([verdict](panel/VERDICT.md)) returned **right-idea-but-chang
 - **PF-2 — Add a judge-calibration / false-positive-rate audit GATE before trusting satisfaction numbers.** Same-family LLM-judge (D-1) on the held-out stream may be a "hall of mirrors" (pragmatist + security + methodology). Relates to C32:OQ1 / FE-1. **Recommendation: gate the first reliance on satisfaction scores on a judge-FP audit** (C46 can measure it); do not auto-promote on uncalibrated satisfaction.
 - **PF-3 — Define a minimum objective-drift tripwire even PRE-L5, not only at L5.** D-21 puts the real detector before L5 lights-out; the panel wants a cheap mechanical tripwire (not only the human checkpoint) active from the first self-modification (P3b), since drift can begin the moment the factory tunes itself. **Recommendation: a lightweight drift tripwire at P3b**, ahead of the full detector at L5.
 
+### D-23 substrate harvest (2026-06-01) — Sweep-2 first action (protocol + harvest, no live run)
+
+Per the operator's Sweep-2 decision (no live agents this run), the D-23 Gas City reality-check was executed as **(a)** a runnable spike protocol ([D-23 spike protocol](D-23-gas-city-spike-protocol.md)) and **(b)** a harvest of the substrate facts the Gas City prototype (`lago-morph/gascity-prototype@b14c278`, 2026-05-25) already proved ([D-23 substrate harvest](D-23-substrate-harvest.md), 12 facts F1–F12). Spec annotations applied this run carry the marker `[D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]`.
+
+- **OQs RESOLVED by the harvest:** **XC-9** + **C42:OQ-4** (canonical `[[rig]]`; path bindings in `.gc/site.toml`; F1); **C04:OQ-4** (Phase-0 Provider-kind = tmux, one interactive `claude` per pane; F7). **C28:OQ-4** partially informed (pack-import strictness; full pack contract still needs pinned-`gc` G11 verification; F3).
+- **Contradiction scan — lead-verified 0 true contradictions.** The harvest flagged F2 (`convergence.max_iterations` not a real field), F4 (`gc init` interactive), F9 (dolt `--ref refs/heads/*`) as `CONTRADICTS-CLAIM`. Lead verification against the actual specs reclassified **all three to `NEW-INFO`**: C18/C39 never assert a `convergence.*` field (they defer numeric policy to C20 slots + G11), and no v4 spec references `gc init` or dolt refs at all. v4's deferral discipline held. Applied as operational caveats, not corrections. (Morning-review headline.)
+- **Prevent-vs-detect remains OPEN.** The prototype proved bead-**prefix** is the scoping *mechanism* (F10) but **never tested enforcement strength** (smoke test deferred). **C34:OQ-C34-1 ≡ C43:OQ-C43-1 stay live**; the D-23 spike (Test A) is the resolver. No annotation closes this.
+
 ## Cross-component issues (raised during Sweep 1 builds)
 
 - **XC-1 — C19↔C20 dependency direction contradiction.** The canonical inventory lists C20→C19
@@ -137,7 +145,7 @@ _Batch-2 + tail review wave (2026-05-31 harvest):_
 - C04:OQ-1 — Max revokes unattended subprocess automation: what Provider/auth swap lands behind C04's seam, before/after the Jun-15-2026 Agent-SDK-Max path? Fallback auth undesigned (G12). *Shared with C28:OQ-1.*
 - C04:OQ-2 — resume modes unenumerated ("multi-mode resume"/Native); which modes in scope + resume-failure escalation (re-dispatch? operator gate?).
 - C04:OQ-3 — multi-session/seat horizontal scale ownership: C04 (hosting) vs C05 (dispatch/pool) vs C29 (routing)? (G34) *Shared with C28:OQ-3.*
-- C04:OQ-4 — Provider-kind selection criterion (tmux vs k8s/subprocess/exec) unstated; inferred config-driven via C03, policy open.
+- C04:OQ-4 — **RESOLVED by D-23 harvest (F7, 2026-06-01):** Phase-0 Provider-kind = **tmux** — each agent is one interactive `claude` process in its own pane under a single tmux server, managed by the `gc start` controller. Verified against gascity-prototype@b14c278. (Was: selection criterion unstated; inferred config-driven.) Non-tmux providers (k8s/subprocess/exec) remain future/config-driven.
 - C05:OQ-1 — routing-key authority: C05 vs C09 vs C12 (who resolves name→template/role). *Shared seam with C09:OQ-1.*
 - C05:OQ-2 — pool member-selection policy is Gas City's, not C05's (round-robin/least-loaded/sticky); unspecified, sweep-2.
 - C05:OQ-3 — back-pressure: Gas City native dispatch vs reconciler (C18) tick — never a C05 queue; verify vs pinned `gc` (G11).
@@ -187,7 +195,7 @@ _Batch-2 + tail review wave (2026-05-31 harvest):_
 - C42:OQ-1 — holdout enforce vs declare ownership RESOLVED by D-13 (C34 enforces+audits; C43 blast-radius; C42 provides); residual = does Gas City prevent at tool-call time or audit-after (G11/G21).
 - C42:OQ-2 — are `worker` and `implementer` the same role under two names (Phase-0 vs Phase-2 rigs)?
 - C42:OQ-3 — judge partition shape — SCOPED BY D-17 (Sweep-1 read-default fixed; partition SHAPE = unified OQ-C42-3+OQ-C34-3+C32-OQ5, joint C42/C34/C32 Sweep-2 freeze).
-- C42:OQ-4 — canonical `[rigs]` vs `[[rig]]` spelling inconsistent across C01/C03/C42 (XC-9).
+- C42:OQ-4 — **RESOLVED by D-23 harvest (F1, 2026-06-01):** canonical spelling is **`[[rig]]`** (singular); path bindings live in `.gc/site.toml`, `city.toml` `[[rig]]` blocks carry partition/role semantics only. `[[rigs]] path=` is a PackV2 error. Verified against gascity-prototype@b14c278. Closes XC-9. (Was: spelling inconsistent across C01/C03/C42.)
 
 _Batch-3 review wave (2026-05-31 harvest) — D-15/D-16/D-17 applied:_
 - C06:OQ-1 — F32 "Addressed" but integrity half (HMAC mail signing) optional/deferred (G36→FE-3, blocked on G37); when does signing become mandatory? *(seam: signature attaches at C06 Mail envelope, binds to C41 provenance.)*

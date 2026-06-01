@@ -1,91 +1,73 @@
-# Overnight summary — v4 Sweep-2 run (D-23 substrate verification + first depth cluster)
+# What I did overnight — v4, first build-detail run
 
-**Run date:** 2026-06-01 · **Mode:** autonomous unattended · **Branch model:** stacked PRs (operator-directed) · **Stack:** PRs #229 → #230 → #231 → #232 → (this wrap PR).
+**What this is:** a plain-language readout of one overnight working session, for you to read in a sitting. What got done, what I found, and the two things that need your call. The machine-readable detail lives in the pull requests; this is the human layer on top. A companion file, [decisions in plain language](decisions-this-run-plain-english.md), walks through every choice this run made.
 
-> This is the primary review artifact for the run. Read this, the [scope envelope](architectures/v4/_meta/RUN-SCOPE-2026-06-01.md), and the per-PR descriptions; you do not need to read the diffs. The two genuine **operator decisions** are in §6.
+---
 
-## 1. TL;DR
+## The one-paragraph version
 
-- **The D-23 Gas City reality-check was executed the way you chose — protocol + harvest, no live agents.** I verified empirically (not from a subagent's say-so) that **Gas City is real** (`github.com/gastownhall/gascity`), cloned the `gascity-prototype` you pointed me at, and harvested the substrate facts it already proved into the corpus. **Prevent-vs-detect stays OPEN** (the prototype deferred the smoke test); a runnable spike protocol is now on disk for whoever has Docker.
-- **3 "contradictions" the harvest flagged turned out to be 0 true contradictions** after I verified them against the actual specs — v4's discipline of deferring unverified substrate names to G11 held up. Closed OQs: **XC-9, C42:OQ-4, C04:OQ-4**.
-- **The run's pivotal decision (auto-001) is settled after 2 rounds of real adversarial review (6 opus reviewers):** if `gc` is detect-only, that's a **binding go/no-go gate** on unattended operation — but expressed as a *policy rubric*, not a pre-blessed build (the reviewers killed my first draft's OS-prevent-layer as a bar violation).
-- **First Sweep-2 implementation-depth cluster landed:** the evidence/data substrate (C19/C20/C21/C23/C41) deepened to signatures/schemas/Mermaid/error-taxonomies/acceptance-tests. A seam adversary caught a **HIGH build-breaking contract drift** (C23 `EventId` struct vs C41 bare `uint64`) — fixed as ledger decisions **D-26…D-29**.
-- **2 things genuinely need you (§6):** (a) re-adopt D-20 as *conditional on substrate prevention* (the auto-001 rubric) or keep it unconditional; (b) accept the per-rig-class autonomy "missing middle." Both are reversible.
-- **Deliberately deferred (§7):** the live spike (your call), Sweep-2 depth for the other ~52 components (long tail), and wiring the auto-001 rubric into C43/C34/C42/C56/C57 (gated on your D-20 re-adoption).
+The next big phase is turning the 57 architecture sketches into build-ready detail. I front-loaded the one thing everything else depends on: checking whether **Gas City** — the runtime the whole factory sits on — is actually real and behaves the way we've been assuming. It's real (I confirmed the genuine repository myself, not on an AI's say-so), and you'd already handed me a working prototype of it. I folded what that prototype *proves* into our specs, settled the biggest open **safety** question through two rounds of adversarial review, and wrote build-ready detail for the five "data foundation" components. **Two things genuinely need your call** — both are "how cautious do we want to be on safety," which is yours, not mine. Everything else I either decided with a clear undo path or deliberately left alone.
 
-## 2. Suggested merge order
+## What got done
 
-Stack-bottom first; each PR's base is the previous branch, so GitHub auto-retargets to `main` as you merge down the stack:
+```mermaid
+flowchart LR
+  A[Is Gas City real?] -->|verified: yes| B[Fold what the<br/>prototype proves<br/>into the specs]
+  B --> C[Settle the big<br/>safety question]
+  C --> D[Write build-ready detail:<br/>5 data components]
+  D --> E[2 questions<br/>for you]
+```
 
-1. **#229** — scope envelope (the run's contract).
-2. **#230** — D-23 spike protocol + substrate harvest + 13 spec annotations + OQ closures.
-3. **#231** — auto-001 decision brief (detect-only binding gate). *Merging this records the decision; it does NOT wire the rubric into specs — that's deferred pending your §6(a) re-adoption.*
-4. **#232** — Sweep-2 evidence/data-substrate cluster (C19/C20/C21/C23/C41) + seam fixes D-26…D-29.
-5. **(this wrap PR)** — this summary + HANDOFF refresh + retrospective.
+- **Confirmed Gas City is real — properly, not on faith.** An AI helper first told me it was real "version 1.2.0, install with brew" — and the version/date it gave contradicted itself, which is the tell for a made-up answer. So I checked the actual GitHub repository myself three different ways, with a known-good repository as a control to rule out the sandbox's network quirks. It's real. The prototype you pointed me at is a working, Dockerised Gas City built in a sandbox just like this one.
+- **Folded the prototype's hard-won facts into our specs.** The prototype already figured out a dozen real things about how Gas City actually works (config file shapes, how it loads agent "packs," how the bead store persists). I wrote those into the relevant specs, marked as "verified against a real `gc`," and closed several open questions. One nice result: the helper that did the harvesting flagged three places where it thought the prototype *contradicted* our design — I checked each against what our specs actually say, and **all three were false alarms.** Our design had been careful to leave those exact things unspecified until we could check them. Discipline held.
+- **One thing stays genuinely unknown:** whether Gas City *blocks* a forbidden access in the moment, or just *records it afterward*. The prototype proved the factory stands up and runs, but its authors skipped the test that would answer this (to save on token spend). So I wrote the exact test to run later — it just needs a machine with Docker — and left the question honestly open.
+- **Settled the biggest safety decision** (the "fence," below) through two rounds of real adversarial review.
+- **Wrote build-ready detail for the data foundation:** the five components that store and attribute every piece of work — the bead store, the bead schema, the trajectory store, the event log, and the provenance chain. A reviewer whose only job was checking the *seams between* these five caught a real bug two of them would have hit at build time (they'd agreed on a rule but disagreed on a field's exact shape). Fixed.
 
-All five are a linear chain; merge in order. None is safe to merge out of sequence (each depends on its parent's diff).
+## The big safety question, and what I decided
 
-## 3. PRs opened (in stack order)
+The factory has a **fence**: it labels every action by whether it touches production, a sandbox, or a fake stand-in, and refuses the dangerous combinations. The fence is what stops Simon Willison's *lethal trifecta* — when one agent can read private data, be fed untrusted text, *and* send data out, all at once. You already decided to put the fence up **before** the factory runs unattended.
 
-| PR | Branch (suffix) | Title | Base | Rewind point |
-|---|---|---|---|---|
-| #229 | `…-OpJFZ` | scope envelope | `main` | revert `94d3fc4`+`c6c7f70` → before the run |
-| #230 | `…-02-d23-spike` | D-23 protocol + harvest | #229 branch | revert `432335a`→`3a3cb32` → drops D-23 milestone |
-| #231 | `…-03-auto001` | auto-001 decision brief | #230 branch | revert `f39b420`→`ad7fec3` → as-adopted D-23 caveat posture |
-| #232 | `…-04-sweep2-data` | Sweep-2 data cluster | #231 branch | per-component commits + `D-26..29` ledger + seam-fix commit, individually revertible |
-| (wrap) | `…-05-wrap` | wrap kit (summary/HANDOFF/retro) | #232 branch | revert the wrap commit(s) |
+Here's the wrinkle. A fence is only a real fence if the runtime actually **blocks** the bad combination. If Gas City only **notices it afterward**, the "fence" is a sign, not a wall. We won't know which until the test above is run.
 
-PR descriptions are the primary per-chunk review artifact.
+So the decision I had to settle was: *what happens to the plan if the runtime turns out to only notice, not block?* My first draft answered it by saying "then we build our own blocking layer." Three independent reviewers killed that answer — correctly — because building our own blocking is exactly the kind of custom hardening you told the whole project to avoid; the prototype's own stack is supposed to provide it. The second round reshaped it into something cleaner:
 
-## 4. Decision briefs written
+> **If the runtime only notices instead of blocks, the factory does not run unattended — it stays at human-in-the-loop review — until either the runtime is shown to block, or someone makes a deliberate, costed case for a blocking layer. We don't pre-bless building one.**
 
-| Brief | Question | Rounds | Outcome |
-|---|---|---|---|
-| [auto-001](architectures/v4/_meta/decisions/auto-001-detect-only-binding-gate.md) | If `gc` is detect-only, what binds on D-20 / unattended P2? | 2 (3+3 real opus adversaries) | **Decided:** policy-level rubric — non-PREVENT substrate ⇒ P2 gated; default discharge = descope-to-L4; prevent layer NOT pre-blessed (re-enters the bar); fail-closed on inconclusive; per-rig-class middle; trifecta residual→C57. Round 1 (pre-blessed OS-prevent discharge) superseded — preserved with strikethrough. |
+It's written as a *rule to apply to whatever the test finds*, not a pre-baked answer to a test we haven't run — because pre-deciding the test's result is the exact mistake the project is built to avoid. It also adds a sensible middle: the parts of the factory that *can't* assemble the trifecta in the first place (no private data, or no untrusted input, or no way to send data out) can still run unattended even if the runtime only notices.
 
-## 5. Chain status
+**This reframes a decision you already made**, so I did **not** quietly write it into the specs. It's question #1 below.
 
-- **D-23 (Sweep-2 first action): DONE** as protocol + harvest. Empirical prevent-vs-detect run is **owed** (needs a Docker-capable environment; protocol is ready).
-- **auto-001: DECIDED**, but its spec wiring (C43/C34/C42/C56/C57) is **deferred** pending operator re-adoption of D-20's conditionality (§6a).
-- **Sweep-2 depth: 5 of 57 components done** (the data substrate). ~52 components remain at Sweep-1 depth — the long tail (§7), with a suggested next-cluster order in the [HANDOFF](architectures/v4/_meta/HANDOFF.md).
-- **8 expert-panel NEW recommendations:** PF-1 (D-23 spike) addressed; the auto-001 rubric absorbs the panel's binding-gate ask + the shadow-evaluator-adjacent independence concern partially; the rest (judge_independence_tier C33, Unleash pin, shadow evaluator, drift tripwire) remain queued for later clusters (§7).
+## The two things that need you
 
-## 6. Morning-review items (need your input)
+| # | The question, in plain terms | My recommendation |
+|---|---|---|
+| 1 | When the runtime only *notices* bad access instead of *blocking* it, should that **stop** unattended running until we fix it — or just be a noted caveat? | **Treat it as a stop.** A fence that doesn't block is a sign, not a wall — and this factory edits its own code. |
+| 2 | Should we allow the **safe parts** of the factory to run unattended even before the blocking question is settled (the parts that can't leak data by construction), keeping humans in the loop only on the risky parts? | **Yes.** It keeps the "lights-out factory" dream alive without building anything risky. |
 
-**(a) Re-adopt D-20 as *conditional on substrate prevention*?** *(from auto-001)*
-- **Question:** D-20 was adopted as an *unconditional* "fence pulled to P2." auto-001 argues an unenforced fence is a *declaration, not a control*, so D-20 should be conditional: unattended P2 requires the substrate to *prevent* (not just log) on the relevant blast-radius face; otherwise descope-to-L4. This reframes an operator-adopted decision, so I did **not** silently apply it.
-- **Lead recommendation:** re-adopt as conditional (the rubric). An unenforced fence gives false confidence on a self-modifying factory.
-- **Rewind / alternative:** keep D-20 unconditional and treat detect-only as a noted caveat (the original posture) — revert PR #231.
+Both are reversible — each is one decision record plus, eventually, a few spec edits. Neither blocks anything you'd merge today; they shape the *next* pass. The full reasoning, including the reviewers' objections, is in the decision record inside pull request #231, and in plain language in the [companion decisions file](decisions-this-run-plain-english.md).
 
-**(b) Accept the per-rig-class autonomy "missing middle"?** *(from auto-001 Round 2)*
-- **Question:** Under a detect-only substrate, instead of "L4-forever globally," permit unattended/L5 on rig classes that *structurally cannot* assemble the lethal trifecta (no private-data reach **or** no untrusted input **or** no egress), L4 only on trifecta-capable/production-touching classes. Plus: an L4 throughput/on-call feasibility note as a P2-entry artifact, and a named L4→PREVENT exit tripwire (so "stay L4" isn't a silent permanent trap).
-- **Lead recommendation:** accept — it preserves the product's reason to exist (real autonomy) under a detect-only substrate without re-blessing dropped hardening.
-- **Rewind / alternative:** global gate only (the simpler, more conservative posture).
+## What I deliberately did NOT do
 
-*Both are recorded in [auto-001](architectures/v4/_meta/decisions/auto-001-detect-only-binding-gate.md); neither is wired into specs yet.*
+- **Run a live factory overnight.** That was your call — it spends real money on live agents. I prepared the test instead of running it.
+- **Wire the safety rule (question #1) into the specs.** It changes a decision you'd already adopted, so it waits for your answer rather than sneaking in.
+- **Detail the other ~52 components.** Build-ready detail for all 57 is more than one night. I did the five data-foundation ones; the next sessions take the workflow components and the evaluation components (the evaluation ones partly wait on question #1).
+- **A handful of smaller improvements** an expert panel suggested earlier (a "who's grading the grader" independence check, pinning a library version, a drift tripwire). Each belongs with its own component's detail pass; none is lost.
 
-## 7. What I deliberately did NOT do
+## How to look at it
 
-- **Run a live Gas City / spend tokens on live agents** — your explicit decision. The spike is a ready-to-run protocol, not an executed spike. *Binding deferral:* the empirical prevent-vs-detect answer is owed and gates the auto-001 rubric's outcome.
-- **Wire the auto-001 rubric into C43/C34/C42/C56/C57** — gated on your §6(a) re-adoption of D-20's conditionality; applying it now would silently relitigate an operator-adopted decision. Flagged in HANDOFF as the first follow-up if you re-adopt.
-- **Sweep-2 depth for the other ~52 components** — exceeds one run. Done: C19/C20/C21/C23/C41 (data substrate). Suggested next clusters (workflow engine; eval/holdout — note the holdout cluster is partly gated on §6a): see [HANDOFF](architectures/v4/_meta/HANDOFF.md).
-- **The other panel NEW recommendations** (judge_independence_tier on C33, Unleash version-pin, shadow evaluator, pre-L5 drift tripwire) — queued, not done; each belongs with its component's Sweep-2 cluster.
-- **Touch `spec-optimized/` / `plan-optimized/`** (frozen) or read the four v4 source docs into primary context (subagents read targeted sections).
+Five pull requests, meant to be read and merged **in order** (each builds on the one before):
 
-## 8. Rewind points (full chain)
+1. **#229** — the plan for the night (the "scope envelope").
+2. **#230** — the Gas City reality-check: the test to run, the harvested facts, the spec updates.
+3. **#231** — the safety-fence decision (this is where question #1 lives).
+4. **#232** — build-ready detail for the five data components, plus the seam fix.
+5. **#233** — this summary, the companion decisions file, the updated handoff, and the session's lessons-learned.
 
-| Revert | Undoes |
-|---|---|
-| whole stack (PRs #229–wrap) | the entire run → back to `origin/main` @ #228 |
-| `94d3fc4`,`c6c7f70` (#229) | the scope envelope only |
-| `432335a`,`97ac3dd`,`3a3cb32` (#230) | D-23 protocol / ledger OQ-closures / 13 spec annotations |
-| `f39b420`,`91c4dad`,`ad7fec3` (#231) | the auto-001 brief (Round 1/Round 2/Final) → restores noted-caveat posture |
-| the `D-26..29` ledger commit + seam-fix commit (#232) | the cross-component seam resolutions (keeps the per-component depth) |
-| each C19/C20/C21/C23/C41 commit (#232) | that one component's Sweep-2 depth |
+You read the pull-request descriptions, not the code — each one is written to stand on its own. Every step has a one-line "undo this by reverting commit X" so nothing is a one-way door.
 
-## 9. Session metadata
+## Honest disclosure
 
-- **Stack:** 5 branches (`…-OpJFZ`, `-02-d23-spike`, `-03-auto001`, `-04-sweep2-data`, `-05-wrap`); one PR each (#229–#232 + wrap).
-- **Subagents:** ~14 dispatches — 1 recon, 2 D-23 (protocol+harvest), 1 harvest-integrator, **6 opus adversaries** (auto-001, 2 rounds), 1 C20 opus exemplar builder, 4 sonnet sibling builders, 1 seam reviewer, 1 seam-fix integrator. Each wrote to disk + returned a receipt; the orchestrator owned all git; commit+push every wave.
-- **Model choices:** opus for the lead, the auto-001 adversaries, and the C20 exemplar; sonnet for authoring/harvest/integration/sibling-builders/seam-review (per "dynamic model choices; opus for decisions, sonnet in general").
-- **Discipline:** empirical verification over subagent narrative (caught a confabulated "gc v1.2.0/brew install"); real-subagent adversarial review (no inline simulation); cross-component decisions through the ledger (D-26…D-29); prevent-vs-detect kept OPEN throughout.
+- The single biggest unknown in the whole architecture — does the runtime *block* or merely *notice* — is **still open.** I couldn't run the test here (no Docker daemon in this sandbox), and I wasn't going to guess. The test is written and ready.
+- Question #1 is a genuine **risk-tolerance** call. I have a recommendation, but it's your judgement to make, not mine — it trades a real (if narrow) exposure window against build sequencing.
+- Everything I decided on my own went through real adversarial review and has a named undo path. Where reviewers proved me wrong (the "build our own blocking" first draft), I changed the decision and kept the wrong version visible, struck through, so you can see the reasoning move.

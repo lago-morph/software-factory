@@ -166,6 +166,13 @@ grammar, and the pack manifest defer to sweep 2 (and the *runner* contract to C3
 contract to C34, the *partition* contract to C42; the cryptographic-**signature** format is not sweep-2 work
 at all — it is DEFERRED → FE-3/G37 per D-14).
 
+**OQ-1 RESOLVED (Sweep-2):** Scenario-record schema frozen (field table §4.5). `created_by = "rig:scenario_authoring"` is an explicit field (D-29 wire form). Corpus manifest contract frozen in §3.3.
+**OQ-2 RESOLVED (Sweep-2):** D-13 seam confirmed: C30 publishes the I6 path/label feed; no enforcement obligation touches C30. See §3.1 verbatim D-13 citation.
+**OQ-3 RESOLVED (Sweep-2):** Signing DEFERRED → FE-3 confirmed (D-14). Phase-0/2 integrity = git content-addressing + rig isolation (INV-1/INV-4). C30 carries no signing obligation.
+**OQ-4 RESOLVED (Sweep-2):** Metadata home = separate git repo, NOT CXDB (D-36 verbatim below). The corpus is the held-out input to the Inspect AI log flow; it is never read from CXDB.
+
+**RESOLVED (Sweep-2):** I1–I7 are now concretised below with wire-level signatures, the scenario-record schema (§4.5, OQ-1 RESOLVED), the corpus manifest contract (§3.3), and the C17 tool-node registration (§3.2). The D-38, D-36, D-13 binding decisions are cited verbatim where they anchor contracts.
+
 | # | Interface | Direction | Description | Owning/detailing component |
 |---|---|---|---|---|
 | I1 | **Inspect AI Task DSL (authoring format)** | inbound (author) | Scenarios are Inspect AI `Task` objects (Python), authored as-is (README:170; AI-CONTEXT:467). C30 *adopts* the DSL; it does not define it. | Inspect AI (DSL); C30 (adoption) |
@@ -175,6 +182,111 @@ at all — it is DEFERRED → FE-3/G37 per D-14).
 | I5 | **Corpus integrity = git revision (signing DEFERRED → FE-3)** | storage + verify | Phase-0/2 tamper-evidence/provenance is the **content-addressed git commit identity** of each scenario in the separate repo (AI-CONTEXT:236/404); C34/baselining (F7) verify the corpus against its git revision. **Cryptographic per-scenario signing is DEFERRED to FE-3 (blocked on G37/D-14)** — not a sweep-1 interface. | C30 (git revision); C34 (verify); *FE-3/C03 (signing+key, deferred)* |
 | I6 | **Scenario-path feed (to enforcement/audit)** | outbound (read) | The set of scenario paths/labels C34's audit compares actual implementer reads against ("agent reads vs scenario paths", README:173). C30 *publishes the corpus layout*; C34 *audits against it*. | C30 (publishes); **C34** (audits) |
 | I7 | **Corpus retrieval (to runner/judge)** | outbound (read) | The runner (C31) and judge (C32) resolve a component's scenarios by path/`Task` from the corpus. C30 owns *the corpus*; C31 owns *execution*. | C30 (corpus); C31/C32 (consume) |
+
+### 3.1 Binding decisions cited verbatim (D-36, D-38, D-13)
+
+**D-36** (verbatim, review-log):
+> "Eval-tier trajectory flow is the Inspect AI log, NOT CXDB. C31 (runner) produces an **Inspect AI trajectory log**; C32 (judge) scores that log; C33 reduces. The spine eval tier does **NOT** read trajectories from CXDB (C21) — CXDB (C21/C22) + the bridge (C24) stay **non-spine** … C33 writes the satisfaction record to **C19 (beads)**, not CXDB."
+
+Consequence for C30: scenario **metadata home is the separate git repo, not CXDB** (OQ-4 RESOLVED below). The corpus is the held-out *input* to the Inspect AI log flow; it is never read from CXDB.
+
+**D-38** (verbatim, review-log):
+> "Judge read-surface SHAPE = a separate judge rig (the D-17 joint C42/C34/C32 freeze). Per D-31 (multiple rigs per city) + D-17: the judge runs in a **separate rig** from the worker (worker rig + judge rig, co-resident in the city). The judge MAY read the worker's trajectory log + the held-out scenario partition; the worker MUST NOT read the judge rig or the scenarios (the holdout — C34 enforces+audits, C42 provides the partition); **no shared context window**."
+
+Consequence for C30: the **judge rig has read-access to the `scenarios` partition**; the **worker rig does NOT** (holdout). C30 places the corpus in the `scenarios` partition precisely so D-38's judge-read-surface has a well-defined target and C34 has a well-defined boundary to enforce. The partition boundary is C42's; C30 places; C34 enforces (D-13).
+
+**D-13** (verbatim, review-log):
+> "Holdout enforcement ownership. C34 owns holdout-integrity ENFORCEMENT + after-the-fact AUDIT (read-isolation policy, independence checks under D-1, `scenarios ∉ read_partition(worker)`). C43 owns the distinct lethal-trifecta blast-radius bound (Bash/net/fs typing, twin isolation; G31). C42 PROVIDES the role partition C34 enforces; C42 does not enforce. Pre-constrains unbuilt C34 (Batch 3) + C43 (Batch 4)."
+
+Consequence for C30: **C30 stores/authors** in the isolated rig. **No enforcement obligation leaks onto C30.** OQ-2 RESOLVED below.
+
+### 3.2 `inspect_eval` tool-node registration (C17 binding — sweep-2)
+
+The Inspect AI scenario provider is exposed as a **C17 tool node** per the `[[tool]] type="subprocess"` sketch (AI-CONTEXT §13.3; C17 §3.3). The TOML block below is the **pack authoring config** — part of the `[[service]] type="inspect_ai"` Gas City provider pack (README:424). Field `command`/`cmd` spelling is G11-gated per **D-34** ("tool-node command-key field name is a source contradiction, G11-gated; specs MUST carry the spelling note and MUST NOT claim either spelling as verified").
+
+```toml
+# pack.toml — C30's inspect_ai provider pack (the Gas City service + tool node)
+# [[service]] block: exposes Inspect AI as a named provider
+[[service]]
+name    = "inspect_ai"
+type    = "inspect_ai"     # recognized by the Gas City pack loader
+
+# [[tool]] block: the C17 deterministic node C31 invokes to run a scenario
+[[tool]]
+name           = "inspect_eval"
+type           = "subprocess"
+# command/cmd: G11-gated (AI-CONTEXT §13.3 uses "command"; prototype uses "cmd" — D-34)
+command        = "inspect"   # [needs G11 verification — may be "cmd"]
+args           = ["eval", "{scenario_path}", "--task", "{task}"]
+work_partition = "scenarios"  # C42 partition this tool node operates within
+```
+
+**C17 `ToolNodeRef`** for the `inspect_eval` node (against C17 §3.4):
+
+```go
+ToolNodeRef{
+    Name:           "inspect_eval",
+    InputKeys:      []string{"scenario_path", "task"},
+    WorkPartition:  "scenarios",
+    DeterminismTag: "deterministic",
+}
+```
+
+The `scenario_path` input key is resolved from the scenario record's `task_path` field (§4.5 below); `task` is the Inspect AI `Task` name within that file. C31 (runner) constructs the `ToolNodeRef` invocation; C30 provides the corpus from which `scenario_path` and `task` are drawn.
+
+**Authoring rig config** (from AI-CONTEXT §13.3 — the `[[rig]]` block C30 binds to; spelled per D-32):
+```toml
+# .gc/site.toml (path bindings — harvest-verified F1)
+[[rig]]
+name = "scenario_authoring"
+path = "<scenario-repo-root>"    # the separate git repo root (INV-1)
+
+# city.toml (partition semantics — spelling needs G11 per D-32)
+[[rig]]                          # or [[rigs]] — G11-gated per D-32
+name            = "scenario_authoring"
+read_partition  = "scenarios"
+write_partition = "scenarios"
+# The implementer [[rig]] explicitly does NOT include scenarios in read_partition
+# (AI-CONTEXT §13.3 comment — C42 owns this block; C30 references it)
+```
+
+### 3.3 Corpus manifest contract (sweep-2)
+
+C30 publishes a **corpus manifest** — a machine-readable index of all held-out scenarios in the separate repo. The manifest is the I6 scenario-path feed C34 audits against and the I7 corpus-retrieval surface C31/C32 consume. It is a git-tracked file committed by the `scenario_authoring` rig.
+
+**Manifest file:** `scenarios/MANIFEST.json` (root of the separate scenario repo; co-located with the `scenarios/<component>/` subtrees).
+
+```json
+{
+  "schema_version": "1",
+  "generated_at_commit": "<git-sha>",
+  "entries": [
+    {
+      "component":    "C31",
+      "task_path":    "scenarios/C31/eval_task.py",
+      "task_name":    "scenario_runner_basic",
+      "created_by":   "rig:scenario_authoring",
+      "git_commit":   "<sha-of-commit-that-added-this-scenario>",
+      "created_at":   "2026-06-01T00:00:00Z",
+      "description":  "Tests that the scenario runner executes a held-out scenario and produces an Inspect AI log"
+    }
+  ]
+}
+```
+
+**Fields** (see §4.5 for the authoritative scenario-record schema; this table covers the manifest entry only):
+
+| Field | Type | Req | Semantics | R/W by |
+|---|---|---|---|---|
+| `component` | `string` | R | the C-ID the scenario exercises (maps to `scenarios/<component>/` path) | C30 writes; C31/C32/C34 read |
+| `task_path` | `path` | R | repo-relative path to the Inspect AI `Task` file (`scenarios/<component>/<file>.py`) | C30 writes; C31/C32 read |
+| `task_name` | `string` | R | the Python `Task` object name inside `task_path` (the Inspect AI `--task` arg) | C30 writes; C31/C32 read |
+| `created_by` | `string` | R | `"rig:scenario_authoring"` — the `"kind:id"` wire form per D-29 (consistent with C20/C41 `created_by` wire type) | C30 writes; C34/C41 read |
+| `git_commit` | `string` | R | SHA of the commit that introduced this scenario entry (INV-4 provenance + tamper-evidence) | C30 writes (git identity); C34 verifies |
+| `created_at` | `timestamp` | R | ISO-8601 authoring timestamp | C30 writes; C34 audit reads |
+| `description` | `string` | O | human-readable scenario description | C30 writes; human readers |
+| `schema_version` | `string` | R (manifest root) | version of this manifest schema (bump on structural change) | C30 writes |
+| `generated_at_commit` | `string` | R (manifest root) | HEAD SHA of the scenario repo at manifest generation time | C30 writes; C34 baseline verifies |
 
 **Invariants C30 must uphold (store-level):**
 - **INV-1 (separate-repo holdout):** scenarios live in a **separate git repo** from the code the implementer

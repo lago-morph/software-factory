@@ -18,7 +18,20 @@
 > F-MODE-COVERAGE F2/F39/F47/F60 (satisfaction-over-population as the reward-hacking / region-mismatch /
 > Goodhart / compounding-error guard); ambiguities-and-gaps G09; review-log D-1 (judge same-provider),
 > D-6 (canonical track); **D-15 (RESOLVED — satisfaction is holistic at Sweep-1 against C08's free-form DoD; FE-5 enumerated per-criterion DoD stays DEFERRED to Sweep-2)**; FUTURE-ENHANCEMENTS FE-5 (enumerated per-criterion DoD — decision below).
-> Inventory ID: C33   Kind: component   Status: sweep-1
+> Inventory ID: C33   Kind: component   Status: sweep-2
+>
+> **Sweep-2 additions (2026-06-01):** Concrete `reduce()` signature; `SatisfactionDistribution` schema (OQ-2
+> resolved); `satisfaction_metric` bead-write contract (D-36); E-code table; AC-code table (E↔AC cross-refs);
+> sequence diagram; OQ-1/OQ-2/OQ-4 resolved inline. Binding decisions cited verbatim: D-15, D-36, D-39.
+>
+> **D-36 (verbatim):** "C33 writes the satisfaction record to **C19 (beads)**, not CXDB."
+>
+> **D-39 (verbatim):** "`ScoreRecord` schema is owned + frozen by C32. C33 (aggregate) … consume it. Frozen
+> at Sweep-2."
+>
+> **D-15 (verbatim):** "Satisfaction is HOLISTIC at Sweep-1 (FE-5 resolution). C33 computes the satisfaction
+> distribution by a graded judge (C32) over C08's existing free-form Definition-of-Done — NOT against
+> enumerated per-criterion DoD."
 
 ## 1. Purpose & responsibility
 

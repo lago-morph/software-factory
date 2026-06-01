@@ -35,7 +35,7 @@
 > (`spec/C29-model-floor-stylesheet.md` §3 — `resolveModel`/`crossFamilyRule`/`IndependenceConstraint`, the
 > L0–L3 ladder, L1 Phase-0 default) and C30 spec (`spec/C30-scenario-store.md` §1 — the held-out
 > Inspect-AI-`Task` corpus at `scenarios/<component>/` C32 scores against).
-> Inventory ID: C32   Kind: agent-role   Status: sweep-1
+> Inventory ID: C32   Kind: agent-role   Status: sweep-2
 > Track: canonical (faithful posture — elaborate v4 exactly; mark inferred fills `[FAITHFUL-FILL]`,
 > v4 ambiguities `[AMBIGUITY: Gxx]`).
 

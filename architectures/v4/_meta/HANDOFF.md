@@ -1,8 +1,21 @@
 # HANDOFF — v4 Spec & Plan run (resume from here)
 
-**Last updated:** 2026-06-01 (Sweep-1 + wrap-up run complete).
-**Status:** **Sweep-1 is COMPLETE** (all 57 components built + adversary-reviewed + integrated on the canonical `spec/` + `plan-faithful/` track) **AND the wrap-up run is complete** — operator decisions **D-20…D-25 adopted**, the expert-panel **VERDICT** recorded, three human-facing guides published, and the implementer build order rewritten to lead with the **safe-self-build backbone**. Next work is **Sweep 2 (implementation-ready depth)**, and its first action is the **Gas City reality-check spike (D-23)**.
-**Working tree:** clean. Everything is merged to `main` (tip = merge of **PR #224**). The Sweep-1 build landed as **#220**; the wrap-up kit + guides + operator decisions as **#221–#224**.
+**Last updated:** 2026-06-01 (Sweep-2 run #1 — D-23 + first depth cluster — complete; see §0).
+**Status:** **Sweep-1 COMPLETE** (57/57 built+reviewed+integrated) + **wrap-up COMPLETE** (D-20…D-25 adopted, panel VERDICT, guides, products-first build order). **Sweep-2 has STARTED** (this run): the **D-23 Gas City reality-check is done as protocol + harvest** (no live run, per operator), the pivotal **auto-001 decision is settled** (2 rounds / 6 adversaries), and the **first Sweep-2 depth cluster (C19/C20/C21/C23/C41) landed**. **2 operator morning-review items are open** (D-20 re-adoption; per-rig-class autonomy) — see [`overnight-summary-2026-06-01-sweep2.md`](../../../overnight-summary-2026-06-01-sweep2.md) §6.
+**Working tree:** the Sweep-2 run #1 work is in stacked PRs **#229→#232 + wrap** (NOT yet merged to `main` at run close). Prior state: everything through #228 is in `main`.
+
+## 0. Sweep-2 run #1 (2026-06-01) — what landed + what's next
+
+**Done this run (stacked PRs #229–#232 + wrap):**
+- **D-23 (protocol + harvest):** [`D-23-gas-city-spike-protocol.md`](./D-23-gas-city-spike-protocol.md) (runnable prevent-vs-detect / `[[service]]` / Orders-durability checklist) + [`D-23-substrate-harvest.md`](./D-23-substrate-harvest.md) (12 facts from the real `gascity-prototype@b14c278`). Closed **XC-9, C42:OQ-4, C04:OQ-4**; **0 true contradictions** (3 flagged, all reclassified NEW-INFO). 13 specs annotated `[D-23 substrate-verified]`.
+- **auto-001 decided** ([`decisions/auto-001-detect-only-binding-gate.md`](./decisions/auto-001-detect-only-binding-gate.md)): detect-only ⇒ binding gate on unattended P2, as a **policy rubric** (descope-to-L4 default; prevent layer NOT pre-blessed; per-rig-class middle; fail-closed). Resolved **OQ-C41-4** via D-29.
+- **Sweep-2 depth cluster** (evidence/data substrate): **C19, C20, C21, C23, C41** at implementation depth. Seam adversary found + fixed a HIGH `event_id` drift → ledger **D-26…D-29**.
+
+**MANDATORY FIRST ACTIONS for the next session (in order):**
+1. **Resolve the 2 morning-review items** ([summary §6](../../../overnight-summary-2026-06-01-sweep2.md)): (a) re-adopt D-20 as conditional-on-prevention? (b) accept per-rig-class autonomy? Until (a) is answered, do NOT wire the auto-001 rubric into specs.
+2. **If (a) re-adopted:** wire the auto-001 rubric into **C43/C34/C42/C56/C57** (the deferred spec edits) as its own PR.
+3. **The empirical D-23 spike is still owed** (needs a Docker-capable env; prototype + protocol ready) — prevent-vs-detect (C34:OQ-C34-1 ≡ C43:OQ-C43-1) stays OPEN until then; it gates the auto-001 rubric's actual outcome.
+4. **Continue Sweep-2 depth** on the remaining ~52 components. Suggested next clusters: **workflow-engine** (C04/C05/C12/C13/C18/C40) and **eval/holdout** (C30/C31/C32/C33/C34/C42 — note holdout depth is partly gated on item 1). Use the [`BUILDER-BRIEF`](./BUILDER-BRIEF.md) at Sweep-2 depth, the C20 spec as the format **exemplar**, and a cross-cluster seam adversary per cluster.
 
 This file + the other `_meta/` artifacts are sufficient to resume with zero re-grounding. Start with the run summary at [`run-summary.md`](../../../run-summary.md), the operator decision guide [`decisions-to-make.md`](../../../decisions-to-make.md), and the coverage ledger [`STATUS.md`](./STATUS.md).
 

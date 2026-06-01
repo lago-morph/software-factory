@@ -37,7 +37,7 @@ C09 owns the two halves of that one mechanism:
 | Upstream / lateral (binds via) | **C05** sling/dispatch | Sling routes a bead/wisp to an agent with a specific template; C09 supplies the formula-node→template-name binding sling resolves. Hard inventory dependency (`Depends on: C05`). |
 | Upstream (references templates) | **C12** formula/pipeline file | "Gas City formulas reference templates by name" (README:109) — a formula node names the template C09 renders. C09 is the resolution point for that name→template binding. |
 | Downstream (consumes instruction) | **C28** Claude Code agent loop | The rendered instruction is the agent's initial prompt; C28 executes against it (AI-CONTEXT §3.2 line 89; README:362 "one prompt template at `agents/worker/prompt.template.md`"). |
-| Lateral (run state supplies variables) | **C13** molecule | A molecule is the instantiated workflow (live bead-tree); its run context is the source of the template variables C09 substitutes. Soft — variable source, not a hard inventory edge. |
+| Lateral (run state) | **C13** molecule | A molecule is the instantiated workflow (live bead-tree). At Phase 0, C13 is **not** a hard runtime dependency for render-context variables: `BeadId` and `CreatedBy` are sourced from the C05 `DispatchRequest` (§3.4 `bead_id`/`created_by` fields); `PackGitRev`/`TemplateName`/`AgentRole` from the C08 pack context. C13 may supply additional pack-specific variables declared in `pack.toml [template_vars]` in later phases. Soft — not a hard inventory edge at Phase 0. |
 | Lateral (attribution) | **C41** identity/attribution | The binding decision (which spec drove which work) is an attributable action; `created_by` rides the dispatch. Soft upstream. |
 
 C09 sits in the **Spec Intake** subsystem and is **foundational** (inventory: Foundational? = yes): it is the connective tissue between the spec artifact (C08) and the build flow (C05 sling, C12 formula, C28 agent loop). It is a **Batch-2** component (per the inventory's suggested batches) because it depends on Batch-1 C08 and on C05.
@@ -49,7 +49,7 @@ Sweep-1: interfaces **named + described** (concrete signatures, the template-var
 ### 3.1 Inbound
 
 - **Template-source interface (C08 → C09).** A Go `text/template` Markdown file at `agents/<name>/prompt.template.md` (README:106; AI-CONTEXT:119). C09 receives the template body (or a reference resolving to it) plus the agent name it belongs to.
-- **Render-context interface (run state → C09).** The set of template variables available at render time, supplied by the run context (the molecule/bead, C13) — e.g., bead fields, work parameters. v4 does not enumerate the variable set (Phase 0 content is "arbitrary; whatever the worker's initial prompt should be", AI-CONTEXT:542), so at the smallest install the context may be empty and the render is effectively pass-through.
+- **Render-context interface (dispatch + pack context → C09).** The set of template variables available at render time. At Phase 0, the canonical variable set (§3.2a) is assembled from two already-present inbounds: (a) the C05 `DispatchRequest` (supplies `BeadId` via `bead_id` and `CreatedBy` via `created_by`; both required fields per §3.4) and (b) the C08 pack context (supplies `TemplateName`, `AgentRole`, `PackGitRev`). v4 does not enumerate the variable set (Phase 0 content is "arbitrary; whatever the worker's initial prompt should be", AI-CONTEXT:542), so at the smallest install the context may be empty and the render is effectively pass-through. **Sweep-2 note:** C13 (molecule/bead run context) is NOT a required Phase-0 inbound for these variables — it may supply additional pack-specific variables in later phases via the `pack.toml [template_vars]` escape hatch.
 
   > [FAITHFUL-FILL] v4 names neither the template-variable namespace nor any specific variable. The minimal faithful contract: the render context is **whatever the Go `text/template` body references**, drawn from the dispatch/run context; no required variables exist at Phase 0 (the template may be a constant string, AI-CONTEXT:542). A fixed variable schema would be an architectural addition v4 does not make; it is left to be enumerated as templates begin using variables (sweep 2 / per-pack convention).
 
@@ -122,7 +122,7 @@ bind_and_render(template_name: string, agent_role: string, pack_root: PackRoot, 
 
 **RESOLVED (Sweep-2):** v4 enumerates no template variables ("arbitrary", AI-CONTEXT:542). The canonical namespace is defined here as the **minimal faithful set** that covers bead-identity, run-identity, and spec-identity — the fields C09 can plausibly inject from its inbound contracts (C08 pack context + C13 molecule/bead state + C05 dispatch). Variables outside this set are **not supported** at Phase 0 and produce E-C09-02 (unbound-variable) if referenced.
 
-> [FAITHFUL-FILL] v4 names no template variables; this table is the smallest faithful addition that makes the render contract concrete. Every variable is sourced from an already-named C09 inbound: the C08 pack (layout path), the C13 molecule/bead (run state), the C05 dispatch request (routing key). No arbitrary/external injection is allowed at Phase 0. Undefined-required-variable → E-C09-02 (fail loud, per §6 INV-1 faithful choice and OQ-2 default).
+> [FAITHFUL-FILL] v4 names no template variables; this table is the smallest faithful addition that makes the render contract concrete. Every variable is sourced from an already-named C09 inbound: the C08 pack (layout path for `TemplateName`/`AgentRole`/`PackGitRev`) and the C05 `DispatchRequest` (for `BeadId` via the `bead_id` field, and `CreatedBy` via the `created_by` field — both required fields in the §3.4 table). **C13 is NOT a required runtime dependency for the canonical Phase-0 variable set**: all six Phase-0 variables are derivable from the C08 pack context and the C05 DispatchRequest already present at bind time. No arbitrary/external injection is allowed at Phase 0. Undefined-required-variable → E-C09-02 (fail loud, per §6 INV-1 faithful choice and OQ-2 default).
 
 ### Template-variable namespace table (Sweep-2)
 
@@ -131,7 +131,7 @@ bind_and_render(template_name: string, agent_role: string, pack_root: PackRoot, 
 | `{{.TemplateName}}` | `string` | O | The resolved template name (path relative to pack root, e.g. `agents/worker/prompt.template.md`). Injected by C09 from the `BoundTemplate.template_name` field. | C09 writes (resolved); template author reads |
 | `{{.AgentRole}}` | `string` | O | The target agent role (e.g. `dog`, `worker`). Injected by C09 from the `BoundTemplate.agent_role` field. | C09 writes (resolved); template author reads |
 | `{{.PackGitRev}}` | `string` | O | The git revision of the pack at render time (`BoundTemplate.pack_git_rev`). Provides the INV-4 spec-revision anchor in rendered text, if the template author wants to surface it. | C09 writes (resolved); template author reads |
-| `{{.BeadId}}` | `bead_id` | O | The bead ID of the work item being dispatched (from the C05 DispatchRequest / C20 bead). Lets a template reference its own work-item identity. | C05/C13 writes (dispatch context); C09 injects; template author reads |
+| `{{.BeadId}}` | `bead_id` | O | The bead ID of the work item being dispatched (from the C05 DispatchRequest `bead_id` field, §3.4). Lets a template reference its own work-item identity. | C05 DispatchRequest writes (`bead_id` field, §3.4); C09 injects from dispatch context; template author reads |
 | `{{.CreatedBy}}` | `string` | O | The `created_by` actor wire value for this dispatch, in `"kind:id"` colon-delimited format (D-29). Lets a template surface the dispatcher identity. | C05 DispatchRequest writes; C09 injects; template author reads |
 | *(future / pack-specific)* | — | — | Additional variables MAY be introduced by later pack conventions; they MUST be declared in a `[template_vars]` section of `pack.toml` so C09 can validate them. Undeclared variables render as E-C09-02. | Pack author declares; C09 validates |
 
@@ -159,7 +159,7 @@ C09 is an **interface/transform**, not a data store. It owns no durable state of
 |---|---|
 | Owned artifact | None of its own. The template body is C08's artifact (collapse: the `prompt.template.md` file); the formula's template-name reference is C12's; the dispatch record is sling's (C05). |
 | Binding relation | `formula-node → template-name → agent-role`, resolved at dispatch (README:109). **OQ-3 RESOLVED:** this is a *naming convention* over the pack layout (`agents/<name>/prompt.template.md` × `city.toml` agent declarations) — not a separate registry (see §3.2b). |
-| Render context | Transient per-render variable set from the run context (C13). Lifetime = one render. Namespace: §3.2a table (six fields at Phase 0). |
+| Render context | Transient per-render variable set assembled from the C05 `DispatchRequest` (`BeadId` from `bead_id`, `CreatedBy` from `created_by`) + the C08 pack context (`PackGitRev`, `TemplateName`, `AgentRole`). Lifetime = one render. Namespace: §3.2a table (six fields at Phase 0). **C13 is not a hard runtime dependency** for the canonical Phase-0 variable set — all variables come from inbounds already present at dispatch time. |
 | Persistence | None owned. Durability of "which spec drove which work" rides the bead/work-graph (C19) dispatch record + git revision of the pack (C08). |
 | Consistency | The pack git revision is the consistency boundary for *which* template text exists; sling's dispatch is the consistency point for *which* template is bound to a work item. |
 
@@ -231,8 +231,8 @@ sequenceDiagram
     else role found
         C03-->>C09: agent_role confirmed
     end
-    C09->>C13: fetch render context vars (BeadId, CreatedBy, and namespace fields)
-    C13-->>C09: RenderContext{BeadId, CreatedBy, PackGitRev, ...}
+    Note over C09: extract BeadId from DispatchRequest.bead_id and CreatedBy from DispatchRequest.created_by (C05 §3.4)
+    Note over C09: build RenderContext{BeadId, CreatedBy, PackGitRev, TemplateName, AgentRole} from dispatch and pack context
     C09->>C09: render(bound, ctx) via Go text/template Execute
     alt template parse or execution error
         C09-->>C12: E-C09-04 template-parse-error

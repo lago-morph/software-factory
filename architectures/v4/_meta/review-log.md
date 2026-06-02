@@ -125,6 +125,43 @@ Surfaced by the cross-cluster seam-consistency adversary review of the C19/C20/C
 
 - **D-42 (ADOPTED — operator, 2026-06-02) — the spec–scenarios–system triangle is the canonical evaluation framing; the judge is a diagnostician, not a scorer.** Every build is three representations — **Spec (S)**, hold-out **Scenarios (H)**, **System (I)** — joined by three independently-verified edges: **S↔H** (scenario builder + spec builder make the correspondence correct + complete), **S↔I** (the system's own unit/integration/e2e tests — implementer-written, therefore gameable), **H↔I** (the judge, evaluated independently — the anti-gaming check). The judge measures H↔I; a misalignment is a **non-specific signal** whose root cause is attributed across **{judge, spec, scenario, system}**; the judge surfaces the attribution and recommends **incremental-fix** vs **discard-and-reimplement-from-revised-spec**. A component is **complete only when all three edges align** — 100% hold-out pass is necessary, not sufficient. Spec/scenario correction is performed by an authoring path **independent of the implementing worker** (anti-gaming). Canonical statement: [ADR-0069](../../../docs/adr/0069-spec-scenarios-system-triangle-evaluation-invariant.md). **This reframes C32 (scorer → diagnostician), supersedes the lone-distribution-gate reading of C53 (→ tri-alignment completion), and adds the repair router to C52.** Implementation plan: **HANDOFF §0★**. Refines D-15 / D-38 / D-39 and the `auto-002` gate (now understood as the H↔I edge of the triangle). Rewind: revert this entry + ADR-0069 + the §0★ plan + the eval-tier spec deltas.
 
+### Triangle diagnosis contract (2026-06-02) — D-43 (lead, implementing D-42 / ADR-0069 §0★.2; pre-briefed to the C32 builder + the C52/C53/C30/C08/C34 dependent wave)
+
+- **D-43 (ADOPTED — lead, 2026-06-02; implements D-42 / HANDOFF §0★.2.1) — the judge's diagnosis is a companion `DiagnosisRecord`, NOT a mutation of the frozen `ScoreRecord`; owned + frozen by C32.** Reifying the diagnostician (D-42) requires a new per-build judge output. Of the two §0★.2.1 options (additive optional fields on `ScoreRecord` with a bead-type version bump, vs. a companion record keyed to the `ScoreRecord`), the **companion `DiagnosisRecord` is adopted** — so the **D-39 `ScoreRecord` freeze is preserved verbatim** and C33/C34/C46 keep consuming `ScoreRecord` unchanged. Cardinality: `ScoreRecord` stays **per (trajectory, scenario, judge)** — the per-scenario H↔I signal, unchanged; `DiagnosisRecord` is **one per build/evaluation pass** (per component-under-evaluation), computed by C32 over the set of `ScoreRecord`s for that build. C32 gains a `diagnose()` method alongside the unchanged `score()`.
+
+  **Bead type: `softwarefactory.v4.beads:diagnosis_record`. Canonical frozen schema = C32 §3.2a.** Field summary (the contract C52/C53/C34 build against):
+
+  | Field | Type | Req | Semantics |
+  |---|---|---|---|
+  | `factory_build_ref` | `string` | R | The `factory_build` bead this diagnosis is for (D-40 status bead) |
+  | `component_id` | `string` | R | The component under evaluation |
+  | `scenario_set_version` | `string` | R | C30 hold-out corpus pin evaluated (C34 audits) |
+  | `score_record_refs` | `list<string>` | R | The per-scenario `ScoreRecord`s (the H↔I evidence) this diagnosis is computed over |
+  | `holdout_pass_rate` | `float` (0.0–1.0) | R | Fraction of scenarios with `score_label = satisfied` (H↔I gate input) |
+  | `all_scenarios_satisfied` | `bool` | R | True iff **every** scenario `score_label = satisfied` (the **100% hold-out floor** — necessary, not sufficient) |
+  | `misalignments` | `list<Misalignment>` | R | Per-scenario misalignment detail (empty iff `all_scenarios_satisfied`); each = `{scenario_id, score_record_ref, observed, expected, gap, attributed_cause ∈ {judge,spec,scenario,system}}` |
+  | `root_cause` | `enum{judge,spec,scenario,system,none}` | R | Primary root-cause attribution of the misalignment; `none` iff aligned |
+  | `root_cause_rationale` | `string` | R | The judge's reasoning for the attribution (human-review reads) |
+  | `secondary_causes` | `list<enum{judge,spec,scenario,system}>` | O | Additional contributing corners when multi-source |
+  | `spec_defect_class` | `enum{none,localized,structural}` | R | When `root_cause ∈ {spec}`: `localized` (ambiguity patchable in place) vs `structural` (system faithfully built the wrong target → discard); `none` otherwise |
+  | `repair_recommendation` | `enum{incremental_fix,discard_and_reimplement,none}` | R | The repair mode the judge recommends; `none` iff aligned. C52 routes on (`root_cause`, `spec_defect_class`, this) |
+  | `repair_rationale` | `string` | R | Justification for the repair recommendation |
+  | `tri_alignment` | `enum{aligned,misaligned}` | R | All three edges judged aligned; `aligned` **requires** `all_scenarios_satisfied = true` AND `root_cause = none` |
+  | `judge_self_trust` | `enum{calibrated,uncalibrated}` | O | Whether the judge's own verdicts are trusted yet (PF-2 calibration precondition); informs C53 oversight, never the 100% floor |
+  | `judge_model_id` | `string` | R | Judge identity (D-10) — the diagnosis is itself an auditable judge output |
+  | `diagnosis_prompt_hash` | `string` | R | SHA-256 of the diagnosis prompt (C34 audit reproducibility) |
+  | `created_by` | `actor` | R | C41 attribution — the judge rig (`"rig:judge-N"`, D-29) |
+  | `diagnosed_at` | `timestamp` | R | UTC timestamp |
+  | `error_code` | `string` | O | E-code if diagnosis was degraded |
+
+  **Attribution → repair semantics (the C52 router key):** `system` (clear spec, trajectory genuinely fails) → `incremental_fix` = **polish** (patch system + its own S↔I tests); `judge` (mis-run / inconsistent / high ensemble disagreement / can't justify its own grade) → `incremental_fix` but routed to **recalibrate-judge-then-re-eval** (no system/spec change); `scenario` (scenario misrepresents the spec — tests what the spec doesn't require, or is itself ambiguous/contradictory vs the spec) → `incremental_fix` routed to **independent scenario correction** (C30 scenario builder + spec builder, never the worker); `spec` + `localized` → `incremental_fix` routed to **independent spec correction** (C08 + future C10/C11); `spec` + `structural` → `discard_and_reimplement` (independent spec correction, then throw away the system and rebuild from the revised spec).
+
+  **Anti-gaming invariants (load-bearing — D-42 / ADR-0069):** (i) the `DiagnosisRecord` is produced **only by the judge rig** (D-38), never by the implementing worker; (ii) every `spec`/`scenario` repair route is executed by the **independent authoring path** (C08 + future C10/C11; C30 scenario builder + spec builder), **never the implementing worker** — without this, "fix the spec" degenerates into "weaken the spec until my output passes"; (iii) `tri_alignment = aligned` is **necessary-and-the-100%-floor-is-non-negotiable**: 100% hold-out pass (`all_scenarios_satisfied`) is necessary but **not sufficient** for `aligned` — the spec/scenario edges must also be clean. The **100% floor never lowers**; only the human-review / judge-trust **oversight** relaxes as the judge earns calibration (`judge_self_trust`).
+
+  **Scope (capability-bar, §0★.3):** the independent spec/scenario-correction path is named as a **SEAM** to C08 + the future non-spine C10/C11 + C30; this pass specs the *contracts* (the `DiagnosisRecord`, the repair router, the independence requirement) and does **NOT** build the intent crucible (C11) / EARS linter (C10).
+
+  Owner: **C32** (freezes the schema; only C32 may change a required field, by a new binding decision). Consumers: **C52** (repair router keys on `root_cause`/`spec_defect_class`/`repair_recommendation`), **C53** (`tri_alignment` + `all_scenarios_satisfied` are conjunctive go terms), **C34** (audits the diagnosis as a judge output; audits `scenario_set_version` staleness + `created_by` independence), human review. Refines D-39 (additively — `ScoreRecord` untouched), D-15 (holistic grading still feeds `satisfaction_score`; diagnosis adds the attribution layer D-15 deferred to FE-5), D-38 (diagnosis runs in the judge rig). Rewind: revert this entry + C32 §3.2a/§3.1a + the C52/C53/C30/C08/C34 diagnosis deltas.
+
 ## Cross-component issues (raised during Sweep 1 builds)
 
 - **XC-1 — C19↔C20 dependency direction contradiction.** The canonical inventory lists C20→C19

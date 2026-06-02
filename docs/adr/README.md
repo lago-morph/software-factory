@@ -24,6 +24,7 @@ python3 .claude/skills/adr/scripts/check_adr_links.py docs/adr/
 | [0009](./0009-help-wanted-label-as-permanent-marker-of-agent-authored-issues.md) | Repurpose the GitHub default `help wanted` label as the permanent marker of agent-authored issues | Accepted | 2026-05-21 |
 | [0067](./0067-dual-track-per-component-v4-layout.md) | Dual-track per-component v4 spec/plan layout with a _meta decision ledger | Accepted | 2026-05-30 |
 | [0068](./0068-organize-v4-build-order-docs-by-product.md) | Organize v4 build-order documentation by adopted product, not by dependency phase | Accepted | 2026-06-01 |
+| [0069](./0069-spec-scenarios-system-triangle-evaluation-invariant.md) | The spec–scenarios–system triangle as the evaluation invariant for unattended self-building | Accepted | 2026-06-02 |
 
 ## Conventions in one screen
 

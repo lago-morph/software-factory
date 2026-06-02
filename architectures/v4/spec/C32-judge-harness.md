@@ -35,7 +35,7 @@
 > (`spec/C29-model-floor-stylesheet.md` §3 — `resolveModel`/`crossFamilyRule`/`IndependenceConstraint`, the
 > L0–L3 ladder, L1 Phase-0 default) and C30 spec (`spec/C30-scenario-store.md` §1 — the held-out
 > Inspect-AI-`Task` corpus at `scenarios/<component>/` C32 scores against).
-> Inventory ID: C32   Kind: agent-role   Status: sweep-1
+> Inventory ID: C32   Kind: agent-role   Status: sweep-2
 > Track: canonical (faithful posture — elaborate v4 exactly; mark inferred fills `[FAITHFUL-FILL]`,
 > v4 ambiguities `[AMBIGUITY: Gxx]`).
 
@@ -129,41 +129,124 @@ for the aggregator (C33) and the holdout audit (C34).
 | Realized over | **C17/C02** Tool-node / pack ABI | The Inspect AI scorer is exposed as a Gas City pack/tool node ("Inspect AI provides the bulk … Gas City pack", README:185,191; the `inspect_eval` `[[tool]]`, AI-CONTEXT §13.3). |
 | Feeds (meta) | **C46** Meta-metrics | "judge false-positive rate" is a P12 meta-metric (README:269); C32's scores + disagreement are an input. (Downstream; not a build dep.) |
 
-## 3. Interfaces / contracts (sweep-1: named + described)
+## 3. Interfaces / contracts (sweep-2: concrete signatures + frozen schema)
 
-**Inbound:**
-1. **`scoreTrajectory(trajectoryRef, scenarioRef) → ScoreRecord` (primary entry).** The harness's core
-   operation: given a reference to a trajectory (CXDB turn-DAG / bead) and a reference to a held-out scenario
-   (Inspect AI `Task`, C30), run the Inspect AI scorer with the judge model and return a structured score.
-   *Preconditions:* the scenario is resolvable through the judge's role-isolated read surface (C30/C42; the
-   exact partition is OQ-C42-3, OQ5); a judge model +
-   independence constraint are available from C29. *Postcondition:* exactly one `ScoreRecord` is emitted and
-   persisted (to a bead/CXDB turn) for the pair, attributed (C41). Concrete signature/return schema is
-   sweep-2.
-2. **Judge-model + independence contract (from C29).** C32 consumes `resolveModel(judge node) →
-   modelIdentity` and the emitted `IndependenceConstraint` (carrying the **active independence level**;
-   Phase-0 default `L1` = same-provider judge, prompt/role/rig-isolated, D-1). C32 *honors* the constraint
-   (runs the judge under the supplied identity + isolation) and *records the level* in the score; it does not
-   evaluate or enforce the constraint (that audit is C34).
-3. **Scenario/rubric contract (from C30).** C32 reads a scenario as an Inspect AI `Task` with versioned
-   grading criteria from `scenarios/<component>/` (read-only, through the judge's role-isolated read surface;
-   exact partition = OQ5). C32 binds the
-   rubric into the scoring run; it does not author or mutate it.
-4. **Trajectory-read contract (from C21/C19).** Read-only access to the trajectory turn-DAG / bead
-   work-product to be scored.
+> **OQ4 RESOLVED (Sweep-2) — D-37:** C31↔C32 contract = post-hoc scoring. C31 produces an Inspect AI
+> trajectory log; C32 scores post-hoc off that log. C31 does NOT invoke C32 inline. Resolves
+> C32:OQ4. The trajectory-read interface below reflects this: C32 reads C31's log directly.
 
-**Outbound:**
-5. **`ScoreRecord` emission (to C33 / C34).** A structured per-trajectory result written to a bead / CXDB
-   turn, carrying: scenario id + version, trajectory ref, the **satisfaction score** (shape per Inspect AI
-   scorer), the **judge model identity + active independence level**, and (ensemble) **disagreement**. This
-   is the seam C33 aggregates and C34 audits. `> [FAITHFUL-FILL]` schema — v4 fixes only "judge outputs from
-   beads" (README:426); fields above are the minimal set C33/C34/C46 need; concrete schema is sweep-2.
-6. **Ensemble request (internal, optional).** A request to run N judges over the same trajectory and reduce
-   to a `ScoreRecord` carrying per-judge scores + a disagreement signal ("Inspect AI supports multiple
-   scorers", README:187). **The multi-scorer *execution* is Inspect AI's (off-the-shelf); C32 authors no
-   ensemble engine** — only the *request* and the *disagreement field* on the record (capability-for-principle
-   bar: the stack provides the mechanism). Sweep-1 names it; the reduction policy (how disagreement is
-   summarized) is sweep-2.
+> **OQ5 RESOLVED (Sweep-2) — D-38:** Judge read-surface SHAPE = a separate judge rig (the D-17 joint
+> C42/C34/C32 freeze). Per D-31 (multiple rigs per city): judge runs in a separate rig from the worker;
+> judge MAY read the worker trajectory log + held-out scenarios; worker MUST NOT read the judge rig or
+> scenarios; no shared context window. Resolves the unified OQ-C42-3 + OQ-C34-3 + C32-OQ5.
+
+### 3.1 Primary interface signature
+
+```python
+def score(
+    trajectory_log: TrajectoryLog,   # C31-produced Inspect AI trajectory log (post-hoc, D-37)
+    scenario: InspectAITask,          # held-out scenario Task from C30 (judge rig read, D-38)
+    dod: DefinitionOfDone,            # C08's free-form DoD text (holistic grading per D-15)
+    judge_model: ModelIdentity,       # from C29 resolveModel("judge") — Phase-0: same-provider (D-1)
+    independence: IndependenceConstraint,  # from C29 — Phase-0: L1
+    n_judges: int = 1,               # >1 → ensemble path; Inspect AI multi-scorer (README:187)
+) -> ScoreRecord:
+    ...
+```
+
+- **`TrajectoryLog`** — the Inspect AI log artifact written by C31 after running the scenario against the
+  built component. C32 reads this read-only from the judge rig's read surface (D-38; C31 writes it into
+  the worker rig; the judge rig has read access to it per D-38).
+- **`InspectAITask`** — the held-out scenario object from `scenarios/<component>/` (C30's store). C32 reads
+  it through the judge rig partition (D-38); it never returns its contents to the worker rig (I3).
+- **`DefinitionOfDone`** — C08's free-form DoD text (README:§C08). Used as the holistic grading rubric per
+  **D-15** ("graded judge over C08's existing free-form Definition-of-Done — NOT against enumerated
+  per-criterion DoD"). C32 does NOT enumerate per-criterion sub-scores (FE-5, deferred).
+- **`ModelIdentity`** / **`IndependenceConstraint`** — consumed from C29's `resolveModel` + `crossFamilyRule`
+  output; Phase-0 identity = Claude Code same-provider, level `L1` (D-1). C32 honors, does not enforce.
+- **Return** — a single `ScoreRecord` (frozen schema §3.2); exactly one per `score()` call regardless of `n_judges`
+  (ensemble judges are reduced inside the call; I5).
+
+**Preconditions:** (a) `trajectory_log` exists and is parseable Inspect AI log format; (b) `scenario` is
+resolvable from the judge rig's read surface (D-38); (c) `judge_model` is not None (C29 resolved it);
+(d) `dod` is non-empty (C08 produced it); **(e) `trajectory_log.inspect_version` matches C32's installed
+Inspect AI version — mismatch raises E-C32-02 (REV-SEAM-02: version-pin guard).**
+
+**Postconditions:** exactly one attributed `ScoreRecord` is persisted as a C19 bead (`score_record` type)
+and is consumable by C33 and auditable by C34.
+
+### 3.2 Frozen `ScoreRecord` schema (D-39 — OWNED AND FROZEN BY C32)
+
+> **OQ2 RESOLVED (Sweep-2) — D-39:**
+> "**C32 OWNS + FREEZES the `ScoreRecord` schema** — C33/C34/C46 consume it; freeze it here."
+> (review-log D-39, verbatim.) The table below is the contract C33/C34/C46 build against.
+
+Bead type: `softwarefactory.v4.beads:score_record`
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `scenario_id` | `string` | R | Unique ID of the held-out scenario (C30 `Task.name`/`Task.id`) | C32 writes; C33/C34/C46 read |
+| `scenario_version` | `string` | R | Version/commit of the scenario corpus at score time (C30 corpus pin) | C32 writes; C34 audits for staleness |
+| `trajectory_ref` | `string` | R | Reference to the C31-produced trajectory log (path or content-hash); links score to the run | C32 writes; C33/C34 read |
+| `dod_version` | `string` | R | Version/hash of the C08 DoD text used as rubric (so grading conditions are reproducible) | C32 writes; C33/C34/C46 read |
+| `satisfaction_score` | `float` (0.0–1.0) | R | Holistic satisfaction score from the Inspect AI graded scorer (D-15: single graded value over free-form DoD, not per-criterion) | C32 writes (Inspect AI produces); C33 aggregates; C46 calibrates |
+| `score_label` | `enum{satisfied,partial,unsatisfied}` | R | Categorical label derived from `satisfaction_score` thresholds; coarse signal for C34 enforcement gates | C32 writes; C34/C33 read |
+| `judge_model_id` | `string` | R | The model identity used as judge, from C29 `ModelIdentity.id` (D-10: `{id, family, cost_tier}`) | C32 writes; C34 audits (independence check per D-13) |
+| `independence_level` | `enum{L0,L1,L2,L3}` | R | Active independence level stamped at score time (Phase-0 = `L1`, D-1); C34 audits against declared policy | C32 writes; C34 audits |
+| `n_judges` | `int` | R | Number of judge runs in this scoring call (1 = single; >1 = ensemble; Inspect AI multi-scorer) | C32 writes; C46 reads |
+| `per_judge_scores` | `list<float>` | O | Raw satisfaction scores per judge run when `n_judges > 1`; absent for single-judge runs | C32 writes (ensemble path); C46 reads for FP-rate |
+| `disagreement` | `float` | O | Ensemble disagreement signal (std-dev of `per_judge_scores`); absent when `n_judges = 1` (README:187; F46) | C32 writes (ensemble path); C33/C46 read |
+| `judge_prompt_hash` | `string` | R | SHA-256 of the judge prompt sent to the LLM (scenario rubric + DoD text + trajectory excerpt); enables audit reproducibility | C32 writes; C34 audits |
+| `created_by` | `actor` | R | C41 attribution — the judge rig identity (wire format: `"rig:judge-1"`, D-29) | C32 writes via C41; C34 audits |
+| `scored_at` | `timestamp` | R | UTC timestamp of the scoring run | C32 writes; C33/C46 read |
+| `error_code` | `string` | O | E-code if scoring was partial/degraded (e.g. `E-C32-01`, `E-C32-02`); absent on clean run | C32 writes on error; C33/C34 read |
+
+> **Freeze guarantee (D-39):** C33, C34, and C46 MAY build against this field set immediately. C32 will
+> not remove or rename any required (`Req = R`) field without a new binding decision. Optional fields
+> (`Req = O`) may be added non-breakingly; any removal requires a schema version bump and downstream
+> notification.
+
+> [FAITHFUL-FILL] **Score bead type name `score_record`.** v4 says "judge outputs from beads"
+> (README:426) but names no type string. `softwarefactory.v4.beads:score_record` is the minimal
+> consistent choice: it uses the D-2 namespace, is unambiguous, and is the natural peer of `factory_build`.
+> If the canonical bead type name must change, only C32 (owner per D-39) can make that change.
+
+> [FAITHFUL-FILL] **`score_label` thresholds.** v4 gives no numeric thresholds. Placeholder:
+> `satisfaction_score ≥ 0.75 → satisfied`; `0.4–0.75 → partial`; `< 0.4 → unsatisfied`. Exact thresholds
+> are a C32 config parameter, tunable by C46 calibration; they are not a v4 invariant.
+
+### 3.3 Judge-prompt structure
+
+Per **D-15** ("graded judge over C08's **free-form** DoD, not enumerated per-criterion"):
+
+```
+SYSTEM: You are an independent evaluator in a separate judge rig.
+        Your task is to grade whether the following agent trajectory
+        satisfies the Definition of Done for the scenario.
+        Do not use enumerated per-criterion scoring.
+        Produce a single holistic satisfaction score 0.0–1.0.
+
+SCENARIO: <InspectAITask.description>
+          <InspectAITask.input>
+
+DEFINITION OF DONE:
+  <dod.text>          # C08's free-form DoD — verbatim (D-15)
+
+TRAJECTORY:
+  <trajectory_log excerpt — the agent's turn sequence>
+
+INSTRUCTIONS:
+  1. Read the DoD holistically.
+  2. Assess whether the trajectory's final state satisfies it.
+  3. Output ONLY a JSON object:
+     {"score": <float 0.0–1.0>, "label": "<satisfied|partial|unsatisfied>",
+      "rationale": "<one paragraph>"}
+```
+
+- The prompt is **SHA-256 hashed** before sending and the hash stored in `judge_prompt_hash` (audit trail, D-38).
+- The rubric text is the DoD verbatim — C32 does **not** enumerate sub-criteria (D-15; FE-5 deferred).
+- The trajectory excerpt length is bounded (C32 config param, default = last 4096 tokens of the log) to
+  stay within the judge model's context window (same Max seat as coder, D-1).
 
 **Invariants:**
 - **I1 (secondary-guard).** C32 is the *probabilistic, secondary* evaluator; it never substitutes for the
@@ -174,56 +257,113 @@ for the aggregator (C33) and the holdout audit (C34).
   *enforcement* or *audit* (D-13 → C34). At Phase 0 the level is `L1` (same-provider, isolated by rig/role/
   prompt, D-1).
 - **I3 (held-out at score time).** C32 reads the scenario only through its **role-isolated** read surface
-  (the `judge` role, isolated from the implementer); it does
-  not hand scenario contents back to the implementer rig. C32's *own* read is legitimate (it must see the
-  scenario to grade); the guarantee that the *implementer* never saw it is C34/C42's, not C32's. *(The exact
-  judge **partition** — a dedicated `judge` partition vs a role-isolated read of `code`+scenario-outputs — is
-  OQ-C42-3/OQ-C34-3, deferred at OQ5; I3 asserts only the role isolation, not the partition shape.)*
+  (the `judge` rig, separate from the worker rig per D-38); it does not hand scenario contents back to the
+  implementer rig. C32's *own* read is legitimate (it must see the scenario to grade); the guarantee that
+  the *implementer* never saw it is C34/C42's, not C32's.
 - **I4 (attributed, no silent score).** Every `ScoreRecord` is attributed (C41 `created_by` = the judge
   rig/model) and recorded — there is no unlogged judgement; this is what makes "judge false-positive rate"
   (C46) and the independence audit (C34) computable.
-- **I5 (one record per pair).** `scoreTrajectory` is deterministic in its *bookkeeping* (exactly one
-  `ScoreRecord` per (trajectory, scenario, judge-run)); the *LLM score itself* is probabilistic — the
-  population statistics (C33), not per-call determinism, are the contract (this is the point of P6).
+- **I5 (one record per pair).** `score()` is deterministic in its *bookkeeping* (exactly one
+  `ScoreRecord` per `(trajectory_log, scenario, dod)` call, regardless of `n_judges`); the *LLM score
+  itself* is probabilistic — the population statistics (C33), not per-call determinism, are the contract
+  (this is the point of P6).
+- **I6 (separate-rig isolation — D-38).** C32 runs in a **separate judge rig** from the worker. The judge
+  MAY read the worker trajectory log + held-out scenarios; the worker MUST NOT read the judge rig or
+  scenarios; there is **no shared context window** between worker rig and judge rig. Prevent-vs-detect of
+  the worker→scenario read remains the D-23 spike's open question (D-30).
 
 ## 4. Data model / state
 
 C32 owns **little durable state** — it is an *agent-role/scorer*, not a store. Scenarios live in C30,
-trajectories in C21/C19, the aggregated distribution in C33, the model registry in C29.
+trajectories produced by C31 in the trajectory log, the aggregated distribution in C33, the model registry
+in C29.
 
-| Datum | Shape (sweep-1) | Owner | Notes |
+> **D-36 annotation (eval-tier trajectory source):** Per D-36, the spine eval tier reads trajectories
+> from C31's **Inspect AI trajectory log**, NOT from CXDB. C32 reads the log post-hoc (D-37); CXDB/C21
+> is NOT a C32 read dependency for the spine eval path.
+
+| Datum | Shape (sweep-2) | Owner | R/W-by |
 |---|---|---|---|
-| `ScoreRecord` (per trajectory) | `{scenario_id+version, trajectory_ref, score (Inspect-AI shape), judge_model_id, independence_level, disagreement?}` | C32 (emits) → persisted on bead/CXDB | The judge output C33 aggregates / C34 audits. `> [FAITHFUL-FILL]` — minimal field set; sweep-2 fixes schema. |
-| Scorer pack config | Inspect AI scorer wrapped as Gas City pack/tool node (`inspect_eval`) | C02/C17 + C32 | Declarative; the Inspect AI scorer is adopted, not authored. |
-| Rubric binding (transient) | the scenario `Task`'s criteria loaded for one run | C30 (content) / C32 (use) | C32 holds it only for the duration of a scoring run. |
-| Judge model identity + level (transient) | from C29 per run | C29 | Recorded into the `ScoreRecord`; not owned. |
+| `ScoreRecord` bead | Frozen field table §3.2 | **C32 (emits, owns schema per D-39)** → persisted as `score_record` bead in C19 | C32 writes; C33 aggregates; C34 audits; C46 reads FP-rate |
+| Scorer pack config | `inspect_eval` tool node in Gas City pack (C02/C17); declares judge model binding from C29 | C02/C17 + C32 config | C32 declares; C02/C17 host |
+| Rubric binding (transient) | Loaded `InspectAITask` + DoD text — held only for duration of one `score()` call | C30 (content source) / C32 (load+apply) | C32 reads C30; discarded after emit |
+| Judge model identity + level (transient) | `ModelIdentity` + `IndependenceConstraint` from C29 per run | C29 (authoritative) | C32 consumes; stamped into `ScoreRecord.judge_model_id` + `ScoreRecord.independence_level` |
+| Judge prompt (transient) | Constructed per §3.3; SHA-256 hashed → `judge_prompt_hash` in `ScoreRecord` | C32 constructs | C32 creates; hash persisted in `ScoreRecord` for C34 audit |
 
 C32 is **restart-safe**: scoring is re-runnable (idempotent at the bookkeeping level, I5) because inputs
-(trajectory, scenario) are durable elsewhere; a lost in-flight score is simply re-scored.
+(trajectory log, scenario, DoD) are durable elsewhere; a lost in-flight score is simply re-scored.
 
 ## 5. Behavior
 
 **Scoring one trajectory (the core flow):**
-1. A trajectory becomes scoreable (a build bead completes, or C31 finishes a scenario run, or a
-   batch/replay requests scoring). The (trajectory, scenario) pair is the unit.
-2. C32 obtains the **judge model identity + independence constraint** from C29 (`resolveModel(judge node)`;
-   Phase-0 `L1`, D-1) and resolves the held-out **scenario** + rubric from C30 (judge's role-isolated read
-   surface; exact partition = OQ5).
-3. C32 runs the **Inspect AI scorer** with the LLM grader (Claude Code, judge rig, D-1) bound to the
-   trajectory + rubric → a satisfaction score.
-4. *(Ensemble, optional)* C32 runs N judges and reduces to a disagreement signal (README:187).
-5. C32 emits a **`ScoreRecord`** (score + judge identity + active independence level + disagreement),
-   attributed (C41), to a bead / CXDB turn → consumed by **C33** (aggregate) and auditable by **C34**.
+1. C31 finishes a scenario run and writes the **Inspect AI trajectory log** (the hand-off artifact, D-37).
+2. The (trajectory_log, scenario, dod) triple is the scoring unit. C32's `score()` is invoked — either by
+   C31 signalling completion (bead/event) or by a batch/replay caller.
+3. C32 obtains the **judge model identity + independence constraint** from C29 (`resolveModel("judge")`;
+   Phase-0 `L1`, D-1) and reads the held-out **scenario** + DoD from the judge rig's read surface (D-38:
+   separate judge rig, judge MAY read trajectory log + scenarios, worker MUST NOT read judge rig/scenarios,
+   no shared context window).
+4. C32 constructs the **judge prompt** (§3.3): scenario description + DoD text + trajectory excerpt;
+   SHA-256 hashes it → `judge_prompt_hash`.
+5. C32 runs the **Inspect AI scorer** with the LLM grader (Claude Code, judge rig, D-1) bound to the
+   constructed prompt → raw `satisfaction_score` (float 0.0–1.0) + `score_label`.
+6. *(Ensemble, optional — n_judges > 1)* C32 requests N Inspect AI scorers over the same prompt (multi-scorer,
+   README:187); reduces to `per_judge_scores` list + `disagreement` (std-dev). Inspect AI executes the
+   multi-scorer; C32 owns only the request and the reduction.
+7. C32 emits a **`ScoreRecord`** (§3.2, all required fields populated), attributed via C41 (`created_by =
+   "rig:judge-N"`), and persists it as a `score_record` bead in C19 → consumed by **C33** (aggregate) and
+   auditable by **C34**.
+
+**Sequence diagram — trajectory log + scenario + DoD → judge prompt → ScoreRecord:**
+
+```mermaid
+sequenceDiagram
+    participant C31 as C31 Runner
+    participant C29 as C29 Model Stylesheet
+    participant C32 as C32 Judge Harness
+    participant InspAI as Inspect AI Scorer
+    participant C41 as C41 Attribution
+    participant C19 as C19 Bead Store
+    participant C33 as C33 Aggregator
+    participant C34 as C34 Holdout Audit
+
+    C31->>C32: trajectory_log (Inspect AI log, post-hoc per D-37)
+    Note over C32: also receives scenario + dod from judge rig read surface (D-38)
+    C32->>C29: resolveModel("judge")
+    C29-->>C32: ModelIdentity + IndependenceConstraint (L1, D-1)
+    C32->>C32: build judge prompt (scenario+dod+trajectory excerpt, §3.3)
+    C32->>C32: SHA-256 hash prompt -> judge_prompt_hash
+    C32->>InspAI: run scorer with judge model + prompt (n_judges times if ensemble)
+    InspAI-->>C32: satisfaction_score, score_label (per judge)
+    C32->>C32: compute disagreement if n_judges > 1
+    C32->>C41: created_by attribution ("rig:judge-N")
+    C41-->>C32: attributed ScoreRecord fields
+    C32->>C19: persist ScoreRecord bead (score_record type)
+    C19-->>C33: ScoreRecord available for aggregation
+    C19-->>C34: ScoreRecord available for audit
+```
 
 **Degraded behavior:** if the judge model is unavailable (C29 cannot resolve / auth fails) the pair is left
-*unscored* and surfaced as a bead/gate event (visible to the self-healing loop) — C32 never silently
-substitutes a fabricated score (I4). If a single judge in an ensemble fails, C32 emits the partial ensemble
-with reduced N and flags it (the disagreement/N is part of the record). If the scenario is unresolvable in
-the partition, scoring fails closed (no score) rather than reaching outside its role-isolated read surface
-(I3; exact partition = OQ5).
+*unscored* and surfaced as a `E-C32-01` bead/gate event (visible to the self-healing loop) — C32 never
+silently substitutes a fabricated score (I4). If a single judge in an ensemble fails, C32 emits the partial
+ensemble with reduced N, sets `error_code = "E-C32-03"`, and flags the disagreement field as `null`
+(partial ensemble). If the trajectory log is unparseable, C32 emits `E-C32-02` and leaves the pair
+unscored. If the scenario is unresolvable from the judge rig's read surface, C32 emits `E-C32-04` and
+fails closed (no score, no fabricated result; I3/I6).
 
-Sequence/state diagrams and the ensemble-reduction algorithm are **sweep-2/3**; this sweep fixes the named
-flow + invariants.
+## 5a. Error taxonomy (sweep-2)
+
+| E-code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| `E-C32-01` | Judge model unavailable — C29 cannot resolve a model identity or auth fails | Unscored pair; `score_record` bead NOT emitted; bead/gate event written to C19 with `error_code = "E-C32-01"` | C33/C34 see no score for the (trajectory, scenario); the self-heal loop (C36–C39) can retry or escalate; no fabricated score (I4) |
+| `E-C32-02` | Trajectory log unparseable — C31's log is missing, corrupt, or not Inspect AI format | Unscored pair; gate event with `error_code = "E-C32-02"` | Caller (C31 or batch replay) re-runs the scenario to regenerate the log; C32 is not the re-runner |
+| `E-C32-03` | Partial ensemble — one or more judges in an n_judges>1 run fail; others succeed | `ScoreRecord` emitted with reduced `n_judges`, `error_code = "E-C32-03"`, `disagreement = null`; `per_judge_scores` contains only successful runs | C33 accepts the partial record with reduced N; C46 notes the reduced sample in FP-rate accounting |
+| `E-C32-04` | Holdout-leak-detected / scenario unresolvable — scenario not accessible from judge rig read surface (D-38), or judge rig detects a possible cross-partition read attempt | Scoring fails closed; gate event with `error_code = "E-C32-04"` and metadata for C34 audit | C34 is notified immediately; no score emitted; operator review required — this is the highest-severity error as it may indicate isolation failure |
+| `E-C32-05` | Score parse failure — the Inspect AI scorer returned output but it is not parseable as `{score, label, rationale}` JSON | Unscored pair; gate event with `error_code = "E-C32-05"` | Retry (LLM non-determinism); if persistent, escalate to C36–C39 self-heal with the prompt hash for diagnosis |
+| `E-C32-06` | Judge timeout — the Inspect AI scorer did not return within the configured deadline | Unscored pair; gate event with `error_code = "E-C32-06"` | Retry after back-off; repeated timeout escalates as throughput issue (shared Max seat, D-1 / OQ3) |
+
+> [FAITHFUL-FILL] Error codes are C32-scoped per the SWEEP2-DISPATCH rubric. The self-healing loop
+> (C36–C39) is the consumer of gate events; C32 emits the gate event but does not drive recovery.
 
 ## 6. Failure modes & handling
 
@@ -301,64 +441,57 @@ events (visible to the C36–C39 self-healing loop), never as silent or fabricat
   makes the independence audit (C34) and judge-FP-rate meta-metric (C46) computable.
 - **Ops.** The scorer is adopted off-the-shelf (Inspect AI) and exposed declaratively as a Gas City pack
   (C02/C17), no Go fork; rubrics are versioned with the scenario corpus (C30).
+  **[REV-SEAM-02 — version-pin requirement added:]** C32's `[[service]] type="inspect_ai"` provider block MUST carry the **same pinned Inspect AI version** as C31's pack (e.g. `version = "0.3.x"`). C32 MUST validate the `inspect_version` field on the incoming `TrajectoryLog` envelope (C31 §4.1) against its own installed version at score time; a version mismatch MUST be treated as a log-parse failure and surface as E-C32-02. Version drift between C31 and C32 silently breaks post-hoc scoring (C31 flagged this risk at OQ-4 / §7 Ops).
+  **[REV-SEAM-03 — C22 registration seam added:]** The `score_record` bead type (`softwarefactory.v4.beads:score_record`) MUST be registered in C22 (D-3 mechanism) at C32's pack installation step, before any scoring run. C33, C34, and C46 consumers depend on the registration to locate the bead-type schema. This mirrors C33's `satisfaction_metric` registration seam (C33 §3.5/§7 Ops).
 
-## 8. Acceptance criteria & test strategy (sweep-1, high level)
+## 8. Acceptance criteria & test strategy (sweep-2: concrete AC-code table)
 
-- **AC1 (scores a trajectory against a scenario).** Given a recorded trajectory and a held-out Inspect AI
-  scenario, `scoreTrajectory` runs the Inspect AI scorer with the judge model and emits exactly one
-  attributed `ScoreRecord` for the pair (README:185; inventory C32). *Test:* one (trajectory, scenario) pair
-  → one persisted, attributed score consumable by C33.
-- **AC2 (same-provider judge, Phase-0/D-1).** The judge runs as a **Claude Code agent in the `judge` rig**
-  (a distinct *role*) with a **disjoint rubric/role/prompt** from the coder, **without** any second-provider
-  credential; each `ScoreRecord` records the active independence level (`L1`). *Test:* a same-provider judge
-  with a distinct *role* + rubric scores successfully; the record stamps level `L1`. *(The literal
-  cross-family/ cross-provider judge test belongs to FE-1, not this sweep. The judge's exact **partition**
-  read-surface is OQ5/OQ-C42-3 — AC2 asserts role/prompt isolation, not the partition shape.)*
-- **AC3 (probabilistic, not gate-pass).** C32 emits a satisfaction *score* (Inspect AI shape over a region),
-  not a boolean test result; a population of scores is reducible by C33 to a distribution (P6, F2/F39).
-  *Test:* scoring multiple trajectories for one scenario yields a score *distribution*, not a single pass/
-  fail.
-- **AC4 (multi-judge disagreement).** Running N judges over the same trajectory produces a `ScoreRecord`
-  carrying per-judge scores + a disagreement signal (README:187; F46). *Test:* N≥2 judges → disagreement
-  surfaced in the record.
-- **AC5 (secondary-guard).** C32 never acts as a deterministic safety gate; its score is satisfaction
-  evidence subordinate to the P4 boundary (I1; F33/F51). *Test:* a green judge score does not authorize a
-  deploy that the deterministic boundary (C43/P4) would block.
-- **AC6 (honor, don't enforce, independence).** C32 honors C29's independence constraint and records the
-  level, but runs **no** independence audit/enforcement (D-13 → C34). *Test:* C32 emits the level on the
-  record; the *audit* of independence is exercised in C34's suite, not C32's.
-- **AC7 (no silent score).** Judge-unavailable / partition-miss leaves the pair unscored + surfaced as a
-  bead/gate event; no fabricated score is ever emitted (I4). *Test:* induce judge auth failure → no
-  `ScoreRecord`, a gate event instead.
-
-Concrete `ScoreRecord` schema, the Inspect-AI-scorer wiring, the ensemble-reduction policy, and
-judge-FP-rate test fixtures are **sweep-2**.
+| AC-code | Given / When / Then | Verifies |
+|---|---|---|
+| `AC-C32-01` | **Given** a C31 trajectory log + a held-out scenario + DoD text; **When** `score()` is called; **Then** exactly one attributed `ScoreRecord` bead is persisted in C19 with all required fields (`satisfaction_score`, `score_label`, `judge_model_id`, `independence_level`, `judge_prompt_hash`, `created_by`, `scored_at` non-null); C33 can read it | I4, I5, D-39; AC1 |
+| `AC-C32-02` | **Given** C29 returns `ModelIdentity` with `family="claude"` + `IndependenceConstraint(level=L1)`; **When** `score()` is called; **Then** the emitted `ScoreRecord.independence_level = "L1"` and no second-provider credential is required or attempted | I2, D-1; AC2 |
+| `AC-C32-03` | **Given** the judge runs in a separate judge rig (D-38) with no shared context window with the worker rig; **When** `score()` is called; **Then** the trajectory log and scenario are readable by the judge but the worker rig cannot observe the judge prompt, scenario text, or any ScoreRecord field (independently verified by C34 audit) | I3, I6, D-38; AC2 |
+| `AC-C32-04` | **Given** 10 distinct trajectory logs for the same scenario; **When** `score()` is called for each; **Then** the 10 `satisfaction_score` values are a float distribution (not all identical and not a boolean); C33 can aggregate them into a distribution | I5, P6, D-15; AC3 |
+| `AC-C32-05` | **Given** `n_judges = 3`; **When** `score()` is called; **Then** `ScoreRecord.per_judge_scores` is a list of 3 floats and `ScoreRecord.disagreement` is the std-dev of those values | F46, README:187; AC4 |
+| `AC-C32-06` | **Given** a green `ScoreRecord` (`score_label = "satisfied"`); **When** a C43 deterministic boundary gate would BLOCK a deploy; **Then** the `ScoreRecord` alone does NOT authorize the deploy (C32 is not consulted as the gate, I1) | I1, F33, F51; AC5 |
+| `AC-C32-07` | **Given** C29 returns None (model unavailable); **When** `score()` is called; **Then** NO `ScoreRecord` bead is emitted; a gate event bead with `error_code = "E-C32-01"` is written to C19; C33 sees zero scores for the pair | E-C32-01, I4; AC7 |
+| `AC-C32-08` | **Given** a malformed trajectory log (corrupt / not Inspect AI format); **When** `score()` is called; **Then** NO `ScoreRecord` bead is emitted; a gate event with `error_code = "E-C32-02"` is written | E-C32-02, I4; AC7 |
+| `AC-C32-09` | **Given** the scenario is not accessible from the judge rig's read surface (D-38 isolation); **When** `score()` is called; **Then** scoring fails closed: NO `ScoreRecord` bead, gate event with `error_code = "E-C32-04"`, and C34 receives notification | E-C32-04, I3, I6; AC7 |
+| `AC-C32-10` | **Given** n_judges=2 and one scorer times out; **When** `score()` is called; **Then** `ScoreRecord` is emitted with `n_judges = 1` (actual), `error_code = "E-C32-03"`, `disagreement = null`; C33 accepts it with a reduced-N flag | E-C32-03; AC4 partial |
+| `AC-C32-11` | **Given** the Inspect AI scorer returns non-JSON output; **When** `score()` is called; **Then** gate event with `error_code = "E-C32-05"`; NO `ScoreRecord` emitted; retry is the caller's option | E-C32-05, I4 |
+| `AC-C32-12` | **Given** the scorer times out (configurable deadline exceeded); **When** `score()` is called; **Then** gate event with `error_code = "E-C32-06"`; NO `ScoreRecord` emitted | E-C32-06, I4 |
+| `AC-C32-13` | **Given** any emitted `ScoreRecord`; **When** read by C34; **Then** `judge_prompt_hash` is a valid SHA-256 hex string, and `created_by` is a valid `"rig:judge-N"` actor string (D-29), enabling C34's independence audit | I4, D-38, D-39; C34 audit |
+| `AC-C32-14` | **Given** a DoD text (C08 free-form); **When** the judge prompt is constructed (§3.3); **Then** the DoD text appears verbatim (unmodified, unenumerated) in the prompt and `judge_prompt_hash` matches the constructed prompt | D-15, §3.3 |
 
 ## 9. Open questions (→ review-log)
 
-- **OQ1 (G08/G20 → FE-1, top).** Same-family judge **bias residual**: under D-1 the Phase-0 judge shares the
-  coder's training distribution, so F48 (tacit collusion via shared context) stays **Partial** — rig/role/
-  prompt isolation bounds *context* sharing but not *distribution* sharing. *When* does same-family judge
-  bias become material enough to trigger FE-1 (cross-family judging), and what measurement (e.g. judge-FP-rate
-  via C46, or a calibration scenario set) makes that call? *This is the deferred-not-resolved edge of D-1.*
-- **OQ2 (score schema seam).** v4 fixes only "judge outputs from beads" (README:426). The concrete
-  `ScoreRecord` schema is the contract C33 (aggregate), C34 (audit), and C46 (judge-FP-rate) all bind to —
-  it must be frozen early (sweep-2) so those three can build against it in parallel. `[FAITHFUL-FILL]` here;
-  needs a canonical schema ruling.
-- **OQ3 (cost/throughput, shared with C28 G13/G34, G32).** No token-budget/cost model exists for
-  judge-suite + ensemble scoring on the **single Phase-0 Max seat** the judge shares with the coder. Ensemble
-  judging multiplies judge calls; v4 gives no numbers. Needs quantification (→ C46) before throughput claims
-  hold.
-- **OQ4 (runner↔scorer split).** Inspect AI bundles runner+scorer but v4's inventory splits them (C31 runner,
-  C32 judge). The exact seam — does C31 *invoke* C32 as the scorer, or does C32 score post-hoc from CXDB, or
-  both? — is `[FAITHFUL-FILL]`; confirm the C31↔C32 contract at sweep-2 (overlaps C31).
-- **OQ5 (judge partition read-surface — SCOPED BY D-17).** **Sweep-1 default (D-17):** the judge (C32) **MAY
-  read** the worker's trajectories + the held-out scenarios (to score); the worker **MUST NOT read** the judge
-  rig or the scenarios (holdout). The judge's exact **partition SHAPE** — a dedicated `judge` partition vs a
-  role-isolated read of `code`+scenario-outputs — is **not** settled by v4 and is the **joint open question
-  OQ-C42-3 + OQ-C34-3 + this C32-OQ5**, which **D-17 unifies** and routes to a **joint C42 (provides partition)
-  + C34 (enforces+audits) + C32 (judge) Sweep-2 freeze**. AI-CONTEXT §13.3 names only the
-  `scenario_authoring`/`implementer` rigs (+ the `inspect_eval` tool), **not** a judge rig; it is therefore not
-  the source for the judge partition. C32 does not pre-decide the shape — it asserts the judge's *role/prompt
-  isolation* + the D-17 Sweep-1 read-default, and defers the partition shape to the joint freeze. (Resolving it
-  pins how I3 and AC2 read at sweep-2.)
+- **OQ1 (G08/G20 → FE-1, top — PARTIALLY RESOLVED by D-1; bias-measurement deferred).**
+  RESOLVED (Sweep-2): Under D-1 the Phase-0 same-family judge bias stays **Partial** (F48 residual). The
+  FE-1 trigger condition is: **when C46's judge-FP-rate measurement shows persistent calibration error
+  (e.g. >15% FP rate on a calibration scenario set), that is the evidence to activate FE-1 (cross-family
+  judging)**. The judge-FP measurement harness is C46, not C32 — C32 produces the `ScoreRecord`s C46 reads.
+  C32 builds **no** cross-family machinery and assumes **no** second-provider credential; those are FE-1.
+  The bias residual is acknowledged; D-1 advisory stands; the FP-rate gate (via C46) is the named trigger.
+
+- **OQ2 (score schema seam) — RESOLVED (Sweep-2) by D-39.** `ScoreRecord` schema is **frozen at §3.2**.
+  C33, C34, and C46 build against the frozen field table. C32 owns the schema; any change requires a new
+  binding decision.
+
+- **OQ3 (cost/throughput, shared with C28 G13/G34, G32 — still open).** No token-budget/cost model exists
+  for judge-suite + ensemble scoring on the **single Phase-0 Max seat** the judge shares with the coder.
+  Ensemble judging multiplies judge calls (`n_judges × trajectory count`); v4 gives no numbers. Needs
+  quantification (→ C46) before throughput claims hold. **Still open — not C32's to resolve; flagged for
+  C46/OQ3 + C28:OQ-3.**
+
+- **OQ4 (runner↔scorer split) — RESOLVED (Sweep-2) by D-37.** C31↔C32 contract = post-hoc scoring: C31
+  runs the held-out scenario against the built component and writes the Inspect AI trajectory log; C32 scores
+  post-hoc off that log. C31 does NOT invoke C32 inline. The hand-off artifact is the trajectory log. The
+  `score()` signature (§3.1) reflects this; `TrajectoryLog` is the C31-produced artifact.
+
+- **OQ5 (judge partition read-surface) — RESOLVED (Sweep-2) by D-38.** Judge read-surface SHAPE = a
+  **separate judge rig** (per D-31 multiple-rigs-per-city + D-17 joint freeze). The judge runs in its own
+  rig (e.g. `rig:judge-1`) co-resident in the city with the worker rig (e.g. `rig:worker-1`). The judge
+  MAY read the worker trajectory log + the held-out scenario partition; the worker MUST NOT read the judge
+  rig or the scenarios; **no shared context window**. C42 provides the partition; C34 enforces + audits;
+  C32 runs inside it. The prevent-vs-detect strength of the worker→scenario boundary is the D-23 spike
+  (D-30) — still open, not a C32 question. I3 and I6 reflect the resolved shape; AC-C32-03 tests it.

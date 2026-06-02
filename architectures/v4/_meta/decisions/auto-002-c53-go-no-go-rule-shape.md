@@ -1,6 +1,6 @@
 # auto-002 — C53 first-self-build go/no-go rule shape
 
-**Status:** Round-2 pending · **flagged as a MORNING-REVIEW item (operator sign-off required before the C53 milestone is armed).**
+**Status:** Round-2 pending · **flagged as a MORNING-REVIEW item (operator sign-off required before the C53 milestone is armed).** · **REFRAMED 2026-06-02 by the spec–scenarios–system triangle (D-42 / D-43 / ADR-0069): this go/no-go rule is now understood as the *H↔I edge* within a larger *tri-alignment* completion criterion — see the "## Update" section below. The C′ statistics become diagnostic *evidence*, not the gate; the binding gate is the four conjunctive tri-alignment terms in C53 §3.1.**
 **Author:** Lead agent, autonomous-run 2026-06-01. **Owner of the decision:** operator (jonathan@manton.com).
 **Context:** [`C53-bootstrap-validation.md`](../../spec/C53-bootstrap-validation.md) §3.1; [`C33-satisfaction-metric.md`](../../spec/C33-satisfaction-metric.md) (the `SatisfactionDistribution` C53 reads); panel verdict [`panel-sweep2/VERDICT.md`](../panel-sweep2/VERDICT.md).
 
@@ -22,6 +22,16 @@ This is a genuine operator-judgment / safety-governance fork, not a mechanical e
 ~~**Round-1: Adopt C** — `p10 ≥ T_tail AND mean ≥ T_central AND std_dev ≤ T_spread` + `MinScenarios` + judge-FP precondition.~~ **Superseded by Round 2 below (Adopt C′).** (Round-1 reasoning preserved under "Reasoning" for traceability.)
 
 **Round-2 (final, pending operator sign-off): Adopt C′** — `p10 ≥ T_tail AND mean ≥ T_central AND (p90 − p10) ≤ T_spread`, with: a `MinScenarios` floor; the rule **shape FROZEN** (only the `T_*` thresholds are operator knobs — the shape itself is not, to deny a Goodhart escape); a judge-trust precondition discharged by a **human-audited judge sample** (≥N human-rated scenarios), not a cold-start-uncomputable statistical FP rate; and a **mandatory post-deployment factory-integrity term** (the factory's own baseline scenario suite must still pass after the new component is deployed, before `go`). The human design-review verdict (C52) remains a mandatory conjunctive term — satisfaction alone never deploys.
+
+## Update (2026-06-02) — reframed by the spec–scenarios–system triangle (D-42 / D-43 / ADR-0069)
+
+This brief asked "*which statistics gate the apex of bet #3?*" — framed as a predicate over C33's satisfaction distribution. The operator-adopted **triangle evaluation invariant** (D-42 / [ADR-0069](../../../docs/adr/0069-spec-scenarios-system-triangle-evaluation-invariant.md)) supplies the missing structure: this brief's go/no-go is **one edge — H↔I — of a three-edge triangle**, not the whole completion test. The reframe does NOT overturn C′; it relocates it:
+
+- **The H↔I edge** (hold-out scenarios pass against the system, judged independently by C32) is exactly what this brief gated. Under the triangle, the strictest reading of that edge is **100% hold-out pass** (every scenario `satisfied`) — and that is now the **floor pinned at 1.0** in `C53 MilestoneConfig`, never an operator knob (per D-42: "*the 100% floor never lowers; what relaxes as the judge earns calibrated trust is the human-review/judge-trust oversight, not the pass rate*").
+- **The C′ statistics** (`p10`, `mean`, `p90 − p10`, `MinScenarios`) are **no longer the gate**. They become **diagnostic evidence** surfaced to the judge's diagnosis (C32 `DiagnosisRecord`) and to human review — they describe the *shape* of the H↔I evidence, but they do not decide go/no-go. A distribution that is 100% `satisfied` but erratic is now caught by the judge's **root-cause attribution + tri_alignment** verdict, not by a `std_dev`/`p90−p10` threshold.
+- **Completion = tri-alignment**, realized in `C53 §3.1` as four conjunctive `go` terms: (1) 100% hold-out pass (`all_scenarios_satisfied`), (2) `DiagnosisRecord.tri_alignment = aligned` (no unresolved spec/scenario/judge defect), (3) the human `ReviewVerdict`, (4) the post-deploy factory-integrity check. The **post-deploy factory-integrity term** this brief's Round-2 added is preserved as Term 4. The **judge-trust precondition** (PF-2, the human-audited judge sample) becomes the relaxable `judge_self_trust` oversight knob, NOT a precondition on the pass rate.
+
+**Net:** C′'s *conservatism* survives and is strengthened (the spread/erraticism concern is now handled by the diagnostician rather than a brittle cold-start threshold), and C′'s *frozen-shape* property survives (the four-term shape is frozen; only `T_*`-equivalent oversight knobs relax). The morning-review ask below is unchanged in substance — the operator still sets the oversight/judge-trust knobs — but the pass-rate floor is no longer a knob at all. See [`review-log.md` D-42/D-43](../review-log.md) and [`HANDOFF.md` §0★](../HANDOFF.md).
 
 ## Reasoning
 

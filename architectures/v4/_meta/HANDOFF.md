@@ -6,6 +6,11 @@
 
 ## 0. NEXT RUN — Sweep-2 implementation depth for the 25-component spine (LONG, UNATTENDED)
 
+> **✅ §0 DONE — Sweep-2 spine run #2 closed 2026-06-02** (PRs #237–#243, stacked, open for review). All **25 spine components are at Sweep-2 implementation-ready depth**, Gas City + Claude Max first. New cross-component ledger decisions **D-31..D-41** (multi-rig per city; rig-spelling file-split; XC-7/CapabilityDescriptor; command/cmd; C09-vars-from-C05/C13-out; eval-tier CXDB-out + post-hoc scoring + separate judge rig + ScoreRecord-frozen; factory_build status-transition; + 4 panel-found integration fixes). Morning summary at [`overnight-summary.md`](../../../overnight-summary.md); panel verdict at [`panel-sweep2/VERDICT.md`](./panel-sweep2/VERDICT.md); retro at [`retrospective/2026-06-02-242.md`](../../../retrospective/2026-06-02-242.md).
+> **CARRIED FORWARD (the next run + the next dispatch prompt MUST pick these up):** (1) **OPERATOR SIGN-OFF OWED** on the C53 first-self-build go/no-go rule shape — decision brief [`auto-002`](./decisions/auto-002-c53-go-no-go-rule-shape.md) (recommend option C′); (2) the **empirical D-23 spike is still owed** (needs Docker) — it gates the unattended face + whether the D-30 watcher is built; (3) **Sweep-2 for the remaining 32 non-spine components** is the next authoring work; (4) adopt the **cross-product integration pass** discipline (retro skill `SKILL-SPEC-de22c313ca` + agents-rule `AGENTS-MD-759e9a22cc`) — it caught 4 build-breakers the per-cluster reviews missed.
+>
+> The text below was the brief for run #2 (now complete) — kept for context.
+
 > Read this whole §0, then [`STATUS.md`](./STATUS.md), [`review-log.md`](./review-log.md) (ledger D-1..D-30 + harvested OQs = the work list), and **the build order [`implementation-dependencies.md`](../implementation-dependencies.md)** (the authoritative 25-component spine + the 7 products + per-product dependency edges). Do **NOT** read the four v4 source docs into primary context — subagents read targeted sections.
 
 ### 0.1 Binding safety gate — D-30 (operator-adopted; DO NOT relitigate)

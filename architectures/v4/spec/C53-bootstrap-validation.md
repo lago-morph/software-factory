@@ -164,18 +164,23 @@ the predicate, C30 on the scenario manifest, and C52 on the design-review record
 | I4 | **Go/no-go decision record** | outbound (data) | The recorded **`go` \| `no-go`** verdict + the **evidence** (C51 predicate verdict, C33 distribution + scenario set + sample count, C52 review record). Written to the `factory_build` bead (C20/C19); read by C54 to arm/withhold Phase 3. | C53 (shape); **C20** (slot), C54 (consumer) |
 | I5 | **Fail-branch escalation contract** | internal (policy) | On **no-go**: **iterate the spec + re-run** (README:519); after a bounded attempt count still failing → **"add more substrate before Phase 3"** (AI-CONTEXT:619). C53 names the branch + the attempt-bound *requirement*; the exact bound + authorizer is operator policy (OQ-2). | C53 (this); C52 (re-run), operator (bound) |
 
-### 3.0 Outbound type — `RubricResult` (C52 seam — RFB-SEAM-03 fix)
+### 3.0 Call-graph ordering (INT-1 fix — one-directional C52 → C53)
 
-> **RFB-SEAM-03 FIX (2026-06-01):** C52 §3.4 `submit_for_review` takes `c53_rubric_result: RubricResult` as a typed parameter. C53 produces `GoNoGoDecision` from `decide()` but never exported the `RubricResult` name. This creates an untyped seam: C52 references a type C53 never defines. Fix: `RubricResult` is an explicit **type alias** for `GoNoGoDecision` — it is C53's outbound face toward C52's gate.
-
-```
-// RubricResult — C53's outbound type toward C52 submit_for_review gate.
-// Identical to GoNoGoDecision (§3.1); aliased here so C52's contract is typed.
-// C52 passes the result of C53's decide() call as c53_rubric_result.
-type RubricResult = GoNoGoDecision
-```
-
-The `RubricResult` C52 receives contains the full `GoNoGoDecision` evidence bundle (verdict, evidence refs, N, attempt state, decided_at). C52's `submit_for_review` gate reads `c53_rubric_result.Verdict` to determine whether C53's go/no-go has been assessed — the gate is non-bypassable regardless of the verdict value (I2). C52 stores the `gate_decision` (C52's own human-review record); C53's milestone fields (`milestone_verdict`, `milestone_evidence`, `milestone_decided_at`) are written directly by C53 to the `factory_build` bead (D-40, §3.4 below) — they are NOT part of C52's `GateDecision`.
+> **INT-1 FIX (Sweep-2):** The original RFB-SEAM-03 note framed `RubricResult` as an alias fed *into*
+> C52's `submit_for_review` gate, creating a circular dependency: C52's gate required C53's output and
+> C53's `decide()` required C52's `ReviewVerdict`. This deadlock is broken by making the call graph
+> strictly one-directional:
+>
+> **C52.phase_A (`submit_for_review`) → `ReviewVerdict` → C53.decide() → `GoNoGoDecision` → C52.phase_B (`deploy_if_approved`)**
+>
+> C53's `decide()` takes C52's `ReviewVerdict` as one of its inputs (Term 3 of the rubric — see
+> §3.1/§3.2 below). C53 does **not** feed any output back to C52's Phase A; it only feeds
+> `GoNoGoDecision` to C52's Phase B (the deploy trigger). The `RubricResult = GoNoGoDecision` alias is
+> retired: C52 Phase B consumes `GoNoGoDecision` directly (C52 §3.4 Contract 6B). The stale
+> `submit_for_review(c53_rubric_result: RubricResult)` framing is superseded — Phase A takes no C53
+> input. C52 stores `gate_decision` (its own human-review record); C53's fields (`milestone_verdict`,
+> `milestone_evidence`, `milestone_decided_at`) are written directly by C53 to the `factory_build` bead
+> (D-40, §3.4 below) — they are NOT part of C52's `GateDecision`.
 
 ### 3.1 Sweep-2 concrete signature — `decide()` (OQ-1 RESOLVED here)
 

@@ -204,45 +204,56 @@ Key flow notes:
 
 ### 5.1 Template resolution sequence diagram (Sweep-2)
 
-The following diagram shows the full C08→C09→C05→C28 handoff contract: template resolution, variable substitution, bound-prompt production, and dispatch to sling.
+The following diagram shows the full dispatch-first C05→C09→C28 handoff contract consistent with
+C05 §5.1 and D-35: the `DispatchRequest` (carrying `bead_id` and `created_by`) already exists when
+C09 is called, so C09 can extract `BeadId`/`CreatedBy` from it. C05 is the entry point that calls
+C09 mid-dispatch; C09 is not the entry point and does not build the DispatchRequest.
+
+> **INT-3 FIX (Sweep-2):** The prior diagram showed C12 calling `bind_and_render` first, then C05
+> building a `DispatchRequest with RoutingKey` afterward — contradicting both C05 §5.1
+> (DispatchRequest-first) and D-35 (C09 reads `bead_id`/`created_by` FROM the DispatchRequest). If
+> C09 ran first there would be no DispatchRequest to read from. The corrected ordering: C18/C12
+> assembles the DispatchRequest (with `bead_id` and `created_by`); C05.dispatch is invoked; C05
+> calls C09 to resolve the routing key mid-dispatch; C09 reads `bead_id`/`created_by` from the
+> already-present DispatchRequest; C09 returns the RoutingKey + renders the InstructionString; C05
+> issues `gc sling` to C28.
 
 ```mermaid
 sequenceDiagram
-    participant C12 as C12 formula node
+    participant C18 as C18 or C12 caller
+    participant C05 as C05 sling dispatch
     participant C09 as C09 bind+render
     participant C08 as C08 pack layout
     participant C03 as C03 city.toml agent decls
-    participant C13 as C13 molecule run context
-    participant C05 as C05 sling dispatch
     participant C28 as C28 agent loop
 
-    C12->>C09: bind_and_render(template_name, agent_role, pack_root, ctx)
+    C18->>C05: dispatch(DispatchRequest{bead_id, created_by, template_name, agent_role, pack_root})
+    Note over C05: DispatchRequest exists here - bead_id and created_by are already present (D-35)
+    C05->>C09: bind_and_render(template_name, agent_role, pack_root, ctx_from_dispatch_request)
     C09->>C08: read file at pack_root/template_name
     alt file not found
         C08-->>C09: error (path missing)
-        C09-->>C12: E-C09-01 template-not-found
+        C09-->>C05: E-C09-01 template-not-found
     else file found
         C08-->>C09: template_body (raw Go text/template Markdown)
     end
     C09->>C03: lookup agent_role in city.toml agent declarations
     alt role not declared
         C03-->>C09: error (no matching agent block)
-        C09-->>C12: E-C09-03 role-mismatch
+        C09-->>C05: E-C09-03 role-mismatch
     else role found
         C03-->>C09: agent_role confirmed
     end
-    Note over C09: extract BeadId from DispatchRequest.bead_id and CreatedBy from DispatchRequest.created_by (C05 §3.4)
-    Note over C09: build RenderContext{BeadId, CreatedBy, PackGitRev, TemplateName, AgentRole} from dispatch and pack context
+    Note over C09: extract BeadId from DispatchRequest.bead_id and CreatedBy from DispatchRequest.created_by (D-35)
+    Note over C09: build RenderContext{BeadId, CreatedBy, PackGitRev, TemplateName, AgentRole} from dispatch request and pack context
     C09->>C09: render(bound, ctx) via Go text/template Execute
     alt template parse or execution error
-        C09-->>C12: E-C09-04 template-parse-error
+        C09-->>C05: E-C09-04 template-parse-error
     else undefined required variable
-        C09-->>C12: E-C09-02 unbound-variable
+        C09-->>C05: E-C09-02 unbound-variable
     else render succeeds
-        C09-->>C05: RoutingKey{template_name, agent_role}
-        C09-->>C28: InstructionString (rendered prompt)
-        C05->>C05: dispatch(DispatchRequest with RoutingKey)
-        C05-->>C28: bead routed via gc sling
+        C09-->>C05: RoutingKey{template_name, agent_role} and InstructionString (rendered prompt)
+        C05->>C28: bead routed via gc sling with InstructionString as initial prompt
         C28->>C28: execute agent loop against InstructionString
     end
 ```
@@ -304,7 +315,7 @@ Test strategy (sweep-1): a minimal valid `prompt.template.md` rendered with an e
 | **AC-C09-07** | Given: a template body with an unclosed action `{{.AgentRole` (malformed template). When: `render(bound, ctx)`. Then: result is E-C09-04; no partial instruction string is returned. | E-C09-04 (template-parse-error); C08 INV-2; AC-4. Cross-refs: E-C09-04. |
 | **AC-C09-08** | Given: a conformant template at pack git rev R1. When: the spec is edited and committed (pack git rev R2); `bind_and_render` is called again. Then: `BoundTemplate.pack_git_rev == R2` and the `InstructionString` reflects the R2 template body (not R1). | INV-4 (spec-revision binding is explicit); AC-6 (rebuild loop). |
 | **AC-C09-09** | Given: a rendered instruction produced by AC-C09-01. When: the instruction text is inspected. Then: it contains no formula-DAG workflow instructions — only the `prompt.template.md` spec content. | INV-3 (no methodology leak); AC-7. |
-| **AC-C09-10** | Given: a successful `bind_and_render`. When: the `RoutingKey` is passed to `C05.dispatch(DispatchRequest{..., target_role=RoutingKey.agent_role, template_name=RoutingKey.template_name, ...})`. Then: C05 issues `gc sling` to the matching agent; C28 receives the `InstructionString` as its initial prompt. | C08→C09→C05→C28 handoff contract (§3.1a authority chain); INV-1 + INV-2. |
+| **AC-C09-10** | Given: C05 has received a `DispatchRequest{bead_id, created_by, template_name, agent_role, pack_root}` (DispatchRequest exists BEFORE C09 is called). When: C05 calls `bind_and_render(template_name, agent_role, pack_root, ctx_from_dispatch_request)` and C09 reads `bead_id`/`created_by` from the DispatchRequest to build the RenderContext. Then: C09 returns `RoutingKey{template_name, agent_role}` and `InstructionString`; C05 issues `gc sling` to route the bead; C28 receives the `InstructionString` as its initial prompt. The DispatchRequest-first ordering is the only ordering consistent with D-35. | C05→C09→C28 dispatch-first handoff (INT-3 fix; §5.1 sequence diagram; D-35); INV-1 + INV-2. |
 
 **E↔AC cross-reference summary:**
 - E-C09-01 → AC-C09-05

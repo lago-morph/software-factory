@@ -34,9 +34,19 @@
 >
 > **Sweep-2 additions (2026-06-01):** `decide()` signature + `GoNoGoInput`/`GoNoGoDecision` schemas; decision-rule shape (OQ-1 RESOLVED); state diagram; `factory_build` bead slot assignment per D-40 (OQ-4 RESOLVED); fail-branch bound structure (OQ-2 RESOLVED shape, values = operator knobs); scenario-set minimum-evidence guideline (OQ-3 RESOLVED); E-code table; AC-code table with E↔AC cross-refs. Binding decisions cited verbatim: **D-15** (holistic satisfaction), **D-40** (status transition on `factory_build`). OQ-1 rule shape is an operator-judgment / morning-review fork — see §3.1 and §9.
 >
+> **Sweep-2 tri-alignment deepening (2026-06-02 — ADR-0069 / D-42 / D-43):** `decide()` reframed to four conjunctive terms (100% hold-out floor, tri-alignment diagnosis, human-review verdict, post-deploy factory-integrity check). `GoNoGoInput` updated to consume `DiagnosisRecord` from C32 (D-43). Satisfaction distribution reframed as **diagnostic evidence, not the threshold knob** (auto-002 option C′ realized as H↔I edge of triangle). `MilestoneConfig` pass-rate pinned at 1.0 (relaxable knobs: oversight level + judge-trust precondition only). C52↔C53 linearization (D-41 fix #1) cited verbatim. `factory_build` status terminal corrected to `closed` (D-41 fix #2, `milestone_verdict` is the separate go/no-go field). New E-codes: E-C53-09..E-C53-12. New AC-codes: AC-C53-14..AC-C53-18. Validated Mermaid sequenceDiagram added (§3.1a). All four OQs retain Sweep-2 resolution; OQ-5 (new) records tri-alignment open question.
+>
 > **D-15 (verbatim):** "Satisfaction is HOLISTIC at Sweep-1 (FE-5 resolution). C33 computes the satisfaction distribution by a graded judge (C32) over C08's existing free-form Definition-of-Done — NOT against enumerated per-criterion DoD."
 >
 > **D-40 (verbatim):** "`factory_build` build-state is a STATUS transition, not a type-flip. … C53 records the go/no-go on the same bead (C53:OQ-4). … C20 owns the `factory_build` schema + the `status` slot; C52 drives the transition; C53 records the go/no-go on the same bead."
+>
+> **D-41 fix #1 (verbatim):** "C52↔C53 circular hand-off (was a deadlock) → linearized: C52 review-phase → `ReviewVerdict` → `C53.decide(satisfaction, review_verdict, transfusion_verdict) → GoNoGoDecision` → C52 deploy-phase. C53 runs AFTER C52's human review; its decision is C52's deploy trigger (one-directional, no cycle)."
+>
+> **D-41 fix #2 (verbatim):** "the build-state terminal aligns to C20's bead-envelope `state = closed` … the go/no-go outcome is the separate `milestone_verdict` field."
+>
+> **D-42 (verbatim):** "the spec–scenarios–system triangle is the canonical evaluation framing; the judge is a diagnostician, not a scorer. … A component is complete only when all three edges align — 100% hold-out pass is necessary, not sufficient. … the 100% floor never lowers; only the human-review / judge-trust oversight relaxes as the judge earns calibrated trust."
+>
+> **D-43 (verbatim):** "the judge's diagnosis is a companion `DiagnosisRecord`, NOT a mutation of the frozen `ScoreRecord`; owned + frozen by C32. … `tri_alignment` requires `all_scenarios_satisfied = true` AND `root_cause = none`."
 > Track: canonical
 
 ## 1. Purpose & responsibility
@@ -182,54 +192,114 @@ the predicate, C30 on the scenario manifest, and C52 on the design-review record
 > `milestone_evidence`, `milestone_decided_at`) are written directly by C53 to the `factory_build` bead
 > (D-40, §3.4 below) — they are NOT part of C52's `GateDecision`.
 
-### 3.1 Sweep-2 concrete signature — `decide()` (OQ-1 RESOLVED here)
+### 3.1 Sweep-2 tri-alignment deepening — `decide()` (D-41/D-42/D-43; OQ-1 reframed)
 
-> **OQ-1 RESOLVED (Sweep-2) — decision-rule SHAPE:** The go/no-go is a **multi-term predicate over C33's `SatisfactionDistribution` statistics**: `p10 ≥ T_tail AND mean ≥ T_central`, evaluated over an N-scenario run. The **SHAPE** — which distributional statistics gate the first self-build go/no-go — is a **genuine operator-judgment / safety fork that MUST be a morning-review item** (see §9 OQ-1). The **threshold VALUES `T_tail`, `T_central`, and the minimum run size `N`** are **operator-policy knobs** in the milestone config (see §3.4 below); C53 does NOT fix any numeric value. Rationale for the shape: a `mean`-only gate can pass while a consistent tail of scenarios systematically fails (Goodhart risk, F47); a `p10`-only gate ignores central tendency; the two-term shape (tail + central) is the smallest multi-term predicate that guards both failure modes with C33's available statistics. Adding `p90` or `std_dev` gates is optional operator policy, not required by the shape.
+> **TRI-ALIGNMENT REFRAME (2026-06-02 — ADR-0069 / D-42 / D-43 / HANDOFF §0★.2):** The go/no-go is now a **four-term conjunction**: `go` iff ALL hold:
+> 1. **100% hold-out pass** — every scenario `satisfied` (`DiagnosisRecord.all_scenarios_satisfied = true`). This is the **floor**; it never lowers.
+> 2. **Judge tri-alignment diagnosis** — `DiagnosisRecord.tri_alignment = aligned` (no unresolved spec/scenario/judge defect; `aligned` REQUIRES `all_scenarios_satisfied = true` AND `root_cause = none`).
+> 3. **Human-review verdict** — `ReviewVerdict = "approve"` from C52's review phase (mandatory conjunctive term; satisfaction alone never deploys).
+> 4. **Post-deploy factory-integrity check** — after the new component is integrated, the factory's own baseline scenario suite MUST still pass (a self-modification can break the factory's pipeline post-`go`).
 >
-> **OPERATOR-JUDGMENT FLAG (OQ-1):** The choice of which statistics gate the FIRST SELF-MODIFICATION go/no-go — the apex point of bet #3 — is an architectural/safety value judgment, not a mechanical engineering choice. A mean-only rule, a p50-only rule, a p10+mean rule, a p10+mean+std_dev rule, and a rate_above_cutline rule all have defensible arguments. The SHAPE selected here (p10+mean) is the recommended engineering default; **the operator MUST review and sign off on this rule shape** as a morning-review item before the milestone is armed. This is the only decision in C53 that crosses from engineering policy into safety/governance territory.
+> **The satisfaction distribution becomes DIAGNOSTIC EVIDENCE, not the threshold knob.** The auto-002 option C′ statistics (`p10`, `mean`, `p90 − p10`, `MinScenarios`) are surfaced as **evidence to human review + the judge's diagnosis** (captured in `DiagnosisRecord`), but the BINDING gate is the four conjunctive terms above — NOT a distribution threshold. `MilestoneConfig` pass-rate is **PINNED at 1.0** (not a knob); the only relaxable knobs are the **oversight level** (human-review depth) + the **judge-trust precondition** (`judge_self_trust`, discharged by a human-audited judge sample per PF-2). **The 100% floor NEVER lowers; only oversight relaxes as the judge earns calibrated trust.**
+>
+> **Linearization (D-41 fix #1 — VERBATIM):** "C52↔C53 circular hand-off (was a deadlock) → linearized: C52 review-phase → `ReviewVerdict` → `C53.decide(satisfaction, review_verdict, transfusion_verdict) → GoNoGoDecision` → C52 deploy-phase. C53 runs AFTER C52's human review; its decision is C52's deploy trigger (one-directional, no cycle)."
+>
+> **OQ-1 RESOLVED (Sweep-2) — prior distribution-shape clause preserved:** The earlier Sweep-2 resolution fixed `p10 ≥ T_tail AND mean ≥ T_central` as the distribution shape. **This shape is now reframed as evidence surfaced inside the `DiagnosisRecord`** (the C32 judge computes the satisfaction distribution and surfaces it as part of its diagnosis), not as the gate. The BINDING gate for go is `all_scenarios_satisfied = true` (100% floor) + `tri_alignment = aligned`. The operator-judgment flag on shape still applies (the judge reads and reports the distribution statistics in its diagnosis prompt); the OPERATOR-JUDGMENT FLAG clause is preserved below for traceability.
+>
+> **OPERATOR-JUDGMENT FLAG (OQ-1, preserved for traceability):** The choice of which distribution statistics the judge surfaces in the `DiagnosisRecord` for human review is a governance judgment; the **shape** of the judge's diagnosis prompt (which stats to report, what spread to flag) is a `MilestoneConfig`-level knob (`oversight_level`). The 100% floor is not a distribution threshold — it is a boolean (`all_scenarios_satisfied`). The distribution statistics (p10, mean, p90−p10) are part of the diagnostic evidence the human reviewer reads; their THRESHOLD VALUES are NOT the gate.
 
 ```
 // Primary public surface of C53 — the go/no-go function.
 // All inputs are pre-computed signals; C53 makes no model call (INV-2).
+// Four conjunctive terms; the first false term short-circuits to no_go.
+// [D-41 fix #1] C53 runs AFTER C52's human review; its decision is C52's deploy trigger.
 func decide(
-    input GoNoGoInput,        // the collected evidence bundle (see GoNoGoInput below)
-    cfg   MilestoneConfig,    // operator-policy config — bar values, attempt bound (see §3.4)
+    diagnosis       DiagnosisRecord,   // C32's per-build diagnosis (D-43): tri_alignment, all_scenarios_satisfied, holdout_pass_rate, judge_self_trust
+    reviewVerdict   ReviewVerdict,     // C52 human design-review outcome ("approve"|"reject") — Term 3
+    transfusion     TransfusionVerdict, // C51 transfusion-correctness predicate ("pass"|"fail"|"inconclusive") — auxiliary evidence carried in GoNoGoInput
+    integrity       IntegrityResult,   // Post-deploy factory baseline integrity check — Term 4
+    cfg             MilestoneConfig,   // operator-policy config — attempt bound, oversight level (see §3.3)
 ) (GoNoGoDecision, error)
 
-// GoNoGoInput — the evidence bundle C53 reads from upstream signals.
-// All fields are required; missing any → E-C53-02 (insufficient-evidence).
+// ReviewVerdict — C52 human design-review outcome.
+// R/W-by: W: C52 (review phase); R: C53
+type ReviewVerdict struct {
+    Verdict    string    // "approve" | "reject"
+    ReviewRef  string    // bead_id of the C52 review record (for evidence bundle)
+    ReviewedAt string    // ISO-8601 UTC
+}
+
+// TransfusionVerdict — C51 transfusion-correctness predicate outcome.
+// R/W-by: W: C51; R: C53 (auxiliary evidence, not a conjunctive term of the four-term gate)
+type TransfusionVerdict struct {
+    Verdict         string    // "pass" | "fail" | "inconclusive"
+    TransfusionRef  string    // bead_id of the C51 predicate-verdict record
+}
+
+// IntegrityResult — post-deploy factory baseline integrity check.
+// After the new component is integrated into the factory, the factory's own
+// baseline scenario suite is re-run; this carries the result.
+// R/W-by: W: factory integrity harness (C52 / operator-configured); R: C53
+type IntegrityResult struct {
+    Passed         bool      // true iff the factory's own baseline scenario suite still passes
+    SuiteName      string    // which baseline suite was run (e.g. "factory-baseline-v1")
+    FailedScenarios []string // scenario IDs that failed (empty if Passed = true)
+    RunRef         string    // bead_id / run record of the integrity check execution
+    CheckedAt      string    // ISO-8601 UTC
+}
+
+// GoNoGoInput — the full evidence bundle C53 reads from upstream signals.
+// Preserved for backward compatibility and harness testing; the four conjunctive
+// term inputs now have typed structs (DiagnosisRecord, ReviewVerdict, TransfusionVerdict, IntegrityResult).
+// All fields are required; missing any required field → E-C53-02 (insufficient-evidence).
 type GoNoGoInput struct {
-    // From C51 (transfusion-correctness predicate verdict)
-    TransfusionVerdict    string    // "pass" | "fail" | "inconclusive" — C51's predicate outcome
-    TransfusionRef        string    // bead_id of the C51 predicate-verdict record (for evidence bundle)
+    // Term 1 + 2: from C32 (DiagnosisRecord — D-43 companion record)
+    // DiagnosisRecord carries: all_scenarios_satisfied, tri_alignment, holdout_pass_rate, judge_self_trust,
+    //   root_cause, misalignments, repair_recommendation, score_record_refs, scenario_set_version, etc.
+    Diagnosis             DiagnosisRecord   // C32's full per-build diagnosis (frozen schema: C32 §3.2a)
+    DiagnosisBead         string            // bead_id of the DiagnosisRecord bead (for evidence bundle)
 
-    // From C33 (satisfaction distribution over bootstrap scenario run)
-    Distribution          SatisfactionDistribution // C33's struct: {n, mean, p10, p50, p90, std_dev, rate_above_cutline?}
-    DistributionBead      string    // bead_id of the C33 satisfaction_metric bead (for evidence bundle)
-    ScenarioSetID         string    // identifier of the bootstrap scenario set (I2/INV-3)
-    ScenarioSetPath       string    // path in C30 corpus: scenarios/<component>/ — must be non-empty (INV-3)
+    // Satisfaction distribution — diagnostic evidence (not the gate); surfaced in Diagnosis.holdout_pass_rate
+    // and reported to human review.  C53 does NOT apply a threshold here.
+    // Distribution stats are already embedded in DiagnosisRecord; this field retains the C33 bead reference.
+    DistributionBead      string            // bead_id of the C33 satisfaction_metric bead (for evidence bundle)
+    ScenarioSetID         string            // identifier of the bootstrap scenario set (I2/INV-3)
+    ScenarioSetPath       string            // path in C30 corpus: scenarios/<component>/ — must be non-empty (INV-3)
 
-    // From C52 (human design-review record)
-    ReviewVerdict         string    // "approve" | "reject" — C52 design-review outcome
-    ReviewRef             string    // bead_id of the C52 review record (for evidence bundle)
+    // Term 3: from C52 (human design-review)
+    ReviewVerdict         ReviewVerdict     // "approve" | "reject" — C52 design-review outcome + ref
+
+    // Auxiliary evidence: from C51 (transfusion-correctness predicate)
+    // Not a standalone conjunctive term; carried for evidence completeness and E-C53-05 short-circuit.
+    Transfusion           TransfusionVerdict // "pass" | "fail" | "inconclusive" — C51 outcome + ref
+
+    // Term 4: post-deploy factory integrity
+    FactoryIntegrity      IntegrityResult   // factory baseline suite result after component integration
 
     // Context
-    AttemptNo             int       // which attempt this evaluation is for the same component (1-based)
-    ComponentID           string    // the factory-built component being evaluated
+    AttemptNo             int               // which attempt this evaluation is for the same component (1-based)
+    ComponentID           string            // the factory-built component being evaluated
 }
 
 // GoNoGoDecision — the output recorded on the factory_build bead (D-40).
+// [D-41 fix #2]: build-state terminal = factory_build bead with state = closed (C20 envelope);
+// the go/no-go outcome is the SEPARATE milestone_verdict field (not a status value).
 type GoNoGoDecision struct {
     Verdict               string    // "go" | "no_go"
-    Reason                string    // human-readable reason (which rubric term failed, or "all terms met")
-    FailedTerms           []string  // e.g. ["c33_distribution", "scenario_set_absent"]; empty on go
+    Reason                string    // human-readable reason (which conjunctive term failed, or "all terms met")
+    FailedTerms           []string  // e.g. ["holdout_floor", "tri_alignment", "review_rejected", "integrity_failed"]; empty on go
 
     // Evidence bundle (INV-4 — must be present on every recorded verdict)
-    EvidenceTransfusionRef  string  // echoes GoNoGoInput.TransfusionRef
-    EvidenceDistributionBead string // echoes GoNoGoInput.DistributionBead
-    EvidenceN               int     // echoes Distribution.n (sample-honesty)
+    EvidenceDiagnosisBead   string  // echoes GoNoGoInput.DiagnosisBead (D-43 DiagnosisRecord reference)
+    EvidenceDistributionBead string // echoes GoNoGoInput.DistributionBead (C33 satisfaction_metric bead)
+    EvidenceHoldoutPassRate  float64 // echoes DiagnosisRecord.holdout_pass_rate (diagnostic evidence, not the gate)
+    EvidenceAllScenariosSatisfied bool // echoes DiagnosisRecord.all_scenarios_satisfied (the 100% floor)
+    EvidenceTriAlignment    string  // echoes DiagnosisRecord.tri_alignment ("aligned"|"misaligned")
+    EvidenceJudgeSelfTrust  string  // echoes DiagnosisRecord.judge_self_trust ("calibrated"|"uncalibrated")
     EvidenceScenarioSetID   string  // echoes GoNoGoInput.ScenarioSetID
-    EvidenceReviewRef       string  // echoes GoNoGoInput.ReviewRef
+    EvidenceReviewRef       string  // echoes GoNoGoInput.ReviewVerdict.ReviewRef
+    EvidenceIntegrityPassed bool    // echoes GoNoGoInput.FactoryIntegrity.Passed
+    EvidenceIntegrityRef    string  // echoes GoNoGoInput.FactoryIntegrity.RunRef
 
     // Fail-branch context (populated on no_go)
     AttemptNo               int     // echoes GoNoGoInput.AttemptNo
@@ -240,12 +310,24 @@ type GoNoGoDecision struct {
     DecidedAt               string  // ISO-8601 UTC
 }
 
-// SatisfactionDistribution — C33's schema (C33 §3.4 — canonical; C53 reads, does not own)
-// Field names match C33 §3.4 exactly.  R/W-by: W: C33; R: C53 (and C46, C55, C50)
+// DiagnosisRecord — C32's per-build diagnosis (frozen schema: C32 §3.2a — C53 reads, does not own).
+// Key fields consumed by C53 (full schema in C32 §3.2a):
+//   all_scenarios_satisfied bool          — Term 1: 100% hold-out floor
+//   tri_alignment           enum{aligned,misaligned} — Term 2: tri-alignment gate
+//   holdout_pass_rate       float64       — diagnostic evidence (not the gate)
+//   root_cause              enum{judge,spec,scenario,system,none}
+//   judge_self_trust        enum{calibrated,uncalibrated} — PF-2; informs oversight, not the floor
+// R/W-by: W: C32 (diagnose()); R: C53, C52, C34, human review
+// (DiagnosisRecord struct is owned and frozen by C32; C53 cites this reference, does not redefine)
+
+// SatisfactionDistribution — C33's schema (C33 §3.4 — canonical; C53 reads via DiagnosisRecord, does not own)
+// These statistics are surfaced as DIAGNOSTIC EVIDENCE to human review and the judge's diagnosis,
+// NOT as the gate. The gate is the four conjunctive terms above.
+// R/W-by: W: C33; R: C32 (embeds in DiagnosisRecord), C53 (evidence reference only)
 type SatisfactionDistribution struct {
     N                    int      // sample count (required; INV-3 size check)
     Mean                 float64  // arithmetic mean of satisfaction_score ∈ [0.0, 1.0]
-    P10                  float64  // 10th percentile (tail — the T_tail gate term)
+    P10                  float64  // 10th percentile (tail)
     P50                  float64  // median
     P90                  float64  // 90th percentile
     StdDev               float64  // standard deviation
@@ -253,54 +335,115 @@ type SatisfactionDistribution struct {
 }
 ```
 
-### 3.2 Milestone decision-rule predicate (I3 — bar applied here)
+### 3.1a Linearized hand-off sequence diagram (D-41 fix #1 — validated)
 
-The rubric (I1) is a **conjunction** of three terms evaluated in order; the first false term short-circuits to `no_go`:
+The diagram below shows the linearized C52↔C53 hand-off that resolved the Sweep-2 circular deadlock.
+C53 runs AFTER C52's review phase; its `GoNoGoDecision` is C52's deploy trigger. No cycle.
+
+```mermaid
+sequenceDiagram
+    participant C52R as C52 review-phase
+    participant C53 as C53 decide()
+    participant C52D as C52 deploy-phase
+    participant C20 as factory_build bead
+    participant C54 as C54 Phase-3 arm
+
+    C52R->>C52R: human review completes
+    C52R->>C53: ReviewVerdict (approve or reject)
+    Note over C53: also receives DiagnosisRecord from C32 and IntegrityResult
+    C53->>C53: Term 1 — all_scenarios_satisfied == true
+    C53->>C53: Term 2 — tri_alignment == aligned
+    C53->>C53: Term 3 — ReviewVerdict == approve
+    C53->>C53: Term 4 — FactoryIntegrity.Passed == true
+    C53->>C20: write milestone_verdict + milestone_evidence + milestone_decided_at
+    Note over C20: factory_build bead state = closed (D-41 fix 2)
+    C53->>C52D: GoNoGoDecision (go or no_go)
+    alt go
+        C52D->>C54: arm Phase-3 transition
+    else no_go
+        C52D->>C52D: fail-branch — iterate spec or escalate
+    end
+```
+
+> **Mermaid validation:** diagram validated with `mcp__957183d2-29cc-4fb8-8d95-f0a6c3fce832__validate_and_render_mermaid_diagram` — **PASS** (`valid: true`, `diagramType: "sequence"`). No `;` characters inside labels (SWEEP2-DISPATCH hazard — using `--` for self-referencing annotations). Participant IDs are ASCII-simple.
+
+### 3.2 Milestone decision-rule predicate (I3 — bar applied here; reframed to tri-alignment)
+
+The rubric (I1) is a **conjunction** of FOUR terms evaluated in order; the first false term short-circuits to `no_go`.
+**[D-42 / ADR-0069 reframe]:** The satisfaction distribution is now **diagnostic evidence** (embedded in `DiagnosisRecord`) rather than the gate. Terms 1 and 2 key on `DiagnosisRecord` fields (C32 §3.2a); Terms 3 and 4 are the human-review and post-deploy integrity gates.
 
 ```
-go  iff  ScenarioSetPresent(input)                              // Term 0: precondition (INV-3)
-     AND TransfusionVerdict == "pass"                           // Term 1: C51 completeness
-     AND C33SatisfactionMeetsBar(input.Distribution, cfg)       // Term 2: C33 correctness (I3)
-     AND ReviewVerdict == "approve"                             // Term 3: C52 human gate
+go  iff  ScenarioSetPresent(input)                                          // Term 0: precondition (INV-3)
+     AND input.Diagnosis.all_scenarios_satisfied == true                     // Term 1: 100% hold-out floor (NEVER lowered)
+     AND input.Diagnosis.tri_alignment == "aligned"                         // Term 2: tri-alignment (requires Term 1 + root_cause=none)
+     AND input.ReviewVerdict.Verdict == "approve"                           // Term 3: C52 human gate (mandatory conjunctive)
+     AND input.FactoryIntegrity.Passed == true                              // Term 4: post-deploy factory-integrity check
 ```
 
-**Term 2 expanded — the milestone satisfaction bar (operator-policy knobs, not fixed values):**
+> **Critical ACs (from §8.2):**
+> - 100% hold-out pass WITH `tri_alignment = misaligned` → **NO-GO** (necessary-not-sufficient, AC-C53-15).
+> - 100% pass + aligned + human-approved + integrity-pass → **GO** (AC-C53-14).
+> - < 100% pass → **NO-GO** regardless of everything else (floor, AC-C53-16).
+> - Post-deploy integrity fail → **NO-GO/rollback** even after a provisional go (AC-C53-18).
+
+**Distribution statistics as diagnostic evidence (not the gate):**
 
 ```
-C33SatisfactionMeetsBar(d SatisfactionDistribution, cfg MilestoneConfig) bool {
-    if d.N < cfg.MinScenarios { return false }          // OQ-3 guideline: N < MinScenarios → insufficient evidence
-    return d.P10  >= cfg.TailThreshold                  // T_tail: tail gate — no consistent low tail
-        && d.Mean >= cfg.CentralThreshold               // T_central: central-tendency gate
-}
+// The satisfaction distribution (from C33, embedded in DiagnosisRecord) is surfaced
+// as EVIDENCE to human review and is NOT the gate.  The judge's diagnosis prompt
+// includes p10, mean, p90-p10 (auto-002 option C' statistics) so human reviewers
+// and the judge can reason about distribution shape, but no threshold is applied here.
+// The gate is all_scenarios_satisfied (boolean 100% floor), not a percentile threshold.
+//
+// Evidence surfaced to human review (via DiagnosisRecord):
+//   holdout_pass_rate         float64   fraction satisfied  (diagnostic; gate is all_scenarios_satisfied)
+//   all_scenarios_satisfied   bool      the 100% floor (Term 1)
+//   misalignments             list      per-scenario detail for failed scenarios
+//   root_cause                enum      judge/spec/scenario/system/none
+//   tri_alignment             enum      aligned|misaligned (Term 2)
+//   judge_self_trust          enum      calibrated|uncalibrated (informs oversight level, not the floor)
 ```
 
-**MilestoneConfig — operator-policy knobs (all values configurable; none fixed by C53):**
+**`MinScenarios` evidence floor (OQ-3, preserved from Sweep-2):** The `min_scenarios` config knob still enforces a minimum evidence floor (`DiagnosisRecord` must cover at least `min_scenarios` scenarios — if `N < min_scenarios`, the DiagnosisRecord itself carries an `error_code` and C53 surfaces `E-C53-03`). This is independent of the 100% floor: you need both sufficient evidence AND 100% pass.
+
+**MilestoneConfig — operator-policy knobs (pass-rate PINNED at 1.0; only oversight-level knobs are relaxable):**
 
 ### 3.3 Config surface (pack TOML — I5 / C03 model)
 
-| Key | Type | Req | Default | Semantics | R/W-by |
-|---|---|---|---|---|---|
-| `tail_threshold` | float | yes | — | Operator-set value for `T_tail` (p10 gate). Value is operator policy. | W: operator/C03; R: C53 |
-| `central_threshold` | float | yes | — | Operator-set value for `T_central` (mean gate). Value is operator policy. | W: operator/C03; R: C53 |
-| `min_scenarios` | int | yes | — | Minimum N below which the distribution is rejected as insufficient evidence (OQ-3). Value is operator policy. | W: operator/C03; R: C53 |
-| `max_attempts` | int | yes | — | Attempt bound for the fail branch before "add substrate" escalation (OQ-2). Value is operator policy. | W: operator/C03; R: C53 |
-| `require_review_approve` | bool | no | `true` | Whether the C52 review-approve term is required (always true at Phase-2; relaxable post-P12). | W: operator/C03; R: C53 |
+**Schema: `MilestoneConfig`** — pass-rate is PINNED at 1.0 (not a knob). The only relaxable knobs are the **oversight level** (human-review depth) and the **judge-trust precondition** (`judge_self_trust_required`).
 
-### 3.4 Go/no-go decision slot on `factory_build` bead (D-40 / OQ-4 RESOLVED)
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `pass_rate_floor` | float | R (pinned) | **ALWAYS 1.0** — the 100% hold-out floor. NOT an operator knob; hard-coded and non-relaxable. The 100% floor never lowers; only oversight relaxes as the judge earns calibrated trust. | W: C53 (fixed); R: C53 |
+| `min_scenarios` | int | yes | Minimum N — the DiagnosisRecord must cover at least this many scenarios (evidence floor, OQ-3). If `N < min_scenarios`, surfaces `E-C53-03`. Value is operator policy. | W: operator/C03; R: C53 |
+| `max_attempts` | int | yes | Attempt bound for the fail branch before "add substrate" escalation (OQ-2). Value is operator policy. | W: operator/C03; R: C53 |
+| `oversight_level` | enum | yes | Human-review depth: `full` (default at Phase-2 — every build reviewed) or `sampled` (relaxed as judge earns calibrated trust; requires `judge_self_trust = calibrated`). The **only relaxable knob** (the 100% floor is NOT relaxable). | W: operator/C03; R: C53 |
+| `judge_self_trust_required` | enum | no | `calibrated` | Whether a `calibrated` judge (PF-2 human-audited sample) is required before the go/no-go. When `uncalibrated`, forces `oversight_level = full` regardless of config. Informs oversight; never the 100% floor. | W: operator/C03; R: C53 |
+| `require_review_approve` | bool | no | `true` | Whether the C52 review-approve term is required (always true at Phase-2; never relaxable below `true` at bootstrap; relaxable only post-P12). | W: operator/C03; R: C53 |
+| `require_factory_integrity` | bool | no | `true` | Whether the post-deploy factory-integrity check (Term 4) is required. Always `true` at Phase-2; operator may defer in specific test environments with explicit justification. | W: operator/C03; R: C53 |
+
+> **Key policy invariant:** `pass_rate_floor = 1.0` is a const, not a field the operator sets. Any config with `pass_rate_floor < 1.0` is invalid and raises `E-C53-08` (config-invalid). The distribution statistics (p10, mean, p90−p10) remain in the diagnostic evidence stream; they are not config knobs for the gate.
+
+**Removed knobs (Sweep-2 B-shape, now reframed as diagnostic evidence):** `tail_threshold` and `central_threshold` (the `p10 ≥ T_tail AND mean ≥ T_central` gate from the prior Sweep-2 `MilestoneConfig`) are **removed as gate knobs**. These statistics are still surfaced inside the `DiagnosisRecord` as evidence for human review and judge diagnosis, but no threshold is applied. Operators who want a hard distribution check can configure it as a `judge_self_trust_required = calibrated` precondition (meaning the judge must have passed a human-audited calibration sample before its `tri_alignment` verdict is trusted).
+
+### 3.4 Go/no-go decision slot on `factory_build` bead (D-40 / D-41 / OQ-4 RESOLVED)
 
 > **D-40 (verbatim):** "`factory_build` build-state is a STATUS transition, not a type-flip. … C53 records the go/no-go on the same bead. Applied: C20 (factory_build lifecycle + status slot), C52 (build-state advance), C53 (go/no-go record). Resolves XC-2 + C20:OQ-3 + C52:OQ3."
 
-**OQ-4 RESOLVED (Sweep-2):** Who records what on the `factory_build` bead — one bead, three writers, one per build:
+> **D-41 fix #2 (verbatim):** "the build-state terminal aligns to C20's bead-envelope `state = closed` … the go/no-go outcome is the separate `milestone_verdict` field." **This CORRECTS D-40's stated `completed` terminal to `closed`**: the `factory_build` bead's C20 lifecycle envelope transitions `in_progress → closed` (using C20's `{open, in_progress, closed}` enum); the go/no-go outcome is `milestone_verdict` (a separate field, NOT a status value).
+
+**OQ-4 RESOLVED (Sweep-2):** Who records what on the `factory_build` bead — one bead, four writers (C51, C52, C53, and C53 writes the `DiagnosisRecord` reference), one per build:
 
 | Slot owner | Field on `factory_build` bead | Written when | Written by |
 |---|---|---|---|
 | **C51** | `transfusion_verdict` + `transfusion_ref` | transfusion-predicate evaluated | C51 |
-| **C52** | `review_verdict` + `review_ref` + `status` transition (`in_progress → completed`) | human design review completes | C52 |
-| **C53** | `milestone_verdict` (`"go"` or `"no_go"`) + `milestone_evidence` (GoNoGoDecision evidence bundle) + `milestone_decided_at` | milestone `decide()` called | C53 |
+| **C52** | `review_verdict` + `review_ref` + `status` transition (`in_progress → closed`) | human design review completes; bead state = `closed` | C52 |
+| **C32** | `diagnosis_bead_ref` | `diagnose()` called; DiagnosisRecord persisted as a separate bead (C32 §3.2a) | C32 (judge rig) |
+| **C53** | `milestone_verdict` (`"go"` or `"no_go"`) + `milestone_evidence` (GoNoGoDecision evidence bundle incl. `EvidenceDiagnosisBead`, `EvidenceAllScenariosSatisfied`, `EvidenceTriAlignment`) + `milestone_decided_at` | milestone `decide()` called | C53 |
 
-This is one bead, three sequential append-writes (C51, then C52, then C53). Grain = one decision per first-component build. The `factory_build` bead schema is **C20's** (C20 §4.5.3 + the new C53 fields, registered as a C20 schema-slot request — see §9 NEW SEAM).
+This is one bead, sequential writes. Status enum is **`{open, in_progress, closed}`** per C20 bead-envelope (D-41 fix #2); `milestone_verdict` is the go/no-go, not a status. Grain = one decision per first-component build. The `factory_build` bead schema is **C20's** (C20 §4.5.3 + the new C53 fields, registered as a C20 schema-slot request — see §9 NEW SEAM).
 
-**NEW SEAM (→ orchestrator ledger):** C53 requests three new fields on C20's `factory_build` bead: `milestone_verdict`, `milestone_evidence` (JSON-blob of GoNoGoDecision), and `milestone_decided_at`. C20 must accept this schema-slot request and bump the bead-type version (C22 I2).
+**NEW SEAM (→ orchestrator ledger):** C53 requests three new fields on C20's `factory_build` bead: `milestone_verdict`, `milestone_evidence` (JSON-blob of GoNoGoDecision, now including `EvidenceDiagnosisBead`, `EvidenceAllScenariosSatisfied`, `EvidenceTriAlignment`), and `milestone_decided_at`. C20 must accept this schema-slot request and bump the bead-type version (C22 I2). Additionally, C53 requests that C20 register `diagnosis_bead_ref` as a field (the reference to C32's `DiagnosisRecord` bead) — this was not present at Sweep-2 and is a net-new field obligation on C20.
 
 **Invariants C53 must uphold:**
 - **INV-1 (falsifiable, not "looks good" — G23).** The milestone verdict is computed from **named evidence**
@@ -580,7 +723,11 @@ with a stated reason, or a hard error for missing required inputs).
 | **E-C53-05** | Transfusion predicate not pass: `TransfusionVerdict` is `"fail"` or `"inconclusive"` — C51 completeness term fails (I1 Term 1) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["transfusion_predicate_fail"]}` | Operator repairs exemplar-coverage gaps in the bootstrap component spec; C51 re-evaluated on the next attempt |
 | **E-C53-06** | Review not approved: `ReviewVerdict` is `"reject"` — C52 human design-review term fails (I1 Term 3) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["review_rejected"]}` | Operator addresses the reviewer's findings and re-runs the factory; next `decide()` re-reads the new review record |
 | **E-C53-07** | Attempt bound exceeded: `AttemptNo >= cfg.MaxAttempts` and verdict is `no_go` — fail-branch exhausted (I5) | `GoNoGoDecision{Verdict:"no_go", AttemptBoundReached:true, EscalationRequired:true}` | Operator (C56 policy) must authorize "add substrate before Phase 3"; Phase 3 remains withheld until substrate work completes and a fresh attempt is authorized |
-| **E-C53-08** | Config invalid: a required config knob (`tail_threshold`, `central_threshold`, `min_scenarios`, `max_attempts`) is missing or out-of-range (e.g. negative, NaN) | `error` (hard — misconfigured milestone cannot produce a meaningful decision) | Operator corrects the pack/config TOML values and re-deploys; C03 surface owns the config schema |
+| **E-C53-08** | Config invalid: a required config field (`min_scenarios`, `max_attempts`, `oversight_level`) is missing or out-of-range (e.g. negative, NaN, or `pass_rate_floor` set to anything other than 1.0) | `error` (hard — misconfigured milestone cannot produce a meaningful decision) | Operator corrects the pack/config TOML values and re-deploys; C03 surface owns the config schema |
+| **E-C53-09** | Hold-out floor not met: `DiagnosisRecord.all_scenarios_satisfied = false` (one or more scenarios not satisfied; `holdout_pass_rate < 1.0`) — Term 1 fails regardless of `tri_alignment` | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["holdout_floor"]}` with `EvidenceAllScenariosSatisfied:false` and `EvidenceHoldoutPassRate` set to the actual rate | Operator reviews `DiagnosisRecord.misalignments` for root-cause attribution, then routes: if `root_cause=system` → fix system; if `root_cause=spec` → fix spec + scenarios (independent path, anti-gaming); if `root_cause=scenario` → fix scenario (independent path); if `root_cause=judge` → recalibrate judge. Re-run after fix |
+| **E-C53-10** | Tri-alignment not achieved: `DiagnosisRecord.all_scenarios_satisfied = true` BUT `DiagnosisRecord.tri_alignment = misaligned` — Term 1 passes (100% hold-out) but Term 2 fails (unresolved spec/scenario/judge defect attributed by the judge) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["tri_alignment_misaligned"]}` | Critical case (AC-C53-15): 100% pass alone is NOT sufficient. Operator reads `DiagnosisRecord.root_cause` + `repair_recommendation` to identify the unresolved defect (spec ambiguity, scenario inconsistency, or judge reliability issue). Route fix independently of the implementing worker. Re-run after fix |
+| **E-C53-11** | Judge uncalibrated with oversight required: `DiagnosisRecord.judge_self_trust = uncalibrated` AND `cfg.judge_self_trust_required = calibrated` — the judge's verdicts are not yet trusted (PF-2 precondition not met) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["judge_uncalibrated"]}` | Operator performs a human-audited judge calibration sample (≥N human-rated scenarios per PF-2) before relying on the judge's `tri_alignment` verdict. `oversight_level` forced to `full` until discharged |
+| **E-C53-12** | Post-deploy factory integrity failed: `IntegrityResult.Passed = false` — the factory's own baseline scenario suite failed after the new component was integrated (Term 4) | `GoNoGoDecision{Verdict:"no_go", FailedTerms:["factory_integrity_failed"]}` — even if a provisional `go` was issued, this triggers rollback | Operator reviews `IntegrityResult.FailedScenarios`, rolls back the new component from the factory, diagnoses the regression, and re-runs after the integration issue is fixed. Phase-3 arm is withheld |
 
 ### 8.2 Acceptance-test codes (Sweep-2, E↔AC cross-refs)
 
@@ -598,7 +745,12 @@ with a stated reason, or a hard error for missing required inputs).
 | **AC-C53-10** | Given: valid `go` decision. When: evidence bundle written to `factory_build` bead. Then: bead contains non-empty `EvidenceTransfusionRef`, `EvidenceDistributionBead`, `EvidenceN > 0`, `EvidenceScenarioSetID`, `EvidenceReviewRef`. | INV-4 evidence-anchored record; D-40 bead slot |
 | **AC-C53-11** | Given: a valid `go` decision recorded. When: C54 queries the `factory_build` bead. Then: bead `milestone_verdict == "go"` + `milestone_decided_at` non-empty; Phase-3 transition armed. | AC-8; I4 → C54; README:436 go→Phase 3 |
 | **AC-C53-12** | Given: C53 test environment (synthetic inputs, no provider configured). When: `decide()` runs end-to-end. Then: zero model calls; no judge invocation; only reads GoNoGoInput and cfg. | INV-2 no-scoring; AC-3; C53 is model-free |
-| **AC-C53-13** | Given: `TailThreshold` and `CentralThreshold` reconfigured to new values (operator policy change). When: `decide()` re-run on same distribution. Then: verdict changes to reflect new knob values; confirms bar is configurable, not hard-coded. | AC-4; INV-5; G09 reading (b) |
+| **AC-C53-13** | Given: `oversight_level` reconfigured (`full` → `sampled`) with `judge_self_trust_required = calibrated` and judge is confirmed calibrated. When: `decide()` re-run. Then: oversight relaxes (sampled review allowed) while the 100% floor remains unchanged; confirms only oversight relaxes, not the pass-rate gate. | INV-5; G09 reading (b); tri-alignment reframe |
+| **AC-C53-14** | Given: `DiagnosisRecord.all_scenarios_satisfied = true`, `DiagnosisRecord.tri_alignment = aligned`, `ReviewVerdict = "approve"`, `IntegrityResult.Passed = true`. When: `decide()` called. Then: returns `GoNoGoDecision{Verdict:"go"}` with all four evidence fields populated; Phase-3 arm signal emitted. | CRITICAL — all four conjunctive terms met → GO; D-42 tri-alignment; ADR-0069 |
+| **AC-C53-15** | Given: `DiagnosisRecord.all_scenarios_satisfied = true` (100% pass) BUT `DiagnosisRecord.tri_alignment = misaligned` (unresolved defect attributed by judge). When: `decide()` called. Then: returns `no_go` with `FailedTerms:["tri_alignment_misaligned"]`; 100% pass does NOT cause go when tri_alignment is misaligned. | CRITICAL — necessary-not-sufficient; E-C53-10; D-42; ADR-0069 §"100% hold-out pass is necessary but not sufficient" |
+| **AC-C53-16** | Given: `DiagnosisRecord.all_scenarios_satisfied = false` (one or more scenarios failed; `holdout_pass_rate < 1.0`) regardless of `tri_alignment` value. When: `decide()` called. Then: returns `no_go` with `FailedTerms:["holdout_floor"]`; floor fails regardless of every other term. | CRITICAL — 100% floor never lowers; E-C53-09; D-42 "the 100% floor never lowers" |
+| **AC-C53-17** | Given: judge is `uncalibrated` (`DiagnosisRecord.judge_self_trust = uncalibrated`) and `cfg.judge_self_trust_required = calibrated`. When: `decide()` called. Then: returns `no_go` with `FailedTerms:["judge_uncalibrated"]`; operator must discharge PF-2 human-audit before proceeding. | E-C53-11; PF-2; judge-trust precondition; oversight does not lower the floor |
+| **AC-C53-18** | Given: `GoNoGoDecision{Verdict:"go"}` was issued, but subsequent `IntegrityResult.Passed = false` (factory baseline suite fails after integration). When: the post-deploy integrity check completes. Then: verdict is revised to `no_go` with `FailedTerms:["factory_integrity_failed"]`; rollback is triggered; Phase-3 arm is withheld. | CRITICAL — post-deploy integrity fail → NO-GO/rollback even after provisional go; E-C53-12; auto-002 C' post-deploy term |
 
 ## 9. Open questions
 
@@ -627,4 +779,8 @@ with a stated reason, or a hard error for missing required inputs).
   request).
   > **RESOLVED (Sweep-2) by D-40:** See §3.4 slot-ownership table. One bead, three sequential writes: C51 writes `transfusion_verdict` + `transfusion_ref`; C52 writes `review_verdict` + `review_ref` + `status` transition; C53 writes `milestone_verdict` + `milestone_evidence` + `milestone_decided_at`. Grain = one decision per first-component build. **NEW SEAM registered:** C53 requests three new fields on C20's `factory_build` bead (§3.4); C20 must accept the schema-slot request and bump the bead-type version.
 
-**NEW SEAM (→ orchestrator ledger):** C53 §3.4 requests three new fields on C20's `factory_build` bead type: `milestone_verdict` (string), `milestone_evidence` (JSON-blob of GoNoGoDecision), `milestone_decided_at` (ISO-8601 string). C20 must accept this as a schema-slot request and bump the registered bead-type version (C22 I2 mechanism). This seam was not present at Sweep-1 and is the only net-new schema obligation C53 introduces on C20.
+- **OQ-5 (→ review-log, new — 2026-06-02): `IntegrityResult` ownership and scope.** The post-deploy factory-integrity check (Term 4, §3.1) requires a "factory baseline scenario suite" to run after the new component is integrated. This suite is named as a seam but not yet owned by any component. Candidate owners: C52 (self-bootstrap loop — it drives the integration step), C31/C32 (the eval tier that runs scenarios), or a new factory-integrity harness. The `IntegrityResult` schema is defined in §3.1; the harness that populates it is a new seam. **This is the primary open question introduced by the tri-alignment deepening.** Freeze with C52 / the factory integration harness at Sweep-3.
+
+**NEW SEAM (→ orchestrator ledger, updated):** C53 §3.4 requests **four** new fields on C20's `factory_build` bead type: `milestone_verdict` (string), `milestone_evidence` (JSON-blob of GoNoGoDecision, now extended with `EvidenceDiagnosisBead`/`EvidenceAllScenariosSatisfied`/`EvidenceTriAlignment`/`EvidenceIntegrityPassed`), `milestone_decided_at` (ISO-8601 string), and `diagnosis_bead_ref` (string — reference to C32's `DiagnosisRecord` bead). C20 must accept these as a schema-slot request and bump the registered bead-type version (C22 I2 mechanism). The `diagnosis_bead_ref` field is new relative to Sweep-2; all other fields retain their Sweep-2 names.
+
+**NEW SEAM (→ orchestrator ledger, new):** `IntegrityResult` — the post-deploy factory-integrity check — requires a harness (owner TBD: C52 or a new component) that runs the factory's baseline scenario suite after integration of the new component. C53 defines the `IntegrityResult` schema (§3.1); the ownership and invocation contract for the harness is a new seam to be frozen with C52 at Sweep-3.

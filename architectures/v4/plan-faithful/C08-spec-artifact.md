@@ -9,6 +9,8 @@ Sweep-2 additions (initial): T8 (DoD field + C33 seam), T9 (schema field table),
 
 Sweep-2 additions (triangle / D-42/D-43 deepening): T12 (spec-quality properties table + `spec_defect_class` semantics), T13 (independent-correction invariant INV-5 + E-C08-07/08), T14 (`SpecCorrectionRequest` seam schema + C10/C11 seam naming), T15 (in-system vs hold-out distinction; the spec as shared referent), T16 (AC-C08-09/10 anti-gaming + correction-loop ACs), T17 (spec-correction flow diagram — Mermaid validated PASS).
 
+Seam integration edits (D-44/D-45 pass): T14 extended — `SpecCorrectionRequest` gains `diagnosis_ref` (R) field (D-44 common field); `spec_ref` is demoted from common to spec-route-specific per D-44 field split; `requested_by` confirmed present and named per D-44; `defect_detail` confirmed as canonical name (not `defect_summary`). T17 updated — OQ-3 RESOLVED by D-45: C34 is the canonical enforcement owner; E-C08-07 is defense-in-depth (updated in spec §9 + §6.4 field table). AC-C08-09 updated to reflect D-45 canonical enforcement framing.
+
 ## 1. Work breakdown
 
 | Task | Description | Size | Prereqs |

@@ -3,7 +3,7 @@
 > Source: README §"Part 7 — The self-bootstrap mechanic" (lines 476–500: the recursion diagram `Factory → Spec → Run → Human design review → Deploy -.extends.-> Factory`; line 478 "the 12 principles are *recursive* … Specs as SoT applies to the factory's own development"; "Discipline that keeps the bootstrap honest" — line 496 "Gene transfusion always … No invention from scratch", 497 "Attribution of transfusion sources … `transfused_from`", **498 "Design review before deployment. Human reviews the factory's design output before any factory-built component goes into production use. Required until P12 is mature and trusted"**, 499 "Scenarios drive evaluation"); README §"Phase 2 — Layer 2 … and bootstrap validation" (lines 429–436: the milestone "Author a careful spec for a small new component / Run the factory on the spec / Human review the output / Deploy if it works"; 436 "If the bootstrap validation succeeds, the factory has proven it can do its own development work … If it fails, the factory itself needs work before Phase 3"); README §"Phase 3+ — Factory builds factory" (lines 444–446 "every subsequent principle's components get built by the factory itself, with gene transfusion … with human design review at each piece"; 472 "each component is bounded, each gets reviewed, each ships independently"); README Part 8 bet #3 (line 510 "The factory can do its own development work after Phases 0-2") + risk (line 519 "Phase 2 may not validate the bootstrap … iterate on the spec and run again; if still failing after a few attempts, the factory needs more substrate"); README Part 9 step 8 (line 542 "Author the Phase 2 spec for a small first-factory-built component. The bootstrap validation prompt is the most consequential thing you write in the first month"); AI-CONTEXT §11.1 (line 471 "Factory-builds-factory after Layer 2 — StrongDM pattern; minimizes human engineering investment"; line 475 "Phase 2 = Layer 2 + bootstrap validation — First factory-built component proves/disproves whole approach"); AI-CONTEXT §16 cold-start "If you're picking up an in-progress factory-built component" (lines 694–699: `gc bd find --type factory_build_in_progress` → check `transfused_from` → spec in `packs/*/spec.md` → scenarios at `scenarios/<component>/` → `gc converge resume <bead_id>`); component-inventory C52 row (maps `A84, A87, A85, B06, B17, B56, B80`; depends on C51, C52-gate, C08; gaps G14, G23; foundational: no; Batch 4 "factory builds factory"); ambiguities-and-gaps G14 (major — transfusion reliability is "a bet"; Phases 3b/3c/3d gated on it; "no fallback for 'factory cannot reliably transfuse'"), G23 (major — "Bootstrap-validation success criteria are subjective … 'if it works' … has no rubric, no scenario set for the bootstrap component itself, no pass bar"); review-log binding decisions **D-3** (C20 authors the `factory_build`/`factory_build_in_progress` bead schemas; C52 *uses* the lifecycle, does not define it), **D-6** (canonical track), **D-15** (satisfaction holistic against C08 free-form DoD — *transitive only*: it shapes C51's predicate internals, which C52 consumes as a black-box verdict; C52 itself is not bound by the satisfaction-holism decision); F-MODE-COVERAGE F54 (line 93, RSI goal-subversion over cycles), F43 (line 75, RSI board-visibility gap), F25 (line 102, design starvation — A109).
 > Inventory ID: C52   Kind: control-loop   Status: sweep-2
 > Track: canonical
-> Binding decisions obeyed: **D-3** (C20 owns `factory_build` schema; C52 drives lifecycle only), **D-6** (canonical track), **D-15** (holistic free-form DoD — transitive via C51), **D-21** (F54 objective-drift: registered-unbuilt in C57; cheap periodic human checkpoint now; real detector required before L5), **D-40** (`factory_build` build-state is a STATUS transition `in_progress → closed` on a single bead type — NOT a type-flip; C52 drives the transition; `completed` reconciled to `closed` per INT-2 envelope alignment — see INT-2 reconciliation note below).
+> Binding decisions obeyed: **D-3** (C20 owns `factory_build` schema; C52 drives lifecycle only), **D-6** (canonical track), **D-15** (holistic free-form DoD — transitive via C51), **D-21** (F54 objective-drift: registered-unbuilt in C57; cheap periodic human checkpoint now; real detector required before L5), **D-40** (`factory_build` build-state is a STATUS transition `in_progress → closed` on a single bead type — NOT a type-flip; C52 drives the transition; `completed` reconciled to `closed` per INT-2 envelope alignment — see INT-2 reconciliation note below), **D-44** (C52 constructs the consumer-named payload per route: `SpecCorrectionRequest` on `spec` route, `ScenarioCorrectionRequest` on `scenario` route — NOT a generic `CorrectionRequest`; both anchor on `factory_build_ref` + carry `diagnosis_ref` + `requested_by` stamped by C52; `defect_summary` renamed `defect_detail`; see §5.0.2), **D-45** (C52 MUST stamp `requested_by` with its rig identity and MUST NOT route a correction whose C34 audit fails; C34 is the canonical enforcement owner; see §5.0.5).
 
 > **D-40 ADOPTED — verbatim (resolves C52:OQ3 + XC-2):**
 > "The in-progress → completed advance of a factory self-build is a **`status` field transition on a single `factory_build` bead type** (`status: in_progress → completed`), **NOT** a flip from a distinct `factory_build_in_progress` type to `factory_build`. The cold-start / resume query keys on `factory_build` + `status = in_progress` (resolving **XC-2**'s AI-CONTEXT §16 hard-coded `gc bd find --type factory_build_in_progress` to a `--type factory_build --status in_progress` query). **C20** owns the `factory_build` schema + the `status` slot; **C52** drives the transition; **C53** records the go/no-go on the same bead."
@@ -297,6 +297,12 @@ Operational consequence:
 
 #### 5.0.2 Router signature and RepairAction type
 
+> **D-44 (ADOPTED — lead, 2026-06-02) — canonical correction-request contract: C52 constructs the consumer-named payload per route; both anchor on `factory_build_ref` + carry `diagnosis_ref` + `requested_by`.**
+> "Canonical: C52 does **NOT** emit a single generic `CorrectionRequest` — on a `spec` route it constructs **C08's `SpecCorrectionRequest`**, on a `scenario` route it constructs **C30's `ScenarioCorrectionRequest`** (C08 and C30 each remain the spec-of-record for their own inbound type). **Common required fields on BOTH payloads:** `factory_build_ref` (the D-40 bead anchor — the canonical traceability key), `diagnosis_ref` (the `DiagnosisRecord` bead id, so the consumer can pull full attribution), `component_id`, `requested_by` (`"kind:id"` actor, D-29 — **stamped by C52 with its own rig identity**; this is the field the worker-origin rejection keys on, D-45), `repair_mode` ∈ `{incremental_fix, discard_and_reimplement}` (= `DiagnosisRecord.repair_recommendation`), `defect_detail` (the rationale text, copied from `DiagnosisRecord.root_cause_rationale` + `repair_rationale`), `requested_at`. **`SpecCorrectionRequest` adds:** `spec_ref`/`spec_git_revision`, `spec_defect_class` ∈ `{localized, structural}` (from the diagnosis), `misalignment_refs` (the per-scenario `Misalignment` rows attributed to spec). **`ScenarioCorrectionRequest` adds:** `scenario_ids` (the misaligned scenarios). The `defect_detail` field name is canonical on both (replaces C52 `defect_summary` and C30 `rationale`). `correction_mode` ∈ `{re_author, extend, remove}` is **reclassified as C30-INTERNAL** (the local edit operation the scenario builder chooses when it acts) — **NOT** an inbound request field; the inbound payload carries `repair_mode`, not `correction_mode`."
+
+> **D-45 (ADOPTED — lead, 2026-06-02; resolves C08:OQ-3 + the C30/C34 enforcement-point ambiguity) — worker-origin rejection of correction requests is ENFORCED by C34 (its provenance audit is the canonical owner); C08/C30 entry-guards are defense-in-depth.**
+> "Canonical: **C34 owns the enforcement** — it already audits `DiagnosisRecord.created_by` for judge-rig provenance (E-C34-08); that audit **extends to `{Spec,Scenario}CorrectionRequest.requested_by`** (a correction request whose `requested_by` resolves to the implementing worker rig fails the audit → the request is rejected, never executed). **C52 MUST stamp `requested_by` with its rig identity and MUST NOT route a correction whose C34 audit fails** (consume the audit verdict before hand-off). The **C08 (E-C08-07) and C30 (E-C30-08) entry-guard rejections are retained as defense-in-depth** but delegate the authoritative check to C34."
+
 ```
 route_repair(
   diagnosis: DiagnosisRecord,   -- from C32 §3.2a (frozen schema; C52 reads, never writes)
@@ -311,20 +317,49 @@ RepairAction = {
   diagnosis_ref:     string           -- the DiagnosisRecord bead id this repair keys on
   independent_path:  bool             -- True iff the route is handed to the independent path
   discard_system:    bool             -- True iff the current system build is discarded
-  correction_request: CorrectionRequest | null  -- payload for the independent path
+  correction_request: SpecCorrectionRequest | ScenarioCorrectionRequest | null
+                                      -- per-route consumer-named payload (D-44):
+                                      --   spec routes → C08's SpecCorrectionRequest
+                                      --   scenario routes → C30's ScenarioCorrectionRequest
+                                      --   C52 constructs the appropriate type; NO generic CorrectionRequest
   escalation_reason:  string | null   -- populated iff route=escalate_human
 }
-
-CorrectionRequest = {
-  diagnosis_ref:   string            -- links to the DiagnosisRecord
-  target:          enum{spec, scenario}
-  component_id:    str
-  spec_ref:        path              -- the C08 spec to correct (if target=spec)
-  scenario_ref:    path              -- the scenario set to correct (if target=scenario)
-  defect_summary:  string            -- from DiagnosisRecord.root_cause_rationale
-  repair_mode:     enum{incremental_fix, discard_and_reimplement}
-}
 ```
+
+**C52 constructs each payload as the consumer-named type (D-44). Common required fields on BOTH payloads:**
+
+```
+-- Common fields (D-44 canonical — field-for-field consistent across C52/C08/C30/C34)
+factory_build_ref:  string            -- D-40 factory_build bead (canonical traceability key)
+diagnosis_ref:      string            -- DiagnosisRecord bead id (links full attribution)
+component_id:       str               -- component under evaluation
+requested_by:       string            -- "kind:id" D-29 actor; C52 stamps its own rig identity
+                                      --   e.g. "rig:bootstrap" — NEVER a worker-rig identity
+                                      --   C34 audits this field; C52 MUST NOT route if audit fails (D-45)
+repair_mode:        enum{incremental_fix, discard_and_reimplement}
+                                      -- = DiagnosisRecord.repair_recommendation
+defect_detail:      string            -- DiagnosisRecord.root_cause_rationale + repair_rationale
+                                      --   (renamed from defect_summary — D-44)
+requested_at:       timestamp         -- UTC timestamp when C52 issued the request
+```
+
+**On the `spec` route, C52 constructs C08's `SpecCorrectionRequest` (adds):**
+
+```
+spec_ref:           path              -- the C08 spec being corrected
+spec_git_revision:  string (git SHA)  -- committed revision active at diagnosis time
+spec_defect_class:  enum{localized,structural} -- from DiagnosisRecord.spec_defect_class
+misalignment_refs:  list[string]      -- DiagnosisRecord.misalignments[*] attributed to spec
+```
+
+**On the `scenario` route, C52 constructs C30's `ScenarioCorrectionRequest` (adds):**
+
+```
+scenario_ids:       list[string]      -- DiagnosisRecord.misalignments[*].scenario_id
+                                      --   flagged as root_cause=scenario
+```
+
+**C34 audit gate (D-45):** Before routing either payload to C08 or C30, C52 calls C34's `audit_correction_request_provenance()` with `requested_by`. If the audit returns `verdict="violation"` (i.e. `requested_by` resolves to a worker rig), C52 MUST NOT hand off the correction — it escalates to human instead (E-C52-09 path). C52 never routes a correction whose C34 audit fails.
 
 The `DiagnosisRecord` schema is **frozen by C32 (§3.2a)**. C52 reads `root_cause`, `spec_defect_class`, `repair_recommendation`, `tri_alignment`, `all_scenarios_satisfied`, and `misalignments`. It does NOT write to the `DiagnosisRecord`.
 
@@ -403,8 +438,11 @@ Per D-43 §"Scope (capability-bar, §0★.3)": the independent spec/scenario-cor
 
 **Spec-correction seam (C08 + future C10/C11):**
 ```
--- Minimal interface (a CorrectionRequest keyed on the DiagnosisRecord)
-request_spec_correction(req: CorrectionRequest) -> SpecCorrectionHandle
+-- C52 constructs C08's SpecCorrectionRequest (D-44: per-route consumer-named payload)
+-- Then gates on C34 audit before routing (D-45):
+c34_result = audit_correction_request_provenance(req.requested_by, ...)
+if c34_result.verdict == "violation": escalate_human(...)  -- MUST NOT route
+request_spec_correction(req: SpecCorrectionRequest) -> SpecCorrectionHandle
 -- C08 receives the request; C10/C11 (future, non-spine) enrich it
 -- C52 polls / awaits the SpecCorrectionHandle for completion
 -- C52 reads the corrected spec_ref and re-enters step 2 (emit_spec) with updated intent
@@ -412,7 +450,11 @@ request_spec_correction(req: CorrectionRequest) -> SpecCorrectionHandle
 
 **Scenario-correction seam (C30 scenario builder + spec builder):**
 ```
-request_scenario_correction(req: CorrectionRequest) -> ScenarioCorrectionHandle
+-- C52 constructs C30's ScenarioCorrectionRequest (D-44: per-route consumer-named payload)
+-- Then gates on C34 audit before routing (D-45):
+c34_result = audit_correction_request_provenance(req.requested_by, ...)
+if c34_result.verdict == "violation": escalate_human(...)  -- MUST NOT route
+request_scenario_correction(req: ScenarioCorrectionRequest) -> ScenarioCorrectionHandle
 -- C30 scenario builder + spec builder receive the request (independent authoring path)
 -- INVARIANT-AG: the implementing worker is NOT a party to this call
 -- C52 awaits the ScenarioCorrectionHandle; re-enters step 5 (Evaluating) on completion
@@ -541,6 +583,9 @@ stateDiagram-v2
 | **AC-C52-17** | ANTI-GAMING: Given any `route_repair` result with `independent_path = True`; then the implementing worker is NEVER invoked in the correction pathway; any code path that routes a `scenario_correct`, `spec_correct_localized`, or `spec_correct_structural_discard` action to the worker MUST be treated as a security invariant violation (INVARIANT-AG) | D-42/ADR-0069 — anti-gaming load-bearing invariant; §5.0.1 | E-C52-09 |
 | **AC-C52-18** | Given `attempt_no >= max_attempts` on a repair loop; when `route_repair` is called; then `RepairAction.route = escalate_human` is returned with `escalation_reason="attempt_exhaustion"`; `E-C52-08` is raised; a deferred-Phase-3 signal is emitted; and the `factory_build` bead status remains `in_progress` (NOT closed) | C52:OQ4 (attempt-bounded loop); §5.0.3 | E-C52-08 |
 | **AC-C52-19** | Given a `DiagnosisRecord` with an unknown `root_cause` value (outside `{judge,spec,scenario,system,none}`); when `route_repair` is called; then `E-C52-07` is raised; the router escalates to human; the build is NOT deployed; and no repair route is silently selected | §5.0.3 router-unknown-attribution | E-C52-07 |
+| **AC-C52-20** | Given a `DiagnosisRecord` with `root_cause = spec`; when `route_repair` constructs the correction payload; then a `SpecCorrectionRequest` (C08's type) is produced — NOT a generic `CorrectionRequest`; the payload carries `factory_build_ref`, `diagnosis_ref`, `component_id`, `requested_by` stamped with C52's rig identity (e.g. `"rig:bootstrap"`), `repair_mode`, `defect_detail` (NOT `defect_summary`), `requested_at`, plus `spec_ref`, `spec_git_revision`, `spec_defect_class`, and `misalignment_refs` (D-44) | D-44 per-route payload construction (spec route); `defect_detail` canonical name | — |
+| **AC-C52-21** | Given a `DiagnosisRecord` with `root_cause = scenario`; when `route_repair` constructs the correction payload; then a `ScenarioCorrectionRequest` (C30's type) is produced — NOT a generic `CorrectionRequest`; the payload carries all common required fields including `requested_by` stamped with C52's rig identity, plus `scenario_ids` (D-44) | D-44 per-route payload construction (scenario route) | — |
+| **AC-C52-22** | Given C52 has constructed a `SpecCorrectionRequest` or `ScenarioCorrectionRequest`; when C34's `audit_correction_request_provenance` is called with `requested_by`; if `verdict = "violation"` (worker-rig origin); then C52 MUST NOT dispatch the correction to C08/C30 — it escalates to human instead; the independent authoring path never receives a worker-originated request (D-45) | D-45 gate-on-audit before hand-off; C34 as canonical enforcement owner | E-C52-09 |
 
 ### 9.2 Test strategy
 

@@ -113,17 +113,12 @@ passes, or cause a scenario to be softened to match what it produced. D-42/ADR-0
 > C10/C11; C30 scenario builder + spec builder), **never the implementing worker** — without this, 'fix
 > the spec' degenerates into 'weaken the spec until my output passes'."* — D-43 (review-log, verbatim)
 
-**C34's duty (correction-path independence enforcement):** C34 audits that any correction request
-triggered by a `DiagnosisRecord.root_cause ∈ {spec, scenario}` did **NOT originate from the worker
-rig**. Concretely:
+**C34's duty (correction-path independence enforcement — canonical per D-45):** C34 is the **authoritative enforcement owner** for worker-origin rejection of both `DiagnosisRecord.created_by` (existing E-C34-08) and `{Spec,Scenario}CorrectionRequest.requested_by` (D-44/D-45 extension). Concretely:
 
 - The `DiagnosisRecord.created_by` must be a judge rig (`"rig:judge-N"`) — never a worker rig. A
   `DiagnosisRecord` with `created_by` not matching a judge rig is itself invalid (E-C34-08) and any
   correction it triggers is suspect.
-- A correction request arriving at the independent authoring path (C08/C30 seam, future C10/C11) that
-  **carries a worker-rig origin** in its provenance must be flagged as E-C34-09 (worker-originated
-  correction request). C34 audits correction-request provenance to confirm all spec/scenario changes are
-  driven from `DiagnosisRecord` beads produced by the judge rig, not from the worker rig.
+- **`{Spec,Scenario}CorrectionRequest.requested_by` (D-44/D-45 — new extension):** C34's provenance audit **extends** to the `requested_by` field on both `SpecCorrectionRequest` (C08's type) and `ScenarioCorrectionRequest` (C30's type). A correction request whose `requested_by` resolves to the implementing worker rig **fails the audit → the request is rejected, never executed** (E-C34-09). This is C34's canonical enforcement of D-45. **C52 MUST call `audit_correction_request_provenance()` before routing any correction** and MUST NOT hand off a correction whose audit returns `verdict="violation"`. The C08 (E-C08-07) and C30 (E-C30-08) entry-guards are retained as **defense-in-depth** but delegate the authoritative check to C34 (D-45).
 
 This extends the anti-gaming property from "worker can't read the hold-out" to "worker can't drive its
 own spec/scenario relaxation." The correction seam (C08/C30 + future C10/C11) is named here as a
@@ -180,12 +175,7 @@ separation. This is why C34 *enforces and audits* what C42 *declares* and C30 *s
   rig (independence), (c) `scenario_set_version` is current / not stale, and (d) the self-consistency
   invariant holds (`tri_alignment = aligned` only if `all_scenarios_satisfied = true` AND `root_cause =
   none`). A `DiagnosisRecord` failing any check is flagged before C52/C53 act on it. See §3.4 + §4.5.
-- **Own correction-path independence enforcement (new, D-42 + D-43).** C34 audits that any
-  spec/scenario correction request triggered by a `DiagnosisRecord.root_cause ∈ {spec, scenario}` did NOT
-  originate from the worker rig. The independent spec/scenario-correction path (C08/C30 + future C10/C11)
-  is a seam C34 enforces the provenance of — a worker-originated correction request (E-C34-09) is a
-  violation of the anti-gaming property (§1.2). C34 does not build the correction path; it audits
-  correction-request provenance.
+- **Own correction-path independence enforcement — canonical per D-45 (D-42 + D-43 + D-44 + D-45).** C34 is the **authoritative enforcement owner** for worker-origin rejection of correction requests (D-45). Its provenance audit **extends** from `DiagnosisRecord.created_by` (E-C34-08) to **`{Spec,Scenario}CorrectionRequest.requested_by`** (D-44 canonical field on both payload types): a correction request whose `requested_by` resolves to the implementing worker rig fails the audit → rejected, never executed (E-C34-09). C52 MUST consume this audit verdict before hand-off. The C08 (E-C08-07) and C30 (E-C30-08) entry-guards are **defense-in-depth**, not the authoritative check. C34 does not build the correction path; it audits correction-request provenance.
 - **Publish holdout-integrity status + findings.** Expose, per run / per scenario evaluation, a
   pass/violation status and the leak/independence findings as **beads** so the evaluation tier (C32/C33),
   the override loop, and the residual-risk register can consume them. C34's output is the observability
@@ -531,32 +521,50 @@ class DiagnosisAuditResult:
     created_by: str                       # "rig:c34-auditor" D-29 wire form
 ```
 
-**Correction-request provenance audit (§1.2 duty):**
+**Correction-request provenance audit (§1.2 duty — extended per D-44/D-45 to cover `{Spec,Scenario}CorrectionRequest.requested_by`):**
+
+> **D-44 (ADOPTED — lead, 2026-06-02) — canonical correction-request contract.**
+> "**Common required fields on BOTH payloads:** … `requested_by` (`"kind:id"` actor, D-29 — **stamped by C52 with its own rig identity**; this is the field the worker-origin rejection keys on, D-45)."
+
+> **D-45 (ADOPTED — lead, 2026-06-02; resolves C08:OQ-3 + the C30/C34 enforcement-point ambiguity) — worker-origin rejection of correction requests is ENFORCED by C34 (its provenance audit is the canonical owner); C08/C30 entry-guards are defense-in-depth.**
+> "Canonical: **C34 owns the enforcement** — it already audits `DiagnosisRecord.created_by` for judge-rig provenance (E-C34-08); that audit **extends to `{Spec,Scenario}CorrectionRequest.requested_by`** (a correction request whose `requested_by` resolves to the implementing worker rig fails the audit → the request is rejected, never executed). **C52 MUST stamp `requested_by` with its rig identity and MUST NOT route a correction whose C34 audit fails** (consume the audit verdict before hand-off). The **C08 (E-C08-07) and C30 (E-C30-08) entry-guard rejections are retained as defense-in-depth** but delegate the authoritative check to C34. This keeps the anti-gaming property (worker can neither read the hold-out nor drive its own spec/scenario relaxation) enforced at one canonical point with redundant guards."
+
+**Per D-45, C34's `audit_correction_request_provenance()` is the canonical enforcement for worker-origin rejection of `{Spec,Scenario}CorrectionRequest.requested_by`.** C52 calls this function before routing any correction to C08 or C30; a `violation` verdict MUST block the hand-off. C08 (E-C08-07) and C30 (E-C30-08) entry-guards are defense-in-depth — they fire if a request somehow bypasses C34.
 
 ```python
 def audit_correction_request_provenance(
-    correction_request_ref: str,          # bead_id or event_id of the spec/scenario
-                                          # correction request arriving at C08/C30 seam
-    origin_actor: str,                    # C41 attribution of the requester
-    judge_rig_names: list[str],           # C42-declared judge rig names
+    correction_request_ref: str,          # bead_id or event_id of the SpecCorrectionRequest
+                                          # or ScenarioCorrectionRequest (D-44 field: requested_by)
+    origin_actor: str,                    # the `requested_by` field value from the payload
+                                          # (D-44 canonical field name on both payload types)
+    judge_rig_names: list[str],           # C42-declared judge rig names (includes bootstrap/orchestrator)
     worker_rig_names: list[str],          # C42-declared worker/implementer rig names
 ) -> ProvenanceAuditResult:
-    """Audit that a spec/scenario correction request did NOT originate from the worker rig.
+    """Audit that a {Spec,Scenario}CorrectionRequest.requested_by did NOT originate from the worker rig.
 
-    A correction request MUST trace back to a DiagnosisRecord produced by the judge rig.
+    D-44/D-45: The `requested_by` field is the canonical worker-origin rejection key.
+    C52 stamps `requested_by` with its own rig identity before routing; C34 validates it here.
+    This extends the E-C34-08 audit (DiagnosisRecord.created_by) to the correction-request seam.
+
+    A correction request MUST have `requested_by` that resolves to a non-worker rig
+    (e.g. "rig:bootstrap", "rig:orchestrator") — never a worker rig.
     If origin_actor ∈ worker_rig_names → E-C34-09 (worker-originated correction request).
     If origin_actor is unknown/missing → treat as violation (fail-loud).
 
     Postconditions:
-    - Returns ProvenanceAuditResult(verdict="clean") iff origin_actor ∈ judge_rig_names
+    - Returns ProvenanceAuditResult(verdict="clean") iff origin_actor ∉ worker_rig_names
+      AND origin_actor is known (not empty/unknown)
     - Returns ProvenanceAuditResult(verdict="violation") + E-C34-09 otherwise
+    - C52 MUST NOT route the correction if verdict="violation"
+    - C08/C30 entry-guards (E-C08-07 / E-C30-08) are defense-in-depth — they fire only if
+      a worker-rig request somehow bypasses this canonical check
     """
     ...
 
 @dataclass
 class ProvenanceAuditResult:
     correction_request_ref: str
-    origin_actor: str
+    origin_actor: str                      # the `requested_by` field value audited
     verdict: Literal["clean", "violation"]
     violation_type: Optional[str]          # "worker_origin" | "unknown_origin" | None
     audited_at: str                        # ISO-8601 UTC
@@ -942,10 +950,7 @@ flowchart LR
    a record with absent `diagnosis_prompt_hash` (E-C34-07), non-judge `created_by` (E-C34-08), stale
    `scenario_set_version` (E-C34-06), or self-inconsistent `tri_alignment` (E-C34-10) causes
    `DiagnosisAuditRecord.verdict = "failed"` and blocks C52/C53.
-10. **Correction-path independence enforced (§1.2 / D-42)**: C34 audits correction-request provenance;
-    a spec/scenario correction request originating from a worker rig raises E-C34-09, blocks the request,
-    and is routed to C35/C57; the independent authoring path (C08/C30 + future C10/C11 seam) receives
-    only judge-rig-originating correction requests.
+10. **Correction-path independence enforced — canonical per D-45 (§1.2 / D-42 / D-44 / D-45)**: C34 is the **authoritative enforcement owner** for worker-origin rejection of correction requests. Its provenance audit extends from `DiagnosisRecord.created_by` (E-C34-08) to **`{Spec,Scenario}CorrectionRequest.requested_by`** (D-44/D-45 extension): a request whose `requested_by` resolves to a worker rig raises E-C34-09, blocks the request, and is routed to C35/C57. C52 MUST consume the audit verdict before hand-off. The independent authoring path (C08/C30 + future C10/C11 seam) receives only non-worker-rig-originated correction requests. C08 (E-C08-07) and C30 (E-C30-08) entry-guards are defense-in-depth.
 
 ### 8.1 Concrete acceptance tests (Sweep-2 AC-codes)
 
@@ -965,6 +970,8 @@ flowchart LR
 | **AC-C34-12** | GIVEN a `DiagnosisRecord` where `diagnosis_prompt_hash = ""` (absent or empty); WHEN `audit_diagnosis` is called; THEN `DiagnosisAuditRecord.verdict = "failed"`, `violations` contains `"E-C34-07"`, `diagnosis_prompt_hash_present = false` | §3.4 reproducibility: absent prompt hash fails audit | E-C34-07 |
 | **AC-C34-13** | GIVEN a `DiagnosisRecord` where `tri_alignment = "aligned"` but `all_scenarios_satisfied = false`; WHEN `audit_diagnosis` is called; THEN `DiagnosisAuditRecord.verdict = "failed"`, `violations` contains `"E-C34-10"`, `self_consistent = false`; C53 MUST NOT read `tri_alignment` as a go term from this record | §3.4 + §4.5 self-consistency invariant (D-43) | E-C34-10 |
 | **AC-C34-14** | GIVEN a correction request arrives at the C08/C30 authoring seam with `origin_actor = "rig:worker-1"` (a worker rig); WHEN `audit_correction_request_provenance` is called; THEN `ProvenanceAuditResult.verdict = "violation"`, `violation_type = "worker_origin"`, and the correction request is blocked | §1.2 + §3.4 worker-originated correction request blocked (anti-gaming repair path) | E-C34-09 |
+| **AC-C34-15** | GIVEN a `SpecCorrectionRequest` (C08's type, D-44) with `requested_by = "rig:worker-1"` is passed to `audit_correction_request_provenance`; WHEN the audit runs; THEN `ProvenanceAuditResult.verdict = "violation"`, `violation_type = "worker_origin"`; AND C52 MUST NOT route this request to C08 — it escalates to human instead; C08's E-C08-07 entry-guard and C30's E-C30-08 entry-guard are defense-in-depth only (D-45 canonical enforcement by C34) | D-44/D-45 extension: C34 audits `{Spec,Scenario}CorrectionRequest.requested_by`; C34 is the canonical owner; C08/C30 guards are redundant | E-C34-09 |
+| **AC-C34-16** | GIVEN a `ScenarioCorrectionRequest` (C30's type, D-44) with `requested_by = "rig:bootstrap"` (C52's own rig identity, a non-worker rig); WHEN `audit_correction_request_provenance` is called; THEN `ProvenanceAuditResult.verdict = "clean"`; AND C52 MAY route this request to C30 | D-44/D-45 extension: non-worker `requested_by` passes C34 audit; C52 may proceed with routing | — (no E-code; passing case) |
 
 ## 9. Open questions
 

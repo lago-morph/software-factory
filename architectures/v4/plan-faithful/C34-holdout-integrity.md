@@ -34,7 +34,7 @@ is resolved (D-38); T8/T9 are partially resolved. New task T10 added for the C30
 | **T10** | **Freeze C30 MANIFEST consumption seam** — `load_scenario_manifest(manifest_path, scenario_repo_root) → ScenarioManifest`; `created_by` validation (E-C34-05); staleness check (E-C34-06). Closes the C30→C34 deferred seam. | S | C30 §3.3 manifest schema frozen | DONE — §3.1 seam closed (Sweep-2) |
 | **T11** | **Confirm anti-gaming structural property (§1.1)** — state explicitly that H↔I is a valid anti-gaming check because `scenarios ∉ read_partition(worker)` (D-13) and the worker cannot author the hold-out (D-38); without this the judge's verdict is self-referential for unattended operation. Cite D-13 + D-38 verbatim. | S | T1; D-13 + D-38 (already adopted) | DONE — §1.1 authored (Sweep-2) |
 | **T12** | **Freeze repair-path independence duty (§1.2)** — state that the independent spec/scenario-correction path (C08/C30 + future C10/C11 seam) is also outside the worker's reach; C34 audits correction-request provenance; E-C34-09 on worker-originated request. Cite D-42 + D-43 verbatim. | S | T11; D-42 + D-43 (adopted) | DONE — §1.2 + E-C34-09 authored (Sweep-2) |
-| **T13** | **Freeze DiagnosisRecord audit contract (§3.4 + §4.5)** — `audit_diagnosis(diagnosis, judge_rig_names, current_scenario_set_version) → DiagnosisAuditResult`; `audit_correction_request_provenance(...) → ProvenanceAuditResult`; `DiagnosisAuditRecord` bead schema (§4.5); E-C34-07/08/09/10 defined; AC-C34-11..14 cover the test vectors. | M | T3 (independence-check); C32 §3.2a schema frozen (D-43) | DONE — §3.4 + §4.5 + E-codes + AC-codes authored (Sweep-2) |
+| **T13** | **Freeze DiagnosisRecord audit contract (§3.4 + §4.5)** — `audit_diagnosis(diagnosis, judge_rig_names, current_scenario_set_version) → DiagnosisAuditResult`; `audit_correction_request_provenance(...) → ProvenanceAuditResult`; `DiagnosisAuditRecord` bead schema (§4.5); E-C34-07/08/09/10 defined; AC-C34-11..14 cover the test vectors. **D-44/D-45 seam-integration edit (2026-06-02):** `audit_correction_request_provenance()` extended to cover `{Spec,Scenario}CorrectionRequest.requested_by` (D-45 canonical enforcement); C08 E-C08-07 and C30 E-C30-08 are defense-in-depth; AC-C34-15 (worker-rig `requested_by` on `SpecCorrectionRequest` fails) and AC-C34-16 (non-worker `requested_by` passes) added. | M | T3 (independence-check); C32 §3.2a schema frozen (D-43) | DONE — §3.4 + §4.5 + E-codes + AC-codes authored (Sweep-2); D-44/D-45 extension authored (2026-06-02) |
 | **T14** | **Validated anti-gaming + repair path diagram (§5.2)** — Mermaid flowchart of the H↔I structural property + repair path independence; validated by tool (PASS). | S | T11, T12, T13 | DONE — §5.2 validated diagram (Sweep-2) |
 
 ## 2. Dependency graph
@@ -92,7 +92,7 @@ T13 ────────────────────────► 
 | **M5** | One-line G28 authority note + G10 caveat (T5) | DONE (Sweep-1; unchanged) | C57 residual register |
 | **M6 (PENDING)** | Audit pack tool node (T6) — Gas City pack running the pipeline against real `gc` | PENDING — Sweep-3 / build | End-to-end AC-C34-01..14 pass |
 | **M7 (new — Sweep-2)** | Anti-gaming structural property + repair path independence (T11+T12) — §1.1 + §1.2 state the H↔I anti-gaming argument; D-13 + D-38 + D-42 + D-43 cited verbatim | DONE | C52/C53/C57 can discover C34's correction-path enforcement duty |
-| **M8 (new — Sweep-2)** | DiagnosisRecord audit contract (T13) — `audit_diagnosis` + `audit_correction_request_provenance` signatures; `DiagnosisAuditRecord` schema (§4.5); E-C34-07/08/09/10; AC-C34-11..14 | DONE | C52 blocks on `failed` DiagnosisAuditRecord; C53 blocked from using stale/inconsistent `tri_alignment` |
+| **M8 (new — Sweep-2)** | DiagnosisRecord audit contract (T13) — `audit_diagnosis` + `audit_correction_request_provenance` signatures; `DiagnosisAuditRecord` schema (§4.5); E-C34-07/08/09/10; AC-C34-11..14. **D-44/D-45 (2026-06-02):** `audit_correction_request_provenance()` extended to `{Spec,Scenario}CorrectionRequest.requested_by` (D-45 canonical enforcement); AC-C34-15/16 added. | DONE | C52 blocks on `failed` DiagnosisAuditRecord; C53 blocked from using stale/inconsistent `tri_alignment`; C08/C30 defense-in-depth guards backed by C34 canonical enforcement (D-45) |
 | **M9 (new — Sweep-2)** | Validated anti-gaming diagram (T14) — §5.2 Mermaid flowchart, tool-validated PASS | DONE | Diagrams available for integration review |
 
 Freeze M1 first: it is the policy the audit and independence checks rest on. M2/M3/M4 let C33/C35/C57 start
@@ -160,4 +160,8 @@ owner + reason).
     worker-originated correction-request violation.
   - `audit_diagnosis()` + `audit_correction_request_provenance()` signatures and the `DiagnosisAuditRecord`
     bead schema (§3.4 + §4.5) are frozen; E-C34-07/08/09/10 and AC-C34-11..14 cover the surface.
+  - **D-44/D-45 (2026-06-02):** `audit_correction_request_provenance()` is the canonical enforcement owner
+    for worker-rig `requested_by` checks on both `SpecCorrectionRequest` (C08 route) and
+    `ScenarioCorrectionRequest` (C30 route); E-C34-09 extended; AC-C34-15 (worker-rig fails) and
+    AC-C34-16 (non-worker passes) added; C08 E-C08-07 and C30 E-C30-08 are explicitly defense-in-depth.
   - The §5.2 anti-gaming + repair path diagram is validated (PASS) and in the spec.

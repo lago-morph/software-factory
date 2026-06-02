@@ -110,9 +110,9 @@ coordination), and F43 (RSI board-visibility) all being marked Addressed.
 
 ### 3.1 Actor-model contract
 
-The closed vocabulary of actor *kinds* (`city`, `rig`, `agent`) and the shape of an *actor reference*
-that a `created_by` resolves to. Any component reading a `created_by` can resolve it to `(kind,
-identifier)` against this contract.
+The closed vocabulary of actor *kinds* (`city`, `rig`, `agent`, `tool`) and the shape of an *actor
+reference* that a `created_by` resolves to. Any component reading a `created_by` can resolve it to
+`(kind, identifier)` against this contract. (`tool` added per INT-4 — see §3.1 fix note above.)
 
 **Interface signature (C41-I1):**
 ```

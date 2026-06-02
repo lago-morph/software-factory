@@ -410,7 +410,20 @@ path = "/workspace/rigs/rig1"   # workdir injected into SessionSpec by C42 bindi
 ```
 # .env / container environment
 IS_SANDBOX=1      # required when running as root; passed to every session spawn (F12, harvest-verified)
+CLAUDE_CODE_OAUTH_TOKEN=<token>   # [OPEN SEAM: needs-G11 — see note below]
 ```
+
+> **[OPEN SEAM: needs-G11 — RCM-SEAM-01, env-forwarding for CLAUDE_CODE_OAUTH_TOKEN]**
+>
+> C04 I3 states: "C04 injects the OAuth-derived auth + full OTEL env block at every session start/resume." The prototype (D-23, `docker-compose.sandbox.yml`) passes `CLAUDE_CODE_OAUTH_TOKEN` via *container env* and the tmux panes inherit it — **Reading B** (inheritance). C04's `env` field (§4.1) says "OAuth-derived auth + OTEL vars" but does not explicitly name `CLAUDE_CODE_OAUTH_TOKEN` in a field-by-field list.
+>
+> Two readings with an unresolved operational gap:
+> - **Reading A:** `CLAUDE_CODE_OAUTH_TOKEN` must be explicitly declared in `[[agent]] env = {…}` (C04's explicit injection path). If `gc`'s `internal/execenv` does NOT relay it from container env, it must be in the TOML block.
+> - **Reading B (prototype-verified):** `CLAUDE_CODE_OAUTH_TOKEN` is passed as a container env var; tmux pane subprocesses inherit it without an `[[agent]] env` declaration.
+>
+> **What is unknown (G11):** (1) Does `gc` forward the full container env into each tmux pane, or only the vars explicitly listed in `[[agent]] env = {…}`? (2) Does `gc`'s `internal/execenv` STRIP vars matching `TOKEN`/`OAUTH` patterns before spawning operator commands (a plausible security measure)? If yes to (2), Reading B fails silently.
+>
+> **Operational risk:** Auth failure (E-C04-03 / E-C28-03) without a clear error until the first API call. Until G11: supply `CLAUDE_CODE_OAUTH_TOKEN` in BOTH the container env AND attempt to include it in `[[agent]] env = {…}` as a belt-and-suspenders approach. This seam is also noted in C28 §3.3.
 
 > [FAITHFUL-FILL] `[session] provider = "tmux"` is the inferred canonical TOML key for ProviderKind
 > selection (gascity-config-anchor §3 row `[session] provider`; deep-dive:311; F7 confirms Phase-0 =

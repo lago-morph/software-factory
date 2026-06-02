@@ -1,8 +1,54 @@
 # HANDOFF — v4 Spec & Plan run (resume from here)
 
-**Last updated:** 2026-06-01 (Sweep-2 run #1 closed + prevent-gate D-30 adopted; next run = the 25-component spine — see §0).
+**Last updated:** 2026-06-02 (Sweep-2 spine run #2 merged to `main`; **triangle evaluation invariant adopted — ADR-0069 / D-42 — now the TOP next task; see §0★**).
 **Status:** **Sweep-1 COMPLETE** (57/57). **Sweep-2 STARTED**: run #1 (PRs #229–#233, all merged to `main`) delivered the D-23 protocol+harvest, the adversarially-reviewed prevent-gate decision (now **operator-ADOPTED — D-30**, both morning-review items closed), and the evidence/data-substrate depth cluster (C19/C20/C21/C23/C41). **NEXT RUN: author Sweep-2 implementation-ready depth for the 25-component safe-self-build spine, unattended, Gas City + Claude Max integration FIRST.**
-**Working tree:** everything through PR #235 is in `main`. (Historical run reports/prompts now live under [`archive/`](../../../archive/README.md).)
+**Working tree:** everything through PR #243 is in `main` (the full 25-component spine at Sweep-2 depth). (Historical run reports/prompts now live under [`archive/`](../../../archive/README.md).)
+
+## 0★. NEXT RUN — TOP PRIORITY: implement the spec–scenarios–system triangle (ADR-0069 / D-42)
+
+> Canonical statement: [**ADR-0069**](../../../docs/adr/0069-spec-scenarios-system-triangle-evaluation-invariant.md). Ledger: **D-42** ([review-log.md](./review-log.md)). This is the **#1 next task**, ahead of "Sweep-2 for the remaining 32 components." The eval tier as currently specced is structurally incomplete: it models the judge as a *scorer*, and the operator has established that the judge must be a *diagnostician* over a three-representation triangle. **Read the intent below before touching any spec — the mechanics only make sense in light of it.**
+
+### 0★.1 Why this is the load-bearing task (intent — do not skip)
+
+The factory's purpose is to build components **for itself, unattended**. The hard part is **trust without a human in every loop**. If the agent that writes a component also writes the checks that bless it, the blessing is self-referential — it grades its own homework. The triangle is the structural decomposition that makes the grading independent and the failures diagnosable; **it is the precondition for unattended operation**, not an evaluation nicety.
+
+Every build is **three representations** that must be made to agree:
+
+- **Spec (S)** — what the component must do.
+- **hold-out Scenarios (H)** — independent descriptions of using the spec'd system.
+- **implemented System (I)** — the built component **and its own unit/integration/e2e tests**.
+
+…joined by **three edges, each verified by a different party with a different trust property**:
+
+| Edge | Must hold | Verified by | Independent of the implementer? |
+|---|---|---|---|
+| **S ↔ H** | scenarios correctly + completely describe use of the spec'd system | scenario builder **with** spec builder | authoring-side (both) |
+| **S ↔ I** | the system faithfully implements the spec | the system's **own** unit/integration/e2e tests | **No** — implementer-written, **gameable** |
+| **H ↔ I** | hold-out scenarios pass against the system | the **judge**, evaluated independently | **Yes** — the **anti-gaming check** |
+
+The judge measures **only H↔I**, and a failure there is a **non-specific alarm** — the defect can live in any corner: the **judge** (mis-running/misinterpreting), the **spec** (ambiguity/incompleteness/contradiction), the **scenarios** (incomplete/misrepresenting/ambiguous/contradictory vs the spec), or the **system** (fails the spec; its own tests wrong for the same reasons). The judge's job is to **attribute the root cause** and **recommend a repair mode**:
+
+- **incremental fix** — converge the three representations in place (localized defect); or
+- **discard + reimplement** — fix the spec and/or scenarios via the **independent authoring path**, throw away the system, rebuild from the revised spec (structural defect: the system faithfully built the *wrong target*).
+
+**Completion = all three edges aligned.** 100% hold-out pass is *necessary, not sufficient*. The integration bar is 100% hold-out pass **+** tri-alignment **+** human review; the **100% floor never lowers** — what relaxes as the judge earns calibrated trust is the human-review/judge-trust **oversight**, not the pass rate. Because the judge is itself a defect source, **judge calibration** (a human-audited sample before its verdicts are trusted) is a first-class, standing requirement.
+
+### 0★.2 What to change (mechanics — deepen in place, preserve Sweep-2 content)
+
+1. **C32 (judge) — scorer → diagnostician.** Keep `satisfaction_score` (the H↔I signal) + `score_label`. ADD a diagnosis output: (a) per-scenario **misalignment** detail (which scenario(s), and the observed-vs-expected gap); (b) a **root-cause attribution** across `{judge, spec, scenario, system}` with rationale; (c) a **repair_recommendation** ∈ `{incremental_fix, discard_and_reimplement}` with justification. **Contract care:** the `ScoreRecord` is D-39-frozen — add the diagnosis either as *additive optional* fields (bump the bead-type version) **or** as a companion `DiagnosisRecord` keyed to the `ScoreRecord`, so C33/C34/C46 keep consuming cleanly. The seam adversary must verify no downstream breakage.
+2. **C53 (go/no-go) — completion = tri-alignment.** `decide()` consumes: (a) **100% hold-out pass** (the H↔I gate at its strictest — every scenario `satisfied`), (b) the judge's **tri-alignment diagnosis** (no unresolved spec/scenario/judge defect), (c) the **human-review** verdict, (d) the **post-deploy factory-integrity** check (does the factory still work after the new component is integrated?). `go` iff all hold. The satisfaction distribution becomes **diagnostic evidence, not the threshold knob**. `MilestoneConfig`: pass-rate pinned at 100%; the relaxable knobs are oversight + the judge-trust precondition. (This realizes `auto-002` option C′ as one edge of the triangle.)
+3. **C52 (self-bootstrap) — fail-branch → repair router**, keyed on the judge's attribution + recommendation: judge defect → recalibrate judge, re-eval; system defect vs sound spec → **polish** (patch system + its own tests), re-eval; scenario defect → route to **independent scenario correction** (C30 + spec builder), re-eval; structural spec defect → route to **independent spec correction** (C08/C11), **discard system + reimplement from revised spec**. **Invariant:** spec/scenario correction is performed by the independent authoring path, **never the implementing worker** (this is the anti-gaming property — without it, "fix the spec" becomes "weaken the spec until my output passes"). Bounded attempts (C52:OQ4) + human escalation on exhaustion still apply.
+4. **C30 + C08 — correspondence, independence, and the test-kind distinction.** C30: state the **S↔H correspondence duty** (scenarios correctly + completely describe the spec'd system's use), authored by the scenario builder **with** the spec builder in an authoring rig independent of the worker (D-38). C08: state the spec-quality properties the triangle needs (unambiguous, complete, non-contradictory — the very defect classes the judge attributes) and that spec correction runs through the independent authoring path. **Both:** make explicit the distinction now missing from the specs — **in-system tests** (unit/integration/e2e; implementer-written; enforce S↔I; gameable; part of the build deliverable) **vs the hold-out** (C30; independent; enforces H↔I; anti-gaming).
+5. **C34 (holdout integrity) — confirm/extend** that it is precisely what makes H↔I a valid anti-gaming check (worker cannot read/author the hold-out), and that the **independent spec/scenario-correction path is also outside the worker's reach**.
+6. **Ledger + brief.** D-42 + ADR-0069 are recorded. Update `auto-002` to frame its gate as the H↔I edge within the larger tri-alignment completion criterion. Record any new cross-component contract (e.g., the `DiagnosisRecord` shape) as a numbered ledger decision.
+
+### 0★.3 Scope note — the independent authoring path (capability-bar discipline)
+
+The natural home of the "independent spec/scenario correction" is the **intent crucible (C11)** + **EARS linter (C10)** + scenario authoring (C30). **C10/C11 are non-spine** (not in the 25). Do **not** build the full intent crucible in this pass. Instead: spec the triangle's *contracts* (the judge diagnosis output, the repair router, the independence requirement) and **name the independent-spec-correction path as a seam** to C08 + the future C10/C11, pulling in only the minimal interface needed. This keeps the change disciplined (new capability tied to the triangle invariant; no speculative machinery).
+
+### 0★.4 How to run it (conventions + verification)
+
+Deepen in place per the [Sweep-2 dispatch addendum](./SWEEP2-DISPATCH.md) (depth bar, E/AC codes, verbatim-D-citation, the Mermaid `;`-in-label hazard). **Validate every diagram with the validator tool, not a type-grep.** Suggested wave: (1) **C32 diagnostician first** — it is the keystone and defines the diagnosis contract the others consume; (2) then **C52 router + C53 tri-alignment + C30/C08 + C34** in parallel, pre-briefed with C32's diagnosis-output contract; (3) a **per-product seam adversary**; (4) a **cross-product integration pass** over C32/C52/C53/C30/C08/C34 (the lesson from run #2 — per-cluster reviews miss two-cluster seams); (5) PR. The seam adversary must field-level-verify the `ScoreRecord`/`DiagnosisRecord` contract against every consumer (the run-#2 `satisfaction_score`-vs-`score_value` blocker is the cautionary tale).
 
 ## 0. NEXT RUN — Sweep-2 implementation depth for the 25-component spine (LONG, UNATTENDED)
 

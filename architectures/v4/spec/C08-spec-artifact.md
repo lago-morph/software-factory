@@ -193,6 +193,152 @@ Errors are scoped to C08's three surfaces: **format** (the file itself), **DoD**
 
 > No `E-C08` code is reserved for enumerated per-criterion DoD errors — that surface does not exist at Sweep-2 (FE-5/deferred, D-15). E-C08-02 is the only DoD-related error.
 
+### 6.2 Spec-quality properties required by the triangle (Sweep-2 addition — D-42/D-43)
+
+The triangle framing (ADR-0069; D-42) identifies three defect classes the judge attributes to the **Spec (S)** corner. C08 must produce specs that satisfy these three quality properties — they are exactly the `spec_defect_class` semantics C32 uses in `DiagnosisRecord` (D-43):
+
+**D-42 (verbatim citation — load-bearing for the triangle framing):**
+
+> "Every build is three representations — **Spec (S)**, hold-out **Scenarios (H)**, **System (I)** — joined by three independently-verified edges: **S↔H** (scenario builder + spec builder make the correspondence correct + complete), **S↔I** (the system's own unit/integration/e2e tests — implementer-written, therefore gameable), **H↔I** (the judge, evaluated independently — the anti-gaming check)."
+> — review-log D-42 (Triangle evaluation invariant, 2026-06-02; operator-adopted; ADR-0069)
+
+**D-43 (verbatim citation — load-bearing for `spec_defect_class` semantics):**
+
+> "`spec_defect_class` | `enum{none,localized,structural}` | R | When `root_cause=spec`: `localized` (patch in place) vs `structural` (system faithfully built the wrong target — discard and reimplement); `none` otherwise"
+> — review-log D-43 (Triangle diagnosis contract, 2026-06-02; C32 §3.2a field table)
+
+The three spec-quality properties and their tie to the triangle:
+
+| Property | Definition | `spec_defect_class` when violated | Repair mode |
+|---|---|---|---|
+| **Unambiguous** | The spec permits only one consistent interpretation of the required behavior — the implementing agent and the judge read it the same way | `localized` (ambiguity is patchable in place without discarding the system) | `incremental_fix` via independent spec correction |
+| **Complete** | The spec covers all behaviors the scenarios test — no required behavior is left unspecified (F3 residual: completeness cannot be fully guaranteed; the hold-out makes incompleteness visible) | `localized` (a missing clause is addable without discarding the system, unless the missing clause reveals the target was wrong from the start) | `incremental_fix` or `discard_and_reimplement` depending on scope |
+| **Non-contradictory** | No two clauses in the spec require mutually exclusive behavior — the system cannot satisfy both | `structural` if contradictions cause the system to faithfully implement an incoherent target; `localized` if resolution is unambiguous and in-place | `incremental_fix` (localized) or `discard_and_reimplement` (structural) |
+
+**The `spec_defect_class` semantics (from D-43) are the triangleside definition of spec quality:**
+
+- `localized` — the spec defect is a **patchable ambiguity, missing clause, or limited contradiction** that can be corrected in place; the system need not be discarded (the existing implementation, once the spec is fixed, is likely still salvageable with targeted changes).
+- `structural` — the spec defect caused the system to **faithfully implement the wrong target** (the agent did exactly what the spec said, but the spec described the wrong thing). Patching the system is futile — the correct action is to discard the system entirely, correct the spec via the independent authoring path, and rebuild from scratch.
+
+These two classes are the load-bearing distinction for C52's repair router (D-43: `spec` + `localized` → `incremental_fix` routed to independent spec correction; `spec` + `structural` → `discard_and_reimplement`).
+
+**F-mode mapping:** `localized` spec defects are the triangle-framing of F18 (prose ambiguity) and F3 (incompleteness); `structural` spec defects are a new surface surfaced by the triangle — the case where the spec was internally consistent but targeted the wrong problem.
+
+### 6.3 Independent spec-correction invariant (Sweep-2 addition — D-42/D-43 anti-gaming)
+
+**INVARIANT (INV-5): spec correction MUST run through the independent authoring path, NEVER through the implementing worker.**
+
+**D-43 (verbatim citation — anti-gaming invariant):**
+
+> "every `spec`/`scenario` repair route is executed by the **independent authoring path** (C08 + future C10/C11; C30 scenario builder + spec builder), **never the implementing worker** — without this, 'fix the spec' degenerates into 'weaken the spec until my output passes'"
+> — review-log D-43 (Triangle diagnosis contract, 2026-06-02; Anti-gaming invariants)
+
+When C32's `diagnose()` produces a `DiagnosisRecord` with `root_cause = spec`, C52 routes a **`SpecCorrectionRequest`** (§6.4) to the independent spec-authoring path — the same path that originally wrote the spec (a human, C08's authoring interface, optionally assisted by the future non-spine C10 EARS linter and C11 intent crucible). The implementing worker that built the system under evaluation MUST NOT receive the spec-correction request, modify the spec, or propose spec text that is then applied. Without this independence, "fix the spec" becomes "weaken the spec until my output passes" — the system game-optimizes the rubric by which it is judged.
+
+**Why this is structural, not a matter of discipline:** the anti-gaming property derives from *who* performs the correction, not from *what* the correction says. A worker-authored spec correction is gameable by construction even if the correction appears reasonable — the worker's incentive is to pass the hold-out, and relaxing an underspecified clause is indistinguishable from correctly clarifying it when the same agent performs both roles. The independent authoring path breaks this incentive link at the process boundary.
+
+**INV-5 stated as a detectable invariant:** a `SpecCorrectionRequest` that carries a `requested_by` actor in class `rig:worker-*` or `agent:worker-*` MUST be rejected before it reaches the spec-authoring path. This is E-C08-07 (§6.1 extension below). The rejection is the anti-gaming check at the C08 boundary.
+
+### 6.4 SpecCorrectionRequest seam — interface to future C10/C11 (Sweep-2 addition — capability-bar §0★.3)
+
+When C32 attributes `root_cause = spec`, the repair router (C52) issues a **`SpecCorrectionRequest`** to the independent spec-authoring path. This is a **named seam** — C08 defines the interface contract; the future non-spine components C10 (EARS linter) and C11 (intent crucible) are the eventual consumers of this request on the authoring side. This pass does NOT build C10 or C11 — it names the seam and the minimal interface only (per D-43 capability-bar §0★.3; see also [ADR-0043](../../../docs/adr/0043-p-17-intent-crucible-validator.md) as the future home for the intent-crucible substance-check path).
+
+**`SpecCorrectionRequest` schema (C08 seam — read by C52 outbound, consumed by independent authoring path):**
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `factory_build_ref` | `string` | R | The `factory_build` bead this correction is for (D-40 status bead); keys the `DiagnosisRecord` that triggered this request — the authoritative traceability anchor | C52 writes (from `DiagnosisRecord.factory_build_ref`); C08 authoring path reads |
+| `component_id` | `string` | R | The component whose spec is defective; identifies which `agents/<name>/prompt.template.md` needs correction | C52 writes; C08 authoring path reads |
+| `spec_git_revision` | `string` (git SHA) | R | The committed revision of `prompt.template.md` that was active when the defect was diagnosed — the exact artifact under correction | C52 writes (from `DiagnosisRecord`'s evaluation inputs); C08 authoring path reads |
+| `spec_defect_class` | `enum{localized,structural}` | R | The defect class from `DiagnosisRecord.spec_defect_class`; drives the correction mode (in-place patch vs full rewrite before rebuild) | C32 writes into `DiagnosisRecord`; C52 copies; C08 authoring path keys on |
+| `defect_detail` | `string` | R | The judge's `root_cause_rationale` from `DiagnosisRecord` — the human-readable attribution explaining what the defect is; the authoring path reads this to understand what to fix | C32 writes into `DiagnosisRecord.root_cause_rationale`; C52 copies verbatim; C08 author reads |
+| `misalignment_refs` | `list<string>` | R | The `DiagnosisRecord.misalignments[*].scenario_id` values that were attributed to `spec`; narrows which behaviors the correction must address | C52 extracts from `DiagnosisRecord.misalignments`; C08 author reads |
+| `requested_by` | `string` (`"kind:id"` per D-29) | R | The actor that issued the correction request; MUST be the repair router (C52 rig identity, e.g. `"rig:bootstrap-N"`) — NEVER a worker-rig identity; E-C08-07 fires if a worker-rig actor is the requester | C52 writes its own rig identity; C08 authoring path / C34 validates |
+| `repair_mode` | `enum{incremental_fix,discard_and_reimplement}` | R | From `DiagnosisRecord.repair_recommendation`; if `discard_and_reimplement`, the authoring path must fully rewrite the spec and flag the system for discard before rebuild | C52 copies from `DiagnosisRecord.repair_recommendation`; C08 author acts on |
+| `requested_at` | `timestamp` | R | UTC timestamp when C52 issued the request | C52 writes |
+
+**`SpecCorrectionRequest` invariants:**
+
+- **`requested_by` MUST NOT be a worker-rig actor** — any request where `requested_by ∈ {rig:worker-*, agent:worker-*}` is rejected with E-C08-07 (anti-gaming; INV-5).
+- **`spec_git_revision` MUST match a committed revision** — C08's version-control contract (INV-3) applies; a correction request for an uncommitted revision is rejected with E-C08-04.
+- **`factory_build_ref` is the traceability anchor** — every spec correction is traceable back to the `DiagnosisRecord` that triggered it; C34 audits this chain.
+
+**Seam note (capability-bar):** the future non-spine **C10** (EARS linter) receives the `SpecCorrectionRequest` and runs deterministic EARS/INCOSE rules over the defect detail to propose concrete textual fixes. The future non-spine **C11** (intent crucible, [ADR-0043](../../../docs/adr/0043-p-17-intent-crucible-validator.md)) receives it to run the substance-check — verifying that the corrected spec satisfies the original operator intent and does not introduce new structural gaps. Neither C10 nor C11 is built at this sweep. The seam is named so their builders know the inbound interface.
+
+**Spec-correction flow diagram (Mermaid — validated PASS):**
+
+```mermaid
+flowchart TD
+    DR["DiagnosisRecord\n(C32 diagnose())"]
+    RC_SPEC["root_cause = spec"]
+    RC_OTHER["root_cause != spec"]
+    SDC_LOC["spec_defect_class\n= localized"]
+    SDC_STR["spec_defect_class\n= structural"]
+    SEAM["SpecCorrectionRequest\n(seam to C10/C11)"]
+    PATCH["independent spec correction\nin place (C08 author path)"]
+    DISCARD["discard system\nreimplement from\nrevised spec"]
+    REJECT["REJECT — anti-gaming\n(worker-rig origin blocked)"]
+
+    DR --> RC_SPEC
+    DR --> RC_OTHER
+    RC_SPEC --> SDC_LOC
+    RC_SPEC --> SDC_STR
+    SDC_LOC --> SEAM
+    SDC_STR --> SEAM
+    SEAM -->|"from worker rig"| REJECT
+    SEAM -->|"from independent path"| PATCH
+    SEAM -->|"from independent path"| DISCARD
+    SDC_LOC --> PATCH
+    SDC_STR --> DISCARD
+```
+
+### 6.5 In-system tests vs hold-out: the spec as shared referent (Sweep-2 addition — D-15/D-38/D-42)
+
+C08's free-form DoD is the **shared referent for both kinds of tests** the triangle uses:
+
+**D-15 (verbatim citation — holistic grading is the shared DoD form):**
+
+> "C33 computes the satisfaction distribution by a graded judge (C32) over C08's existing free-form Definition-of-Done — NOT against enumerated per-criterion DoD. FE-5 (enumerated per-criterion DoD inside the spec artifact) stays DEFERRED; it is a coordinated C08+C32+C33 change whose primary beneficiary (C46 per-criterion diagnosis) is built last."
+> — review-log D-15 (Batch-3 review integration, 2026-05-31)
+
+The DoD field is judged **holistically** by C32 (D-15). This holistic judgment is the common rubric for two structurally different test kinds:
+
+| Test kind | Edge | Author | Trust property | Relation to the spec |
+|---|---|---|---|---|
+| **In-system tests** (unit / integration / e2e) | **S↔I** | The **implementing worker** — gameable | NOT the trust boundary; enforces the implementer's own reading of the spec | Written by the implementer as part of the deliverable; green means "the implementer believes the system matches the spec" |
+| **Hold-out scenarios** | **H↔I** | The **scenario builder + spec builder** — independent of the implementer | The **anti-gaming check**; the judge evaluates independently (D-38) | Authored against the same spec (S) by a different party; green means "an independent reader's interpretation of the spec is satisfied" |
+
+The spec (C08's artifact) is the **shared referent**: both the implementer (writing S↔I tests) and the scenario builder (authoring H↔I hold-outs) read the same `prompt.template.md` at the same git revision. Divergence between the two test kinds is diagnostic signal — the judge's `misalignments` and `root_cause` attribution (D-43) name which representation is at fault.
+
+**D-38 (verbatim citation — judge independence for the H↔I edge):**
+
+> "the judge runs in a **separate rig** from the worker (worker rig + judge rig, co-resident in the city). The judge MAY read the worker's trajectory log + the held-out scenario partition; the worker MUST NOT read the judge rig or the scenarios (the holdout — C34 enforces+audits, C42 provides the partition); **no shared context window**."
+> — review-log D-38 (Evaluation-tier seam decisions, 2026-06-01)
+
+**Consequence for C08:** the spec author is responsible for making the DoD clear enough that BOTH the implementer and the independent scenario builder arrive at consistent interpretations. An ambiguous DoD that causes the two parties to build against different understandings is a `localized` spec defect (the ambiguity is attributable and patchable). A DoD that describes the wrong system is a `structural` spec defect.
+
+### 6.6 Extended error codes (Sweep-2 addition — anti-gaming + correction-seam errors)
+
+The following two E-codes extend §6.1 for the correction-seam surfaces introduced in §6.3 and §6.4:
+
+| Code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| **E-C08-07** | Worker-rig-originated spec-correction request — a `SpecCorrectionRequest` with `requested_by ∈ {rig:worker-*, agent:worker-*}` reaches the C08 authoring path | The authoring path (or its gating component, C34/C52) rejects the request and logs a security violation; no spec change is made | The request must be reissued from the legitimate repair router (C52 rig identity); investigate how a worker-rig actor obtained access to the correction-request path — this is an integrity breach (INV-5 / anti-gaming) |
+| **E-C08-08** | Spec still ambiguous after correction — C32's `diagnose()` on the rebuilt system returns `root_cause = spec` with `spec_defect_class = localized` again (same or new ambiguity) after a `SpecCorrectionRequest` was applied | `DiagnosisRecord` emitted with `root_cause = spec`; C52 re-routes to the independent authoring path with the updated defect detail | The spec author must re-examine the DoD for remaining or newly-introduced ambiguity; the `misalignment_refs` in the new `SpecCorrectionRequest` narrow which scenarios still fail; repeated `localized` cycles indicate the DoD requires structural clarification |
+
+**E-code / AC cross-reference table (all codes, including §6.1 + §6.6):**
+
+| E-code | Asserted by AC |
+|---|---|
+| E-C08-01 | AC-C08-02 |
+| E-C08-02 | AC-C08-03, AC-C08-04 |
+| E-C08-03 | AC-C08-05 |
+| E-C08-04 | AC-C08-06 |
+| E-C08-07 | AC-C08-09 |
+| E-C08-08 | AC-C08-10 |
+
+> No E-code for E-C08-05 (missing spec file) or E-C08-06 (secrets in spec) is asserted by a specific AC-C08 test — both conditions are observable at the C09 / C10 boundary (E-C08-05 via C09 E-C09-01; E-C08-06 via C10 static lint).
+
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
 - **Security / secrets.** v4's spec format is plaintext Markdown in a git pack. Secrets do not belong in the spec; credential handling is undefined at the substrate level (G37, scoped to C03/`city.toml`, not C08). Faithful note: C08 carries no secrets-management responsibility. E-C08-06 names the violation; C03 + C41 own the mitigation surface.
@@ -223,10 +369,15 @@ Sweep-1 acceptance (high-level, preserved):
 | **AC-C08-07** | Given a failing run that produces an `anomaly` bead (C39); when C39 writes a `fix_task` bead (C20 §4.5.2); then `fix_task.spec_ref` points to the committed `prompt.template.md` path of the spec that drove the failing run, and a subsequent spec edit + recommit + re-render produces the rebuild | AC-5; INV-1; the C08→C39→C08 loop (Principle 1 loop) |
 | **AC-C08-08** | Given a spec committed with actor identity (git author = `"human:alice"` per C41 D-29 wire type); when the attribution chain is read (C41 + git metadata); then the spec revision resolves to an identified actor | AC-3; INV-3; D-29 wire type |
 
-Each AC that asserts a failure path cross-references its E-code: AC-C08-02 → E-C08-01; AC-C08-03 → E-C08-02; AC-C08-04 → E-C08-02; AC-C08-05 → E-C08-03; AC-C08-06 → E-C08-04.
+| **AC-C08-09** | Given a `SpecCorrectionRequest` with `requested_by = "rig:worker-1"` (a worker-rig identity); when the authoring path's gating component (C34/C52 boundary) evaluates the request; then the request is REJECTED before reaching the spec author, E-C08-07 is logged, and no spec change is made | **E-C08-07** assertion; INV-5 (anti-gaming); D-43 anti-gaming invariant; the worker cannot drive spec correction |
+| **AC-C08-10** | Given a `SpecCorrectionRequest` was applied (independent authoring path corrected the spec) and the system was rebuilt; when C32's `diagnose()` runs on the rebuilt system and returns `root_cause = spec`, `spec_defect_class = localized` again (ambiguity persists after correction); then a new `SpecCorrectionRequest` is issued with updated `defect_detail` from the new `DiagnosisRecord.root_cause_rationale` | **E-C08-08** assertion; correction-loop closure; D-43 (`spec` + `localized` → `incremental_fix`) |
+
+Each AC that asserts a failure path cross-references its E-code: AC-C08-02 → E-C08-01; AC-C08-03 → E-C08-02; AC-C08-04 → E-C08-02; AC-C08-05 → E-C08-03; AC-C08-06 → E-C08-04; AC-C08-09 → E-C08-07; AC-C08-10 → E-C08-08.
 
 ## 9. Open questions
 
 - **OQ-1 (→ review-log). RESOLVED (Sweep-2).** The canonical-track faithful collapse (Reading A: `prompt.template.md` = the spec artifact) is adopted. The C08↔C09 boundary seam is named in §1 (boundary section). The C08↔C09 seam is registered in the orchestrator ledger as a NEW SEAM (see receipt). If a future integrator adopts DELTA-01 (standalone spec bundle), C08's responsibilities survive; C09 gains a `spec_id` resolution step. This OQ is closed on the canonical track.
 - **OQ-2 (still open).** No internal section schema is specified; whether downstream (C10, C11) should be allowed to *require* structure (e.g., a mandatory "Definition of Done" heading for the `dod` field extraction) is left open. D-9 says F38 vocab-lint stays in C10 without a C07 registry; this does not resolve whether C10 may require a DoD heading convention. The DoD field (§4.1) is a logical field; its physical location within `spec_body` is free-form at Sweep-2. If C10 later requires a heading, that is a C10 structural rule over C08's surface — not a C08 format change.
+- **OQ-3 (new, Sweep-2).** The `SpecCorrectionRequest.requested_by` validation (who enforces E-C08-07?) is assigned here to "the authoring path's gating component (C34/C52 boundary)" — but the exact enforcement point (C52 pre-send check vs C34 audit of the request bead vs a separate authoring-path entry guard) is not settled. C34 already audits `DiagnosisRecord.created_by` for independence; extending that audit to `SpecCorrectionRequest.requested_by` is the natural fit. Needs C52/C34 alignment. Forwarded to the orchestrator ledger as a new seam.
+
 - **G16 (addressed, deferred-with-reason).** C08's assigned gap G16 questions whether the **12-principle set is the right set** (substituting self-optimization P12 for El Kaim's "pipeline files worth sharing"). This is a *whole-architecture* premise, not a property of the spec-artifact format: P1 ("specs as source of truth") — the principle C08 realizes — is **not** the substituted principle and is uncontested by G16. **Faithful disposition:** C08 records that its own grounding principle (P1) is stable under G16, and defers the P12-substitution question to the architecture-level owner (C57 failure-mode coverage / the README "first bet"). No C08 format change follows from G16. (AI-CONTEXT:27; README:98; ambiguities-and-gaps G16.)

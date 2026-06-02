@@ -26,8 +26,23 @@
 > provider as coder ⇒ holdout integrity rests on THIS component + role/prompt isolation, making C42
 > load-bearing for C34) and **FE-1**; review-log **XC-9** (`[rigs]`/`[[rig]]` spelling inconsistent across
 > C01/C03/C42).
-> Inventory ID: C42   Kind: agent-role   Status: sweep-1
+> Inventory ID: C42   Kind: agent-role   Status: sweep-2
 > Track: A (faithful)
+> Binding decisions obeyed: **D-1** (same-provider judge → holdout rests on partition+role isolation),
+> **D-13** (C34 enforces+audits; C43 blast-radius; C42 PROVIDES — not enforces), **D-17** (joint C42/C34/C32
+> Sweep-2 partition-shape freeze), **D-30** (prevent/block required for unattended; watcher design deferred
+> to D-23 spike), **D-31** (multiple rigs per city — partition contract operates over N rigs; worker-rig ≠
+> judge-rig), **D-32** (rig config spelling is file-split — `.gc/site.toml` uses `[[rig]]` with `path`;
+> `city.toml` spelling is needs-pinned-gc-run G11; `[[rigs]] path =` is a PackV2 error).
+
+> [D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25] Two substrate facts directly underwrite
+> this spec: **(F1)** `[[rig]]` (singular) is the canonical block spelling; `[[rigs]] path=` is a PackV2
+> error; path bindings live in `.gc/site.toml` (entrypoint-written). The city.toml `[[rig]]`/`[[rigs]]`
+> spelling divergence between F1's "canonical `[[rig]]`" ruling and the prototype's `city.toml.example`
+> using `[[rigs]]` is the **anchor contradiction** — see §4.2 spelling note and OQ-C42-4 resolution.
+> **(F10)** Bead prefix is the **partition scoping mechanism** (agents on rig1 see/write only `r1-` beads;
+> explicit `prefix=` required to avoid auto-derived collisions). Enforcement *strength* (prevent vs detect)
+> was **not tested** and remains OPEN (D-23 spike Test A).
 
 ## 1. Purpose & responsibility
 
@@ -41,6 +56,18 @@ read and write**. In v4 vocabulary a **rig** is "an agent worker role" (AI-CONTE
 [scenarios] during work" (README:166). (Faithful precision per G10: this makes the worker rig
 *policy-denied* read of the scenario partition — filesystem perms + rig config — **not** a hard physical
 control until C43 lands; see §6/G21.)
+
+**[D-31 ADOPTED 2026-06-01 — Multiple rigs per city; partition contract operates over N rigs]**
+
+> "A *city* (one Gas City install / the `gc` substrate, C01) hosts **multiple rigs** (C42) — not one.
+> The `[[rig]]`/`[[rigs]]` array-of-tables declares N rig partitions inside a single city;
+> **rig partitioning (C42) is the isolation of these N co-resident rigs from one another** (e.g. a
+> worker rig and a separate judge rig living in the same city — the D-17 holdout read-surface depends
+> on worker-rig ≠ judge-rig). Specs MUST model multiple-rigs-per-city explicitly and MUST NOT assume
+> one-rig-per-city."
+> — review-log D-31 (Sweep-2 spine-run decisions, 2026-06-01)
+
+**C42's partition contract therefore operates over N rigs per city** — not a singleton. The `[[rig]]`/`[[rigs]]` array-of-tables in a city's config declares all N co-resident rig partitions; the partition isolation this component defines is fundamentally *between* multiple rigs sharing the same Gas City install. The D-17 holdout design (worker-rig ≠ judge-rig) is the canonical instance: both rigs reside in the same city, and the partition boundary between them is exactly what C42 provides. All contracts in this spec (§3, §4, §5) are stated over the set of N rigs, not a single rig.
 
 C42 is **load-bearing for holdout integrity (C34)**. Per review-log **D-1**, the judge runs on the *same
 provider/family* as the coder (cross-family judging is deferred to FE-1), so the holdout guarantee that
@@ -88,7 +115,8 @@ C42.
   … enforcement". C34 *owns* enforcing the holdout read-isolation and auditing reads vs scenario paths
   (README:173); C42 *declares* the partition labels/invariant that C34 enforces and audits against. The
   policy declaration is C42; the **enforcement + audit is C34**. (C42 does not over-claim that this
-  enforcement is C43's — see the C43 bullet for the *distinct* lethal-trifecta boundary.)
+  enforcement is C43's — see the C43 bullet for the *distinct* lethal-trifecta boundary.) **This boundary
+  is settled by D-13 — see §6.**
 - NOT the **identity / actor model** (C41). C41 supplies the *actor* (who acted, the `created_by`); C42
   writes the read/write *policy against* that actor's role. C42 consumes C41 identity; it does not define
   it. (C41 §1 states the reverse boundary: "NOT authorization / partitioning (C42).")
@@ -115,9 +143,9 @@ C42.
 | Upstream (consumes identity) | **C41** Identity / actor model | Read/write policy is written *against* the rig/agent actor C41 defines. C41 supplies "who/which role"; C42 supplies "allowed to read/write what". (C41 §1/§2 names C42 the downstream policy consumer.) |
 | Upstream (substrate) | **C01** Gas City substrate | > [FAITHFUL-FILL] — **dependency not declared in inventory** (inventory C42 `depends on` = C04 only); faithful fill. `[[rig]]` blocks, `read_partition`/`write_partition`, and worktree isolation are the Gas City config/native primitive C42 elaborates (AI-CONTEXT §13.3; F17 "native"); C42 does not build a new substrate. |
 | Downstream (consumes partitions) | **C30** Scenario authoring & store (read-isolation) | The scenario store lives in the `scenarios` partition and the `scenario_authoring` rig; the worker rig cannot read it. C30 `depends on C42`. |
-| Downstream (holdout enforcement + audit) | **C34** Holdout integrity & isolation **enforcement** | Per inventory C34 = "Read-isolation policy (perms + OPA + rig partition) + after-the-fact audit; … **enforcement**". C34 *owns* holdout read-isolation enforcement+audit; it consumes C42's partition labels (the declarative unit) as the policy it enforces and audits reads against (D-1: the guarantee rests on partitioning + role isolation, not model family). C42 supplies the labels; **C34 enforces and audits** them. |
+| Downstream (holdout enforcement + audit) | **C34** Holdout integrity & isolation **enforcement** | Per inventory C34 = "Read-isolation policy (perms + OPA + rig partition) + after-the-fact audit; … **enforcement**". C34 *owns* holdout read-isolation enforcement+audit; it consumes C42's partition labels (the declarative unit) as the policy it enforces and audits reads against (D-1: the guarantee rests on partitioning + role isolation, not model family). C42 supplies the labels; **C34 enforces and audits** them. (D-13) |
 | Downstream (broad-tool-access blast radius) | **C43** Isolation & lethal-trifecta boundary | Distinct boundary: C43 owns the Bash/network/fs security posture + twin isolation (G31). It backstops *any* partition once an agent has broad tool access — the residual read-escape C42's policy + C34's enforcement cannot themselves close. Without C43 the broad-tool-access escape stays open (XC-8). C43 `depends on C42`. |
-| Downstream (judge tier) | **C32** Judge harness | Runs as the **judge** rig — a distinct *role* from the worker (one of the three KEEP roles). Same provider as coder (D-1), so separation is by rig/role, not family. (The judge's *partition* read surface — third label vs `code`+results — is **OQ-C42-3**, not settled here.) |
+| Downstream (judge tier) | **C32** Judge harness | Runs as the **judge** rig — a distinct *role* from the worker (one of the three KEEP roles). Same provider as coder (D-1), so separation is by rig/role, not family. Judge partition read-surface shape is the **joint C42/C34/C32 freeze** under D-17 (in progress this run — see §9 OQ-C42-3). |
 
 C42 is **not foundational** (inventory: no) and is in **Batch 2** (built in parallel with C04/C05/C28/C29
 etc.). It is **load-bearing for the evaluation tier's holdout claim** even though it is not on the Batch-1
@@ -126,13 +154,13 @@ critical path: per D-1, C34's holdout integrity has *no* model-family fallback, 
 
 ## 3. Interfaces / contracts
 
-Sweep 1 — interfaces **named and described**; concrete TOML grammar, partition-label syntax, the
-audit-feed schema, and the OPA policy contract are sweep-2 deliverables.
+Sweep 1 — interfaces **named and described**; Sweep 2 — concrete TOML grammar, partition-record schemas,
+sequence diagram, E-codes, and AC-codes added below.
 
 1. **Rig / role declaration contract** — the closed vocabulary of agent **roles** (worker/implementer,
-   scenario-author, judge) and the shape of a `[[rig]]` declaration: a `name`, a `read_partition`, and a
-   `write_partition` (AI-CONTEXT §13.3). Any component can resolve a running agent to its rig and thus to
-   its allowed partitions.
+   scenario-author, judge) and the shape of a `[[rig]]` declaration: a `name`, a `read_partition`, a
+   `write_partition`, and (city.toml only) a bead `prefix` (F10; the scoping mechanism). Any component can
+   resolve a running agent to its rig and thus to its allowed partitions and bead prefix.
 2. **Partition model contract** — what a *partition* is (a named, label-addressed region of the
    read/write surface: at minimum `code` and `scenarios`, AI-CONTEXT §13.3) and the rule that a rig may
    only read its `read_partition` and only write its `write_partition`. The **holdout invariant** —
@@ -161,13 +189,67 @@ audit-feed schema, and the OPA policy contract are sweep-2 deliverables.
   outside the named role set, is invalid. (> [FAITHFUL-FILL] — see §4.)
 - **Partition confinement.** A rig reads only its `read_partition` and writes only its `write_partition`;
   cross-partition read/write is denied by policy (and, once C43 lands, enforced — G31).
+- **Prefix uniqueness.** Each rig's bead prefix (`r1-`, `r2-`, etc.) must be *explicitly declared* in
+  `city.toml`; relying on auto-derivation from the rig name is a misconfiguration — rig names with shared
+  prefixes (e.g. `rig1`/`rig2` both derive `"ri"`) collide at startup (F10).
 - **Worktree disjointness.** Two concurrent runs never share a writable worktree path (F17).
 - **Detect-after-the-fact-by-default (residual).** The holdout invariant is upheld by filesystem
   permissions + rig config + prompt discipline and **enforced + verified by C34** (holdout integrity &
   isolation enforcement); against a broad-tool-access worker the residual read-escape is *not prevented*
   at tool-call time until C43's lethal-trifecta isolation lands (G21, G31). C42 records this so no
-  downstream component over-trusts the
-  boundary.
+  downstream component over-trusts the boundary.
+
+### 3.1 Concrete signatures (Sweep-2)
+
+C42 is **config + policy**, not a service, so its "signatures" are the **config contract** (TOML shape)
+and the **partition-record type** C34/C32/C43 freeze against.
+
+**Partition record** — the typed artifact C34/C32 consume to enforce and audit (F-mode and AC-code
+cross-refs in §4.1 and §8):
+
+```
+PartitionRecord {
+  rig_name:       string          // must match [[rig]] name in city.toml; non-empty
+                                  // NOTE: rig_name is the TOML config key value (e.g. "implementer", "worker");
+                                  // role_kind is the ABSTRACT role class (e.g. worker). These are DISTINCT:
+                                  // a [[rig]] with name="implementer" maps to role_kind=worker (OQ-C42-2 RESOLVED).
+                                  // C34/C32 consumers: match on role_kind for policy logic; use rig_name for
+                                  // config lookup and bead-prefix scoping. Do NOT conflate rig_name with role_kind.
+  role_kind:      RoleKind        // enum: worker | scenario_author | judge
+                                  // "worker" covers both Phase-0 "worker" and Phase-2 "implementer" rig names
+                                  // (OQ-C42-2 RESOLVED — same role, different TOML name by phase)
+  read_partition: set<string>     // partition labels this rig may read; validated holdout invariant
+  write_partition: set<string>    // partition labels this rig may write
+  bead_prefix:    string          // the scoping mechanism (F10); e.g. "r1", "r2" (explicit, no auto-derive)
+}
+```
+
+**Config-load result** — returned (or error) when `city.toml` is loaded:
+
+```
+validate_partition_config(city_toml: CityToml) -> Result<[PartitionRecord], ConfigError>
+  // raises E-C42-01 if any rig has scenarios in read_partition (holdout invariant violation)
+  // raises E-C42-02 if two rigs have the same bead_prefix (prefix collision)
+  // raises E-C42-03 if a rig has no role_kind (role-unmapped)
+  // returns the closed set of PartitionRecord for the configured role set
+```
+
+**Holdout-policy feed** — the surface C34 calls:
+
+```
+get_partition_policy() -> [PartitionRecord]
+  // C34 calls this to get the current partition policy for enforcement and audit
+  // Returns the validated partition set; never includes a worker rig with scenarios in read_partition
+```
+
+**Worktree-isolation contract** — invoked by C04/Gas City at run setup:
+
+```
+assign_worktree(session_id: string, rig_name: string, partition_record: PartitionRecord)
+  -> Result<WorktreePath, ConfigError>
+  // Each session gets one isolated writable worktree path scoped to its rig's partitions
+  // Two concurrent sessions with the same rig must receive disjoint WorktreePaths (F17 invariant)
+```
 
 ## 4. Data model / state
 
@@ -175,38 +257,92 @@ C42 owns **policy/configuration definitions**, not instance state. The rig decla
 `city.toml` `[[rig]]` blocks (Gas City config, AI-CONTEXT §13.3); the scenario bytes live in C30; the
 worktrees are C04/Gas-City-managed filesystem state. C42 defines the *meaning and invariants* of these.
 
-### 4.1 Rig / role declaration (the unit of policy)
+### 4.1 Partition record — field table (Sweep-2)
 
-| Field | Meaning | v4 source |
-|---|---|---|
-| `name` | the rig name; identifies the role (`implementer`, `scenario_authoring`, judge) | AI-CONTEXT §13.3 |
-| role *kind* | one of worker/implementer, scenario-author, judge | component-inventory C42 "Worker/scenario/judge roles" |
-| `read_partition` | the partition label(s) this rig may read | AI-CONTEXT §13.3 |
-| `write_partition` | the partition label(s) this rig may write | AI-CONTEXT §13.3 |
+The **partition record** is the unit of policy C34 and C32 freeze against. Every field is derived from
+the `[[rig]]`/`[[rigs]]` block in `city.toml` at config-load.
 
-> [FAITHFUL-FILL] **Role set = exactly {worker/implementer, scenario-author, judge}.** v4 names the
-> `implementer` and `scenario_authoring` rigs verbatim (AI-CONTEXT §13.3) and the inventory names
-> "Worker/scenario/judge **roles**" (C42 one-liner). The minimal faithful choice is to treat this triple as
-> the *closed* role set for the holdout boundary, because v4 names no fourth evaluation role and the
-> role-closure invariant ("an agent outside the named role set is invalid") needs a closed set to be
-> well-defined. Whether `worker` and `implementer` are the *same* role under two names (Phase-0 `worker`
-> rig, AI-CONTEXT §13.1, vs Phase-2 `implementer` rig, §13.3) is OQ-C42-2; the smallest faithful reading is
-> that they are the **same role** — the Phase-0 `worker` becomes the Phase-2 `implementer` once the
-> scenario partition exists, since v4 never runs both simultaneously. Concrete role↔rig-name grammar
-> deferred to sweep 2.
+| Field | Type | Req? | Semantics | R/W by |
+|---|---|---|---|---|
+| `rig_name` | `string` | R | Identifier matching the `name =` key in the `[[rig]]` block; non-empty; must be unique per city.toml. | C42 reads from city.toml; C34/C32/C43 read via `get_partition_policy()` |
+| `role_kind` | `enum{worker, scenario_author, judge}` | R | The abstract role class (resolved role set — OQ-C42-2 resolves `worker`=`implementer`, see §9). Out-of-set → E-C42-03. | C42 classifies; C34/C32 consume |
+| `read_partition` | `set<string>` | R | Partition labels this rig may read. **Holdout invariant:** `"scenarios" ∉ read_partition` when `role_kind=worker`. Violation → E-C42-01. | C42 reads; C34 enforces; C43 backstops |
+| `write_partition` | `set<string>` | R | Partition labels this rig may write. Typically the same as the roles it authors. | C42 reads; C34 enforces |
+| `bead_prefix` | `string` | R | Explicit prefix for bead IDs scoped to this rig (the scoping mechanism, F10). Must be unique across all rigs in this city; duplicate prefix → E-C42-02. Auto-derived prefix from rig name is a misconfiguration (F10 collision risk). | C42 validates; C01/Gas City runtime applies |
 
-### 4.2 Partition (the unit of authorization)
+### 4.2 `city.toml` rig-block config surface (Sweep-2)
 
-A **partition** is a named, label-addressed region of the read/write surface. v4 names at least two:
-`code` and `scenarios` (AI-CONTEXT §13.3), plus `work_partition = "scenarios"` on the `inspect_eval` tool
-node (§13.3). The partition is what a `read_partition`/`write_partition` points at.
+**[D-32 ADOPTED 2026-06-01 — Rig config spelling is file-split]**
 
-> [FAITHFUL-FILL] **Partition set is open, anchored by the named two (`code`, `scenarios`).** v4 names
-> `code` and `scenarios` explicitly (AI-CONTEXT §13.3). The smallest faithful reading is that the partition
-> *label space* is open (other partitions may exist for other boundaries) but the **two v4-named partitions
-> are mandatory** and the holdout invariant is fixed on the `scenarios` label. The concrete mapping of a
-> partition label to a filesystem path / git repo / OPA resource is sweep-2 (and is exactly the G28
-> composition question — see §4.3).
+> "Rig **path** bindings live in **`.gc/site.toml`** as **`[[rig]]`** (singular array-of-tables,
+> `name` + `path`) — harvest-verified. The **`city.toml`** rig block (partition / `prefix` / role
+> semantics, **no `path`**) is spelled **`[[rigs]]`** (plural) in the prototype's actual
+> `city.toml.example`, contradicting D-23 F1's blanket "`[[rig]]` singular canonical" — so the
+> **`city.toml` rig-block spelling is `needs-pinned-gc-run (G11)`** and specs MUST NOT assert a
+> single canonical `city.toml` spelling. `[[rigs]] path =` (a `path` in `city.toml`) is an
+> unambiguous PackV2 error."
+> — review-log D-32 (Sweep-2 spine-run decisions, 2026-06-01)
+
+> **DRIFT-CRITICAL SPELLING NOTE (from gascity-config-anchor §3, applies verbatim here).**
+> The harvest's F1 states "canonical spelling is `[[rig]]` (singular)". The prototype **primary sources
+> show the spelling is file-dependent**:
+> - **`.gc/site.toml`** uses **`[[rig]]`** (singular) with `name` + `path` — harvest-verified
+>   (entrypoint.sh:70–76).
+> - **`city.toml`** in the prototype uses **`[[rigs]]`** (plural) with `name` + `prefix` — verbatim in
+>   `city.toml.example:49–56`.
+> The invariant that holds in both and is the real anti-drift rule: **a rig `path` belongs ONLY in
+> `.gc/site.toml`; `city.toml` rig blocks carry `prefix`/partition/role and never `path`.**
+> Whether `city.toml` uses `[[rig]]` or `[[rigs]]` is **`needs-pinned-gc-run (G11)`** — see
+> OQ-C42-4 (updated in §9). `[[rigs]] path =` is unambiguously a PackV2 error (F1).
+
+**city.toml partition/role blocks** — the canonical Gas City surface for partition declarations.
+Fields `read_partition` and `write_partition` are v4-named (AI-CONTEXT §13.3) and are `needs-pinned-gc-run (G11)` for exact TOML grammar; the field *names* are grounded in v4 (AI-CONTEXT §13.3) and confirmed in the config-anchor table (C03:105, C42:133).
+
+```toml
+# city.toml — rig partition / role blocks
+# Spelling: [[rig]] (F1 canonical) vs [[rigs]] (prototype city.toml.example) — needs-pinned-gc-run (G11)
+# PATH belongs in .gc/site.toml, NOT here (F1 — PackV2 error otherwise)
+
+# Worker / implementer rig (roles: code generation, build, test)
+# OQ-C42-2 RESOLVED: "worker" (Phase-0) and "implementer" (Phase-2) are the same role — see §9
+[[rig]]   # [needs G11 verification] — city.toml spelling may be [[rigs]] per prototype example
+name     = "implementer"
+prefix   = "r1"                  # EXPLICIT required (F10: avoid auto-derive collision)
+# read_partition / write_partition grammar: needs-pinned-gc-run (G11); field names from AI-CONTEXT §13.3
+read_partition  = ["code"]       # MUST NOT include "scenarios" — holdout invariant
+write_partition = ["code"]
+
+# Scenario-authoring rig (role: scenario authoring, isolated from implementer)
+[[rig]]   # [needs G11 verification]
+name     = "scenario_authoring"
+prefix   = "r2"                  # EXPLICIT; different prefix from implementer to avoid collision
+read_partition  = ["scenarios", "code"]
+write_partition = ["scenarios"]
+
+# Judge rig — reads trajectories + scenarios to score; MUST NOT share context with worker
+# Partition shape: D-17 joint freeze (C42/C34/C32) in progress this run — see OQ-C42-3
+[[rig]]   # [needs G11 verification]
+name     = "judge"
+prefix   = "gj"                  # EXPLICIT; distinct prefix
+read_partition  = ["code", "scenarios", "trajectories"]  # [D-17 freeze in progress — see OQ-C42-3]
+write_partition = ["judgments"]                          # [D-17 freeze in progress]
+```
+
+```toml
+# .gc/site.toml — machine-local, entrypoint-written; DIFFERENT FILE from city.toml
+# Path bindings only (F1 harvest-verified: entrypoint.sh:70–76)
+[[rig]]
+name = "implementer"
+path = "/workspace/rigs/implementer/"   # actual filesystem path; written at container-start
+
+[[rig]]
+name = "scenario_authoring"
+path = "/workspace/rigs/scenario_authoring/"
+
+[[rig]]
+name = "judge"
+path = "/workspace/rigs/judge/"
+```
 
 ### 4.3 Which mechanism is authoritative (G28) — sweep-1 note, not a composition primitive
 
@@ -244,6 +380,24 @@ worker/implementer rig can read `scenarios` is invalid and must be rejected at c
 whether Gas City *rejects* such a config or merely *permits* it is the G21/OQ-C42-1 enforcement question —
 §6).
 
+### 4.5 Partition label registry (Sweep-2)
+
+The v4-named partition labels (AI-CONTEXT §13.3). The label space is open (new partitions may be added),
+but these are the two mandatory labels the holdout invariant is fixed on:
+
+| Label | Meaning | Owner | Worker may read? | Judge may read? |
+|---|---|---|---|---|
+| `code` | source code, build artifacts, test results | implementer rig writes; all may read | Yes | Yes |
+| `scenarios` | held-out evaluation scenario files (C30) | scenario_authoring rig writes | **NO** (holdout invariant) | Yes (D-17 default) |
+| `trajectories` | agent session traces / CXDB turns (C21/C23) | Gas City session manager writes | Yes (own) | Yes (for scoring) |
+| `judgments` | judge scores, ScoreRecords (C32/C33) | judge rig writes | No | Yes (own) |
+
+> [FAITHFUL-FILL] — `trajectories` and `judgments` are inferred partition labels for the judge read surface (D-17
+> joint freeze in progress). v4 names `code` and `scenarios` verbatim (AI-CONTEXT §13.3); `trajectories`
+> and `judgments` are the minimal faithful extensions for a judge that must score without sharing a context
+> window with the worker. The D-17 joint C42/C34/C32 freeze will either confirm or replace these labels.
+> Until that freeze completes (C34/C32 must land), mark `[D-17 freeze in progress]`.
+
 ## 5. Behavior
 
 C42 has no control loop; its behavior is **definitional** and **config-load / run-setup**-time:
@@ -259,8 +413,46 @@ C42 has no control loop; its behavior is **definitional** and **config-load / ru
   compares it against actual agent reads (README:173) to *detect* a violation after the fact. C42 supplies
   the policy; it does not run the audit.
 
-(Sequence/state diagrams for config-load validation and run-setup worktree assignment are deferred to
-sweep 2 per BUILDER-BRIEF altitude.)
+### 5.1 Partitioned read attempt — sequence diagram (Sweep-2)
+
+The diagram shows the partitioned read path for a **worker** attempting to access the bead store, scoped
+by the bead prefix mechanism (F10). C42 PROVIDES the partition contract at config-load; the worker's
+runtime reads are scoped by Gas City's prefix routing; C34 audits after the fact; whether Gas City
+PREVENTS out-of-prefix access is the D-30/D-23 open gate.
+
+```mermaid
+sequenceDiagram
+    participant W as Worker (implementer rig, prefix r1-)
+    participant GC as Gas City / bd (bead store)
+    participant C34 as C34 holdout-integrity audit
+    participant C43 as C43 isolation fence (D-30 gate — not yet enforced)
+
+    Note over W,C43: Config-load phase (C42 provides the policy)
+    W->>GC: city.toml [[rig]] name=implementer prefix=r1 read_partition=[code]
+    GC-->>W: PartitionRecord validated (E-C42-01 if scenarios in read_partition)
+
+    Note over W,GC: Worker reads bead store (runtime — prefix scoping)
+    W->>GC: bd get r1-<bead-id>  (in-partition read)
+    GC-->>W: bead data (prefix matches rig scope)
+
+    Note over W,GC: Attempted out-of-partition read
+    W->>GC: bd get r2-<bead-id>  (out-of-partition)
+    alt Gas City PREVENTS (prevent-vs-detect-OPEN — D-23 spike)
+        GC-->>W: BLOCKED (E-C42-04 partition-violation-detected, C43 fence active)
+    else Gas City permits (detect-only path until D-23 spike + C43)
+        GC-->>W: bead data returned (partition violation NOT blocked)
+        GC->>C34: event: out-of-partition read observed (prefix r2 from rig r1)
+        C34-->>C34: audit log: violation detected after the fact (G21 residual)
+    end
+
+    Note over C43: D-30: prevent required for unattended (P2/P3b)
+    Note over C43: D-23 spike decides: watcher needed or native prevent sufficient
+```
+
+> **D-30 prevent-gate note:** The "Gas City PREVENTS" branch is the D-30 required end-state for P2/P3b.
+> Until the D-23 spike (Test A) confirms whether `gc`/`bd` natively block out-of-prefix reads, this
+> branch is UNVERIFIED. If the spike shows only detect, an enforcement watcher WILL be added (D-30 — sanctioned
+> design deferred). Unattended operation is human-in-the-loop until prevention is established.
 
 ## 6. Failure modes & handling
 
@@ -316,6 +508,29 @@ sweep 2 per BUILDER-BRIEF altitude.)
 > `read_partition` authoritative → filesystem perms + repo backstop → OPA later → audit detect-only**. The
 > remaining real question is *enforcement strength*, which is the G21 ambiguity above, not G28.
 
+### 6.1 Error taxonomy (Sweep-2)
+
+Component-scoped E-codes for partition-level failures. The enforcement-strength of E-C42-04 (whether it
+results in a hard block or an audit event) is the D-23 spike question; the code is defined regardless.
+
+| E-code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| **E-C42-01** | `partition-violation-misconfig` — worker/implementer rig declares `scenarios` in `read_partition` in city.toml | Config-load error: `validate_partition_config` returns `ConfigError` at startup; `gc start` refuses to run | Fix city.toml: remove `scenarios` from the worker rig's `read_partition`; re-run `gc start` |
+| **E-C42-02** | `prefix-collision` — two rigs in city.toml have the same `bead_prefix` value (auto-derived or explicit) | Config-load error: startup refusal with duplicate-prefix diagnostic (F10 — e.g. `rig1`/`rig2` both derive `"ri"`) | Add explicit `prefix = "<unique>"` to each rig's city.toml block; restart |
+| **E-C42-03** | `role-unmapped` — a running agent references a `rig_name` not present in the validated `[PartitionRecord]` set | Runtime error: `assign_worktree` returns `ConfigError`; the session cannot start | Declare the missing `[[rig]]` block in city.toml and restart; or remap the agent to a declared rig |
+| **E-C42-04** | `partition-violation-detected` — a runtime bead/filesystem access crosses a partition boundary (out-of-prefix bead access or out-of-partition file read) | **If prevent active (D-30 / D-23 spike): hard block** at tool-call boundary (E-C42-04 `BLOCKED`). **If detect-only** (current Phase-0 state): C34 audit event emitted; access may succeed (prevent-vs-detect-OPEN) | Investigate agent prompt + partition config; if repeated → escalate to human review; prevent mode: agent sees access denied error |
+
+> **D-30 note on E-C42-04.** Per D-30 (verbatim from review-log):
+>
+> > "unattended operation (P2) and self-modification (P3b) require the substrate to BLOCK (prevent at the
+> > tool-call/process boundary) — not merely detect — out-of-boundary access on the relevant blast-radius
+> > face."
+>
+> E-C42-04 MUST be a hard block before P2/P3b is permitted. Whether Gas City natively provides this block
+> (making E-C42-04 a tool-call-level rejection) or requires an enforcement watcher is the D-23 spike Test A
+> outcome. Until that outcome is known, E-C42-04's "surfaced-as" row has two branches (above). Do NOT treat
+> the detect-only branch as the permanent end-state.
+
 ## 7. Cross-cutting (security / cost / scale / observability / ops)
 
 - **Security (the central concern).** C42 is the **authorization-declaration** layer of the security model
@@ -338,10 +553,10 @@ sweep 2 per BUILDER-BRIEF altitude.)
   possible — the audit compares actual reads against the declared partition labels (README:173). C42's
   published policy *is* the observability surface for holdout violations.
 - **Ops.** Rig/partition policy is sourced from `city.toml` `[[rig]]` blocks under normal git review
-  (AI-CONTEXT §13.3). *Spelling caveat (XC-9):* `[rigs]` (the config section, AI-CONTEXT §3.4 "explicitly
-  off" list) vs `[[rig]]` (the per-rig block, §13.3) is inconsistent across C01/C03/C42; C42 uses the
-  per-rig `[[rig]]` block form from §13.3 and flags the canonical-spelling ruling to C07/integrator
-  (OQ-C42-4). Enabling OPA later is an additive pack at the deferred layer-3 seam (§4.3) — additive, not a
+  (AI-CONTEXT §13.3). *Spelling caveat (XC-9 resolved by D-23/F1 for `.gc/site.toml`; city.toml spelling
+  needs-pinned-gc-run G11):* C42 uses the per-rig `[[rig]]` block form from §13.3 as F1's canonical
+  recommendation, but the prototype's `city.toml.example` uses `[[rigs]]` — see §4.2 spelling note and
+  OQ-C42-4. Enabling OPA later is an additive pack at the deferred layer-3 seam (§4.3) — additive, not a
   migration.
 
 ## 8. Acceptance criteria & test strategy
@@ -373,43 +588,121 @@ sweep 2 per BUILDER-BRIEF altitude.)
    C30, the F-mode owner C57) can discover that, against a broad-tool-access worker, the boundary is config
    + filesystem + discipline with detect-after-the-fact audit until C43 lands, so they do not over-trust
    "held-out".
-(Concrete `[[rig]]`/partition-label TOML grammar, the audit-feed schema, the OPA policy contract, and
-out-of-partition-read test vectors are sweep-2 deliverables — and for the *prevention* path, are
-deliverables of C43, not C42's default build.)
+8. **Prefix uniqueness enforced at config-load (F10)**: the config-load validator rejects any city.toml
+   with two rigs having the same `bead_prefix`, whether explicit or auto-derived (E-C42-02). *(The same
+   G11-gated question as E-C42-01: whether Gas City itself rejects this or the validator is a C42-supplied
+   pack tool.)*
+
+### 8.1 Concrete acceptance tests (Sweep-2)
+
+Each is an executable check. `assert reject(...)` = validation refuses startup; `assert pass(...)` = valid
+config accepted. E-codes cross-referenced per SWEEP2-DISPATCH rubric.
+
+**Config-load validation — partition invariant (E-C42-01)**
+- **AC-C42-01** — Given a `city.toml` with the implementer rig's `read_partition = ["code", "scenarios"]`,
+  `validate_partition_config` returns E-C42-01 and `gc start` refuses to proceed. (Asserts the holdout
+  invariant and E-C42-01.)
+- **AC-C42-02** — Given a valid city.toml with the implementer rig's `read_partition = ["code"]` and
+  scenario_authoring rig's `read_partition = ["scenarios", "code"]`, `validate_partition_config` returns a
+  `[PartitionRecord]` with all three roles present. (Positive case — holdout invariant holds.)
+
+**Prefix uniqueness (E-C42-02)**
+- **AC-C42-03** — Given a city.toml where two rigs share the same explicit `prefix = "r1"`, startup is
+  rejected with E-C42-02. (F10 collision; asserts E-C42-02.)
+- **AC-C42-04** — Given rig names `rig1` and `rig2` with NO explicit `prefix`, startup is rejected with
+  E-C42-02 (auto-derived `"ri"` collision, F10). *(Marked G11-gated: passes natively iff Gas City detects
+  prefix collisions at config-load; else this is a C42 validator-pack check.)*
+
+**Role-unmapped (E-C42-03)**
+- **AC-C42-05** — Given an agent session referencing `rig_name = "unknown_rig"` not in the validated
+  `[PartitionRecord]`, `assign_worktree` returns E-C42-03 and the session cannot start.
+
+**Partition-violation detection (E-C42-04, D-23 gate)**
+- **AC-C42-06** — Given a worker (prefix `r1-`) attempting to read a bead with prefix `r2-` (belonging to
+  the scenario_authoring rig): **(a)** if prevent is active (D-23 spike confirms native block or watcher in
+  place): the access is BLOCKED and E-C42-04 is surfaced as an access-denied error; **(b)** if detect-only
+  (current Phase-0): C34 receives an audit event for the out-of-partition read; the test records which
+  branch occurred. *(D-23 Test A gates the (a) branch. Asserts E-C42-04.)*
+- **AC-C42-07** — An implementer-rig worker cannot access scenario files in the scenario partition via
+  filesystem path traversal (`../scenario_authoring/…`); either the OS sandbox (C43) or filesystem
+  permissions block the access. *(G21/G31 — this is the lethal-trifecta test; blocked until C43 lands.
+  Recorded here as a forward test vector for C43's acceptance suite.)*
+
+**Worktree isolation (F17)**
+- **AC-C42-08** — Two concurrent implementer-rig sessions are assigned disjoint writable worktree paths;
+  writing to session-1's worktree does not appear in session-2's worktree. (Asserts the worktree
+  disjointness invariant; §3 contract 3.)
+
+**Partition-policy feed (C34 seam)**
+- **AC-C42-09** — `get_partition_policy()` returns one `PartitionRecord` per configured rig, each carrying
+  the `rig_name`, `role_kind`, `read_partition`, `write_partition`, and `bead_prefix`; C34 can consume this
+  set to enforce the holdout invariant without reading city.toml directly.
 
 ## 9. Open questions
 
-- **OQ-C42-1** (→ review-log): **Does Gas City *enforce* the holdout invariant, or only declare it? (G21,
-  top open question).** This is the load-bearing security decision for C42: v4 says "filesystem permissions
-  + agent-prompt **discipline** + audit logging" (README:177) and the audit is a *detector* (README:173).
-  Confirm whether the worker rig subprocess is *prevented* from reading outside `read_partition` at
-  tool-call time, or whether the boundary is config + filesystem + discipline with C34 detecting violations
-  after the fact. Per D-1 there is **no model-family fallback**, so this single boundary carries the whole
-  holdout guarantee. **Ownership is settled by D-13:** holdout-integrity enforcement + audit is **C34**'s
-  charter, the residual broad-tool-access blast radius is **C43**'s (G31), and C42 only *provides* the
-  partition. What remains open here is the substrate fact — does Gas City *prevent* the out-of-partition read
-  at tool-call time, or only permit-with-review so C34 detects after the fact — which the canonical track
-  cannot settle without verifying the real `gc` binary (G11); routed to review-log.
-- **OQ-C42-2** (→ review-log): **Are `worker` and `implementer` the same role under two names?** Phase-0
-  names a `worker` rig (AI-CONTEXT §13.1); Phase-2 names an `implementer` rig (§13.3). The faithful fill
-  (§4.1) treats them as the same role (the Phase-0 worker *becomes* the implementer once the scenario
-  partition exists). Confirm, and confirm the canonical role↔rig-name mapping for the closed role set.
-- **OQ-C42-3** (→ review-log; **scoped by D-17**): **Is the judge a third partition, or does it read `code` +
-  scenario *results*?** v4 names `scenario_authoring` and `implementer` rigs (§13.3) but does not give the judge
-  rig's `read_partition` explicitly. The judge must read the trajectory/output to score it but must remain
-  role-isolated from the worker (D-1). **Per D-17:** the Sweep-1 read-default is fixed (judge MAY read the
-  worker's trajectories + held-out scenarios; worker MUST NOT read the judge rig or scenarios), and the exact
-  **partition SHAPE** is the **unified OQ-C42-3 + OQ-C34-3 + C32-OQ5**, frozen **jointly by C42 (provides
-  partition) + C34 (enforces+audits) + C32 (judge) at Sweep-2**. Confirm the judge rig's partition (and whether
-  the same-provider judge per D-1 needs its own partition label distinct from `code`/`scenarios`).
-- **OQ-C42-4** (→ review-log, XC-9): **Canonical `[rigs]` vs `[[rig]]` spelling.** Inconsistent across
-  C01/C03/C42; C42 uses `[[rig]]` per AI-CONTEXT §13.3. Owner: C07/integrator — pick one and propagate. (RESOLVED by D-23 harvest — see [`_meta/D-23-substrate-harvest.md`](../_meta/D-23-substrate-harvest.md))
+- **OQ-C42-1** — **RESOLVED (Sweep-2, partial): D-13 settles ownership; substrate fact remains open (D-23 spike).**
+  RESOLVED (Sweep-2): the *ownership* half of this OQ is closed by D-13 — C34 owns holdout-integrity
+  enforcement + audit; C43 owns the lethal-trifecta blast-radius; C42 provides the partition. The verbatim
+  D-13 ruling:
+
+  > "C34 owns holdout-integrity ENFORCEMENT + after-the-fact AUDIT (read-isolation policy, independence
+  > checks under D-1, `scenarios ∉ read_partition(worker)`). C43 owns the distinct lethal-trifecta
+  > blast-radius bound (Bash/net/fs typing, twin isolation; G31). C42 PROVIDES the role partition C34
+  > enforces; C42 does not enforce."
+
+  Residual (still open): does Gas City *prevent* at tool-call time (the D-23 spike Test A question; G11/G21)?
+  This is the substrate fact the empirical spike must answer. Conformance check: Test A1 (bead-layer:
+  `bd get r2-… from rig1 cwd`) + Test A2 (OS/Bash: `cat ../rig2/…` from implementer session). Until the
+  spike runs, E-C42-04 has two branches and AC-C42-06 has two outcomes. **D-30 is adopted:** prevent is
+  required for P2/P3b regardless of the spike outcome.
+
+- **OQ-C42-2** — **RESOLVED (Sweep-2): `worker` and `implementer` are the same role.**
+  v4 Phase-0 uses `worker` (AI-CONTEXT §13.1); Phase-2 uses `implementer` (AI-CONTEXT §13.3). The faithful
+  resolution: they are **the same role** — the Phase-0 `worker` rig evolves into the `implementer` rig
+  name once the scenario-partition is established (v4 never runs both simultaneously; §13.1 is the
+  Phase-0 single-rig config, §13.3 is the Phase-2 multi-role config). In the `role_kind` enum (§4.1)
+  `worker` and `implementer` map to `role_kind = worker`; the partition-record `rig_name` field takes the
+  verbatim name from city.toml (either `"worker"` in Phase-0 configs or `"implementer"` in Phase-2 configs).
+  C42 does **not** require both names to coexist. The holdout invariant applies to whichever name is used.
+
+- **OQ-C42-3** — **SCOPED BY D-17; joint freeze in progress this run.**
+  The judge rig's exact `read_partition` / `write_partition` shape is the **unified OQ-C42-3 + OQ-C34-3 +
+  C32-OQ5** question, to be frozen jointly by C42 (provides partition) + C34 (enforces+audits) + C32
+  (judge) at Sweep-2. The D-17 verbatim ruling:
+
+  > "D-17 — Judge read-surface: Sweep-1 default + joint C42/C34/C32 Sweep-2 freeze. Sweep-1 default:
+  > the judge (C32) MAY read the worker's trajectories + the held-out scenarios (to score); the worker
+  > MUST NOT read the judge rig or the scenarios (holdout). The exact judge-partition SHAPE (separate rig
+  > vs shared scenario partition; precise read-surface) is settled jointly by C42 (provides partition)
+  > + C34 (enforces+audits) + C32 (judge) at Sweep-2 — unifies OQ-C42-3 + OQ-C34-3 + C32-OQ5."
+
+  C42's PROVIDING side is specced in §4.2 and §4.5 with the D-17 default applied. The freeze COMPLETES when
+  C34 and C32 land their Sweep-2 specs and confirm or revise the judge partition labels (`trajectories`,
+  `judgments` in §4.5 are marked `[D-17 freeze in progress]`).
+
+- **OQ-C42-4** — **RESOLVED (D-23 harvest F1) + NUANCED by config anchor.**
+  RESOLVED by D-23 harvest: `.gc/site.toml` uses `[[rig]]` (singular) with `name` + `path` —
+  harvest-verified (entrypoint.sh:70–76). This closes XC-9 for the `.gc/site.toml` spelling.
+  NUANCE: the config anchor (gascity-config-anchor §3) establishes that `city.toml` spelling is
+  **`needs-pinned-gc-run (G11)`** — F1's "canonical `[[rig]]`" and the prototype's `city.toml.example`
+  `[[rigs]]` disagree. The invariant that resolves both: **`path` belongs ONLY in `.gc/site.toml`**
+  (a `[[rigs]] path=` in city.toml is a PackV2 error regardless of spelling). City.toml block spelling
+  (`[[rig]]` vs `[[rigs]]`) must be confirmed against a pinned `gc` run (G11). C42 exemplars in §4.2 use
+  `[[rig]]` (F1 canonical recommendation) and annotate `[needs G11 verification]`.
+
+---
 
 **[D-30 ADOPTED 2026-06-01 — prevent/block required for unattended]**
 
 C42 provides the partition this decision enforces *prevention* over: the blast-radius face this gate refers to is the rig/partition boundary C42 defines.
 
 > The operator has adopted the auto-001 rubric and re-adopted D-20 as **conditional on prevention**: unattended operation (P2) and self-modification (P3b) require the substrate to **BLOCK (prevent at the tool-call/process boundary)** — not merely detect — out-of-boundary access on the relevant blast-radius face. **Discharge:** if Gas City does not prevent natively (per the [D-23 spike](../_meta/D-23-gas-city-spike-protocol.md)), an **enforcement watcher that blocks WILL be added** (sanctioned in principle); its **design is DEFERRED until the spike confirms the substrate does not already prevent** — do not design what we may not need, and the watcher's design must still pass the bar when built. Until prevention is established (native or watcher), unattended operation is **blocked** (human-in-the-loop). The per-rig-class "structurally-safe parts may run unattended" optimization remains available but secondary. See the [auto-001 decision brief](../_meta/decisions/auto-001-detect-only-binding-gate.md) and review-log D-30.
+
+The D-30 verbatim requirement, cited from review-log:
+
+> "unattended operation (P2) and self-modification (P3b) require the substrate to BLOCK (prevent at the
+> tool-call/process boundary) — not merely detect — out-of-boundary access on the relevant blast-radius
+> face."
 
 ---
 

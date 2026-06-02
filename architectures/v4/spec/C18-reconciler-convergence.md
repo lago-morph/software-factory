@@ -1,7 +1,7 @@
 # C18 — Reconciler / Health Patrol loop (`reconciler-convergence`)  (Spec, canonical track)
 
 > Source: AI-CONTEXT §3.2 (concept table line 93 — "9 | Health Patrol (Controller + Convergence) | Per-tick reconciler; bounded convergence with gates | P4, P11 (partial), P8 (weak)"); AI-CONTEXT §3.1 coverage map (line 69 — P4 "Strong (reconciler + tool nodes)"; line 73 — P8 "Weak (convergence gates partially impose; mostly user discipline)"); AI-CONTEXT §4 line 34 (P4 — "Tool nodes for most steps; LLM only where reasoning required"); README §"Principle 4 — Deterministic-first" (lines 152–162 — "Most steps don't need a model. Use models only where reasoning is required"; line 159 — "Reconciler / controller loop | Desired-state convergence | Gas City Health Patrol + convergence loops | MIT | **Native**"); README §13.1 (line 370 — "P4 (deterministic-first): reconciler + tool-node primitives available"). Native-ness reinforced: README:334/518 + AI-CONTEXT:439/476 (a "modified reconciler" is called out only as a *source-level fork* trigger v4 does **not** need). Companion: [`spec/C05-sling-dispatch.md`](./C05-sling-dispatch.md) (the dispatch action this loop is the v4-inferred trigger for — see §3.1), [`spec/C01-gas-city-substrate.md`](./C01-gas-city-substrate.md) (the substrate whose Health Patrol C18 is a thin spec over), [`spec/C13-molecule-runtime-state.md`](./C13-molecule-runtime-state.md) (the in-flight workflow state the loop converges), [`spec/C39-fix-task-loop-closure.md`](./C39-fix-task-loop-closure.md) (owns the **numeric** termination policy this loop's bound is parameterised by — see G18/§9).
-> Inventory ID: C18   Kind: control-loop   Status: sweep-1
+> Inventory ID: C18   Kind: control-loop   Status: sweep-2
 > Maps from: A36, A22e, B07, B59. Depends on: C01 (Gas City substrate). Key gaps: G18 (loop-closure termination — **routed to C39 per XC-3**, see §9).
 
 ## 1. Purpose & responsibility
@@ -49,9 +49,78 @@ C18 sits in the **Workflow Engine** subsystem and is **not foundational** (inven
 
 ## 3. Interfaces / contracts
 
-Sweep-1: interfaces **named + described**. Concrete tick signatures, the desired-vs-actual diff schema, the gate-ordering contract's exact shape, and the bound-reached signal payload are deferred to sweep 2.
+Sweep-1 content preserved below; Sweep-2 adds concrete signatures, field tables, and the E-code taxonomy after the existing sections.
 
-### 3.1 Inbound
+### 3.0 Concrete signatures (sweep-2)
+
+All signatures are Go-style pseudo-types reflecting Gas City's Go 1.26.3 toolchain (gascity-config-anchor §1). Because C18 is a thin contract over Gas City's **native** Health Patrol (`gc start --foreground`, F6), the "signatures" below are the **v4 contract seam**: the shapes C18 reads from or writes to adjacent components, not `gc` internals invented by v4.
+
+```go
+// ---- Inbound: Desired-vs-actual snapshot read (C13/C19/C20 → C18) ----
+// PassInput is assembled once per tick from the molecule/bead-tree state.
+type PassInput struct {
+    Desired   []BeadSpec     // the set of bead steps that SHOULD be in state "running"/"closed"
+    Actual    []BeadState    // observed states from C19 (gc bd ls / bead-store read)
+    Gates     []Gate         // ordered gate set from C16/C17; C18 sorts deterministic-first (§3.1)
+    BoundParam BoundPolicy   // injected from C39 via C20 max_attempts slot (XC-3)
+}
+
+type BeadSpec struct {
+    ID       string   // bead_id — target of gc bd find (C19/C20 §4.1)
+    Type     string   // registry type tag (C20 registry)
+    Required Status   // the desired Status for this step (e.g. "closed")
+}
+
+type BeadState struct {
+    ID     string
+    Status Status   // "open" | "in_progress" | "closed"  (C20 §4.5.0)
+    AttemptNo int   // attempt_no from C20 fix_task slot (XC-3); 0 if N/A
+}
+
+type Status string  // "open" | "in_progress" | "closed"
+
+// BoundPolicy is the per-pass bound C39 injects; C18 enforces it, does NOT own the value.
+// The field name max_attempts matches the C20 fix_task slot frozen by XC-3 (§4.5.2).
+type BoundPolicy struct {
+    MaxAttempts int   // C39 sets; C18 checks AttemptNo < MaxAttempts (INV-2)
+}
+
+// ---- Gate ordering (C16/C17 → C18) ----
+// Gate.Kind drives deterministic-first ordering: deterministic gates sort before LLM gates (INV-1).
+type Gate struct {
+    ID          string
+    Kind        GateKind   // Deterministic | LLM
+    Predicate   func(BeadState) (decided bool, stepToward BeadSpec, err error)
+}
+
+type GateKind string
+const (
+    Deterministic GateKind = "deterministic"  // tool-node / hook — cheap, reproducible (README:154)
+    LLM           GateKind = "llm"            // admitted only where reasoning is required (INV-1)
+)
+
+// ---- Outbound: convergence-pass result (C18 → C39 / C05) ----
+// PassResult is what C18 emits after one convergence pass over PassInput.
+type PassResult struct {
+    Converged    bool
+    BoundReached bool           // true iff pass hit MaxAttempts without convergence (INV-2)
+    Signal       *BoundReachedSignal  // non-nil iff BoundReached — routed to C39 (XC-3)
+    Redispatch   []BeadSpec     // beads that "should run but are not" — routed to C05 [FAITHFUL-FILL RC05-01]
+    Delta        int            // desired-vs-actual gap count this tick (INV-3: must not increase pass-over-pass)
+}
+
+// BoundReachedSignal is the C18 → C39 payload (XC-3 seam).
+// C18 owns the emission; C39 owns every policy decision that follows.
+type BoundReachedSignal struct {
+    BeadID      string   // the fix_task bead that hit the bound
+    AttemptNo   int      // the value at which the bound was reached
+    MaxAttempts int      // the injected bound that was reached
+}
+```
+
+> [needs G11 verification] The `gc` reconciler's internal tick model is unverified. The types above represent the **contract seam** C18 enforces over the native Health Patrol — not invented `gc` internals. The hook surface by which a Gas City pack observes or extends the per-tick gate sequence must be confirmed against the pinned `gc` binary before any pass implementation is attempted (OQ-3 / G11 / [D-23 substrate-verified — gascity-prototype@b14c278, 2026-05-25]).
+
+### 3.1 Inbound (sweep-1, preserved)
 
 - **Desired-vs-actual state interface (C13/C19/C20 → C18).** On each tick, the loop reads the **desired** state and the **actual** state of in-flight work — the molecule / bead-tree (C13) over the typed work-graph (C19/C20) — to compute the convergence delta. "Desired-state convergence" (README:159) requires both a desired target and an observed actual; this interface supplies them. C18 reads this state read-only for the comparison; transitions it writes go back through the native bead-store operations (it owns no separate state store, §4).
 - **Gate-set interface (C16/C17 → C18).** The set of gates to evaluate in a pass — deterministic gates (tool nodes, C17; hook-style checks, AI-CONTEXT:187) and the points where an LLM step is admitted "where reasoning is required" (README:154). C18 receives gate definitions; it **orders** them deterministic-first and runs them. It does not author gate predicates (C16/C17 do).
@@ -59,13 +128,15 @@ Sweep-1: interfaces **named + described**. Concrete tick signatures, the desired
 
   > [FAITHFUL-FILL] v4 says "bounded convergence" (AI-CONTEXT:93) but never states the bound's value, where it lives, or who sets it. Per XC-3 the **numeric** policy (N attempts → escalate, oscillation detection, L5 authorization) is **C39**'s, over the boundable slots **XC-3 names** (`attempt_no`/`max_attempts`/`escalated`/`closes`) — backed by C20's attempt-count / terminal-state / escalation schema fields (C20 has not yet frozen those exact identifiers; concrete field names are C20-sweep-2, and `closes` is a chain-edge field rather than a counter). The minimal faithful reading is therefore: C18's bound is an **injected parameter from C39**, not a C18 constant. This keeps "the loop is bounded" (C18's duty) separate from "the bound is N and exceeding it escalates" (C39's duty), exactly as XC-3 routes it. Until C39 lands (Batch 4) C18 models the bound as an opaque injected limit; it invents no `gc` reconciler internal to source it (G11).
 
-### 3.2 Outbound
+### 3.2 Outbound (sweep-1, preserved)
 
 - **Convergence-step / (re)dispatch trigger (C18 → C05).** When the convergence delta shows work that *should* be running and is not, the loop issues a (re)dispatch to sling (C05). **This trigger edge is a v4 inference, not a stated fact (RC05-01)** — see the §2 `[FAITHFUL-FILL]`. C18 is modelled as the driver that hands C05 a dispatch request; the *act* of routing is C05's. (An integrator could instead trigger dispatch from a running C12 formula step — the alternative noted in RC05-01.)
 - **Bound-reached signal (C18 → C39).** When a convergence pass hits its injected bound without reaching desired state, C18 emits a **bound-reached / not-converged** signal to the policy owner (C39), which then applies the numeric policy (escalate / detect oscillation / decide ship authorization). C18 **stops at the signal** — it does not count attempts toward N, detect oscillation, or authorize a ship (those are C39, XC-3). This is the seam that keeps the loop bounded (C18) while the *consequences* of the bound are policy (C39).
+
+  **BoundReachedSignal transport (XC-3 seam — needs resolution):** The mechanism by which C18 delivers `BoundReachedSignal` to C39 is unspecified in v4 (XC-3 names the ownership split but not the transport wire). The minimal faithful floor is a **bead write**: C18 writes a `fix_task`-typed bead (C20 schema) carrying `{bead_id, attempt_no, max_attempts}` into the bead store (C19), and C39 polls/subscribes for `fix_task` beads with `escalated=false` and `attempt_no >= max_attempts`. This is consistent with "agents coordinate through beads only (write/poll)" (F8, harvest-verified) and requires no new transport primitive. **Alternative:** C18 calls C39 via a direct Gas City sling (C05) if C39 is modeled as an agent. Either way the `BoundReachedSignal` type (§3.0) is the contract shape; the transport is `[needs G11 verification]` and **DEFERRED to orchestrator ledger** until C39 lands (Batch 4). Until resolved, implementations MUST use bead-write as the safe floor.
 - **Convergence observability (native, not a C18 contract).** That a tick ran, that a gate passed/failed, and that a pass converged or hit its bound are observable through the **native** event bus (C23, "Append-only JSONL with monotonic seq", AI-CONTEXT:87) that fires on the reconciler's actions — C18 introduces **no record, store, or telemetry of its own**. This line is descriptive of native Health Patrol behaviour, not an interface C18 provides.
 
-### 3.3 Invariants
+### 3.3 Invariants (sweep-1, preserved)
 
 - **INV-1 (deterministic-first ordering).** Within any convergence pass, **every deterministic gate is evaluated before any LLM step**, and an LLM step is admitted **only where a deterministic gate cannot decide** ("Most steps don't need a model. Use models only where reasoning is required", README:154; AI-CONTEXT:34). A pass that invokes an LLM step while a deciding deterministic gate was skipped violates P4. This is the one invariant that makes the loop *deterministic-first* and not merely *a reconciler*.
 - **INV-2 (bounded pass).** Every convergence pass **terminates** under the injected bound (AI-CONTEXT:93 "bounded convergence") — it either reaches desired state or emits bound-reached (§3.2). The loop never spins unboundedly; "no termination" is precisely the G18 blocker this invariant closes at the *loop* level (with the *numeric* policy at C39).
@@ -73,6 +144,43 @@ Sweep-1: interfaces **named + described**. Concrete tick signatures, the desired
 - **INV-4 (no loop-owned state).** C18 contributes **no durable state of its own**. Desired/actual live in C13/C19/C20; the bound parameters and `attempt_no`/`escalated`/`closes` live with C20's schema and C39's policy; tick/gate/convergence events ride the native event bus (C23). The reconciler is a **decision over native state**, not a new store (§4).
 
 > [FAITHFUL-FILL] INV-1…INV-4 are not stated verbatim in v4 (which gives the reconciler one concept row + one placement row + the P4 prose). They are the minimal invariants that make "per-tick deterministic-first bounded convergence" well-defined: gates ordered deterministic-first (INV-1, the kept P4 property, README:154), each pass bounded and terminating (INV-2, AI-CONTEXT:93), moving toward desired (INV-3, README:159), without C18 owning state (INV-4 — the loop is native, §4). Each is the smallest constraint needed for the one-line responsibility to hold; none adds scope v4 withholds, and the *numeric* half of INV-2 is explicitly delegated to C39 (XC-3).
+
+### 3.4 Convergence-pass / health-record field table (sweep-2)
+
+Columns: **Field | Type | Req | Semantics | R/W-by**
+
+The table covers the per-pass record C18 assembles transiently plus the cross-component slots that persist in C20. C18 **owns no durable store** (INV-4); the durable slots are owned by C20 and driven by C39.
+
+#### Per-pass (transient — C18 internal, not persisted)
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `desired` | `[]BeadSpec` | R | the ordered set of bead steps that SHOULD be complete/running this tick | Read by C18; assembled from C13/C19 |
+| `actual` | `[]BeadState` | R | observed states from the bead store for the same steps | Read by C18 from C19 (gc bd ls) |
+| `delta` | `int` | R | count of desired steps not yet in the desired status — the convergence gap (INV-3: must not increase) | Computed by C18; emitted to C23 via native event bus |
+| `gates_ordered` | `[]Gate` | R | gate set sorted deterministic-first: all `Kind=Deterministic` gates precede any `Kind=LLM` gate (INV-1) | C18 sorts; C16/C17 supply gate definitions |
+| `pass_iteration` | `int` | R | which iteration of the convergence pass we are on this tick — checked against `BoundPolicy.MaxAttempts` (INV-2) | C18 increments; not persisted |
+
+#### Cross-component durable slots (C20-owned, C39-driven, C18 enforces)
+
+Per XC-3: C20 **owns the field definitions**; C39 **writes and owns the values**; C18 **reads and enforces** per-pass bound.
+
+> **XC-3 verbatim citation** (authoritative ownership split):
+>
+> > **XC-3 RESOLVED — G18 numeric termination policy owned by C39.** C39 (fix-task-loop-closure) owns the numeric termination/escalation policy (N-attempts→escalate, F52 oscillation detection, L5 ship-authorization) over C20's bounded slots; **C18** owns the convergence loop + the bound-reached signal; **C20** owns the schema slots. Verified across the C16/C18/C20/C39 reviews and against C39's now-on-disk spec (§1/§3.2 contract 7/§6 "CRITICAL — XC-3"). Closes the XC-3 routing that C16/C18/C20 deferred to C39.
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `attempt_no` | `int` | R | which attempt this `fix_task` is for the same anomaly — the convergence iteration count C18 compares against `max_attempts` | **R**: C18 (bound-check per-pass); **W**: C39 (increments on each fix-task write) |
+| `max_attempts` | `int` | O | the injected per-pass bound — the value C18 enforces without owning; `convergence.max_iterations` is NOT a real `gc` field (F2) | **R**: C18 (enforces); **W**: C39 (sets the bound policy) |
+| `escalated` | `bool` | O | true once C39 has handed the chain to a human — C18 treats a bead with `escalated=true` as terminal (no further pass) | **R**: C18; **W**: C39 exclusively |
+| `closes` | `bead_id` | R (on `resolution`) | chain-closure edge: the `resolution` bead that closes a `fix_task` — C18 reads to confirm chain is terminated | **R**: C18 (pass-termination check); **W**: C39 on confirmed closure |
+
+> **CRITICAL — `convergence.max_iterations` is NOT a real `gc` config field (F2).**
+> Verified against Gas City prototype (gascity-prototype@b14c278): PackV2 strict-mode rejects it.
+> The per-pass bound C18 enforces is injected through C20's `max_attempts` slot (written by C39),
+> NOT through any `[convergence]` TOML section. C18 MUST NOT emit a `convergence.max_iterations` config
+> key. The actual `gc` mechanism is `[needs G11 verification]`.
 
 ## 4. Data model / state
 
@@ -122,6 +230,36 @@ Key flow notes:
 - **Bound the pass (INV-2) + hand off the numbers (XC-3).** The pass runs **within the injected bound** (AI-CONTEXT:93). On reaching the bound without convergence, C18 **emits bound-reached to C39** and stops; C39 applies the numeric policy (escalate / detect oscillation / decide L5 ship authorization). C18 supplies the *loop and the signal*; C39 supplies the *N, the oscillation detector, and the authorization decision*.
 - **Record (native, passive).** Tick / gate / convergence events ride the native event bus (C23) — C18 writes no record of its own (§3.2, §4).
 
+### 5.1 Convergence-loop lifecycle — state diagram (sweep-2)
+
+The `stateDiagram-v2` below captures the **converge → bound-reached → escalate (to C39)** lifecycle that C18 owns. States are the convergence-loop pass states, not individual bead states (those are in C20 §5.1).
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle : native Health Patrol tick fires (C01)
+    Idle --> Reading : delta = 0, nothing to do
+    Reading : read desired vs actual (C13/C19/C20)
+    Reading --> Converged : delta = 0
+    Converged --> [*] : hold, emit native event; next tick
+    Reading --> GateOrdering : delta > 0
+    GateOrdering : sort gates deterministic-first (INV-1)
+    GateOrdering --> DeterministicEval : always first
+    DeterministicEval --> StepToward : gate decides (INV-1)
+    DeterministicEval --> LLMStep : no deterministic gate decides (reasoning required)
+    LLMStep --> StepToward : LLM produces step
+    StepToward --> RedispatchNeeded : work should run but is not
+    StepToward --> BoundCheck : work is progressing
+    RedispatchNeeded --> C05Dispatch : emit redispatch signal [FAITHFUL-FILL RC05-01]
+    C05Dispatch --> BoundCheck
+    BoundCheck : check attempt_no vs max_attempts (INV-2)
+    BoundCheck --> Converged : pass converged within bound
+    BoundCheck --> BoundReached : attempt_no >= max_attempts
+    BoundReached : emit BoundReachedSignal → C39 (XC-3)
+    BoundReached --> [*] : C39 applies numeric policy (escalate/oscillation/L5 authz)
+```
+
+> [needs G11 verification] The exact hook points into `gc start --foreground`'s Health Patrol loop by which C18 inserts the deterministic-first gate ordering are unverified against the pinned `gc` binary. The diagram represents the **v4 contract** C18 enforces; the concrete Gas City reconciler hook surface is OQ-3.
+
 ## 6. Failure modes & handling
 
 | F-mode | Applies to C18 how | v4 handling (faithful) |
@@ -143,24 +281,57 @@ Key flow notes:
 - **Observability.** "Which tick ran, which gates passed/failed, whether a pass converged or hit its bound" is observable through the **native** event bus (C23, monotonic seq, AI-CONTEXT:87) — C18 adds no telemetry of its own. Richer convergence-trajectory analysis for the Healer rides CXDB (C21) and the clustering/diagnosis pieces (C37/C38), not a C18-owned store.
 - **Ops.** Adjusting the convergence bound is a **C39 policy change** (the `max_attempts` it injects, XC-3), and adjusting which gates run deterministic-first is a **C16/C17** change — not a C18 redeploy. C18 has no operational knobs of its own beyond what it inherits from native Health Patrol; "tune the reconciler" routes to C01 (native) for tick behaviour, C39 for the bound, and C16/C17 for the gates.
 
+## 7.5 Error taxonomy (sweep-2)
+
+E-codes are component-scoped: `E-C18-NN`. Each row: **E-code | condition | surfaced-as | caller recovery**.
+
+| E-code | Condition | Surfaced-as | Caller recovery |
+|---|---|---|---|
+| **E-C18-01** | Gate-order violation: an LLM gate was evaluated while at least one undecided deterministic gate remained (INV-1 violated) | `PassResult{Converged:false}` + convergence-fault event on native bus (C23); error logged with gate-IDs | C18 aborts the pass; C39 receives no bound-reached (the fault pre-empts normal bound-check); operator must inspect the gate set configuration (C16/C17) |
+| **E-C18-02** | Non-convergence / bound-reached: pass reached `attempt_no >= max_attempts` without `delta=0` (INV-2 — the normal escalation path) | `PassResult{BoundReached:true, Signal:&BoundReachedSignal{...}}` emitted to C39 (XC-3) | C39 owns the numeric policy response: escalate / detect oscillation / authorize or block ship. C18 stops the pass and does NOT retry. |
+| **E-C18-03** | Convergence-fault / delta regression: a convergence step increased `delta` (actual moved *further* from desired — INV-3 violated) | `PassResult{Converged:false}` + delta-regression event on native bus (C23); the offending step identified | C18 surfaces the fault and does NOT re-apply the step; pass continues at the current delta to allow the next gate to attempt recovery; repeated delta regression accumulates toward bound-reached (E-C18-02) |
+| **E-C18-04** | Redispatch-fail: C18 emitted a redispatch to C05 but the dispatch call returned an error (`[FAITHFUL-FILL RC05-01]`) | `PassResult{Redispatch:[]BeadSpec{...}}` + dispatch-error event on native bus (C23) | C18 records the failed dispatch and continues the pass; the undispatched beads remain in `desired-actual delta` and will be re-attempted on the next tick; persistent failure accumulates toward bound-reached (E-C18-02) |
+| **E-C18-05** | Nil bound-policy: C39 has not yet injected `max_attempts` for this bead (e.g. C39 is not yet live in the batch) | Pass runs in stub mode with a hardcoded safe default (`max_attempts=3`); warning event on native bus | C39 must inject a `max_attempts` value before the chain advances past the stub default; a warning in the native event stream prompts the operator if C39 is unexpectedly absent |
+
+> [FAITHFUL-FILL] E-C18-05 (nil-bound stub) is the batch-order-inversion mitigation: C18 lands in Batch 3, C39 in Batch 4. The stub default of `max_attempts=3` is the smallest safe value that prevents an unbounded pass while C39 is not yet live; C39's first write sets the real value and the stub is overridden. This is the minimal consistent choice — inventing no `gc` reconciler internal and holding INV-2 even when C39 is absent.
+
 ## 8. Acceptance criteria & test strategy
 
-Sweep-1 acceptance (high-level):
-1. **AC-1 (deterministic-first ordering).** In a convergence pass with both a deciding deterministic gate and an available LLM step, the deterministic gate is evaluated **first** and the LLM step is **not** taken when the deterministic gate decides (INV-1; README:154). A pass that takes the LLM step while skipping a deciding deterministic gate fails the test.
-2. **AC-2 (LLM admitted only where reasoning is required).** When **no** deterministic gate can decide a step ("reasoning required", README:154; AI-CONTEXT:34), the loop admits the LLM step — verifying the ordering is *deterministic-first*, not *deterministic-only* (INV-1).
-3. **AC-3 (bounded pass terminates).** A convergence scenario that cannot reach desired state **terminates at the injected bound and emits bound-reached** to C39, rather than spinning unboundedly (INV-2; AI-CONTEXT:93). The numeric value and what C39 does next are out of scope here (XC-3).
-4. **AC-4 (convergence toward desired).** Each pass's transition reduces or holds the desired-vs-actual delta over the molecule/bead-tree (C13/C19/C20); a delta-*increasing* pass is surfaced as a convergence fault, not silently retried (INV-3; README:159).
-5. **AC-5 (bound-reached handoff, not self-escalation).** On reaching the bound, C18 emits the bound-reached signal to C39 and does **not** itself count attempts toward N, detect oscillation, or authorize a ship — verifying the C18/C39 policy boundary holds (XC-3; G18).
-6. **AC-6 (re-dispatch under convergence).** When desired ≠ actual because a dispatched agent is unavailable, the next tick's convergence re-triggers C05 to re-route (zombie-agent recovery; F22) — verifying the **inferred** C18→C05 trigger edge end-to-end (RC05-01; flagged as inference, not asserted fact).
-7. **AC-7 (no loop-owned state).** The loop persists no convergence state of its own; tick/gate/convergence events are observable via the **native** event bus (C23) and the durable counters live in C20's schema (written under C39's policy), not in a C18 store (INV-4).
+### 8.0 Sweep-1 acceptance (preserved)
 
-Test strategy (sweep-1): a single-tick fixture with one deciding deterministic gate + one available LLM step (AC-1) and its no-deciding-gate counterpart (AC-2); a non-convergent fixture run to the injected bound to assert termination + bound-reached emission (AC-3, AC-5); a delta-increasing fixture to assert convergence-fault surfacing (AC-4); a two-tick unavailable-agent fixture asserting re-dispatch via the inferred C05 edge (AC-6, F22); an attribution/observability check that tick + gate events appear on the native event bus with no C18-owned record (AC-7). Concrete tick signatures, the desired-vs-actual diff schema, the gate-ordering contract shape, and the bound-reached payload are deferred to sweep 2 — and verified against the **pinned `gc` binary** rather than invented `gc` internals (G11).
+1. **AC-C18-01** (deterministic-first ordering, was AC-1). In a convergence pass with both a deciding deterministic gate and an available LLM step, the deterministic gate is evaluated **first** and the LLM step is **not** taken when the deterministic gate decides (INV-1; README:154). A pass that takes the LLM step while skipping a deciding deterministic gate fails the test. Asserts: **E-C18-01** surfaces on gate-order violation.
+2. **AC-C18-02** (LLM admitted only where reasoning is required, was AC-2). When **no** deterministic gate can decide a step ("reasoning required", README:154; AI-CONTEXT:34), the loop admits the LLM step — verifying the ordering is *deterministic-first*, not *deterministic-only* (INV-1).
+3. **AC-C18-03** (bounded pass terminates, was AC-3). A convergence scenario that cannot reach desired state **terminates at the injected bound and emits bound-reached** to C39, rather than spinning unboundedly (INV-2; AI-CONTEXT:93). Asserts: **E-C18-02** produced; C18 does NOT self-escalate.
+4. **AC-C18-04** (convergence toward desired, was AC-4). Each pass's transition reduces or holds the desired-vs-actual delta over the molecule/bead-tree (C13/C19/C20); a delta-*increasing* pass is surfaced as a convergence fault, not silently retried (INV-3; README:159). Asserts: **E-C18-03** produced.
+5. **AC-C18-05** (bound-reached handoff, not self-escalation, was AC-5). On reaching the bound, C18 emits the bound-reached signal to C39 and does **not** itself count attempts toward N, detect oscillation, or authorize a ship — verifying the C18/C39 policy boundary holds (XC-3; G18). Asserts: **E-C18-02** signal content matches `BoundReachedSignal`; no C18-owned escalation action.
+6. **AC-C18-06** (re-dispatch under convergence, was AC-6). When desired ≠ actual because a dispatched agent is unavailable, the next tick's convergence re-triggers C05 to re-route (zombie-agent recovery; F22) — verifying the **inferred** C18→C05 trigger edge end-to-end (RC05-01; flagged as inference, not asserted fact).
+7. **AC-C18-07** (no loop-owned state, was AC-7). The loop persists no convergence state of its own; tick/gate/convergence events are observable via the **native** event bus (C23) and the durable counters live in C20's schema (written under C39's policy), not in a C18 store (INV-4).
+
+### 8.1 Sweep-2 concrete acceptance tests (AC-code table)
+
+| AC-code | Given / When / Then | Verifies |
+|---|---|---|
+| **AC-C18-01** | Given a `PassInput` with one `Deterministic` gate that decides `BeadSpec` + one `LLM` gate; When C18 runs a convergence pass; Then `gates_ordered[0].Kind == Deterministic` and the LLM gate is NOT invoked | INV-1 / E-C18-01 |
+| **AC-C18-02** | Given a `PassInput` where ALL deterministic gates return `decided=false` + one LLM gate; When C18 runs a pass; Then the LLM gate IS invoked and `PassResult.Converged` depends on the LLM step's outcome | INV-1 (deterministic-first, not deterministic-only) |
+| **AC-C18-03** | Given a `PassInput` with `BoundPolicy{MaxAttempts:2}` and a desired state that cannot be reached in 2 iterations; When C18 runs the pass to exhaustion; Then `PassResult.BoundReached==true` and `Signal.AttemptNo==2`, `Signal.MaxAttempts==2` are non-nil; loop halts | INV-2 / **E-C18-02** |
+| **AC-C18-04** | Given a `PassInput` where a gate's step returns a `BeadState` with higher `delta` than before; When C18 detects delta increase; Then `PassResult.Converged==false`, a delta-regression event appears on native bus (C23), and the regressing step is NOT re-applied | INV-3 / **E-C18-03** |
+| **AC-C18-05** | Given `PassResult.BoundReached==true` has been emitted; When the test inspects C18's internal state; Then C18 has NOT written `escalated=true` to any bead, has NOT invoked any oscillation-detection logic, and has NOT authorized any ship action | XC-3 / **E-C18-02** |
+| **AC-C18-06** | Given a `PassInput` where one `BeadSpec` has `Required=in_progress` but `BeadState.Status=open` (agent unavailable); When C18 runs two ticks; Then `PassResult.Redispatch` contains the spec on tick 1; On tick 2, the re-dispatch has been issued via C05 [FAITHFUL-FILL RC05-01] | F22 / **E-C18-04** on dispatch failure |
+| **AC-C18-07** | Given a convergence pass completes; When the test inspects the native event bus (C23); Then at least one tick/gate/converge event is present; AND no C18-owned bead or record has been created in C19/C20 | INV-4 |
+| **AC-C18-08** | Given `BoundPolicy` is absent (nil/zero) when C18 first runs; When C18 runs the pass; Then it uses the stub default `max_attempts=3`, a warning event appears on native bus, and the pass terminates at 3 iterations without panicking | Batch-order inversion / **E-C18-05** |
+
+Test strategy (sweep-2): all sweep-1 fixtures refined to use `PassInput`/`PassResult` types from §3.0 signatures. AC-C18-03/05 pair drives the E-C18-02 path (bound-reached); AC-C18-04 drives E-C18-03 (delta regression); AC-C18-06 drives E-C18-04 (redispatch-fail path); AC-C18-08 drives E-C18-05 (nil-bound stub). All tests verified against the **native event bus** (C23) for observability without C18-owned records. Gate-ordering hook confirmed against the **pinned `gc` binary** before any T4 implementation (OQ-3 / G11).
 
 ## 9. Open questions
 
-- **OQ-1 (→ [review-log](../_meta/review-log.md), top open question).** *Confirm C39 — not C18 — owns the numeric termination policy (G18 / XC-3).* C18 provides the bounded convergence **loop** and emits **bound-reached**; XC-3 routes the **numeric** policy (N attempts → escalate, F52 oscillation detection, L5 ship authorization) to **C39**, backed by C20's `attempt_no`/`max_attempts`/`escalated`/`closes` slots — "deferred to C39 (and possibly C18). **Confirm C39 owns it.**" (review-log XC-3). Faithful disposition: **C39 owns the policy; C18 owns the loop + the bound-reached signal + the injected-bound enforcement.** The load-bearing cross-component item is confirming with the C39 author that (a) C39 injects the bound C18 enforces, (b) C39 consumes C18's bound-reached signal, and (c) oscillation detection and L5 ship authorization live wholly in C39, so C18 holds none of the numbers. If any of the numeric policy is folded back into C18, INV-2 grows from "enforce an injected bound + signal" to "own N + detect oscillation + authorize ship" — a materially larger C18 that XC-3 currently routes away.
-- **OQ-2.** *Reconciler→dispatch trigger is inferred, not v4-stated (RC05-01).* C18's outbound (re)dispatch edge to C05 (§3.2) — and the F22 re-dispatch story (§6) — assumes the reconciler invokes sling, which v4 implies but never states (the two never co-occur causally; §2 `[FAITHFUL-FILL]`). Carry this as the load-bearing assumption to confirm with the C05 author (already mirrored as RC05-01 on the C05 side): if dispatch is instead triggered by a running C12 formula step, C18's outbound trigger changes from "issue dispatch" to "converge state and let the formula dispatch". Until then, model it as reconciler-driven and **flag it as inference, never assert it as sourced fact**.
-- **OQ-3.** *Native Health Patrol internals are unverified (G11).* v4 says the loop is "Native" (README:159) and "Per-tick … bounded convergence with gates" (AI-CONTEXT:93) but gives no `gc` reconciler interface, tick model, or gate-ordering hook surface. Under the bar this is **Gas City's native machinery**, not C18 custom code — C18 specs the *contract* (deterministic-first ordering, bounded pass, bound-reached signal), not the engine. Open for sweep 2: confirming against the **pinned `gc` binary** how Health Patrol exposes per-pass gate ordering and where a v4 pack hooks the deterministic-first discipline and the bound — strictly as *observation/config over native*, **not** by inventing `gc` reconciler internals (G11 caution).
+- **OQ-1 — RESOLVED (Sweep-2): C39 owns numeric policy; C18 owns the loop + bound enforcement + bound-reached signal.** Verbatim XC-3 citation (authoritative):
+  > **XC-3 RESOLVED — G18 numeric termination policy owned by C39.** C39 (fix-task-loop-closure) owns the numeric termination/escalation policy (N-attempts→escalate, F52 oscillation detection, L5 ship-authorization) over C20's bounded slots; **C18** owns the convergence loop + the bound-reached signal; **C20** owns the schema slots. Verified across the C16/C18/C20/C39 reviews and against C39's now-on-disk spec (§1/§3.2 contract 7/§6 "CRITICAL — XC-3"). Closes the XC-3 routing that C16/C18/C20 deferred to C39.
+
+  C18's Sweep-2 spec encodes this split exactly: `BoundPolicy` (§3.0) is injected by C39 via C20's `max_attempts` slot; `BoundReachedSignal` (§3.0) is C18's outbound to C39; C18 owns zero numeric values. `convergence.max_iterations` is NOT a real `gc` field (F2). The ownership split is now encoded in §3.0 signatures, §3.4 field table, §5.1 state diagram, §7.5 E-code table (E-C18-02), and AC-C18-03/AC-C18-05.
+
+- **OQ-2 — INFERRED, NOT YET PINNED. Reconciler→C05 redispatch trigger is a v4 inference (RC05-01); flag clearly until confirmed.** C18's outbound `Redispatch []BeadSpec` field (§3.0) models the trigger, and E-C18-04 covers dispatch-fail. The C12-formula-step alternative (the faintly-sourced reading from README:109) remains a live alternative. This OQ stays open until a C05-author or G11 pinned-`gc` run confirms the causal path. **All Sweep-2 material marks this edge [FAITHFUL-FILL RC05-01] and does not assert it as sourced fact.**
+
+- **OQ-3 — STILL OPEN; needs G11.** Native Health Patrol internals are unverified (G11). C18 specs the *contract* (deterministic-first ordering, bounded pass, bound-reached signal) not the engine; the §3.0 signatures and §5.1 state diagram represent the v4 contract seam, not invented `gc` internals. The Sweep-2 deliverable is pinning the hook surface against `gc start --foreground` (F6): confirming that a v4 pack can observe/extend per-pass gate ordering within native Health Patrol, and where the `max_attempts` enforcement point lives in real `gc` — via the [D-23 spike protocol](../_meta/D-23-gas-city-spike-protocol.md), **not** by inventing internals. Marked `[needs G11 verification]` throughout Sweep-2 additions. **This remains the top open question for C18.**
 
 ---
 

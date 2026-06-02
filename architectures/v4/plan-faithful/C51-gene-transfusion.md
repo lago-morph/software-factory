@@ -88,29 +88,43 @@ Freeze these early so dependents (C52, C53, C54, C57) can build against stubs:
 
 ## 6. Definition of done
 
-**Per-component (ties to spec §8 acceptance criteria):**
+**Per-component (ties to spec §8 / §8.1 acceptance criteria):**
 - **DoD-1**: a factory-built component declaring **zero** exemplars is rejected; ≥1 `transfused_from` URL
-  passes — "no invention from scratch" enforced (spec §8.1; B55).
+  passes — "no invention from scratch" enforced (spec §8.1; B55). Verified by AC-C51-01.
 - **DoD-2**: `transfused_from` is recorded **once per factory-built component** on its `factory_build`
   bead and resolves via §16 cold-start step 2 — component-grain provenance, not per-record (spec §8.2;
-  RC11-01).
+  RC11-01). Verified by AC-C51-10.
 - **DoD-3**: the predicate is **exemplar-grounded + complete** — every named exemplar behavior is covered
   by ≥1 scenario and a `pass` requires satisfaction ≥ bar; a component satisfying a generic spec but
   covering no exemplar behavior does **not** pass (spec §8.3). **The numeric bar is correctly deferred to
-  C50/C53, not set here** (G07 predicate-shape delivered, threshold policy relocated).
+  C50/C53, not set here** (G07 predicate-shape delivered, threshold policy relocated). Verified by AC-C51-04/AC-C51-05.
 - **DoD-4**: a **code-port** from an unverified/restrictive-license exemplar is blocked; the same exemplar
   passes under **pattern-reimplement** (spec §8.4; G30). Tracker (unverified) is the test instance.
+  Verified by AC-C51-02/AC-C51-08.
 - **DoD-5**: a fail/inconclusive predicate emits **transfusion-insufficient** and routes to human design
   review, never silent-ships (spec §8.5). **This is G14 *made falsifiable per component*, not eliminated**
-  — the class-level hedge is C54's (OQ-C51-2).
+  — the class-level hedge is C54's (OQ-C51-2). Verified by AC-C51-05/AC-C51-06.
 - **DoD-6**: an *adopted* upstream substrate dependency (CXDB, Temporal) is **not** flagged for a missing
-  `transfused_from` — only factory-built glue is in scope (spec §8.6; A107).
+  `transfused_from` — only factory-built glue is in scope (spec §8.6; A107). Verified by AC-C51-09.
 
 **Per-task**: each Tn lands with its contract documented and a conformance vector covering its rule. T1
 lands as an accepted C20 slot request; T3 lands with its binding to C30/C32/C33 output shapes named; T4
 lands with the license decision table referencing the README:285–306 census.
 
-**Open-question exit**: OQ-C51-1 (named-behavior extraction — the completeness anchor) and OQ-C51-2 (C54
-class-level fallback ownership) must be resolved or explicitly carried to sweep 2 before T3/T5 are
-considered frozen rather than draft. OQ-C51-3 (threshold owner) and OQ-C51-4 (census authority) co-resolve
-with C50/C53 and C57 respectively.
+**Open-question exit (Sweep-2 update):** OQ-C51-1 (completeness anchor), OQ-C51-3 (threshold owner), OQ-C51-4 (census authority), and OQ-C51-5 (signing) are all **RESOLVED at Sweep-2** (see spec §9). OQ-C51-2 (C54 class-level fallback) remains open — C54 must confirm ownership before T5/T6 are fully frozen.
+
+## 7. Sweep-2 additions: interface-first milestones (concrete)
+
+The following were deferred to Sweep-2 in the plan and are now defined (spec §§3.0–3.0.3, §4.1, §6.1–6.2, §8.1):
+
+| Milestone | Spec section | Build order note |
+|---|---|---|
+| Concrete `can_transfuse` + `check_declaration` signatures | §3.0 | Freeze before T6 (C52 gate integration) |
+| `ExemplarRef` field table (incl. `named_behaviors`, `license_spdx`, `license_verified`, `transfusion_mode`, `donate_back`) | §4.1.1 | Freeze at T1; C52 and C57 read |
+| `transfusion_verdict` field table (incl. `signed=false` for Phase-0) | §4.1.2 | Freeze at T3; C52 writes, C53 reads |
+| Extended `factory_build` bead C20 slot request (§4.1.3) | §4.1.3 | T1 is a C20 slot request — coordinate with C20 author |
+| E-code table (E-C51-01..07) | §6.1 | Referenced by T2/T3/T4/T5 conformance |
+| AC-code table (AC-C51-01..10) + E↔AC cross-refs | §8.1 | T8 conformance vectors are these ACs |
+| Sequence diagram (declare→build→accept→review) | §6.2 | Documents the two C51 call-points C52 must implement |
+
+**New seam (C51↔C52/C53, record-on-factory_build → orchestrator):** The `TransfusionVerdict` written to the `factory_build` bead by C52 (after C51 computes it) is the artifact C53's milestone gate reads. The seam is: C51 returns the struct → C52 writes it to C20 bead → C53 queries the bead. No new transport needed — the bead store (C19/C20) is the coordination medium. This seam was implicit at Sweep-1; it is now explicit in the sequence diagram (§6.2).

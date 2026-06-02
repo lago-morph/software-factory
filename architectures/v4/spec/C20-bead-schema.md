@@ -125,6 +125,22 @@ register_bundle({
   }
   # NOTE: no `viewpoints` key — viewpoint tagging (F50) is a CXDB-trajectory concern (C22's own bundle),
   # NOT a bead concern. C20's bundle registers field schemas only.
+
+  # D-3 + D-39: Eval-tier bead type registrations.
+  # C20 does NOT author these schemas (D-39: C32 owns ScoreRecord; C33 owns satisfaction_metric).
+  # C20 registers them into the bundle so C22's `resolve_type` can locate their schemas on behalf
+  # of consumers (C33 aggregates, C34 audits, C46 reads FP-rate).
+  # Schema detail lives in C32 §3.2 (score_record) and C33 §3.4 (satisfaction_metric).
+  "softwarefactory.v4.beads:score_record": {
+    # schema owned by C32 (D-39 freeze); registered here per D-3 (C20 owns the registration bundle)
+    # field detail: see C32 §3.2 ScoreRecord schema + C32 §3.5 REV-SEAM-03
+    # consumers: C33 (aggregate), C34 (independence audit), C46 (FP-rate, non-spine)
+  },
+  "softwarefactory.v4.beads:satisfaction_metric": {
+    # schema owned by C33; registered here per D-3 (C20 owns the registration bundle)
+    # field detail: see C33 §3.4 SatisfactionDistribution + bead-write contract (D-36)
+    # consumers: C46 (non-spine), C53 (milestone bar), C55 (methodology experiment, non-spine)
+  }
 })
 ```
 
@@ -313,28 +329,39 @@ must validate against that type and survive a store→read→store cycle unchang
 | `max_attempts` | `int` | O | the bound beyond which the chain escalates (XC-3 slot — *slot only*; value is C39 policy) | C20 defines; **C39 sets value**; C18 enforces per-pass |
 | `escalated` | `bool` | O | true once the chain was handed to a human (XC-3 slot) | C20 defines; **C39 sets** |
 
-#### 4.5.3 `factory_build` — completed build record (AI-CONTEXT §16)
+#### 4.5.3 `factory_build` — factory self-build record (AI-CONTEXT §16; D-40 lifecycle)
+
+> **[D-40 ADOPTED 2026-06-01 — verbatim]:** "The in-progress → completed advance of a factory self-build is a **`status` field transition on a single `factory_build` bead type** (`status: in_progress → completed`), **NOT** a flip from a distinct `factory_build_in_progress` type to `factory_build`. The cold-start / resume query keys on `factory_build` + `status = in_progress` (resolving **XC-2**'s AI-CONTEXT §16 hard-coded `gc bd find --type factory_build_in_progress` to a `--type factory_build --status in_progress` query). **C20** owns the `factory_build` schema + the `status` slot; **C52** drives the transition; **C53** records the go/no-go on the same bead (C53:OQ-4)."
+
+> **Bead-type version bump (D-40 + C53 slot-request):** The `factory_build` type schema is extended with the D-40 status slot + the C51/C52/C53 verdict and milestone slots. The bundle version MUST be incremented (C22 I2 — immutable once published) whenever this field set changes. This is a **breaking schema extension** that downstream components (C51, C52, C53, C34 audit) must read the new fields against. The C22 registration mechanism (D-3) MUST be re-run after any version bump.
 
 | Field | Type | Req? | Semantics | R/W by |
 |---|---|---|---|---|
 | `transfused_from` | `string` \| `list<string>` | R | gene-transfusion attribution: the external exemplar(s) this component transfused (AI-CONTEXT §16 step 2) | C51 writes; C51 audit reads |
-| `spec_ref` | `path` | R | spec pointer (`packs/*/spec.md`) | C52/C08 |
-| `scenario_ref` | `path` | R | scenario pointer (`scenarios/<component>/`) | C52/C30 |
+| `spec_ref` | `path` | R | spec pointer (`packs/*/agents/*/prompt.template.md`) | C52 writes on spec emission |
+| `scenario_ref` | `path` | R | scenario pointer (`scenarios/<component>/`) | C52 writes; C30 populates |
+| `status` | `enum{in_progress, completed}` | R | D-40 lifecycle state. `in_progress` on build-start (C52 `emit_spec`); **C52 advances to `completed`** after `gate_decision.decision=approved` (`advance_to_completed`). The canonical resume query is `gc bd find --type factory_build --status in_progress` (D-40, XC-2 resolution). | C20 defines slot; **C52 drives transition** |
+| `workflow_handle` | `handle` | R | resume token for `gc converge resume <bead_id>` (AI-CONTEXT §16 lines 695–699; D-40 resume-completeness invariant). Required when `status=in_progress`; may be absent on pre-dispatch write. | C52 writes after dispatch |
+| `gate_decision` | `JSON` (GateDecision) | O | C52's human-review record: `{decision: enum{approved,rejected}, reviewer_id: actor, decision_ts: timestamp, notes: string|null, bead_id: bead_id}`. Present once `submit_for_review` is called (§3.4 C52). D-40: "C52 drives the transition; gate decision record stored on this bead." | **C52 writes** after human-review gate; C52/C53 read to decide advance |
+| `transfusion_verdict` | `JSON` (TransfusionVerdictRecord) | O | C51 predicate outcome: `{outcome: enum{pass,fail,inconclusive}, completeness_result, correctness_result, scenario_ids, verdict_time, signed: bool}` (C51 §4.1.2). Present once C51 acceptance-time evaluation runs. | **C51 computes**; C52 writes to bead; C53 reads (Term 1 of rubric) |
+| `milestone_verdict` | `string` (`"go"` \| `"no_go"`) | O | C53's bootstrap go/no-go outcome. Present once C53 `decide()` is called. Consumed by C54 to arm/withhold Phase-3 transition. (C53 §3.4, D-40 "C53 records the go/no-go on the same bead.") | **C53 writes**; C54 reads |
+| `milestone_evidence` | `JSON` (GoNoGoDecision evidence bundle) | O | C53's full `GoNoGoDecision` evidence record: transfusion ref, distribution bead, scenario set id, review ref, N, attempt bound state, `decided_at`. (C53 §3.4 slot-request; INV-4 auditability.) | **C53 writes**; C57 audits |
+| `milestone_decided_at` | `timestamp` (ISO-8601 UTC) | O | When C53 `decide()` was called. Present whenever `milestone_verdict` is set. (C53 §3.4 slot-request.) | **C53 writes** |
+| `exemplar_set` | `JSON` (`List[ExemplarRef]`) | R | C51-owned declared exemplar set at component grain (C51 §4.1.1). ≥1 required (≥1-exemplar invariant). | C52 writes at declaration-time; C51 reads; C57 license-census aggregates |
 
-#### 4.5.4 `factory_build_in_progress` — resumable mid-flight build (AI-CONTEXT §16 lines 695–699)
+> **Three-writer seam (D-40 + C53 §3.4 NEW SEAM):** One bead, three sequential append-writes: **(1)** C51 writes `transfusion_verdict` + `exemplar_set` at acceptance-time; **(2)** C52 writes `gate_decision` + `workflow_handle` and advances `status` from `in_progress` to `completed` after approval; **(3)** C53 writes `milestone_verdict` + `milestone_evidence` + `milestone_decided_at`. All on the same `factory_build` bead. Grain = one decision per factory-built component build. This seam is registered to the **orchestrator ledger** as a C53-originated new obligation on C20 (C53 §3.4 "NEW SEAM").
 
-Carries **all `factory_build` fields** (§4.5.3) **plus**:
+> **`factory_build_in_progress` note (D-40/XC-2):** The pre-D-40 distinct type `factory_build_in_progress` is retained in §4.5.4 as a **legacy-compatibility alias** for implementations built against the AI-CONTEXT §16 literal query string. The **canonical D-40 path** is `factory_build + status=in_progress`; new code MUST use the D-40 query (`gc bd find --type factory_build --status in_progress`). XC-2 is resolved by D-40; the pre-D-40 type entry is kept only for backward-compatibility annotation, not as the active type for new builds.
 
-| Field | Type | Req? | Semantics | R/W by |
-|---|---|---|---|---|
-| `workflow_handle` | `handle` | R | the resume token `gc converge resume <id>` reattaches to (resume-completeness invariant §3) | C52 writes; `gc converge resume` reads |
+#### 4.5.4 `factory_build_in_progress` — legacy-compatibility alias (PRE-D-40; see §4.5.3)
 
-> [FAITHFUL-FILL] `factory_build_in_progress` is kept a **distinct literal type** (not `factory_build` +
-> `status=in_progress`) so the cold-start query `gc bd find --type factory_build_in_progress` (§16)
-> resolves verbatim with no shim — exactly the faithful/optimized divergence point already noted in §4.1
-> (XC-2). On completion the build advances `factory_build_in_progress → factory_build`; whether that is a
-> `type`-flip on one record or a new `factory_build` linked to the closed in-progress bead is **C20:OQ-3**
-> (= XC-2; C52 co-owner) — deferred, not decided here.
+> **[D-40 ADOPTED 2026-06-01 — XC-2 RESOLVED]:** The canonical path for factory self-builds is now `factory_build + status=in_progress` (§4.5.3). The `factory_build_in_progress` type is retained here as a **legacy-compatibility alias** for code written against the pre-D-40 AI-CONTEXT §16 literal query string (`gc bd find --type factory_build_in_progress`). **New implementations MUST use** `--type factory_build --status in_progress` (C52 §3.1 Contract 2; D-40). This section is preserved for backward-compatibility annotation only, not as the active schema for new builds. C20:OQ-3 (status vs type-encoded lifecycle) is **RESOLVED by D-40**: the `status` field on `factory_build` is the canonical lifecycle; the type string carries no lifecycle information.
+
+For implementations that require the legacy query string to work, the `factory_build_in_progress` type entry in the bundle registry MAY be retained as an alias that resolves to `factory_build + status=in_progress`. The resume-completeness fields (`workflow_handle`, `spec_ref`, `scenario_ref`, `transfused_from`) live on `factory_build` §4.5.3.
+
+> **C20:OQ-3 RESOLVED (D-40):** `status` field is the canonical lifecycle signal. The dual representation (`factory_build_in_progress` type vs `status=in_progress`) is resolved in favor of the status field; the type alias is legacy. D-40 is the binding decision.
+
+> [FAITHFUL-FILL] The original faithful motivation for `factory_build_in_progress` as a **distinct literal type** was that the cold-start query `gc bd find --type factory_build_in_progress` (§16) resolves verbatim with no shim — exactly the XC-2 divergence. D-40 resolves this: the query shim IS the `--type factory_build --status in_progress` form. C52's resume contract (§3.1 Contract 2) implements the D-40 query. The pre-D-40 type remains defined for backward-compatibility only.
 
 #### 4.5.5 Chain-derived types & the closure slot (provisional — OQ-C20-2)
 

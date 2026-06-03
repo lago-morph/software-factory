@@ -73,6 +73,129 @@ repo / `scenarios` partition — not to police access. Per D-1 the judge is the 
 coder, so the holdout guarantee rests on **rig partitioning (C42) + role isolation**, not model-family
 diversity; C30's contribution to that guarantee is *correct placement of the corpus*, nothing more.
 
+### 1.1 S↔H correspondence duty (D-42 / ADR-0069 §0★.2.4)
+
+The scenarios C30 stores must **correctly and completely describe the use of the spec'd system** (the S↔H
+edge of the spec–scenarios–system triangle; ADR-0069 / D-42). This is not a storage property — it is an
+**authoring responsibility**: the scenario builder works **with** the spec builder to ensure every held-out
+scenario accurately exercises an observable behaviour the spec mandates, uses it in a way the spec sanctions,
+and covers the scenarios the spec requires covered. A scenario that tests behaviour the spec does not require,
+or omits a behaviour the spec mandates, or is itself ambiguous relative to the spec, **breaks the S↔H edge**
+— making the H↔I signal (the judge's anti-gaming check) unreliable independently of what the system does.
+
+**D-38** (verbatim, review-log — cited here for the authoring-independence consequence):
+
+> "Judge read-surface SHAPE = a separate judge rig (the D-17 joint C42/C34/C32 freeze). Per D-31 (multiple
+> rigs per city) + D-17: the judge runs in a **separate rig** from the worker (worker rig + judge rig,
+> co-resident in the city). The judge MAY read the worker's trajectory log + the held-out scenario partition;
+> the worker MUST NOT read the judge rig or the scenarios (the holdout — C34 enforces+audits, C42 provides
+> the partition); **no shared context window**."
+
+Consequence for S↔H: the scenario builder + spec builder do their correspondence work in the
+`scenario_authoring` rig — an **authoring-side rig independent of the implementing worker**. D-38 forbids
+the worker from reading the scenario partition; by extension, the worker has **no path to author or correct
+scenarios**. This is not merely an isolation side-effect: it is the **anti-gaming invariant**. If the
+implementing worker could author or correct scenarios, "fix the scenario" would degenerate into "weaken the
+scenario until my output passes."
+
+**S↔H authoring chain (who touches what):**
+
+| Role | May author / correct scenarios? | Rig | Basis |
+|---|---|---|---|
+| **Scenario builder + spec builder** | Yes — this is the S↔H correspondence duty | `scenario_authoring` (C42/D-38) | D-42 / ADR-0069 §0★.2.4 |
+| **Implementing worker** | **Never** — anti-gaming invariant | worker rig (C42) | D-38 / D-42 / ADR-0069 |
+| **Judge (C32)** | No — reads scenarios to score; cannot author | judge rig (C42/D-38) | D-38 |
+
+**When C32 attributes `root_cause = scenario`** — meaning the scenario misrepresents the spec (incomplete,
+ambiguous, or contradictory relative to the spec) — the S↔H edge is broken. The correction is performed by
+the **independent scenario-correction path** (§1.3 below), never the implementing worker.
+
+### 1.2 Test-kind distinction: in-system tests vs the hold-out (D-42 / ADR-0069)
+
+C30 is the home of the **hold-out** — the *independent* check that the implementing worker cannot game. It
+is **explicitly NOT the home of in-system tests**. The distinction is load-bearing for the triangle's trust
+property:
+
+| Kind | Owner | What it enforces | Gameable? | Lives in C30? |
+|---|---|---|---|---|
+| **In-system tests** (unit / integration / e2e) | **Implementing worker** — written as part of the build deliverable | S↔I: the system faithfully implements the spec | **Yes** — the implementer writes both the system and the tests; "green" certifies nothing against an independent reading of the spec | **No** |
+| **Hold-out scenarios** | **Scenario builder + spec builder** — authored in `scenario_authoring` rig, independent of the worker | H↔I: hold-out scenarios pass against the system | **No** — worker cannot read or author these (C34 enforces, D-38/D-42) | **Yes** — this is C30's corpus |
+
+The in-system tests are a necessary build deliverable (they are how the implementer enforces local
+faithfulness and how the S↔I edge is exercised). But they are explicitly **not the trust boundary**: a
+worker can make its own tests pass with a wrong implementation. The hold-out, authored independently in C30's
+rig and evaluated by C32 in the judge rig, is the only check the implementer cannot game — and that
+independence is precisely the H↔I edge's value in the triangle.
+
+### 1.3 Scenario-correction seam: independent authoring path (capability-bar SEAM — §0★.3)
+
+When the judge (C32) attributes `root_cause = scenario` in a `DiagnosisRecord` (D-43 frozen schema, C32
+§3.2a), the misalignment is a **broken S↔H edge**: the stored scenario misrepresents, is incomplete, or is
+ambiguous/contradictory relative to the spec. The repair path is:
+
+1. **C52** (repair router) receives the `DiagnosisRecord` and, keyed on `root_cause = scenario`, routes a
+   `ScenarioCorrectionRequest` to **C30's scenario builder + the spec builder** — **never to the implementing
+   worker** (anti-gaming invariant; D-42).
+2. **C30** receives the `ScenarioCorrectionRequest`, the scenario builder (in the `scenario_authoring` rig,
+   working with the spec builder) re-authors or extends the affected scenario(s), and commits the corrected
+   scenario to the separate repo under a new `scenario_set_version`.
+3. **C52** re-triggers evaluation (via C31/C32) against the corrected corpus.
+4. **C34** audits that the new scenario entry has `created_by = "rig:scenario_authoring"` — a
+   worker-rig-originated correction is rejected at the authoring-rig confinement check (E-C30-08).
+
+**`ScenarioCorrectionRequest` interface (minimal seam — §0★.3 capability-bar):**
+
+> **D-44 (ADOPTED — lead, 2026-06-02) — canonical correction-request contract: C52 constructs the consumer-named payload per route; both anchor on `factory_build_ref` + carry `diagnosis_ref` + `requested_by`.**
+> "C52 does **NOT** emit a single generic `CorrectionRequest` — on a `scenario` route it constructs **C30's `ScenarioCorrectionRequest`** (C30 remains the spec-of-record for this inbound type). **Common required fields on BOTH payloads:** `factory_build_ref` (the D-40 bead anchor — the canonical traceability key), `diagnosis_ref` (the `DiagnosisRecord` bead id, so the consumer can pull full attribution), `component_id`, `requested_by` (`"kind:id"` actor, D-29 — **stamped by C52 with its own rig identity**; this is the field the worker-origin rejection keys on, D-45), `repair_mode` ∈ `{incremental_fix, discard_and_reimplement}` (= `DiagnosisRecord.repair_recommendation`), `defect_detail` (the rationale text, copied from `DiagnosisRecord.root_cause_rationale` + `repair_rationale`; formerly named `rationale` — renamed per D-44), `requested_at`. **`ScenarioCorrectionRequest` adds:** `scenario_ids` (the misaligned scenarios). `correction_mode` ∈ `{re_author, extend, remove}` is **reclassified as C30-INTERNAL** (the local edit operation the scenario builder chooses when it acts) — **NOT** an inbound request field."
+
+> **D-45 (ADOPTED — lead, 2026-06-02; resolves C08:OQ-3 + the C30/C34 enforcement-point ambiguity) — worker-origin rejection is ENFORCED by C34; E-C30-08 is defense-in-depth.**
+> "**C34 owns the enforcement** — its provenance audit **extends to `{Spec,Scenario}CorrectionRequest.requested_by`** (a correction request whose `requested_by` resolves to the implementing worker rig fails the audit → the request is rejected, never executed). The **C30 (E-C30-08) entry-guard rejection is retained as defense-in-depth** but delegates the authoritative check to C34."
+
+This is a named seam to the scenario builder + spec builder + future non-spine C10/C11. C30 receives
+requests; it does **not** build the intent crucible (C11) or EARS linter (C10). The minimal interface:
+
+```python
+@dataclass
+class ScenarioCorrectionRequest:
+    factory_build_ref: str       # keyed on DiagnosisRecord.factory_build_ref (D-40 factory_build bead)
+    diagnosis_ref:     str       # bead ref of the triggering DiagnosisRecord (C32 §3.2a, D-43)
+    component_id:      str       # the component whose scenario corpus needs correction
+    requested_by:      str       # "kind:id" actor (D-29); C52 stamps its own rig identity
+                                 # MUST be C52's rig (e.g. "rig:bootstrap") — NEVER "rig:worker-N"
+                                 # C34 is the canonical enforcement owner (D-45);
+                                 # E-C30-08 is defense-in-depth at this boundary
+    repair_mode:       str       # "incremental_fix" | "discard_and_reimplement"
+                                 # = DiagnosisRecord.repair_recommendation
+    defect_detail:     str       # the judge's root_cause_rationale + repair_rationale verbatim
+                                 # (formerly "rationale" — renamed per D-44)
+    requested_at:      str       # UTC timestamp when C52 issued the request
+    scenario_ids:      list[str] # the scenario Task.name(s) flagged in DiagnosisRecord.misalignments
+    # correction_mode is C30-INTERNAL (the scenario builder's local edit op: "re_author" | "extend" | "remove")
+    # It is NOT an inbound field — C30 determines the edit op internally after receiving this request (D-44)
+```
+
+**`ScenarioCorrectionRequest` field table:**
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `factory_build_ref` | `string` | R | The `factory_build` bead ref (D-40) this correction is for; keys the correction to the build that triggered the diagnosis — canonical traceability anchor (D-44) | C52 writes; C30 reads; C34 audits |
+| `diagnosis_ref` | `string` | R | Bead ref of the `DiagnosisRecord` (C32 §3.2a, D-43) that attributed `root_cause = scenario`; the correction is traceable to the diagnosis | C52 writes; C30/C34 read |
+| `component_id` | `string` | R | The C-ID whose held-out corpus needs correction | C52 writes; C30 reads |
+| `requested_by` | `string` (`"kind:id"` per D-29) | R | The actor that issued the request; MUST be C52's rig identity (e.g. `"rig:bootstrap"`) — NEVER a worker-rig identity; **C34 is the canonical enforcement owner (D-45)**; E-C30-08 fires as defense-in-depth if a worker-rig request reaches this boundary | C52 stamps its own rig identity; C34 validates (canonical, D-45); C30 entry-guard (defense-in-depth) |
+| `repair_mode` | `enum{incremental_fix,discard_and_reimplement}` | R | From `DiagnosisRecord.repair_recommendation`; = the inbound repair intent | C52 copies from `DiagnosisRecord.repair_recommendation`; C30/scenario-builder reads |
+| `defect_detail` | `string` | R | The judge's `root_cause_rationale` + `repair_rationale` from the `DiagnosisRecord` — human-readable explanation of the S↔H misalignment (D-44: canonical name, replaces former `rationale`) | C52 writes (from DiagnosisRecord); C30/spec-builder read |
+| `requested_at` | `timestamp` | R | UTC timestamp when C52 issued the request | C52 writes |
+| `scenario_ids` | `list[string]` | R | The `Task.name` identifiers of the flagged scenarios (from `DiagnosisRecord.misalignments[*].scenario_id`); the correction target(s) (D-44 `ScenarioCorrectionRequest` adds) | C52 writes (from DiagnosisRecord); C30 reads |
+
+**`correction_mode` — C30-INTERNAL (D-44):** `correction_mode ∈ {re_author, extend, remove}` is the scenario builder's local edit operation — how C30 decides to repair the affected scenario(s) after receiving the request. It is **NOT** an inbound field on the `ScenarioCorrectionRequest`; the inbound payload carries `repair_mode`, not `correction_mode`. C30 determines `correction_mode` internally based on the `scenario_ids`, `defect_detail`, and `repair_mode` it receives.
+
+**Anti-gaming invariant on this seam:** the `ScenarioCorrectionRequest` MUST originate from C52's repair
+router (in the judge-rig/bootstrap context), never from the implementing worker rig. C34 enforces this by
+auditing `created_by` on any new scenario entry that follows a correction cycle: if `created_by ≠
+"rig:scenario_authoring"`, E-C30-08 is raised and the entry is rejected. The implementing worker has no
+path to inject a correction request through C52 either, because C52's repair router keys on the
+`DiagnosisRecord` (a judge-rig output the worker cannot produce — D-38/D-42).
+
 **Responsibilities (what C30 is the spec-of-record for):**
 - **Scenario authoring in the Inspect AI Task DSL** — scenarios are Inspect AI `Task` objects (Python),
   *adopted as-is*; C30 owns *that this is the authoring format* and the small Gas City pack that exposes
@@ -435,6 +558,39 @@ sequenceDiagram
     Note over C34: C34 baselines MANIFEST generated_at_commit vs repo HEAD detects drift
 ```
 
+### 5.2 Sequence diagram — scenario-correction path (root_cause=scenario from C32) (Sweep-2)
+
+This diagram covers the C30-owned flow when the judge returns `root_cause = scenario`: C52 routes a
+`ScenarioCorrectionRequest` to C30; the scenario builder + spec builder re-author in the `scenario_authoring`
+rig; C34 audits the result. The worker rig has no step in this flow — its exclusion is the anti-gaming
+property (§1.3 / D-42 / ADR-0069). Diagram validated by `mcp__957183d2` validator (PASS).
+
+```mermaid
+sequenceDiagram
+    participant C32 as Judge (C32)
+    participant C52 as Bootstrap loop (C52)
+    participant C30 as Scenario store (C30)
+    participant C34 as Holdout audit (C34)
+    Note over C32: root_cause = scenario
+    C32->>C52: DiagnosisRecord (root_cause=scenario, misalignments, factory_build_ref)
+    C52->>C30: ScenarioCorrectionRequest (factory_build_ref, diagnosis_ref, component_id, requested_by, repair_mode, defect_detail, requested_at, scenario_ids)
+    Note over C52,C30: NEVER the implementing worker (anti-gaming)
+    C30->>C30: scenario_authoring rig re-authors scenario(s)
+    C30->>C30: commit corrected scenario to separate repo
+    C30-->>C52: corrected scenario_set_version committed
+    C52->>C32: re-trigger evaluation with new scenario_set_version
+    C34-->>C30: audits created_by on new entry (must be rig:scenario_authoring)
+    Note over C34: worker-rig-originated request REJECTED (E-C30-08)
+```
+
+**Boundary note.** C30 *receives and processes* the `ScenarioCorrectionRequest` — the scenario builder +
+spec builder act in the `scenario_authoring` rig. C34 *audits* the resulting entry (anti-gaming check on
+`created_by`). C52 *routes* the request (keyed on `DiagnosisRecord.root_cause = scenario`). The
+**implementing worker has no node in this diagram**: it cannot originate a `ScenarioCorrectionRequest`
+through C52 (C52 keys on the judge-rig `DiagnosisRecord`), and any scenario entry it authors is rejected at
+the C34 confinement audit (E-C30-08). This seam is a stub to future non-spine C10/C11 (§0★.3 capability-bar)
+— C30 names the minimal interface; the spec builder's intent-crucible tooling is deferred.
+
 ## 6. Failure modes & handling
 
 C30 carries the holdout/isolation gaps assigned to it (G10, G21, G28) **at the storage/authoring altitude**,
@@ -456,6 +612,8 @@ committed, and integrity failures detected when the corpus is consumed. Enforcem
 | **E-C30-05** | Manifest schema mismatch: `schema_version` in MANIFEST.json does not match the version the consumer (C31/C32/C34) expects | Consumer (C31/C32/C34) raises a parse error citing E-C30-05; scenario retrieval (I7) or path-feed consumption (I6) is blocked | Regenerate MANIFEST under the current schema version; bump `schema_version` if a structural change was made |
 | **E-C30-06** | MANIFEST missing or corrupt: `scenarios/MANIFEST.json` is absent or unparseable in the separate repo | C31/C32 cannot retrieve scenarios (I7 outage); C34 cannot baseline (I6 outage); E-C30-06 raised by all consumers | Re-generate and commit a valid MANIFEST from the `scenario_authoring` rig; consumers retry once manifest is committed |
 | **E-C30-07** | Tampered scenario: the content of `scenarios/<component>/<name>.py` does not match the git-object hash for the `git_commit` recorded in MANIFEST (i.e. git history was rewritten after authoring) | C34 baselining detects hash mismatch; E-C30-07 in the audit log (INV-4 violation) | Human operator investigation required; the tampered file must be restored from git history or re-authored; this is a security event (F28/F9) |
+| **E-C30-08** | Worker-rig correction request rejected: a `ScenarioCorrectionRequest` whose `requested_by` resolves to a worker-rig identity (or any non-authoring rig) reaches C30's boundary, violating the anti-gaming invariant (§1.3 / D-42 / ADR-0069). **Defense-in-depth per D-45: the authoritative check is C34's `audit_correction_request_provenance()` on `requested_by`; E-C30-08 is a redundant guard at the C30 authoring-rig boundary.** | C34's provenance audit rejects the request before it reaches C30 (canonical, D-45); C30's authoring-rig confinement check (E-C30-08) additionally fires if the request bypasses C34; no scenario entry is committed from a worker-rig origin | The correction MUST be re-originated through the independent authoring path (scenario builder + spec builder in the `scenario_authoring` rig); investigate how the worker-rig request bypassed C34's audit — this is an integrity breach; AC-C30-09 verifies |
+| **E-C30-09** | Scenario-spec mismatch on author: a newly authored or corrected scenario is inconsistent with the spec (tests a behaviour the spec does not mandate, or misrepresents a required behaviour), detected at authoring time before the scenario is committed | Conformance pack pre-commit check or spec-builder review raises E-C30-09; the scenario is blocked from entering the held-out corpus until the S↔H misalignment is resolved | Scenario builder + spec builder revise the scenario to correctly and completely describe the spec'd use; AC-C30-10 verifies the corrected entry passes the correspondence check |
 
 **G10 (minor) — "held-out" implies a guarantee the mechanism doesn't provide.** "P5 says the agent 'cannot
 see' scenarios, but the enforcement is file permissions + agent-prompt discipline + audit logging;
@@ -554,6 +712,8 @@ a git repo with git's own durability/replication story — which is *also* the s
 | **AC-C30-06** | Given `scenarios/MANIFEST.json` in the separate repo / When a consumer (C31/C32/C34) reads the manifest / Then every `task_path` resolves to an existing file and every `task_name` is importable from that file (I2/I7) | Corpus layout resolvable by path (AI-CONTEXT §16.4 L698) | Asserts absence of **E-C30-05** (schema mismatch) + **E-C30-06** (manifest missing) |
 | **AC-C30-07** | Given `scenarios/MANIFEST.json` / When C34 reads `generated_at_commit` and compares to repo HEAD / Then the field equals the current HEAD SHA (or is the last committed HEAD, if the manifest is stale by at most one commit) (I6) | Scenario-path feed to enforcement/audit (README:173); C34 audit baseline | Asserts absence of **E-C30-02** (missing provenance) + **E-C30-06** (manifest corrupt) |
 | **AC-C30-08** | Given the scenario corpus at time T / When a new scenario is added and committed at time T+1 / Then the prior scenario's git-commit SHA is unchanged and the prior scenario file is unmodified (append-only check) (INV-6) | Versioned, append-growing corpus (README:526) | No E-code (positive path; confirms no destructive rewrite) |
+| **AC-C30-09** | Given a `ScenarioCorrectionRequest` that originates from the implementing worker rig (i.e. `created_by` resolves to `"rig:worker-N"` or any non-authoring rig) / When C30's conformance pack or C34's authoring-rig audit processes the request / Then the request is REJECTED and E-C30-08 is raised; no scenario entry is committed from the worker origin; the anti-gaming invariant (§1.3 / D-42 / ADR-0069) is upheld | Anti-gaming: worker-rig scenario correction is structurally blocked (C34 enforces; cross-ref C34 §3) | Asserts **E-C30-08** (worker-rig correction request rejected) |
+| **AC-C30-10** | Given a `ScenarioCorrectionRequest` routed by C52 (keyed on `DiagnosisRecord.root_cause = scenario`, D-43) / When the scenario builder + spec builder in the `scenario_authoring` rig correct and commit the scenario / Then: (a) the new MANIFEST entry has `created_by = "rig:scenario_authoring"` (INV-2 / D-29 wire form); (b) the `scenario_set_version` advances; (c) the corrected scenario correctly and completely describes the spec'd use (S↔H correspondence, §1.1); (d) the new `diagnosis_ref` is present in the MANIFEST entry linking the correction to its triggering DiagnosisRecord | S↔H correspondence authored by the independent path (§1.1/§1.3); correction is traceable to its DiagnosisRecord (D-43) | Asserts absence of **E-C30-09** (scenario-spec mismatch on author); confirms the independent authoring path is the sole correction route |
 
 **Test strategy (Sweep-2).** A **scenario-store conformance pack** that: (1) authors a sample Inspect AI `Task`
 from the `scenario_authoring` rig, commits it to the separate repo at `scenarios/<component>/`, and regenerates
@@ -591,3 +751,25 @@ C30's conformance pack detects the violation at authoring time and raises E-C30-
 signal (or re-detect via the I6 path feed's `created_by` field) to assess holdout-integrity impact. The
 *handoff mechanism* (does C34 poll the I6 feed, or does C30 emit a signal) is a **C30↔C34 seam left open**
 for the C34 Sweep-2 author to close. C30 publishes; C34 decides how to consume.
+
+**New seam (→ orchestrator ledger — Sweep-2 D-42/D-43/D-44/D-45 additions):** The `ScenarioCorrectionRequest` seam
+(§1.3) creates a **C52↔C30 correction-routing contract**: C52 routes on `DiagnosisRecord.root_cause =
+scenario` (D-43, C32 §3.2a), constructs C30's `ScenarioCorrectionRequest` (D-44 per-route consumer-named
+payload), gates on C34's `audit_correction_request_provenance()` result (D-45), and delivers to C30. C30
+receives + processes via the `scenario_authoring` rig. The *delivery mechanism* (is the request a C19 bead? a
+direct call? an async queue?) is **left open** for the C52 Sweep-2 author to specify — C30 names the interface
+fields (§1.3 field table, D-44 canonical) and the anti-gaming invariant; C52 specifies the routing. **C34 owns
+the canonical enforcement** (D-45); **E-C30-08 is defense-in-depth** at the C30 authoring-rig boundary.
+
+**OQ-5 (new, Sweep-2):** **`ScenarioCorrectionRequest` delivery mechanism.** Is the correction request
+delivered as a C19 bead (typed `softwarefactory.v4.beads:scenario_correction_request`), a direct C52→C30
+method call within the bootstrap rig, or an async task queue entry? C52 owns the routing; C30 owns the
+reception + processing. The interface fields in §1.3 are fixed regardless of delivery mechanism; the
+*transport* is left to the C52 Sweep-2 author. (Cross-ref: C52 repair-router seam, D-42/D-43.)
+
+**OQ-6 (new, Sweep-2):** **MANIFEST entry for correction traceability.** Should the corrected scenario's
+MANIFEST entry carry an explicit `diagnosis_ref` field (linking back to the `DiagnosisRecord` that triggered
+the correction) as a first-class required field, or is the git commit message the sufficient traceability
+record? AC-C30-10 currently treats `diagnosis_ref` as a traceability obligation; if it must appear in the
+MANIFEST schema, §4.5 needs a new optional field. Left open for the C52/C34 Sweep-2 pass (both are
+consumers of the correction traceability).

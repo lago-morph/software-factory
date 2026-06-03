@@ -39,25 +39,50 @@
 > Track: canonical (faithful posture — elaborate v4 exactly; mark inferred fills `[FAITHFUL-FILL]`,
 > v4 ambiguities `[AMBIGUITY: Gxx]`).
 
-## 1. Purpose & responsibility
+## 1. Purpose & responsibility (scorer + diagnostician)
 
-C32 is the factory's **LLM-as-judge harness**: the *scorer* that, given a completed (or in-progress) **work
-trajectory** and the **held-out scenario** that work was meant to satisfy, produces a **satisfaction score**
-— "did this trajectory satisfy the scenario?" — using an **LLM as the grader**, not boolean test assertions.
-It is v4's mechanism for **Principle 6 — satisfaction not test-pass**: "Probabilistic metric over scenario
+C32 is the factory's **LLM-as-judge Harness**: the *scorer and diagnostician* that, given a completed (or
+in-progress) **work trajectory** and the **held-out scenario** that work was meant to satisfy, (a) produces
+a **satisfaction score** — "did this trajectory satisfy the scenario?" — using an **LLM as the grader**, and
+(b) over the full set of per-scenario scores for a build, produces a **diagnosis** — root-cause attribution
+and repair recommendation across the **spec–scenarios–system triangle**.
+
+C32 is v4's mechanism for **Principle 6 — satisfaction not test-pass**: "Probabilistic metric over scenario
 trajectories. LLM-as-judge. Boolean assertions don't survive at scale." (README:181). It serves **P5
 (Ashby — requisite variety of evaluation)**: an LLM grader scoring against *regions* of acceptable behavior
 gives the factory far more evaluative variety than a fixed assertion suite could, matching the variety of
 the work it judges (F39 "region scoring | multiple acceptable trajectories | satisfaction distribution over
 region", FM:90).
 
+**The triangle framing (D-42 / ADR-0069).** The factory builds components for itself, unattended. The hard
+problem is trust without a human in every loop. Every build is a **triangle of three representations** —
+**Spec (S)**, hold-out **Scenarios (H)**, and the implemented **System (I)** — joined by three edges, each
+independently verified:
+
+> **D-42 (ADOPTED — operator, 2026-06-02):** "Model every factory build as a triangle of three
+> representations — **Spec (S)**, hold-out **Scenarios (H)**, and the implemented **System (I)** — joined
+> by three edges, each with a distinct owner and trust property … The judge directly measures only the
+> **H ↔ I edge**, and a failure there is a **non-specific alarm**. The misalignment can be caused by a
+> defect in *any* corner: **judge** (incorrectly running/misinterpreting), **spec** (ambiguity/
+> incompleteness), **scenarios** (misrepresentation/contradiction relative to spec), **system** (failure
+> to meet spec). The judge's job is therefore to **surface where the defect lives** (root-cause attribution
+> across the four sources) … **A component is complete only when all three edges align.** 100%-pass on the
+> hold-out is *necessary but not sufficient* …" — review-log D-42; canonical statement: ADR-0069.
+
+C32's `score()` measures the **H↔I edge** per scenario. When H↔I misaligns, that signal is *non-specific* —
+it could be the system, the scenario, the spec, or the judge itself. C32's `diagnose()` converts that
+non-specific alarm into an **attributed root cause** and a **repair recommendation** (incremental_fix vs
+discard_and_reimplement), routing the repair to the correct independent party. Completion (tri-alignment)
+requires all three edges to be clean — 100% hold-out pass alone is **necessary, not sufficient**.
+
 The harness is built **on the existing stack, not from scratch**: the scoring machinery is the **Inspect AI
 scorer** ("LLM-as-judge harness … Inspect AI scorer (best fit)", README:185; AI-CONTEXT:301 "Mature"),
 adopted as-is and exposed as a Gas City pack; the **judge model is Claude Code itself** — the *same
 provider/family as the coder* for Phase 0 (review-log **D-1**), routed and constrained by **C29**. C32's own
 deliverable is the thin, genuine glue the stack does not provide: **binding a trajectory + a scenario rubric
-into an Inspect AI scoring run, invoking it as the judge role, and emitting a typed per-trajectory score**
-for the aggregator (C33) and the holdout audit (C34).
+into an Inspect AI scoring run, invoking it as the judge role, emitting a typed per-trajectory score**, and
+then — once per build — **diagnosing the full set of scores into an attributed `DiagnosisRecord`** for the
+repair router (C52), the go/no-go gate (C53), and the holdout audit (C34).
 
 **Responsibilities (what C32 is the spec-of-record for):**
 - **Scoring one trajectory against one scenario.** Take a (trajectory, scenario) pair and produce a
@@ -86,6 +111,14 @@ for the aggregator (C33) and the holdout audit (C34).
   from beads" but does not fix the per-score schema; the minimal consistent choice is *one structured score
   record per (trajectory, scenario, judge) written to a bead/CXDB turn*, attributed by C41. Concrete schema
   is sweep-2.
+- **Diagnosing the build (root-cause attribution + repair recommendation).** After all per-scenario scores
+  for a build are available, C32 calls `diagnose()` once — in the judge rig, never by the implementing
+  worker — over the full `ScoreRecord` set to produce a single `DiagnosisRecord`: root-cause attribution
+  across {judge, spec, scenario, system}, a `spec_defect_class` when the spec is the source, a
+  `repair_recommendation` (incremental_fix vs discard_and_reimplement), and a `tri_alignment` judgment
+  (aligned only if all_scenarios_satisfied AND root_cause=none). The `DiagnosisRecord` is the keystone of the
+  spec–scenarios–system triangle: it is what converts an opaque H↔I pass/fail into an actionable, auditable
+  repair route for C52, a completion signal for C53, and an auditable bead for C34. [D-42, D-43]
 
 **Explicitly NOT (boundaries):**
 - **NOT the holdout-integrity ENFORCEMENT or audit (C34) — the load-bearing boundary (D-13).** C32 is the
@@ -175,6 +208,63 @@ Inspect AI version — mismatch raises E-C32-02 (REV-SEAM-02: version-pin guard)
 **Postconditions:** exactly one attributed `ScoreRecord` is persisted as a C19 bead (`score_record` type)
 and is consumable by C33 and auditable by C34.
 
+### 3.1a `diagnose()` signature (D-43 — new per-build diagnostician surface)
+
+```python
+def diagnose(
+    score_records: list[ScoreRecord],     # ALL per-scenario ScoreRecords for this build (the H↔I evidence)
+    trajectory_logs: list[TrajectoryLog], # the C31 logs the scores were computed over
+    scenarios: list[InspectAITask],       # the hold-out scenario set (judge-rig read, D-38)
+    spec: SpecArtifact,                   # C08 spec + free-form DoD (judge reads S to attribute spec/scenario defects; S is NOT held-out)
+    factory_build_ref: str,               # the factory_build bead this build advances (D-40)
+    judge_model: ModelIdentity,           # from C29 resolveModel("judge") — Phase-0 same-provider (D-1)
+    independence: IndependenceConstraint, # from C29 — Phase-0 L1
+    judge_self_trust: JudgeTrustState = UNCALIBRATED,  # PF-2 calibration-precondition state; informs C53 oversight, never the 100% floor
+) -> DiagnosisRecord:
+    ...
+```
+
+- **`score_records`** — the complete set of `ScoreRecord`s produced by `score()` for all scenarios in this
+  build. This is the H↔I evidence the diagnosis interprets. Must be non-empty (precondition).
+- **`trajectory_logs`** — the C31-produced Inspect AI trajectory logs corresponding to the ScoreRecords.
+  Read-only from the judge rig (D-38).
+- **`scenarios`** — the hold-out Inspect AI `Task` objects (C30 corpus). Read from the judge rig's read
+  surface (D-38); never returned to the worker rig (I3).
+- **`spec`** — the C08 spec artifact including free-form DoD text. The judge reads S to determine whether
+  misalignments stem from spec/scenario defects vs system defects; S is **not** held-out (the judge may read
+  it for attribution; the anti-gaming property comes from the judge's independence from the implementer, not
+  from holding the spec back). Must be resolvable from the judge rig (precondition).
+- **`factory_build_ref`** — the `factory_build` bead identifier whose build state (D-40) this diagnosis is
+  associated with. Stamped onto the `DiagnosisRecord` for C52/C53 to key against.
+- **`judge_model`** / **`independence`** — consumed from C29's `resolveModel` + `crossFamilyRule` output,
+  same as `score()`. Phase-0 identity = Claude Code same-provider, level `L1` (D-1). C32 honors, does not
+  enforce.
+- **`judge_self_trust`** — the PF-2 calibration-precondition state (`calibrated` / `uncalibrated`). When
+  `uncalibrated`, C53 routes to increased human-review oversight; the 100% hold-out floor is never affected
+  by this field (it never lowers the bar, only the oversight mechanism relaxes as trust is earned).
+- **Return** — a single `DiagnosisRecord` (frozen schema §3.2a); exactly one per `diagnose()` call over the
+  build's full ScoreRecord set.
+
+**Preconditions:** (a) `score_records` is non-empty; (b) `spec` is resolvable from the judge rig's read
+surface (D-38); (c) `judge_model` is not None (C29 resolved it); (d) all `score_records` reference the same
+`factory_build_ref` (they form a coherent set for one build/evaluation pass).
+
+**Postconditions:** exactly one attributed `DiagnosisRecord` is persisted as a C19 bead
+(`softwarefactory.v4.beads:diagnosis_record` type), consumable by **C52** (repair router) and **C53**
+(tri-alignment go/no-go), and auditable by **C34**. The `DiagnosisRecord` carries a `diagnosis_prompt_hash`
+(SHA-256 of the diagnosis prompt) and `created_by = "rig:judge-N"` (C41 attribution) — no silent diagnosis.
+
+**Cardinality:** `score()` is **per-(trajectory, scenario, judge)** — unchanged; `diagnose()` is **one call
+per build**, over the full set of ScoreRecords for that build. The two are distinct operations with distinct
+bead types and distinct consumers.
+
+> **D-43 (ADOPTED — lead, 2026-06-02; implements D-42 / HANDOFF §0★.2.1):** "the judge's diagnosis is a
+> companion `DiagnosisRecord`, NOT a mutation of the frozen `ScoreRecord`; owned + frozen by C32. …
+> Cardinality: `ScoreRecord` stays **per (trajectory, scenario, judge)** — the per-scenario H↔I signal,
+> unchanged; `DiagnosisRecord` is **one per build/evaluation pass** (per component-under-evaluation),
+> computed by C32 over the set of `ScoreRecord`s for that build. C32 gains a `diagnose()` method alongside
+> the unchanged `score()`." — review-log D-43.
+
 ### 3.2 Frozen `ScoreRecord` schema (D-39 — OWNED AND FROZEN BY C32)
 
 > **OQ2 RESOLVED (Sweep-2) — D-39:**
@@ -215,6 +305,71 @@ Bead type: `softwarefactory.v4.beads:score_record`
 > `satisfaction_score ≥ 0.75 → satisfied`; `0.4–0.75 → partial`; `< 0.4 → unsatisfied`. Exact thresholds
 > are a C32 config parameter, tunable by C46 calibration; they are not a v4 invariant.
 
+### 3.2a Frozen `DiagnosisRecord` schema (D-43 — OWNED AND FROZEN BY C32; companion to ScoreRecord)
+
+> **D-43 (ADOPTED — lead, 2026-06-02) verbatim:** "Bead type:
+> `softwarefactory.v4.beads:diagnosis_record`. One per build/evaluation pass. … Owner: **C32** (freezes
+> the schema; only C32 may change a required field, by a new binding decision). Consumers: **C52** (repair
+> router keys on `root_cause`/`spec_defect_class`/`repair_recommendation`), **C53** (`tri_alignment` +
+> `all_scenarios_satisfied` are conjunctive go terms), **C34** (audits the diagnosis as a judge output;
+> audits `scenario_set_version` staleness + `created_by` independence), human review." — review-log D-43.
+
+Bead type: `softwarefactory.v4.beads:diagnosis_record`
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `factory_build_ref` | `string` | R | The `factory_build` bead this diagnosis is for (D-40 status bead) | C32 writes; C52/C53/C34 read |
+| `component_id` | `string` | R | The component under evaluation | C32 writes; C52/C53/C34 read |
+| `scenario_set_version` | `string` | R | C30 hold-out corpus pin evaluated (C34 audits for staleness) | C32 writes; C34 audits |
+| `score_record_refs` | `list<string>` | R | The per-scenario `ScoreRecord` bead refs (the H↔I evidence) this diagnosis is computed over | C32 writes; C34 audits |
+| `holdout_pass_rate` | `float` (0.0–1.0) | R | Fraction of scenarios with `score_label = satisfied` (H↔I gate input) | C32 writes; C53 reads |
+| `all_scenarios_satisfied` | `bool` | R | True iff EVERY scenario `score_label = satisfied` (the **100% hold-out floor** — necessary, not sufficient) | C32 writes; C53/C52 read |
+| `misalignments` | `list<Misalignment>` | R | Per-scenario misalignment detail (empty iff `all_scenarios_satisfied`); see `Misalignment` sub-struct below | C32 writes; C52/C34/human read |
+| `root_cause` | `enum{judge,spec,scenario,system,none}` | R | Primary root-cause attribution; `none` iff aligned | C32 writes; C52 routes; C53/C34 read |
+| `root_cause_rationale` | `string` | R | The judge's reasoning for the attribution (human-review reads) | C32 writes; C34/human read |
+| `secondary_causes` | `list<enum{judge,spec,scenario,system}>` | O | Additional contributing corners when multi-source | C32 writes; C52/C34 read |
+| `spec_defect_class` | `enum{none,localized,structural}` | R | When `root_cause=spec`: `localized` (patch in place) vs `structural` (system faithfully built the wrong target — discard and reimplement); `none` otherwise | C32 writes; C52 routes |
+| `repair_recommendation` | `enum{incremental_fix,discard_and_reimplement,none}` | R | Repair mode; `none` iff aligned. C52 routes on (`root_cause`, `spec_defect_class`, this) | C32 writes; C52 routes |
+| `repair_rationale` | `string` | R | Justification for the repair recommendation | C32 writes; C52/human read |
+| `tri_alignment` | `enum{aligned,misaligned}` | R | All three edges judged aligned; `aligned` **requires** `all_scenarios_satisfied = true` AND `root_cause = none` — 100% hold-out pass alone NEVER sets `aligned` (necessary-not-sufficient) | C32 writes; C53 reads as go term |
+| `judge_self_trust` | `enum{calibrated,uncalibrated}` | O | Whether the judge's verdicts are trusted yet (PF-2 calibration precondition); informs C53 oversight level, **never** the 100% floor | C32 writes; C53 reads |
+| `judge_model_id` | `string` | R | Judge identity (D-10) — the diagnosis is itself an auditable judge output | C32 writes; C34 audits |
+| `diagnosis_prompt_hash` | `string` | R | SHA-256 of the diagnosis prompt (C34 audit reproducibility) | C32 writes; C34 audits |
+| `created_by` | `actor` | R | C41 attribution — the judge rig (`"rig:judge-N"`, D-29) | C32 writes via C41; C34 audits |
+| `diagnosed_at` | `timestamp` | R | UTC timestamp | C32 writes; C34/C52/C53 read |
+| `error_code` | `string` | O | E-code if diagnosis was degraded (e.g. `E-C32-07`, `E-C32-08`, `E-C32-09`); absent on clean run | C32 writes on error; C34/C52 read |
+
+**`Misalignment` sub-struct:**
+
+| Field | Type | Req | Semantics |
+|---|---|---|---|
+| `scenario_id` | `string` | R | The scenario that failed (C30 `Task.name`) |
+| `score_record_ref` | `string` | R | The `ScoreRecord` bead ref for this scenario |
+| `observed` | `string` | R | What the judge observed the system do |
+| `expected` | `string` | R | What the scenario expected (per spec) |
+| `gap` | `string` | R | The judge's description of the discrepancy |
+| `attributed_cause` | `enum{judge,spec,scenario,system}` | R | Per-scenario cause attribution (same vocabulary as `root_cause`; may differ across scenarios in a multi-mismatch build) |
+
+**Attribution → repair semantics (the C52 router key):** `system` (clear spec, trajectory genuinely fails)
+→ `incremental_fix` = polish (patch system + its own S↔I tests); `judge` (mis-run / inconsistent / high
+ensemble disagreement / can't justify its own grade) → `incremental_fix` routed to
+**recalibrate-judge-then-re-eval** (no system/spec change); `scenario` (scenario misrepresents the spec)
+→ `incremental_fix` routed to **independent scenario correction** (C30 scenario builder + spec builder,
+**never** the worker — this is the anti-gaming property per ADR-0069); `spec` + `localized` →
+`incremental_fix` routed to **independent spec correction** (C08 + future non-spine C10/C11); `spec` +
+`structural` → `discard_and_reimplement` (independent spec correction via C08 + future C10/C11, then rebuild
+the system from scratch).
+
+**Capability-bar note (§0★.3):** the independent spec/scenario-correction path is named here as a **SEAM**
+to C08 + future non-spine C10/C11 (EARS linter, intent crucible) + C30 (scenario builder + spec builder).
+This pass specifies the contracts (the `DiagnosisRecord`, the repair router, the independence requirement).
+It does NOT design or build the intent crucible (C11) or the EARS linter (C10).
+
+> **Freeze guarantee (D-43):** C52, C53, and C34 MAY build against this field set immediately. C32 will
+> not remove or rename any required (`Req = R`) field without a new binding decision. Optional fields
+> (`Req = O`) may be added non-breakingly; any removal requires a schema version bump and downstream
+> notification. This freeze is **additive** to D-39 — the `ScoreRecord` schema is untouched.
+
 ### 3.3 Judge-prompt structure
 
 Per **D-15** ("graded judge over C08's **free-form** DoD, not enumerated per-criterion"):
@@ -248,6 +403,85 @@ INSTRUCTIONS:
 - The trajectory excerpt length is bounded (C32 config param, default = last 4096 tokens of the log) to
   stay within the judge model's context window (same Max seat as coder, D-1).
 
+### 3.3a Diagnosis-prompt structure
+
+The `diagnose()` call constructs a single **diagnosis prompt** per build, distinct from the per-scenario
+scoring prompt (§3.3). The judge is asked to reason over the full set of ScoreRecords and the spec to
+produce a root-cause attribution and repair recommendation.
+
+```
+SYSTEM: You are an independent evaluator in a separate judge rig (D-38).
+        You have already scored each hold-out scenario for this build.
+        Your task is to diagnose the build: attribute the root cause of any
+        misalignment across {judge, spec, scenario, system} and recommend a
+        repair mode.
+        Do NOT enumerate per-criterion sub-scores (D-15 holistic DoD).
+        Produce a single JSON object as output.
+
+SPEC (S — the target system's specification + Definition of Done):
+  <spec.text verbatim — the C08 spec artifact>
+
+HOLD-OUT SCENARIOS (H — the independent check set, C30 corpus):
+  For each scenario_id:
+    <scenario description>
+    <scenario input / expected behavior>
+
+SCORE RECORDS (H↔I evidence — the per-scenario satisfaction scores):
+  For each ScoreRecord:
+    scenario_id: <id>
+    score_label: <satisfied|partial|unsatisfied>
+    satisfaction_score: <float>
+    rationale: <the per-scenario judge rationale from score()>
+
+TRAJECTORY EXCERPTS (I — the system under evaluation):
+  For each trajectory_log:
+    scenario_id: <id>
+    <trajectory excerpt — bounded, same window as score()>
+
+INSTRUCTIONS:
+  1. For each scenario, confirm the H↔I result (re-check score_label vs your reading).
+  2. For each misaligned scenario (score_label != satisfied), describe the
+     observed-vs-expected gap.
+  3. Reason across S↔H (does the scenario faithfully describe what the spec requires?)
+     and S↔I (does the system meet a CLEAR, unambiguous spec?). Use this reasoning to
+     attribute the root cause.
+  4. If root_cause = spec: classify as localized (a patchable ambiguity) or structural
+     (the system faithfully built the wrong target — rebuild required).
+  5. Recommend a repair mode: incremental_fix or discard_and_reimplement (none iff aligned).
+  6. Output ONLY a single JSON object:
+     {
+       "holdout_pass_rate": <float 0.0-1.0>,
+       "all_scenarios_satisfied": <bool>,
+       "misalignments": [
+         {
+           "scenario_id": "<id>",
+           "score_record_ref": "<ref>",
+           "observed": "<what the system did>",
+           "expected": "<what the scenario expected>",
+           "gap": "<the discrepancy>",
+           "attributed_cause": "<judge|spec|scenario|system>"
+         }
+       ],
+       "root_cause": "<judge|spec|scenario|system|none>",
+       "root_cause_rationale": "<one paragraph>",
+       "secondary_causes": [],
+       "spec_defect_class": "<none|localized|structural>",
+       "repair_recommendation": "<incremental_fix|discard_and_reimplement|none>",
+       "repair_rationale": "<one paragraph>",
+       "tri_alignment": "<aligned|misaligned>"
+     }
+```
+
+- The prompt is **SHA-256 hashed** before sending and the hash stored in `diagnosis_prompt_hash` (audit
+  trail, C34). No silent diagnosis — every `DiagnosisRecord` is prompt-hashed and attributed (I9).
+- The spec text is included **verbatim** — S is not held-out from the judge (only from the implementing
+  worker). The DoD is graded holistically (D-15, no enumerated per-criterion sub-scores; FE-5 deferred).
+- The judge reads the spec to reason about S↔H (scenario faithfulness to spec) and S↔I (system meets a
+  clear spec). This reading is the mechanism by which spec/scenario defects are distinguishable from system
+  defects — without the spec, all misalignments look like system failures.
+- Self-consistency check: the emitted JSON must satisfy `tri_alignment = aligned` iff
+  `all_scenarios_satisfied = true` AND `root_cause = none`. Any violation raises `E-C32-09` (fail closed).
+
 **Invariants:**
 - **I1 (secondary-guard).** C32 is the *probabilistic, secondary* evaluator; it never substitutes for the
   P4 deterministic boundary as a safety gate (F33/F51, FM:55/76). A green judge score is satisfaction
@@ -271,6 +505,30 @@ INSTRUCTIONS:
   MAY read the worker trajectory log + held-out scenarios; the worker MUST NOT read the judge rig or
   scenarios; there is **no shared context window** between worker rig and judge rig. Prevent-vs-detect of
   the worker→scenario read remains the D-23 spike's open question (D-30).
+- **I7 (diagnosis in judge rig only).** `diagnose()` is produced **only in the judge rig** (D-38), never
+  by the implementing worker. The implementing worker has no path to the `DiagnosisRecord` until it is
+  emitted as a bead — and it has no path to drive the diagnosis or influence its content. This is the
+  load-bearing anti-gaming invariant: if the worker could invoke `diagnose()`, it could steer the
+  attribution toward "scenario defect" to avoid having to fix its own output. [D-42, D-43]
+- **I8 (100% floor + tri-alignment are independent conditions).** `tri_alignment = aligned` REQUIRES
+  `all_scenarios_satisfied = true` AND `root_cause = none` — both simultaneously. A 100% hold-out pass
+  (`all_scenarios_satisfied = true`) ALONE never sets `tri_alignment = aligned` (the hold-out pass is
+  necessary, not sufficient — the spec and scenario edges must also be clean). The **100% floor never
+  lowers**; only the oversight mechanism (`judge_self_trust` + human review, PF-2) relaxes as the judge
+  earns calibrated trust. C32 MUST reject any attempt to emit `tri_alignment = aligned` with
+  `root_cause != none` or `all_scenarios_satisfied = false` (→ E-C32-09, fail closed). [D-42, D-43]
+- **I9 (attribution honesty — no silent diagnosis).** Every misalignment carries an `attributed_cause`
+  field (per `Misalignment` sub-struct) and the `DiagnosisRecord` carries a `root_cause_rationale`.
+  No `tri_alignment = aligned` is emitted without the judge demonstrating clean reasoning (root_cause=none
+  + empty misalignments). Every `DiagnosisRecord` is attributed (C41 `created_by = "rig:judge-N"`) and
+  prompt-hashed (`diagnosis_prompt_hash`) — there is no unlogged or un-attributed diagnosis. [D-43]
+- **I10 (independent authoring path for spec/scenario repair).** Every `spec` or `scenario` repair
+  recommendation in a `DiagnosisRecord` NAMES the independent authoring path —
+  **C08 + future non-spine C10/C11** (for spec defects) and **C30 scenario builder + spec builder** (for
+  scenario defects) — as the executor. The **implementing worker MUST NOT drive spec/scenario correction**.
+  C32 records the routing target in the `repair_rationale`; C52 enforces the routing. This is the
+  structural anti-gaming property: without it, "fix the spec" degenerates into "weaken the spec until my
+  output passes". [D-42, D-43, ADR-0069]
 
 ## 4. Data model / state
 
@@ -285,10 +543,12 @@ in C29.
 | Datum | Shape (sweep-2) | Owner | R/W-by |
 |---|---|---|---|
 | `ScoreRecord` bead | Frozen field table §3.2 | **C32 (emits, owns schema per D-39)** → persisted as `score_record` bead in C19 | C32 writes; C33 aggregates; C34 audits; C46 reads FP-rate |
+| `DiagnosisRecord` bead | Frozen field table §3.2a | **C32 (emits, owns schema per D-43)** → persisted as `diagnosis_record` bead in C19 | C32 writes; C52 routes; C53 reads tri_alignment; C34 audits |
 | Scorer pack config | `inspect_eval` tool node in Gas City pack (C02/C17); declares judge model binding from C29 | C02/C17 + C32 config | C32 declares; C02/C17 host |
 | Rubric binding (transient) | Loaded `InspectAITask` + DoD text — held only for duration of one `score()` call | C30 (content source) / C32 (load+apply) | C32 reads C30; discarded after emit |
-| Judge model identity + level (transient) | `ModelIdentity` + `IndependenceConstraint` from C29 per run | C29 (authoritative) | C32 consumes; stamped into `ScoreRecord.judge_model_id` + `ScoreRecord.independence_level` |
-| Judge prompt (transient) | Constructed per §3.3; SHA-256 hashed → `judge_prompt_hash` in `ScoreRecord` | C32 constructs | C32 creates; hash persisted in `ScoreRecord` for C34 audit |
+| Judge model identity + level (transient) | `ModelIdentity` + `IndependenceConstraint` from C29 per run | C29 (authoritative) | C32 consumes; stamped into `ScoreRecord.judge_model_id` + `ScoreRecord.independence_level` + `DiagnosisRecord.judge_model_id` |
+| Judge prompt — score (transient) | Constructed per §3.3; SHA-256 hashed → `judge_prompt_hash` in `ScoreRecord` | C32 constructs | C32 creates; hash persisted in `ScoreRecord` for C34 audit |
+| Diagnosis prompt (transient) | Constructed per §3.3a; SHA-256 hashed → `diagnosis_prompt_hash` in `DiagnosisRecord` | C32 constructs | C32 creates; hash persisted in `DiagnosisRecord` for C34 audit |
 
 C32 is **restart-safe**: scoring is re-runnable (idempotent at the bookkeeping level, I5) because inputs
 (trajectory log, scenario, DoD) are durable elsewhere; a lost in-flight score is simply re-scored.
@@ -351,6 +611,55 @@ ensemble with reduced N, sets `error_code = "E-C32-03"`, and flags the disagreem
 unscored. If the scenario is unresolvable from the judge rig's read surface, C32 emits `E-C32-04` and
 fails closed (no score, no fabricated result; I3/I6).
 
+**Diagnosis flow (the diagnose() call — once per build):**
+1. After all `score()` calls for a build complete, the judge rig invokes `diagnose()` with the full set of
+   `ScoreRecord`s, trajectory logs, scenarios, and the spec artifact.
+2. C32 constructs the **diagnosis prompt** (§3.3a): spec text + all scenario descriptions + all ScoreRecord
+   rationales + trajectory excerpts; SHA-256 hashes it → `diagnosis_prompt_hash`.
+3. C32 runs the LLM grader with the diagnosis prompt (same judge model from C29, same rig). The grader
+   reasons across S↔H (scenario faithfulness to spec) and S↔I (system meets clear spec) to produce a root-
+   cause attribution and repair recommendation.
+4. C32 validates the output JSON for self-consistency: `tri_alignment = aligned` iff
+   `all_scenarios_satisfied = true` AND `root_cause = none`. Any violation → `E-C32-09` (fail closed;
+   no `DiagnosisRecord` emitted; I8).
+5. If output is unparseable JSON → `E-C32-08` (no `DiagnosisRecord`, retry eligible).
+6. If inputs are incomplete (empty `score_records`, unresolvable `spec`) → `E-C32-07` (fail closed).
+7. C32 emits one **`DiagnosisRecord`** (§3.2a), attributed via C41 (`created_by = "rig:judge-N"`), and
+   persists it as a `diagnosis_record` bead in C19 → consumed by **C52** (repair router) and **C53**
+   (tri-alignment go/no-go), auditable by **C34**.
+
+**Diagnosis sequence diagram — ScoreRecords → diagnose() → DiagnosisRecord → C52/C53 hand-off:**
+
+```mermaid
+sequenceDiagram
+    participant ScoreRecs as ScoreRecords
+    participant C32 as C32 Judge Harness
+    participant Spec as SpecArtifact
+    participant InspAI as Inspect AI Scorer
+    participant C41 as C41 Attribution
+    participant C19 as C19 Bead Store
+    participant C52 as C52 Repair Router
+    participant C53 as C53 Bootstrap Validation
+    participant C34 as C34 Holdout Audit
+
+    ScoreRecs->>C32: list of ScoreRecords for build
+    Spec->>C32: spec artifact and DoD (judge rig read)
+    Note over C32: also receives scenarios and trajectory_logs
+    C32->>C32: build diagnosis prompt
+    C32->>C32: SHA-256 hash prompt to diagnosis_prompt_hash
+    C32->>InspAI: run LLM grader with diagnosis prompt
+    InspAI-->>C32: root_cause attribution and repair_recommendation
+    C32->>C32: validate consistency
+    C32->>C41: created_by attribution for judge rig
+    C41-->>C32: attributed DiagnosisRecord fields
+    C32->>C19: persist DiagnosisRecord bead
+    C19-->>C52: DiagnosisRecord for repair routing
+    C19-->>C53: tri_alignment for go no-go decision
+    C19-->>C34: DiagnosisRecord for audit
+```
+
+> Mermaid diagram validated by `mcp__957183d2-29cc-4fb8-8d95-f0a6c3fce832__validate_and_render_mermaid_diagram` — result: valid (sequence). No `;`/`/`/`--`/`:`/`()`/`=`/`#` in transition labels.
+
 ## 5a. Error taxonomy (sweep-2)
 
 | E-code | Condition | Surfaced-as | Caller recovery |
@@ -361,6 +670,9 @@ fails closed (no score, no fabricated result; I3/I6).
 | `E-C32-04` | Holdout-leak-detected / scenario unresolvable — scenario not accessible from judge rig read surface (D-38), or judge rig detects a possible cross-partition read attempt | Scoring fails closed; gate event with `error_code = "E-C32-04"` and metadata for C34 audit | C34 is notified immediately; no score emitted; operator review required — this is the highest-severity error as it may indicate isolation failure |
 | `E-C32-05` | Score parse failure — the Inspect AI scorer returned output but it is not parseable as `{score, label, rationale}` JSON | Unscored pair; gate event with `error_code = "E-C32-05"` | Retry (LLM non-determinism); if persistent, escalate to C36–C39 self-heal with the prompt hash for diagnosis |
 | `E-C32-06` | Judge timeout — the Inspect AI scorer did not return within the configured deadline | Unscored pair; gate event with `error_code = "E-C32-06"` | Retry after back-off; repeated timeout escalates as throughput issue (shared Max seat, D-1 / OQ3) |
+| `E-C32-07` | Diagnosis inputs incomplete — `score_records` is empty, or `spec` is unresolvable from the judge rig, or `judge_model` is None at `diagnose()` call time | No `DiagnosisRecord` emitted; gate event with `error_code = "E-C32-07"` written to C19; fail closed | C52/C53 see no `DiagnosisRecord` for the build; the self-heal loop (C36–C39) can retry after inputs are available; no fabricated diagnosis (I4, I7) |
+| `E-C32-08` | Diagnosis output unparseable — the LLM grader returned output for the diagnosis prompt that is not valid JSON or does not match the `DiagnosisRecord` schema | No `DiagnosisRecord` emitted; gate event with `error_code = "E-C32-08"` | Retry the `diagnose()` call (LLM non-determinism); if persistent, escalate to C36–C39 self-heal with `diagnosis_prompt_hash` for reproducibility |
+| `E-C32-09` | Diagnosis self-inconsistency — the LLM grader returned internally inconsistent fields, e.g. `tri_alignment = aligned` with `root_cause != none`, or `all_scenarios_satisfied = false` with `tri_alignment = aligned`, or misalignments non-empty with `tri_alignment = aligned` | No `DiagnosisRecord` emitted; gate event with `error_code = "E-C32-09"` written to C19; **NEVER emit a green (aligned) diagnosis that contradicts its own fields** — fail closed | C52/C53 see no `DiagnosisRecord`; retry or escalate; the inconsistency is logged with the `diagnosis_prompt_hash` for C34 audit; a self-inconsistent diagnosis is treated as a judge defect (root_cause = judge on the next attempt) |
 
 > [FAITHFUL-FILL] Error codes are C32-scoped per the SWEEP2-DISPATCH rubric. The self-healing loop
 > (C36–C39) is the consumer of gate events; C32 emits the gate event but does not drive recovery.
@@ -462,6 +774,17 @@ events (visible to the C36–C39 self-healing loop), never as silent or fabricat
 | `AC-C32-12` | **Given** the scorer times out (configurable deadline exceeded); **When** `score()` is called; **Then** gate event with `error_code = "E-C32-06"`; NO `ScoreRecord` emitted | E-C32-06, I4 |
 | `AC-C32-13` | **Given** any emitted `ScoreRecord`; **When** read by C34; **Then** `judge_prompt_hash` is a valid SHA-256 hex string, and `created_by` is a valid `"rig:judge-N"` actor string (D-29), enabling C34's independence audit | I4, D-38, D-39; C34 audit |
 | `AC-C32-14` | **Given** a DoD text (C08 free-form); **When** the judge prompt is constructed (§3.3); **Then** the DoD text appears verbatim (unmodified, unenumerated) in the prompt and `judge_prompt_hash` matches the constructed prompt | D-15, §3.3 |
+| `AC-C32-15` | **Given** a completed build with all scenarios scored; **When** `diagnose()` is called; **Then** exactly one `DiagnosisRecord` bead is persisted in C19 with all required fields (`factory_build_ref`, `component_id`, `scenario_set_version`, `score_record_refs`, `holdout_pass_rate`, `all_scenarios_satisfied`, `misalignments`, `root_cause`, `root_cause_rationale`, `spec_defect_class`, `repair_recommendation`, `repair_rationale`, `tri_alignment`, `judge_model_id`, `diagnosis_prompt_hash`, `created_by`, `diagnosed_at`) non-null (for required fields); C52 and C53 can read it | D-43, I7, I9 |
+| `AC-C32-16` | **Given** all scenarios satisfied (`score_label = satisfied` for every ScoreRecord) AND the spec and scenarios are clean (judge finds no defects); **When** `diagnose()` is called; **Then** `all_scenarios_satisfied = true`, `root_cause = none`, `repair_recommendation = none`, `misalignments = []`, and `tri_alignment = aligned` | I8, D-42, D-43 — the necessary-not-sufficient test (100% hold-out + clean spec/scenario → aligned) |
+| `AC-C32-17` | **Given** a scenario fails (`score_label = unsatisfied`) and the spec is clear and unambiguous; **When** `diagnose()` is called; **Then** `root_cause = system`, `repair_recommendation = incremental_fix`, `tri_alignment = misaligned`; the `misalignments` list has an entry for the failing scenario with `attributed_cause = system` | D-43 system-defect path |
+| `AC-C32-18` | **Given** a scenario fails and the judge identifies an ambiguity in the spec (localized — patchable without rebuild); **When** `diagnose()` is called; **Then** `root_cause = spec`, `spec_defect_class = localized`, `repair_recommendation = incremental_fix`, `tri_alignment = misaligned`; `repair_rationale` names the independent spec correction path (C08 + future C10/C11) as the executor | D-43 spec+localized path; I10 |
+| `AC-C32-19` | **Given** a scenario fails and the judge identifies a structural spec defect (system faithfully built the wrong target); **When** `diagnose()` is called; **Then** `root_cause = spec`, `spec_defect_class = structural`, `repair_recommendation = discard_and_reimplement`, `tri_alignment = misaligned`; `repair_rationale` names the independent spec correction path and specifies that the system must be rebuilt | D-43 spec+structural path; I10 |
+| `AC-C32-20` | **Given** a scenario fails and the judge identifies the scenario misrepresents the spec; **When** `diagnose()` is called; **Then** `root_cause = scenario`, `repair_recommendation = incremental_fix`, `tri_alignment = misaligned`; `repair_rationale` names C30 scenario builder + spec builder as the executor — NEVER the implementing worker | D-43 scenario-defect path; I10, ADR-0069 anti-gaming |
+| `AC-C32-21` | **Given** the judge finds high ensemble disagreement or cannot justify its own per-scenario verdicts; **When** `diagnose()` is called; **Then** `root_cause = judge`, `repair_recommendation = incremental_fix` (routed to recalibrate-judge), `tri_alignment = misaligned`; C52 routes to judge recalibration, NOT to system or spec correction | D-43 judge-defect path |
+| `AC-C32-22` | **Given** ALL scenarios pass (`all_scenarios_satisfied = true`) BUT the judge identifies a spec ambiguity; **When** `diagnose()` is called; **Then** `all_scenarios_satisfied = true` BUT `tri_alignment = misaligned` (100% hold-out pass is necessary, NOT sufficient — necessary-not-sufficient invariant); `root_cause != none` | I8, D-42 — the core necessary-not-sufficient test |
+| `AC-C32-23` | **Given** the diagnosis LLM returns JSON with `tri_alignment = aligned` but `root_cause != none`; **When** C32 validates the output; **Then** NO `DiagnosisRecord` is emitted; a gate event with `error_code = "E-C32-09"` is written to C19; fail closed; the inconsistency is logged with `diagnosis_prompt_hash` | E-C32-09, I8 |
+| `AC-C32-24` | **Given** any emitted `DiagnosisRecord`; **When** read by C34; **Then** `diagnosis_prompt_hash` is a valid SHA-256 hex string, `created_by = "rig:judge-N"`, and `judge_model_id` is non-null — enabling C34's independence + reproducibility audit | I9, D-43, §3.3a |
+| `AC-C32-25` | **Given** `score_records` is empty or `spec` is unresolvable; **When** `diagnose()` is called; **Then** NO `DiagnosisRecord` is emitted; a gate event with `error_code = "E-C32-07"` is written; fail closed; C52/C53 see no diagnosis | E-C32-07, I7 |
 
 ## 9. Open questions (→ review-log)
 
@@ -495,3 +818,22 @@ events (visible to the C36–C39 self-healing loop), never as silent or fabricat
   rig or the scenarios; **no shared context window**. C42 provides the partition; C34 enforces + audits;
   C32 runs inside it. The prevent-vs-detect strength of the worker→scenario boundary is the D-23 spike
   (D-30) — still open, not a C32 question. I3 and I6 reflect the resolved shape; AC-C32-03 tests it.
+
+- **OQ6 (judge calibration seam — `judge_self_trust` and PF-2 establishment).** The `judge_self_trust`
+  field on `DiagnosisRecord` is set to `calibrated` vs `uncalibrated` based on PF-2's human-audited-sample
+  gate. How exactly is the `calibrated` state established — what sample size, what human-agreement bar, and
+  who writes the state change? This is the PF-2 seam: a human-audited subset of `DiagnosisRecord`s is
+  compared to human verdicts; if agreement is above threshold, the judge is declared `calibrated`. The exact
+  mechanism (who triggers the audit, where the calibration state is persisted, how C32 reads it at
+  `diagnose()` call time) is **NOT designed here** — it is a PF-2 implementation question deferred to the
+  C46 calibration harness. C32 names the seam; PF-2 designs it. **Still open.**
+
+- **OQ7 (context-window budget for diagnosis prompt).** The diagnosis prompt (§3.3a) includes the full spec
+  text, all scenario descriptions, all ScoreRecord rationales, and trajectory excerpts for ALL scenarios in
+  the build. For a build with many scenarios, this prompt may exceed the judge model's context window (same
+  Max seat as the coder, D-1). A chunking or summarization strategy is NOT designed here (it would require
+  knowing the scenario count and spec size at design time, which varies per component). The risk is that
+  very large builds require either prompt truncation (losing detail) or multi-pass diagnosis (splitting
+  scenarios across calls, then aggregating). This is an OQ flagged for C46's cost/throughput model and for
+  the first real build that exercises `diagnose()`. **Still open — not C32's to resolve alone; shared with
+  C46:OQ3 + C28:OQ-2.**

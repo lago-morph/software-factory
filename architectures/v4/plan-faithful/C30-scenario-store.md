@@ -27,7 +27,8 @@ against** — then freeze the corpus/layout/feed seams the evaluation tier (C31,
 | **T5** Corpus integrity via git revision (signing DEFERRED → FE-3/G37) | Establish that each scenario's **git commit identity** is its Phase-0/2 tamper-evidence/provenance record (AC-5; verified by C34/baselining, F7; AI-CONTEXT:236/404). **Custom cryptographic signing is NOT built — it is DEFERRED → FE-3, blocked on G37 (D-14); a plaintext key collapses the assurance (XC-6).** | S | T3 |
 | **T6** Scenario-path feed to C34 | Publish the corpus layout/paths (+ git-revision identity) as the feed **C34** enforces+audits actual implementer reads against (AC-7; README:173). **C30 publishes; C34 enforces+audits (D-13).** | M | T3, T4 |
 | **T7** Freeze corpus/layout/feed seams | Enumerate + freeze I1–I7 (Task DSL, repo+layout, provider pack, partition/rig binding, git-revision integrity, path-feed, corpus retrieval) + the §4.5 scenario-record schema (OQ-1 RESOLVED) so C31/C32/C34 build against the frozen schema. *(No signature-format seam — signing DEFERRED → FE-3.)* | M | T2–T6 |
-| **T8** Scenario-store conformance pack | Build the conformance pack (§8 test strategy) asserting AC-C30-01…AC-C30-08 + E-code negative paths (E-C30-01…E-C30-07); gate C31/C32/C34 on AC-C30-04 + AC-C30-07 green. | M | T7 |
+| **T8** Scenario-store conformance pack | Build the conformance pack (§8 test strategy) asserting AC-C30-01…AC-C30-10 + E-code negative paths (E-C30-01…E-C30-09); gate C31/C32/C34 on AC-C30-04 + AC-C30-07 green. Include AC-C30-09 (worker-rig correction rejected) + AC-C30-10 (S↔H independent correction) in the suite. | M | T7, T9 |
+| **T9** S↔H correspondence duty + correction-seam publication | Document the S↔H authoring responsibility (§1.1), the test-kind distinction table (§1.2), and publish the `ScenarioCorrectionRequest` interface (§1.3 field table + seam to C52). Per **D-44**: schema now carries `requested_by` (R, `"kind:id"` per D-29), `repair_mode` (R), `defect_detail` (R, canonical name — replaces `rationale`), `requested_at` (R); `correction_mode {re_author,extend,remove}` is reclassified as **C30-INTERNAL** (not an inbound field). Per **D-45**: E-C30-08 is defense-in-depth (C34 is canonical enforcement owner); note in the field table and E-code description. Assert AC-C30-09/AC-C30-10. **No intent crucible / EARS linter built** — this is a SEAM stub (§0★.3 capability-bar). | S | T3, T4, C32 DiagnosisRecord frozen (D-43) |
 
 ## 2. Dependency graph
 
@@ -36,15 +37,23 @@ against** — then freeze the corpus/layout/feed seams the evaluation tier (C31,
   needed for T4; **C42 provides, C30 does not enforce**, D-13). Inspect AI (external OSS, T1) is the DSL.
   C03 (secrets) is *not* a prereq and not on T5's path: T5 uses the content-addressed git repo (no key);
   **cryptographic signing is DEFERRED → FE-3, blocked on G37/C03 (D-14)** — out of C30's sweep-1 scope.
+  **T9 (correction-seam publication) additionally depends on C32's `DiagnosisRecord` schema being frozen
+  (D-43)** — the `ScenarioCorrectionRequest.diagnosis_ref` field keys to the `DiagnosisRecord` bead.
 - **Critical path:** **T1 → T2** (adopt + provider pack) and **T3 → T4** (repo + partition binding) are the
   two gating chains; they converge at **T6** (the C34 path-feed) and **T7** (seam freeze). T4's
   partition-placement (AC-4) is the load-bearing correctness check — it makes the holdout invariant
   `scenarios ∉ read_partition(worker)` (C42) and C34's audit well-defined. C30 does **not** gate on any
-  enforcement work (that is C34's, downstream).
+  enforcement work (that is C34's, downstream). **T9 is independent of T2/T5/T6** — it requires only T3
+  (repo standing) + T4 (partition binding) + D-43 frozen; it feeds into T8 (conformance pack must cover
+  AC-C30-09/AC-C30-10).
 - **Downstream gated by T7 (seam freeze):** **C31** (runner → I1 Task DSL + I7 corpus retrieval; also needs
   the Inspect-AI session-id adapter, G25 — *C31's* concern), **C32** (judge → I7 corpus; same-provider per
   D-1), **C34** (holdout enforcement+audit → I6 path-feed + I5 git-revision integrity; **enforcement is C34**), and the
   corpus consumers **C35/C53/C55** (override rules / bootstrap validation / methodology loop → I7).
+- **New downstream gated by T9 (correction-seam):** **C52** (repair router must deliver
+  `ScenarioCorrectionRequest` in the field shape §1.3 specifies); **C34** (must audit `created_by` on
+  correction-cycle entries — E-C30-08 enforcement). T9 publishes the seam interface; C52 and C34 own the
+  delivery and enforcement respectively (OQ-5/OQ-6).
 
 ## 3. Parallelization
 
@@ -122,8 +131,12 @@ Retire in this order (highest uncertainty first):
 
 **Per-task DoD:** each Tn meets its mapped acceptance criterion (T1→AC-C30-01, T2→AC-C30-01/I3,
 T3→AC-C30-02/AC-C30-06/AC-C30-08, T4→AC-C30-03/AC-C30-04, T5→AC-C30-05, T6→AC-C30-07, T7→M1–M4,
-T8→conformance-pack-green) and marks the spec's OQs resolved (OQ-1/OQ-2/OQ-3/OQ-4 RESOLVED by Sweep-2).
-**T4 (AC-C30-04: partition placement) + T6 (AC-C30-07: path-feed to C34) are the gating exit criteria** —
-they make the holdout boundary well-defined and auditable; C34/C42 depend on them. **DoD explicitly excludes
-enforcement/audit work (C34, D-13).** New seam: E-C30-04 handoff to C34 (C30↔C34 trigger contract) left
-open for the C34 Sweep-2 author to specify the consumption mechanism.
+T8→conformance-pack-green-on-AC-C30-01..AC-C30-10, T9→AC-C30-09/AC-C30-10/§1.1-§1.3-published) and marks
+the spec's OQs resolved (OQ-1/OQ-2/OQ-3/OQ-4 RESOLVED by Sweep-2; OQ-5/OQ-6 new and open — deferred to
+C52/C34 Sweep-2 authors). **T4 (AC-C30-04: partition placement) + T6 (AC-C30-07: path-feed to C34) are the
+gating exit criteria** — they make the holdout boundary well-defined and auditable; C34/C42 depend on them.
+**T9 (AC-C30-09: anti-gaming rejection + AC-C30-10: S↔H independent path) is required before C52's repair
+router can build against the correction seam.** **DoD explicitly excludes enforcement/audit work (C34, D-13)
+and the intent crucible / EARS linter (C10/C11, §0★.3 capability-bar).** Open seams: E-C30-04 handoff to
+C34 (C30↔C34 trigger contract) + `ScenarioCorrectionRequest` delivery mechanism (C52↔C30, OQ-5) + MANIFEST
+`diagnosis_ref` field question (OQ-6) — left open for C52/C34 Sweep-2 authors.

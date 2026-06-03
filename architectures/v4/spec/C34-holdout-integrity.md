@@ -58,6 +58,79 @@ worker that produced it. Per review-log **D-13** this is C34's explicit charter;
 partition labels, C30 *stores* the scenario bytes in the isolated rig, and C34 is where the **enforcement
 and the audit live**.
 
+### 1.1 Why H↔I is a valid anti-gaming check (structural property, D-13 + D-38)
+
+The H↔I edge — the judge's verdict on whether the system satisfies the hold-out scenarios — is the
+**anti-gaming check** of the spec–scenarios–system triangle (D-42 / ADR-0069). Its trustworthiness for
+**unattended operation** rests on a single structural property: **the implementing worker cannot read or
+author the hold-out scenarios**.
+
+> **D-13 (verbatim):** "C34 owns holdout-integrity ENFORCEMENT + after-the-fact AUDIT (read-isolation
+> policy, independence checks under D-1, `scenarios ∉ read_partition(worker)`). C43 owns the distinct
+> lethal-trifecta blast-radius bound (Bash/net/fs typing, twin isolation; G31). C42 PROVIDES the role
+> partition C34 enforces; C42 does not enforce. Pre-constrains unbuilt C34 (Batch 3) + C43 (Batch 4)."
+
+> **D-38 (verbatim):** "Judge read-surface SHAPE = a separate judge rig (the D-17 joint C42/C34/C32
+> freeze). Per D-31 (multiple rigs per city) + D-17: the judge runs in a **separate rig** from the worker
+> (worker rig + judge rig, co-resident in the city). The judge MAY read the worker's trajectory log + the
+> held-out scenario partition; the worker MUST NOT read the judge rig or the scenarios (the holdout — C34
+> enforces+audits, C42 provides the partition); **no shared context window**."
+
+The structural property C34 enforces and audits:
+
+- **`scenarios ∉ read_partition(worker)` (D-13)** — the worker rig is policy-denied read of the
+  `scenarios` partition. The hold-out corpus is in a **separate git repo** with filesystem permissions
+  enforcing read-only-from-implementer; the worker rig's partition config explicitly excludes the
+  `scenarios` partition. C34 realizes this on disk and audits actual reads against scenario paths.
+- **Worker cannot author the hold-out (D-38)** — the `scenarios` partition is owned by the
+  `scenario_authoring` rig (C30), not the `implementer`/`worker` rig. C34 validates `created_by ==
+  "rig:scenario_authoring"` on every manifest entry (E-C34-05). An entry authored by any other rig is
+  immediately flagged and the corpus treated as suspect.
+
+**Without this structural property the H↔I check is self-referential** — the worker grades its own
+homework: it could read the scenarios before implementing, craft an implementation tuned to pass them, and
+the judge's verdict would carry zero anti-gaming value. The property makes the judge's H↔I verdict
+trustworthy for unattended operation (D-42) precisely because *neither the read nor the authoring path
+from the worker to the hold-out exists*, and C34 is the component that enforces and audits those
+closed paths (D-13 / D-38).
+
+### 1.2 Repair path independence: the anti-gaming property extends to spec/scenario correction (D-42 + D-43)
+
+A misalignment verdict from the judge (H↔I edge failure) may be attributed to `root_cause ∈
+{spec, scenario}` via the `DiagnosisRecord` (D-43 / C32 §3.2a). When that happens, the needed correction
+is a **spec change** (C08 + future C10/C11) or a **scenario change** (C30 scenario builder). This
+correction path is **outside the worker's reach by design** — and C34 is responsible for auditing that
+this independence is not violated.
+
+**Why this matters:** if the implementing worker could trigger or influence a spec/scenario correction,
+the anti-gaming property would degrade: the worker could cause the spec to weaken until its output
+passes, or cause a scenario to be softened to match what it produced. D-42/ADR-0069 make this explicit:
+
+> *"Spec/scenario correction is performed by an authoring path **independent of the implementing
+> worker** (anti-gaming)."* — D-42 (review-log, verbatim)
+>
+> *"Every `spec`/`scenario` repair route is executed by the **independent authoring path** (C08 + future
+> C10/C11; C30 scenario builder + spec builder), **never the implementing worker** — without this, 'fix
+> the spec' degenerates into 'weaken the spec until my output passes'."* — D-43 (review-log, verbatim)
+
+**C34's duty (correction-path independence enforcement — canonical per D-45):** C34 is the **authoritative enforcement owner** for worker-origin rejection of both `DiagnosisRecord.created_by` (existing E-C34-08) and `{Spec,Scenario}CorrectionRequest.requested_by` (D-44/D-45 extension). Concretely:
+
+- The `DiagnosisRecord.created_by` must be a judge rig (`"rig:judge-N"`) — never a worker rig. A
+  `DiagnosisRecord` with `created_by` not matching a judge rig is itself invalid (E-C34-08) and any
+  correction it triggers is suspect.
+- **`{Spec,Scenario}CorrectionRequest.requested_by` (D-44/D-45 — new extension):** C34's provenance audit **extends** to the `requested_by` field on both `SpecCorrectionRequest` (C08's type) and `ScenarioCorrectionRequest` (C30's type). A correction request whose `requested_by` resolves to the implementing worker rig **fails the audit → the request is rejected, never executed** (E-C34-09). This is C34's canonical enforcement of D-45. **C52 MUST call `audit_correction_request_provenance()` before routing any correction** and MUST NOT hand off a correction whose audit returns `verdict="violation"`. The C08 (E-C08-07) and C30 (E-C30-08) entry-guards are retained as **defense-in-depth** but delegate the authoritative check to C34 (D-45).
+
+This extends the anti-gaming property from "worker can't read the hold-out" to "worker can't drive its
+own spec/scenario relaxation." The correction seam (C08/C30 + future C10/C11) is named here as a
+**seam** — C34 does not build the intent crucible (C11) or EARS linter (C10); it audits the *provenance*
+of what flows through those seams.
+
+**[D-30 prevent-gate applies here too]** Per D-30, unattended (P2) / self-modification (P3b) require
+the substrate to BLOCK, not merely detect, out-of-boundary access. Whether Gas City blocks a worker rig
+from writing into the spec/scenario authoring pipeline (not just from reading the scenarios) is part of
+the same D-23 spike question (OQ-C34-1). C34 audits the correction-request provenance in the
+detect+audit path; the blocking watcher design is DEFERRED pending the spike. See §9 OQ-C34-1.
+
 C34 is **load-bearing for the entire evaluation tier's integrity claim**. Per **D-1**, the judge runs on
 the *same provider/family* as the coder (cross-family judging is deferred to **FE-1**), so the guarantee
 "the implementer never read the scenarios it is judged on, and the judge that scored it is independent of
@@ -97,6 +170,12 @@ separation. This is why C34 *enforces and audits* what C42 *declares* and C30 *s
   distinct partition — so that "independently judged" (AI-CONTEXT:35) holds *by isolation* now that
   model-family diversity is deferred (D-1). Independence is asserted via the **rig/role separation**, not a
   registry field (D-10) and not model family (D-1).
+- **Own the DiagnosisRecord audit (new, D-43).** For each `DiagnosisRecord` produced by C32, C34 audits:
+  (a) `diagnosis_prompt_hash` is present (reproducibility), (b) `created_by` is a judge rig, not a worker
+  rig (independence), (c) `scenario_set_version` is current / not stale, and (d) the self-consistency
+  invariant holds (`tri_alignment = aligned` only if `all_scenarios_satisfied = true` AND `root_cause =
+  none`). A `DiagnosisRecord` failing any check is flagged before C52/C53 act on it. See §3.4 + §4.5.
+- **Own correction-path independence enforcement — canonical per D-45 (D-42 + D-43 + D-44 + D-45).** C34 is the **authoritative enforcement owner** for worker-origin rejection of correction requests (D-45). Its provenance audit **extends** from `DiagnosisRecord.created_by` (E-C34-08) to **`{Spec,Scenario}CorrectionRequest.requested_by`** (D-44 canonical field on both payload types): a correction request whose `requested_by` resolves to the implementing worker rig fails the audit → rejected, never executed (E-C34-09). C52 MUST consume this audit verdict before hand-off. The C08 (E-C08-07) and C30 (E-C30-08) entry-guards are **defense-in-depth**, not the authoritative check. C34 does not build the correction path; it audits correction-request provenance.
 - **Publish holdout-integrity status + findings.** Expose, per run / per scenario evaluation, a
   pass/violation status and the leak/independence findings as **beads** so the evaluation tier (C32/C33),
   the override loop, and the residual-risk register can consume them. C34's output is the observability
@@ -390,6 +469,107 @@ this predicate is skipped (D-1 — same provider). The seam name for this forwar
 **`FE1_cross_family_gate`**; it is not built now. C29 emits the signal; C34 consumes it.
 **OQ-C34-4 stays OPEN** (where enforcement lives — C34 vs C29 advisory — is FE-1's decision).
 
+### 3.4 DiagnosisRecord audit interface (Sweep-2 — new; D-43)
+
+C34 now also audits the `DiagnosisRecord` that C32 emits per build evaluation. This is distinct from
+auditing the per-scenario `ScoreRecord` (§3.2/§3.3): the `DiagnosisRecord` is the **aggregate judge
+output** that C52 (repair router) and C53 (tri-alignment gate) act on — a corrupt or worker-generated
+`DiagnosisRecord` could silently steer the repair path or falsely declare tri-alignment. C34 is the
+guard.
+
+```python
+def audit_diagnosis(
+    diagnosis: DiagnosisRecord,       # C32 §3.2a frozen schema (D-43); bead type
+                                      #   softwarefactory.v4.beads:diagnosis_record
+    judge_rig_names: list[str],       # C42-declared judge rig names (e.g. ["judge-1"])
+                                      #   used to verify created_by ∈ judge rigs
+    current_scenario_set_version: str, # the pinned scenario corpus version in effect
+                                       #   (from C30 MANIFEST generated_at_commit or
+                                       #    semantic version tag); staleness baseline
+) -> DiagnosisAuditResult:
+    """Audit a DiagnosisRecord produced by C32 before C52/C53 act on it.
+
+    Audit checks (in order):
+    1. diagnosis_prompt_hash is present and non-empty — reproducibility (E-C34-07 if missing)
+    2. created_by ∈ judge_rig_names (D-38: diagnosis MUST come from judge rig, NEVER worker)
+       — (E-C34-08 if created_by is a worker rig or unknown rig)
+    3. scenario_set_version == current_scenario_set_version — staleness check
+       — (E-C34-06 sub-case if stale)
+    4. Self-consistency invariant (D-43):
+         tri_alignment == "aligned" iff all_scenarios_satisfied == True AND root_cause == "none"
+       Any deviation → E-C34-10 (self-inconsistent DiagnosisRecord)
+
+    Postconditions:
+    - Returns DiagnosisAuditResult(verdict="passed") iff all 4 checks pass
+    - Returns DiagnosisAuditResult(verdict="failed", violations=[...]) on any check failure
+    - A "failed" result MUST block C52 from routing repairs and C53 from reading tri_alignment
+      until a clean DiagnosisRecord is produced by the judge rig
+    """
+    ...
+```
+
+**`DiagnosisAuditResult` type:**
+
+```python
+@dataclass
+class DiagnosisAuditResult:
+    diagnosis_record_id: str              # bead_id of the audited DiagnosisRecord
+    verdict: Literal["passed", "failed"]
+    violations: list[str]                 # empty if verdict == "passed"; one entry per
+                                          # failed check, naming the E-code raised
+    audited_at: str                       # ISO-8601 UTC
+    created_by: str                       # "rig:c34-auditor" D-29 wire form
+```
+
+**Correction-request provenance audit (§1.2 duty — extended per D-44/D-45 to cover `{Spec,Scenario}CorrectionRequest.requested_by`):**
+
+> **D-44 (ADOPTED — lead, 2026-06-02) — canonical correction-request contract.**
+> "**Common required fields on BOTH payloads:** … `requested_by` (`"kind:id"` actor, D-29 — **stamped by C52 with its own rig identity**; this is the field the worker-origin rejection keys on, D-45)."
+
+> **D-45 (ADOPTED — lead, 2026-06-02; resolves C08:OQ-3 + the C30/C34 enforcement-point ambiguity) — worker-origin rejection of correction requests is ENFORCED by C34 (its provenance audit is the canonical owner); C08/C30 entry-guards are defense-in-depth.**
+> "Canonical: **C34 owns the enforcement** — it already audits `DiagnosisRecord.created_by` for judge-rig provenance (E-C34-08); that audit **extends to `{Spec,Scenario}CorrectionRequest.requested_by`** (a correction request whose `requested_by` resolves to the implementing worker rig fails the audit → the request is rejected, never executed). **C52 MUST stamp `requested_by` with its rig identity and MUST NOT route a correction whose C34 audit fails** (consume the audit verdict before hand-off). The **C08 (E-C08-07) and C30 (E-C30-08) entry-guard rejections are retained as defense-in-depth** but delegate the authoritative check to C34. This keeps the anti-gaming property (worker can neither read the hold-out nor drive its own spec/scenario relaxation) enforced at one canonical point with redundant guards."
+
+**Per D-45, C34's `audit_correction_request_provenance()` is the canonical enforcement for worker-origin rejection of `{Spec,Scenario}CorrectionRequest.requested_by`.** C52 calls this function before routing any correction to C08 or C30; a `violation` verdict MUST block the hand-off. C08 (E-C08-07) and C30 (E-C30-08) entry-guards are defense-in-depth — they fire if a request somehow bypasses C34.
+
+```python
+def audit_correction_request_provenance(
+    correction_request_ref: str,          # bead_id or event_id of the SpecCorrectionRequest
+                                          # or ScenarioCorrectionRequest (D-44 field: requested_by)
+    origin_actor: str,                    # the `requested_by` field value from the payload
+                                          # (D-44 canonical field name on both payload types)
+    judge_rig_names: list[str],           # C42-declared judge rig names (includes bootstrap/orchestrator)
+    worker_rig_names: list[str],          # C42-declared worker/implementer rig names
+) -> ProvenanceAuditResult:
+    """Audit that a {Spec,Scenario}CorrectionRequest.requested_by did NOT originate from the worker rig.
+
+    D-44/D-45: The `requested_by` field is the canonical worker-origin rejection key.
+    C52 stamps `requested_by` with its own rig identity before routing; C34 validates it here.
+    This extends the E-C34-08 audit (DiagnosisRecord.created_by) to the correction-request seam.
+
+    A correction request MUST have `requested_by` that resolves to a non-worker rig
+    (e.g. "rig:bootstrap", "rig:orchestrator") — never a worker rig.
+    If origin_actor ∈ worker_rig_names → E-C34-09 (worker-originated correction request).
+    If origin_actor is unknown/missing → treat as violation (fail-loud).
+
+    Postconditions:
+    - Returns ProvenanceAuditResult(verdict="clean") iff origin_actor ∉ worker_rig_names
+      AND origin_actor is known (not empty/unknown)
+    - Returns ProvenanceAuditResult(verdict="violation") + E-C34-09 otherwise
+    - C52 MUST NOT route the correction if verdict="violation"
+    - C08/C30 entry-guards (E-C08-07 / E-C30-08) are defense-in-depth — they fire only if
+      a worker-rig request somehow bypasses this canonical check
+    """
+    ...
+
+@dataclass
+class ProvenanceAuditResult:
+    correction_request_ref: str
+    origin_actor: str                      # the `requested_by` field value audited
+    verdict: Literal["clean", "violation"]
+    violation_type: Optional[str]          # "worker_origin" | "unknown_origin" | None
+    audited_at: str                        # ISO-8601 UTC
+```
+
 ## 4. Data model / state
 
 C34 owns **the read-isolation policy object, the audit/independence verdicts, and the findings** it raises.
@@ -490,15 +670,48 @@ Authority note (one line, G28): the **rig `read_partition` (C42) is the authorit
 broad-tool-access blast-radius bound is **C43's** (G31); **OPA is dropped**. This is the smallest faithful
 resolution of G28 from C34's side — an authority statement, not a composition stack (see §6).
 
+### 4.5 DiagnosisAuditRecord bead schema (new — D-43)
+
+> **[FAITHFUL-FILL] DiagnosisAuditRecord is a new audit bead type.** The `DiagnosisRecord` is the
+> aggregate judge output that gates C52 (repair router) and C53 (tri-alignment). C34 must audit it before
+> those consumers act on it. The audit result is a bead in C19/C20 consistent with the existing
+> `HoldoutAuditRecord` / `IndependenceAuditRecord` pattern.
+
+**`DiagnosisAuditRecord` bead schema** (bead type:
+`softwarefactory.v4.beads:diagnosis_audit_record`):
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `diagnosis_record_id` | `string` (bead_id) | R | The `DiagnosisRecord` bead being audited (C32 §3.2a, D-43) | C34 writes; C52/C53 block on "failed" |
+| `factory_build_ref` | `string` | R | The `factory_build` bead this diagnosis covers; links to `DiagnosisRecord.factory_build_ref` | C34 writes (copied from DiagnosisRecord); C52/C53 read |
+| `verdict` | `enum{passed, failed}` | R | `passed` = all four audit checks clean; `failed` = at least one violation | C34 writes; C52 MUST NOT route on a `failed` record; C53 MUST NOT read `tri_alignment` from a `failed` record |
+| `violations` | `list[string]` | R | Empty if `verdict=passed`; list of E-codes raised (e.g. `["E-C34-08", "E-C34-10"]`) | C34 writes; C52/C53/C57 read |
+| `diagnosis_prompt_hash_present` | `bool` | R | Whether `DiagnosisRecord.diagnosis_prompt_hash` was present and non-empty (reproducibility check) | C34 audits; false → E-C34-07 |
+| `created_by_verdict` | `enum{judge_rig, worker_rig, unknown_rig}` | R | Classification of `DiagnosisRecord.created_by` against C42-declared rig names | C34 audits; `worker_rig` or `unknown_rig` → E-C34-08 |
+| `scenario_set_version_match` | `bool` | R | Whether `DiagnosisRecord.scenario_set_version == current_scenario_set_version` at audit time | C34 audits; false → E-C34-06 (staleness sub-case) |
+| `self_consistent` | `bool` | R | Whether the `tri_alignment = aligned` iff `all_scenarios_satisfied = true AND root_cause = none` invariant holds in the audited record | C34 audits; false → E-C34-10 |
+| `audited_at` | `timestamp` | R | UTC timestamp of the audit | C34 writes; C52/C53/C57 read |
+| `created_by` | `string` | R | `"rig:c34-auditor"` D-29 wire form | C34 writes via C41; all read |
+
+**Expanded audit surface — all DiagnosisRecord fields C34 audits:**
+
+| Field | Type | Req | Semantics | R/W-by |
+|---|---|---|---|---|
+| `diagnosis_prompt_hash` | `string` | R | SHA-256 of the diagnosis prompt; C34 verifies non-empty for reproducibility — a diagnosis cannot be re-run or challenged without the prompt | C32 writes; C34 audits (E-C34-07 if absent) |
+| `created_by` | `actor` | R | Must be a C42-declared judge rig (`"rig:judge-N"`, D-38); C34 verifies it is NOT a worker rig — a worker-rig-originated diagnosis breaks the anti-gaming property (D-42) | C32 writes; C34 audits (E-C34-08 if worker or unknown) |
+| `scenario_set_version` | `string` | R | The C30 hold-out corpus pin evaluated; C34 verifies it matches the current pinned version — a stale corpus may omit recently-authored scenarios, weakening the hold-out gate | C32 writes; C34 audits (E-C34-06 staleness sub-case) |
+| `tri_alignment` + `all_scenarios_satisfied` + `root_cause` | `enum + bool + enum` | R | Self-consistency invariant: `tri_alignment = aligned` REQUIRES `all_scenarios_satisfied = true` AND `root_cause = none`; any other combination is a judge logic error and must not reach C52/C53 undetected | C32 writes; C34 audits (E-C34-10 if inconsistent) |
+
 ### 4.4 Persistence & consistency
 
 C34 holds **no new store**. The policy object is config/derived (from C42 labels + C30 paths + on-disk
 perms); verdicts are derived per run; findings are **beads** in the existing work-graph (C19/C20). C34's
-only consistency requirement is that **every worker-rig read inside `scenarios` produces a leak finding**
-and **every scored trajectory gets an independence verdict** — i.e., the audit is *complete over the read
-trail* and *complete over the scored set* (faithful: whether the read trail is complete enough to make the
-audit sound is OQ-C34-2 / G21, since a broad-tool-access worker may read by a path the trail does not
-capture until C43 lands).
+only consistency requirement is that **every worker-rig read inside `scenarios` produces a leak finding**,
+**every scored trajectory gets an independence verdict**, and **every `DiagnosisRecord` gets a
+`DiagnosisAuditRecord` before C52/C53 consume it** — i.e., the audit is *complete over the read trail*,
+*complete over the scored set*, and *complete over the diagnosis output* (faithful: whether the read trail
+is complete enough to make the audit sound is OQ-C34-2 / G21, since a broad-tool-access worker may read
+by a path the trail does not capture until C43 lands).
 
 ## 5. Behavior
 
@@ -557,6 +770,51 @@ sequenceDiagram
     C19-->>C35: LeakFinding or ViolationFinding available (override/why loop)
 ```
 
+### 5.2 Anti-gaming + repair path independence diagram (Sweep-2; validated PASS)
+
+> **Mermaid validator verdict: PASS** (validated 2026-06-02 via
+> `mcp__957183d2-29cc-4fb8-8d95-f0a6c3fce832__validate_and_render_mermaid_diagram`; `valid: true`,
+> `diagramType: flowchart`).
+
+This diagram shows the structural property (§1.1) and the repair path independence property (§1.2):
+the worker's read and authoring paths to the hold-out are blocked by C34; the correction path from
+`DiagnosisRecord` to spec/scenario change is routed exclusively through the independent authoring path,
+audited by C34 at the provenance seam.
+
+```mermaid
+flowchart LR
+    W["Worker rig\n(implementer)"]
+    H["Hold-out Scenarios\n(C30)"]
+    S["Spec\n(C08)"]
+    JR["Judge rig\n(C32)"]
+    DR["DiagnosisRecord\n(C32 §3.2a)"]
+    C34["C34 Holdout Auditor"]
+    C52["C52 Repair Router"]
+    AP["Independent Authoring Path\n(C08/C30)"]
+
+    W -- "reads BLOCKED\n(D-13 + D-38)" --> H
+    W -- "cannot drive correction" --> S
+    JR -- "reads allowed\n(D-38)" --> H
+    JR -- "reads trajectory" --> W
+    JR -- "produces" --> DR
+    W -- "cannot produce\n(anti-gaming)" --> DR
+    DR -- "audit_diagnosis (§3.4)" --> C34
+    C34 -- "checks created_by\nstale version\nself-consistency" --> DR
+    DR -- "root_cause triggers" --> C52
+    C52 -- "routes to" --> AP
+    AP -- "corrects spec or scenario\nnever the worker" --> S
+```
+
+**Key flows:**
+- The `W → H` arrow is blocked at the enforcement/audit layer; any read attempt is caught by
+  `run_holdout_audit` (§3.2, E-C34-01). C34 audits this path.
+- The `W → DR` non-edge: the worker cannot invoke `C32.diagnose()` (D-43 / C32 §3.2a I9); the
+  `DiagnosisRecord.created_by` must be a judge rig or `audit_diagnosis` raises E-C34-08.
+- The `C34 → DR` audit arrow: `audit_diagnosis()` (§3.4) checks all four audit surfaces before
+  C52/C53 act on the `DiagnosisRecord`.
+- The `C52 → AP` arrow: correction is always routed to the independent authoring path; C34
+  audits correction-request provenance at this seam (§3.4 `audit_correction_request_provenance()`).
+
 ## 6. Failure modes & handling
 
 ### 6.1 Error taxonomy (E-codes, Sweep-2)
@@ -568,7 +826,11 @@ sequenceDiagram
 | **E-C34-03** | **Audit-trail-incomplete** — one or more read-trail events have an unknown actor (cannot confirm worker vs non-worker rig) | `HoldoutAuditRecord.verdict = "audit_trail_incomplete"`; audit is inconclusive for this run | C57 register: record as caveat (G21 residual); wait for C43 broad-tool-access bound before trusting clean verdicts on these runs |
 | **E-C34-04** | **Independence-predicate-unconfigured** — judge_partition or worker_partition is unknown/missing from C42 config at check time | `IndependenceAuditRecord.verdict = "violation"` (fail-loud on unknown partition) + `violation_type = "independence_level_below_floor"` | Operator must supply C42 partition config; C34 cannot run the check without it |
 | **E-C34-05** | **Wrong-authoring-identity** — a MANIFEST.json entry has `created_by != "rig:scenario_authoring"` (E-C30-04 consumption seam, §3.1) | Manifest load raises `E-C34-05`; corpus is treated as suspect; no audit proceeds against the suspect manifest version | Scenario-authoring rig must recommit the entry with the correct `created_by`; operator reviews the commit history |
-| **E-C34-06** | **Manifest-stale** — `generated_at_commit` in MANIFEST.json does not match the scenario repo HEAD SHA (corpus has been updated without regenerating the manifest) | Manifest load raises `E-C34-06`; `protected_paths` from a stale manifest may be incomplete | `scenario_authoring` rig must regenerate and commit an updated MANIFEST.json |
+| **E-C34-06** | **Manifest-stale** — `generated_at_commit` in MANIFEST.json does not match the scenario repo HEAD SHA (corpus has been updated without regenerating the manifest); also raised as a sub-case when `DiagnosisRecord.scenario_set_version` does not match the current corpus pin | Manifest load raises `E-C34-06`; `DiagnosisAuditRecord.scenario_set_version_match = false`; `protected_paths` from a stale manifest may be incomplete; a stale `DiagnosisRecord` may have omitted recently-authored scenarios | `scenario_authoring` rig must regenerate and commit an updated MANIFEST.json; C32 must re-run `diagnose()` against the current corpus |
+| **E-C34-07** | **Diagnosis-prompt-hash-absent** — `DiagnosisRecord.diagnosis_prompt_hash` is missing or empty; the diagnosis cannot be reproduced, challenged, or re-run without the prompt hash | `DiagnosisAuditRecord.verdict = "failed"`, `violations = ["E-C34-07"]`, `diagnosis_prompt_hash_present = false`; C52/C53 MUST block on this record | C32 must re-run `diagnose()` with prompt hashing enforced (C32 §3.2a I9); C34 quarantines the un-hashed record |
+| **E-C34-08** | **Diagnosis-from-non-judge-rig** — `DiagnosisRecord.created_by` is not a C42-declared judge rig (it is a worker rig, an unknown rig, or absent); the anti-gaming property is violated because a non-judge source produced the aggregate diagnosis that gates C52/C53 (D-38 / D-42) | `DiagnosisAuditRecord.verdict = "failed"`, `violations = ["E-C34-08"]`, `created_by_verdict ∈ {worker_rig, unknown_rig}`; C52/C53 MUST NOT route or gate on this record; a holdout-integrity bead is emitted | Operator reviews the `DiagnosisRecord` provenance; the worker rig must not have access to C32's `diagnose()` entrypoint; C34 routes the finding to C35 (override/why) and C57 (register) |
+| **E-C34-09** | **Worker-originated-correction-request** — a spec/scenario correction request arriving at the independent authoring path (C08/C30 + future C10/C11 seam) carries a worker-rig origin in its C41 provenance; this violates the repair-path independence property (§1.2 / D-42 / D-43) | `ProvenanceAuditResult.verdict = "violation"`, `violation_type = "worker_origin"`; the correction request is blocked and a finding bead written to C19; C35 override/why loop picks it up | The correction pipeline (C08/C30) must reject the request; the operator reviews the worker rig's access to the correction seam; C34 finding routed to C57 register |
+| **E-C34-10** | **Diagnosis-self-inconsistent** — `DiagnosisRecord.tri_alignment = "aligned"` but either `all_scenarios_satisfied ≠ true` or `root_cause ≠ "none"` (or both); the judge logic violated the invariant that `aligned` requires a 100% pass AND no root cause (D-43 / C32 §3.2a) | `DiagnosisAuditRecord.verdict = "failed"`, `violations = ["E-C34-10"]`, `self_consistent = false`; C53 MUST NOT use `tri_alignment` from this record as a go term; C52 MUST NOT route on `repair_recommendation` from this record | C32 must re-run `diagnose()` and emit a corrected `DiagnosisRecord`; C34 quarantines the inconsistent record and routes the finding to C57 |
 
 ### 6.2 Failure-mode table (F-modes / gaps)
 
@@ -684,6 +946,11 @@ sequenceDiagram
 8. **No policy-engine / OPA over-build (bar)**: C34 contains **no OPA / Rego engine, no custom MAC kernel,
    no tool-call-time interceptor**; enforcement is file perms + C42 partitions + the after-the-fact audit
    only (SURVIVOR-PASS C42-06; README:425).
+9. **DiagnosisRecord audit gate (D-43)**: C34 audits every `DiagnosisRecord` before C52/C53 act on it;
+   a record with absent `diagnosis_prompt_hash` (E-C34-07), non-judge `created_by` (E-C34-08), stale
+   `scenario_set_version` (E-C34-06), or self-inconsistent `tri_alignment` (E-C34-10) causes
+   `DiagnosisAuditRecord.verdict = "failed"` and blocks C52/C53.
+10. **Correction-path independence enforced — canonical per D-45 (§1.2 / D-42 / D-44 / D-45)**: C34 is the **authoritative enforcement owner** for worker-origin rejection of correction requests. Its provenance audit extends from `DiagnosisRecord.created_by` (E-C34-08) to **`{Spec,Scenario}CorrectionRequest.requested_by`** (D-44/D-45 extension): a request whose `requested_by` resolves to a worker rig raises E-C34-09, blocks the request, and is routed to C35/C57. C52 MUST consume the audit verdict before hand-off. The independent authoring path (C08/C30 + future C10/C11 seam) receives only non-worker-rig-originated correction requests. C08 (E-C08-07) and C30 (E-C30-08) entry-guards are defense-in-depth.
 
 ### 8.1 Concrete acceptance tests (Sweep-2 AC-codes)
 
@@ -699,6 +966,12 @@ sequenceDiagram
 | **AC-C34-08** | GIVEN a MANIFEST.json where `generated_at_commit` does not match the scenario repo HEAD SHA; WHEN `load_scenario_manifest` is called; THEN `E-C34-06` is raised | §3.1 stale-manifest detection | E-C34-06 |
 | **AC-C34-09** | GIVEN a `HoldoutAuditRecord` with `verdict = "leak"` is written to C19; WHEN C33 queries for audit records for the run; THEN C33 can read the bead and retrieve `LeakFinding.read_path` and `LeakFinding.actor_ref` | §4.2 schema completeness; C33 gate seam | E-C34-01 |
 | **AC-C34-10** | GIVEN the factory has no OPA engine / Rego policy / tool-call-time interceptor; THEN audit runs solely via manifest-based path comparison (§3.1/§3.2) and independence predicate (§3.3); no Rego evaluation occurs | §1 no-policy-engine invariant (SURVIVOR-PASS C42-06) | — (structural) |
+| **AC-C34-11** | GIVEN a `DiagnosisRecord` where `created_by = "rig:worker-1"` (a worker rig, not a judge rig); WHEN `audit_diagnosis` is called; THEN `DiagnosisAuditRecord.verdict = "failed"`, `violations` contains `"E-C34-08"`, `created_by_verdict = "worker_rig"`, and C52/C53 are blocked from acting on the record | §1.1 + §3.4 + §4.5 anti-gaming: diagnosis from non-judge rig fails audit | E-C34-08 |
+| **AC-C34-12** | GIVEN a `DiagnosisRecord` where `diagnosis_prompt_hash = ""` (absent or empty); WHEN `audit_diagnosis` is called; THEN `DiagnosisAuditRecord.verdict = "failed"`, `violations` contains `"E-C34-07"`, `diagnosis_prompt_hash_present = false` | §3.4 reproducibility: absent prompt hash fails audit | E-C34-07 |
+| **AC-C34-13** | GIVEN a `DiagnosisRecord` where `tri_alignment = "aligned"` but `all_scenarios_satisfied = false`; WHEN `audit_diagnosis` is called; THEN `DiagnosisAuditRecord.verdict = "failed"`, `violations` contains `"E-C34-10"`, `self_consistent = false`; C53 MUST NOT read `tri_alignment` as a go term from this record | §3.4 + §4.5 self-consistency invariant (D-43) | E-C34-10 |
+| **AC-C34-14** | GIVEN a correction request arrives at the C08/C30 authoring seam with `origin_actor = "rig:worker-1"` (a worker rig); WHEN `audit_correction_request_provenance` is called; THEN `ProvenanceAuditResult.verdict = "violation"`, `violation_type = "worker_origin"`, and the correction request is blocked | §1.2 + §3.4 worker-originated correction request blocked (anti-gaming repair path) | E-C34-09 |
+| **AC-C34-15** | GIVEN a `SpecCorrectionRequest` (C08's type, D-44) with `requested_by = "rig:worker-1"` is passed to `audit_correction_request_provenance`; WHEN the audit runs; THEN `ProvenanceAuditResult.verdict = "violation"`, `violation_type = "worker_origin"`; AND C52 MUST NOT route this request to C08 — it escalates to human instead; C08's E-C08-07 entry-guard and C30's E-C30-08 entry-guard are defense-in-depth only (D-45 canonical enforcement by C34) | D-44/D-45 extension: C34 audits `{Spec,Scenario}CorrectionRequest.requested_by`; C34 is the canonical owner; C08/C30 guards are redundant | E-C34-09 |
+| **AC-C34-16** | GIVEN a `ScenarioCorrectionRequest` (C30's type, D-44) with `requested_by = "rig:bootstrap"` (C52's own rig identity, a non-worker rig); WHEN `audit_correction_request_provenance` is called; THEN `ProvenanceAuditResult.verdict = "clean"`; AND C52 MAY route this request to C30 | D-44/D-45 extension: non-worker `requested_by` passes C34 audit; C52 may proceed with routing | — (no E-code; passing case) |
 
 ## 9. Open questions
 

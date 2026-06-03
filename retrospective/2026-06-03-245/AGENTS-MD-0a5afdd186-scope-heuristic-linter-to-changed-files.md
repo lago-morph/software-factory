@@ -1,0 +1,9 @@
+# agent instruction
+
+**Scope heuristic-linter output to your changed files and the actionable finding class before declaring done.** When a repo-wide heuristic checker reports a large pre-existing backlog (hundreds or thousands of findings across files you never touched), do not treat a nonzero exit as a blocker and do not fix the noise. Filter the output to the files your change touched AND to the high-signal finding class (e.g. BROKEN_LINK over heuristic BARE_TEXT/BACKTICK_PATH guesses), fix only what your change introduced, and verify that subset is clean.
+
+*Grounded in: check-internal-refs.py reporting 4627 repo-wide issues, of which exactly one BROKEN_LINK was introduced by this change.*
+
+# justification
+
+After opening PR #245, `scripts/check-internal-refs.py` exited 1 with **4627 findings across 672 files** — overwhelmingly pre-existing heuristic false-positives (the checker flags the bare word "spec" in prose like "implements the spec" and every backtick config path such as `.gc/site.toml`). Taken at face value, a nonzero exit looks like a failing gate; chasing it would have meant editing hundreds of untouched files and ballooning the PR. The correct move was two filters: restrict to the files this PR changed, and restrict to the one finding class that is an actual defect rather than a heuristic guess — `BROKEN_LINK`. That isolated exactly one real issue (a wrong relative-path depth to ADR-0069 in `auto-002`, which sits one directory deeper than `review-log.md`), which was a genuine bug worth fixing. The asymmetry: the scoped check is two `grep` filters and finds the one thing you broke; the unscoped reaction either blocks a clean PR on a 4627-issue backlog or drags the whole backlog into an unrelated change. A repo-wide heuristic linter's total count is not a per-PR gate — your delta against the high-signal class is.

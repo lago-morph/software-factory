@@ -1,163 +1,133 @@
-# Plan B — "De-risk the foundations" (safety + measurement adversary)
+# Plan B — "De-risk the foundations first" (safety + measurement adversary lens)
 
-> Lens: assume the things most likely to lie are (a) the unverified Gas City "native" claims
-> (prevent vs detect), (b) the **judge** corner of the triangle, (c) holdout integrity, and
-> (d) self-modification blast radius before the fence. Front-load the cheap checks that turn
-> assumptions into facts, and **calibrate the measurement instrument before trusting its readings.**
-> This plan still ships real [agent-os](../../../../) work — it just refuses to trust a green light
-> it has not yet earned the right to read.
+> Companion to the [grounding brief + velocity exemplar](./00-grounding-and-exemplar.md). This is the
+> *adversarial* alternative: same destination (real agent-os work, semi-autonomous build), but it refuses to
+> trust a measurement instrument it has not calibrated, or a substrate guarantee it has not witnessed.
 
 ## 1. Thesis
 
-The backbone gives us a measurement instrument (the spec↔scenarios↔system
-[triangle](../../../../docs/adr/0069-spec-scenarios-system-triangle-evaluation-invariant.md)) and a
-go/no-go gate ([C53](../../spec/C53-bootstrap-validation.md)) — but an instrument you have not
-calibrated is not evidence, it is a *rumor with a number on it*. The next 2–3 weeks should
-**discharge the three unverified foundations first** (substrate prevent-vs-detect, judge
-calibration, holdout integrity), *then* drive a real agent-os component through the gate. The
-velocity-first exemplar is right that the work must be real and right to drive at
-[C53](../../spec/C53-bootstrap-validation.md); it is over-optimistic in treating the judge's
-`root_cause` as trustworthy after a single inject-and-confirm, when the `judge_self_trust`
-precondition is *undesigned* and ships `uncalibrated` by default.
+The backbone's apex is a *measurement* event: [C53's four-term go/no-go](../../spec/C53-bootstrap-validation.md)
+reads signals from the [spec↔scenarios↔system triangle](../../../../docs/adr/0069-spec-scenarios-system-triangle-evaluation-invariant.md),
+and three of its four terms are produced by an LLM judge and a substrate whose guarantees are **claimed, not
+verified** ([A2](./00-grounding-and-exemplar.md#a2-the-make-or-break-caveat-that-must-be-discharged-first)).
+A factory that builds real software on top of a lying instrument doesn't fail loudly — it ships defects with a
+green verdict. So the first milestones spend cheaply to turn the four riskiest assumptions (prevent-vs-detect,
+judge root-cause fidelity, holdout integrity, self-modification blast radius) into *witnessed facts* — and only
+then do we point the calibrated instrument at agent-os's real backlog. We still ship real components; we just
+refuse to trust the scoreboard before we've checked it against a known-answer game.
 
 ## 2. Milestone-ordered spine (gates, not day-counts)
 
-### Gate 0 — Substrate truth: prevent vs detect (cheapest, first)
-- **Goal.** Replace the single biggest assumption in the design with a fact before any signal is
-  trusted ([decision #4](../../../../decisions-to-make.md#4-does-gas-city-prevent-bad-access-or-only-notice-it-after-the-fact)).
-- **Actions.** Stand up one `claude` worker rig + one judge rig (per
-  [D-38 separate-judge-rig](../../spec/C32-judge-harness.md)); attempt a cross-partition read of the
-  scenario partition *and* a production-typed action. Record whether each is **physically refused**
-  (prevent) or **audited after the fact** (detect). Confirm attribution flows into beads.
-- **Exit.** A one-page "substrate truth" note. If **detect-only**, holdout
-  ([C34](../../spec/C34-holdout-integrity.md), described as "after-the-fact AUDIT") and the fence
-  ([C43](../../spec/C43-isolation-boundary.md)) are *strictly weaker* — every later gate's trust
-  level is annotated accordingly, and Gate 2 cannot rely on the holdout to stop teach-to-the-test.
+**Gate 0 — Substrate truth, prevention-grade.** *Goal:* witness what Gas City actually enforces, not what v4
+claims. *Actions:* re-run the [Gas City conformance check (C01 AC-2)](../../implementation-dependencies.md#gas-city--gc-binary-mit);
+then the load-bearing sub-test — attempt a cross-partition read from inside a worker rig and record whether `gc`
+**physically refuses it** or lets it through for an after-the-fact audit
+([decision #4, prevent-vs-detect](../../../../decisions-to-make.md#4-does-gas-city-prevent-bad-access-or-only-notice-it-after-the-fact)).
+Run the same probe against the [holdout partition (C34)](../../spec/C34-holdout-integrity.md) — `scenarios ∉
+read_partition(worker)` must hold by *refusal*, not by audit. *Exit:* a one-page "substrate truth" note stating
+prevent **or** detect for both fences. If detect-only, every later gate inherits a written trust-downgrade.
 
-### Gate 1 — Calibrate the judge *before* reading it (the load-bearing gate)
-- **Goal.** Earn the right to trust `root_cause` / `tri_alignment`. This is the gate the exemplar
-  skips. The backbone ships the judge with `judge_self_trust = uncalibrated`
-  ([C32 §3.2](../../spec/C32-judge-harness.md)), and **PF-2 — the mechanism that establishes
-  `calibrated` — is explicitly undesigned and deferred to C46**, which is *not in the backbone*
-  ([C32 OQ6](../../spec/C32-judge-harness.md)). So "the triangle works" is unproven by construction.
-- **Actions.** Build a **judge-calibration sample**: a small fixed set of trajectories with
-  *human-authored ground-truth root-cause labels*, deliberately spanning all five corners
-  (`judge / spec / scenario / system / none`). Run the judge; compute agreement vs the human labels.
-  Cover the high-stakes confusions explicitly — a `system` bug mislabelled `spec`, or a real defect
-  mislabelled `none` (a false green). Cross-check against the C32 ACs that already enumerate each
-  path ([AC-C32-16..23](../../spec/C32-judge-harness.md)).
-- **Exit.** A recorded judge false-positive rate. Until agreement clears a stated bar, the factory
-  runs at `oversight_level = full` ([C53 §3.3](../../spec/C53-bootstrap-validation.md)) and **no
-  `tri_alignment = aligned` is treated as load-bearing** — it is advisory only. A mis-localizing
-  judge silently corrupts the *entire* defect-finding loop, so this is the instrument-calibration
-  step that makes every later reading meaningful.
+**Gate 1 — Calibrate the judge before trusting any reading (the instrument-first gate).** *Goal:* prove the
+judge's `root_cause` ∈ {judge, spec, scenario, system, none} localizes correctly *before* it adjudicates real
+work. *Actions:* build a **known-answer calibration set** — a handful of builds where we have *deliberately and
+secretly* planted exactly one defect in a known corner (one spec-ambiguity, one broken scenario, one system
+bug, one clean build that should return `root_cause = none`). Run them through
+[C32 `diagnose()`](../../spec/C32-judge-harness.md) and score the judge on *whether it named the corner we
+planted*. This discharges the [PF-2 `judge_self_trust` precondition](../../spec/C32-judge-harness.md) with a
+**human-audited sample**, not a self-declaration. *Exit:* a confusion matrix of planted-corner vs judge-named
+corner; `judge_self_trust = calibrated` is set **only** if it routes cleanly. A judge that confuses *system*
+with *spec* defects is recorded as uncalibrated, forcing `oversight_level = full` at C53.
 
-### Gate 2 — Holdout integrity, adversarially (not assumed)
-- **Goal.** Confirm the agent cannot teach to the test — the thing that would make every
-  satisfaction score a lie. F28 "holdout leakage" is marked *Addressed*
-  ([F-MODE-COVERAGE §1](../../F-MODE-COVERAGE.md)) but that rests on the same unverified substrate.
-- **Actions.** Author a held-out scenario set from a real agent-os component's ACs (see Gate 3).
-  Run a deliberate **leak probe**: instruct a worker to read `scenarios/<component>/`; confirm the
-  read is refused (if Gate 0 said *prevent*) or at minimum audited and flagged (if *detect*). Verify
-  `scenarios ∉ read_partition(worker)` per [C34](../../spec/C34-holdout-integrity.md).
-- **Exit.** A recorded holdout-integrity verdict. If detect-only, add the compensating control named
-  in [decision #4 option B](../../../../decisions-to-make.md#4-does-gas-city-prevent-bad-access-or-only-notice-it-after-the-fact)
-  (post-run audit gate) *before* any score is trusted as un-gamed.
+**Gate 2 — First real loop end-to-end, on a real spec, with both defect-injections live.** *Goal:* prove the
+eval tier runs end-to-end on real work. *Actions:* author the minimal **3-step C12 formula** (spec-in → build →
+judge) over a real agent-os component's acceptance criteria — use the agent-os **B12 CloudEvent schema
+registry** (clone at `/tmp/agent-os`) or **B3 OPA policy framework**: pure code, PyTest / `opa test`-scoreable,
+*no Kubernetes*
+([A0](./00-grounding-and-exemplar.md#a0-the-real-target-product-lago-morphagent-os-this-is-what-the-factory-is-for)).
+Re-inject a spec defect and a scenario defect *on this real component* and confirm the now-calibrated judge
+still routes them. *Exit:* green loop scenario → C31 runner → C32 judge → C33 satisfaction, with two
+correctly-localized injected defects on real agent-os material.
 
-### Gate 3 — First real self-build, gated honestly
-- **Goal.** The bet-#3 moment — does factory-builds-factory work on real work? — but read through a
-  *calibrated* instrument.
-- **Actions.** Take **agent-os [B12 CloudEvent schema registry](../../../../)** (pure JSON-Schema +
-  Python, PyTest-scoreable, no cluster — confirmed in `/tmp/agent-os/specs/components/B/spec-B12.md`)
-  or **B3 OPA policy framework** (`opa test`) as input. Build into its own repo; score against
-  held-out scenarios from its ACs; run the **four-term C53 gate**: 100% hold-out floor ∧
-  `tri_alignment = aligned` ∧ human-approve ∧ post-deploy factory-integrity
-  ([C53 §3.2](../../spec/C53-bootstrap-validation.md)).
-- **Exit.** A recorded `go`/`no_go` with evidence **and** the Gate-1 calibration verdict attached, so
-  the `go` is auditable as more than "the judge said so." A passing agent-os component repo.
+**Gate 3 — Holdout-integrity adversary gate (before the first self-build counts).** *Goal:* prove the agent
+*cannot* teach to the test. *Actions:* a red-team probe — instruct a worker to *attempt* to read the held-out
+scenarios for B12, and confirm Gate-0's refusal holds end-to-end through the rig partition. Cross-check that the
+judge runs in a [separate judge rig (D-38)](../../spec/C34-holdout-integrity.md) with no shared context window.
+If Gate-0 came back detect-only, this gate's exit is *conditional*: holdout integrity is audit-grade, and the
+first self-build's `go` carries that caveat in its evidence bundle. *Exit:* a recorded leak-attempt result;
+holdout strength labeled prevent or detect.
 
-### Gate 4 — Provoke each defect class; populate the ledger
-- **Goal.** Find defects deliberately, and confirm the (now-calibrated) judge routes each to the
-  right corner.
-- **Actions.** Push varied real agent-os work: an ambiguous-spec component (provoke `root_cause =
-  spec`), an infra-heavy A-component that *should* trip the twin gap (confirm the fence/limits hold,
-  not a false green), and a re-run of the Gate-1 leak probe under load. Build the **defect ledger**:
-  every divergence tagged by corner with a fix owner — and **a fifth column for judge-disagreement
-  events** (cases where human review overruled `root_cause`), feeding back into recalibration.
-- **Exit.** A populated defect ledger; the top-3 substrate gaps the factory can't yet build around
-  (twins near-certainly among them); an updated judge FP rate.
+**Gate 4 — The first real self-build through the four-term C53 gate.** *Goal:* the bet-#3 moment, on a
+calibrated instrument. *Actions:* take B12's `spec-X.md` + `plan-X.md`, run [C52 self-bootstrap → the C53
+four-term gate](../../spec/C53-bootstrap-validation.md#32-milestone-decision-rule-predicate-i3--bar-applied-here-reframed-to-tri-alignment):
+**100% hold-out floor** ∧ **tri_alignment = aligned** ∧ **human approve** ∧ **post-deploy factory-integrity
+pass**. The fourth term is non-negotiable here — a self-modification can green-light itself and break the
+factory's own baseline suite. *Exit:* a recorded `go`/`no_go` with full evidence bundle and a passing,
+real agent-os component repo — **and** the factory's baseline suite still green post-integration.
 
-### Gate 5 — Widen only behind the fence
-- **Goal.** A safe batched rhythm — never unattended without the fence.
-- **Actions.** Confirm the **fence (C43) is up before any unattended batch**
-  ([decision #1](../../../../decisions-to-make.md#1-put-the-safety-fence-up-before-the-factory-runs-unattended-or-after)).
-  Run 2–3 more infra-light B-components (B16 policy content, B6 SDK, B9 CLI, B19 approval schemas
-  downstream of B12). Stand up [C56](../../implementation-dependencies.md) autonomy-ladder language
-  so the human rung is named, and ride the cheap "are the goals still right?" drift checkpoint on
-  every batch review ([decision #2 option A](../../../../decisions-to-make.md#2-the-is-it-still-doing-what-i-asked-watcher--build-it-or-just-log-that-its-missing)).
-- **Exit.** 3–4 factory-built agent-os components in their repos; a batched-review rhythm; a
-  fence-confirmed-before-unattended record.
+**Gate 5 — Fence up, then deliberately provoke each defect class.** *Goal:* find defects on purpose, safely.
+*Actions:* confirm the [boundary-typing fence (C43) is up before any unattended batch (D-20)](../../../../decisions-to-make.md#1-put-the-safety-fence-up-before-the-factory-runs-unattended-or-after);
+then push *varied* real agent-os work to provoke each corner: an ambiguous-spec B-component, a hard-upstream-dep
+component, and one **infra-heavy A-component that *should* hit the digital-twin gap**
+([A0 — twins bound how much agent-os is buildable now](./00-grounding-and-exemplar.md#a0-the-real-target-product-lago-morphagent-os-this-is-what-the-factory-is-for))
+to confirm the limit holds rather than silently producing junk. Build the **defect ledger**: every divergence
+tagged by corner with a fix owner. Re-run a slimmed judge-calibration spot-check at this gate — drift in the
+instrument is itself a defect. *Exit:* populated defect ledger + the witnessed list of agent-os components the
+factory *cannot* build until twins exist.
 
 ## 3. How defects get found — and how the defect-finder is itself validated
 
-Defects are found by the [triangle](../../../../docs/adr/0069-spec-scenarios-system-triangle-evaluation-invariant.md):
-every divergence is *attributable to a corner* (spec / scenario / system / judge), routed by the
-judge's `DiagnosisRecord.root_cause`. **But the routing is only as trustworthy as the router.** What
-makes `root_cause` trustworthy is *not* that the judge emitted it — it is the **Gate-1 calibration
-sample**: a human-labelled, all-five-corners ground-truth set, with a measured agreement rate and an
-explicit false-green check (`root_cause = none` on a build that actually has a defect). Until that
-rate clears the bar, `judge_self_trust` stays `uncalibrated`, oversight stays `full`, and
-`tri_alignment = aligned` is advisory, never a deploy authority. The sample is re-run whenever the
-ledger logs a judge-disagreement event (Gate 4) — the instrument is *continuously* re-checked, not
-certified once. This is the consuming side of [C32 OQ6 / PF-2](../../spec/C32-judge-harness.md): the
-seam the backbone names but does not design, which this plan designs a minimal human-audited version
-of. `[PROPOSED — not in source]` the exact agreement bar and sample size are operator policy.
+Defects are found by the triangle: every failing scenario is *attributed to a corner*, turning "the factory has
+bugs" into a routable signal ([A3](./00-grounding-and-exemplar.md#a3-the-defect-finding-methodology-is-already-designed-the-triangle)).
+But the adversarial point is that **the router is itself one of the corners** — a judge that silently mislabels a
+*system* bug as a *spec* defect sends the fix to the wrong place and corrupts the whole loop. So `root_cause` is
+trustworthy only after Gate 1's known-answer calibration: we *plant* defects in known corners and score the judge
+on naming them, producing a confusion matrix that discharges [`judge_self_trust` (PF-2)](../../spec/C32-judge-harness.md)
+with human-audited evidence rather than self-attestation. Two further adversarial pressures: (a) the
+[same-provider judge (D-1)](../../spec/C34-holdout-integrity.md) shares the coder's blind spots, so the
+calibration sample must include defects the coder's family is *prone to* (not just easy ones); (b) re-spot-check
+calibration at Gate 5 — a judge trusted in week one can drift. Until the matrix is clean, C53 runs at
+`oversight_level = full` and a `go` is never taken on satisfaction alone. What makes `root_cause` trustworthy is
+exactly this: a recorded match between *planted* corner and *named* corner, re-checked over time — not the
+judge's own confidence.
 
 ## 4. Longer horizon (named, not scheduled)
 
-The gating question becomes "what does agent-os need next that the factory can't yet build, and which
-unbuilt safety component has become a *hard* prerequisite?"
-
-- **Digital twins ([C44/C45](../../implementation-dependencies.md)) become a hard prerequisite** the
-  moment the backlog turns to infra-heavy Workstream-A components (operators, Helm installs, cluster
-  policy) — they cannot be scored without a twinned or real `kind` cluster, and twins also complete
-  the fence's deferred half.
-- **The objective-drift watcher ([F54](../../F-MODE-COVERAGE.md)) becomes a hard prerequisite
-  *before* any lights-out rung** — the cheap human checkpoint
-  ([decision #2](../../../../decisions-to-make.md#2-the-is-it-still-doing-what-i-asked-watcher--build-it-or-just-log-that-its-missing))
-  suffices only while a human reviews in batches.
-- **C46 (judge-FP measurement / calibration harness) becomes a hard prerequisite before
-  `oversight_level = sampled`** — relaxing human review *requires* a calibrated judge, and C46 is the
-  named owner of the FP-rate trigger for cross-family judging (FE-1).
-- Then the **CXDB → self-heal chain** (C21/C24 → C36→C37→C38→C39), **methodology experiments via C55**
-  (GF-M is *first*, not *winner*), and the sequential **self-optimization tail** (C46→C47→C48→C50,
-  C49 kept experimental per [decision #3](../../../../decisions-to-make.md#3-the-hardest-unsolved-piece--replaying-a-run-with-one-thing-changed)).
+The gating question stays "what does agent-os need next that the factory can't yet build?" — and Gate 5 will
+have *witnessed* the answer: **[digital twins (C44/C45)](./00-grounding-and-exemplar.md#a5-the-evolution-path-how-the-rest-of-the-57-components-get-added)**
+become a hard prerequisite the moment infra-heavy Workstream-A components (operators, Helm installs, cluster
+policy) enter the backlog — and twins complete the fence's deferred half, so they are *also* a safety
+prerequisite, not only a capability one. The **[objective-drift watcher (F54)](../../../../decisions-to-make.md#2-the-is-it-still-doing-what-i-asked-watcher--build-it-or-just-log-that-its-missing)**
+becomes a hard prerequisite *before any lights-out rung* — fine as a human checkpoint while review is batched,
+unacceptable once dozens of agent-os components grind through unattended. Then the
+[CXDB/self-heal arc (C21/C24 → C36→C39)](./00-grounding-and-exemplar.md#a5-the-evolution-path-how-the-rest-of-the-57-components-get-added),
+[methodology-as-config experiments (C55)](../../spec/C55-methodology-experiment.md) — GF-M is "first experiment,
+not winner" — and the genuinely-sequential self-optimization tail (C46→C50, with C49 kept experimental).
 
 ## 5. Top 3 risks the velocity exemplar under-weights
 
-1. **The judge is uncalibrated by construction, and the exemplar trusts it after one inject-test.**
-   The exemplar's Gate 1 "inject a spec defect and a scenario defect, confirm `root_cause` localizes
-   each" is a *two-sample smoke test*, not calibration — it never measures the false-green rate
-   (`root_cause = none` on a defective build) and never establishes `judge_self_trust = calibrated`
-   ([C32 OQ6](../../spec/C32-judge-harness.md)). **Mitigation:** Gate 1's all-five-corners
-   human-labelled sample with a recorded FP rate, gating oversight relaxation.
-2. **Holdout integrity is assumed "Addressed," but rests on unverified prevent-vs-detect.** If the
-   substrate only *detects*, the agent can read the test answers and you learn it from the audit log
-   — every satisfaction score upstream is then suspect. **Mitigation:** Gate 0 + Gate 2 adversarial
-   leak probe, with a compensating audit gate if detect-only.
-3. **Single-Max-seat cost is multiplicative and the exemplar widens before quantifying it.** A
-   judge-calibration sample plus an *ensemble* judge multiplies calls (`n_judges × trajectories`) on
-   the seat shared with the coder, with no token-budget model in v4
-   ([C32 OQ3](../../spec/C32-judge-harness.md)). **Mitigation:** quantify cost on the Gate-3 single
-   build before any Gate-4/5 fan-out; keep fan-out incremental.
+1. **The judge is treated as trustworthy from its first gate; calibration is listed as a *mitigation*, not a
+   *gate*.** The exemplar's risk #3 names judge mis-calibration but lets the first real loop run before the
+   known-answer audit. *Mitigation:* Gate 1 *blocks* — no reading is trusted before the confusion matrix is
+   clean, and the [same-provider-judge blind spot (D-1)](../../spec/C34-holdout-integrity.md) is explicitly
+   stress-tested.
+2. **Prevent-vs-detect is treated as a footnote that adjusts "trust," not a gate that changes what counts as a
+   pass.** If [Gas City is detect-only (decision #4)](../../../../decisions-to-make.md#4-does-gas-city-prevent-bad-access-or-only-notice-it-after-the-fact),
+   holdout integrity is audit-grade and the agent *could* have read the answers before we noticed. *Mitigation:*
+   Gate 0 + Gate 3 make this a *witnessed* property that stamps a caveat onto every downstream `go`.
+3. **Single-Max-seat cost fan-out is dismissed as "slow," not as a forcing function for restraint.** Running
+   candidates × work-types × scenarios × the calibration sample through one judge seat is
+   [multiplicative token cost with no number attached (A6)](./00-grounding-and-exemplar.md#a6-hard-constraints--known-risks-the-plan-must-respect).
+   *Mitigation:* keep fan-out incremental; the calibration set is small-and-known by design; quantify cost
+   before any full grid at Gate 5.
 
 ## 6. The 3 biggest ways this plan differs from the exemplar
 
-1. **It inserts a dedicated judge-calibration gate (Gate 1) *before* the first self-build** and makes
-   `tri_alignment` advisory-until-calibrated — where the exemplar folds calibration into a two-sample
-   smoke test inside its first formula gate and trusts the result immediately.
-2. **It treats holdout integrity as a thing to *break on purpose* (Gate 2 leak probe), not a property
-   to assume** — the exemplar lists holdout-leak as one item in a later "exercise to find defects"
-   gate, after it has already trusted the scores.
-3. **It quantifies single-seat cost on the first build and gates fan-out on that number**, rather than
-   widening to 3–4 components and only noting cost as a residual risk afterward.
+1. **A dedicated judge-calibration gate (Gate 1) is inserted *before* the first real loop.** The exemplar
+   injects defects only to *observe* the triangle working; this plan *scores the judge on a known-answer set*
+   and makes `judge_self_trust = calibrated` a precondition, not a hope.
+2. **Substrate truth is reordered into a hard gate whose result rewrites every later exit criterion.** The
+   exemplar's Gate 0 produces a note; here the prevent-vs-detect outcome propagates a written trust-downgrade
+   into the holdout gate and into the C53 evidence bundle.
+3. **An explicit holdout-integrity adversary gate (Gate 3) sits between the first loop and the first counted
+   self-build** — the exemplar folds leak-attempts into a later "exercise" gate, *after* the bet-#3 self-build
+   has already been trusted.

@@ -72,8 +72,7 @@ inherits the gap and dresses it as a gate. Compounding it: under [D-1](../../spe
 Phase-0 judge is **same-provider** (Claude judging Claude, F48 shared-distribution residual *Partial*), so
 the most likely judge errors are *correlated* with the coder's — exactly what a small same-family
 calibration sample is least able to surface. The plan should state plainly that until A1–A2 are discharged,
-`calibrated` is *unreachable* and the factory stays at `oversight_level = full` — the conservative default it
-already chose.
+`calibrated` is *unreachable* and the factory stays at `oversight_level = full`.
 
 ## 4. What the plan gets right on measurement (preserve)
 

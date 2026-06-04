@@ -50,28 +50,27 @@ has no transfusable gene. Pick a first build whose exemplar is real and permissi
 ([§2 Gate 3](../10-unified-plan.md)) as a mechanical step. *Cited fact:* C11's 9 fields — including
 the one anchoring C51's completeness check — are reverse-engineered, and GF-C is undefined
 (`C11-intent-intake.md` OQ-1: "the 9 field names are a FAITHFUL-FILL … GF-C itself is undefined …
-**the load-bearing ambiguity for C11**"). C51's completeness anchor (named exemplar behaviors) is
-*operator-supplied at C11 intake*, not extracted (`C51-gene-transfusion.md` §3.0.1). So a **human**
-hand-authors the named-behavior list and DoD the transfusion predicate then grades against. *Fix:*
-Gate 3 must state the crucible→C08 step is **human-authored**, and add the named-behavior list to the
-Gate-3 evidence bundle — stopping "the factory converted the spec" from masking the narrower true
-claim "a human wrote the buildable spec; the factory built against it."
+**the load-bearing ambiguity for C11**"). C11 enforces only field *presence*, not quality (INV-2),
+so the named-behavior list and DoD the transfusion predicate grades against are **human**-authored.
+*Fix:* Gate 3 must state the crucible→C08 step is **human-authored** and add the named-behavior list
+to the Gate-3 evidence bundle — stopping "the factory converted the spec" from masking the narrower
+true claim "a human wrote the buildable spec; the factory built against it."
 
 ## 3. The single place the recursion is most likely to NOT close
 
 **At the agent-os-spec → C08-DoD conversion, where an architecture-of-record's `[PROPOSED — not in
-source]` holes become the C08 Definition-of-Done.** B12 is riddled with them: `spec-B12.md` §4.2
-flags the registry layout, schema-id convention, tooling command names, and even the
-`platform.capability.changed` payload as `[PROPOSED — not in source]` (R1 "high," R3 "med"). These
-are exactly the dimensions the held-out scenarios (`AC-B12-01..06`) score. When the spec's contract
-is under-determined, the triangle's `root_cause` will land on **spec** for legitimately ambiguous
-reasons — and the plan's own router (C52 §5.0.1 INVARIANT-AG) then forbids the worker from resolving
-it, routing every such miss to independent spec correction. The likely failure is not a dramatic
-crash but a **`no_go` loop that exhausts `max_attempts`** (C52 §5.0.3, E-C52-08) and triggers the
-"factory needs more substrate" exit — when the real defect was that an *architecture* spec was fed
-where an *implementation* spec was needed. That fallback is **not actionable as written**: "needs
-more substrate" names no missing component, because the missing thing is a human spec-authoring pass,
-not a factory capability. Amendment A1+A3 convert this dead-end into a diagnosable one.
+source]` holes become the Definition-of-Done.** B12 is riddled with them: `spec-B12.md` §4.2 flags
+the registry layout, schema-id convention, tooling command names, and the `platform.capability.changed`
+payload as `[PROPOSED — not in source]` (R1 "high," R3 "med") — exactly the dimensions the held-out
+scenarios (`AC-B12-01..06`) score. With an under-determined contract, the triangle's `root_cause`
+lands on **spec** for legitimately ambiguous reasons; the plan's own router (C52 §5.0.1 INVARIANT-AG)
+then forbids the worker from resolving it, routing every miss to independent spec correction. The
+likely failure is not a crash but a **`no_go` loop that exhausts `max_attempts`** (C52 §5.0.3,
+E-C52-08), triggering the "factory needs more substrate" exit — when the real defect was that an
+*architecture* spec was fed where an *implementation* spec was needed. That fallback is **not
+actionable as written**: "needs more substrate" names no missing component, because the missing thing
+is a human spec-authoring pass, not a factory capability. A1+A3 convert this dead-end into a
+diagnosable one.
 
 ## 4. What the plan gets right about feasibility that must be preserved
 

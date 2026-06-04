@@ -14,8 +14,8 @@ the window**. The plan front-loads six deliverables (substrate probe + a *new* c
 holdout probe + first code build + a defect-provocation sweep + a four-component line) onto a single
 operator who must also stand up *three rig classes* (worker, separate judge, parallel) and personally
 review **every** build. Two gates are multi-week projects wearing a gate's clothing. I accept only with
-the amendments below cutting Gate 4 and re-scoping Gate 5; without them the honest outcome is Gates 0–3
-done and 4–5 slipped — fine, but the plan should *say* that rather than promise the line.
+the amendments below re-scoping Gates 1 and 5; without them the honest outcome is Gates 0–3 done and
+4–5 slipped — fine, but the plan should *say* that rather than promise the line.
 
 ## 2. Top three named amendments
 
@@ -26,21 +26,20 @@ B16 `estimate: L` upstream `[B3, A1, A6, A5, B13]`, B6 `estimate: XL` upstream `
 `plan-B6.md`, `plan-B9.md`). A1 is **LiteLLM** — `estimate: XL`, the cluster-bound LLM gateway
 (`plan-A1.md`). B3 itself sits on A7 (OPA install, `plan-A7.md`). So three of the four "infra-light"
 batch members carry infra-heavy upstreams the factory *cannot build before twins* — the exact
-twin-gap the plan names as Risk #3. Fix: replace the batch with the genuinely standalone B-set the
-grounding brief actually lists — **B12-adjacent pure-code work** (the brief names A18 audit-adapter
-library, B16-as-content, B6-SDK-contract *only*) — and explicitly **mark B6/B16/B9 twin-gated and
-out of the window**. One real second build (e.g. B3's `opa test` layer alone) is a credible Gate 5;
-a four-component line is not.
+twin-gap the plan names as Risk #3. Fix: replace the batch with genuinely standalone pure-code work
+(the brief names the A18 audit-adapter library as a candidate) and explicitly **mark B6/B16/B9
+twin-gated and out of the window**. One real second build (e.g. B3's `opa test` layer alone) is a
+credible Gate 5; a four-component line is not.
 
 **B2 — Gate 1 is a multi-week project, not a gate.** Problem: Gate 1 *designs and builds* the
 PF-2/C46 calibration mechanism the backbone explicitly defers (`10-unified-plan.md` §1, §2 Gate 1;
 `spec/C32-judge-harness.md` OQ6). "A small fixed set of human-authored ground-truth root-cause labels
 spanning all five corners" with a measured false-green rate is a labelling + tooling effort, and the
 bar value and sample size are admitted `[PROPOSED — not in source]` (§2 Gate 1 exit). Authoring
-trustworthy five-corner ground truth is itself judgement-heavy work for the single non-coding operator
+trustworthy five-corner ground truth is judgement-heavy work for the single non-coding operator
 (`00-grounding-and-exemplar.md` A7). Fix: time-box Gate 1 to a **fixed tiny N (e.g. 10–15 labelled
-trajectories)** declared up front, accept a *coarse* false-green bar, and explicitly defer "real"
-calibration to the C46 horizon. Otherwise Gate 1 eats week 1 and starves Gate 3.
+trajectories)** declared up front, accept a *coarse* false-green bar, and defer "real" calibration to
+the C46 horizon. Otherwise Gate 1 eats week 1 and starves Gate 3.
 
 **B3 — The human-batched-review rhythm contradicts the plan's own oversight rule.** Problem: Gate 5
 promises "a batched-review cadence that sustains one batch per review cycle" (§2 Gate 5 exit), but
@@ -76,4 +75,4 @@ Gate-3 cost measurement to a **Gate-0 back-of-envelope** so the topology is size
 - **B22 design-only as the very first pass** (Gate 0): zero upstreams (`plan-B22.md` upstream `[]`) —
   the right way to prove the pipe before asking it to write code.
 - **The accepted fail branch** (Gate 3 `no_go` → "needs more substrate before Phase 3"). A plan that
-  names its own honest failure outcome is one I can put on-call behind.
+  names its own honest failure outcome is one I can stand behind on-call.

@@ -2,7 +2,7 @@
 
 > Reviewer angle: I have watched "the system builds itself" plans fail at exactly the seam
 > where an *architecture-of-record* is asserted to be a *buildable* spec. I pressure-test whether
-> the recursion actually closes on B12, or whether the conversion step is hand-waved.
+> the recursion closes on B12, or whether the conversion step is hand-waved.
 
 ## 1. Verdict
 
@@ -10,27 +10,27 @@
 
 The plan's spine is honest where it counts: it earns the green light before reading it (Gate 1
 calibration as a *precondition*), keeps `oversight_level = full` until the judge clears a bar, and
-treats `no_go` as an accepted finding, not a failure to hide. That is the opposite of a
-magical-recursion plan — why I do not reject. But the recursion does **not** close as cleanly as
-Gate 3 asserts, and the plan obscures the seam most likely to break it: the agent-os→C08 conversion
-and the gene-transfusion grounding for B12. Three amendments are required before it is safe to run.
+treats `no_go` as an accepted finding, not a failure to hide — the opposite of a magical-recursion
+plan, which is why I do not reject. But the recursion does **not** close as cleanly as Gate 3
+asserts, and the plan obscures the seam most likely to break it: the agent-os→C08 conversion and the
+gene-transfusion grounding for B12. Three amendments are required before it is safe to run.
 
 ## 2. Top 3 named amendments
 
 **A1 — B12 is NOT dependency-free; its DoD reaches into runtime the plan cannot exercise.**
 *Problem:* the plan picks B12 as the first real code build on the grounds it is "pure JSON-Schema +
 Python, no cluster, no upstream" ([§2 Gate 3](../10-unified-plan.md); grounding
-[A0](../00-grounding-and-exemplar.md)). The B12 spec contradicts this: *cited fact* —
-`spec-B12.md` §3 lists **HARD upstream A4 (Knative+NATS broker) and B8 (event adapters)**, and
-`plan-B12.md` §3.1 marks both `(HARD)`. The "no cluster" claim is true only for the *test tier*
-(`spec-B12.md` §8: PyTest yes, Chainsaw/Playwright N/A) — but B12's own acceptance criteria reach
-past it: AC-B12-06 ("a published schema is retrievable by an emitter for pre-publish validation and
-by an external subscriber") describes runtime contract behavior with A4/B8, not a unit test.
-*Fix:* split B12's DoD at Gate 2 into a **clusterless-scoreable core** (REQ-01..05, 09 — the
-validators and CI gate, genuinely PyTest-bound) and a **deferred runtime half** (REQ-06 publish,
-the B8/emitter contract) explicitly marked twin/cluster-gated, exactly as Gate 5 already does for
-B16/B6. Otherwise the first `go` certifies a partial component and the bootstrap bar is quietly
-weakened — the precise gaming D-42 exists to prevent.
+[A0](../00-grounding-and-exemplar.md)). The B12 spec contradicts this. *Cited fact:* `spec-B12.md`
+§3 lists **HARD upstream A4 (Knative+NATS broker) and B8 (event adapters)**, and `plan-B12.md` §3.1
+marks both `(HARD)`. "No cluster" is true only for the *test tier* (`spec-B12.md` §8: PyTest yes,
+Chainsaw/Playwright N/A) — but B12's acceptance criteria reach past it: AC-B12-06 ("a published
+schema is retrievable by an emitter for pre-publish validation and by an external subscriber")
+describes runtime contract behavior with A4/B8, not a unit test.
+*Fix:* split B12's DoD at Gate 3 into a **clusterless-scoreable core** (REQ-01..05, 09 — validators
+and CI gate, genuinely PyTest-bound) and a **deferred runtime half** (REQ-06 publish, the
+B8/emitter contract) explicitly twin/cluster-gated, exactly as Gate 5 already does for B16/B6.
+Otherwise the first `go` certifies a partial component and the bootstrap bar is quietly weakened —
+the precise gaming D-42 exists to prevent.
 
 **A2 — gene-transfusion has no named exemplar for B12, and C51 forbids leaning on the obvious one.**
 *Problem:* C52 *requires* C51's predicate to pass before deploy, and C51 mandates ≥1 concrete

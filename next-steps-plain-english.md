@@ -6,6 +6,22 @@ after the first 25 components are built** — how to put *real* work through the
 defects through a real process, fix them, and grow it toward the actual goal: **building
 [`lago-morph/agent-os`](https://github.com/lago-morph/agent-os) semi-autonomously.**
 
+**Two framings that shape everything below (and that an earlier draft of this got wrong).**
+- **This is a *co-implementation*, not a hand-off.** You are **not** finishing the factory and *then*
+  building agent-os. You build both at once: each agent-os component is a *driver* — real work that
+  exercises the factory, exposes its next weakness, and that weakness becomes the next factory
+  improvement. The factory and the product advance together, one component at a time.
+- **The factory is a *prototype for discovery*, not a destination.** The v4 factory as designed is
+  **not** the system you ultimately want — it is scaffolding good enough to start real work, so the
+  real work can *teach you* what the factory must become. Success isn't "factory finished"; it's
+  "real work has shown us, with evidence, what to build next." Discovery continues through every
+  component you exercise.
+
+**The concrete methodology — the actual Gas City "formulas" (the workflow recipes you feed in), how
+you author, run, and experiment with them, and the co-implementation loop worked end-to-end — lives
+in the companion: [the methodology &amp; formulas report](methodology-and-formulas-plain-english.md).**
+Read this report for *what to do*; read the companion for *how the building actually works*.
+
 This plan was drafted, then handed to a **panel of six experts** (a software architect, a
 safety/security reviewer, an evaluation scientist, a delivery/operations lead, a "does this really
 build itself?" skeptic, and an operator-experience reviewer). All six accepted the overall shape and
@@ -276,6 +292,12 @@ Most of this plan is mechanical. A few choices are real judgment calls only you 
   to get.
 - **Speed is capped by one AI seat, working serially.** Plan the early weeks around *getting it right*,
   not *getting it fast*; the production-line speed comes later, after twins and more capacity.
+- **The real deliverable is discovery, not a finished factory.** What you'll have at the end is a
+  prototype that has *earned* an evidence-backed list of what the factory must become next — kept in a
+  running **factory-gap ledger** (every time real agent-os work hits a factory limitation). That
+  ledger, not a roadmap guessed in advance, is what decides each next factory investment. The
+  [methodology companion](methodology-and-formulas-plain-english.md) shows this co-implementation loop
+  in detail.
 
 ---
 

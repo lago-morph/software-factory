@@ -1,7 +1,7 @@
 # ADR: Factory as a prototype for discovery, co-implemented with a project portfolio
 
 - **ID**: ADR-6e3fa15d31
-- **Status**: Draft (not yet adopted to docs/adr/)
+- **Status**: Adopted as [ADR 0071](../../docs/adr/0071-factory-as-prototype-for-discovery-portfolio.md) (ID preserved)
 - **Date**: 2026-06-05
 - **Source retrospective**: ../2026-06-05-247.md
 - **PRs covered**: #247

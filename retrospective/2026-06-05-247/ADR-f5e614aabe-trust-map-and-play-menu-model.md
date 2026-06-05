@@ -1,7 +1,7 @@
 # ADR: Trust-map and play-menu model for selecting factory work
 
 - **ID**: ADR-f5e614aabe
-- **Status**: Draft (not yet adopted to docs/adr/)
+- **Status**: Adopted as [ADR 0070](../../docs/adr/0070-trust-map-and-play-menu-model.md) (ID preserved)
 - **Date**: 2026-06-05
 - **Source retrospective**: ../2026-06-05-247.md
 - **PRs covered**: #247

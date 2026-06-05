@@ -25,6 +25,8 @@ python3 .claude/skills/adr/scripts/check_adr_links.py docs/adr/
 | [0067](./0067-dual-track-per-component-v4-layout.md) | Dual-track per-component v4 spec/plan layout with a _meta decision ledger | Accepted | 2026-05-30 |
 | [0068](./0068-organize-v4-build-order-docs-by-product.md) | Organize v4 build-order documentation by adopted product, not by dependency phase | Accepted | 2026-06-01 |
 | [0069](./0069-spec-scenarios-system-triangle-evaluation-invariant.md) | The spec–scenarios–system triangle as the evaluation invariant for unattended self-building | Accepted | 2026-06-02 |
+| [0070](./0070-trust-map-and-play-menu-model.md) | Trust-map and play-menu model for selecting factory work | Accepted | 2026-06-05 |
+| [0071](./0071-factory-as-prototype-for-discovery-portfolio.md) | Factory as a prototype for discovery, co-implemented with a project portfolio | Accepted | 2026-06-05 |
 
 ## Conventions in one screen
 

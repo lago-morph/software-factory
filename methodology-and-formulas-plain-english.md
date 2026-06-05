@@ -120,8 +120,8 @@ after = ["implement"]
 
 [[node]]
 id   = "judge"
-kind = "agent"                # AI (DIFFERENT model family): diagnose, don't just score
-prompt = "diagnose-trajectory"
+kind = "agent"                # AI judge in a SEPARATE rig: diagnose, don't just score
+prompt = "diagnose-trajectory" # (a different model family is the AIM — see note below)
 in   = ["$scenario_set"]      # the held-out tests the worker never saw
 after = ["unit_tests"]
 
@@ -139,9 +139,26 @@ max_iterations = 3
 ```
 
 Notice what's *in the file*: the order of work, where the human sits, that the judge is a separate
-step (and a different model family), that tests are deterministic, and that failures loop a *bounded*
-number of times and only when the fault is the code. None of that lives in a prompt. To **see** it,
-you export it to a picture: `gc formula export build-component-v1 --format dot` renders the graph.
+step, that tests are deterministic, and that failures loop a *bounded* number of times and only when
+the fault is the code. None of that lives in a prompt. To **see** it, you export it to a picture:
+`gc formula export build-component-v1 --format dot` renders the graph.
+
+**Three honesty notes on that example** (so you don't take illustration for fact):
+- **The judge's "different model family" is the *aim*, not today's reality.** The safer design wants
+  the judge to be a *different* AI family from the coder (same-family judges share blind spots — this
+  is why the
+  [eval scientist on the panel](architectures/v4/_meta/next-steps/panel/03-eval-measurement.md) pushed
+  for it). But the early design **relaxes cross-family to *advisory*** — at this phase the judge runs
+  in a *separate sandbox* but may be the *same* family
+  ([judge spec C32 §9](architectures/v4/spec/C32-judge-harness.md); model-floor C29 sets
+  `cross_family_required: false` early). So if it's same-family for now, **trust its verdicts with
+  extra caution** — which is exactly what the judge-calibration step in
+  [the main report](next-steps-plain-english.md) is for.
+- **The `$slot` parameter style is borrowed** from non-Gas-City pipeline examples, not from a verified
+  Gas City formula ([C12 §3.1, the parameter FAITHFUL-FILL](architectures/v4/spec/C12-formula-pipeline-file.md#31-the-formula-artifact-named-structure)) — illustration only.
+- **The `[loop]` block keys are invented for legibility.** Gas City's real loop primitive is unverified
+  ([C12 open question #2](architectures/v4/spec/C12-formula-pipeline-file.md#9-open-questions)); the
+  design only commits that iteration is *bounded and lintable*, not to these key names.
 
 ---
 
@@ -217,7 +234,11 @@ Here's the ratchet on a real example, so the abstract loop above is concrete:
    itself often a build the factory can do. "I need to *see* formulas" → build the **DOT visualizer**.
    "The judge mis-blames" → recalibrate it. "Spec completion is ad-hoc" → strengthen the **intent
    crucible**. Each is a small factory component, built (where possible) *by the factory*, reviewed by
-   you.
+   you. **This isn't automatic, though** — a factory self-build rides on the same guardrails as any
+   build: it needs a real external example to copy (no invention from scratch), it passes your
+   mandatory design-review gate before it deploys, and the whole "factory builds factory" idea is
+   itself one of the bets these weeks are testing. Early on, expect to hand-build some of these factory
+   pieces yourself; handing more of them to the factory is part of what you're *discovering*.
 6. **Re-run** B12 — or move to the next agent-os component — with the now-stronger factory.
 
 Every agent-os component you tackle leaves the factory measurably better *and* leaves a real piece of

@@ -150,8 +150,10 @@ The panel turned this from a vibe into a real measurement:
   isn't enough to grade a fallible judge.
 - The judge **passes only if its false-green rate is provably low** (a statistical bound, not a lucky
   single score), and it must do well on *each* corner, not just on average.
-- Keep the judge a **different AI family** from the one writing the code — otherwise they share the
-  same blind spots and the inspection is rigged.
+- Run the judge in a **separate sandbox**, and *aim* for a **different AI family** from the one writing
+  the code (same-family judges share blind spots). Note the early design **relaxes this to advisory** —
+  so if the judge is the same family for now, treat its verdicts with extra caution; that's part of why
+  this calibration matters.
 - **Time-box it.** Use a small, fixed sample and a coarse bar; this is a gate, not a research project.
 - **Done when:** the judge has cleared a written bar. Until then, **every build gets full human
   review** regardless.

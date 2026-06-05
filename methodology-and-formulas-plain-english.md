@@ -1,13 +1,16 @@
 # The methodology: Gas City formulas, and the co-implementation loop
 
 **Who this is for.** You, again — steering the project. This is the companion to
-[the next-steps report](next-steps-plain-english.md). That report answered *what to do*; this one
-answers the two things it under-served: **(1) the concrete methodology — the actual Gas City
-"formulas" (workflow recipes) you feed the factory, how you author them, run them, and experiment
-with them; and (2) the framing that this is a *co-implementation* — you are building the factory and
-agent-os *at the same time*, using agent-os work as the driver that discovers what the factory needs
-next.** The factory you have at the end is not the factory you want; it's a prototype whose job is to
-*teach you* what to build.
+[the next-steps report](next-steps-plain-english.md), and both sit under
+[the charter](factory-discovery-charter.md) (read that first for the *why* and the vocabulary —
+trust map, the board of cards, drivers, toys, reduced models). That report answered *what to do*; this
+one answers the two things it under-served: **(1) the concrete methodology — the actual Gas City
+"formulas" (workflow recipes) you feed the factory, how you author, run, and experiment with them; and
+(2) the framing that this is a *co-implementation* — you build the factory and your projects *at the
+same time*, using real work as the driver that discovers what the factory needs next.** Every formula
+experiment in Part 5 is, in the charter's terms, just **a card you can play on the board.** The factory
+you have at the end is not the factory you want; it's a prototype whose job is to *teach you* what to
+build.
 
 > **One honesty flag up front.** The exact file format of a Gas City formula is *Gas City's own, and
 > nobody has run it against our assumptions yet* (this is the same unverified-substrate caveat that

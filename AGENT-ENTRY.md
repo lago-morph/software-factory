@@ -14,6 +14,13 @@ This is the top-level navigation document for new agent sessions on this repo. I
 
 ## 2. Current state
 
+- [Factory discovery charter](factory-discovery-charter.md) — the why/how/vocabulary for the **current
+  phase**: exercising and evolving the v4 factory by building a portfolio of real projects (agent-os
+  first) through it. Names the co-implementation framing, the prototype-for-discovery stance, the
+  trust map (🌑→🌕), the play-menu-of-cards selection model, the toy/reduced-model/driver/self-build
+  vocabulary, the two ledgers, the hard-won rules-of-the-game, and the fun-first constraint. **Read
+  this for the feel before the v4 design docs.** Practical companions: [next-steps report](next-steps-plain-english.md),
+  [methodology & formulas](methodology-and-formulas-plain-english.md).
 - [Phase-8 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-28-phase-8-close.md) — pickup brief for the next agent; **Phase 8 fully closed with 10 per-candidate lean-eval briefs + 3 cross-candidate bias-guard audits + lead-agent cross-check artifact + cross-candidate evaluator-brief**; DEC-1.a falsifying result pattern named verbatim pre-execution (K=1 universal-negation falsifier); v3 synthesis pipeline COMPLETE; downstream simulator-harness execution is post-v3 scope; task-aware reading lists for downstream-simulator-harness picker + retrospective reviewer. **This is the active handoff.** Update this entry's link target when a new SESSION-HANDOFF is written.
 - [Phase-7 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-27-phase-7-close.md) — superseded by Phase-8-close above. Phase 7 closed with 10 per-candidate back-fill notes + 2 bias-guard audits + lead-agent aggregation matrix; Wave 7.3 spec patches NOT FIRED. Phase-8 Phase-7-cite-obligations propagated through auto-008's per-candidate mapping table.
 - [Phase-6 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-26-phase-6-close.md) — superseded by Phase-7-close above. Phase-6-followup carry-forwards #1/#2/#3 closed by Phase 7 (silent-absorption auditor + historian expanded mandates).

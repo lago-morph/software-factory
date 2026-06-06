@@ -37,6 +37,14 @@ This is the top-level navigation document for new agent sessions on this repo. I
 
 ## 3. Plan
 
+- [Backbone implementation plan](architectures/v4/backbone-implementation-plan.md) — the plan to **build
+  the first 25 components** (handoff Step 2): the adopt-vs-build classification of the 25, the five build
+  gates (B0 substrate-truth → B4 shakedown), how the rules-of-the-game and the 8 panel amendments map
+  onto the build, per-product "done" definitions, single-seat sizing, and the seam handing off to the
+  exercising phase. **The build plan; ends where the unified plan starts.**
+- [Unified plan — exercising the factory](architectures/v4/_meta/next-steps/10-unified-plan.md) — the
+  panel-reviewed plan for **exercising** the built factory on real `agent-os` work (Gates 0–5: calibrate
+  → drive one nail → widen behind the fence). Its horizon begins once the backbone-25 exist.
 - [v3 synthesis plan](ARCHITECTURE-V3-SYNTHESIS-PLAN.md) — phased synthesis plan for the v3 architecture (Phases 0 through 8 with v1.2 revision of Phase 5 ADR-dispatch structure). **Read only the section for your current phase**; earlier phases are historical context, later phases are scaffolding. If your task is in Phase N, the Phase-N section is the binding spec for that phase.
 
 ## 4. Decisions (binding)

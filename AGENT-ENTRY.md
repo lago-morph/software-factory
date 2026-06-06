@@ -21,16 +21,20 @@ This is the top-level navigation document for new agent sessions on this repo. I
   vocabulary, the two ledgers, the hard-won rules-of-the-game, and the fun-first constraint. **Read
   this for the feel before the v4 design docs.** Practical companions: [next-steps report](next-steps-plain-english.md),
   [methodology & formulas](methodology-and-formulas-plain-english.md).
+- [Session handoff (2026-06-06) — board + backbone-plan close](architectures/v4/SESSION-HANDOFF-2026-06-06-board-and-backbone-plan-close.md)
+  — **the active handoff.** Records that the planning arc is closed (Step 1 board + Step 2 backbone build
+  plan both merged) and that the next work is Step 3 (execute), which is **gated on a real environment** —
+  the ephemeral web sandbox can author and commit but cannot host the running factory. Names the Gate-B0
+  entry blocker (which host), the in-sandbox prep that needs no answer, and task-aware reading lists.
+  Update this entry's link target when a newer handoff is written.
 - [Discovery-phase session handoff (2026-06-05)](architectures/v4/SESSION-HANDOFF-2026-06-05-discovery-charter-and-next-steps.md)
-  — **the active handoff.** Records that the discovery charter + plan are merged but **no factory code
-  exists yet**, and names the next three steps in order: (1) build the first set of cards (the board),
-  (2) write a plan to implement the first 25 components, (3) execute it. Update this entry's link target
-  when a newer handoff is written.
+  — **superseded by the 2026-06-06 handoff above.** Records that the discovery charter + plan were merged
+  with no factory code yet, and named the three steps (board / backbone plan / execute); Steps 1–2 are now done.
 - [Board 1 — the opening play menu](BOARD.md) — the first **board of cards** (handoff Step 1): the
   shakedown-cruise card set for the backbone-25, the live trust map, the per-card pressure targets, the
   two ledgers, and the operator decisions settled for this board (real-drivers-are-self-builds-only,
   portfolio-frozen, bead-viewer-added).
-- [Phase-8 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-28-phase-8-close.md) — pickup brief for the next agent; **Phase 8 fully closed with 10 per-candidate lean-eval briefs + 3 cross-candidate bias-guard audits + lead-agent cross-check artifact + cross-candidate evaluator-brief**; DEC-1.a falsifying result pattern named verbatim pre-execution (K=1 universal-negation falsifier); v3 synthesis pipeline COMPLETE; downstream simulator-harness execution is post-v3 scope; task-aware reading lists for downstream-simulator-harness picker + retrospective reviewer. **This is the active handoff.** Update this entry's link target when a new SESSION-HANDOFF is written.
+- [Phase-8 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-28-phase-8-close.md) — pickup brief for the next agent; **Phase 8 fully closed with 10 per-candidate lean-eval briefs + 3 cross-candidate bias-guard audits + lead-agent cross-check artifact + cross-candidate evaluator-brief**; DEC-1.a falsifying result pattern named verbatim pre-execution (K=1 universal-negation falsifier); v3 synthesis pipeline COMPLETE; downstream simulator-harness execution is post-v3 scope; task-aware reading lists for downstream-simulator-harness picker + retrospective reviewer. **The active handoff for the v3 synthesis phase** (superseded for the current v4 discovery phase by the 2026-06-06 handoff above).
 - [Phase-7 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-27-phase-7-close.md) — superseded by Phase-8-close above. Phase 7 closed with 10 per-candidate back-fill notes + 2 bias-guard audits + lead-agent aggregation matrix; Wave 7.3 spec patches NOT FIRED. Phase-8 Phase-7-cite-obligations propagated through auto-008's per-candidate mapping table.
 - [Phase-6 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-26-phase-6-close.md) — superseded by Phase-7-close above. Phase-6-followup carry-forwards #1/#2/#3 closed by Phase 7 (silent-absorption auditor + historian expanded mandates).
 - [Phase-5 close handoff](architectures/v3/SESSION-HANDOFF-2026-05-25-phase-5-close.md) — superseded by Phase-6-close + Phase-7-close above. **Note**: per-candidate ADR set table has documentation defects on BF-M + BF-L rows; see the Phase-7-close handoff erratum-extension for the full correction set.
@@ -72,6 +76,16 @@ This is the top-level navigation document for new agent sessions on this repo. I
 ## Reading lists by task
 
 Pre-curated per-task reading lists. If your first task is on this list, read exactly the named files and skip everything else until needed. Lists are accelerators — if your task isn't here, fall back to navigation sections 1–7.
+
+### Step 3 entry — stand up Gas City + run the Gate B0 conformance check (on a real host)
+
+- Read: [`AGENTS.md`](AGENTS.md), this file, [the 2026-06-06 handoff](architectures/v4/SESSION-HANDOFF-2026-06-06-board-and-backbone-plan-close.md), [backbone plan § Gate B0](architectures/v4/backbone-implementation-plan.md#gate-b0--substrate-truth-the-literal-first-move), [C01 substrate/conformance](architectures/v4/spec/C01-gas-city-substrate.md), [decision #4 prevent-vs-detect](decisions-to-make.md#4-does-gas-city-prevent-bad-access-or-only-notice-it-after-the-fact), [C43 fence](architectures/v4/spec/C43-isolation-boundary.md), [C34 holdout](architectures/v4/spec/C34-holdout-integrity.md).
+- Skip: the [unified/exercising plan](architectures/v4/_meta/next-steps/10-unified-plan.md) (that phase begins after the 25 exist); all v3 synthesis docs.
+
+### Author Gate B0/B1 prep artifacts in-sandbox (no running `gc` needed)
+
+- Read: [`AGENTS.md`](AGENTS.md), this file, [backbone plan § Gate B0–B1](architectures/v4/backbone-implementation-plan.md#gate-b0--substrate-truth-the-literal-first-move), [C01 substrate](architectures/v4/spec/C01-gas-city-substrate.md), [C03 config](architectures/v4/spec/C03-config-feature-flags.md), [C20 bead schema](architectures/v4/spec/C20-bead-schema.md), [C08 spec artifact](architectures/v4/spec/C08-spec-artifact.md), [methodology companion](methodology-and-formulas-plain-english.md).
+- Skip: eval-tier (C30–C33), fence-holdout (C34), and bootstrap (C51–C53) specs until their gates.
 
 ### Downstream simulator-harness picker (post-v3 entry point)
 

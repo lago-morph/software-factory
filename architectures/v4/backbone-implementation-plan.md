@@ -244,6 +244,22 @@ fence (Gate 5) — and the [Board 1 cards](../../BOARD.md) are how the operator 
 
 ---
 
+## The operator instrument — built alongside (not one of the 25)
+
+One artifact rides *next to* this plan rather than inside it: the **Gascity progress-tracker TUI**, the
+terminal viewer the operator watches the factory with (bead flow through sessions, bead contents, commit
+diffs, formulas). It is deliberately **not a 26th backbone component** — nothing in the dependency graph
+depends on it, and folding it into the 25 would distort the coverage map. Instead it is an **operator
+instrument**, in the spirit of the on-ramp's *"trust your instruments before you trust the result"*: it
+is the **next thing built once the substrate (Gate B0) is up**, and it **grows as each backbone
+component lands** (each new capability is a new thing to watch). Its build, chunk ladder, repo
+discipline, and ship-in-the-city-image approach live in the
+[progress-tracker TUI instrument plan](tui-operator-instrument-plan.md); it tracks
+[idea-pipeline issue #21](https://github.com/lago-morph/idea-pipeline/issues/21) and is seeded by
+[Board 1 Card 8](../../BOARD.md#8-bead-tui-viewer--toy--dual-use-your-request).
+
+---
+
 *Companions: the [build order](implementation-dependencies.md) (the dependency source of truth, the 7
 products, the three rings), the [charter](../../factory-discovery-charter.md) (why & how), the
 [panel verdict](_meta/next-steps/panel/VERDICT.md) (the 8 amendments), the

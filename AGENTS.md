@@ -168,3 +168,21 @@ The repo-root checker [`scripts/check-internal-refs.py`](./scripts/check-interna
 <!-- AGENTS-MD-21ab2b1ef8 -->
 
 **Address user confusion directly, not via meta-honesty sections.** When the user expresses confusion about something you wrote, restate plainly. Don't structure the correction as 'honesty flags', 'things to acknowledge', 'two findings to record honestly', 'one wrinkle to flag', or similar meta-frames. The meta-frame adds parsing cost without adding clarity. State the corrected information; skip the narration about how you're being honest about correcting yourself.
+
+## Execute documentation before publishing it
+
+<!-- AGENTS-MD-c78b670a12 -->
+
+**Execute documentation before publishing it.** When you write or edit user-facing documentation that contains runnable commands, execute every command against the real running system and reconcile the docs to observed behavior before declaring them done; do not ship commands you only reasoned about. See the [`execute-docs-against-running-system`](.claude/skills/execute-docs-against-running-system/SKILL.md) skill.
+
+## Verify the shipped artifact and config, not a proxy
+
+<!-- AGENTS-MD-36202f144e -->
+
+**Verify the shipped artifact and config, not a proxy.** Verify a packaged deliverable by running the exact shipped artifact and configuration — the real compose file, entrypoint, and volume/network settings — on a target-equivalent platform, not a hand-rolled approximation that is easier to run. See the [`verify-the-shipped-config-not-a-proxy`](.claude/skills/verify-the-shipped-config-not-a-proxy/SKILL.md) skill.
+
+## Reasoned-from-source is not verified
+
+<!-- AGENTS-MD-a924b58a5c -->
+
+**Reasoned-from-source is not verified.** A change derived from reading source code is a hypothesis, not a verified fix; label it as unverified and run it against the real system before shipping it or claiming it works.

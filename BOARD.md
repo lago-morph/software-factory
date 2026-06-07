@@ -214,6 +214,12 @@ something up (9, 10).
   so tag it as an *invented tool* (it still counts toward coverage of C19/C23/C41).
 - **Prereqs:** on-ramp #1 (you need a real store with real beads in it — run card 1 first and you'll have
   something to look at).
+- **Now institutionalized as an operator instrument.** This card is the seed of the
+  [progress-tracker TUI](architectures/v4/tui-operator-instrument-plan.md) — built *alongside* the
+  backbone (not one of the 25) and grown by cards, tracking
+  [idea-pipeline issue #21](https://github.com/lago-morph/idea-pipeline/issues/21). Its v0.1 is a
+  deliberately tiny dogfood toy (browse beads across city + rigs → details) that the *current* prototype
+  builds, doubling as a shakedown of the build loop.
 
 ### 9. Emoji-saga  *(invented-for-fun)*
 - **Pressures:** formula **composition** (C12/C13 — chaining `agent` + `tool` steps and a `sub_formula`)

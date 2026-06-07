@@ -115,8 +115,8 @@ Claude Code web sandbox itself** — Docker is available there (the daemon is st
 and a CA-injection + token build/test recipe is documented in
 [the prototype's sandbox build/test notes](https://github.com/lago-morph/software-factory-prototype/blob/main/docs/HANDOFF.md).
 It has now been **exercised end-to-end in the sandbox**: the image builds (python3 + `sftui` + the
-`tui/` bake), the baked viewer runs in the container (`sftui --dump`), and the chunk-1 bead built
-`tui/beadview.py` autonomously (created → routed → polecat commit → refinery merge, ~15 min) — proving
+`tui/` bake), the baked viewer runs in the container (`sftui --dump`), and the chunk-1 bead built the prototype's
+`beadview.py` autonomously (created → routed → polecat commit → refinery merge, ~15 min) — proving
 the prototype can build a non-trivial, useful artifact, which is the shakedown thesis of phase 1.
 
 ---

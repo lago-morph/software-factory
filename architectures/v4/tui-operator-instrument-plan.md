@@ -110,9 +110,11 @@ around. The target shape:
 
 The concrete prototype changes (rig wiring, credentials, Dockerfile shim, `tui/` scaffold) are staged in
 the [software-factory-prototype](https://github.com/lago-morph/software-factory-prototype) repository.
-The live dogfood run (`docker compose up` + the chunk-1 `gc bd create` prompt) requires a Docker host
-and a Claude subscription token, so it is the operator's to execute; it cannot run in the planning
-sandbox.
+The live dogfood run (`docker compose up` + the chunk-1 `gc bd create` prompt) **can be exercised in the
+Claude Code web sandbox itself** — Docker is available there (the daemon is started with `sudo dockerd`),
+and a CA-injection + token build/test recipe is documented in
+[the prototype's sandbox build/test notes](https://github.com/lago-morph/software-factory-prototype/blob/main/docs/HANDOFF.md).
+It simply has not been run yet, so the prototype changes are unverified-by-execution until that pass.
 
 ---
 

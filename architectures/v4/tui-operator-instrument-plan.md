@@ -114,7 +114,10 @@ The live dogfood run (`docker compose up` + the chunk-1 `gc bd create` prompt) *
 Claude Code web sandbox itself** — Docker is available there (the daemon is started with `sudo dockerd`),
 and a CA-injection + token build/test recipe is documented in
 [the prototype's sandbox build/test notes](https://github.com/lago-morph/software-factory-prototype/blob/main/docs/HANDOFF.md).
-It simply has not been run yet, so the prototype changes are unverified-by-execution until that pass.
+It has now been **exercised end-to-end in the sandbox**: the image builds (python3 + `sftui` + the
+`tui/` bake), the baked viewer runs in the container (`sftui --dump`), and the chunk-1 bead built
+`tui/beadview.py` autonomously (created → routed → polecat commit → refinery merge, ~15 min) — proving
+the prototype can build a non-trivial, useful artifact, which is the shakedown thesis of phase 1.
 
 ---
 

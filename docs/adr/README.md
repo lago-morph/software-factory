@@ -27,6 +27,7 @@ python3 .claude/skills/adr/scripts/check_adr_links.py docs/adr/
 | [0069](./0069-spec-scenarios-system-triangle-evaluation-invariant.md) | The spec–scenarios–system triangle as the evaluation invariant for unattended self-building | Accepted | 2026-06-02 |
 | [0070](./0070-trust-map-and-play-menu-model.md) | Trust-map and play-menu model for selecting factory work | Accepted | 2026-06-05 |
 | [0071](./0071-factory-as-prototype-for-discovery-portfolio.md) | Factory as a prototype for discovery, co-implemented with a project portfolio | Accepted | 2026-06-05 |
+| [0072](./0072-operator-tooling-instrument-not-component.md) | Operator tooling is an instrument alongside the backbone, not a backbone component | Accepted | 2026-06-08 |
 
 ## Conventions in one screen
 

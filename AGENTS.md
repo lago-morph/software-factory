@@ -192,3 +192,15 @@ The repo-root checker [`scripts/check-internal-refs.py`](./scripts/check-interna
 <!-- AGENTS-MD-7e51a0c4d9 -->
 
 **Always test every fix by executing it against the real running system before claiming it works or merging it — no exceptions, ever.** A fix reasoned from source or from an error message is a hypothesis, not a verified change; running `bash -n`, `py_compile`, or a linter checks syntax, not behavior, and is not a test of the fix. Build and run the real artifact (for Dockerized components, the actual image + `docker compose` stack), reproduce the original failure, then confirm the fix removes it. "I couldn't test it here" is rarely true — if a runtime is genuinely unavailable, say so explicitly and do NOT claim the fix works. This hardens [`reasoned-from-source is not verified`](#reasoned-from-source-is-not-verified) and [`verify the shipped artifact and config, not a proxy`](#verify-the-shipped-artifact-and-config-not-a-proxy) from best-effort guidance into an absolute requirement.
+
+## Read the full handoff/environment doc before claiming an environment limitation
+
+<!-- AGENTS-MD-aee92aa39e -->
+
+**Read the full handoff/environment doc before claiming an environment limitation.** Before reporting that a capability is unavailable (no Docker, no token, no network, "can't verify here"), read the repo's complete handoff / environment / getting-started doc end to end — not just its head — and probe directly (e.g. `which dockerd`, `docker info`). State a limitation only after both the doc and a live probe confirm it.
+
+## Store invocation prompts and commands durably in the repo
+
+<!-- AGENTS-MD-6741a48eef -->
+
+**Store invocation prompts and commands durably in the repo.** When a prompt, command, or input drives real work (a `gc bd create` task body, a subagent brief, a generation prompt), commit it to the repo as the durable source of truth — do not leave it only in chat, a subagent brief, or an ephemeral / un-synced store (e.g. a local bead store). If it was worth running, it is worth re-running and reviewing.

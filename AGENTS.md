@@ -186,3 +186,9 @@ The repo-root checker [`scripts/check-internal-refs.py`](./scripts/check-interna
 <!-- AGENTS-MD-a924b58a5c -->
 
 **Reasoned-from-source is not verified.** A change derived from reading source code is a hypothesis, not a verified fix; label it as unverified and run it against the real system before shipping it or claiming it works.
+
+## Always test fixes — no exceptions, ever
+
+<!-- AGENTS-MD-7e51a0c4d9 -->
+
+**Always test every fix by executing it against the real running system before claiming it works or merging it — no exceptions, ever.** A fix reasoned from source or from an error message is a hypothesis, not a verified change; running `bash -n`, `py_compile`, or a linter checks syntax, not behavior, and is not a test of the fix. Build and run the real artifact (for Dockerized components, the actual image + `docker compose` stack), reproduce the original failure, then confirm the fix removes it. "I couldn't test it here" is rarely true — if a runtime is genuinely unavailable, say so explicitly and do NOT claim the fix works. This hardens [`reasoned-from-source is not verified`](#reasoned-from-source-is-not-verified) and [`verify the shipped artifact and config, not a proxy`](#verify-the-shipped-artifact-and-config-not-a-proxy) from best-effort guidance into an absolute requirement.
